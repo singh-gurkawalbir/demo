@@ -1,0 +1,38 @@
+{
+  "name": "integrator-ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Eli Perelman <eli@eliperelman.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "neutrino start --require dotenv/config",
+    "build": "neutrino build --require dotenv/config",
+    "lint": "neutrino lint",
+    "precommit": "neutrino stage",
+    "styleguide": "neutrino styleguide:start --require dotenv/config"
+  },
+  "dependencies": {
+    "@material-ui/core": "^1.0.0-rc.1",
+    "@material-ui/icons": "^1.0.0-rc.0",
+    "@material-ui/lab": "^1.0.0-alpha.2",
+    "classnames": "^2.2.5",
+    "error-stack-parser": "^2.0.1",
+    "localforage": "^1.7.1",
+    "mdi-react": "^3.3.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-fout-stager": "^3.0.0",
+    "react-hot-loader": "^4.2.0",
+    "react-loadable": "^5.4.0",
+    "react-router-dom": "^4.2.2",
+    "redbox-react": "^1.6.0",
+    "typeface-roboto": "^0.0.54"
+  },
+  "devDependencies": {
+    "babel-register": "^6.26.0",
+    "dotenv": "^5.0.1",
+    "neutrino": "^8.2.3",
+    "neutrino-preset-mozilla-frontend-infra": "^4.1.0"
+  }
+}
