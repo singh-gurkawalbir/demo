@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
@@ -29,14 +29,16 @@ export default class App extends Component {
       <MuiThemeProvider theme={theme}>
         <FontStager />
         <CssBaseline />
-        <Appbar />
         <BrowserRouter>
-          <Switch>
-            <Route path="/pipelines" component={Pipelines} />
-            <Route path="/exports" component={Exports} />
-            <Route path="/" component={Dashboard} />
-            <Route component={NotFound} />
-          </Switch>
+          <Fragment>
+            <Appbar />
+            <Switch>
+              <Route path="/pipelines" component={Pipelines} />
+              <Route path="/exports" component={Exports} />
+              <Route path="/" component={Dashboard} />
+              <Route component={NotFound} />
+            </Switch>
+          </Fragment>
         </BrowserRouter>
       </MuiThemeProvider>
     );
