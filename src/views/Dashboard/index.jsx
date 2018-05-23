@@ -19,7 +19,15 @@ export default class Dashboard extends Component {
           color="secondary"
           component={Link}
           to="/pipelines">
-          Pipelines
+          Create a Data Pipe
+        </Button>
+
+        <Button
+          variant="raised"
+          color="secondary"
+          component={Link}
+          to="/exports">
+          List your Exports
         </Button>
       </div>
     );

@@ -17,6 +17,9 @@ const Pipelines = loadable(() =>
 const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
 );
+const Exports = loadable(() =>
+  import(/* webpackChunkName: 'Pipelines' */ '../views/Exports')
+);
 
 @hot(module)
 @withStyles({})
@@ -30,6 +33,7 @@ export default class App extends Component {
         <BrowserRouter>
           <Switch>
             <Route path="/pipelines" component={Pipelines} />
+            <Route path="/exports" component={Exports} />
             <Route path="/" component={Dashboard} />
             <Route component={NotFound} />
           </Switch>
