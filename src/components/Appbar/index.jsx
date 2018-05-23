@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from 'mdi-react/MenuIcon';
+import { Link } from 'react-router-dom';
 
 @withStyles(theme => ({
   root: {
@@ -35,12 +36,14 @@ export default class Appbar extends Component {
               aria-label="Menu">
               <MenuIcon className={classes.icon} />
             </IconButton>
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.flex}>
-              {process.env.APP_NAME}
-            </Typography>
+            <Link to="/">
+              <Typography
+                variant="title"
+                color="inherit"
+                className={classes.flex}>
+                {process.env.APP_NAME}
+              </Typography>
+            </Link>
           </Toolbar>
         </MuiAppBar>
       </div>
