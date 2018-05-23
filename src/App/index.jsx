@@ -18,7 +18,7 @@ const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
 );
 const Exports = loadable(() =>
-  import(/* webpackChunkName: 'Pipelines' */ '../views/Exports')
+  import(/* webpackChunkName: 'Exports' */ '../views/Exports')
 );
 
 @hot(module)
