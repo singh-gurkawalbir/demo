@@ -14,6 +14,10 @@ import { Link } from 'react-router-dom';
   flex: {
     flex: 1,
   },
+  playground: {
+    textDecoration: 'none',
+    color: 'white',
+  },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
@@ -36,7 +40,7 @@ export default class Appbar extends Component {
               aria-label="Menu">
               <MenuIcon className={classes.icon} />
             </IconButton>
-            <Link to="/">
+            <Link className={classes.playground} to="/">
               <Typography
                 variant="title"
                 color="inherit"

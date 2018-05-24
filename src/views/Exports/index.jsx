@@ -1,9 +1,10 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -16,18 +17,32 @@ import api from '../../utils/api';
 @hot(module)
 @withStyles(theme => ({
   root: {
-    width: '100%',
+    width: '98%',
     marginTop: theme.spacing.unit * 3,
+    marginLeft: theme.spacing.unit,
     overflowX: 'auto',
+    // textAlign: 'center',
+  },
+  title: {
+    marginBottom: theme.spacing.unit * 2,
+  },
+  button: {
+    margin: theme.spacing.unit,
+    textAlign: 'center',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
+    fontWeight: 'bold',
     flexBasis: '66.66%',
     flexShrink: 0,
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(12),
     color: theme.palette.text.secondary,
+  },
+  exportDetails: {
+    flexBasis: '66.66%',
+    flexShrink: 0,
   },
   paper: theme.mixins.gutters({
     paddingTop: 16,
@@ -41,6 +56,8 @@ export default class Exports extends Component {
   state = {
     loading: false,
     rowData: [],
+    // filter: '',
+    pageSize: 3,
     expanded: null,
   };
 
@@ -93,9 +110,16 @@ export default class Exports extends Component {
     });
   };
 
+  handleMore = () => {
+    this.setState({
+      pageSize: this.state.pageSize + 2,
+    });
+  };
+
   render() {
     const { classes } = this.props;
-    const { loading, rowData, error, expanded } = this.state;
+    const { loading, rowData, error, expanded, pageSize } = this.state;
+    const pageData = rowData.slice(0, pageSize);
 
     if (loading) {
       return (
@@ -128,28 +152,50 @@ export default class Exports extends Component {
 
     return (
       <Fragment>
-        <Typography variant="display1">These are your exports</Typography>
         <div className={classes.root}>
-          {rowData.map(e => (
+          <Typography className={classes.title} variant="display1">
+            These are your exports
+          </Typography>
+          {pageData.map(e => (
             <ExpansionPanel
               key={e.id}
               expanded={expanded === e.id}
               onChange={this.handleChange(e.id)}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+              <ExpansionPanelSummary
+                focused={(expanded === e.id).toString()}
+                expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>
                   {e.name} {e.type && `(${e.type} export)`}
                 </Typography>
                 <Typography className={classes.secondaryHeading}>
-                  Last modified on <TimeAgo date={e.lastModified} />
+                  Last modified on <TimeAgo date={e.lastModified} /> by you.
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                <Typography>
-                  Using connection: {e.connection.name} ({e.connection.type})
+                <Typography className={classes.exportDetails}>
+                  Created on {new Date(e.lastModified).toLocaleDateString()} by
+                  You.
+                  <br />
+                  Using a {e.connection.type.toUpperCase()} connection named:
+                  {e.connection.name}
+                </Typography>
+                <Typography className={classes.secondaryHeading}>
+                  <Link to="/export/preview">Run this Export now</Link>
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           ))}
+
+          {rowData.length > pageSize && (
+            <Button
+              onClick={this.handleMore}
+              variant="raised"
+              size="medium"
+              color="primary"
+              className={classes.button}>
+              More
+            </Button>
+          )}
         </div>
       </Fragment>
     );
