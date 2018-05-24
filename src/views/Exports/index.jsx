@@ -24,10 +24,16 @@ import api from '../../utils/api';
     overflowX: 'auto',
     // textAlign: 'center',
   },
+  titleBox: {
+    display: 'flex',
+  },
   title: {
     marginBottom: theme.spacing.unit * 2,
-    flexBasis: '66.66%',
+    flexBasis: '50%',
     flexShrink: 0,
+  },
+  textField: {
+    width: '350px',
   },
   button: {
     margin: theme.spacing.unit,
@@ -36,13 +42,18 @@ import api from '../../utils/api';
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: 'bold',
-    flexBasis: '66.66%',
+    flexBasis: '50%',
+    flexShrink: 0,
+  },
+  app: {
+    flexBasis: '16.66%',
     flexShrink: 0,
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(12),
     color: theme.palette.text.secondary,
   },
+
   exportDetails: {
     flexBasis: '66.66%',
     flexShrink: 0,
@@ -86,21 +97,23 @@ export default class Exports extends Component {
   async fetchRowData() {
     const exports = await api('/exports');
     const connections = await api('/connections');
-    const connHash = {};
+    const cHash = {};
 
     // convert conn array to hash keyed from conn id.
     // lets join exports and connection into hybrid obj.
-    connections.map(c => (connHash[c._id] = c));
+    connections.map(c => (cHash[c._id] = c));
 
+    // build view model for this view.
     const rowData = exports.map(e => ({
       id: e._id,
       name: e.name || e._id,
       type: e.type,
       lastModified: e.lastModified,
+      app: cHash[e._connectionId].assistant || cHash[e._connectionId].type,
       connection: {
-        type: connHash[e._connectionId].type,
-        id: connHash[e._connectionId]._id,
-        name: connHash[e._connectionId].name || connHash[e._connectionId]._id,
+        type: cHash[e._connectionId].type,
+        id: cHash[e._connectionId]._id,
+        name: cHash[e._connectionId].name || cHash[e._connectionId]._id,
       },
     }));
 
@@ -124,6 +137,23 @@ export default class Exports extends Component {
     this.setState({
       pageSize: this.state.pageSize + 2,
     });
+  };
+
+  testExport = e => {
+    const { search } = this.state;
+
+    if (!search) return true;
+
+    const valuesToSearch = [
+      e.id,
+      e.name,
+      e.connection.name,
+      e.connection.assistant,
+      e.connection.type,
+    ];
+    const textToSearch = valuesToSearch.join('|').toUpperCase();
+
+    return textToSearch.indexOf(search.toUpperCase()) >= 0;
   };
 
   render() {
@@ -159,28 +189,29 @@ export default class Exports extends Component {
       return <ErrorPanel error={error} />;
     }
 
-    const filteredData = rowData.filter(
-      e => !search || e.name.indexOf(search) >= 0
-    );
+    const filteredData = rowData.filter(this.testExport);
     const pageData = filteredData.slice(0, pageSize);
 
     return (
       <Fragment>
         <div className={classes.root}>
-          <Typography className={classes.title} variant="display1">
-            These are your exports
-          </Typography>
-          <Typography className={classes.secondaryHeading}>
-            <TextField
-              onChange={this.handleSearch}
-              value={search}
-              id="search"
-              label="Search by Name"
-              type="search"
-              className={classes.textField}
-              margin="normal"
-            />
-          </Typography>
+          <div className={classes.titleBox}>
+            <Typography className={classes.title} variant="display1">
+              These are your exports
+            </Typography>
+            <Typography className={classes.secondaryHeading}>
+              <TextField
+                onChange={this.handleSearch}
+                value={search}
+                id="search"
+                label="Search by export, connection or app name"
+                type="search"
+                className={classes.textField}
+                margin="normal"
+              />
+            </Typography>
+          </div>
+
           {pageData.map(e => (
             <ExpansionPanel
               key={e.id}
@@ -192,14 +223,14 @@ export default class Exports extends Component {
                 <Typography className={classes.heading}>
                   {e.name} {e.type && `(${e.type} export)`}
                 </Typography>
+                <Typography className={classes.app}>{e.app}</Typography>
                 <Typography className={classes.secondaryHeading}>
-                  Last modified on <TimeAgo date={e.lastModified} /> by you.
+                  Last modified on <TimeAgo date={e.lastModified} />.
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Typography className={classes.exportDetails}>
-                  Created on {new Date(e.lastModified).toLocaleDateString()} by
-                  You.
+                  Created on {new Date(e.lastModified).toLocaleDateString()}
                   <br />
                   Using a {e.connection.type.toUpperCase()} connection named:
                   {e.connection.name}
