@@ -9,12 +9,10 @@ import Typography from '@material-ui/core/Typography';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import ArrowExpandDownIcon from 'mdi-react/ArrowExpandDownIcon';
 import PlusIcon from 'mdi-react/PlusIcon';
-import storage from '../../../utils/storage';
+import db from '../../../utils/db';
 import Spinner from '../../../components/Spinner';
 import ErrorPanel from '../../../components/ErrorPanel';
 import SpeedDial from '../../../components/SpeedDial';
-
-const PIPELINES = '@@PIPELINES';
 
 @hot(module)
 @withStyles({
@@ -37,7 +35,7 @@ export default class ListPipelines extends Component {
 
     try {
       this.setState({
-        pipelines: (await storage.getItem(PIPELINES)) || [],
+        pipelines: await db.table('pipelines').toArray(),
         error: null,
         loading: false,
       });
