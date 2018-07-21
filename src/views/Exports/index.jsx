@@ -12,8 +12,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
 import Spinner from '../../components/Spinner';
-import ErrorPanel from '../../components/ErrorPanel';
-import api from '../../utils/api';
 
 @hot(module)
 @withStyles(theme => ({
@@ -33,6 +31,7 @@ import api from '../../utils/api';
     flexShrink: 0,
   },
   textField: {
+    marginTop: 0,
     width: '350px',
   },
   button: {
@@ -65,38 +64,26 @@ import api from '../../utils/api';
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   }),
+  focusedSummary: {
+    backgroundColor: 'red',
+  },
 }))
 export default class Exports extends Component {
   state = {
-    loading: false,
-    rowData: [],
     search: '',
     pageSize: 3,
     expanded: null,
   };
 
-  async componentDidMount() {
-    this.setState({ loading: true });
+  // TODO: see this gist for how to bind window events to react components
+  // I want this so that as a user types, the keys automatically
+  // are placed in the search.
+  // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
-    try {
-      this.setState({
-        // exports: await api('/exports'),
-        rowData: await this.fetchRowData(),
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      this.setState({
-        rowData: null,
-        loading: false,
-        error,
-      });
-    }
-  }
-
-  async fetchRowData() {
-    const exports = await api('/exports');
-    const connections = await api('/connections');
+  buildRowData() {
+    const { exports, connections } = this.props;
+    // const exports = await api('/exports');
+    // const connections = await api('/connections');
     const cHash = {};
 
     // convert conn array to hash keyed from conn id.
@@ -109,7 +96,9 @@ export default class Exports extends Component {
       name: e.name || e._id,
       type: e.type,
       lastModified: e.lastModified,
-      app: cHash[e._connectionId].assistant || cHash[e._connectionId].type,
+      app: (
+        cHash[e._connectionId].assistant || cHash[e._connectionId].type
+      ).toUpperCase(),
       connection: {
         type: cHash[e._connectionId].type,
         id: cHash[e._connectionId]._id,
@@ -121,9 +110,12 @@ export default class Exports extends Component {
   }
 
   handleSearch = event => {
+    // TODO: use this component to highlight the matching text in the resuts:
+    // https://github.com/bvaughn/react-highlight-words
     this.setState({
       pageSize: 3,
       search: event.target.value,
+      expanded: null,
     });
   };
 
@@ -157,19 +149,21 @@ export default class Exports extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { loading, rowData, error, expanded, pageSize, search } = this.state;
+    const { connections, exports, classes } = this.props;
+    const { expanded, pageSize, search } = this.state;
 
-    if (loading) {
+    if (!connections || !exports) {
       return (
         <Paper className={classes.paper} elevation={4}>
           <Typography variant="headline" component="h3">
-            Retrieving your Exports.
+            Retrieving your Exports and Connections.
           </Typography>
           <Spinner loading />
         </Paper>
       );
     }
+
+    const rowData = this.buildRowData();
 
     if (!rowData) {
       return (
@@ -183,10 +177,6 @@ export default class Exports extends Component {
           </Typography>
         </Paper>
       );
-    }
-
-    if (error) {
-      return <ErrorPanel error={error} />;
     }
 
     const filteredData = rowData.filter(this.testExport);
@@ -215,9 +205,10 @@ export default class Exports extends Component {
           {pageData.map(e => (
             <ExpansionPanel
               key={e.id}
-              expanded={expanded === e.id}
+              expanded={expanded === e.id || pageData.length === 1}
               onChange={this.handlePanelChange(e.id)}>
               <ExpansionPanelSummary
+                classes={{ focused: classes.focusedSummary }}
                 focused={(expanded === e.id).toString()}
                 expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>
@@ -225,7 +216,7 @@ export default class Exports extends Component {
                 </Typography>
                 <Typography className={classes.app}>{e.app}</Typography>
                 <Typography className={classes.secondaryHeading}>
-                  Last modified on <TimeAgo date={e.lastModified} />.
+                  Last modified <TimeAgo date={e.lastModified} />.
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
@@ -236,15 +227,15 @@ export default class Exports extends Component {
                   {e.connection.name}
                 </Typography>
                 <Typography className={classes.secondaryHeading}>
-                  <Link to="/export/preview">Run this Export now</Link>
+                  <Link to="/pg/export/preview">Run this Export now</Link>
                   <br />
-                  <Link to="/export/clone">Clone this Export</Link>
+                  <Link to="/pg/export/clone">Clone this Export</Link>
                   <br />
-                  <Link to="/export/push">
+                  <Link to="/pg/export/push">
                     Publish export data to Data Pipeline
                   </Link>
                   <br />
-                  <Link to="/export/clone">View Audit Log</Link>
+                  <Link to="/pg/export/clone">View Audit Log</Link>
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>

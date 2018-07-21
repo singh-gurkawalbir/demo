@@ -40,7 +40,7 @@ export default class Appbar extends Component {
               aria-label="Menu">
               <MenuIcon className={classes.icon} />
             </IconButton>
-            <Link className={classes.playground} to="/">
+            <Link className={classes.playground} to="/pg/">
               <Typography
                 variant="title"
                 color="inherit"
