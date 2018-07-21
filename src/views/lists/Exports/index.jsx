@@ -1,6 +1,5 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -11,7 +10,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../../components/Spinner';
+import RowDetail from './RowDetail';
 
 @hot(module)
 @withStyles(theme => ({
@@ -220,23 +220,7 @@ export default class Exports extends Component {
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                <Typography className={classes.exportDetails}>
-                  Created on {new Date(e.lastModified).toLocaleDateString()}
-                  <br />
-                  Using a {e.connection.type.toUpperCase()} connection named:
-                  {e.connection.name}
-                </Typography>
-                <Typography className={classes.secondaryHeading}>
-                  <Link to="/pg/export/preview">Run this Export now</Link>
-                  <br />
-                  <Link to="/pg/export/clone">Clone this Export</Link>
-                  <br />
-                  <Link to="/pg/export/push">
-                    Publish export data to Data Pipeline
-                  </Link>
-                  <br />
-                  <Link to="/pg/export/clone">View Audit Log</Link>
-                </Typography>
+                <RowDetail item={e} />
               </ExpansionPanelDetails>
             </ExpansionPanel>
           ))}
