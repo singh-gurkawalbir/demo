@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -12,6 +11,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
 import Spinner from '../../../components/Spinner';
 import RowDetail from './RowDetail';
+import TitleBar from '../TitleBar';
 
 @hot(module)
 @withStyles(theme => ({
@@ -29,10 +29,6 @@ import RowDetail from './RowDetail';
     marginBottom: theme.spacing.unit * 2,
     flexBasis: '50%',
     flexShrink: 0,
-  },
-  textField: {
-    marginTop: 0,
-    width: '350px',
   },
   button: {
     margin: theme.spacing.unit,
@@ -109,7 +105,7 @@ export default class Exports extends Component {
     return rowData;
   }
 
-  handleSearch = event => {
+  onSearchChange = event => {
     // TODO: use this component to highlight the matching text in the resuts:
     // https://github.com/bvaughn/react-highlight-words
     this.setState({
@@ -185,23 +181,7 @@ export default class Exports extends Component {
     return (
       <Fragment>
         <div className={classes.root}>
-          <div className={classes.titleBox}>
-            <Typography className={classes.title} variant="display1">
-              These are your exports
-            </Typography>
-            <Typography className={classes.secondaryHeading}>
-              <TextField
-                onChange={this.handleSearch}
-                value={search}
-                id="search"
-                label="Search by export, connection or app name"
-                type="search"
-                className={classes.textField}
-                margin="normal"
-              />
-            </Typography>
-          </div>
-
+          <TitleBar searchText={search} handleSearch={this.onSearchChange} />
           {pageData.map(e => (
             <ExpansionPanel
               key={e.id}
@@ -209,7 +189,7 @@ export default class Exports extends Component {
               onChange={this.handlePanelChange(e.id)}>
               <ExpansionPanelSummary
                 classes={{ focused: classes.focusedSummary }}
-                focused={(expanded === e.id).toString()}
+                focused={expanded === e.id || pageData.length === 1}
                 expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>
                   {e.name} {e.type && `(${e.type} export)`}
