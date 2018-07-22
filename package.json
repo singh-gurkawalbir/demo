@@ -34,6 +34,7 @@
     "babel-register": "^6.26.0",
     "dotenv": "^5.0.1",
     "neutrino": "^8.2.3",
-    "neutrino-preset-mozilla-frontend-infra": "^4.1.0"
+    "neutrino-preset-mozilla-frontend-infra": "^4.1.0",
+    "prettier-eslint": "^8.8.1"
   }
 }

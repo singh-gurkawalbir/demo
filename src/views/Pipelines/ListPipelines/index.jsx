@@ -51,7 +51,7 @@ export default class ListPipelines extends Component {
   }
 
   handleAddPipelineClick = () => {
-    this.props.history.push('/pipelines/create');
+    this.props.history.push('/pg/pipelines/create');
   };
 
   render() {

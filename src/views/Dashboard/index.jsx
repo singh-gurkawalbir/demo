@@ -18,7 +18,7 @@ export default class Dashboard extends Component {
           variant="raised"
           color="secondary"
           component={Link}
-          to="/pipelines">
+          to="/pg/pipelines">
           Create a Data Pipe
         </Button>
 
@@ -26,7 +26,7 @@ export default class Dashboard extends Component {
           variant="raised"
           color="secondary"
           component={Link}
-          to="/exports">
+          to="/pg/exports">
           List your Exports
         </Button>
       </div>

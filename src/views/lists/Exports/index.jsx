@@ -1,19 +1,17 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
-import Spinner from '../../components/Spinner';
-import ErrorPanel from '../../components/ErrorPanel';
-import api from '../../utils/api';
+import Spinner from '../../../components/Spinner';
+import RowDetail from './RowDetail';
+import TitleBar from '../TitleBar';
 
 @hot(module)
 @withStyles(theme => ({
@@ -31,9 +29,6 @@ import api from '../../utils/api';
     marginBottom: theme.spacing.unit * 2,
     flexBasis: '50%',
     flexShrink: 0,
-  },
-  textField: {
-    width: '350px',
   },
   button: {
     margin: theme.spacing.unit,
@@ -65,38 +60,26 @@ import api from '../../utils/api';
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   }),
+  focusedSummary: {
+    backgroundColor: 'red',
+  },
 }))
 export default class Exports extends Component {
   state = {
-    loading: false,
-    rowData: [],
     search: '',
     pageSize: 3,
     expanded: null,
   };
 
-  async componentDidMount() {
-    this.setState({ loading: true });
+  // TODO: see this gist for how to bind window events to react components
+  // I want this so that as a user types, the keys automatically
+  // are placed in the search.
+  // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
-    try {
-      this.setState({
-        // exports: await api('/exports'),
-        rowData: await this.fetchRowData(),
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      this.setState({
-        rowData: null,
-        loading: false,
-        error,
-      });
-    }
-  }
-
-  async fetchRowData() {
-    const exports = await api('/exports');
-    const connections = await api('/connections');
+  buildRowData() {
+    const { exports, connections } = this.props;
+    // const exports = await api('/exports');
+    // const connections = await api('/connections');
     const cHash = {};
 
     // convert conn array to hash keyed from conn id.
@@ -109,7 +92,9 @@ export default class Exports extends Component {
       name: e.name || e._id,
       type: e.type,
       lastModified: e.lastModified,
-      app: cHash[e._connectionId].assistant || cHash[e._connectionId].type,
+      app: (
+        cHash[e._connectionId].assistant || cHash[e._connectionId].type
+      ).toUpperCase(),
       connection: {
         type: cHash[e._connectionId].type,
         id: cHash[e._connectionId]._id,
@@ -120,10 +105,13 @@ export default class Exports extends Component {
     return rowData;
   }
 
-  handleSearch = event => {
+  onSearchChange = event => {
+    // TODO: use this component to highlight the matching text in the resuts:
+    // https://github.com/bvaughn/react-highlight-words
     this.setState({
       pageSize: 3,
       search: event.target.value,
+      expanded: null,
     });
   };
 
@@ -157,19 +145,21 @@ export default class Exports extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { loading, rowData, error, expanded, pageSize, search } = this.state;
+    const { connections, exports, classes } = this.props;
+    const { expanded, pageSize, search } = this.state;
 
-    if (loading) {
+    if (!connections || !exports) {
       return (
         <Paper className={classes.paper} elevation={4}>
           <Typography variant="headline" component="h3">
-            Retrieving your Exports.
+            Retrieving your Exports and Connections.
           </Typography>
           <Spinner loading />
         </Paper>
       );
     }
+
+    const rowData = this.buildRowData();
 
     if (!rowData) {
       return (
@@ -185,67 +175,32 @@ export default class Exports extends Component {
       );
     }
 
-    if (error) {
-      return <ErrorPanel error={error} />;
-    }
-
     const filteredData = rowData.filter(this.testExport);
     const pageData = filteredData.slice(0, pageSize);
 
     return (
       <Fragment>
         <div className={classes.root}>
-          <div className={classes.titleBox}>
-            <Typography className={classes.title} variant="display1">
-              These are your exports
-            </Typography>
-            <Typography className={classes.secondaryHeading}>
-              <TextField
-                onChange={this.handleSearch}
-                value={search}
-                id="search"
-                label="Search by export, connection or app name"
-                type="search"
-                className={classes.textField}
-                margin="normal"
-              />
-            </Typography>
-          </div>
-
+          <TitleBar searchText={search} handleSearch={this.onSearchChange} />
           {pageData.map(e => (
             <ExpansionPanel
               key={e.id}
-              expanded={expanded === e.id}
+              expanded={expanded === e.id || pageData.length === 1}
               onChange={this.handlePanelChange(e.id)}>
               <ExpansionPanelSummary
-                focused={(expanded === e.id).toString()}
+                classes={{ focused: classes.focusedSummary }}
+                focused={expanded === e.id || pageData.length === 1}
                 expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>
                   {e.name} {e.type && `(${e.type} export)`}
                 </Typography>
                 <Typography className={classes.app}>{e.app}</Typography>
                 <Typography className={classes.secondaryHeading}>
-                  Last modified on <TimeAgo date={e.lastModified} />.
+                  Last modified <TimeAgo date={e.lastModified} />.
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                <Typography className={classes.exportDetails}>
-                  Created on {new Date(e.lastModified).toLocaleDateString()}
-                  <br />
-                  Using a {e.connection.type.toUpperCase()} connection named:
-                  {e.connection.name}
-                </Typography>
-                <Typography className={classes.secondaryHeading}>
-                  <Link to="/export/preview">Run this Export now</Link>
-                  <br />
-                  <Link to="/export/clone">Clone this Export</Link>
-                  <br />
-                  <Link to="/export/push">
-                    Publish export data to Data Pipeline
-                  </Link>
-                  <br />
-                  <Link to="/export/clone">View Audit Log</Link>
-                </Typography>
+                <RowDetail item={e} />
               </ExpansionPanelDetails>
             </ExpansionPanel>
           ))}

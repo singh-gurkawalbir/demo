@@ -1,0 +1,45 @@
+import { hot } from 'react-hot-loader';
+import { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+
+@hot(module)
+@withStyles(theme => ({
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(12),
+    color: theme.palette.text.secondary,
+  },
+
+  exportDetails: {
+    flexBasis: '66.66%',
+    flexShrink: 0,
+  },
+}))
+export default class Exports extends Component {
+  render() {
+    const { classes, item } = this.props;
+
+    return (
+      <Fragment>
+        <Typography className={classes.exportDetails}>
+          Created on {new Date(item.lastModified).toLocaleDateString()}
+          <br />
+          Using a {item.connection.type.toUpperCase()} connection named:
+          {item.connection.name}
+        </Typography>
+        <Typography className={classes.secondaryHeading}>
+          <Link to={`/pg/export/preview/${item._id}`}>Run this Export now</Link>
+          <br />
+          <Link to="/pg/export/clone">Clone this Export</Link>
+          <br />
+          <Link to="/pg/export/publish">
+            Publish export data to Data Pipeline
+          </Link>
+          <br />
+          <Link to="/pg/export/clone">View Audit Log</Link>
+        </Typography>
+      </Fragment>
+    );
+  }
+}
