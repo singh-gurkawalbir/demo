@@ -1,5 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment, cloneElement } from 'react';
+import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -50,6 +51,19 @@ import TitleBar from './TitleBar';
   },
 }))
 export default class Exports extends Component {
+  static propTypes = {
+    itemName: PropTypes.string.isRequired,
+    rowData: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        heading: PropTypes.string.isRequired,
+        application: PropTypes.string.isRequired,
+        searchableText: PropTypes.string.isRequired,
+        lastModified: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+  };
+
   state = {
     search: '',
     pageSize: 3,
@@ -60,33 +74,6 @@ export default class Exports extends Component {
   // I want this so that as a user types, the keys automatically
   // are placed in the search.
   // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
-
-  buildRowData() {
-    const { exports, connections } = this.props;
-    const cHash = {};
-
-    // convert conn array to hash keyed from conn id.
-    // lets join exports and connection into hybrid obj.
-    connections.map(c => (cHash[c._id] = c));
-
-    // build view model for this view.
-    const rowData = exports.map(e => ({
-      id: e._id,
-      name: e.name || e._id,
-      type: e.type,
-      lastModified: e.lastModified,
-      app: (
-        cHash[e._connectionId].assistant || cHash[e._connectionId].type
-      ).toUpperCase(),
-      connection: {
-        type: cHash[e._connectionId].type,
-        id: cHash[e._connectionId]._id,
-        name: cHash[e._connectionId].name || cHash[e._connectionId]._id,
-      },
-    }));
-
-    return rowData;
-  }
 
   onSearchChange = event => {
     // TODO: use this component to highlight the matching text in the resuts:
@@ -115,16 +102,7 @@ export default class Exports extends Component {
 
     if (!search) return true;
 
-    const valuesToSearch = [
-      e.id,
-      e.name,
-      e.connection.name,
-      e.connection.assistant,
-      e.connection.type,
-    ];
-    const textToSearch = valuesToSearch.join('|').toUpperCase();
-
-    return textToSearch.indexOf(search.toUpperCase()) >= 0;
+    return e.searchableText.toUpperCase().indexOf(search.toUpperCase()) >= 0;
   };
 
   render() {
@@ -170,9 +148,7 @@ export default class Exports extends Component {
                   expanded === e.id || pageData.length === 1
                 ).toString()}
                 expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>
-                  {e.name} {e.type && `(${e.type} export)`}
-                </Typography>
+                <Typography className={classes.heading}>{e.heading}</Typography>
                 <Typography className={classes.app}>{e.app}</Typography>
                 <Typography className={classes.secondaryHeading}>
                   Last modified <TimeAgo date={e.lastModified} />.
