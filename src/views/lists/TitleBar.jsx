@@ -30,19 +30,19 @@ export default class Exports extends Component {
   // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
   render() {
-    const { classes, searchText, handleSearch } = this.props;
+    const { classes, searchText, handleSearch, itemName } = this.props;
 
     return (
       <div className={classes.titleBox}>
         <Typography className={classes.title} variant="display1">
-          Your Exports
+          Your {itemName}
         </Typography>
         <Typography className={classes.secondaryHeading}>
           <TextField
             onChange={handleSearch}
             value={searchText}
             id="search"
-            label="Search by Export, Connection or Application"
+            label={`Search by ${itemName}, Connection or Application`}
             type="search"
             className={classes.textField}
             margin="normal"
