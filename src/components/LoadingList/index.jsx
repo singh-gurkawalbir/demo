@@ -17,13 +17,18 @@ import Paper from '@material-ui/core/Paper';
     marginRight: theme.spacing.unit,
   }),
 }))
-export default class StepList extends Component {
+export default class LoadingList extends Component {
   static propTypes = {
-    steps: PropTypes.array,
+    steps: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        done: PropTypes.bool.isRequired,
+      })
+    ).isRequired,
   };
 
   // static defaultProps = {
-  //   loading: false,
+  //   propName: value,
   // };
 
   render() {

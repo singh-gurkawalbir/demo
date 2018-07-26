@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
-import StepList from '../../../components/StepList';
+import LoadingList from '../../../components/LoadingList';
 import RowDetail from './RowDetail';
 import DetailList from '../DetailList';
 
@@ -15,20 +15,23 @@ export default class Exports extends Component {
     connections.map(c => (cHash[c._id] = c));
 
     // build view model for this view.
-    const rowData = exports.map(e => ({
-      id: e._id,
-      name: e.name || e._id,
-      type: e.type,
-      lastModified: e.lastModified,
-      app: (
-        cHash[e._connectionId].assistant || cHash[e._connectionId].type
-      ).toUpperCase(),
-      connection: {
-        type: cHash[e._connectionId].type,
-        id: cHash[e._connectionId]._id,
-        name: cHash[e._connectionId].name || cHash[e._connectionId]._id,
-      },
-    }));
+    const rowData = exports.map(e => {
+      const c = cHash[e._connectionId];
+
+      return {
+        id: e._id,
+        heading: (e.name || e._id) + (e.type ? ` (${e.type} export)` : ''),
+        type: e.type,
+        lastModified: e.lastModified,
+        searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
+        application: (c.assistant || c.type).toUpperCase(),
+        connection: {
+          type: c.type,
+          id: c._id,
+          name: c.name || c._id,
+        },
+      };
+    });
 
     return rowData;
   }
@@ -41,7 +44,7 @@ export default class Exports extends Component {
     ];
 
     if (!connections || !exports) {
-      return <StepList steps={steps} />;
+      return <LoadingList steps={steps} />;
     }
 
     const rowData = this.buildRowData();
