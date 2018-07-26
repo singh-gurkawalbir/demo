@@ -12,5 +12,9 @@ API_EMAIL = "[IO account username]"
 API_PASSWORD = "[IO account pwd]"
 
 ```
+Currently this ui project does not support CSRF tokens. To enable API calls to a local running instance of IO, make sure to set the following env var in the development config file:
+```
+  "IGNORE_CSRF_IN_DEV": true
+```
 
->Feel free to add and new pages in the "views" folder, just please fork this repo and raise PRs for code review as we do with the other integrator repos.
+>Feel free to add and new pages in the "/src/views" folder, just please fork this repo and raise PRs for code review as we do with the other integrator repos.
