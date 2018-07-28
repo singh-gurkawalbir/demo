@@ -149,7 +149,7 @@ export default class Exports extends Component {
                 ).toString()}
                 expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>{e.heading}</Typography>
-                <Typography className={classes.app}>{e.app}</Typography>
+                <Typography className={classes.app}>{e.application}</Typography>
                 <Typography className={classes.secondaryHeading}>
                   Last modified <TimeAgo date={e.lastModified} />.
                 </Typography>
@@ -167,7 +167,7 @@ export default class Exports extends Component {
               size="medium"
               color="primary"
               className={classes.button}>
-              More results ({filteredData.length - pageSize} left)
+              More results!!! ({filteredData.length - pageSize} left)
             </Button>
           )}
         </div>

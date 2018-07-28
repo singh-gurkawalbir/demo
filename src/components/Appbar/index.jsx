@@ -27,14 +27,19 @@ import { Link } from 'react-router-dom';
   },
 }))
 export default class Appbar extends Component {
+  // handleToolsClick(e) {
+  //   console.log('click', e);
+  // }
+
   render() {
-    const { classes } = this.props;
+    const { classes, onToggleDrawer } = this.props;
 
     return (
       <div className={classes.root}>
         <MuiAppBar position="static">
           <Toolbar>
             <IconButton
+              onClick={onToggleDrawer}
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu">
@@ -45,7 +50,7 @@ export default class Appbar extends Component {
                 variant="title"
                 color="inherit"
                 className={classes.flex}>
-                {process.env.APP_NAME}
+                integrator.io
               </Typography>
             </Link>
           </Toolbar>

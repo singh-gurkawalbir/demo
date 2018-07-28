@@ -37,7 +37,7 @@ export default class Exports extends Component {
         <Typography className={classes.title} variant="display1">
           Your {itemName}
         </Typography>
-        <Typography className={classes.secondaryHeading}>
+        <div className={classes.secondaryHeading}>
           <TextField
             onChange={handleSearch}
             value={searchText}
@@ -47,7 +47,7 @@ export default class Exports extends Component {
             className={classes.textField}
             margin="normal"
           />
-        </Typography>
+        </div>
       </div>
     );
   }
