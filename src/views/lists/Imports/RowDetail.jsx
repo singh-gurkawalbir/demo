@@ -16,7 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
     flexShrink: 0,
   },
 }))
-export default class Exports extends Component {
+export default class Imports extends Component {
   render() {
     const { classes, item } = this.props;
 
@@ -29,15 +29,13 @@ export default class Exports extends Component {
           {item.connection.name}
         </Typography>
         <Typography className={classes.secondaryHeading}>
-          <Link to={`/pg/export/preview/${item._id}`}>Preview this Export</Link>
-          <br />
-          <Link to="/pg/export/clone">Clone this Export</Link>
-          <br />
-          <Link to="/pg/export/publish">
-            Publish export data to Data Pipeline
+          <Link to={`/pg/imports/preview/${item._id}`}>
+            Preview this Import
           </Link>
           <br />
-          <Link to="/pg/export/clone">View Audit Log</Link>
+          <Link to="/pg/impors/clone">Clone this Import</Link>
+          <br />
+          <Link to="/pg/imports/audit">View Audit Log</Link>
         </Typography>
       </Fragment>
     );

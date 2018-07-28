@@ -1,8 +1,8 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 
 @hot(module)
 @withStyles(theme => ({
@@ -12,24 +12,6 @@ import Button from '@material-ui/core/Button';
 }))
 export default class Dashboard extends Component {
   render() {
-    return (
-      <div className={this.props.classes.root}>
-        <Button
-          variant="raised"
-          color="secondary"
-          component={Link}
-          to="/pg/pipelines">
-          Create a Data Pipe
-        </Button>
-
-        <Button
-          variant="raised"
-          color="secondary"
-          component={Link}
-          to="/pg/exports">
-          List your Exports
-        </Button>
-      </div>
-    );
+    return <div className={this.props.classes.root} />;
   }
 }

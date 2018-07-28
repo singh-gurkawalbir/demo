@@ -4,7 +4,16 @@ import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import DataUsageIcon from '@material-ui/icons/DataUsage';
+import HomeIconIcon from '@material-ui/icons/Home';
+import Divider from '@material-ui/core/Divider';
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import FontStager from '../components/FontStager';
 import Appbar from '../components/Appbar';
 import Spinner from '../components/Spinner';
@@ -13,6 +22,7 @@ import theme from '../theme';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import api from '../utils/api';
+import { ListItem } from '../../node_modules/@material-ui/core';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
@@ -26,14 +36,21 @@ const NotFound = loadable(() =>
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/lists/Exports')
 );
+const Imports = loadable(() =>
+  import(/* webpackChunkName: 'Imports' */ '../views/lists/Imports')
+);
 
 @hot(module)
-@withStyles({})
+@withStyles({
+  appBar: {},
+})
 export default class App extends Component {
   state = {
     loading: false,
+    showDrawer: false,
     authenticated: false,
     exports: null,
+    imports: null,
     connections: null,
   };
 
@@ -65,6 +82,11 @@ export default class App extends Component {
       self.setState({ exports: exports || [] });
     });
 
+    api('/imports').then(imports => {
+      // console.log('imports loaded');
+      self.setState({ imports: imports || [] });
+    });
+
     // console.log('loading connections');
     api('/connections').then(connections => {
       // console.log('connections loaded');
@@ -80,9 +102,21 @@ export default class App extends Component {
     return isSuccess;
   }
 
+  handleToggleDrawer = () => {
+    this.setState({ showDrawer: !this.state.showDrawer });
+  };
+
   render() {
     const { classes } = this.props;
-    const { loading, error, exports, connections, authenticated } = this.state;
+    const {
+      loading,
+      error,
+      showDrawer,
+      exports,
+      imports,
+      connections,
+      authenticated,
+    } = this.state;
 
     if (loading) {
       return (
@@ -109,7 +143,54 @@ export default class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            <Appbar />
+            <Appbar onToggleDrawer={this.handleToggleDrawer} />
+
+            <Drawer open={showDrawer}>
+              <div
+                tabIndex={0}
+                role="button"
+                onClick={this.handleToggleDrawer}
+                onKeyDown={this.handleToggleDrawer}>
+                <List>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <HomeIconIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link to="/pg/">Dashboard</Link>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <CloudDownloadIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link to="/pg/exports">Exports</Link>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <CloudUploadIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link to="/pg/imports">Imports</Link>
+                    </ListItemText>
+                  </ListItem>
+                </List>
+                <Divider />
+                <List>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <DataUsageIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link to="/pg/pipelines">Create a Data Pipe</Link>
+                    </ListItemText>
+                  </ListItem>
+                </List>
+              </div>
+            </Drawer>
+
             <Switch>
               <Route path="/pg/pipelines" component={Pipelines} />
               <Route
@@ -118,6 +199,16 @@ export default class App extends Component {
                   <Exports
                     {...props}
                     exports={exports}
+                    connections={connections}
+                  />
+                )}
+              />
+              <Route
+                path="/pg/imports"
+                render={props => (
+                  <Imports
+                    {...props}
+                    imports={imports}
                     connections={connections}
                   />
                 )}
