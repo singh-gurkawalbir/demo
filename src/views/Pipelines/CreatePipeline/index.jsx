@@ -1,44 +1,76 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+// import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+// import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+// import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Typography from '@material-ui/core/Typography';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import InboxIcon from 'mdi-react/InboxIcon';
-import DraftIcon from 'mdi-react/DraftIcon';
-import PlusIcon from 'mdi-react/PlusIcon';
+import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+// import Typography from '@material-ui/core/Typography';
+// import List from '@material-ui/core/List';
+// import ListItem from '@material-ui/core/ListItem';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+// import ListItemText from '@material-ui/core/ListItemText';
+// import Typography from '@material-ui/core/Typography';
+import ArrowDownIcon from 'mdi-react/ArrowDownIcon';
+// import DraftIcon from 'mdi-react/DraftIcon';
 import api from '../../../utils/api';
 import Spinner from '../../../components/Spinner';
 import ErrorPanel from '../../../components/ErrorPanel';
-import SpeedDial from '../../../components/SpeedDial';
+import CodeEditor from '../../../components/CodeEditor';
+import ProcessorPanel from '../../../components/ProcessorPanel';
+
+// Handlebars processor takes in JSON, rules are text templates,
+// output is indeterminate, but can be typed
+// JavaScript processor takes in args and outputs anything
+
+// All parsers take text/string in, and output JSON
+// XML processor is text in, XML out
+//
 
 @hot(module)
-@withStyles({
+@withStyles(theme => ({
   root: {
-    margin: 40,
+    margin: 80,
   },
-  empty: {
+  actionItems: {
+    margin: `${theme.spacing.triple}px 0`,
+  },
+  actionItem: {
     textAlign: 'center',
   },
-})
+  icon: {
+    verticalAlign: 'middle',
+    marginRight: theme.spacing.quad,
+  },
+  formControlWrapper: {
+    textAlign: 'right',
+  },
+  formControl: {
+    textAlign: 'left',
+    margin: theme.spacing.unit,
+    minWidth: 120,
+  },
+  expansionSelect: {
+    width: '50%',
+  },
+  selectEmpty: {
+    marginTop: theme.spacing.double,
+  },
+}))
 export default class CreatePipeline extends Component {
   state = {
     loading: false,
-    entries: [],
-    showProcessorDialog: false,
+    input: '',
+    parseAs: 'text',
+    usingProcessors: [],
+    // showProcessorDialog: false,
     processors: null,
-    pipelineValue: null,
+    // pipelineValue: null,
   };
 
   async componentDidMount() {
@@ -46,7 +78,7 @@ export default class CreatePipeline extends Component {
 
     try {
       this.setState({
-        processors: await api('/processors'),
+        processors: Object.values(await api('/processors')),
         loading: false,
         error: null,
       });
@@ -59,26 +91,59 @@ export default class CreatePipeline extends Component {
     }
   }
 
-  handleAddProcessorClick = () => {
-    this.setState({ showProcessorDialog: true });
+  // handleAddProcessorClick = () => {
+  //   this.setState({ showProcessorDialog: true });
+  // };
+  //
+  // handleEntering = () => {
+  //   this.radioGroup.focus();
+  // };
+  //
+  // handleProcessorCancel = () => {
+  //   this.setState({ showProcessorDialog: false });
+  // };
+  //
+  // handleProcessorOK = () => {
+  //   // TODO: set some state to trigger showing the pipeline entry form
+  //   // for this processor
+  //   this.setState({ showProcessorDialog: false });
+  // };
+  //
+  // handleChange = (e, pipelineValue) => {
+  //   this.setState({ pipelineValue });
+  // };
+
+  handleInputChange = input => {
+    this.setState({ input });
   };
 
-  handleEntering = () => {
-    this.radioGroup.focus();
+  handleParseChange = e => {
+    this.setState({ parseAs: e.target.value });
   };
 
-  handleProcessorCancel = () => {
-    this.setState({ showProcessorDialog: false });
+  handleAddClick = () => {
+    this.setState({
+      usingProcessors: [
+        ...this.state.usingProcessors,
+        { id: this.state.usingProcessors.length },
+      ],
+    });
   };
 
-  handleProcessorOK = () => {
-    // TODO: set some state to trigger showing the pipeline entry form
-    // for this processor
-    this.setState({ showProcessorDialog: false });
-  };
+  handleProcessorChange = (processor, nextProcessor) => {
+    const index = this.state.usingProcessors.findIndex(
+      ({ id }) => id === processor.id
+    );
+    const usingProcessors = [...this.state.usingProcessors];
 
-  handleChange = (e, pipelineValue) => {
-    this.setState({ pipelineValue });
+    usingProcessors[index] = {
+      ...processor,
+      ...nextProcessor,
+    };
+
+    this.setState({
+      usingProcessors,
+    });
   };
 
   render() {
@@ -86,87 +151,57 @@ export default class CreatePipeline extends Component {
     const {
       loading,
       processors,
-      entries,
+      usingProcessors,
       error,
-      showProcessorDialog,
-      pipelineValue,
+      input,
+      parseAs,
     } = this.state;
-
-    if (loading || !processors) {
-      return <Spinner loading />;
-    }
-
-    if (error) {
-      return <ErrorPanel error={error} />;
-    }
 
     return (
       <div className={classes.root}>
-        {entries.length ? (
-          <List component="nav">
-            <ListItem button>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Inbox" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <DraftIcon />
-              </ListItemIcon>
-              <ListItemText primary="Drafts" />
-            </ListItem>
-          </List>
-        ) : (
-          <Typography variant="subheading" className={classes.empty}>
-            <em>Add a new processor to the data pipeline to get started.</em>
-          </Typography>
-        )}
-        <SpeedDial>
-          <SpeedDialAction
-            icon={<PlusIcon />}
-            tooltipTitle="Add processor"
-            onClick={this.handleAddProcessorClick}
-          />
-        </SpeedDial>
-        <Dialog
-          open={showProcessorDialog}
-          disableBackdropClick
-          disableEscapeKeyDown
-          maxWidth="xs"
-          onEntering={this.handleEntering}
-          aria-labelledby="confirmation-dialog-title">
-          <DialogTitle id="confirmation-dialog-title">
-            Select Pipeline
-          </DialogTitle>
-          <DialogContent>
-            <RadioGroup
-              ref={node => {
-                this.radioGroup = node;
-              }}
-              aria-label="pipeline"
-              name="pipeline"
-              value={pipelineValue}
-              onChange={this.handleChange}>
-              {Object.keys(processors).map(key => (
-                <FormControlLabel
-                  value={key}
-                  key={`processor-option-${key}`}
-                  control={<Radio />}
-                  label={key}
-                />
-              ))}
-            </RadioGroup>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleProcessorCancel} color="primary">
-              Cancel
+        {loading && <Spinner loading />}
+        {error && <ErrorPanel error={error} />}
+        <div className={classes.formControlWrapper}>
+          <FormControl className={classes.formControl}>
+            <InputLabel htmlFor="parseAs">Parse input as:</InputLabel>
+            <Select
+              className={classes.selectEmpty}
+              value={parseAs}
+              onChange={this.handleParseChange}
+              name="parseAs">
+              <MenuItem value="json">JSON</MenuItem>
+              <MenuItem value="xml">XML</MenuItem>
+              <MenuItem value="ldjson">Line-delimited JSON</MenuItem>
+              <MenuItem value="csv">CSV</MenuItem>
+              <MenuItem value="text">Plain Text</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+        <CodeEditor value={input} onChange={this.handleInputChange} />
+        {usingProcessors &&
+          usingProcessors.length &&
+          usingProcessors.map(processor => (
+            <ProcessorPanel
+              key={processor.id}
+              processors={processors}
+              processor={processor}
+              onProcessorChange={this.handleProcessorChange}
+            />
+          ))}
+        <Grid container className={classes.actionItems}>
+          <Grid item xs={6} className={classes.actionItem}>
+            <ArrowDownIcon className={classes.icon} />
+          </Grid>
+          <Grid item xs={6} className={classes.actionItem}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={this.handleAddClick}>
+              Add a new processor
             </Button>
-            <Button onClick={this.handleProcessorOK} color="primary">
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
+          </Grid>
+        </Grid>
       </div>
     );
   }
