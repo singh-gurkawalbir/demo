@@ -167,7 +167,7 @@ export default class Exports extends Component {
               size="medium"
               color="primary"
               className={classes.button}>
-              More results!!! ({filteredData.length - pageSize} left)
+              More results ({filteredData.length - pageSize} left)
             </Button>
           )}
         </div>
