@@ -49,6 +49,7 @@ export default class App extends Component {
     loading: false,
     showDrawer: false,
     authenticated: false,
+    profile: null,
     exports: null,
     imports: null,
     connections: null,
@@ -77,6 +78,39 @@ export default class App extends Component {
     // we still want users to navigate the site even which we
     // prime the caches...
     // console.log('loading exports');
+
+    /* Profile Returns:
+    { agreeTOSAndPP: true
+      auth_type_google:
+        { email: "dave.riedl@celigo.com", id: "long int"}
+          company:"Celigo"
+        },
+      _id: "uuid",
+      createdAt: "2018-07-03T21:06:50.926Z",
+      developer: true,
+      email: "dave.riedl@celigo.com",
+      emailHash: "xxx",
+      name: "Dave Riedl",
+      phone: "402",
+      role: "Dev",
+      timezone: "America/Los_Angeles",
+    }
+    */
+    api('/profile').then(profile => {
+      if (profile) {
+        const avatarUrl = `https://secure.gravatar.com/avatar/${
+          profile.emailHash
+        }?d=mm&s=55`;
+        const enhanced = { ...profile, avatarUrl };
+
+        // console.log('profile enhanced:', enhanced);
+
+        self.setState({ profile: enhanced });
+      } else {
+        self.setState({ profile: null });
+      }
+    });
+
     api('/exports').then(exports => {
       // console.log('exports loaded');
       self.setState({ exports: exports || [] });
@@ -112,6 +146,7 @@ export default class App extends Component {
       loading,
       error,
       showDrawer,
+      profile,
       exports,
       imports,
       connections,
@@ -143,7 +178,10 @@ export default class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            <Appbar onToggleDrawer={this.handleToggleDrawer} />
+            <Appbar
+              profile={profile}
+              onToggleDrawer={this.handleToggleDrawer}
+            />
 
             <Drawer open={showDrawer}>
               <div
@@ -157,16 +195,18 @@ export default class App extends Component {
                       <HomeIconIcon />
                     </ListItemIcon>
                     <ListItemText>
-                      <Link to="/pg/">Dashboard</Link>
+                      <Link variant="" to="/pg/">
+                        Dashboard
+                      </Link>
                     </ListItemText>
                   </ListItem>
                   <ListItem button>
-                    <ListItemIcon>
-                      <CloudDownloadIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Link to="/pg/exports">Exports</Link>
-                    </ListItemText>
+                    <Link to="/pg/exports">
+                      <ListItemIcon>
+                        <CloudDownloadIcon />
+                      </ListItemIcon>
+                      <ListItemText>Exports</ListItemText>
+                    </Link>
                   </ListItem>
                   <ListItem button>
                     <ListItemIcon>

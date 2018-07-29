@@ -1,10 +1,15 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import MuiAppBar from '@material-ui/core/AppBar';
+import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from 'mdi-react/MenuIcon';
+// import MenuIcon from 'mdi-react/MenuIcon';
+// import AccountCircle from '@material-ui/icons/AccountCircle';
+import Avatar from '@material-ui/core/Avatar';
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 import { Link } from 'react-router-dom';
 
 @withStyles(theme => ({
@@ -17,6 +22,7 @@ import { Link } from 'react-router-dom';
   playground: {
     textDecoration: 'none',
     color: 'white',
+    flex: 1,
   },
   menuButton: {
     marginLeft: -12,
@@ -27,16 +33,26 @@ import { Link } from 'react-router-dom';
   },
 }))
 export default class Appbar extends Component {
-  // handleToolsClick(e) {
-  //   console.log('click', e);
-  // }
+  state = {
+    anchorEl: null,
+  };
+
+  handleMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
 
   render() {
-    const { classes, onToggleDrawer } = this.props;
+    const { anchorEl } = this.state;
+    const { classes, onToggleDrawer, profile } = this.props;
+    const open = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
-        <MuiAppBar position="static">
+        <AppBar position="static">
           <Toolbar>
             <IconButton
               onClick={onToggleDrawer}
@@ -53,8 +69,40 @@ export default class Appbar extends Component {
                 integrator.io
               </Typography>
             </Link>
+            {profile && (
+              <div>
+                <IconButton
+                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-haspopup="true"
+                  onClick={this.handleMenu}
+                  color="inherit">
+                  <Avatar
+                    alt={profile.name}
+                    src={profile.avatarUrl}
+                    className={classes.avatar}
+                  />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={open}
+                  onClose={this.handleClose}>
+                  <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
+                  <MenuItem onClick={this.handleClose}>Theme</MenuItem>
+                  <MenuItem onClick={this.handleClose}>Sign Out</MenuItem>
+                </Menu>
+              </div>
+            )}
           </Toolbar>
-        </MuiAppBar>
+        </AppBar>
       </div>
     );
   }
