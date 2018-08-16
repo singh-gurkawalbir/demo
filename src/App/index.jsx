@@ -18,7 +18,7 @@ import FontStager from '../components/FontStager';
 import Appbar from '../components/Appbar';
 import Spinner from '../components/Spinner';
 import ErrorPanel from '../components/ErrorPanel';
-import theme from '../theme';
+import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import api from '../utils/api';
@@ -41,12 +41,17 @@ const Imports = loadable(() =>
 );
 
 @hot(module)
-@withStyles({
+@withStyles(theme => ({
   appBar: {},
-})
+  link: {
+    // color: theme.palette.text.primary,
+    color: theme.palette.action.active,
+  },
+}))
 export default class App extends Component {
   state = {
     loading: false,
+    themeName: 'light',
     showDrawer: false,
     authenticated: false,
     profile: null,
@@ -140,6 +145,9 @@ export default class App extends Component {
     this.setState({ showDrawer: !this.state.showDrawer });
   };
 
+  handleSetTheme = themeName => {
+    this.setState({ themeName });
+  };
   render() {
     const { classes } = this.props;
     const {
@@ -151,7 +159,11 @@ export default class App extends Component {
       imports,
       connections,
       authenticated,
+      themeName,
     } = this.state;
+    const customTheme = themeProvider(themeName);
+
+    // console.log('theme:', customTheme);
 
     if (loading) {
       return (
@@ -173,7 +185,7 @@ export default class App extends Component {
     }
 
     return (
-      <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={customTheme}>
         <FontStager />
         <CssBaseline />
         <BrowserRouter>
@@ -181,6 +193,8 @@ export default class App extends Component {
             <Appbar
               profile={profile}
               onToggleDrawer={this.handleToggleDrawer}
+              onSetTheme={this.handleSetTheme}
+              themeName={themeName}
             />
 
             <Drawer open={showDrawer}>
@@ -195,25 +209,29 @@ export default class App extends Component {
                       <HomeIconIcon />
                     </ListItemIcon>
                     <ListItemText>
-                      <Link variant="" to="/pg/">
+                      <Link className={classes.link} to="/pg/">
                         Dashboard
                       </Link>
                     </ListItemText>
                   </ListItem>
                   <ListItem button>
-                    <Link to="/pg/exports">
-                      <ListItemIcon>
-                        <CloudDownloadIcon />
-                      </ListItemIcon>
-                      <ListItemText>Exports</ListItemText>
-                    </Link>
+                    <ListItemIcon>
+                      <CloudDownloadIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link className={classes.link} to="/pg/exports">
+                        Exports
+                      </Link>
+                    </ListItemText>
                   </ListItem>
                   <ListItem button>
                     <ListItemIcon>
                       <CloudUploadIcon />
                     </ListItemIcon>
                     <ListItemText>
-                      <Link to="/pg/imports">Imports</Link>
+                      <Link className={classes.link} to="/pg/imports">
+                        Imports
+                      </Link>
                     </ListItemText>
                   </ListItem>
                 </List>
@@ -224,7 +242,9 @@ export default class App extends Component {
                       <DataUsageIcon />
                     </ListItemIcon>
                     <ListItemText>
-                      <Link to="/pg/pipelines">Create a Data Pipe</Link>
+                      <Link className={classes.link} to="/pg/pipelines">
+                        Create a Data Pipe
+                      </Link>
                     </ListItemText>
                   </ListItem>
                 </List>

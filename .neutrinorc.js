@@ -1,19 +1,21 @@
-const { join } = require('path');
+const { join } = require('path')
 
 require('babel-register')({
   plugins: [
     [
       require.resolve('babel-plugin-transform-es2015-modules-commonjs'),
       {
-        useBuiltIns: true,
-      },
+        useBuiltIns: true
+      }
     ],
-    require.resolve('babel-plugin-transform-object-rest-spread'),
+    require.resolve('babel-plugin-transform-object-rest-spread')
   ],
-  cache: false,
-});
+  cache: false
+})
 
-const theme = require('./src/theme').default;
+const themeProvider = require('./src/themeProvider').default
+console.log(themeProvider)
+const theme = themeProvider('light')
 
 module.exports = {
   use: [
@@ -23,10 +25,10 @@ module.exports = {
         components: 'src/components/**/index.jsx',
         theme: theme.styleguide,
         styles: {
-          StyleGuide: theme.styleguide.StyleGuide,
+          StyleGuide: theme.styleguide.StyleGuide
         },
         editorConfig: {
-          theme: 'material',
+          theme: 'material'
         },
         showUsage: true,
         skipComponentsWithoutExample: false,
@@ -35,62 +37,65 @@ module.exports = {
           StyleGuideRenderer: join(
             __dirname,
             'src/styleguide/StyleGuideRenderer.jsx'
-          ),
-        },
-      },
+          )
+        }
+      }
     ],
     [
       'neutrino-preset-mozilla-frontend-infra/react',
       {
         html: {
-          title: 'Integrator UI',
+          title: 'Integrator UI'
         },
         devServer: {
           port: 4000,
-          publicPath: '/pg/',
+          publicPath: '/pg',
           host: 'localhost.io',
+          historyApiFallback: {
+            disableDotRule: true
+          }
         },
         eslint: {
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
             'react/no-did-mount-set-state': 'off',
-            'no-underscore-dangle': 'off',
-          },
-        },
-      },
+            'no-underscore-dangle': 'off'
+          }
+        }
+      }
     ],
     ['@neutrinojs/env', ['API_ENDPOINT', 'API_EMAIL', 'API_PASSWORD']],
     neutrino => {
       neutrino.config.devServer.proxy({
         '/signin': {
-          target: process.env.API_ENDPOINT,
+          target: process.env.API_ENDPOINT
         },
         '/api': {
           target: process.env.API_ENDPOINT,
-          //pathRewrite: {
+          // pathRewrite: {
           //  '^/api': '',
-          //},
+          // },
           secure: false,
           changeOrigin: true,
           onProxyRes: proxyRes => {
             // Strip the cookie `secure` attribute, otherwise prod cookies
             // will be rejected by the browser when using non-HTTPS localhost:
             // https://github.com/nodejitsu/node-http-proxy/pull/1166
-            // const removeSecure = str => str.replace(/; secure/i, '');
-            // const setCookie = proxyRes.headers['set-cookie'];
+            // const removeSecure = str => str.replace(/; secure/i, '')
+            // const setCookie = proxyRes.headers['set-cookie']
             //
             // if (setCookie) {
             //   proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
             //     ? setCookie.map(removeSecure)
-            //     : removeSecure(setCookie);
+            //     : removeSecure(setCookie)
             // }
-          },
-        },
-      });
-      neutrino.config.output.publicPath('/pg/');
-    },
-  ],
-};
+          }
+        }
+      })
+      neutrino.config.output.publicPath('/pg/')
+    }
+  ]
+}
 
 //
