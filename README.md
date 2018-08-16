@@ -6,7 +6,6 @@ Only minor configuration is needed to get this project to run.
 Please add a file called ".env" into the root of your local copy of this project with the following content:
 
 ```
-APP_NAME = "integrator.io Playground"
 API_ENDPOINT = "http://localhost.io:5000"
 API_EMAIL = "[IO account username]"
 API_PASSWORD = "[IO account pwd]"
