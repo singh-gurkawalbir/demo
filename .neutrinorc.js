@@ -14,7 +14,6 @@ require('babel-register')({
 })
 
 const themeProvider = require('./src/themeProvider').default
-console.log(themeProvider)
 const theme = themeProvider('light')
 
 module.exports = {
