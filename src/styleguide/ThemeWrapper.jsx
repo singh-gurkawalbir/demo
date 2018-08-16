@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import ErrorPanel from '../components/ErrorPanel';
-import theme from '../theme';
+import themeProvider from '../themeProvider';
 
 export default class ThemeWrapper extends Component {
   state = {
@@ -13,6 +13,8 @@ export default class ThemeWrapper extends Component {
   }
 
   render() {
+    const theme = themeProvider('light');
+
     return (
       <MuiThemeProvider theme={theme}>
         {this.state.error ? (

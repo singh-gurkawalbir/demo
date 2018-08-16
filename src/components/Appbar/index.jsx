@@ -4,12 +4,23 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+// import Dialog from '@material-ui/core/Dialog';
+// import DialogActions from '@material-ui/core/DialogActions';
+// import DialogContent from '@material-ui/core/DialogContent';
+// import DialogContentText from '@material-ui/core/DialogContentText';
+// import DialogTitle from '@material-ui/core/DialogTitle';
 // import MenuIcon from 'mdi-react/MenuIcon';
 // import AccountCircle from '@material-ui/icons/AccountCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+// import MenuItem from '@material-ui/core/MenuItem';
+import Popper from '@material-ui/core/Popper';
 import { Link } from 'react-router-dom';
 
 @withStyles(theme => ({
@@ -29,16 +40,70 @@ import { Link } from 'react-router-dom';
     marginRight: 20,
   },
   icon: {
-    fill: theme.palette.common.white,
+    fill: theme.palette.light,
+  },
+  bigAvatar: {
+    marginLeft: theme.spacing.unit,
+    width: 60,
+    height: 60,
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  profileMenu: {
+    padding: theme.spacing.unit,
+  },
+  arrow: {
+    position: 'absolute',
+    fontSize: 7,
+    width: '3em',
+    height: '3em',
+    '&::before': {
+      content: '""',
+      margin: 'auto',
+      display: 'block',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+    },
+  },
+  popper: {
+    zIndex: 1,
+    '&[x-placement*="bottom"] $arrow': {
+      top: 0,
+      left: 0,
+      marginTop: '-0.9em',
+      width: '3em',
+      height: '1em',
+      '&::before': {
+        borderWidth: '0 1em 1em 1em',
+        borderColor: `transparent transparent ${
+          theme.palette.background.paper
+        } transparent`,
+      },
+    },
   },
 }))
 export default class Appbar extends Component {
   state = {
     anchorEl: null,
+    arrowEl: null,
+  };
+
+  handlearrowEl = node => {
+    this.setState({ arrowEl: node });
   };
 
   handleMenu = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    if (this.state.anchorEl) {
+      this.setState({ anchorEl: null });
+    } else {
+      this.setState({ anchorEl: event.currentTarget });
+    }
+  };
+
+  handleThemeChange = event => {
+    this.props.onSetTheme(event.target.value);
   };
 
   handleClose = () => {
@@ -46,8 +111,8 @@ export default class Appbar extends Component {
   };
 
   render() {
-    const { anchorEl } = this.state;
-    const { classes, onToggleDrawer, profile } = this.props;
+    const { anchorEl, arrowEl } = this.state;
+    const { classes, profile, onToggleDrawer, themeName } = this.props;
     const open = Boolean(anchorEl);
 
     return (
@@ -72,7 +137,7 @@ export default class Appbar extends Component {
             {profile && (
               <div>
                 <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-owns={open ? 'profileOptions' : null}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit">
@@ -82,23 +147,81 @@ export default class Appbar extends Component {
                     className={classes.avatar}
                   />
                 </IconButton>
-                <Menu
-                  id="menu-appbar"
+
+                <Popper
+                  id="profileOptions"
                   anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
+                  placement="bottom-end"
                   open={open}
-                  onClose={this.handleClose}>
-                  <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>Theme</MenuItem>
-                  <MenuItem onClick={this.handleClose}>Sign Out</MenuItem>
-                </Menu>
+                  className={classes.popper}
+                  onClose={this.handleClose}
+                  modifiers={{
+                    flip: {
+                      enabled: true,
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      boundariesElement: 'scrollParent',
+                    },
+                    arrow: {
+                      enabled: true,
+                      element: arrowEl,
+                    },
+                  }}>
+                  <span className={classes.arrow} ref={this.handlearrowEl} />
+                  <Paper className={classes.profileMenu}>
+                    <Grid
+                      container
+                      spacing={16}
+                      direction="row"
+                      justify="flex-start"
+                      alignItems="flex-start">
+                      <Grid item>
+                        <Avatar
+                          alt={profile.name}
+                          src={profile.avatarUrl}
+                          className={classes.bigAvatar}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="headline" component="h2">
+                          {profile.name}
+                        </Typography>
+                        <Typography component="h3">{profile.email}</Typography>
+                      </Grid>
+                    </Grid>
+                    <div>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={themeName}
+                          onChange={this.handleThemeChange}
+                          inputProps={{
+                            name: 'themeName',
+                            id: 'color-theme',
+                          }}>
+                          <MenuItem value="light">Celigo Light Theme</MenuItem>
+                          <MenuItem value="dark">Celigo Dark Theme</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <Button
+                      onClick={this.handleClose}
+                      variant="contained"
+                      size="small"
+                      color="primary"
+                      className={classes.button}>
+                      My Profile
+                    </Button>
+                    <Button
+                      onClick={this.handleClose}
+                      variant="contained"
+                      size="small"
+                      color="primary"
+                      className={classes.button}>
+                      Sign Out
+                    </Button>
+                  </Paper>
+                </Popper>
               </div>
             )}
           </Toolbar>

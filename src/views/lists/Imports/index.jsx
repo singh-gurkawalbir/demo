@@ -16,19 +16,20 @@ export default class Exports extends Component {
 
     // build view model for this view.
     const rowData = imports.map(e => {
-      const c = cHash[e._connectionId];
+      const c = cHash[e._connectionId] || {};
 
+      // TODO: some imports or exports don't have connections.
       return {
         id: e._id,
         heading: e.name || e._id,
         type: e.type,
         lastModified: e.lastModified,
         searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-        application: (c.assistant || c.type).toUpperCase(),
+        application: (c.assistant || c.type || '').toUpperCase(),
         connection: {
           type: c.type,
           id: c._id,
-          name: c.name || c._id,
+          name: c.name || c._id || '',
         },
       };
     });
