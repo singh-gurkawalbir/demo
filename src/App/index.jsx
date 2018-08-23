@@ -1,28 +1,19 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import DataUsageIcon from '@material-ui/icons/DataUsage';
-import HomeIconIcon from '@material-ui/icons/Home';
-import Divider from '@material-ui/core/Divider';
-import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import FontStager from '../components/FontStager';
-import Appbar from '../components/Appbar';
+import AppBar from './AppBar';
 import Spinner from '../components/Spinner';
 import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import api from '../utils/api';
-import { ListItem } from '../../node_modules/@material-ui/core';
+import AppDrawer from './AppDrawer';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
@@ -41,13 +32,6 @@ const Imports = loadable(() =>
 );
 
 @hot(module)
-@withStyles(theme => ({
-  appBar: {},
-  link: {
-    // color: theme.palette.text.primary,
-    color: theme.palette.action.active,
-  },
-}))
 export default class App extends Component {
   state = {
     loading: false,
@@ -149,7 +133,6 @@ export default class App extends Component {
     this.setState({ themeName });
   };
   render() {
-    const { classes } = this.props;
     const {
       loading,
       error,
@@ -167,7 +150,7 @@ export default class App extends Component {
 
     if (loading) {
       return (
-        <Paper className={classes.paper} elevation={4}>
+        <Paper elevation={4}>
           <Typography variant="headline" component="h3">
             Authenticating.
           </Typography>
@@ -190,66 +173,17 @@ export default class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            <Appbar
+            <AppBar
               profile={profile}
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
               themeName={themeName}
             />
 
-            <Drawer open={showDrawer}>
-              <div
-                tabIndex={0}
-                role="button"
-                onClick={this.handleToggleDrawer}
-                onKeyDown={this.handleToggleDrawer}>
-                <List>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <HomeIconIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Link className={classes.link} to="/pg/">
-                        Dashboard
-                      </Link>
-                    </ListItemText>
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <CloudDownloadIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Link className={classes.link} to="/pg/exports">
-                        Exports
-                      </Link>
-                    </ListItemText>
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <CloudUploadIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Link className={classes.link} to="/pg/imports">
-                        Imports
-                      </Link>
-                    </ListItemText>
-                  </ListItem>
-                </List>
-                <Divider />
-                <List>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <DataUsageIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <Link className={classes.link} to="/pg/pipelines">
-                        Create a Data Pipe
-                      </Link>
-                    </ListItemText>
-                  </ListItem>
-                </List>
-              </div>
-            </Drawer>
+            <AppDrawer
+              open={showDrawer}
+              onToggleDrawer={this.handleToggleDrawer}
+            />
 
             <Switch>
               <Route path="/pg/pipelines" component={Pipelines} />

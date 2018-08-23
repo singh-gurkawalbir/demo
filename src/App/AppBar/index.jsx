@@ -7,19 +7,11 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-// import Dialog from '@material-ui/core/Dialog';
-// import DialogActions from '@material-ui/core/DialogActions';
-// import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
-// import DialogTitle from '@material-ui/core/DialogTitle';
-// import MenuIcon from 'mdi-react/MenuIcon';
-// import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
-// import MenuItem from '@material-ui/core/MenuItem';
 import Popper from '@material-ui/core/Popper';
 import { Link } from 'react-router-dom';
 
@@ -195,10 +187,7 @@ export default class Appbar extends Component {
                         <Select
                           value={themeName}
                           onChange={this.handleThemeChange}
-                          inputProps={{
-                            name: 'themeName',
-                            id: 'color-theme',
-                          }}>
+                          inputProps={{ name: 'themeName' }}>
                           <MenuItem value="light">Celigo Light Theme</MenuItem>
                           <MenuItem value="dark">Celigo Dark Theme</MenuItem>
                         </Select>
