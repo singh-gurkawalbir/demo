@@ -7,12 +7,13 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
+// import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
 import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Link } from 'react-router-dom';
 
 @withStyles(theme => ({
@@ -139,7 +140,6 @@ export default class Appbar extends Component {
                     className={classes.avatar}
                   />
                 </IconButton>
-
                 <Popper
                   id="profileOptions"
                   anchorEl={anchorEl}
@@ -161,55 +161,60 @@ export default class Appbar extends Component {
                     },
                   }}>
                   <span className={classes.arrow} ref={this.handlearrowEl} />
-                  <Paper className={classes.profileMenu}>
-                    <Grid
-                      container
-                      spacing={16}
-                      direction="row"
-                      justify="flex-start"
-                      alignItems="flex-start">
-                      <Grid item>
-                        <Avatar
-                          alt={profile.name}
-                          src={profile.avatarUrl}
-                          className={classes.bigAvatar}
-                        />
+                  <ClickAwayListener onClickAway={this.handleClose}>
+                    <Paper className={classes.profileMenu}>
+                      <Grid
+                        container
+                        spacing={16}
+                        direction="row"
+                        justify="flex-start"
+                        alignItems="flex-start">
+                        <Grid item>
+                          <Avatar
+                            alt={profile.name}
+                            src={profile.avatarUrl}
+                            className={classes.bigAvatar}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <Typography variant="headline" component="h2">
+                            {profile.name}
+                          </Typography>
+                          <Typography component="h3">
+                            {profile.email}
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid item>
-                        <Typography variant="headline" component="h2">
-                          {profile.name}
-                        </Typography>
-                        <Typography component="h3">{profile.email}</Typography>
-                      </Grid>
-                    </Grid>
-                    <div>
-                      <FormControl className={classes.formControl}>
-                        <Select
-                          value={themeName}
-                          onChange={this.handleThemeChange}
-                          inputProps={{ name: 'themeName' }}>
-                          <MenuItem value="light">Celigo Light Theme</MenuItem>
-                          <MenuItem value="dark">Celigo Dark Theme</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <Button
-                      onClick={this.handleClose}
-                      variant="contained"
-                      size="small"
-                      color="primary"
-                      className={classes.button}>
-                      My Profile
-                    </Button>
-                    <Button
-                      onClick={this.handleClose}
-                      variant="contained"
-                      size="small"
-                      color="primary"
-                      className={classes.button}>
-                      Sign Out
-                    </Button>
-                  </Paper>
+                      <div>
+                        <FormControl className={classes.formControl}>
+                          <Select
+                            native
+                            value={themeName}
+                            onChange={this.handleThemeChange}
+                            inputProps={{ name: 'themeName' }}>
+                            <option value="light">Celigo Light Theme</option>
+                            <option value="dark">Celigo Dark Theme</option>
+                          </Select>
+                        </FormControl>
+                      </div>
+                      <Button
+                        onClick={this.handleClose}
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        className={classes.button}>
+                        My Profile
+                      </Button>
+                      <Button
+                        onClick={this.handleClose}
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        className={classes.button}>
+                        Sign Out
+                      </Button>
+                    </Paper>
+                  </ClickAwayListener>
                 </Popper>
               </div>
             )}
