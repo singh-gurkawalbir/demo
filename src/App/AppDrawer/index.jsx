@@ -14,66 +14,49 @@ import Divider from '@material-ui/core/Divider';
 import { Link } from 'react-router-dom';
 
 @hot(module)
-@withStyles(theme => ({
-  link: {
-    // color: theme.palette.text.primary,
-    color: theme.palette.action.active,
-  },
-}))
+@withStyles({
+  link: {},
+})
 export default class AppDrawer extends Component {
   render() {
-    const { classes, open, onToggleDrawer } = this.props;
+    const { open, onToggleDrawer } = this.props;
 
     return (
-      <Drawer open={open}>
+      <Drawer open={open} onClose={onToggleDrawer}>
         <div
           tabIndex={0}
           role="button"
           onClick={onToggleDrawer}
           onKeyDown={onToggleDrawer}>
           <List>
-            <ListItem button>
+            <ListItem button component={Link} to="/pg/">
               <ListItemIcon>
                 <HomeIconIcon />
               </ListItemIcon>
-              <ListItemText>
-                <Link className={classes.link} to="/pg/">
-                  Dashboard
-                </Link>
-              </ListItemText>
+              <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button>
+
+            <ListItem button component={Link} to="/pg/exports">
               <ListItemIcon>
                 <CloudDownloadIcon />
               </ListItemIcon>
-              <ListItemText>
-                <Link className={classes.link} to="/pg/exports">
-                  Exports
-                </Link>
-              </ListItemText>
+              <ListItemText primary="Exports" />
             </ListItem>
-            <ListItem button>
+
+            <ListItem button component={Link} to="/pg/imports">
               <ListItemIcon>
                 <CloudUploadIcon />
               </ListItemIcon>
-              <ListItemText>
-                <Link className={classes.link} to="/pg/imports">
-                  Imports
-                </Link>
-              </ListItemText>
+              <ListItemText primary="Imports" />
             </ListItem>
           </List>
           <Divider />
           <List>
-            <ListItem button>
+            <ListItem button component={Link} to="/pg/pipelines">
               <ListItemIcon>
                 <DataUsageIcon />
               </ListItemIcon>
-              <ListItemText>
-                <Link className={classes.link} to="/pg/pipelines">
-                  Create a Data Pipe
-                </Link>
-              </ListItemText>
+              <ListItemText primary="Create Data Pipeline" />
             </ListItem>
           </List>
         </div>
