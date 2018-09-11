@@ -1,0 +1,7 @@
+const PROFILE_LOADED = 'PROFILE_LOADED';
+const SET_THEME = 'SET_THEME';
+
+export default {
+  PROFILE_LOADED,
+  SET_THEME,
+};
