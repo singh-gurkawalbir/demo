@@ -4,17 +4,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-// import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Link } from 'react-router-dom';
+import ProfileMenu from './ProfileMenu';
 
 @withStyles(theme => ({
   root: {
@@ -80,11 +72,6 @@ import { Link } from 'react-router-dom';
 export default class Appbar extends Component {
   state = {
     anchorEl: null,
-    arrowEl: null,
-  };
-
-  handlearrowEl = node => {
-    this.setState({ arrowEl: node });
   };
 
   handleMenu = event => {
@@ -95,18 +82,12 @@ export default class Appbar extends Component {
     }
   };
 
-  handleThemeChange = event => {
-    this.props.onSetTheme(event.target.value);
-  };
-
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
   render() {
-    const { anchorEl, arrowEl } = this.state;
-    const { classes, profile, onToggleDrawer, themeName } = this.props;
-    const open = Boolean(anchorEl);
+    const { classes, onToggleDrawer } = this.props;
 
     return (
       <div className={classes.root}>
@@ -127,97 +108,7 @@ export default class Appbar extends Component {
                 integrator.io
               </Typography>
             </Link>
-            {profile && (
-              <div>
-                <IconButton
-                  aria-owns={open ? 'profileOptions' : null}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu}
-                  color="inherit">
-                  <Avatar
-                    alt={profile.name}
-                    src={profile.avatarUrl}
-                    className={classes.avatar}
-                  />
-                </IconButton>
-                <Popper
-                  id="profileOptions"
-                  anchorEl={anchorEl}
-                  placement="bottom-end"
-                  open={open}
-                  className={classes.popper}
-                  onClose={this.handleClose}
-                  modifiers={{
-                    flip: {
-                      enabled: true,
-                    },
-                    preventOverflow: {
-                      enabled: true,
-                      boundariesElement: 'scrollParent',
-                    },
-                    arrow: {
-                      enabled: true,
-                      element: arrowEl,
-                    },
-                  }}>
-                  <span className={classes.arrow} ref={this.handlearrowEl} />
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <Paper className={classes.profileMenu}>
-                      <Grid
-                        container
-                        spacing={16}
-                        direction="row"
-                        justify="flex-start"
-                        alignItems="flex-start">
-                        <Grid item>
-                          <Avatar
-                            alt={profile.name}
-                            src={profile.avatarUrl}
-                            className={classes.bigAvatar}
-                          />
-                        </Grid>
-                        <Grid item>
-                          <Typography variant="headline" component="h2">
-                            {profile.name}
-                          </Typography>
-                          <Typography component="h3">
-                            {profile.email}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                      <div>
-                        <FormControl className={classes.formControl}>
-                          <Select
-                            native
-                            value={themeName}
-                            onChange={this.handleThemeChange}
-                            inputProps={{ name: 'themeName' }}>
-                            <option value="light">Celigo Light Theme</option>
-                            <option value="dark">Celigo Dark Theme</option>
-                          </Select>
-                        </FormControl>
-                      </div>
-                      <Button
-                        onClick={this.handleClose}
-                        variant="contained"
-                        size="small"
-                        color="primary"
-                        className={classes.button}>
-                        My Profile
-                      </Button>
-                      <Button
-                        onClick={this.handleClose}
-                        variant="contained"
-                        size="small"
-                        color="primary"
-                        className={classes.button}>
-                        Sign Out
-                      </Button>
-                    </Paper>
-                  </ClickAwayListener>
-                </Popper>
-              </div>
-            )}
+            <ProfileMenu />
           </Toolbar>
         </AppBar>
       </div>

@@ -1,24 +1,14 @@
 import { render } from 'react-dom';
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import App from './App';
+import rootReducer from './reducers';
 
-const reducer = (state = {}, action) => {
-  switch (action.type) {
-    case 'exports-loaded':
-      return { ...state, exports: action.exports };
+const store = createStore(rootReducer);
 
-    default:
-      return state;
-  }
-};
-
-// this is all demo code, pls ignore (or replace)
-const store = createStore(reducer);
-
-// console.log('Redux state = ', store.getState());
-
-store.dispatch({ type: 'exports-loaded', exports: [{ name: 'first' }] });
-
-// console.log('Redux state = ', store.getState());
-
-render(<App />, document.getElementById('root'));
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);

@@ -1,5 +1,7 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -14,7 +16,16 @@ import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import api from '../utils/api';
 import AppDrawer from './AppDrawer';
+import actions from '../actions';
 
+const mapStateToProps = state => ({
+  themeName: state.session.themeName,
+});
+const mapDispatchToProps = dispatch => ({
+  onProfileLoaded: profile => {
+    dispatch(actions.profileLoaded(profile));
+  },
+});
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
@@ -32,19 +43,23 @@ const Imports = loadable(() =>
 );
 
 @hot(module)
-export default class App extends Component {
+class App extends Component {
+  static propTypes = {
+    store: PropTypes.object,
+  };
+
   state = {
     loading: false,
-    themeName: 'light',
     showDrawer: false,
     authenticated: false,
-    profile: null,
     exports: null,
     imports: null,
     connections: null,
   };
 
   async componentDidMount() {
+    const { onProfileLoaded } = this.props;
+
     this.setState({ loading: true });
 
     try {
@@ -66,25 +81,7 @@ export default class App extends Component {
     // where necessary app state is still loading...
     // we still want users to navigate the site even which we
     // prime the caches...
-    // console.log('loading exports');
 
-    /* Profile Returns:
-    { agreeTOSAndPP: true
-      auth_type_google:
-        { email: "dave.riedl@celigo.com", id: "long int"}
-          company:"Celigo"
-        },
-      _id: "uuid",
-      createdAt: "2018-07-03T21:06:50.926Z",
-      developer: true,
-      email: "dave.riedl@celigo.com",
-      emailHash: "xxx",
-      name: "Dave Riedl",
-      phone: "402",
-      role: "Dev",
-      timezone: "America/Los_Angeles",
-    }
-    */
     api('/profile').then(profile => {
       if (profile) {
         const avatarUrl = `https://secure.gravatar.com/avatar/${
@@ -92,10 +89,12 @@ export default class App extends Component {
         }?d=mm&s=55`;
         const enhanced = { ...profile, avatarUrl };
 
-        // console.log('profile enhanced:', enhanced);
-
+        // console.log('state before:', store.getState());
+        onProfileLoaded(enhanced);
+        // console.log('state after:', store.getState());
         self.setState({ profile: enhanced });
       } else {
+        onProfileLoaded(null);
         self.setState({ profile: null });
       }
     });
@@ -129,21 +128,17 @@ export default class App extends Component {
     this.setState({ showDrawer: !this.state.showDrawer });
   };
 
-  handleSetTheme = themeName => {
-    this.setState({ themeName });
-  };
   render() {
     const {
       loading,
       error,
       showDrawer,
-      profile,
       exports,
       imports,
       connections,
       authenticated,
-      themeName,
     } = this.state;
+    const { themeName } = this.props;
     const customTheme = themeProvider(themeName);
 
     // console.log('theme:', customTheme);
@@ -174,7 +169,6 @@ export default class App extends Component {
         <BrowserRouter>
           <Fragment>
             <AppBar
-              profile={profile}
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
               themeName={themeName}
@@ -216,3 +210,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
