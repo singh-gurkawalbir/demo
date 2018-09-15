@@ -12,9 +12,10 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
-import { isProfileDataReady } from '../../../reducers';
+import { isProfileDataReady, haveProfileData } from '../../../reducers';
 
 const mapStateToProps = state => ({
+  haveProfileData: haveProfileData(state),
   isProfileDataReady: isProfileDataReady(state),
   session: state.session,
 });
@@ -94,6 +95,14 @@ class AppBar extends Component {
     arrowEl: null,
   };
 
+  async componentDidMount() {
+    const { haveProfileData, requestProfile } = this.props;
+
+    if (!haveProfileData) {
+      requestProfile();
+    }
+  }
+
   handlearrowEl = node => {
     this.setState({ arrowEl: node });
   };
@@ -116,13 +125,11 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, session, isProfileDataReady, requestProfile } = this.props;
+    const { classes, session, isProfileDataReady } = this.props;
     const { themeName } = session;
     const open = Boolean(anchorEl);
 
     if (!isProfileDataReady) {
-      requestProfile();
-
       return null;
     }
 

@@ -36,6 +36,10 @@ export function haveConnectionsData(state) {
 }
 
 // PUBLIC GLOBAL SELECTORS
+export function haveProfileData(state) {
+  return !!state.session.name;
+}
+
 export function isProfileDataReady(state) {
   return !!(state.session.name && !state.comms.profile.loading);
 }
