@@ -22,10 +22,10 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   requestExports: () => {
-    dispatch(actions.requestResource('exports'));
+    dispatch(actions.exports.request());
   },
   requestConnections: () => {
-    dispatch(actions.requestResource('connections'));
+    dispatch(actions.connections.request());
   },
 });
 

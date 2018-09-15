@@ -3,35 +3,32 @@ import actions from '../actions';
 import actionTypes from '../actions/types';
 import api from '../utils/api';
 
-function* fetchResource(name) {
-  // console.log('fetchResource: ', name);
+const { profile, exports, imports, connections } = actions;
+
+function* fetchResource(action, path) {
+  // console.log('fetchResource: ', path);
 
   try {
-    const data = yield call(api, `/${name}`);
+    const data = yield call(api, `/${path}`);
 
     // console.log(('data from fetchResource:', data));
 
-    yield put(actions.receivedResource(name, data));
+    yield put(action.received(data));
   } catch (error) {
-    yield put(actions.receivedResource(name, null));
-  }
-}
-
-function* fetchProfile() {
-  try {
-    const data = yield call(api, '/profile');
-
-    yield put(actions.profileReceived(data));
-  } catch (error) {
-    yield put(actions.profileReceived(null));
+    yield put(action.failure(error.message));
   }
 }
 
 export default function* rootSaga() {
   yield all([
-    takeLatest(actionTypes.PROFILE_REQUEST, fetchProfile),
-    takeLatest('EXPORTS_REQUEST', fetchResource, 'exports'),
-    takeLatest('IMPORTS_REQUEST', fetchResource, 'imports'),
-    takeLatest('CONNECTIONS_REQUEST', fetchResource, 'connections'),
+    takeLatest(actionTypes.PROFILE.REQUEST, fetchResource, profile, 'profile'),
+    takeLatest(actionTypes.EXPORTS.REQUEST, fetchResource, exports, 'exports'),
+    takeLatest(actionTypes.IMPORTS.REQUEST, fetchResource, imports, 'imports'),
+    takeLatest(
+      actionTypes.CONNECTIONS.REQUEST,
+      fetchResource,
+      connections,
+      'connections'
+    ),
   ]);
 }

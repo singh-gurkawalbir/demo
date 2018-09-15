@@ -10,11 +10,13 @@ const enhancedProfile = profile => {
   return { ...profile, avatarUrl };
 };
 
-export default (state = { themeName: 'dark' }, action) => {
+const initialState = { themeName: 'dark', errors: {} };
+
+export default (state = initialState, action) => {
   // console.log('session action: ', action);
 
   switch (action.type) {
-    case actionTypes.PROFILE_RECEIVED:
+    case actionTypes.PROFILE.RECEIVED:
       return { ...state, ...enhancedProfile(action.profile) };
 
     case actionTypes.SET_THEME:

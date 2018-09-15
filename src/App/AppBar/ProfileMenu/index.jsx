@@ -24,7 +24,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.setTheme(themeName));
   },
   requestProfile: () => {
-    dispatch(actions.profileRequest());
+    dispatch(actions.profile.request());
   },
 });
 

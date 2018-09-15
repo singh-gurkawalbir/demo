@@ -1,19 +1,12 @@
+// Updates an entity cache in response to any action with response.entities.
 export default (state = {}, action) => {
-  // console.log('data action: ', action);
+  if (action.data) {
+    // console.log('data action: ', action, state);
 
-  switch (action.type) {
-    case 'EXPORTS_RECEIVED':
-      return { ...state, exports: action.resource };
-
-    case 'IMPORTS_RECEIVED':
-      return { ...state, imports: action.resource };
-
-    case 'CONNECTIONS_RECEIVED':
-      return { ...state, connections: action.resource };
-
-    default:
-      return state;
+    return { ...state, ...action.data };
   }
+
+  return state;
 };
 
 // PUBLIC SELECTORS
