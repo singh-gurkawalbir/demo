@@ -9,6 +9,8 @@ function* fetchResource(name) {
   try {
     const data = yield call(api, `/${name}`);
 
+    // console.log(('data from fetchResource:', data));
+
     yield put(actions.receivedResource(name, data));
   } catch (error) {
     yield put(actions.receivedResource(name, null));

@@ -5,11 +5,19 @@ import LoadingList from '../../components/LoadingList';
 import RowDetail from './RowDetail';
 import DetailList from '../../components/DetailList';
 import actions from '../../actions';
-import { exportDetails } from '../../reducers';
+import {
+  exportDetails,
+  isConnectionsDataReady,
+  isExportsDataReady,
+  haveExportsData,
+  haveConnectionsData,
+} from '../../reducers';
 
 const mapStateToProps = state => ({
-  connections: state.data.connections,
-  exports: state.data.exports,
+  isConnectionsDataReady: isConnectionsDataReady(state),
+  isExportsDataReady: isExportsDataReady(state),
+  haveExportsData: haveExportsData(state),
+  haveConnectionsData: haveConnectionsData(state),
   exportDetails: exportDetails(state),
 });
 const mapDispatchToProps = dispatch => ({
@@ -23,27 +31,35 @@ const mapDispatchToProps = dispatch => ({
 
 @hot(module)
 class Exports extends Component {
-  render() {
+  async componentDidMount() {
     const {
-      connections,
-      exports,
-      exportDetails,
+      haveConnectionsData,
+      haveExportsData,
       requestConnections,
       requestExports,
     } = this.props;
-    const steps = [
-      { name: 'Loading Connections', done: !!connections },
-      { name: 'Loading Exports', done: !!exports },
-    ];
 
-    if (!connections || !exports) {
-      if (!connections) {
-        requestConnections();
-      }
+    if (!haveConnectionsData) {
+      requestConnections();
+    }
 
-      if (!exports) {
-        requestExports();
-      }
+    if (!haveExportsData) {
+      requestExports();
+    }
+  }
+
+  render() {
+    const {
+      isConnectionsDataReady,
+      isExportsDataReady,
+      exportDetails,
+    } = this.props;
+
+    if (!isConnectionsDataReady || !isExportsDataReady) {
+      const steps = [
+        { name: 'Loading Connections', done: isConnectionsDataReady },
+        { name: 'Loading Exports', done: isExportsDataReady },
+      ];
 
       return <LoadingList steps={steps} />;
     }

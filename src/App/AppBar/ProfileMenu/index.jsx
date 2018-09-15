@@ -12,8 +12,10 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
+import { isProfileDataReady } from '../../../reducers';
 
 const mapStateToProps = state => ({
+  isProfileDataReady: isProfileDataReady(state),
   session: state.session,
 });
 const mapDispatchToProps = dispatch => ({
@@ -114,11 +116,11 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, session, requestProfile } = this.props;
+    const { classes, session, isProfileDataReady, requestProfile } = this.props;
     const { themeName } = session;
     const open = Boolean(anchorEl);
 
-    if (!session.name) {
+    if (!isProfileDataReady) {
       requestProfile();
 
       return null;

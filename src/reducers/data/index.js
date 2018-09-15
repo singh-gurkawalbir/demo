@@ -85,3 +85,15 @@ export function importDetails({ imports, connections }) {
 
   return rowData;
 }
+
+export function haveExportsData(state) {
+  return !!(state && state.exports);
+}
+
+export function haveImportsData(state) {
+  return !!(state && state.imports);
+}
+
+export function haveConnectionsData(state) {
+  return !!(state && state.connections);
+}
