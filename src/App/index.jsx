@@ -14,18 +14,11 @@ import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
-// import api from '../utils/api';
 import AppDrawer from './AppDrawer';
-// import actions from '../actions';
 
 const mapStateToProps = state => ({
   themeName: state.session.themeName,
 });
-// const mapDispatchToProps = dispatch => ({
-//   onProfileLoaded: profile => {
-//     dispatch(actions.profileReceived(profile));
-//   },
-// });
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
@@ -36,10 +29,10 @@ const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
 );
 const Exports = loadable(() =>
-  import(/* webpackChunkName: 'Exports' */ '../views/lists/Exports')
+  import(/* webpackChunkName: 'Exports' */ '../views/Exports')
 );
 const Imports = loadable(() =>
-  import(/* webpackChunkName: 'Imports' */ '../views/lists/Imports')
+  import(/* webpackChunkName: 'Imports' */ '../views/Imports')
 );
 
 @hot(module)
@@ -52,9 +45,6 @@ class App extends Component {
     loading: false,
     showDrawer: false,
     authenticated: false,
-    exports: null,
-    imports: null,
-    connections: null,
   };
 
   async componentDidMount() {
@@ -74,29 +64,6 @@ class App extends Component {
         error,
       });
     }
-
-    // const self = this;
-
-    // lazy load app state. each view must handle case
-    // where necessary app state is still loading...
-    // we still want users to navigate the site even which we
-    // prime the caches...
-
-    // api('/exports').then(exports => {
-    //   // console.log('exports loaded');
-    //   self.setState({ exports: exports || [] });
-    // });
-
-    // api('/imports').then(imports => {
-    //   // console.log('imports loaded');
-    //   self.setState({ imports: imports || [] });
-    // });
-
-    // // console.log('loading connections');
-    // api('/connections').then(connections => {
-    //   // console.log('connections loaded');
-    //   self.setState({ connections: connections || [] });
-    // });
   }
 
   async setAuthCookie() {

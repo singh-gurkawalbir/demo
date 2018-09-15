@@ -1,10 +1,10 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import LoadingList from '../../../components/LoadingList';
+import LoadingList from '../../components/LoadingList';
 import RowDetail from './RowDetail';
-import DetailList from '../DetailList';
-import actions from '../../../actions';
+import DetailList from '../../components/DetailList';
+import actions from '../../actions';
 
 const mapStateToProps = state => ({
   session: state.session,

@@ -50,7 +50,7 @@ import TitleBar from './TitleBar';
     backgroundColor: 'red',
   },
 }))
-export default class Exports extends Component {
+export default class DetailList extends Component {
   static propTypes = {
     itemName: PropTypes.string.isRequired,
     rowData: PropTypes.arrayOf(
