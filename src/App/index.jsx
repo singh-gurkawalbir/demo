@@ -14,18 +14,18 @@ import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
-import api from '../utils/api';
+// import api from '../utils/api';
 import AppDrawer from './AppDrawer';
-import actions from '../actions';
+// import actions from '../actions';
 
 const mapStateToProps = state => ({
   themeName: state.session.themeName,
 });
-const mapDispatchToProps = dispatch => ({
-  onProfileLoaded: profile => {
-    dispatch(actions.profileLoaded(profile));
-  },
-});
+// const mapDispatchToProps = dispatch => ({
+//   onProfileLoaded: profile => {
+//     dispatch(actions.profileReceived(profile));
+//   },
+// });
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
@@ -58,7 +58,7 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    const { onProfileLoaded } = this.props;
+    // const { onProfileLoaded } = this.props;
 
     this.setState({ loading: true });
 
@@ -75,45 +75,28 @@ class App extends Component {
       });
     }
 
-    const self = this;
+    // const self = this;
 
     // lazy load app state. each view must handle case
     // where necessary app state is still loading...
     // we still want users to navigate the site even which we
     // prime the caches...
 
-    api('/profile').then(profile => {
-      if (profile) {
-        const avatarUrl = `https://secure.gravatar.com/avatar/${
-          profile.emailHash
-        }?d=mm&s=55`;
-        const enhanced = { ...profile, avatarUrl };
+    // api('/exports').then(exports => {
+    //   // console.log('exports loaded');
+    //   self.setState({ exports: exports || [] });
+    // });
 
-        // console.log('state before:', store.getState());
-        onProfileLoaded(enhanced);
-        // console.log('state after:', store.getState());
-        self.setState({ profile: enhanced });
-      } else {
-        onProfileLoaded(null);
-        self.setState({ profile: null });
-      }
-    });
+    // api('/imports').then(imports => {
+    //   // console.log('imports loaded');
+    //   self.setState({ imports: imports || [] });
+    // });
 
-    api('/exports').then(exports => {
-      // console.log('exports loaded');
-      self.setState({ exports: exports || [] });
-    });
-
-    api('/imports').then(imports => {
-      // console.log('imports loaded');
-      self.setState({ imports: imports || [] });
-    });
-
-    // console.log('loading connections');
-    api('/connections').then(connections => {
-      // console.log('connections loaded');
-      self.setState({ connections: connections || [] });
-    });
+    // // console.log('loading connections');
+    // api('/connections').then(connections => {
+    //   // console.log('connections loaded');
+    //   self.setState({ connections: connections || [] });
+    // });
   }
 
   async setAuthCookie() {
@@ -211,4 +194,4 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, null)(App);

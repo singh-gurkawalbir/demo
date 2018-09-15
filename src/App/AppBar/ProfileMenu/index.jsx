@@ -20,6 +20,9 @@ const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {
     dispatch(actions.setTheme(themeName));
   },
+  requestProfile: () => {
+    dispatch(actions.profileRequest());
+  },
 });
 
 @withStyles(theme => ({
@@ -111,11 +114,13 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, session } = this.props;
+    const { classes, session, requestProfile } = this.props;
     const { themeName } = session;
     const open = Boolean(anchorEl);
 
     if (!session.name) {
+      requestProfile();
+
       return null;
     }
 

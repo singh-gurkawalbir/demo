@@ -31,6 +31,7 @@
     "react-timeago": "4.1.9",
     "redux": "4.0.0",
     "react-redux": "5.0.7",
+    "redux-saga": "0.16.0",
     "redbox-react": "1.6.0",
     "typeface-roboto": "0.0.54"
   },

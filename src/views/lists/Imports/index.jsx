@@ -1,11 +1,27 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import LoadingList from '../../../components/LoadingList';
 import RowDetail from './RowDetail';
 import DetailList from '../DetailList';
+import actions from '../../../actions';
+
+const mapStateToProps = state => ({
+  session: state.session,
+  connections: state.data.connections,
+  imports: state.data.imports,
+});
+const mapDispatchToProps = dispatch => ({
+  requestImports: () => {
+    dispatch(actions.requestResource('imports'));
+  },
+  requestConnections: () => {
+    dispatch(actions.requestResource('connections'));
+  },
+});
 
 @hot(module)
-export default class Exports extends Component {
+class Imports extends Component {
   buildRowData() {
     const { imports, connections } = this.props;
     const cHash = {};
@@ -38,13 +54,26 @@ export default class Exports extends Component {
   }
 
   render() {
-    const { connections, imports } = this.props;
+    const {
+      connections,
+      imports,
+      requestConnections,
+      requestImports,
+    } = this.props;
     const steps = [
       { name: 'Loading Connections', done: !!connections },
       { name: 'Loading Imports', done: !!imports },
     ];
 
     if (!connections || !imports) {
+      if (!connections) {
+        requestConnections();
+      }
+
+      if (!imports) {
+        requestImports();
+      }
+
       return <LoadingList steps={steps} />;
     }
 
@@ -57,3 +86,5 @@ export default class Exports extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Imports);
