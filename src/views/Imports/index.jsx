@@ -5,11 +5,12 @@ import LoadingList from '../../components/LoadingList';
 import RowDetail from './RowDetail';
 import DetailList from '../../components/DetailList';
 import actions from '../../actions';
+import { importDetails } from '../../reducers';
 
 const mapStateToProps = state => ({
-  session: state.session,
   connections: state.data.connections,
   imports: state.data.imports,
+  importDetails: importDetails(state),
 });
 const mapDispatchToProps = dispatch => ({
   requestImports: () => {
@@ -22,41 +23,11 @@ const mapDispatchToProps = dispatch => ({
 
 @hot(module)
 class Imports extends Component {
-  buildRowData() {
-    const { imports, connections } = this.props;
-    const cHash = {};
-
-    // convert conn array to hash keyed from conn id.
-    // lets join exports and connection into hybrid obj.
-    connections.map(c => (cHash[c._id] = c));
-
-    // build view model for this view.
-    const rowData = imports.map(e => {
-      const c = cHash[e._connectionId] || {};
-
-      // TODO: some imports or exports don't have connections.
-      return {
-        id: e._id,
-        heading: e.name || e._id,
-        type: e.type,
-        lastModified: e.lastModified,
-        searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-        application: (c.assistant || c.type || '').toUpperCase(),
-        connection: {
-          type: c.type,
-          id: c._id,
-          name: c.name || c._id || '',
-        },
-      };
-    });
-
-    return rowData;
-  }
-
   render() {
     const {
       connections,
       imports,
+      importDetails,
       requestConnections,
       requestImports,
     } = this.props;
@@ -77,10 +48,8 @@ class Imports extends Component {
       return <LoadingList steps={steps} />;
     }
 
-    const rowData = this.buildRowData();
-
     return (
-      <DetailList itemName="Imports" rowData={rowData}>
+      <DetailList itemName="Imports" rowData={importDetails}>
         <RowDetail />
       </DetailList>
     );

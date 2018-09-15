@@ -5,11 +5,12 @@ import LoadingList from '../../components/LoadingList';
 import RowDetail from './RowDetail';
 import DetailList from '../../components/DetailList';
 import actions from '../../actions';
+import { exportDetails } from '../../reducers';
 
 const mapStateToProps = state => ({
-  session: state.session,
   connections: state.data.connections,
   exports: state.data.exports,
+  exportDetails: exportDetails(state),
 });
 const mapDispatchToProps = dispatch => ({
   requestExports: () => {
@@ -22,40 +23,11 @@ const mapDispatchToProps = dispatch => ({
 
 @hot(module)
 class Exports extends Component {
-  buildRowData() {
-    const { exports, connections } = this.props;
-    const cHash = {};
-
-    // convert conn array to hash keyed from conn id.
-    // lets join exports and connection into hybrid obj.
-    connections.map(c => (cHash[c._id] = c));
-
-    // build view model for this view.
-    const rowData = exports.map(e => {
-      const c = cHash[e._connectionId];
-
-      return {
-        id: e._id,
-        heading: (e.name || e._id) + (e.type ? ` (${e.type} export)` : ''),
-        type: e.type,
-        lastModified: e.lastModified,
-        searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-        application: (c.assistant || c.type).toUpperCase(),
-        connection: {
-          type: c.type,
-          id: c._id,
-          name: c.name || c._id,
-        },
-      };
-    });
-
-    return rowData;
-  }
-
   render() {
     const {
       connections,
       exports,
+      exportDetails,
       requestConnections,
       requestExports,
     } = this.props;
@@ -76,10 +48,8 @@ class Exports extends Component {
       return <LoadingList steps={steps} />;
     }
 
-    const rowData = this.buildRowData();
-
     return (
-      <DetailList itemName="Exports" rowData={rowData}>
+      <DetailList itemName="Exports" rowData={exportDetails}>
         <RowDetail />
       </DetailList>
     );
