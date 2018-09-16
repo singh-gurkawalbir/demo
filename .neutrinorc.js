@@ -1,33 +1,55 @@
-const { join } = require('path')
+const { join } = require('path');
 
 require('babel-register')({
   plugins: [
     [
       require.resolve('babel-plugin-transform-es2015-modules-commonjs'),
       {
-        useBuiltIns: true
-      }
+        useBuiltIns: true,
+      },
     ],
-    require.resolve('babel-plugin-transform-object-rest-spread')
+    require.resolve('babel-plugin-transform-object-rest-spread'),
   ],
-  cache: false
-})
+  cache: false,
+});
 
-const themeProvider = require('./src/themeProvider').default
-const theme = themeProvider('light')
+const themeProvider = require('./src/themeProvider').default;
+const theme = themeProvider('light');
 
 module.exports = {
   use: [
+    // "@neutrinojs/node",
+    [
+      '@neutrinojs/jest',
+      {
+        bail: false,
+        testRegex: undefined,
+        // testPathIgnorePatterns: [
+        //   "/node_modules/",
+        //   "/src/views/",
+        //   "/src/components/"
+        // ],
+        // collectCoverageFrom: [
+        //   "!<rootDir>/node_modules/",
+        //   "!<rootDir>/build/",
+        //   "!<rootDir>/src/views",
+        //   "!<rootDir>/src/components",
+        //   "!<rootDir>/src/actions",
+        //   "src/reducers/**/*.{js,jsx}",
+        //   "src/sagas/**/*.{js,jsx}"
+        // ]
+      },
+    ],
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
         components: 'src/components/**/index.jsx',
         theme: theme.styleguide,
         styles: {
-          StyleGuide: theme.styleguide.StyleGuide
+          StyleGuide: theme.styleguide.StyleGuide,
         },
         editorConfig: {
-          theme: 'material'
+          theme: 'material',
         },
         showUsage: true,
         skipComponentsWithoutExample: false,
@@ -36,39 +58,44 @@ module.exports = {
           StyleGuideRenderer: join(
             __dirname,
             'src/styleguide/StyleGuideRenderer.jsx'
-          )
-        }
-      }
+          ),
+        },
+      },
     ],
     [
       'neutrino-preset-mozilla-frontend-infra/react',
       {
         html: {
-          title: 'Integrator UI'
+          title: 'Integrator UI',
         },
         devServer: {
           port: 4000,
           publicPath: '/pg',
           host: 'localhost.io',
           historyApiFallback: {
-            disableDotRule: true
-          }
+            disableDotRule: true,
+          },
         },
         eslint: {
+          plugins: ['jest'],
+          // globals: {
+          //   expect: true,
+          //   text: true
+          // },
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
             'react/no-did-mount-set-state': 'off',
-            'no-underscore-dangle': 'off'
-          }
-        }
-      }
+            'no-underscore-dangle': 'off',
+          },
+        },
+      },
     ],
     ['@neutrinojs/env', ['API_ENDPOINT', 'API_EMAIL', 'API_PASSWORD']],
     neutrino => {
       neutrino.config.devServer.proxy({
         '/signin': {
-          target: process.env.API_ENDPOINT
+          target: process.env.API_ENDPOINT,
         },
         '/api': {
           target: process.env.API_ENDPOINT,
@@ -89,12 +116,12 @@ module.exports = {
             //     ? setCookie.map(removeSecure)
             //     : removeSecure(setCookie)
             // }
-          }
-        }
-      })
-      neutrino.config.output.publicPath('/pg/')
-    }
-  ]
-}
+          },
+        },
+      });
+      neutrino.config.output.publicPath('/pg/');
+    },
+  ],
+};
 
 //

@@ -3,9 +3,10 @@ const SET_THEME = 'SET_THEME';
 export const REQUEST = 'REQUEST';
 export const RECEIVED = 'RECEIVED';
 export const FAILURE = 'FAILURE';
+export const RETRY = 'RETRY';
 
 function createRequestTypes(base) {
-  return [REQUEST, RECEIVED, FAILURE].reduce((acc, type) => {
+  return [REQUEST, RECEIVED, FAILURE, RETRY].reduce((acc, type) => {
     acc[type] = `${base}_${type}`;
 
     return acc;

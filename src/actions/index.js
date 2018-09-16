@@ -10,6 +10,7 @@ function action(type, payload = {}) {
 
 const profile = {
   request: () => action(actionTypes.PROFILE.REQUEST, { request: 'profile' }),
+  retry: () => action(actionTypes.PROFILE.RETRY, { retry: 'profile' }),
   received: profile =>
     action(actionTypes.PROFILE.RECEIVED, { received: 'profile', profile }),
   failure: message =>
@@ -17,6 +18,7 @@ const profile = {
 };
 const exports = {
   request: () => action(actionTypes.EXPORTS.REQUEST, { request: 'exports' }),
+  retry: () => action(actionTypes.EXPORTS.RETRY, { retry: 'exports' }),
   received: exports =>
     action(actionTypes.EXPORTS.RECEIVED, {
       received: 'exports',
@@ -27,6 +29,7 @@ const exports = {
 };
 const imports = {
   request: () => action(actionTypes.IMPORTS.REQUEST, { request: 'imports' }),
+  retry: () => action(actionTypes.IMPORTS.RETRY, { retry: 'imports' }),
   received: imports =>
     action(actionTypes.IMPORTS.RECEIVED, {
       received: 'imports',
@@ -38,6 +41,7 @@ const imports = {
 const connections = {
   request: () =>
     action(actionTypes.CONNECTIONS.REQUEST, { request: 'connections' }),
+  retry: () => action(actionTypes.CONNECTIONS.RETRY, { retry: 'connections' }),
   received: connections =>
     action(actionTypes.CONNECTIONS.RECEIVED, {
       received: 'connections',

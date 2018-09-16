@@ -16,7 +16,7 @@ class Imports extends Component {
     const { importDetails } = this.props;
 
     return (
-      <LoadResources resources={['imports', 'connections']}>
+      <LoadResources required resources={['imports', 'connections']}>
         <DetailList itemName="Imports" rowData={importDetails}>
           <RowDetail />
         </DetailList>
