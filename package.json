@@ -8,6 +8,7 @@
     "start": "neutrino start --require dotenv/config",
     "build": "neutrino build --require dotenv/config",
     "lint": "neutrino lint",
+    "test": "neutrino test --coverage",
     "precommit": "neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config"
   },
@@ -34,12 +35,15 @@
     "redux-logger": "3.0.6",
     "redux-saga": "0.16.0",
     "redbox-react": "1.6.0",
-    "typeface-roboto": "0.0.54"
+    "typeface-roboto": "0.0.54",
+    "eslint-plugin-jest": "^21.22.0"
   },
   "devDependencies": {
     "babel-register": "6.26.0",
     "dotenv": "5.0.1",
+    "jest": "23.6.0",
     "neutrino": "8.3.0",
+    "@neutrinojs/jest": "8.3.0",
     "neutrino-preset-mozilla-frontend-infra": "4.1.0",
     "prettier-eslint": "8.8.2"
   }

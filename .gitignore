@@ -6,4 +6,5 @@ node_modules
 .Rhistory
 .env
 /styleguide
+/coverage
 .vscode
