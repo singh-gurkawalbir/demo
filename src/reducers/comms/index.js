@@ -15,3 +15,8 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+// PUBLIC SELECTORS
+export function isLoading(state, resourceName) {
+  return !!(state && state[resourceName] && state[resourceName].loading);
+}

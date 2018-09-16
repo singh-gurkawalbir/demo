@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import data, * as fromData from './data';
-import session from './session';
-import comms from './comms';
+import session, * as fromSession from './session';
+import comms, * as fromComms from './comms';
 
 const rootReducer = combineReducers({
   session,
@@ -23,35 +23,23 @@ export function importDetails(state) {
   return fromData.importDetails(state.data);
 }
 
-export function haveExportsData(state) {
-  return fromData.haveExportsData(state.data);
+export function haveData(state, resource) {
+  return fromData.haveData(state.data, resource);
 }
 
-export function haveImportsData(state) {
-  return fromData.haveImportsData(state.data);
-}
-
-export function haveConnectionsData(state) {
-  return fromData.haveConnectionsData(state.data);
+// PUBLIC SESSION SELECTORS
+export function haveProfile(state) {
+  return fromSession.haveProfile(state.session);
 }
 
 // PUBLIC GLOBAL SELECTORS
-export function haveProfileData(state) {
-  return !!state.session.name;
-}
-
 export function isProfileDataReady(state) {
-  return !!(state.session.name && !state.comms.profile.loading);
+  return haveProfile(state) && !fromComms.isLoading(state.comms, 'profile');
 }
 
-export function isConnectionsDataReady(state) {
-  return haveConnectionsData(state) && !state.comms.connections.loading;
-}
-
-export function isExportsDataReady(state) {
-  return haveExportsData(state) && !state.comms.exports.loading;
-}
-
-export function isImportsDataReady(state) {
-  return haveImportsData(state) && !state.comms.imports.loading;
+export function isDataReady(state, resource) {
+  return (
+    fromData.haveData(state.data, resource) &&
+    !fromComms.isLoading(state.comms, resource)
+  );
 }

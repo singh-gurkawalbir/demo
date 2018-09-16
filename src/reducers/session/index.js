@@ -1,3 +1,4 @@
+import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
 
 const enhancedProfile = profile => {
@@ -10,19 +11,36 @@ const enhancedProfile = profile => {
   return { ...profile, avatarUrl };
 };
 
-const initialState = { themeName: 'dark', errors: {} };
-
-export default (state = initialState, action) => {
+const profile = (state = null, action) => {
   // console.log('session action: ', action);
 
   switch (action.type) {
     case actionTypes.PROFILE.RECEIVED:
-      return { ...state, ...enhancedProfile(action.profile) };
-
-    case actionTypes.SET_THEME:
-      return { ...state, themeName: action.themeName };
+      return enhancedProfile(action.profile);
 
     default:
       return state;
   }
 };
+
+const themeName = (state = 'dark', action) => {
+  // console.log('session action: ', action);
+
+  switch (action.type) {
+    case actionTypes.SET_THEME:
+      return action.themeName;
+
+    default:
+      return state;
+  }
+};
+
+export default combineReducers({
+  profile,
+  themeName,
+});
+
+// PUBLIC SELECTORS
+export function haveProfile(state) {
+  return !!(state && state.profile);
+}

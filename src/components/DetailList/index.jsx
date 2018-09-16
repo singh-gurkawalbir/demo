@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment, cloneElement } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -51,18 +51,18 @@ import TitleBar from './TitleBar';
   },
 }))
 export default class DetailList extends Component {
-  static propTypes = {
-    itemName: PropTypes.string.isRequired,
-    rowData: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        heading: PropTypes.string.isRequired,
-        application: PropTypes.string.isRequired,
-        searchableText: PropTypes.string.isRequired,
-        lastModified: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-  };
+  // static propTypes = {
+  //   itemName: PropTypes.string.isRequired,
+  //   rowData: PropTypes.arrayOf(
+  //     PropTypes.shape({
+  //       id: PropTypes.string.isRequired,
+  //       heading: PropTypes.string.isRequired,
+  //       application: PropTypes.string.isRequired,
+  //       searchableText: PropTypes.string.isRequired,
+  //       lastModified: PropTypes.string.isRequired,
+  //     })
+  //   ).isRequired,
+  // };
 
   state = {
     search: '',
@@ -108,6 +108,8 @@ export default class DetailList extends Component {
   render() {
     const { rowData, classes, itemName, children } = this.props;
     const { expanded, pageSize, search } = this.state;
+
+    // console.log('rowData', rowData);
 
     if (!rowData) {
       return (

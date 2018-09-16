@@ -12,12 +12,13 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
-import { isProfileDataReady, haveProfileData } from '../../../reducers';
+import { isProfileDataReady, haveProfile } from '../../../reducers';
 
 const mapStateToProps = state => ({
-  haveProfileData: haveProfileData(state),
+  haveProfile: haveProfile(state),
   isProfileDataReady: isProfileDataReady(state),
-  session: state.session,
+  profile: state.session.profile,
+  themeName: state.session.themeName,
 });
 const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {
@@ -125,8 +126,7 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, session, isProfileDataReady } = this.props;
-    const { themeName } = session;
+    const { classes, profile, themeName, isProfileDataReady } = this.props;
     const open = Boolean(anchorEl);
 
     if (!isProfileDataReady) {
@@ -141,8 +141,8 @@ class AppBar extends Component {
           onClick={this.handleMenu}
           color="inherit">
           <Avatar
-            alt={session.name}
-            src={session.avatarUrl}
+            alt={profile.name}
+            src={profile.avatarUrl}
             className={classes.avatar}
           />
         </IconButton>
@@ -177,16 +177,16 @@ class AppBar extends Component {
                 alignItems="flex-start">
                 <Grid item>
                   <Avatar
-                    alt={session.name}
-                    src={session.avatarUrl}
+                    alt={profile.name}
+                    src={profile.avatarUrl}
                     className={classes.bigAvatar}
                   />
                 </Grid>
                 <Grid item>
                   <Typography variant="headline" component="h2">
-                    {session.name}
+                    {profile.name}
                   </Typography>
-                  <Typography component="h3">{session.email}</Typography>
+                  <Typography component="h3">{profile.email}</Typography>
                 </Grid>
               </Grid>
               <div>

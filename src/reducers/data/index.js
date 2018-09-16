@@ -1,4 +1,4 @@
-// Updates an entity cache in response to any action with response.entities.
+// Updates an entity cache in response to any action with response.data.
 export default (state = {}, action) => {
   if (action.data) {
     // console.log('data action: ', action, state);
@@ -10,8 +10,6 @@ export default (state = {}, action) => {
 };
 
 // PUBLIC SELECTORS
-// Following this pattern:
-// https://hackernoon.com/selector-pattern-painless-redux-store-destructuring-bfc26b72b9ae
 const getConnectionMap = connections => {
   if (!connections) return {};
 
@@ -79,14 +77,6 @@ export function importDetails({ imports, connections }) {
   return rowData;
 }
 
-export function haveExportsData(state) {
-  return !!(state && state.exports);
-}
-
-export function haveImportsData(state) {
-  return !!(state && state.imports);
-}
-
-export function haveConnectionsData(state) {
-  return !!(state && state.connections);
+export function haveData(state, resourceName) {
+  return !!(state && state[resourceName]);
 }
