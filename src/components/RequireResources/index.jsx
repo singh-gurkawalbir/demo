@@ -3,24 +3,16 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import actions from '../../actions';
-import { isDataReady, haveData } from '../../reducers';
+import { resourceStatus } from '../../reducers';
 
 const mapStateToProps = (state, { resources }) => {
-  const status = [];
-
-  // console.log('mapStateToProps:', state);
-  resources.reduce((acc, resource) => {
-    acc.push({
-      name: resource,
-      isDataReady: isDataReady(state, resource),
-      haveData: haveData(state, resource),
-    });
+  const requiredStatus = resources.reduce((acc, resource) => {
+    acc.push(resourceStatus(state, resource));
 
     return acc;
-  }, status);
-
-  const isAllDataReady = status.reduce((acc, resource) => {
-    if (!resource.isDataReady) {
+  }, []);
+  const isAllDataReady = requiredStatus.reduce((acc, resource) => {
+    if (!resource.isReady) {
       return false;
     }
 
@@ -29,7 +21,7 @@ const mapStateToProps = (state, { resources }) => {
 
   return {
     isAllDataReady,
-    resourceStatus: status,
+    requiredStatus,
   };
 };
 
@@ -47,13 +39,13 @@ const mapDispatchToProps = dispatch => ({
 }))
 class RequireResources extends Component {
   async componentDidMount() {
-    const { isAllDataReady, resourceStatus, requestResource } = this.props;
+    const { isAllDataReady, requiredStatus, requestResource } = this.props;
 
-    // console.log('isAllDataReady:', isAllDataReady, resourceStatus);
+    // console.log('isAllDataReady:', isAllDataReady, requiredStatus);
 
     if (!isAllDataReady) {
-      resourceStatus.forEach(resource => {
-        if (!resource.haveData) {
+      requiredStatus.forEach(resource => {
+        if (!resource.hasData) {
           requestResource(resource.name);
         }
       });
@@ -61,19 +53,28 @@ class RequireResources extends Component {
   }
 
   render() {
-    const { isAllDataReady, resourceStatus, children, classes } = this.props;
+    const { isAllDataReady, requiredStatus, children, classes } = this.props;
 
     if (!isAllDataReady) {
-      return resourceStatus.map(
-        r =>
-          !r.isDataReady && (
-            <SnackbarContent
-              key={r.name}
-              className={classes.snackbar}
-              message={`Loading ${r.name}`}
-            />
-          )
-      );
+      return requiredStatus.map(r => {
+        if (r.isReady) {
+          return null;
+        }
+
+        let msg = `Loading ${r.name}...`;
+
+        if (r.retryCount > 0) {
+          msg += ` Retry ${r.retryCount}`;
+        }
+
+        return (
+          <SnackbarContent
+            key={r.name}
+            className={classes.snackbar}
+            message={msg}
+          />
+        );
+      });
     }
 
     return children;

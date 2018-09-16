@@ -23,10 +23,6 @@ export function importDetails(state) {
   return fromData.importDetails(state.data);
 }
 
-export function haveData(state, resource) {
-  return fromData.haveData(state.data, resource);
-}
-
 // PUBLIC SESSION SELECTORS
 export function haveProfile(state) {
   return fromSession.haveProfile(state.session);
@@ -42,4 +38,21 @@ export function isDataReady(state, resource) {
     fromData.haveData(state.data, resource) &&
     !fromComms.isLoading(state.comms, resource)
   );
+}
+
+export function resourceStatus(state, resource) {
+  const hasData = fromData.haveData(state.data, resource);
+  const isLoading = fromComms.isLoading(state.comms, resource);
+  const retryCount = fromComms.retryCount(state.comms, resource);
+  const error = fromComms.error(state.comms, resource);
+  const isReady = hasData && !isLoading;
+
+  return {
+    name: resource,
+    hasData,
+    isLoading,
+    retryCount,
+    isReady,
+    error,
+  };
 }
