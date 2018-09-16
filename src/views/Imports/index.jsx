@@ -3,7 +3,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RowDetail from './RowDetail';
 import DetailList from '../../components/DetailList';
-import LoadResources from '../../components/LoadResources';
+import RequireResources from '../../components/RequireResources';
 import { importDetails } from '../../reducers';
 
 const mapStateToProps = state => ({
@@ -16,11 +16,11 @@ class Imports extends Component {
     const { importDetails } = this.props;
 
     return (
-      <LoadResources resources={['imports', 'connections']}>
+      <RequireResources resources={['imports', 'connections']}>
         <DetailList itemName="Imports" rowData={importDetails}>
           <RowDetail />
         </DetailList>
-      </LoadResources>
+      </RequireResources>
     );
   }
 }

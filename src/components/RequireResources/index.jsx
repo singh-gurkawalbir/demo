@@ -1,9 +1,9 @@
-import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import LoadingList from './LoadingList';
-import actions from '../actions';
-import { isDataReady, haveData } from '../reducers';
+import { withStyles } from '@material-ui/core/styles';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import actions from '../../actions';
+import { isDataReady, haveData } from '../../reducers';
 
 const mapStateToProps = (state, { resources }) => {
   const status = [];
@@ -40,8 +40,12 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-@hot(module)
-class LoadResources extends Component {
+@withStyles(theme => ({
+  snackbar: {
+    margin: theme.spacing.unit,
+  },
+}))
+class RequireResources extends Component {
   async componentDidMount() {
     const { isAllDataReady, resourceStatus, requestResource } = this.props;
 
@@ -57,23 +61,23 @@ class LoadResources extends Component {
   }
 
   render() {
-    const { isAllDataReady, resourceStatus, children } = this.props;
+    const { isAllDataReady, resourceStatus, children, classes } = this.props;
 
     if (!isAllDataReady) {
-      const steps = resourceStatus.reduce((acc, resource) => {
-        acc.push({
-          name: `Loading ${resource.name}...`,
-          done: resource.isDataReady,
-        });
-
-        return acc;
-      }, []);
-
-      return <LoadingList steps={steps} />;
+      return resourceStatus.map(
+        r =>
+          !r.isDataReady && (
+            <SnackbarContent
+              key={r.name}
+              className={classes.snackbar}
+              message={`Loading ${r.name}`}
+            />
+          )
+      );
     }
 
     return children;
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoadResources);
+export default connect(mapStateToProps, mapDispatchToProps)(RequireResources);
