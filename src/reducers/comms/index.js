@@ -2,15 +2,30 @@ const initialState = {};
 
 export default (state = initialState, action) => {
   if (action.request) {
-    // console.log('comms request action: ', action);
+    const status = Object.assign({}, state[action.request]) || {};
 
-    return { ...state, [action.request]: { loading: true } };
+    status.loading = true;
+    delete status.retry;
+
+    return { ...state, [action.request]: status };
   }
 
   if (action.received) {
-    // console.log('comms received action: ', action);
+    const status = Object.assign({}, state[action.received]) || {};
 
-    return { ...state, [action.received]: { loading: false } };
+    status.loading = false;
+    delete status.retry;
+
+    return { ...state, [action.received]: status };
+  }
+
+  if (action.retry) {
+    const status = Object.assign({}, state[action.retry]) || {};
+
+    status.retry = status.retry || 0;
+    status.retry += 1;
+
+    return { ...state, [action.retry]: status };
   }
 
   return state;

@@ -61,9 +61,10 @@ class LoadResources extends Component {
 
     if (!isAllDataReady) {
       const steps = resourceStatus.reduce((acc, resource) => {
-        if (!resource.hasData) {
-          acc.push({ name: `Loading ${resource.name}...`, done: false });
-        }
+        acc.push({
+          name: `Loading ${resource.name}...`,
+          done: resource.isDataReady,
+        });
 
         return acc;
       }, []);
