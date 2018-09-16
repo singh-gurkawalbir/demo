@@ -23,7 +23,7 @@ import TextField from '@material-ui/core/TextField';
     color: theme.palette.text.secondary,
   },
 }))
-export default class Exports extends Component {
+export default class TitleBar extends Component {
   // TODO: see this gist for how to bind window events to react components
   // I want this so that as a user types, the keys automatically
   // are placed in the search.

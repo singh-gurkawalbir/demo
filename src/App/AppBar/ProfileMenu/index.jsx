@@ -12,13 +12,20 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
+import { isProfileDataReady, haveProfile } from '../../../reducers';
 
 const mapStateToProps = state => ({
-  session: state.session,
+  haveProfile: haveProfile(state),
+  isProfileDataReady: isProfileDataReady(state),
+  profile: state.session.profile,
+  themeName: state.session.themeName,
 });
 const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {
     dispatch(actions.setTheme(themeName));
+  },
+  requestProfile: () => {
+    dispatch(actions.profile.request());
   },
 });
 
@@ -89,6 +96,14 @@ class AppBar extends Component {
     arrowEl: null,
   };
 
+  async componentDidMount() {
+    const { haveProfileData, requestProfile } = this.props;
+
+    if (!haveProfileData) {
+      requestProfile();
+    }
+  }
+
   handlearrowEl = node => {
     this.setState({ arrowEl: node });
   };
@@ -111,11 +126,10 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, session } = this.props;
-    const { themeName } = session;
+    const { classes, profile, themeName, isProfileDataReady } = this.props;
     const open = Boolean(anchorEl);
 
-    if (!session.name) {
+    if (!isProfileDataReady) {
       return null;
     }
 
@@ -127,8 +141,8 @@ class AppBar extends Component {
           onClick={this.handleMenu}
           color="inherit">
           <Avatar
-            alt={session.name}
-            src={session.avatarUrl}
+            alt={profile.name}
+            src={profile.avatarUrl}
             className={classes.avatar}
           />
         </IconButton>
@@ -163,16 +177,16 @@ class AppBar extends Component {
                 alignItems="flex-start">
                 <Grid item>
                   <Avatar
-                    alt={session.name}
-                    src={session.avatarUrl}
+                    alt={profile.name}
+                    src={profile.avatarUrl}
                     className={classes.bigAvatar}
                   />
                 </Grid>
                 <Grid item>
                   <Typography variant="headline" component="h2">
-                    {session.name}
+                    {profile.name}
                   </Typography>
-                  <Typography component="h3">{session.email}</Typography>
+                  <Typography component="h3">{profile.email}</Typography>
                 </Grid>
               </Grid>
               <div>
