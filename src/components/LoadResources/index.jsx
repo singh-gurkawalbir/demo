@@ -76,7 +76,13 @@ class LoadResources extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return <SnackbarContent className={classes.snackbar} message={msg} />;
+      return (
+        <SnackbarContent
+          key={r.name}
+          className={classes.snackbar}
+          message={msg}
+        />
+      );
     };
 
     return (
