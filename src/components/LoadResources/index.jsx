@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -37,7 +37,7 @@ const mapDispatchToProps = dispatch => ({
     margin: theme.spacing.unit,
   },
 }))
-class RequireResources extends Component {
+class LoadResources extends Component {
   async componentDidMount() {
     const { isAllDataReady, requiredStatus, requestResource } = this.props;
 
@@ -53,32 +53,39 @@ class RequireResources extends Component {
   }
 
   render() {
-    const { isAllDataReady, requiredStatus, children, classes } = this.props;
+    const {
+      isAllDataReady,
+      requiredStatus,
+      children,
+      classes,
+      required,
+    } = this.props;
 
-    if (!isAllDataReady) {
-      return requiredStatus.map(r => {
-        if (r.isReady) {
-          return null;
-        }
-
-        let msg = `Loading ${r.name}...`;
-
-        if (r.retryCount > 0) {
-          msg += ` Retry ${r.retryCount}`;
-        }
-
-        return (
-          <SnackbarContent
-            key={r.name}
-            className={classes.snackbar}
-            message={msg}
-          />
-        );
-      });
+    if (isAllDataReady) {
+      return children;
     }
 
-    return children;
+    const notification = r => {
+      if (r.isReady) {
+        return null;
+      }
+
+      let msg = `Loading ${r.name}...`;
+
+      if (r.retryCount > 0) {
+        msg += ` Retry ${r.retryCount}`;
+      }
+
+      return <SnackbarContent className={classes.snackbar} message={msg} />;
+    };
+
+    return (
+      <Fragment>
+        {requiredStatus.map(r => notification(r))}
+        {!required && children}
+      </Fragment>
+    );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequireResources);
+export default connect(mapStateToProps, mapDispatchToProps)(LoadResources);

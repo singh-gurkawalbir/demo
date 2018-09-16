@@ -1,3 +1,8 @@
+const delay = delay =>
+  new Promise(fulfill => {
+    setTimeout(fulfill, delay);
+  });
+
 export default async (path, opts = {}) => {
   const options = {
     ...opts,
@@ -9,6 +14,10 @@ export default async (path, opts = {}) => {
       ...(opts.headers || {}),
     },
   };
+
+  // for development only to slow down local api calls
+  // lets build for a good UX that can deal with high latency calls...
+  await delay(200);
   const response = await fetch(`/api${path}`, options);
 
   return response.json();

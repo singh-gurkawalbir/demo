@@ -10,7 +10,10 @@ import { withStyles } from '@material-ui/core/styles';
     fontSize: theme.typography.pxToRem(12),
     color: theme.palette.text.secondary,
   },
-
+  link: {
+    color: theme.palette.text.secondary,
+    // color: theme.palette.action.active,
+  },
   exportDetails: {
     flexBasis: '66.66%',
     flexShrink: 0,
@@ -29,13 +32,17 @@ export default class Imports extends Component {
           {item.connection.name}
         </Typography>
         <Typography className={classes.secondaryHeading}>
-          <Link to={`/pg/imports/preview/${item._id}`}>
+          <Link className={classes.link} to={`/pg/imports/preview/${item._id}`}>
             Preview this Import
           </Link>
           <br />
-          <Link to="/pg/impors/clone">Clone this Import</Link>
+          <Link className={classes.link} to="/pg/impors/clone">
+            Clone this Import
+          </Link>
           <br />
-          <Link to="/pg/imports/audit">View Audit Log</Link>
+          <Link className={classes.link} to="/pg/imports/audit">
+            View Audit Log
+          </Link>
         </Typography>
       </Fragment>
     );
