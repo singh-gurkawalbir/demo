@@ -8,8 +8,6 @@ const { profile, exports, imports, connections } = actions;
 const tryCount = 3;
 
 function* fetchResource(action, path) {
-  // console.log('fetchResource: ', path);
-
   for (let i = 0; i < tryCount; i += 1) {
     try {
       const data = yield call(api, `/${path}`);

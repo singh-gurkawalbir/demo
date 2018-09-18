@@ -37,7 +37,7 @@ export function isLoading(state, resourceName) {
 }
 
 export function retryCount(state, resourceName) {
-  return !!(state && state[resourceName] && state[resourceName].retry);
+  return (state && state[resourceName] && state[resourceName].retry) || 0;
 }
 
 export function error(state, resourceName) {
