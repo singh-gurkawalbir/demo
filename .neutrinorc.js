@@ -77,10 +77,10 @@ module.exports = {
           },
         },
         eslint: {
-          plugins: ['jest'],
+          // plugins: ['jest'],
           // globals: {
           //   expect: true,
-          //   text: true
+          //   text: true,
           // },
           rules: {
             // This is disabled in next airbnb preset release for
