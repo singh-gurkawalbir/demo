@@ -9,6 +9,8 @@ import actions from '../../actions';
 
 // "matcher" reference: https://jestjs.io/docs/en/using-matchers
 
+// TODO: as more resource types come "online" in our app, we need to keep
+// the below const up-to-date-. Maybe move this const to actions...
 const resources = ['exports', 'imports', 'connections'];
 
 describe('comms reducers', () => {

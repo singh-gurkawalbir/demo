@@ -7,14 +7,14 @@ import api from '../utils/api';
 const { profile, exports, imports, connections } = actions;
 const tryCount = 3;
 
-function* fetchResource(action, path) {
+export function* fetchResource(action, path) {
   for (let i = 0; i < tryCount; i += 1) {
     try {
       const data = yield call(api, `/${path}`);
 
       // console.log(('data from fetchResource:', data));
 
-      yield put(action.received(data));
+      return yield put(action.received(data));
     } catch (error) {
       if (i < tryCount - 1) {
         yield call(delay, 2000);
@@ -22,7 +22,7 @@ function* fetchResource(action, path) {
       } else {
         // attempts failed after 'tryCount' attempts
         // this time yield an error...
-        yield put(action.failure(error.message));
+        return yield put(action.failure(error.message));
       }
     }
   }
