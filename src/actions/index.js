@@ -1,5 +1,7 @@
 import actionTypes from './types';
 
+export const availableResources = ['exports', 'imports', 'connections'];
+
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
 // a type are symetrical in shape.
@@ -14,7 +16,7 @@ const profile = {
   received: profile =>
     action(actionTypes.PROFILE.RECEIVED, { received: 'profile', profile }),
   failure: message =>
-    action(actionTypes.PROFILE.FAILURE, { errors: { profile: message } }),
+    action(actionTypes.PROFILE.FAILURE, { error: 'profile', message }),
 };
 const exports = {
   request: () => action(actionTypes.EXPORTS.REQUEST, { request: 'exports' }),
@@ -25,7 +27,7 @@ const exports = {
       data: { exports },
     }),
   failure: message =>
-    action(actionTypes.EXPORTS.FAILURE, { errors: { exports: message } }),
+    action(actionTypes.EXPORTS.FAILURE, { error: 'exports', message }),
 };
 const imports = {
   request: () => action(actionTypes.IMPORTS.REQUEST, { request: 'imports' }),
@@ -36,7 +38,7 @@ const imports = {
       data: { imports },
     }),
   failure: message =>
-    action(actionTypes.IMPORTS.FAILURE, { errors: { imports: message } }),
+    action(actionTypes.IMPORTS.FAILURE, { error: 'imports', message }),
 };
 const connections = {
   request: () =>
@@ -49,7 +51,8 @@ const connections = {
     }),
   failure: message =>
     action(actionTypes.CONNECTIONS.FAILURE, {
-      errors: { connections: message },
+      error: 'connections',
+      message,
     }),
 };
 const setTheme = themeName => ({

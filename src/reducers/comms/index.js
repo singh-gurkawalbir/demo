@@ -6,6 +6,7 @@ export default (state = initialState, action) => {
 
     status.loading = true;
     delete status.retry;
+    delete status.error;
 
     return { ...state, [action.request]: status };
   }
@@ -15,6 +16,7 @@ export default (state = initialState, action) => {
 
     status.loading = false;
     delete status.retry;
+    delete status.error;
 
     return { ...state, [action.received]: status };
   }
@@ -26,6 +28,16 @@ export default (state = initialState, action) => {
     status.retry += 1;
 
     return { ...state, [action.retry]: status };
+  }
+
+  if (action.error) {
+    const status = Object.assign({}, state[action.error]) || {};
+
+    status.error = action.message;
+    delete status.retry;
+    status.loading = false;
+
+    return { ...state, [action.error]: status };
   }
 
   return state;
@@ -41,5 +53,5 @@ export function retryCount(state, resourceName) {
 }
 
 export function error(state, resourceName) {
-  return !!(state && state[resourceName] && state[resourceName].error);
+  return state && state[resourceName] && state[resourceName].error;
 }

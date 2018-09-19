@@ -16,6 +16,10 @@ export function* fetchResource(action, path) {
 
       return yield put(action.received(data));
     } catch (error) {
+      // TODO: analyze error and dispatch(put) different actions as need.
+      // for example, if we get a 401, we should dispatch a redirect action
+      // to the login page. Possibly some 4xx errors could also have custom
+      // behavior, etc..
       if (i < tryCount - 1) {
         yield call(delay, 2000);
         yield put(action.retry());

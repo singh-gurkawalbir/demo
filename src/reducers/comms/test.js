@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
-import actions from '../../actions';
+import actions, { availableResources } from '../../actions';
 
 // TODO: the vsCode "jest" extension does not understand the Neutrino
 // configuration so the built in IDE features do not work... :(
@@ -11,10 +11,9 @@ import actions from '../../actions';
 
 // TODO: as more resource types come "online" in our app, we need to keep
 // the below const up-to-date-. Maybe move this const to actions...
-const resources = ['exports', 'imports', 'connections'];
 
 describe('comms reducers', () => {
-  resources.forEach(resource => {
+  availableResources.forEach(resource => {
     describe(`${resource} request action`, () => {
       test('should set loading flag', () => {
         const newState = reducer(undefined, actions[resource].request());
@@ -57,26 +56,24 @@ describe('comms reducers', () => {
       });
     });
 
-    describe(`${resource} received action`, () => {
-      test('should clear loading flag', () => {
-        const state = reducer(undefined, actions[resource].request());
+    describe(`${resource} failure action`, () => {
+      test('should set error message', () => {
+        const state = reducer(undefined, actions[resource].failure('error'));
 
-        expect(state[resource].loading).toBe(true);
-
-        const newState = reducer(state, actions[resource].received());
-
-        expect(newState[resource].loading).toBe(false);
+        expect(state[resource].error).toEqual('error');
       });
 
-      test('should reset retry flag', () => {
-        // force the retry value to be set...
-        const state = reducer(undefined, actions[resource].retry());
+      test('should clear loading and retry count', () => {
+        let state = reducer(undefined, actions[resource].request());
 
+        state = reducer(state, actions[resource].retry());
+        expect(state[resource].loading).toBe(true);
         expect(state[resource].retry).toBe(1);
 
-        const newState = reducer(state, actions[resource].received());
+        state = reducer(state, actions[resource].failure('error'));
 
-        expect(newState[resource].retry).toBeUndefined();
+        expect(state[resource].loading).toBe(false);
+        expect(state[resource].retry).toBeUndefined();
       });
     });
 
@@ -100,7 +97,7 @@ describe('comms reducers', () => {
 });
 
 describe('comms selectors', () => {
-  resources.forEach(resource => {
+  availableResources.forEach(resource => {
     describe(`${resource} isLoading`, () => {
       test('should be false on initial state', () => {
         const isLoading = selectors.isLoading(undefined, resource);

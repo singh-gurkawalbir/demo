@@ -12,12 +12,18 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
-import { isProfileDataReady, haveProfile } from '../../../reducers';
+import {
+  isProfileDataReady,
+  hasProfile,
+  userProfile,
+  avatarUrl,
+} from '../../../reducers';
 
 const mapStateToProps = state => ({
-  haveProfile: haveProfile(state),
+  hasProfile: hasProfile(state),
   isProfileDataReady: isProfileDataReady(state),
-  profile: state.session.profile,
+  profile: userProfile(state),
+  avatarUrl: avatarUrl(state),
   themeName: state.session.themeName,
 });
 const mapDispatchToProps = dispatch => ({
@@ -97,9 +103,9 @@ class AppBar extends Component {
   };
 
   async componentDidMount() {
-    const { haveProfileData, requestProfile } = this.props;
+    const { hasProfileData, requestProfile } = this.props;
 
-    if (!haveProfileData) {
+    if (!hasProfileData) {
       requestProfile();
     }
   }
@@ -126,8 +132,14 @@ class AppBar extends Component {
 
   render() {
     const { anchorEl, arrowEl } = this.state;
-    const { classes, profile, themeName, isProfileDataReady } = this.props;
     const open = Boolean(anchorEl);
+    const {
+      classes,
+      profile,
+      themeName,
+      avatarUrl,
+      isProfileDataReady,
+    } = this.props;
 
     if (!isProfileDataReady) {
       return null;
@@ -142,7 +154,7 @@ class AppBar extends Component {
           color="inherit">
           <Avatar
             alt={profile.name}
-            src={profile.avatarUrl}
+            src={avatarUrl}
             className={classes.avatar}
           />
         </IconButton>
@@ -178,7 +190,7 @@ class AppBar extends Component {
                 <Grid item>
                   <Avatar
                     alt={profile.name}
-                    src={profile.avatarUrl}
+                    src={avatarUrl}
                     className={classes.bigAvatar}
                   />
                 </Grid>

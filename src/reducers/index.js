@@ -24,13 +24,21 @@ export function importDetails(state) {
 }
 
 // PUBLIC SESSION SELECTORS
-export function haveProfile(state) {
-  return fromSession.haveProfile(state.session);
+export function avatarUrl(state) {
+  return fromSession.avatarUrl(state.session);
+}
+
+export function userProfile(state) {
+  return state && state.session && state.session.profile;
+}
+
+export function hasProfile(state) {
+  return !!userProfile(state);
 }
 
 // PUBLIC GLOBAL SELECTORS
 export function isProfileDataReady(state) {
-  return haveProfile(state) && !fromComms.isLoading(state.comms, 'profile');
+  return hasProfile(state) && !fromComms.isLoading(state.comms, 'profile');
 }
 
 export function isDataReady(state, resource) {
