@@ -24,6 +24,11 @@ export function importDetails(state) {
 }
 
 // PUBLIC SESSION SELECTORS
+export function allLoadingOrErrored(state) {
+  return fromComms.allLoadingOrErrored(state.comms);
+}
+
+// PUBLIC SESSION SELECTORS
 export function avatarUrl(state) {
   return fromSession.avatarUrl(state.session);
 }

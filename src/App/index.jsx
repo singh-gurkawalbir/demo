@@ -15,6 +15,7 @@ import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import AppDrawer from './AppDrawer';
+import NetworkSnackbar from '../components/NetworkSnackbar';
 
 const mapStateToProps = state => ({
   themeName: state.session.themeName,
@@ -114,6 +115,7 @@ class App extends Component {
 
     return (
       <MuiThemeProvider theme={customTheme}>
+        <NetworkSnackbar />
         <FontStager />
         <CssBaseline />
         <BrowserRouter>

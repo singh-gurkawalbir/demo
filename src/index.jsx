@@ -1,5 +1,5 @@
 import { render } from 'react-dom';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
@@ -25,7 +25,12 @@ if (process.env.NODE_ENV === `development`) {
   middleware.push(createLogger(logOptions));
 }
 
-const store = createStore(rootReducer, applyMiddleware(...middleware));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(...middleware))
+);
+// const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 sagaMiddleware.run(rootSaga);
 

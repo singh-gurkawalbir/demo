@@ -55,3 +55,22 @@ export function retryCount(state, resourceName) {
 export function error(state, resourceName) {
   return state && state[resourceName] && state[resourceName].error;
 }
+
+export function allLoadingOrErrored(state) {
+  const resources = [];
+
+  Object.keys(state).forEach(key => {
+    const status = {
+      name: key,
+      isLoading: isLoading(state, key),
+      retryCount: retryCount(state, key),
+      error: error(state, key),
+    };
+
+    if (status.isLoading || status.error) {
+      resources.push(status);
+    }
+  });
+
+  return resources.length ? resources : null;
+}
