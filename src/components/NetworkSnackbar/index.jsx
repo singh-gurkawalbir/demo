@@ -9,7 +9,10 @@ const mapStateToProps = state => ({
 });
 
 @withStyles(theme => ({
-  snack: {
+  snackbar: {
+    marginTop: theme.spacing.unit * 1,
+  },
+  snackbarContent: {
     w: theme.spacing.unit * 4,
     flexGrow: 0,
   },
@@ -40,7 +43,18 @@ class NetworkSnackbar extends Component {
 
     return (
       <Snackbar
-        className={classes.snack}
+        className={classes.snackbar}
+        ContentProps={{
+          'aria-describedby': 'snackbar-fab-message-id',
+
+          // TODO: Are we overriding the default "paper" component style
+          // globaly? The material-ui demo page has the snackbar width
+          // and corner radius set differently than our default... we need
+          // to use the overrides below to compensate. why? where in our
+          // component heirarchy are these css overides?
+          square: false,
+          className: classes.snackbarContent,
+        }}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
