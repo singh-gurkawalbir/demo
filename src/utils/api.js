@@ -17,7 +17,7 @@ export default async (path, opts = {}) => {
 
   // for development only to slow down local api calls
   // lets build for a good UX that can deal with high latency calls...
-  await delay(1900);
+  await delay(300);
   const response = await fetch(`/api${path}`, options);
 
   return response.json();

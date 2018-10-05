@@ -45,8 +45,6 @@ class NetworkSnackbar extends Component {
       <Snackbar
         className={classes.snackbar}
         ContentProps={{
-          'aria-describedby': 'snackbar-fab-message-id',
-
           // TODO: Are we overriding the default "paper" component style
           // globaly? The material-ui demo page has the snackbar width
           // and corner radius set differently than our default... we need

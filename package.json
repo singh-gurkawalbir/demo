@@ -37,7 +37,7 @@
     "redux-saga": "0.16.0",
     "redbox-react": "1.6.0",
     "typeface-roboto": "0.0.54",
-    "eslint-plugin-jest": "^21.24.1"
+    "eslint-plugin-jest": "21.24.1"
   },
   "devDependencies": {
     "babel-register": "6.26.0",

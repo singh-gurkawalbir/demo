@@ -18,26 +18,24 @@ const theme = themeProvider('light');
 
 module.exports = {
   use: [
-    // "@neutrinojs/node",
+    '@neutrinojs/node',
     [
       '@neutrinojs/jest',
       {
         bail: false,
         testRegex: undefined,
+        collectCoverage: true,
         // testPathIgnorePatterns: [
         //   "/node_modules/",
         //   "/src/views/",
         //   "/src/components/"
         // ],
-        // collectCoverageFrom: [
-        //   "!<rootDir>/node_modules/",
-        //   "!<rootDir>/build/",
-        //   "!<rootDir>/src/views",
-        //   "!<rootDir>/src/components",
-        //   "!<rootDir>/src/actions",
-        //   "src/reducers/**/*.{js,jsx}",
-        //   "src/sagas/**/*.{js,jsx}"
-        // ]
+        collectCoverageFrom: [
+          //"!<rootDir>/node_modules/",
+          //"!<rootDir>/build/",
+          'src/reducers/**/*.{js,jsx}',
+          'src/sagas/**/*.{js,jsx}',
+        ],
       },
     ],
     [
