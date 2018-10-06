@@ -1,16 +1,12 @@
+// TODO: Figure out ho to configure the linter to ignore warnings about global
+// references introduced by JEST. Witout the below exclusion in every test file,
+// the linter precommit step will fail. ...and the IDE doesnt like the globals
+// either.
 /* global describe, test, expect */
 import reducer, * as selectors from './';
 import actions, { availableResources } from '../../actions';
 
-// TODO: the vsCode "jest" extension does not understand the Neutrino
-// configuration so the built in IDE features do not work... :(
-// we need to manually create/configure babel config file to replicate what
-// Neutrino has set-up
-
-// "matcher" reference: https://jestjs.io/docs/en/using-matchers
-
-// TODO: as more resource types come "online" in our app, we need to keep
-// the below const up-to-date-. Maybe move this const to actions...
+// Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 
 describe('comms reducers', () => {
   availableResources.forEach(resource => {
@@ -63,6 +59,11 @@ describe('comms reducers', () => {
         expect(state[resource].error).toEqual('error');
       });
 
+      test('should default an error message if none is provided in the action', () => {
+        const state = reducer(undefined, actions[resource].failure());
+
+        expect(state[resource].error).toEqual('unknown error');
+      });
       test('should clear loading and retry count', () => {
         let state = reducer(undefined, actions[resource].request());
 
@@ -143,6 +144,110 @@ describe('comms selectors', () => {
           expect(count).toBe(i);
         }
       });
+    });
+  });
+  describe('allLoadingOrErrored', () => {
+    test('should return null on bad state', () => {
+      let result;
+
+      result = selectors.allLoadingOrErrored(undefined);
+      expect(result).toBeNull();
+
+      result = selectors.allLoadingOrErrored(null);
+      expect(result).toBeNull();
+
+      result = selectors.allLoadingOrErrored(123);
+      expect(result).toBeNull();
+
+      result = selectors.allLoadingOrErrored('hello world');
+      expect(result).toBeNull();
+
+      result = selectors.allLoadingOrErrored(true);
+      expect(result).toBeNull();
+    });
+
+    test('should return null on valid state, with no resource network activity', () => {
+      const result = selectors.allLoadingOrErrored([]);
+
+      expect(result).toBeNull();
+    });
+
+    test('should return null on valid state, with resource network activity but no pending loading or errors.', () => {
+      let state;
+
+      // assign
+      state = reducer(state, actions.exports.request());
+      state = reducer(state, actions.exports.received());
+
+      // act
+      const result = selectors.allLoadingOrErrored(state);
+
+      // assert
+      expect(result).toBeNull();
+    });
+
+    test('should return proper result when 1 resource is loading.', () => {
+      // assign
+      const state = reducer(undefined, actions.exports.request());
+      // act
+      const result = selectors.allLoadingOrErrored(state);
+
+      // assert
+      expect(result).toEqual([
+        {
+          error: undefined,
+          isLoading: true,
+          name: 'exports',
+          retryCount: 0,
+        },
+      ]);
+    });
+
+    test('should return proper result when several resources are loading.', () => {
+      // assign
+      let state;
+
+      state = reducer(state, actions.exports.request());
+      state = reducer(state, actions.imports.request());
+
+      // act
+      const result = selectors.allLoadingOrErrored(state);
+
+      // assert
+      expect(result).toEqual([
+        {
+          error: undefined,
+          isLoading: true,
+          name: 'exports',
+          retryCount: 0,
+        },
+        {
+          error: undefined,
+          isLoading: true,
+          name: 'imports',
+          retryCount: 0,
+        },
+      ]);
+    });
+
+    test('should return proper result when a resource network call errored.', () => {
+      // assign
+      const state = reducer(
+        undefined,
+        actions.exports.failure('my nice error')
+      );
+      // act
+      const result = selectors.allLoadingOrErrored(state);
+
+      // assert
+      expect(result).toEqual([
+        {
+          error: 'my nice error',
+          isLoading: false,
+          name: 'exports',
+          retryCount: 0,
+        },
+      ]);
     });
   });
 });

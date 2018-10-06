@@ -33,7 +33,7 @@ export default (state = initialState, action) => {
   if (action.error) {
     const status = Object.assign({}, state[action.error]) || {};
 
-    status.error = action.message;
+    status.error = action.message || 'unknown error';
     delete status.retry;
     status.loading = false;
 
@@ -57,6 +57,10 @@ export function error(state, resourceName) {
 }
 
 export function allLoadingOrErrored(state) {
+  if (!state || typeof state !== 'object') {
+    return null;
+  }
+
   const resources = [];
 
   Object.keys(state).forEach(key => {

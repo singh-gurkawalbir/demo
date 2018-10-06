@@ -22,19 +22,21 @@ module.exports = {
     [
       '@neutrinojs/jest',
       {
+        // TODO: add jest config to set proper threshholds for "success"
+        // this will be important when we force a precommit rule to pass
+        // the jest test runner... the thresholds are needed to tell the
+        // jest cli to not return error codes... Lets set code coverage to
+        // 90%.
         bail: false,
         testRegex: undefined,
         collectCoverage: true,
-        // testPathIgnorePatterns: [
-        //   "/node_modules/",
-        //   "/src/views/",
-        //   "/src/components/"
-        // ],
         collectCoverageFrom: [
-          //"!<rootDir>/node_modules/",
-          //"!<rootDir>/build/",
+          // If we consistently follow the current abstractions,
+          // these should be the only folders that need test coverage...
+          'src/actions/**/*.{js,jsx}',
           'src/reducers/**/*.{js,jsx}',
           'src/sagas/**/*.{js,jsx}',
+          'src/utils/**/*.{js,jsx}',
         ],
       },
     ],
