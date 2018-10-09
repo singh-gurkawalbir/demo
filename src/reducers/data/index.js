@@ -25,7 +25,7 @@ const getConnectionMap = connections => {
 export function resourceList(state, { name, take, keyword }) {
   // console.log('selector args', state, name, take, keyword);
 
-  if (!name || typeof name !== 'string') {
+  if (!state || !name || typeof name !== 'string') {
     return [];
   }
 
@@ -56,7 +56,12 @@ export function resourceList(state, { name, take, keyword }) {
   };
 
   const filteredData = filledResources.filter(matchTest);
-  const pageData = filteredData.slice(0, take || 1);
+
+  if (!take || typeof take !== 'number') {
+    return filteredData;
+  }
+
+  const pageData = filteredData.slice(0, take);
 
   if (!pageData) return [];
 
