@@ -1,5 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment, cloneElement } from 'react';
+import { connect } from 'react-redux';
 // import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -11,6 +12,18 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
 import TitleBar from './TitleBar';
+import * as selectors from '../../reducers';
+
+const mapStateToProps = (state, ownProps) =>
+  // console.log('mapStateToProps args', state, ownProps);
+
+  ({
+    resources: selectors.resourceList(state, {
+      name: ownProps.name,
+      take: 3,
+      keyword: undefined,
+    }),
+  });
 
 @hot(module)
 @withStyles(theme => ({
@@ -50,7 +63,7 @@ import TitleBar from './TitleBar';
     backgroundColor: 'red',
   },
 }))
-export default class DetailList extends Component {
+class ResourceList extends Component {
   // static propTypes = {
   //   itemName: PropTypes.string.isRequired,
   //   rowData: PropTypes.arrayOf(
@@ -97,36 +110,25 @@ export default class DetailList extends Component {
     });
   };
 
-  testExport = e => {
-    const { search } = this.state;
-
-    if (!search) return true;
-
-    return e.searchableText.toUpperCase().indexOf(search.toUpperCase()) >= 0;
-  };
-
   render() {
-    const { rowData, classes, itemName, children } = this.props;
+    const { resources, classes, displayName, children } = this.props;
     const { expanded, pageSize, search } = this.state;
 
     // console.log('rowData', rowData);
 
-    if (!rowData) {
+    if (!resources) {
       return (
         <Paper className={classes.paper} elevation={4}>
           <Typography variant="headline" component="h3">
-            You have no {itemName}.
+            You have no {displayName}.
           </Typography>
           <Typography component="p">
-            You can create new {itemName} by logging into:
+            You can create new {displayName} by logging into:
             <a href={process.env.API_ENDPOINT}>{process.env.API_ENDPOINT}</a>.
           </Typography>
         </Paper>
       );
     }
-
-    const filteredData = rowData.filter(this.testExport);
-    const pageData = filteredData.slice(0, pageSize);
 
     // see link below for an explanation of how we pass each item
     // to the child RowDetail component within ExpansionPanelDetails
@@ -137,39 +139,44 @@ export default class DetailList extends Component {
           <TitleBar
             searchText={search}
             handleSearch={this.onSearchChange}
-            itemName={itemName}
+            itemName={displayName}
           />
-          {pageData.map(e => (
+          {resources.map(r => (
             <ExpansionPanel
-              key={e.id}
-              expanded={expanded === e.id || pageData.length === 1}
-              onChange={this.handlePanelChange(e.id)}>
+              key={r._id}
+              expanded={expanded === r._id || resources.length === 1}
+              onChange={this.handlePanelChange(r._id)}>
               <ExpansionPanelSummary
                 classes={{ focused: classes.focusedSummary }}
                 focused={(
-                  expanded === e.id || pageData.length === 1
+                  expanded === r._id || resources.length === 1
                 ).toString()}
                 expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>{e.heading}</Typography>
-                <Typography className={classes.app}>{e.application}</Typography>
+                <Typography className={classes.heading}>
+                  {r.name || r._id}
+                </Typography>
+                <Typography className={classes.app}>
+                  {r.connection &&
+                    (r.connection.assistant || r.connection.type)}
+                </Typography>
                 <Typography className={classes.secondaryHeading}>
-                  Last modified <TimeAgo date={e.lastModified} />.
+                  Last modified <TimeAgo date={r.lastModified} />.
                 </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                {cloneElement(children, { item: e })}
+                {cloneElement(children, { item: r })}
               </ExpansionPanelDetails>
             </ExpansionPanel>
           ))}
 
-          {filteredData.length > pageSize && (
+          {resources.length > pageSize && (
             <Button
               onClick={this.handleMore}
               variant="raised"
               size="medium"
               color="primary"
               className={classes.button}>
-              More results ({filteredData.length - pageSize} left)
+              More results ({resources.length - pageSize} left)
             </Button>
           )}
         </div>
@@ -177,3 +184,5 @@ export default class DetailList extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps, null)(ResourceList);

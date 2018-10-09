@@ -11,24 +11,25 @@ const rootReducer = combineReducers({
 
 export default rootReducer;
 
-// PUBLIC DATA SELECTORS
+// TODO: Do we realy need to proxy all selectors here?
+// Instead, we could only have the selectors that cross
+// state subdivisions (marked GLOBAL right now)
+// This is a lot of boiler plate code to maintian for the
+// sole purpose of abstracting the state "shape" completely.
+// It may be just fine to directly reference the primary state
+// subdivisions (data, session, comms) in order to simplify the code further...
+
 // -------------------
 // Following this pattern:
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
-export function exportDetails(state) {
-  return fromData.exportDetails(state.data);
-}
 
-export function importDetails(state) {
-  return fromData.importDetails(state.data);
-}
-
-// PUBLIC SESSION SELECTORS
+// #region PUBLIC COMMS SELECTORS
 export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
+// #endregion
 
-// PUBLIC SESSION SELECTORS
+// #region PUBLIC SESSION SELECTORS
 export function avatarUrl(state) {
   return fromSession.avatarUrl(state.session);
 }
@@ -40,8 +41,15 @@ export function userProfile(state) {
 export function hasProfile(state) {
   return !!userProfile(state);
 }
+// #endregion
 
-// PUBLIC GLOBAL SELECTORS
+// #region PUBLIC DATA SELECTORS
+export function resourceList(state, options) {
+  return fromData.resourceList(state.data, options);
+}
+// #endregion
+
+// #region PUBLIC GLOBAL SELECTORS
 export function isProfileDataReady(state) {
   return hasProfile(state) && !fromComms.isLoading(state.comms, 'profile');
 }
@@ -69,3 +77,4 @@ export function resourceStatus(state, resource) {
     error,
   };
 }
+// #endregion

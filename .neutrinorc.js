@@ -18,7 +18,6 @@ const theme = themeProvider('light');
 
 module.exports = {
   use: [
-    '@neutrinojs/node',
     [
       '@neutrinojs/jest',
       {
@@ -26,7 +25,7 @@ module.exports = {
         // this will be important when we force a precommit rule to pass
         // the jest test runner... the thresholds are needed to tell the
         // jest cli to not return error codes... Lets set code coverage to
-        // 90%.
+        // 80%.
         bail: false,
         testRegex: undefined,
         collectCoverage: true,
@@ -36,8 +35,15 @@ module.exports = {
           'src/actions/**/*.{js,jsx}',
           'src/reducers/**/*.{js,jsx}',
           'src/sagas/**/*.{js,jsx}',
-          'src/utils/**/*.{js,jsx}',
+          // 'src/utils/**/*.{js,jsx}',
         ],
+        coverageThreshold: {
+          global: {
+            branches: 50,
+            functions: 60,
+            lines: 80,
+          },
+        },
       },
     ],
     [

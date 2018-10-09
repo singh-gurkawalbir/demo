@@ -22,59 +22,45 @@ const getConnectionMap = connections => {
   return cMap;
 };
 
-export function exportDetails({ exports, connections }) {
-  if (!exports || !connections) {
+export function resourceList(state, { name, take, keyword }) {
+  // console.log('selector args', state, name, take, keyword);
+
+  if (!name || typeof name !== 'string') {
     return [];
   }
 
-  const cMap = getConnectionMap(connections);
-  const rowData = exports.map(e => {
-    const c = cMap[e._connectionId];
+  const resources = state[name];
 
-    return {
-      id: e._id,
-      heading: (e.name || e._id) + (e.type ? ` (${e.type} export)` : ''),
-      type: e.type,
-      lastModified: e.lastModified,
-      searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-      application: (c.assistant || c.type).toUpperCase(),
-      connection: {
-        type: c.type,
-        id: c._id,
-        name: c.name || c._id,
-      },
-    };
+  if (!resources) return [];
+
+  const cMap = getConnectionMap(state.connections);
+  const filledResources = resources.map(r => {
+    const copy = Object.assign({}, r);
+
+    if (r._connectionId) {
+      copy.connection = Object.assign({}, cMap[r._connectionId]);
+    }
+
+    return copy;
   });
+  const matchTest = r => {
+    if (!keyword) return true;
 
-  return rowData;
-}
+    let searchableText = `${r._id}|${r.name}|${r.description}`;
 
-export function importDetails({ imports, connections }) {
-  if (!imports || !connections) {
-    return [];
-  }
+    if (r.connection) {
+      searchableText += `|${r.conection.name}|${r.connection.type}`;
+    }
 
-  const cMap = getConnectionMap(connections);
-  const rowData = imports.map(e => {
-    const c = cMap[e._connectionId] || {};
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
 
-    // TODO: some imports or exports don't have connections.
-    return {
-      id: e._id,
-      heading: e.name || e._id,
-      type: e.type,
-      lastModified: e.lastModified,
-      searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-      application: (c.assistant || c.type || '').toUpperCase(),
-      connection: {
-        type: c.type,
-        id: c._id,
-        name: c.name || c._id || '',
-      },
-    };
-  });
+  const filteredData = filledResources.filter(matchTest);
+  const pageData = filteredData.slice(0, take || 1);
 
-  return rowData;
+  if (!pageData) return [];
+
+  return pageData;
 }
 
 export function haveData(state, resourceName) {
