@@ -22,9 +22,33 @@ const themeName = (state = DEFAULT_THEME, action) => {
   }
 };
 
+const filters = (state = {}, action) => {
+  const { type, name, filter } = action;
+  let newState;
+
+  switch (type) {
+    case actionTypes.CLEAR_FILTER:
+      newState = Object.assign({}, state);
+
+      delete newState[name];
+
+      return newState;
+
+    case actionTypes.PATCH_FILTER:
+      newState = Object.assign({}, state);
+      newState[name] = { ...newState[name], ...filter };
+
+      return newState;
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   profile,
   themeName,
+  filters,
 });
 
 // *****************
@@ -44,4 +68,12 @@ export function userTheme(state) {
   }
 
   return state.themeName;
+}
+
+export function filter(state, name) {
+  if (!state || !state.filters) {
+    return {};
+  }
+
+  return state.filters[name];
 }

@@ -9,7 +9,7 @@ export default class Imports extends Component {
   render() {
     return (
       <LoadResources resources={['imports', 'connections']}>
-        <ResourceList name="imports" displayName="Imports">
+        <ResourceList resourceType="imports" displayName="Imports">
           <RowDetail />
         </ResourceList>
       </LoadResources>

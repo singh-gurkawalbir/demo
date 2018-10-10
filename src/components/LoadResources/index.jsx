@@ -5,13 +5,13 @@ import actions from '../../actions';
 import { resourceStatus } from '../../reducers';
 
 const mapStateToProps = (state, { resources }) => {
-  const requiredStatus = resources.reduce((acc, resource) => {
-    acc.push(resourceStatus(state, resource));
+  const requiredStatus = resources.reduce((acc, resourceType) => {
+    acc.push(resourceStatus(state, resourceType));
 
     return acc;
   }, []);
-  const isAllDataReady = requiredStatus.reduce((acc, resource) => {
-    if (!resource.isReady) {
+  const isAllDataReady = requiredStatus.reduce((acc, resourceStatus) => {
+    if (!resourceStatus.isReady) {
       return false;
     }
 

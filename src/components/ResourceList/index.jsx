@@ -1,7 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment, cloneElement } from 'react';
 import { connect } from 'react-redux';
-// import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -13,17 +12,28 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
 import TitleBar from './TitleBar';
 import * as selectors from '../../reducers';
+import actions from '../../actions';
 
-const mapStateToProps = (state, ownProps) =>
+const mapStateToProps = (state, { resourceType }) => {
   // console.log('mapStateToProps args', state, ownProps);
-
-  ({
-    resources: selectors.resourceList(state, {
-      name: ownProps.name,
-      take: 3,
-      keyword: undefined,
-    }),
+  const filter = selectors.filter(state, resourceType) || { take: 3 };
+  const list = selectors.resourceList(state, {
+    name: resourceType,
+    take: filter.take,
+    keyword: filter.keyword,
   });
+
+  return {
+    list,
+    filter,
+  };
+};
+
+const mapDispatchToProps = (dispatch, { resourceType }) => ({
+  handleMore: take => () => {
+    dispatch(actions.patchFilter(resourceType, { take }));
+  },
+});
 
 @hot(module)
 @withStyles(theme => ({
@@ -64,22 +74,7 @@ const mapStateToProps = (state, ownProps) =>
   },
 }))
 class ResourceList extends Component {
-  // static propTypes = {
-  //   itemName: PropTypes.string.isRequired,
-  //   rowData: PropTypes.arrayOf(
-  //     PropTypes.shape({
-  //       id: PropTypes.string.isRequired,
-  //       heading: PropTypes.string.isRequired,
-  //       application: PropTypes.string.isRequired,
-  //       searchableText: PropTypes.string.isRequired,
-  //       lastModified: PropTypes.string.isRequired,
-  //     })
-  //   ).isRequired,
-  // };
-
   state = {
-    search: '',
-    pageSize: 3,
     expanded: null,
   };
 
@@ -88,15 +83,8 @@ class ResourceList extends Component {
   // are placed in the search.
   // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
-  onSearchChange = event => {
-    // TODO: use this component to highlight the matching text in the resuts:
-    // https://github.com/bvaughn/react-highlight-words
-    this.setState({
-      pageSize: 3,
-      search: event.target.value,
-      expanded: null,
-    });
-  };
+  // TODO: use this component to highlight the matching text in the resuts:
+  // https://github.com/bvaughn/react-highlight-words
 
   handlePanelChange = panel => (event, expanded) => {
     this.setState({
@@ -104,19 +92,18 @@ class ResourceList extends Component {
     });
   };
 
-  handleMore = () => {
-    this.setState({
-      pageSize: this.state.pageSize + 2,
-    });
-  };
-
   render() {
-    const { resources, classes, displayName, children } = this.props;
-    const { expanded, pageSize, search } = this.state;
+    const {
+      list,
+      classes,
+      displayName,
+      children,
+      handleMore,
+      resourceType,
+    } = this.props;
+    const { expanded } = this.state;
 
-    // console.log('rowData', rowData);
-
-    if (!resources) {
+    if (!list.count) {
       return (
         <Paper className={classes.paper} elevation={4}>
           <Typography variant="headline" component="h3">
@@ -136,21 +123,15 @@ class ResourceList extends Component {
     return (
       <Fragment>
         <div className={classes.root}>
-          <TitleBar
-            searchText={search}
-            handleSearch={this.onSearchChange}
-            itemName={displayName}
-          />
-          {resources.map(r => (
+          <TitleBar resourceType={resourceType} itemName={displayName} />
+          {list.resources.map(r => (
             <ExpansionPanel
               key={r._id}
-              expanded={expanded === r._id || resources.length === 1}
+              expanded={expanded === r._id || list.count === 1}
               onChange={this.handlePanelChange(r._id)}>
               <ExpansionPanelSummary
                 classes={{ focused: classes.focusedSummary }}
-                focused={(
-                  expanded === r._id || resources.length === 1
-                ).toString()}
+                focused={(expanded === r._id || list.count === 1).toString()}
                 expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>
                   {r.name || r._id}
@@ -169,14 +150,14 @@ class ResourceList extends Component {
             </ExpansionPanel>
           ))}
 
-          {resources.length > pageSize && (
+          {list.total > list.count && (
             <Button
-              onClick={this.handleMore}
+              onClick={handleMore(list.count + 2)}
               variant="raised"
               size="medium"
               color="primary"
               className={classes.button}>
-              More results ({resources.length - pageSize} left)
+              Show more results ({list.filtered - list.count} left)
             </Button>
           )}
         </div>
@@ -185,4 +166,4 @@ class ResourceList extends Component {
   }
 }
 
-export default connect(mapStateToProps, null)(ResourceList);
+export default connect(mapStateToProps, mapDispatchToProps)(ResourceList);

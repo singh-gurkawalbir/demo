@@ -59,9 +59,20 @@ const setTheme = themeName => ({
   type: actionTypes.SET_THEME,
   themeName,
 });
+const patchFilter = (name, filter) => ({
+  type: actionTypes.PATCH_FILTER,
+  name,
+  filter,
+});
+const clearFilter = name => ({
+  type: actionTypes.CLEAR_FILTER,
+  name,
+});
 
 export default {
   setTheme,
+  patchFilter,
+  clearFilter,
   profile,
   exports,
   imports,

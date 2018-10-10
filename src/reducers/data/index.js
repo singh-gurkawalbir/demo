@@ -23,15 +23,24 @@ const getConnectionMap = connections => {
 };
 
 export function resourceList(state, { name, take, keyword }) {
+  const result = {
+    resources: [],
+    total: 0,
+    filtered: 0,
+    count: 0,
+  };
   // console.log('selector args', state, name, take, keyword);
 
   if (!state || !name || typeof name !== 'string') {
-    return [];
+    return result;
   }
 
   const resources = state[name];
 
-  if (!resources) return [];
+  if (!resources) return result;
+
+  result.total = resources.length;
+  result.count = resources.length;
 
   const cMap = getConnectionMap(state.connections);
   const filledResources = resources.map(r => {
@@ -49,7 +58,7 @@ export function resourceList(state, { name, take, keyword }) {
     let searchableText = `${r._id}|${r.name}|${r.description}`;
 
     if (r.connection) {
-      searchableText += `|${r.conection.name}|${r.connection.type}`;
+      searchableText += `|${r.connection.name}|${r.connection.type}`;
     }
 
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
@@ -57,17 +66,22 @@ export function resourceList(state, { name, take, keyword }) {
 
   const filteredData = filledResources.filter(matchTest);
 
+  result.filtered = filteredData.length;
+  result.resources = filteredData;
+
   if (!take || typeof take !== 'number') {
-    return filteredData;
+    return result;
   }
 
-  const pageData = filteredData.slice(0, take);
+  const finalResources = filteredData.slice(0, take);
 
-  if (!pageData) return [];
-
-  return pageData;
+  return {
+    ...result,
+    resources: finalResources,
+    count: finalResources.length,
+  };
 }
 
-export function haveData(state, resourceName) {
-  return !!(state && state[resourceName]);
+export function hasData(state, resourceType) {
+  return !!(state && state[resourceType]);
 }

@@ -30,6 +30,10 @@ export function allLoadingOrErrored(state) {
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
+export function filter(state, name) {
+  return fromSession.filter(state.session, name);
+}
+
 export function avatarUrl(state) {
   return fromSession.avatarUrl(state.session);
 }
@@ -56,13 +60,13 @@ export function isProfileDataReady(state) {
 
 export function isDataReady(state, resource) {
   return (
-    fromData.haveData(state.data, resource) &&
+    fromData.hasData(state.data, resource) &&
     !fromComms.isLoading(state.comms, resource)
   );
 }
 
 export function resourceStatus(state, resource) {
-  const hasData = fromData.haveData(state.data, resource);
+  const hasData = fromData.hasData(state.data, resource);
   const isLoading = fromComms.isLoading(state.comms, resource);
   const retryCount = fromComms.retryCount(state.comms, resource);
   const error = fromComms.error(state.comms, resource);

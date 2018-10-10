@@ -29,26 +29,33 @@ describe('data reducers', () => {
 
 describe('data selectors', () => {
   describe('resourceList', () => {
-    test('should return empty array on bad state.', () => {
-      const resourceList = selectors.resourceList(undefined, {
+    const emptyResult = {
+      resources: [],
+      total: 0,
+      filtered: 0,
+      count: 0,
+    };
+
+    test('should return empty result on bad state.', () => {
+      const result = selectors.resourceList(undefined, {
         name: 'exports',
       });
 
-      expect(resourceList).toEqual([]);
+      expect(result).toEqual(emptyResult);
     });
 
-    test('should return empty array on empty state.', () => {
-      const resourceList = selectors.resourceList(
+    test('should return empty result on empty state.', () => {
+      const result = selectors.resourceList(
         {},
         {
           name: 'exports',
         }
       );
 
-      expect(resourceList).toEqual([]);
+      expect(result).toEqual(emptyResult);
     });
 
-    // #region tests share this data:
+    // #region -> Tests within this code region use the context below:
     const names = ['bob', 'bill', 'will', 'bing'];
     const testExports = names.map(n => ({
       _Id: `${n}id`,
@@ -58,35 +65,56 @@ describe('data selectors', () => {
     const state = reducer(undefined, actions.exports.received(testExports));
 
     test('should return all resources when name matches resource type.', () => {
-      const resourceList = selectors.resourceList(state, {
+      const result = selectors.resourceList(state, {
         name: 'exports',
       });
-      const namesFromResources = resourceList.map(r => r.name);
+      const { resources } = result;
+      const namesFromResources = resources.map(r => r.name);
 
       expect(namesFromResources).toEqual(names);
     });
 
     test('should return only resources matching keyword in name.', () => {
-      const resourceList = selectors.resourceList(state, {
+      const result = selectors.resourceList(state, {
         name: 'exports',
         keyword: 'bi',
       });
-      const namesFromResources = resourceList.map(r => r.name);
+      const { resources } = result;
+      const namesFromResources = resources.map(r => r.name);
 
       expect(namesFromResources).toEqual(['bill', 'bing']);
     });
 
-    test('should return resources limited by take .', () => {
+    test('should return resources limited in count by take.', () => {
       const take = 3;
-      const resourceList = selectors.resourceList(state, {
+      const result = selectors.resourceList(state, {
         name: 'exports',
         take,
       });
-      const namesFromResources = resourceList.map(r => r.name);
+      const { resources } = result;
+      const namesFromResources = resources.map(r => r.name);
 
       expect(namesFromResources).toEqual(names.slice(0, take));
     });
-
     // #endregion
+  });
+
+  describe('hasData', () => {
+    test('should return false when no data in store for any resource', () => {
+      expect(selectors.hasData(undefined, 'exports')).toEqual(false);
+      expect(selectors.hasData({}, 'exports')).toEqual(false);
+    });
+
+    test('should return false when no data found for resourceType', () => {
+      const state = reducer(undefined, actions.exports.received([]));
+
+      expect(selectors.hasData(state, 'imports')).toEqual(false);
+    });
+
+    test('should return true when data found for resourceType', () => {
+      const state = reducer(undefined, actions.exports.received([]));
+
+      expect(selectors.hasData(state, 'exports')).toEqual(true);
+    });
   });
 });
