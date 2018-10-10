@@ -22,61 +22,66 @@ const getConnectionMap = connections => {
   return cMap;
 };
 
-export function exportDetails({ exports, connections }) {
-  if (!exports || !connections) {
-    return [];
+export function resourceList(state, { name, take, keyword }) {
+  const result = {
+    resources: [],
+    total: 0,
+    filtered: 0,
+    count: 0,
+  };
+  // console.log('selector args', state, name, take, keyword);
+
+  if (!state || !name || typeof name !== 'string') {
+    return result;
   }
 
-  const cMap = getConnectionMap(connections);
-  const rowData = exports.map(e => {
-    const c = cMap[e._connectionId];
+  const resources = state[name];
 
-    return {
-      id: e._id,
-      heading: (e.name || e._id) + (e.type ? ` (${e.type} export)` : ''),
-      type: e.type,
-      lastModified: e.lastModified,
-      searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-      application: (c.assistant || c.type).toUpperCase(),
-      connection: {
-        type: c.type,
-        id: c._id,
-        name: c.name || c._id,
-      },
-    };
+  if (!resources) return result;
+
+  result.total = resources.length;
+  result.count = resources.length;
+
+  const cMap = getConnectionMap(state.connections);
+  const filledResources = resources.map(r => {
+    const copy = Object.assign({}, r);
+
+    if (r._connectionId) {
+      copy.connection = Object.assign({}, cMap[r._connectionId]);
+    }
+
+    return copy;
   });
+  const matchTest = r => {
+    if (!keyword) return true;
 
-  return rowData;
-}
+    let searchableText = `${r._id}|${r.name}|${r.description}`;
 
-export function importDetails({ imports, connections }) {
-  if (!imports || !connections) {
-    return [];
+    if (r.connection) {
+      searchableText += `|${r.connection.name}|${r.connection.type}`;
+    }
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const filteredData = filledResources.filter(matchTest);
+
+  result.filtered = filteredData.length;
+  result.resources = filteredData;
+
+  if (!take || typeof take !== 'number') {
+    return result;
   }
 
-  const cMap = getConnectionMap(connections);
-  const rowData = imports.map(e => {
-    const c = cMap[e._connectionId] || {};
+  const finalResources = filteredData.slice(0, take);
 
-    // TODO: some imports or exports don't have connections.
-    return {
-      id: e._id,
-      heading: e.name || e._id,
-      type: e.type,
-      lastModified: e.lastModified,
-      searchableText: `${e.id}|${e.name}|${c.name}|${c.assistant}|${c.type}`,
-      application: (c.assistant || c.type || '').toUpperCase(),
-      connection: {
-        type: c.type,
-        id: c._id,
-        name: c.name || c._id || '',
-      },
-    };
-  });
-
-  return rowData;
+  return {
+    ...result,
+    resources: finalResources,
+    count: finalResources.length,
+  };
 }
 
-export function haveData(state, resourceName) {
-  return !!(state && state[resourceName]);
+export function hasData(state, resourceType) {
+  return !!(state && state[resourceType]);
 }

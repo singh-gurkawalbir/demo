@@ -15,6 +15,7 @@ import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import auth from '../utils/auth';
 import AppDrawer from './AppDrawer';
+import NetworkSnackbar from '../components/NetworkSnackbar';
 
 const mapStateToProps = state => ({
   themeName: state.session.themeName,
@@ -79,15 +80,7 @@ class App extends Component {
   };
 
   render() {
-    const {
-      loading,
-      error,
-      showDrawer,
-      exports,
-      imports,
-      connections,
-      authenticated,
-    } = this.state;
+    const { loading, error, showDrawer, authenticated } = this.state;
     const { themeName } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -114,6 +107,7 @@ class App extends Component {
 
     return (
       <MuiThemeProvider theme={customTheme}>
+        <NetworkSnackbar />
         <FontStager />
         <CssBaseline />
         <BrowserRouter>
@@ -131,26 +125,8 @@ class App extends Component {
 
             <Switch>
               <Route path="/pg/pipelines" component={Pipelines} />
-              <Route
-                path="/pg/exports"
-                render={props => (
-                  <Exports
-                    {...props}
-                    exports={exports}
-                    connections={connections}
-                  />
-                )}
-              />
-              <Route
-                path="/pg/imports"
-                render={props => (
-                  <Imports
-                    {...props}
-                    imports={imports}
-                    connections={connections}
-                  />
-                )}
-              />
+              <Route path="/pg/exports" component={Exports} />
+              <Route path="/pg/imports" component={Imports} />
               <Route path="/pg" component={Dashboard} />
               <Route component={NotFound} />
             </Switch>

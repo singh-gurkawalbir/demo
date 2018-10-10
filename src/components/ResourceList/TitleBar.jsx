@@ -1,8 +1,26 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
+
+const mapStateToProps = (state, { resourceType }) => {
+  const filter = selectors.filter(state, resourceType);
+  const keyword = filter ? filter.keyword || '' : '';
+
+  return { keyword };
+};
+
+const mapDispatchToProps = (dispatch, { resourceType }) => ({
+  handleKeywordChange: event => {
+    const keyword = event.target.value;
+
+    dispatch(actions.patchFilter(resourceType, { keyword }));
+  },
+});
 
 @hot(module)
 @withStyles(theme => ({
@@ -23,14 +41,14 @@ import TextField from '@material-ui/core/TextField';
     color: theme.palette.text.secondary,
   },
 }))
-export default class TitleBar extends Component {
+class TitleBar extends Component {
   // TODO: see this gist for how to bind window events to react components
   // I want this so that as a user types, the keys automatically
   // are placed in the search.
   // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
   render() {
-    const { classes, searchText, handleSearch, itemName } = this.props;
+    const { classes, keyword, handleKeywordChange, itemName } = this.props;
 
     return (
       <div className={classes.titleBox}>
@@ -39,8 +57,8 @@ export default class TitleBar extends Component {
         </Typography>
         <div className={classes.secondaryHeading}>
           <TextField
-            onChange={handleSearch}
-            value={searchText}
+            onChange={handleKeywordChange}
+            value={keyword}
             id="search"
             label={`Search by ${itemName}, Connection or Application`}
             type="search"
@@ -52,3 +70,5 @@ export default class TitleBar extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(TitleBar);

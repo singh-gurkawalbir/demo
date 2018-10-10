@@ -1,28 +1,18 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import RowDetail from './RowDetail';
-import DetailList from '../../components/DetailList';
+import ResourceList from '../../components/ResourceList';
 import LoadResources from '../../components/LoadResources';
-import { importDetails } from '../../reducers';
-
-const mapStateToProps = state => ({
-  importDetails: importDetails(state),
-});
 
 @hot(module)
-class Imports extends Component {
+export default class Imports extends Component {
   render() {
-    const { importDetails } = this.props;
-
     return (
-      <LoadResources required resources={['imports', 'connections']}>
-        <DetailList itemName="Imports" rowData={importDetails}>
+      <LoadResources resources={['imports', 'connections']}>
+        <ResourceList resourceType="imports" displayName="Imports">
           <RowDetail />
-        </DetailList>
+        </ResourceList>
       </LoadResources>
     );
   }
 }
-
-export default connect(mapStateToProps)(Imports);

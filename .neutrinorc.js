@@ -18,26 +18,32 @@ const theme = themeProvider('light');
 
 module.exports = {
   use: [
-    // "@neutrinojs/node",
     [
       '@neutrinojs/jest',
       {
+        // TODO: add jest config to set proper threshholds for "success"
+        // this will be important when we force a precommit rule to pass
+        // the jest test runner... the thresholds are needed to tell the
+        // jest cli to not return error codes... Lets set code coverage to
+        // 80%.
         bail: false,
         testRegex: undefined,
-        // testPathIgnorePatterns: [
-        //   "/node_modules/",
-        //   "/src/views/",
-        //   "/src/components/"
-        // ],
-        // collectCoverageFrom: [
-        //   "!<rootDir>/node_modules/",
-        //   "!<rootDir>/build/",
-        //   "!<rootDir>/src/views",
-        //   "!<rootDir>/src/components",
-        //   "!<rootDir>/src/actions",
-        //   "src/reducers/**/*.{js,jsx}",
-        //   "src/sagas/**/*.{js,jsx}"
-        // ]
+        collectCoverage: true,
+        collectCoverageFrom: [
+          // If we consistently follow the current abstractions,
+          // these should be the only folders that need test coverage...
+          'src/actions/**/*.{js,jsx}',
+          'src/reducers/**/*.{js,jsx}',
+          'src/sagas/**/*.{js,jsx}',
+          // 'src/utils/**/*.{js,jsx}',
+        ],
+        coverageThreshold: {
+          global: {
+            branches: 65,
+            functions: 70,
+            lines: 80,
+          },
+        },
       },
     ],
     [

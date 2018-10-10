@@ -14,6 +14,8 @@ resources.forEach(resource => {
   describe(`fetchResource("${resource}") saga`, () => {
     test('should succeed on successfull api call', () => {
       const fetchSaga = fetchResource(actions[resource], resource);
+      // next() of generator functions always return:
+      // { done: [true|false], value: {[right side of yield]} }
       const callEffect = fetchSaga.next().value;
 
       // console.log('callEffect', callEffect);

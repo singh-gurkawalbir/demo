@@ -28,8 +28,12 @@ export default class Exports extends Component {
         <Typography className={classes.exportDetails}>
           Created on {new Date(item.lastModified).toLocaleDateString()}
           <br />
-          Using a {item.connection.type.toUpperCase()} connection named:
-          {item.connection.name}
+          {item.connection && (
+            <span>
+              Using a {item.connection.type} connection named:
+              {item.connection.name || item.connection._id}
+            </span>
+          )}
         </Typography>
         <Typography className={classes.secondaryHeading}>
           <Link className={classes.link} to={`/pg/export/preview/${item._id}`}>

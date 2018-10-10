@@ -1,31 +1,18 @@
 import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
 
-const enhancedProfile = profile => {
-  if (!profile) return null;
-
-  const avatarUrl = `https://secure.gravatar.com/avatar/${
-    profile.emailHash
-  }?d=mm&s=55`;
-
-  return { ...profile, avatarUrl };
-};
-
+export const DEFAULT_THEME = 'dark';
 const profile = (state = null, action) => {
-  // console.log('session action: ', action);
-
   switch (action.type) {
     case actionTypes.PROFILE.RECEIVED:
-      return enhancedProfile(action.profile);
+      return action.profile;
 
     default:
       return state;
   }
 };
 
-const themeName = (state = 'dark', action) => {
-  // console.log('session action: ', action);
-
+const themeName = (state = DEFAULT_THEME, action) => {
   switch (action.type) {
     case actionTypes.SET_THEME:
       return action.themeName;
@@ -35,12 +22,58 @@ const themeName = (state = 'dark', action) => {
   }
 };
 
+const filters = (state = {}, action) => {
+  const { type, name, filter } = action;
+  let newState;
+
+  switch (type) {
+    case actionTypes.CLEAR_FILTER:
+      newState = Object.assign({}, state);
+
+      delete newState[name];
+
+      return newState;
+
+    case actionTypes.PATCH_FILTER:
+      newState = Object.assign({}, state);
+      newState[name] = { ...newState[name], ...filter };
+
+      return newState;
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   profile,
   themeName,
+  filters,
 });
 
+// *****************
 // PUBLIC SELECTORS
-export function haveProfile(state) {
-  return !!(state && state.profile);
+// *****************
+export function avatarUrl(state) {
+  if (!state || !state.profile) return;
+
+  return `https://secure.gravatar.com/avatar/${
+    state.profile.emailHash
+  }?d=mm&s=55`;
+}
+
+export function userTheme(state) {
+  if (!state || !state.themeName) {
+    return DEFAULT_THEME;
+  }
+
+  return state.themeName;
+}
+
+export function filter(state, name) {
+  if (!state || !state.filters) {
+    return {};
+  }
+
+  return state.filters[name];
 }
