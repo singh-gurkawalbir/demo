@@ -150,7 +150,7 @@ class ResourceList extends Component {
             </ExpansionPanel>
           ))}
 
-          {list.total > list.count && (
+          {list.filtered > list.count && (
             <Button
               onClick={handleMore(list.count + 2)}
               variant="raised"

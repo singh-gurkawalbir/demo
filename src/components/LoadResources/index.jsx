@@ -26,7 +26,7 @@ const mapStateToProps = (state, { resources }) => {
 
 const mapDispatchToProps = dispatch => ({
   requestResource: resource => {
-    // console.log(`request resource ${resource}`);
+    // console.log(`request resource "${resource}"`);
     dispatch(actions[resource].request());
   },
 });
@@ -45,7 +45,7 @@ class LoadResources extends Component {
     if (!isAllDataReady) {
       requiredStatus.forEach(resource => {
         if (!resource.hasData) {
-          requestResource(resource.name);
+          requestResource(resource.resourceType);
         }
       });
     }

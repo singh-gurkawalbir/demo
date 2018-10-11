@@ -18,7 +18,7 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
   handleKeywordChange: event => {
     const keyword = event.target.value;
 
-    dispatch(actions.patchFilter(resourceType, { keyword }));
+    dispatch(actions.patchFilter(resourceType, { keyword, take: 3 }));
   },
 });
 
