@@ -109,6 +109,7 @@ describe('session selectors', () => {
   describe(`avatarUrl`, () => {
     test('should return undefined if no profile exists', () => {
       expect(selectors.avatarUrl(undefined)).toBeUndefined();
+      expect(selectors.avatarUrl({})).toBeUndefined();
     });
 
     test('should return correct url if profile exists', () => {

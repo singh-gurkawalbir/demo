@@ -55,7 +55,7 @@ export default combineReducers({
 // PUBLIC SELECTORS
 // *****************
 export function avatarUrl(state) {
-  if (!state || !state.profile) return;
+  if (!state || !state.profile) return undefined;
 
   return `https://secure.gravatar.com/avatar/${
     state.profile.emailHash

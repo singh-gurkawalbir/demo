@@ -37,10 +37,16 @@ describe('data selectors', () => {
     };
 
     test('should return empty result on bad state.', () => {
-      const result = selectors.resourceList(undefined, {
-        name: 'exports',
+      let result = selectors.resourceList(undefined, {
+        type: 'exports',
       });
 
+      expect(result).toEqual(emptyResult);
+
+      result = selectors.resourceList({}, {});
+      expect(result).toEqual(emptyResult);
+
+      result = selectors.resourceList({}, { type: 123 });
       expect(result).toEqual(emptyResult);
     });
 
@@ -48,7 +54,7 @@ describe('data selectors', () => {
       const result = selectors.resourceList(
         {},
         {
-          name: 'exports',
+          type: 'exports',
         }
       );
 
@@ -59,6 +65,7 @@ describe('data selectors', () => {
     const names = ['bob', 'bill', 'will', 'bing'];
     const testExports = names.map(n => ({
       _Id: `${n}id`,
+      _connectionId: `conn-${n}-id`,
       name: n,
       description: `${n} description`,
     }));
@@ -66,7 +73,7 @@ describe('data selectors', () => {
 
     test('should return all resources when name matches resource type.', () => {
       const result = selectors.resourceList(state, {
-        name: 'exports',
+        type: 'exports',
       });
       const { resources } = result;
       const namesFromResources = resources.map(r => r.name);
@@ -76,7 +83,7 @@ describe('data selectors', () => {
 
     test('should return only resources matching keyword in name.', () => {
       const result = selectors.resourceList(state, {
-        name: 'exports',
+        type: 'exports',
         keyword: 'bi',
       });
       const { resources } = result;
@@ -85,16 +92,56 @@ describe('data selectors', () => {
       expect(namesFromResources).toEqual(['bill', 'bing']);
     });
 
+    test('should return only resources matching keyword in connection name.', () => {
+      const bobConn = {
+        _id: `conn-bob-id`,
+        name: 'testName',
+        description: `Test description`,
+      };
+      const newState = reducer(state, actions.connections.received([bobConn]));
+      const result = selectors.resourceList(newState, {
+        type: 'exports',
+        keyword: 'testN',
+      });
+      const { resources } = result;
+      const namesFromResources = resources.map(r => r.name);
+
+      expect(namesFromResources).toEqual(['bob']);
+    });
+
     test('should return resources limited in count by take.', () => {
       const take = 3;
       const result = selectors.resourceList(state, {
-        name: 'exports',
+        type: 'exports',
         take,
       });
       const { resources } = result;
       const namesFromResources = resources.map(r => r.name);
 
       expect(namesFromResources).toEqual(names.slice(0, take));
+    });
+
+    test('should ignore invalid take argument.', () => {
+      let result = selectors.resourceList(state, {
+        type: 'exports',
+        take: -1,
+      });
+
+      expect(result.count).toEqual(names.length);
+
+      result = selectors.resourceList(state, {
+        type: 'exports',
+        take: 0,
+      });
+
+      expect(result.count).toEqual(names.length);
+
+      result = selectors.resourceList(state, {
+        type: 'exports',
+        take: 'not a number',
+      });
+
+      expect(result.count).toEqual(names.length);
     });
     // #endregion
   });

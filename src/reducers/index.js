@@ -65,15 +65,15 @@ export function isDataReady(state, resource) {
   );
 }
 
-export function resourceStatus(state, resource) {
-  const hasData = fromData.hasData(state.data, resource);
-  const isLoading = fromComms.isLoading(state.comms, resource);
-  const retryCount = fromComms.retryCount(state.comms, resource);
-  const error = fromComms.error(state.comms, resource);
+export function resourceStatus(state, resourceType) {
+  const hasData = fromData.hasData(state.data, resourceType);
+  const isLoading = fromComms.isLoading(state.comms, resourceType);
+  const retryCount = fromComms.retryCount(state.comms, resourceType);
+  const error = fromComms.error(state.comms, resourceType);
   const isReady = hasData && !isLoading;
 
   return {
-    name: resource,
+    resourceType,
     hasData,
     isLoading,
     retryCount,
