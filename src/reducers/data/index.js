@@ -22,7 +22,7 @@ const getConnectionMap = connections => {
   return cMap;
 };
 
-export function resourceList(state, { name, take, keyword }) {
+export function resourceList(state, { type, take, keyword }) {
   const result = {
     resources: [],
     total: 0,
@@ -31,11 +31,11 @@ export function resourceList(state, { name, take, keyword }) {
   };
   // console.log('selector args', state, name, take, keyword);
 
-  if (!state || !name || typeof name !== 'string') {
+  if (!state || !type || typeof type !== 'string') {
     return result;
   }
 
-  const resources = state[name];
+  const resources = state[type];
 
   if (!resources) return result;
 
@@ -43,7 +43,7 @@ export function resourceList(state, { name, take, keyword }) {
   result.count = resources.length;
 
   const cMap = getConnectionMap(state.connections);
-  const filledResources = resources.map(r => {
+  const filled = resources.map(r => {
     const copy = Object.assign({}, r);
 
     if (r._connectionId) {
@@ -64,21 +64,21 @@ export function resourceList(state, { name, take, keyword }) {
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const filteredData = filledResources.filter(matchTest);
+  const filtered = filled.filter(matchTest);
 
-  result.filtered = filteredData.length;
-  result.resources = filteredData;
+  result.filtered = filtered.length;
+  result.resources = filtered;
 
-  if (!take || typeof take !== 'number') {
+  if (typeof take !== 'number' || take < 1) {
     return result;
   }
 
-  const finalResources = filteredData.slice(0, take);
+  const slice = filtered.slice(0, take);
 
   return {
     ...result,
-    resources: finalResources,
-    count: finalResources.length,
+    resources: slice,
+    count: slice.length,
   };
 }
 

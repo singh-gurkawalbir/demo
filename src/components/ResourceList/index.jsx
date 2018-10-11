@@ -18,7 +18,7 @@ const mapStateToProps = (state, { resourceType }) => {
   // console.log('mapStateToProps args', state, ownProps);
   const filter = selectors.filter(state, resourceType) || { take: 3 };
   const list = selectors.resourceList(state, {
-    name: resourceType,
+    type: resourceType,
     take: filter.take,
     keyword: filter.keyword,
   });
@@ -150,7 +150,7 @@ class ResourceList extends Component {
             </ExpansionPanel>
           ))}
 
-          {list.total > list.count && (
+          {list.filtered > list.count && (
             <Button
               onClick={handleMore(list.count + 2)}
               variant="raised"
