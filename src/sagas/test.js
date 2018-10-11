@@ -4,11 +4,26 @@
 
 import { call, put } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import actions from '../actions';
-import { fetchResource } from './';
+import actions, { availableResources } from '../actions';
+import rootSaga, { fetchResource } from './';
 import api from '../utils/api';
 
-const resources = ['exports', 'imports', 'connections', 'profile'];
+const resources = [...availableResources, 'profile'];
+
+describe(`root saga`, () => {
+  // NOTE, this test has little value... I added it to
+  // increase code coverage. I'm not really sure what business rules
+  // to test for the root saga... If something is not configured correctly
+  // with the root saga then a simply sanity check of the UI would show
+  // that something serious was broken... Possilby as out application
+  // gets more complex, testable business rules will become more obvious...
+  test('should return a set of effects that match available resources.', () => {
+    const sagaIterator = rootSaga();
+    const effects = sagaIterator.next();
+
+    expect(effects.value.ALL.length).toBe(resources.length);
+  });
+});
 
 resources.forEach(resource => {
   describe(`fetchResource("${resource}") saga`, () => {

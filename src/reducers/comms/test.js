@@ -8,8 +8,11 @@ import actions, { availableResources } from '../../actions';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 
+// comms reducers and seletors also operate on the profile netowrk call...
+const allResources = [...availableResources, 'profile'];
+
 describe('comms reducers', () => {
-  availableResources.forEach(resource => {
+  [...allResources, 'profile'].forEach(resource => {
     describe(`${resource} request action`, () => {
       test('should set loading flag', () => {
         const newState = reducer(undefined, actions[resource].request());
@@ -98,7 +101,7 @@ describe('comms reducers', () => {
 });
 
 describe('comms selectors', () => {
-  availableResources.forEach(resource => {
+  allResources.forEach(resource => {
     describe(`${resource} isLoading`, () => {
       test('should be false on initial state', () => {
         const isLoading = selectors.isLoading(undefined, resource);
