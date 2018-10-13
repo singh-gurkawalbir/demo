@@ -35,7 +35,18 @@ export function resource(state, resourceType, id) {
 
   const match = resources.find(r => r._id === id);
 
-  return match || null;
+  if (!match) return null;
+
+  const clone = Object.assign({}, match);
+
+  if (!clone._connectionId) return clone;
+
+  const cMap = getConnectionMap(state.connections);
+  const conn = cMap[clone._connectionId];
+
+  clone.connection = conn;
+
+  return clone;
 }
 
 export function resourceList(state, { type, take, keyword }) {

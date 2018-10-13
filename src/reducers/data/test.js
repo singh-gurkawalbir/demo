@@ -28,6 +28,45 @@ describe('data reducers', () => {
 });
 
 describe('data selectors', () => {
+  describe('resource', () => {
+    test('should return null on bad/empty state.', () => {
+      expect(selectors.resource(undefined, 'exports', 123)).toBeNull();
+      expect(selectors.resource({}, 'exports', 123)).toBeNull();
+    });
+
+    test('should return null on bad/empty arguments.', () => {
+      const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
+      const state = reducer(undefined, actions.exports.received(testExports));
+
+      expect(selectors.resource(state, 'junk', 123)).toBeNull();
+      expect(selectors.resource(state, 'exports')).toBeNull();
+      expect(selectors.resource(state)).toBeNull();
+    });
+
+    test('should return matching resource if one exists.', () => {
+      const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
+      const state = reducer(undefined, actions.exports.received(testExports));
+
+      expect(selectors.resource(state, 'exports', 234)).toEqual(testExports[0]);
+    });
+
+    test('should return matching and return filled resource if "connected" by via _connectionId.', () => {
+      const testExports = [{ _id: 234, name: 'A', _connectionId: 99 }];
+      const testConnections = [{ _id: 99, name: 'A' }];
+      let state;
+
+      state = reducer(undefined, actions.exports.received(testExports));
+      state = reducer(state, actions.connections.received(testConnections));
+
+      const filledResource = {
+        ...Object.assign({}, testExports[0]),
+        connection: testConnections[0],
+      };
+
+      expect(selectors.resource(state, 'exports', 234)).toEqual(filledResource);
+    });
+  });
+
   describe('resourceList', () => {
     const emptyResult = {
       resources: [],

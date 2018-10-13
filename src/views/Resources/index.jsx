@@ -68,10 +68,15 @@ class Resources extends Component {
   render() {
     const { allResources, classes } = this.props;
     const NoEdit = () => (
-      <Typography variant="body2">
-        Click on a resource name in the left menu to see the details of that
-        resource.
-      </Typography>
+      <div>
+        <Typography variant="title">
+          The left sidebar lists all your resources organized by type.
+        </Typography>
+        <br />
+        <Typography variant="subheading">
+          Use the keyword search to help find the resoure you are looking for.
+        </Typography>
+      </div>
     );
 
     return (

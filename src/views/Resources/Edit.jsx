@@ -1,8 +1,11 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
@@ -29,11 +32,38 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions[resource].request());
   },
 });
+const relatedComponents = (resource, className) => {
+  const { connection } = resource;
+  const components = [];
+
+  if (connection) {
+    components.push(
+      <Link
+        key="conn"
+        className={className}
+        to={`/pg/resources/connections/edit/${connection._id}`}>
+        <Button size="small" color="secondary">
+          Connected to {connection.name || connection._id}
+        </Button>
+      </Link>
+    );
+  }
+
+  return components;
+};
 
 @hot(module)
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing.unit,
+  },
+  relatedContent: {
+    textDecoration: 'none',
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: '90%',
   },
 }))
 class Edit extends Component {
@@ -47,6 +77,9 @@ class Edit extends Component {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
       };
 
       return new Date(dateString).toLocaleString(undefined, options);
@@ -55,20 +88,44 @@ class Edit extends Component {
     return resource ? (
       <LoadResources required resources={[resourceType]}>
         <Typography variant="headline">
-          {`${toName(resourceType)}: ${resource.name}`}
+          {`${toName(resourceType)}: ${resource.name || ''}`}
         </Typography>
+
+        <Typography variant="subheading">ID: {resource._id}</Typography>
+
         <Typography variant="caption">
           Last Modified: {prettyDate(resource.lastModified)}
         </Typography>
-        <Typography variant="subheading">ID: {resource._id}</Typography>
+
+        {relatedComponents(resource, classes.relatedContent)}
+
         <div className={classes.editableFields}>
-          <div>Name: {resource.name}</div>
-          <div>Description: {resource.description}</div>
+          <form>
+            <TextField
+              id="name"
+              label="Name"
+              rowsMax="4"
+              value={resource.name || ''}
+              // onChange={this.handleChange('multiline')}
+              className={classes.textField}
+              margin="normal"
+            />
+            <TextField
+              id="description"
+              label="Description"
+              multiline
+              rowsMax="4"
+              value={resource.description || ''}
+              // onChange={this.handleChange('multiline')}
+              className={classes.textField}
+              margin="normal"
+            />
+          </form>
         </div>
       </LoadResources>
     ) : (
       <Typography variant="headline">
-        No {resourceType} found with the if {id}
+        No {toName(resourceType)} found with id {id}.
       </Typography>
     );
   }
