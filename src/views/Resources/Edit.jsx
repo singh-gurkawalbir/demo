@@ -1,6 +1,7 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
@@ -30,16 +31,40 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @hot(module)
+@withStyles(theme => ({
+  editableFields: {
+    paddingTop: theme.spacing.unit,
+  },
+}))
 class Edit extends Component {
   render() {
-    const { id, resource, resourceType } = this.props;
+    const { id, resource, resourceType, classes } = this.props;
+    const toName = resourceType =>
+      resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
+    const prettyDate = dateString => {
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      };
+
+      return new Date(dateString).toLocaleString(undefined, options);
+    };
 
     return resource ? (
       <LoadResources required resources={[resourceType]}>
-        <h3>ID: {resource._id}</h3>
-        <div>Name: {resource.name}</div>
-        <div>Description: {resource.description}</div>
-        <div>Last Modified: {resource.lastModified}</div>
+        <Typography variant="headline">
+          {`${toName(resourceType)}: ${resource.name}`}
+        </Typography>
+        <Typography variant="caption">
+          Last Modified: {prettyDate(resource.lastModified)}
+        </Typography>
+        <Typography variant="subheading">ID: {resource._id}</Typography>
+        <div className={classes.editableFields}>
+          <div>Name: {resource.name}</div>
+          <div>Description: {resource.description}</div>
+        </div>
       </LoadResources>
     ) : (
       <Typography variant="headline">

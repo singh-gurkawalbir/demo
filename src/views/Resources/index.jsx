@@ -7,7 +7,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import LoadResources from '../../components/LoadResources';
-import actions, { availableResources } from '../../actions';
+import { availableResources } from '../../actions';
 import FilteredResources from './FilteredResources';
 import Edit from './Edit';
 import SearchOptions from './SearchOptions';
@@ -15,12 +15,14 @@ import * as selectors from '../../reducers';
 
 const mapStateToProps = state => {
   const filterName = 'allResources';
-  const filter = selectors.filter(state, filterName) || { take: 3 };
+  // TODO: Change filter selector to return {} instead of null.
+  // Lots of null checks saved...
+  const filter = selectors.filter(state, filterName) || {};
   const allResources = availableResources.map(resourceType => {
-    const resourceFilter = selectors.filter(state, resourceType) || { take: 3 };
+    const resourceFilter = selectors.filter(state, resourceType) || {};
     const resources = selectors.resourceList(state, {
       type: resourceType,
-      take: resourceFilter.take,
+      take: resourceFilter.take || 3,
       keyword: filter.keyword,
     });
 
@@ -32,13 +34,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  requestResource: resource => {
-    // console.log(`request resource "${resource}"`);
-    dispatch(actions[resource].request());
-  },
-});
-const drawerWidth = 350;
+const drawerWidth = 320;
 
 @hot(module)
 @withStyles(theme => ({
@@ -108,4 +104,4 @@ class Resources extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Resources);
+export default connect(mapStateToProps, null)(Resources);
