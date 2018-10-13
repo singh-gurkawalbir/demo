@@ -41,13 +41,13 @@ describe('data selectors', () => {
         type: 'exports',
       });
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual({ ...emptyResult, type: 'exports' });
 
       result = selectors.resourceList({}, {});
       expect(result).toEqual(emptyResult);
 
       result = selectors.resourceList({}, { type: 123 });
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual({ ...emptyResult, type: 123 });
     });
 
     test('should return empty result on empty state.', () => {
@@ -58,7 +58,7 @@ describe('data selectors', () => {
         }
       );
 
-      expect(result).toEqual(emptyResult);
+      expect(result).toEqual({ ...emptyResult, type: 'exports' });
     });
 
     // #region -> Tests within this code region use the context below:

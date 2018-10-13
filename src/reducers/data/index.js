@@ -22,9 +22,26 @@ const getConnectionMap = connections => {
   return cMap;
 };
 
+export function resource(state, resourceType, id) {
+  // console.log('fetch', resourceType, id);
+
+  if (!state || !id || !resourceType) {
+    return null;
+  }
+
+  const resources = state[resourceType];
+
+  if (!resources) return null;
+
+  const match = resources.find(r => r._id === id);
+
+  return match || null;
+}
+
 export function resourceList(state, { type, take, keyword }) {
   const result = {
     resources: [],
+    type,
     total: 0,
     filtered: 0,
     count: 0,
