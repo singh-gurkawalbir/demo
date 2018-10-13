@@ -25,6 +25,7 @@ export default class Exports extends Component {
 
     return (
       <Fragment>
+        {item.description && <div>{item.description}</div>}
         <Typography className={classes.exportDetails}>
           Created on {new Date(item.lastModified).toLocaleDateString()}
           <br />
@@ -36,19 +37,17 @@ export default class Exports extends Component {
           )}
         </Typography>
         <Typography className={classes.secondaryHeading}>
-          <Link className={classes.link} to={`/pg/export/preview/${item._id}`}>
-            Preview this Export
+          <Link
+            className={classes.link}
+            to={`/pg/resources/exports/edit/${item._id}`}>
+            Edit this Export
           </Link>
           <br />
-          <Link className={classes.link} to="/pg/export/clone">
+          <Link className={classes.link} to="/pg/exports/clone">
             Clone this Export
           </Link>
           <br />
-          <Link className={classes.link} to="/pg/export/publish">
-            Publish export data to Data Pipeline
-          </Link>
-          <br />
-          <Link className={classes.link} to="/pg/export/clone">
+          <Link className={classes.link} to="/pg/exports/audit">
             View Audit Log
           </Link>
         </Typography>

@@ -48,6 +48,10 @@ export function hasProfile(state) {
 // #endregion
 
 // #region PUBLIC DATA SELECTORS
+export function resource(state, resourceType, id) {
+  return fromData.resource(state.data, resourceType, id);
+}
+
 export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }

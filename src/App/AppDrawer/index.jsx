@@ -36,6 +36,16 @@ export default class AppDrawer extends Component {
               <ListItemText primary="Dashboard" />
             </ListItem>
 
+            <ListItem button component={Link} to="/pg/resources">
+              <ListItemIcon>
+                <DataUsageIcon />
+              </ListItemIcon>
+              <ListItemText primary="Resources" />
+            </ListItem>
+
+            <Divider />
+            <Divider />
+
             <ListItem button component={Link} to="/pg/exports">
               <ListItemIcon>
                 <CloudDownloadIcon />
@@ -48,15 +58,6 @@ export default class AppDrawer extends Component {
                 <CloudUploadIcon />
               </ListItemIcon>
               <ListItemText primary="Imports" />
-            </ListItem>
-          </List>
-          <Divider />
-          <List>
-            <ListItem button component={Link} to="/pg/pipelines">
-              <ListItemIcon>
-                <DataUsageIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create Data Pipeline" />
             </ListItem>
           </List>
         </div>

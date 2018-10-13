@@ -23,11 +23,11 @@ const mapStateToProps = state => ({
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
-const Pipelines = loadable(() =>
-  import(/* webpackChunkName: 'Pipelines' */ '../views/Pipelines')
-);
 const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
+);
+const Resources = loadable(() =>
+  import(/* webpackChunkName: 'Resources' */ '../views/Resources')
 );
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/Exports')
@@ -107,11 +107,11 @@ class App extends Component {
 
     return (
       <MuiThemeProvider theme={customTheme}>
-        <NetworkSnackbar />
         <FontStager />
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
+            <NetworkSnackbar />
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
@@ -124,7 +124,7 @@ class App extends Component {
             />
 
             <Switch>
-              <Route path="/pg/pipelines" component={Pipelines} />
+              <Route path="/pg/resources" component={Resources} />
               <Route path="/pg/exports" component={Exports} />
               <Route path="/pg/imports" component={Imports} />
               <Route path="/pg" component={Dashboard} />
