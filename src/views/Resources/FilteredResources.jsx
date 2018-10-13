@@ -2,8 +2,14 @@ import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import TimeAgo from 'react-timeago';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import ImageIcon from '@material-ui/icons/Image';
 import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 
@@ -17,10 +23,13 @@ const mapDispatchToProps = (dispatch, { list }) => ({
 @withStyles(theme => ({
   root: {
     marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    // marginLeft: theme.spacing.unit,
   },
   resourceItems: {
     marginLeft: theme.spacing.unit,
+  },
+  listItem: {
+    paddingTop: 0,
   },
 }))
 class FilteredResources extends Component {
@@ -37,21 +46,35 @@ class FilteredResources extends Component {
       );
     }
 
+    const daysOld = lastModified => (
+      <span>
+        Modified <TimeAgo date={lastModified} /> ago.
+      </span>
+    );
+
     return (
       <Fragment>
         <div className={classes.root}>
           <Typography variant="headline">
             {resourceType.toUpperCase()}
           </Typography>
-          <div className={classes.resourceItems}>
+          <List>
             {list.resources.map(r => (
-              <Typography
+              <ListItem
+                className={classes.listItem}
+                button
                 key={r._id}
-                variant="body2"
                 component={Link}
                 to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-                {r.name || r._id}
-              </Typography>
+                <Avatar>
+                  <ImageIcon />
+                </Avatar>
+                <ListItemText
+                  primary={r.name || r._id}
+                  secondary={daysOld(r.lastModified)}
+                  secondaryTypographyProps={{ variant: 'caption' }}
+                />
+              </ListItem>
             ))}
 
             {list.filtered > list.count && (
@@ -62,7 +85,7 @@ class FilteredResources extends Component {
                 Show more results ({list.filtered - list.count} left)
               </Button>
             )}
-          </div>
+          </List>
         </div>
       </Fragment>
     );

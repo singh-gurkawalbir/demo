@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import * as selectors from '../../reducers';
-import actions from '../../actions';
+import actions, { availableResources } from '../../actions';
 
 const filterName = 'allResources';
 const mapStateToProps = state => {
@@ -18,6 +18,9 @@ const mapDispatchToProps = dispatch => ({
     const keyword = event.target.value;
 
     dispatch(actions.patchFilter(filterName, { keyword }));
+    availableResources.forEach(resourceType => {
+      dispatch(actions.clearFilter(resourceType));
+    });
   },
 });
 
