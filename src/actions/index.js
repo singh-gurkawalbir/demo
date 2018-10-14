@@ -68,11 +68,28 @@ const clearFilter = name => ({
   type: actionTypes.CLEAR_FILTER,
   name,
 });
+const patchStagedResource = (id, patch) => ({
+  type: actionTypes.PATCH_STAGED_RESOURCE,
+  id,
+  patch,
+});
+const clearStagedResource = id => ({
+  type: actionTypes.CLEAR_STAGED_RESOURCE,
+  id,
+});
+const commitStagedResource = (resourceType, id) => ({
+  type: actionTypes.COMMIT_STAGED_RESOURCE,
+  resourceType,
+  id,
+});
 
 export default {
   setTheme,
   patchFilter,
   clearFilter,
+  patchStagedResource,
+  clearStagedResource,
+  commitStagedResource,
   profile,
   exports,
   imports,

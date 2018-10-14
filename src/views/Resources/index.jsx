@@ -15,11 +15,9 @@ import * as selectors from '../../reducers';
 
 const mapStateToProps = state => {
   const filterName = 'allResources';
-  // TODO: Change filter selector to return {} instead of null.
-  // Lots of null checks saved...
-  const filter = selectors.filter(state, filterName) || {};
+  const filter = selectors.filter(state, filterName);
   const allResources = availableResources.map(resourceType => {
-    const resourceFilter = selectors.filter(state, resourceType) || {};
+    const resourceFilter = selectors.filter(state, resourceType);
     const resources = selectors.resourceList(state, {
       type: resourceType,
       take: resourceFilter.take || 3,
@@ -68,10 +66,15 @@ class Resources extends Component {
   render() {
     const { allResources, classes } = this.props;
     const NoEdit = () => (
-      <Typography variant="body2">
-        Click on a resource name in the left menu to see the details of that
-        resource.
-      </Typography>
+      <div>
+        <Typography variant="title">
+          The left sidebar lists all your resources organized by type.
+        </Typography>
+        <br />
+        <Typography variant="subheading">
+          Use the keyword search to help find the resoure you are looking for.
+        </Typography>
+      </div>
     );
 
     return (

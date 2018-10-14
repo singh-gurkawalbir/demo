@@ -1,74 +1,171 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
-
-// import { withStyles } from '@material-ui/core/styles';
 
 // TODO: Write a saga to ratelimit the keyword search
 // to prevent dom updates unnecessarily
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
-  const resource = selectors.resource(state, resourceType, id);
+  const resourceData = selectors.resourceData(state, resourceType, id);
 
   return {
     resourceType,
-    resource,
+    resourceData,
     id,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  requestResource: resource => {
-    // console.log(`request resource "${resource}"`);
-    dispatch(actions[resource].request());
-  },
-});
+const mapDispatchToProps = (dispatch, { match }) => {
+  const { id, resourceType } = match.params;
+
+  return {
+    handleInputChange: event => {
+      const { value } = event.target;
+      const property = event.target.id;
+      const patch = {};
+
+      patch[property] = value;
+      dispatch(actions.patchStagedResource(id, patch));
+    },
+    handleCommitChanges: () => {
+      dispatch(actions.commitStagedResource(resourceType, id));
+    },
+    handleRevertChanges: () => {
+      dispatch(actions.clearStagedResource(id));
+    },
+  };
+};
+
+const relatedComponents = (resource, className) => {
+  const { connection } = resource;
+  const components = [];
+
+  if (connection) {
+    components.push(
+      <Link
+        key="conn"
+        className={className}
+        to={`/pg/resources/connections/edit/${connection._id}`}>
+        <Button size="small" color="secondary">
+          Connected to {connection.name || connection._id}
+        </Button>
+      </Link>
+    );
+  }
+
+  return components;
+};
+
+const toName = resourceType =>
+  resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
+const prettyDate = dateString => {
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+
+  return new Date(dateString).toLocaleString(undefined, options);
+};
 
 @hot(module)
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing.unit,
   },
+  relatedContent: {
+    textDecoration: 'none',
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: '90%',
+  },
 }))
 class Edit extends Component {
   render() {
-    const { id, resource, resourceType, classes } = this.props;
-    const toName = resourceType =>
-      resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
-    const prettyDate = dateString => {
-      const options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      };
+    const {
+      id,
+      resourceData,
+      resourceType,
+      classes,
+      handleInputChange,
+      handleCommitChanges,
+      handleRevertChanges,
+    } = this.props;
+    const { merged, staged } = resourceData;
 
-      return new Date(dateString).toLocaleString(undefined, options);
-    };
-
-    return resource ? (
+    return merged ? (
       <LoadResources required resources={[resourceType]}>
         <Typography variant="headline">
-          {`${toName(resourceType)}: ${resource.name}`}
+          {`${toName(resourceType)}: ${merged.name || ''}`}
         </Typography>
+
+        <Typography variant="subheading">ID: {merged._id}</Typography>
+
         <Typography variant="caption">
-          Last Modified: {prettyDate(resource.lastModified)}
+          Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
-        <Typography variant="subheading">ID: {resource._id}</Typography>
+
+        {relatedComponents(merged, classes.relatedContent)}
+
         <div className={classes.editableFields}>
-          <div>Name: {resource.name}</div>
-          <div>Description: {resource.description}</div>
+          <form>
+            <TextField
+              id="name"
+              label="Name"
+              rowsMax="4"
+              value={merged.name || ''}
+              onChange={handleInputChange}
+              className={classes.textField}
+              margin="normal"
+            />
+            <TextField
+              id="description"
+              label="Description"
+              multiline
+              rowsMax="4"
+              value={merged.description || ''}
+              onChange={handleInputChange}
+              className={classes.textField}
+              margin="normal"
+            />
+            {staged && (
+              <div>
+                <Button
+                  onClick={handleCommitChanges}
+                  size="small"
+                  color="secondary">
+                  Commit Changes
+                </Button>
+
+                <Button
+                  onClick={handleRevertChanges}
+                  size="small"
+                  color="primary">
+                  Revert
+                </Button>
+              </div>
+            )}
+          </form>
         </div>
       </LoadResources>
     ) : (
       <Typography variant="headline">
-        No {resourceType} found with the if {id}
+        No {toName(resourceType)} found with id {id}.
       </Typography>
     );
   }

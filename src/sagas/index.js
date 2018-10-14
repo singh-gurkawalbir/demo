@@ -1,4 +1,4 @@
-import { all, call, takeLatest, put } from 'redux-saga/effects';
+import { all, call, put, takeLatest } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import actions from '../actions';
 import actionTypes from '../actions/types';
@@ -31,6 +31,10 @@ export function* fetchResource(action, path) {
   }
 }
 
+// export function* commitStagedChanges(action) {
+//   const staged = sel;
+// }
+
 export default function* rootSaga() {
   yield all([
     takeLatest(actionTypes.PROFILE.REQUEST, fetchResource, profile, 'profile'),
@@ -42,5 +46,6 @@ export default function* rootSaga() {
       connections,
       'connections'
     ),
+    // takeEvery(actionTypes.COMMIT_STAGED_RESOURCE, commitStagedChanges),
   ]);
 }
