@@ -10,28 +10,41 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 
-// import { withStyles } from '@material-ui/core/styles';
-
 // TODO: Write a saga to ratelimit the keyword search
 // to prevent dom updates unnecessarily
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
-  const resource = selectors.resource(state, resourceType, id);
+  const resourceData = selectors.resourceData(state, resourceType, id);
 
   return {
     resourceType,
-    resource,
+    resourceData,
     id,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  requestResource: resource => {
-    // console.log(`request resource "${resource}"`);
-    dispatch(actions[resource].request());
-  },
-});
+const mapDispatchToProps = (dispatch, { match }) => {
+  const { id, resourceType } = match.params;
+
+  return {
+    handleInputChange: event => {
+      const { value } = event.target;
+      const property = event.target.id;
+      const patch = {};
+
+      patch[property] = value;
+      dispatch(actions.patchStagedResource(id, patch));
+    },
+    handleCommitChanges: () => {
+      dispatch(actions.commitStagedResource(resourceType, id));
+    },
+    handleRevertChanges: () => {
+      dispatch(actions.clearStagedResource(id));
+    },
+  };
+};
+
 const relatedComponents = (resource, className) => {
   const { connection } = resource;
   const components = [];
@@ -52,6 +65,22 @@ const relatedComponents = (resource, className) => {
   return components;
 };
 
+const toName = resourceType =>
+  resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
+const prettyDate = dateString => {
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+
+  return new Date(dateString).toLocaleString(undefined, options);
+};
+
 @hot(module)
 @withStyles(theme => ({
   editableFields: {
@@ -68,36 +97,30 @@ const relatedComponents = (resource, className) => {
 }))
 class Edit extends Component {
   render() {
-    const { id, resource, resourceType, classes } = this.props;
-    const toName = resourceType =>
-      resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
-    const prettyDate = dateString => {
-      const options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      };
+    const {
+      id,
+      resourceData,
+      resourceType,
+      classes,
+      handleInputChange,
+      handleCommitChanges,
+      handleRevertChanges,
+    } = this.props;
+    const { merged, staged } = resourceData;
 
-      return new Date(dateString).toLocaleString(undefined, options);
-    };
-
-    return resource ? (
+    return merged ? (
       <LoadResources required resources={[resourceType]}>
         <Typography variant="headline">
-          {`${toName(resourceType)}: ${resource.name || ''}`}
+          {`${toName(resourceType)}: ${merged.name || ''}`}
         </Typography>
 
-        <Typography variant="subheading">ID: {resource._id}</Typography>
+        <Typography variant="subheading">ID: {merged._id}</Typography>
 
         <Typography variant="caption">
-          Last Modified: {prettyDate(resource.lastModified)}
+          Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
 
-        {relatedComponents(resource, classes.relatedContent)}
+        {relatedComponents(merged, classes.relatedContent)}
 
         <div className={classes.editableFields}>
           <form>
@@ -105,8 +128,8 @@ class Edit extends Component {
               id="name"
               label="Name"
               rowsMax="4"
-              value={resource.name || ''}
-              // onChange={this.handleChange('multiline')}
+              value={merged.name || ''}
+              onChange={handleInputChange}
               className={classes.textField}
               margin="normal"
             />
@@ -115,11 +138,28 @@ class Edit extends Component {
               label="Description"
               multiline
               rowsMax="4"
-              value={resource.description || ''}
-              // onChange={this.handleChange('multiline')}
+              value={merged.description || ''}
+              onChange={handleInputChange}
               className={classes.textField}
               margin="normal"
             />
+            {staged && (
+              <div>
+                <Button
+                  onClick={handleCommitChanges}
+                  size="small"
+                  color="secondary">
+                  Commit Changes
+                </Button>
+
+                <Button
+                  onClick={handleRevertChanges}
+                  size="small"
+                  color="primary">
+                  Revert
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </LoadResources>

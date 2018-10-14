@@ -22,6 +22,32 @@ const themeName = (state = DEFAULT_THEME, action) => {
   }
 };
 
+const stagedResources = (state = {}, action) => {
+  const { type, id, patch } = action;
+  let newState;
+
+  switch (type) {
+    case actionTypes.CLEAR_STAGED_RESOURCE:
+      newState = Object.assign({}, state);
+
+      delete newState[id];
+
+      return newState;
+
+    case actionTypes.PATCH_STAGED_RESOURCE:
+      newState = Object.assign({}, state);
+
+      // TODO: there needs to be a deep copy here...
+      // this is temp code to test our the pattern.
+      newState[id] = { ...newState[id], ...patch };
+
+      return newState;
+
+    default:
+      return state;
+  }
+};
+
 const filters = (state = {}, action) => {
   const { type, name, filter } = action;
   let newState;
@@ -49,6 +75,7 @@ export default combineReducers({
   profile,
   themeName,
   filters,
+  stagedResources,
 });
 
 // *****************
@@ -75,5 +102,13 @@ export function filter(state, name) {
     return {};
   }
 
-  return state.filters[name];
+  return state.filters[name] || {};
+}
+
+export function stagedResource(state, id) {
+  if (!state || !state.stagedResources || !id) {
+    return null;
+  }
+
+  return state.stagedResources[id];
 }

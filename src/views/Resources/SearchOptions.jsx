@@ -10,7 +10,7 @@ const filterName = 'allResources';
 const mapStateToProps = state => {
   const filter = selectors.filter(state, filterName) || {};
 
-  return { keyword: filter.keyword };
+  return { keyword: filter.keyword || '' };
 };
 
 const mapDispatchToProps = dispatch => ({

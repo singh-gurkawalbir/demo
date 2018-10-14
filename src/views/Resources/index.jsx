@@ -15,11 +15,9 @@ import * as selectors from '../../reducers';
 
 const mapStateToProps = state => {
   const filterName = 'allResources';
-  // TODO: Change filter selector to return {} instead of null.
-  // Lots of null checks saved...
-  const filter = selectors.filter(state, filterName) || {};
+  const filter = selectors.filter(state, filterName);
   const allResources = availableResources.map(resourceType => {
-    const resourceFilter = selectors.filter(state, resourceType) || {};
+    const resourceFilter = selectors.filter(state, resourceType);
     const resources = selectors.resourceList(state, {
       type: resourceType,
       take: resourceFilter.take || 3,

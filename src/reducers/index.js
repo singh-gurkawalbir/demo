@@ -49,6 +49,8 @@ export function hasProfile(state) {
 
 // #region PUBLIC DATA SELECTORS
 export function resource(state, resourceType, id) {
+  if (!state) return null;
+
   return fromData.resource(state.data, resourceType, id);
 }
 
@@ -59,7 +61,11 @@ export function resourceList(state, options) {
 
 // #region PUBLIC GLOBAL SELECTORS
 export function isProfileDataReady(state) {
-  return hasProfile(state) && !fromComms.isLoading(state.comms, 'profile');
+  return !!(
+    state &&
+    hasProfile(state) &&
+    !fromComms.isLoading(state.comms, 'profile')
+  );
 }
 
 export function isDataReady(state, resource) {
@@ -83,6 +89,21 @@ export function resourceStatus(state, resourceType) {
     retryCount,
     isReady,
     error,
+  };
+}
+
+export function resourceData(state, resourceType, id) {
+  const r = resource(state, resourceType, id);
+
+  if (!r) return null;
+
+  const staged = fromSession.stagedResource(state.session, id);
+  const merged = staged ? { ...r, ...staged } : r;
+
+  return {
+    resource: r,
+    staged,
+    merged,
   };
 }
 // #endregion
