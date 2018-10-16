@@ -5,7 +5,7 @@
 import { call, put } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import actions, { availableResources } from '../actions';
-import rootSaga, { fetchResource } from './';
+import rootSaga, { fetchResourceCollection } from './';
 import api from '../utils/api';
 
 const resources = [...availableResources, 'profile'];
@@ -21,14 +21,14 @@ describe(`root saga`, () => {
     const sagaIterator = rootSaga();
     const effects = sagaIterator.next();
 
-    expect(effects.value.ALL.length).toBe(resources.length);
+    expect(effects.value.ALL.length).toBeGreaterThan(resources.length);
   });
 });
 
 resources.forEach(resource => {
   describe(`fetchResource("${resource}") saga`, () => {
     test('should succeed on successfull api call', () => {
-      const fetchSaga = fetchResource(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions[resource], resource);
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = fetchSaga.next().value;
@@ -51,7 +51,7 @@ resources.forEach(resource => {
     });
 
     test('should finally succeed after initial failed api call', () => {
-      const fetchSaga = fetchResource(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions[resource], resource);
       const callEffect = fetchSaga.next().value;
 
       // console.log('callEffect', callEffect);
@@ -79,7 +79,7 @@ resources.forEach(resource => {
     });
 
     test('should finally fail with error effect after retries run out', () => {
-      const fetchSaga = fetchResource(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions[resource], resource);
       const mockError = new Error('mock');
 
       for (let i = 0; i < 3; i += 1) {

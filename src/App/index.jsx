@@ -13,7 +13,7 @@ import Spinner from '../components/Spinner';
 import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
-import auth from '../utils/auth';
+import { auth } from '../utils/api';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 
@@ -42,6 +42,8 @@ class App extends Component {
     store: PropTypes.object,
   };
 
+  // TODO: authenticated should be in our redux session store...
+  // we need to create a new action creator and reducer for this.
   state = {
     loading: false,
     showDrawer: false,
@@ -49,8 +51,6 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    // const { onProfileLoaded } = this.props;
-
     this.setState({ loading: true });
 
     try {
