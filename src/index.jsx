@@ -30,7 +30,6 @@ const store = createStore(
   rootReducer,
   composeEnhancers(applyMiddleware(...middleware))
 );
-// const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 sagaMiddleware.run(rootSaga);
 
