@@ -79,6 +79,6 @@ export function* commitStagedChanges({ resourceType, id }) {
 export default function* rootSaga() {
   yield all([
     takeEvery(actionTypes.RESOURCE.REQUEST, fetchResourceCollection),
-    takeEvery(actionTypes.COMMIT_STAGED_RESOURCE, commitStagedChanges),
+    takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   ]);
 }
