@@ -47,7 +47,7 @@ describe('global selectors', () => {
       let state;
 
       state = reducer(undefined, actions.resource.received('exports', exports));
-      state = reducer(state, actions.patchStagedResource(1, patch));
+      state = reducer(state, actions.resource.patchStaged(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
         merged: { ...exports[0], ...patch },

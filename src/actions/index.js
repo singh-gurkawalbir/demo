@@ -22,6 +22,14 @@ const resource = {
 
   failure: (resourceType, message) =>
     action(actionTypes.RESOURCE.FAILURE, { resourceType, message }),
+
+  clearStaged: id => action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
+
+  patchStaged: (id, patch) =>
+    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
+
+  commitStaged: (resourceType, id) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id }),
 };
 // This set of profile action creators are just helper that curry arguments
 // to the generic resource implementations.
@@ -44,28 +52,11 @@ const clearFilter = name => ({
   type: actionTypes.CLEAR_FILTER,
   name,
 });
-const patchStagedResource = (id, patch) => ({
-  type: actionTypes.PATCH_STAGED_RESOURCE,
-  id,
-  patch,
-});
-const clearStagedResource = id => ({
-  type: actionTypes.CLEAR_STAGED_RESOURCE,
-  id,
-});
-const commitStagedResource = (resourceType, id) => ({
-  type: actionTypes.COMMIT_STAGED_RESOURCE,
-  resourceType,
-  id,
-});
 
 export default {
   setTheme,
   patchFilter,
   clearFilter,
-  patchStagedResource,
-  clearStagedResource,
-  commitStagedResource,
   resource,
   profile,
 };

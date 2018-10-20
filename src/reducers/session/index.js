@@ -28,14 +28,15 @@ const stagedResources = (state = {}, action) => {
   let newState;
 
   switch (type) {
-    case actionTypes.CLEAR_STAGED_RESOURCE:
+    case actionTypes.RESOURCE.STAGE_CLEAR:
       newState = Object.assign({}, state);
 
       delete newState[id];
 
       return newState;
 
-    case actionTypes.PATCH_STAGED_RESOURCE:
+    case actionTypes.RESOURCE.STAGE_PATCH:
+      console.log(id, patch);
       newState = Object.assign({}, state);
 
       // TODO: there needs to be a deep copy here...

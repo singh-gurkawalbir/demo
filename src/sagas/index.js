@@ -73,7 +73,7 @@ export function* commitStagedChanges({ resourceType, id }) {
   // lets delasy clearing the staged data.
   yield call(delay, 200);
 
-  yield put(actions.clearStagedResource(id));
+  yield put(actions.resource.clearStaged(id));
 }
 
 export default function* rootSaga() {
