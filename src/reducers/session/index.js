@@ -36,7 +36,6 @@ const stagedResources = (state = {}, action) => {
       return newState;
 
     case actionTypes.RESOURCE.STAGE_PATCH:
-      console.log(id, patch);
       newState = Object.assign({}, state);
 
       // TODO: there needs to be a deep copy here...
