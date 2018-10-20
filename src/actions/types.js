@@ -19,9 +19,7 @@ function createRequestTypes(base) {
 }
 
 const PROFILE = createRequestTypes('PROFILE');
-const EXPORTS = createRequestTypes('EXPORTS');
-const IMPORTS = createRequestTypes('IMPORTS');
-const CONNECTIONS = createRequestTypes('CONNECTIONS');
+const RESOURCE = createRequestTypes('RESOURCE');
 
 export default {
   SET_THEME,
@@ -31,7 +29,5 @@ export default {
   CLEAR_STAGED_RESOURCE,
   COMMIT_STAGED_RESOURCE,
   PROFILE,
-  EXPORTS,
-  IMPORTS,
-  CONNECTIONS,
+  RESOURCE,
 };

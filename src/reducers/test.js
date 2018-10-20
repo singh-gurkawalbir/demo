@@ -10,7 +10,7 @@ describe('global selectors', () => {
       expect(selectors.isProfileDataReady({ session: {} })).toBe(false);
     });
 
-    test('should return true on when profile exists.', () => {
+    test('should return true when profile exists.', () => {
       const state = reducer(
         undefined,
         actions.profile.received('mock profile')
@@ -29,7 +29,10 @@ describe('global selectors', () => {
 
     test('should return correct data when no staged data exists.', () => {
       const exports = [{ _id: 1, name: 'test E' }];
-      const state = reducer(undefined, actions.exports.received(exports));
+      const state = reducer(
+        undefined,
+        actions.resource.received('exports', exports)
+      );
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
         merged: exports[0],
@@ -43,7 +46,7 @@ describe('global selectors', () => {
       const patch = { name: 'text X' };
       let state;
 
-      state = reducer(undefined, actions.exports.received(exports));
+      state = reducer(undefined, actions.resource.received('exports', exports));
       state = reducer(state, actions.patchStagedResource(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({

@@ -8,7 +8,7 @@ import actions, { availableResources } from '../actions';
 import rootSaga, { fetchResourceCollection } from './';
 import api from '../utils/api';
 
-const resources = [...availableResources, 'profile'];
+const resourceTypes = [...availableResources, 'profile'];
 
 describe(`root saga`, () => {
   // NOTE, this test has little value... I added it to
@@ -21,27 +21,27 @@ describe(`root saga`, () => {
     const sagaIterator = rootSaga();
     const effects = sagaIterator.next();
 
-    expect(effects.value.ALL.length).toBeGreaterThan(resources.length);
+    expect(effects.value.ALL.length).toBeGreaterThan(1);
   });
 });
 
-resources.forEach(resource => {
-  describe(`fetchResource("${resource}") saga`, () => {
+resourceTypes.forEach(type => {
+  describe(`fetchResource("${type}") saga`, () => {
     test('should succeed on successfull api call', () => {
-      const fetchSaga = fetchResourceCollection(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions.resource.request(type));
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = fetchSaga.next().value;
 
       // console.log('callEffect', callEffect);
       // first iteration should be the api call
-      expect(callEffect).toEqual(call(api, `/${resource}`));
+      expect(callEffect).toEqual(call(api, `/${type}`));
 
       const mockData = { id: 1 };
       const putEffect = fetchSaga.next(mockData).value;
 
       // second iteration should be to raise the received action
-      expect(putEffect).toEqual(put(actions[resource].received(mockData)));
+      expect(putEffect).toEqual(put(actions.resource.received(type, mockData)));
 
       const complete = fetchSaga.next();
 
@@ -51,24 +51,24 @@ resources.forEach(resource => {
     });
 
     test('should finally succeed after initial failed api call', () => {
-      const fetchSaga = fetchResourceCollection(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions.resource.request(type));
       const callEffect = fetchSaga.next().value;
 
       // console.log('callEffect', callEffect);
       // first iteration should be the api call
-      expect(callEffect).toEqual(call(api, `/${resource}`));
+      expect(callEffect).toEqual(call(api, `/${type}`));
 
       // lets throw an exception to simulate a failed API call
       // this should result in a delay, then retry action, then api call
       expect(fetchSaga.throw().value).toEqual(call(delay, 2000));
-      expect(fetchSaga.next().value).toEqual(put(actions[resource].retry()));
-      expect(fetchSaga.next().value).toEqual(call(api, `/${resource}`));
+      expect(fetchSaga.next().value).toEqual(put(actions.resource.retry(type)));
+      expect(fetchSaga.next().value).toEqual(call(api, `/${type}`));
 
       const mockData = { id: 1 };
 
       // finally the resource received action should be dispatched
       expect(fetchSaga.next(mockData).value).toEqual(
-        put(actions[resource].received(mockData))
+        put(actions.resource.received(type, mockData))
       );
 
       const complete = fetchSaga.next();
@@ -79,17 +79,17 @@ resources.forEach(resource => {
     });
 
     test('should finally fail with error effect after retries run out', () => {
-      const fetchSaga = fetchResourceCollection(actions[resource], resource);
+      const fetchSaga = fetchResourceCollection(actions.resource.request(type));
       const mockError = new Error('mock');
 
       for (let i = 0; i < 3; i += 1) {
         // first iteration should be the api call
-        expect(fetchSaga.next().value).toEqual(call(api, `/${resource}`));
+        expect(fetchSaga.next().value).toEqual(call(api, `/${type}`));
 
         if (i < 2) {
           expect(fetchSaga.throw(mockError).value).toEqual(call(delay, 2000));
           expect(fetchSaga.next().value).toEqual(
-            put(actions[resource].retry())
+            put(actions.resource.retry(type))
           );
         }
       }
@@ -97,7 +97,7 @@ resources.forEach(resource => {
       // the last failed api call should result in a dispatch
       // of the failure action.
       expect(fetchSaga.throw(mockError).value).toEqual(
-        put(actions[resource].failure(mockError.message))
+        put(actions.resource.failure(type, mockError.message))
       );
 
       const complete = fetchSaga.next();

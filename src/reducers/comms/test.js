@@ -9,130 +9,133 @@ import actions, { availableResources } from '../../actions';
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 
 // comms reducers and seletors also operate on the profile netowrk call...
-const allResources = [...availableResources, 'profile'];
+const resourceTypes = [...availableResources, 'profile'];
 
 describe('comms reducers', () => {
-  [...allResources, 'profile'].forEach(resource => {
-    describe(`${resource} request action`, () => {
+  resourceTypes.forEach(type => {
+    describe(`${type} request action`, () => {
       test('should set loading flag', () => {
-        const newState = reducer(undefined, actions[resource].request());
+        const newState = reducer(undefined, actions.resource.request(type));
 
-        expect(newState[resource].loading).toBe(true);
+        expect(newState[type].loading).toBe(true);
       });
 
       test('should reset retry flag', () => {
         // force the retry value to be set...
-        const state = reducer(undefined, actions[resource].retry());
+        const state = reducer(undefined, actions.resource.retry(type));
 
-        expect(state[resource].retry).toBe(1);
+        expect(state[type].retry).toBe(1);
 
-        const newState = reducer(state, actions[resource].request());
+        const newState = reducer(state, actions.resource.request(type));
 
-        expect(newState[resource].retry).toBeUndefined();
+        expect(newState[type].retry).toBeUndefined();
       });
     });
 
-    describe(`${resource} received action`, () => {
+    describe(`${type} received action`, () => {
       test('should clear loading flag', () => {
-        const state = reducer(undefined, actions[resource].request());
+        const state = reducer(undefined, actions.resource.request(type));
 
-        expect(state[resource].loading).toBe(true);
+        expect(state[type].loading).toBe(true);
 
-        const newState = reducer(state, actions[resource].received());
+        const newState = reducer(state, actions.resource.received(type));
 
-        expect(newState[resource].loading).toBe(false);
+        expect(newState[type].loading).toBe(false);
       });
 
       test('should reset retry flag', () => {
         // force the retry value to be set...
-        const state = reducer(undefined, actions[resource].retry());
+        const state = reducer(undefined, actions.resource.retry(type));
 
-        expect(state[resource].retry).toBe(1);
+        expect(state[type].retry).toBe(1);
 
-        const newState = reducer(state, actions[resource].received());
+        const newState = reducer(state, actions.resource.received(type));
 
-        expect(newState[resource].retry).toBeUndefined();
+        expect(newState[type].retry).toBeUndefined();
       });
     });
 
-    describe(`${resource} failure action`, () => {
+    describe(`${type} failure action`, () => {
       test('should set error message', () => {
-        const state = reducer(undefined, actions[resource].failure('error'));
+        const state = reducer(
+          undefined,
+          actions.resource.failure(type, 'error')
+        );
 
-        expect(state[resource].error).toEqual('error');
+        expect(state[type].error).toEqual('error');
       });
 
       test('should default an error message if none is provided in the action', () => {
-        const state = reducer(undefined, actions[resource].failure());
+        const state = reducer(undefined, actions.resource.failure(type));
 
-        expect(state[resource].error).toEqual('unknown error');
+        expect(state[type].error).toEqual('unknown error');
       });
       test('should clear loading and retry count', () => {
-        let state = reducer(undefined, actions[resource].request());
+        let state = reducer(undefined, actions.resource.request(type));
 
-        state = reducer(state, actions[resource].retry());
-        expect(state[resource].loading).toBe(true);
-        expect(state[resource].retry).toBe(1);
+        state = reducer(state, actions.resource.retry(type));
+        expect(state[type].loading).toBe(true);
+        expect(state[type].retry).toBe(1);
 
-        state = reducer(state, actions[resource].failure('error'));
+        state = reducer(state, actions.resource.failure(type, 'error'));
 
-        expect(state[resource].loading).toBe(false);
-        expect(state[resource].retry).toBeUndefined();
+        expect(state[type].loading).toBe(false);
+        expect(state[type].retry).toBeUndefined();
       });
     });
 
-    describe(`${resource} retry action`, () => {
+    describe(`${type} retry action`, () => {
       test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
         // force the retry value to be set...
-        const state = reducer(undefined, actions[resource].retry());
+        const state = reducer(undefined, actions.resource.retry(type));
 
-        expect(state[resource].retry).toBe(1);
+        expect(state[type].retry).toBe(1);
 
-        let newState = reducer(state, actions[resource].retry());
+        let newState = reducer(state, actions.resource.retry(type));
 
-        expect(newState[resource].retry).toBe(2);
+        expect(newState[type].retry).toBe(2);
 
-        newState = reducer(newState, actions[resource].retry());
+        newState = reducer(newState, actions.resource.retry(type));
 
-        expect(newState[resource].retry).toBe(3);
+        expect(newState[type].retry).toBe(3);
       });
     });
   });
 });
 
 describe('comms selectors', () => {
-  allResources.forEach(resource => {
-    describe(`${resource} isLoading`, () => {
+  resourceTypes.forEach(type => {
+    describe(`${type} isLoading`, () => {
       test('should be false on initial state', () => {
-        const isLoading = selectors.isLoading(undefined, resource);
+        const isLoading = selectors.isLoading(undefined, type);
 
         expect(isLoading).toBe(false);
       });
 
       test('should be true after request action', () => {
-        const state = reducer(undefined, actions[resource].request());
-        const isLoading = selectors.isLoading(state, resource);
+        const state = reducer(undefined, actions.resource.request(type));
+        const isLoading = selectors.isLoading(state, type);
 
         expect(isLoading).toBe(true);
       });
 
       test('should be false after received action', () => {
-        const state = reducer(undefined, actions[resource].received());
-        const isLoading = selectors.isLoading(state, resource);
+        const state = reducer(undefined, actions.resource.received(type));
+        const isLoading = selectors.isLoading(state, type);
 
         expect(isLoading).toBe(false);
       });
     });
-    describe(`${resource} retryCount`, () => {
+    describe(`${type} retryCount`, () => {
       test('should be 0 on initial state', () => {
-        const count = selectors.retryCount(undefined, resource);
+        const count = selectors.retryCount(undefined, type);
 
         expect(count).toBe(0);
       });
 
       test('should be 1 after first retry action', () => {
-        const state = reducer(undefined, actions[resource].retry());
-        const count = selectors.retryCount(state, resource);
+        const state = reducer(undefined, actions.resource.retry(type));
+        const count = selectors.retryCount(state, type);
 
         expect(count).toBe(1);
       });
@@ -141,8 +144,8 @@ describe('comms selectors', () => {
         let state;
 
         for (let i = 1; i < 5; i += 1) {
-          state = reducer(state, actions[resource].retry());
-          const count = selectors.retryCount(state, resource);
+          state = reducer(state, actions.resource.retry(type));
+          const count = selectors.retryCount(state, type);
 
           expect(count).toBe(i);
         }
@@ -179,8 +182,8 @@ describe('comms selectors', () => {
       let state;
 
       // assign
-      state = reducer(state, actions.exports.request());
-      state = reducer(state, actions.exports.received());
+      state = reducer(state, actions.resource.request('exports'));
+      state = reducer(state, actions.resource.received('exports'));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -191,7 +194,7 @@ describe('comms selectors', () => {
 
     test('should return proper result when 1 resource is loading.', () => {
       // assign
-      const state = reducer(undefined, actions.exports.request());
+      const state = reducer(undefined, actions.resource.request('exports'));
       // act
       const result = selectors.allLoadingOrErrored(state);
 
@@ -210,8 +213,8 @@ describe('comms selectors', () => {
       // assign
       let state;
 
-      state = reducer(state, actions.exports.request());
-      state = reducer(state, actions.imports.request());
+      state = reducer(state, actions.resource.request('exports'));
+      state = reducer(state, actions.resource.request('imports'));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -237,7 +240,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.exports.failure('my nice error')
+        actions.resource.failure('exports', 'my nice error')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);
