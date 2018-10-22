@@ -56,6 +56,17 @@ export function error(state, resourceName) {
   return state && state[resourceName] && state[resourceName].error;
 }
 
+export function isLoadingAllResources(state) {
+  if (!state || typeof state !== 'object') {
+    return null;
+  }
+
+  return (
+    Object.keys(state).filter(resource => isLoading(state, resource)).length !==
+    0
+  );
+}
+
 export function allLoadingOrErrored(state) {
   if (!state || typeof state !== 'object') {
     return null;

@@ -1,12 +1,20 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { Button, LinearProgress } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
-import { allLoadingOrErrored } from '../../reducers';
+import { allLoadingOrErrored, isLoadingAllResources } from '../../reducers';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
+  isLoadingAllResources: isLoadingAllResources(state),
 });
+
+export function LinearInDertiminate(props) {
+  if (props.isLoadingAllResources) return <LinearProgress />;
+
+  return null;
+}
 
 @withStyles(theme => ({
   snackbar: {
@@ -15,18 +23,41 @@ const mapStateToProps = state => ({
   snackbarContent: {
     w: theme.spacing.unit * 4,
     flexGrow: 0,
+    textAlign: 'center',
   },
 }))
 class NetworkSnackbar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { showSnackbar: true };
+    this.closeSnackbar = this.closeSnackbar.bind(this);
+  }
+  closeSnackbar() {
+    this.setState({
+      showSnackbar: false,
+    });
+  }
   render() {
-    const { allLoadingOrErrored, classes } = this.props;
+    const { showSnackbar } = this.state;
+    const { isLoadingAllResources, allLoadingOrErrored, classes } = this.props;
 
     if (!allLoadingOrErrored) {
       return null;
     }
 
-    const notification = r => {
+    let dismiss = null;
+    const notification = (r, index) => {
       if (r.error) {
+        if (index === allLoadingOrErrored.length - 1)
+          dismiss = (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => this.closeSnackbar()}>
+              Dismiss
+            </Button>
+          );
+
         return <li key={r.name}>{`Error loading ${r.name}. (${r.error})`}</li>;
       }
 
@@ -39,7 +70,13 @@ class NetworkSnackbar extends Component {
       return <li key={r.name}>{msg}</li>;
     };
 
-    const msg = <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>;
+    const msg = (
+      <div>
+        <ul>{allLoadingOrErrored.map((r, index) => notification(r, index))}</ul>
+        <LinearInDertiminate isLoadingAllResources={isLoadingAllResources} />
+        {dismiss}
+      </div>
+    );
 
     return (
       <Snackbar
@@ -57,7 +94,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open
+        open={showSnackbar}
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}
