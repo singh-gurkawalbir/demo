@@ -25,9 +25,9 @@ const mapStateToProps = (state, { resources }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  requestResource: resource => {
+  requestResource: type => {
     // console.log(`request resource "${resource}"`);
-    dispatch(actions[resource].request());
+    dispatch(actions.resource.request(type));
   },
 });
 

@@ -1,15 +1,23 @@
+import actionTypes from '../../actions/types';
+
+const resourceTypesToIgnore = ['profile'];
+
 // Updates an entity cache in response to any action with response.data.
 export default (state = {}, action) => {
-  if (action.data) {
-    // console.log('data action: ', action, state);
+  const { type, resources, resourceType } = action;
 
-    return { ...state, ...action.data };
+  if (resourceTypesToIgnore.find(t => t === resourceType)) {
+    return state;
+  }
+
+  if (type === actionTypes.RESOURCE.RECEIVED) {
+    return { ...state, [resourceType]: resources };
   }
 
   return state;
 };
 
-// PUBLIC SELECTORS
+// #region PUBLIC SELECTORS
 const getConnectionMap = connections => {
   if (!connections) return {};
 
@@ -113,3 +121,4 @@ export function resourceList(state, { type, take, keyword }) {
 export function hasData(state, resourceType) {
   return !!(state && state[resourceType]);
 }
+// #endregion

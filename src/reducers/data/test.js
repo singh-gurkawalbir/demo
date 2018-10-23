@@ -3,13 +3,13 @@ import reducer, * as selectors from './';
 import actions, { availableResources } from '../../actions';
 
 describe('data reducers', () => {
-  availableResources.forEach(resource => {
-    describe(`${resource} received action`, () => {
+  availableResources.forEach(type => {
+    describe(`${type} received action`, () => {
       test('should store the new data', () => {
         const data = 'test data';
-        const state = reducer(undefined, actions[resource].received(data));
+        const state = reducer(undefined, actions.resource.received(type, data));
 
-        expect(state[resource]).toEqual(data);
+        expect(state[type]).toEqual(data);
       });
 
       test('should replace existing data with the new data', () => {
@@ -17,11 +17,11 @@ describe('data reducers', () => {
         const data2 = 'new test data';
         let state;
 
-        state = reducer(state, actions[resource].received(data1));
-        expect(state[resource]).toEqual(data1);
+        state = reducer(state, actions.resource.received(type, data1));
+        expect(state[type]).toEqual(data1);
 
-        state = reducer(state, actions[resource].received(data2));
-        expect(state[resource]).toEqual(data2);
+        state = reducer(state, actions.resource.received(type, data2));
+        expect(state[type]).toEqual(data2);
       });
     });
   });
@@ -36,7 +36,10 @@ describe('data selectors', () => {
 
     test('should return null on bad/empty arguments.', () => {
       const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
-      const state = reducer(undefined, actions.exports.received(testExports));
+      const state = reducer(
+        undefined,
+        actions.resource.received('exports', testExports)
+      );
 
       expect(selectors.resource(state, 'junk', 123)).toBeNull();
       expect(selectors.resource(state, 'exports')).toBeNull();
@@ -45,7 +48,10 @@ describe('data selectors', () => {
 
     test('should return matching resource if one exists.', () => {
       const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
-      const state = reducer(undefined, actions.exports.received(testExports));
+      const state = reducer(
+        undefined,
+        actions.resource.received('exports', testExports)
+      );
 
       expect(selectors.resource(state, 'exports', 234)).toEqual(testExports[0]);
     });
@@ -55,8 +61,14 @@ describe('data selectors', () => {
       const testConnections = [{ _id: 99, name: 'A' }];
       let state;
 
-      state = reducer(undefined, actions.exports.received(testExports));
-      state = reducer(state, actions.connections.received(testConnections));
+      state = reducer(
+        undefined,
+        actions.resource.received('exports', testExports)
+      );
+      state = reducer(
+        state,
+        actions.resource.received('connections', testConnections)
+      );
 
       const filledResource = {
         ...Object.assign({}, testExports[0]),
@@ -108,7 +120,10 @@ describe('data selectors', () => {
       name: n,
       description: `${n} description`,
     }));
-    const state = reducer(undefined, actions.exports.received(testExports));
+    const state = reducer(
+      undefined,
+      actions.resource.received('exports', testExports)
+    );
 
     test('should return all resources when name matches resource type.', () => {
       const result = selectors.resourceList(state, {
@@ -137,7 +152,10 @@ describe('data selectors', () => {
         name: 'testName',
         description: `Test description`,
       };
-      const newState = reducer(state, actions.connections.received([bobConn]));
+      const newState = reducer(
+        state,
+        actions.resource.received('connections', [bobConn])
+      );
       const result = selectors.resourceList(newState, {
         type: 'exports',
         keyword: 'testN',
@@ -192,13 +210,19 @@ describe('data selectors', () => {
     });
 
     test('should return false when no data found for resourceType', () => {
-      const state = reducer(undefined, actions.exports.received([]));
+      const state = reducer(
+        undefined,
+        actions.resource.received('exports', [])
+      );
 
       expect(selectors.hasData(state, 'imports')).toEqual(false);
     });
 
     test('should return true when data found for resourceType', () => {
-      const state = reducer(undefined, actions.exports.received([]));
+      const state = reducer(
+        undefined,
+        actions.resource.received('exports', [])
+      );
 
       expect(selectors.hasData(state, 'exports')).toEqual(true);
     });

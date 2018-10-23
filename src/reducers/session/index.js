@@ -3,13 +3,14 @@ import actionTypes from '../../actions/types';
 
 export const DEFAULT_THEME = 'dark';
 const profile = (state = null, action) => {
-  switch (action.type) {
-    case actionTypes.PROFILE.RECEIVED:
-      return action.profile;
-
-    default:
-      return state;
+  if (
+    action.type === actionTypes.RESOURCE.RECEIVED &&
+    action.resourceType === 'profile'
+  ) {
+    return action.resources;
   }
+
+  return state;
 };
 
 const themeName = (state = DEFAULT_THEME, action) => {
@@ -27,14 +28,14 @@ const stagedResources = (state = {}, action) => {
   let newState;
 
   switch (type) {
-    case actionTypes.CLEAR_STAGED_RESOURCE:
+    case actionTypes.RESOURCE.STAGE_CLEAR:
       newState = Object.assign({}, state);
 
       delete newState[id];
 
       return newState;
 
-    case actionTypes.PATCH_STAGED_RESOURCE:
+    case actionTypes.RESOURCE.STAGE_PATCH:
       newState = Object.assign({}, state);
 
       // TODO: there needs to be a deep copy here...

@@ -1,49 +1,53 @@
+import actionTypes from '../../actions/types';
+
 const initialState = {};
 
 export default (state = initialState, action) => {
-  if (action.request) {
-    const status = Object.assign({}, state[action.request]) || {};
+  const { type, resourceType } = action;
+  let newStatus;
 
-    status.loading = true;
-    delete status.retry;
-    delete status.error;
+  switch (type) {
+    case actionTypes.RESOURCE.REQUEST:
+      newStatus = Object.assign({}, state[resourceType]) || {};
 
-    return { ...state, [action.request]: status };
+      newStatus.loading = true;
+      delete newStatus.retry;
+      delete newStatus.error;
+
+      return { ...state, [resourceType]: newStatus };
+
+    case actionTypes.RESOURCE.RECEIVED:
+      newStatus = Object.assign({}, state[resourceType]) || {};
+
+      newStatus.loading = false;
+      delete newStatus.retry;
+      delete newStatus.error;
+
+      return { ...state, [resourceType]: newStatus };
+
+    case actionTypes.RESOURCE.RETRY:
+      newStatus = Object.assign({}, state[resourceType]) || {};
+
+      newStatus.retry = newStatus.retry || 0;
+      newStatus.retry += 1;
+
+      return { ...state, [resourceType]: newStatus };
+
+    case actionTypes.RESOURCE.FAILURE:
+      newStatus = Object.assign({}, state[resourceType]) || {};
+
+      newStatus.error = action.message || 'unknown error';
+      delete newStatus.retry;
+      newStatus.loading = false;
+
+      return { ...state, [resourceType]: newStatus };
+
+    default:
+      return state;
   }
-
-  if (action.received) {
-    const status = Object.assign({}, state[action.received]) || {};
-
-    status.loading = false;
-    delete status.retry;
-    delete status.error;
-
-    return { ...state, [action.received]: status };
-  }
-
-  if (action.retry) {
-    const status = Object.assign({}, state[action.retry]) || {};
-
-    status.retry = status.retry || 0;
-    status.retry += 1;
-
-    return { ...state, [action.retry]: status };
-  }
-
-  if (action.error) {
-    const status = Object.assign({}, state[action.error]) || {};
-
-    status.error = action.message || 'unknown error';
-    delete status.retry;
-    status.loading = false;
-
-    return { ...state, [action.error]: status };
-  }
-
-  return state;
 };
 
-// PUBLIC SELECTORS
+// #region PUBLIC SELECTORS
 export function isLoading(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].loading);
 }
@@ -89,3 +93,4 @@ export function allLoadingOrErrored(state) {
 
   return resources.length ? resources : null;
 }
+// #endregion
