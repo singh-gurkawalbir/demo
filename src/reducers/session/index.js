@@ -16,7 +16,7 @@ const profile = (state = null, action) => {
 const themeName = (state = DEFAULT_THEME, action) => {
   switch (action.type) {
     case actionTypes.SET_THEME:
-      return action.themeName;
+      return action.name;
 
     default:
       return state;

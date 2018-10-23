@@ -4,152 +4,146 @@
 // either.
 /* global describe, test, expect */
 import reducer, * as selectors from './';
-import actions, { availableResources } from '../../actions';
+import actions from '../../actions';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 
-// comms reducers and seletors also operate on the profile netowrk call...
-const resourceTypes = [...availableResources, 'profile'];
-
 describe('comms reducers', () => {
-  resourceTypes.forEach(type => {
-    describe(`${type} request action`, () => {
-      test('should set loading flag', () => {
-        const newState = reducer(undefined, actions.resource.request(type));
+  const path = '/test/path/';
 
-        expect(newState[type].loading).toBe(true);
-      });
+  describe(`request action`, () => {
+    test('should set loading flag', () => {
+      const newState = reducer(undefined, actions.api.request(path));
 
-      test('should reset retry flag', () => {
-        // force the retry value to be set...
-        const state = reducer(undefined, actions.resource.retry(type));
-
-        expect(state[type].retry).toBe(1);
-
-        const newState = reducer(state, actions.resource.request(type));
-
-        expect(newState[type].retry).toBeUndefined();
-      });
+      expect(newState[path].loading).toBe(true);
     });
 
-    describe(`${type} received action`, () => {
-      test('should clear loading flag', () => {
-        const state = reducer(undefined, actions.resource.request(type));
+    test('should reset retry flag', () => {
+      // force the retry value to be set...
+      const state = reducer(undefined, actions.api.retry(path));
 
-        expect(state[type].loading).toBe(true);
+      expect(state[path].retry).toBe(1);
 
-        const newState = reducer(state, actions.resource.received(type));
+      const newState = reducer(state, actions.api.request(path));
 
-        expect(newState[type].loading).toBe(false);
-      });
+      expect(newState[path].retry).toBeUndefined();
+    });
+  });
 
-      test('should reset retry flag', () => {
-        // force the retry value to be set...
-        const state = reducer(undefined, actions.resource.retry(type));
+  describe(`completed action`, () => {
+    test('should clear loading flag', () => {
+      const state = reducer(undefined, actions.api.request(path));
 
-        expect(state[type].retry).toBe(1);
+      expect(state[path].loading).toBe(true);
 
-        const newState = reducer(state, actions.resource.received(type));
+      const newState = reducer(state, actions.api.complete(path));
 
-        expect(newState[type].retry).toBeUndefined();
-      });
+      expect(newState[path].loading).toBe(false);
     });
 
-    describe(`${type} failure action`, () => {
-      test('should set error message', () => {
-        const state = reducer(
-          undefined,
-          actions.resource.failure(type, 'error')
-        );
+    test('should reset retry flag', () => {
+      // force the retry value to be set...
+      const state = reducer(undefined, actions.api.retry(path));
 
-        expect(state[type].error).toEqual('error');
-      });
+      expect(state[path].retry).toBe(1);
 
-      test('should default an error message if none is provided in the action', () => {
-        const state = reducer(undefined, actions.resource.failure(type));
+      const newState = reducer(state, actions.api.complete(path));
 
-        expect(state[type].error).toEqual('unknown error');
-      });
-      test('should clear loading and retry count', () => {
-        let state = reducer(undefined, actions.resource.request(type));
+      expect(newState[path].retry).toBeUndefined();
+    });
+  });
 
-        state = reducer(state, actions.resource.retry(type));
-        expect(state[type].loading).toBe(true);
-        expect(state[type].retry).toBe(1);
+  describe(`failure action`, () => {
+    test('should set error message', () => {
+      const state = reducer(undefined, actions.api.failure(path, 'error'));
 
-        state = reducer(state, actions.resource.failure(type, 'error'));
-
-        expect(state[type].loading).toBe(false);
-        expect(state[type].retry).toBeUndefined();
-      });
+      expect(state[path].error).toEqual('error');
     });
 
-    describe(`${type} retry action`, () => {
-      test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
-        // force the retry value to be set...
-        const state = reducer(undefined, actions.resource.retry(type));
+    test('should default an error message if none is provided in the action', () => {
+      const state = reducer(undefined, actions.api.failure(path));
 
-        expect(state[type].retry).toBe(1);
+      expect(state[path].error).toEqual('unknown error');
+    });
+    test('should clear loading and retry count', () => {
+      let state = reducer(undefined, actions.api.request(path));
 
-        let newState = reducer(state, actions.resource.retry(type));
+      state = reducer(state, actions.api.retry(path));
+      expect(state[path].loading).toBe(true);
+      expect(state[path].retry).toBe(1);
 
-        expect(newState[type].retry).toBe(2);
+      state = reducer(state, actions.api.failure(path, 'error'));
 
-        newState = reducer(newState, actions.resource.retry(type));
+      expect(state[path].loading).toBe(false);
+      expect(state[path].retry).toBeUndefined();
+    });
+  });
 
-        expect(newState[type].retry).toBe(3);
-      });
+  describe(`retry action`, () => {
+    test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
+      // force the retry value to be set...
+      const state = reducer(undefined, actions.api.retry(path));
+
+      expect(state[path].retry).toBe(1);
+
+      let newState = reducer(state, actions.api.retry(path));
+
+      expect(newState[path].retry).toBe(2);
+
+      newState = reducer(newState, actions.api.retry(path));
+
+      expect(newState[path].retry).toBe(3);
     });
   });
 });
 
 describe('comms selectors', () => {
-  resourceTypes.forEach(type => {
-    describe(`${type} isLoading`, () => {
-      test('should be false on initial state', () => {
-        const isLoading = selectors.isLoading(undefined, type);
+  const path = '/test/path';
 
-        expect(isLoading).toBe(false);
-      });
+  describe(`isLoading`, () => {
+    test('should be false on initial state', () => {
+      const isLoading = selectors.isLoading(undefined, path);
 
-      test('should be true after request action', () => {
-        const state = reducer(undefined, actions.resource.request(type));
-        const isLoading = selectors.isLoading(state, type);
-
-        expect(isLoading).toBe(true);
-      });
-
-      test('should be false after received action', () => {
-        const state = reducer(undefined, actions.resource.received(type));
-        const isLoading = selectors.isLoading(state, type);
-
-        expect(isLoading).toBe(false);
-      });
+      expect(isLoading).toBe(false);
     });
-    describe(`${type} retryCount`, () => {
-      test('should be 0 on initial state', () => {
-        const count = selectors.retryCount(undefined, type);
 
-        expect(count).toBe(0);
-      });
+    test('should be true after request action', () => {
+      const state = reducer(undefined, actions.api.request(path));
+      const isLoading = selectors.isLoading(state, path);
 
-      test('should be 1 after first retry action', () => {
-        const state = reducer(undefined, actions.resource.retry(type));
-        const count = selectors.retryCount(state, type);
+      expect(isLoading).toBe(true);
+    });
 
-        expect(count).toBe(1);
-      });
+    test('should be false after received action', () => {
+      const state = reducer(undefined, actions.resource.received(path));
+      const isLoading = selectors.isLoading(state, path);
 
-      test('should increase by 1 after each retry action', () => {
-        let state;
+      expect(isLoading).toBe(false);
+    });
+  });
+  describe(`retryCount`, () => {
+    test('should be 0 on initial state', () => {
+      const count = selectors.retryCount(undefined, path);
 
-        for (let i = 1; i < 5; i += 1) {
-          state = reducer(state, actions.resource.retry(type));
-          const count = selectors.retryCount(state, type);
+      expect(count).toBe(0);
+    });
 
-          expect(count).toBe(i);
-        }
-      });
+    test('should be 1 after first retry action', () => {
+      const state = reducer(undefined, actions.api.retry(path));
+      const count = selectors.retryCount(state, path);
+
+      expect(count).toBe(1);
+    });
+
+    test('should increase by 1 after each retry action', () => {
+      let state;
+
+      for (let i = 1; i < 5; i += 1) {
+        state = reducer(state, actions.api.retry(path));
+        const count = selectors.retryCount(state, path);
+
+        expect(count).toBe(i);
+      }
     });
   });
   describe('allLoadingOrErrored', () => {
@@ -182,8 +176,8 @@ describe('comms selectors', () => {
       let state;
 
       // assign
-      state = reducer(state, actions.resource.request('exports'));
-      state = reducer(state, actions.resource.received('exports'));
+      state = reducer(state, actions.api.request(path));
+      state = reducer(state, actions.api.complete(path));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -194,7 +188,7 @@ describe('comms selectors', () => {
 
     test('should return proper result when 1 resource is loading.', () => {
       // assign
-      const state = reducer(undefined, actions.resource.request('exports'));
+      const state = reducer(undefined, actions.api.request('exports'));
       // act
       const result = selectors.allLoadingOrErrored(state);
 
@@ -211,10 +205,12 @@ describe('comms selectors', () => {
 
     test('should return proper result when several resources are loading.', () => {
       // assign
+      const pathA = `${path}/123`;
+      const pathB = `${path}/456`;
       let state;
 
-      state = reducer(state, actions.resource.request('exports'));
-      state = reducer(state, actions.resource.request('imports'));
+      state = reducer(state, actions.api.request(pathA));
+      state = reducer(state, actions.api.request(pathB));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -224,13 +220,13 @@ describe('comms selectors', () => {
         {
           error: undefined,
           isLoading: true,
-          name: 'exports',
+          name: pathA,
           retryCount: 0,
         },
         {
           error: undefined,
           isLoading: true,
-          name: 'imports',
+          name: pathB,
           retryCount: 0,
         },
       ]);
@@ -240,7 +236,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.resource.failure('exports', 'my nice error')
+        actions.api.failure(path, 'my nice error')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -250,7 +246,7 @@ describe('comms selectors', () => {
         {
           error: 'my nice error',
           isLoading: false,
-          name: 'exports',
+          name: path,
           retryCount: 0,
         },
       ]);

@@ -14,12 +14,16 @@ import * as selectors from '../reducers';
 
 const tryCount = 3;
 
-export function* fetchResourceCollection({ resourceType }) {
+export function* apiCallWithRetry(path, opts) {
+  yield put(actions.api.request(path));
+
   for (let i = 0; i < tryCount; i += 1) {
     try {
-      const collection = yield call(api, `/${resourceType}`);
+      const successResponse = yield call(api, path, opts);
 
-      return yield put(actions.resource.received(resourceType, collection));
+      yield put(actions.api.complete(path));
+
+      return successResponse;
     } catch (error) {
       // TODO: analyze error and dispatch(put) different actions as need.
       // for example, if we get a 401, we should dispatch a redirect action
@@ -28,14 +32,25 @@ export function* fetchResourceCollection({ resourceType }) {
 
       if (i < tryCount - 1) {
         yield call(delay, 2000);
-        yield put(actions.resource.retry(resourceType));
+        yield put(actions.api.retry(path));
       } else {
         // attempts failed after 'tryCount' attempts
         // this time yield an error...
-        return yield put(actions.resource.failure(resourceType, error.message));
+        yield put(actions.api.failure(path, error.message));
+
+        // the parent saga may need to know if there was an error for
+        // its own "Data story"...
+        throw new Error(error);
       }
     }
   }
+}
+
+export function* getResourceCollection({ resourceType }) {
+  const path = `/${resourceType}`;
+  const collection = yield call(apiCallWithRetry, path);
+
+  yield put(actions.resource.received(resourceType, collection));
 }
 
 export function* commitStagedChanges({ resourceType, id }) {
@@ -78,7 +93,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actionTypes.RESOURCE.REQUEST, fetchResourceCollection),
+    takeEvery(actionTypes.RESOURCE.REQUEST, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   ]);
 }

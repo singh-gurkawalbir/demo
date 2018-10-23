@@ -4,19 +4,24 @@ const CLEAR_FILTER = 'CLEAR_FILTER';
 
 export const REQUEST = 'REQUEST';
 export const RECEIVED = 'RECEIVED';
-export const FAILURE = 'FAILURE';
-export const RETRY = 'RETRY';
-export const STAGE_PATCH = 'STAGE_PATCH';
-export const STAGE_CLEAR = 'STAGE_CLEAR';
-export const STAGE_COMMIT = 'STAGE_COMMIT';
 
-const baseActions = [REQUEST, RECEIVED, FAILURE, RETRY];
-const stageActions = [STAGE_PATCH, STAGE_CLEAR, STAGE_COMMIT];
+const STAGE_PATCH = 'STAGE_PATCH';
+const STAGE_CLEAR = 'STAGE_CLEAR';
+const STAGE_COMMIT = 'STAGE_COMMIT';
+// these action types are used for managing network
+// activity. Typically this set of actions are only
+// dispatched in Redux Sagas.
+const API_REQUEST = 'API_REQUEST';
+const API_COMPLETE = 'API_COMPLETE';
+const API_RETRY = 'API_RETRY';
+const API_FAILURE = 'API_FAILURE';
+const baseResourceActions = [REQUEST, RECEIVED];
+const stageResourceActions = [STAGE_PATCH, STAGE_CLEAR, STAGE_COMMIT];
 
 function createResourceActionTypes(base, includeStagedActions) {
   const supportedActions = includeStagedActions
-    ? [...baseActions, ...stageActions]
-    : [...baseActions];
+    ? [...baseResourceActions, ...stageResourceActions]
+    : [...baseResourceActions];
 
   return supportedActions.reduce((acc, type) => {
     acc[type] = `${base}_${type}`;
@@ -34,4 +39,8 @@ export default {
   CLEAR_FILTER,
   PROFILE,
   RESOURCE,
+  API_REQUEST,
+  API_COMPLETE,
+  API_RETRY,
+  API_FAILURE,
 };
