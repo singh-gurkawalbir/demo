@@ -4,8 +4,58 @@ import actions, { availableResources } from '../../actions';
 
 describe('data reducers', () => {
   availableResources.forEach(resourceType => {
-    describe(`${resourceType} received collection action`, () => {
-      test('should store the new data', () => {
+    describe(`${resourceType} received resource action`, () => {
+      test('should store the new resource if none exist', () => {
+        const resource = { _id: 1, name: 'bob' };
+        const state = reducer(
+          undefined,
+          actions.resource.received(resourceType, resource)
+        );
+
+        expect(state[resourceType]).toContain(resource);
+      });
+
+      test('should store the new resource if some exist', () => {
+        const collection = [{ _id: 1 }, { _id: 3 }];
+        const resource = { _id: 2, name: 'bob' };
+        let state;
+
+        state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+        state = reducer(
+          state,
+          actions.resource.received(resourceType, resource)
+        );
+
+        expect(state[resourceType]).toEqual([...collection, resource]);
+      });
+
+      test('should replace an existing resource if one already exists', () => {
+        const collection = [{ _id: 1 }, { _id: 2 }, { _id: 3 }];
+        const resource = { _id: 2, name: 'bob' };
+        let state;
+
+        state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+        state = reducer(
+          state,
+          actions.resource.received(resourceType, resource)
+        );
+
+        expect(state[resourceType]).toEqual([
+          collection[0],
+          resource,
+          collection[2],
+        ]);
+      });
+    });
+
+    describe(`${resourceType} received resource collection action`, () => {
+      test('should store the new collection', () => {
         const data = 'test data';
         const state = reducer(
           undefined,
@@ -15,7 +65,7 @@ describe('data reducers', () => {
         expect(state[resourceType]).toEqual(data);
       });
 
-      test('should replace existing data with the new data', () => {
+      test('should replace existing collection with the new colletion', () => {
         const data1 = 'test data';
         const data2 = 'new test data';
         let state;
