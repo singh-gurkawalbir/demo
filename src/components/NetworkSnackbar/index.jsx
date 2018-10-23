@@ -9,12 +9,8 @@ const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAllResources: isLoadingAllResources(state),
 });
-
-export function LinearInDertiminate(props) {
-  if (props.isLoadingAllResources) return <LinearProgress />;
-
-  return null;
-}
+const LinearInDertiminate = props =>
+  props.isLoadingAllResources && <LinearProgress />;
 
 @withStyles(theme => ({
   snackbar: {

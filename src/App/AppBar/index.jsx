@@ -8,6 +8,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
 
+const CeligoLogo = ({ className }) => (
+  <img
+    src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
+    srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
+    alt="Celigo Logo"
+    className={className}
+  />
+);
+
 @withStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -15,10 +24,14 @@ import ProfileMenu from './ProfileMenu';
   flex: {
     flex: 1,
   },
+  celigoLogo: {
+    width: 120,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   playground: {
     textDecoration: 'none',
     color: 'white',
-    flex: 1,
   },
   menuButton: {
     marginLeft: -12,
@@ -108,6 +121,7 @@ export default class Appbar extends Component {
                 integrator.io
               </Typography>
             </Link>
+            <CeligoLogo className={classes.celigoLogo} />
             <ProfileMenu />
           </Toolbar>
         </AppBar>
