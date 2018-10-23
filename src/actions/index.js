@@ -19,11 +19,20 @@ const api = {
     action(actionTypes.API_FAILURE, { path, message }),
 };
 const resource = {
-  request: resourceType =>
-    action(actionTypes.RESOURCE.REQUEST, { resourceType }),
+  request: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REQUEST, { resourceType, id }),
 
-  received: (resourceType, resources) =>
-    action(actionTypes.RESOURCE.RECEIVED, { resourceType, resources }),
+  requestCollection: resourceType =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType }),
+
+  received: (resourceType, resource) =>
+    action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
+
+  receivedCollection: (resourceType, collection) =>
+    action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
+      resourceType,
+      collection,
+    }),
 
   clearStaged: id => action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
 

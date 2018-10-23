@@ -4,17 +4,22 @@ const resourceTypesToIgnore = ['profile'];
 
 // Updates an entity cache in response to any action with response.data.
 export default (state = {}, action) => {
-  const { type, resources, resourceType } = action;
+  const { type, resource, collection, resourceType } = action;
 
   if (resourceTypesToIgnore.find(t => t === resourceType)) {
     return state;
   }
 
-  if (type === actionTypes.RESOURCE.RECEIVED) {
-    return { ...state, [resourceType]: resources };
-  }
+  switch (type) {
+    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+      return { ...state, [resourceType]: collection };
 
-  return state;
+    case actionTypes.RESOURCE.RECEIVED:
+      return { ...state, resource };
+
+    default:
+      return state;
+  }
 };
 
 // #region PUBLIC SELECTORS

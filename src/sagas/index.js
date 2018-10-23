@@ -46,11 +46,32 @@ export function* apiCallWithRetry(path, opts) {
   }
 }
 
+export function* getResource({ resourceType, id }) {
+  const path = `/${resourceType}/${id}`;
+
+  try {
+    const resource = yield call(apiCallWithRetry, path);
+
+    yield put(actions.resource.received(resourceType, resource));
+
+    return resource;
+  } catch (e) {
+    return undefined;
+  }
+}
+
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
-  const collection = yield call(apiCallWithRetry, path);
 
-  yield put(actions.resource.received(resourceType, collection));
+  try {
+    const collection = yield call(apiCallWithRetry, path);
+
+    yield put(actions.resource.receivedCollection(resourceType, collection));
+
+    return collection;
+  } catch (e) {
+    return undefined;
+  }
 }
 
 export function* commitStagedChanges({ resourceType, id }) {
@@ -82,7 +103,7 @@ export function* commitStagedChanges({ resourceType, id }) {
   // from the above update call. (Instead of the brute force replace-all
   // call to the specific collection below:
 
-  yield put(actions.resource.request(resourceType));
+  yield put(actions.resource.requestCollection(resourceType));
 
   // It will take some time for the put request to be fullfilled
   // lets delasy clearing the staged data.
@@ -93,7 +114,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actionTypes.RESOURCE.REQUEST, getResourceCollection),
+    takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   ]);
 }
