@@ -42,9 +42,7 @@ describe('global selectors', () => {
     });
 
     test('should return correct data when staged data exists.', () => {
-      const exports = [
-        { _id: 1, name: 'test E', locallyModifiedLast: 'something' },
-      ];
+      const exports = [{ _id: 1, name: 'test E' }];
       const patch = { name: 'test X' };
       let state;
 
@@ -57,7 +55,6 @@ describe('global selectors', () => {
       const merged = {
         _id: 1,
         name: 'test X',
-        locallyModifiedLast: patchAction.timestamp,
       };
 
       state = reducer(state, patchAction);
