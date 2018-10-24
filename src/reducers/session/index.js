@@ -24,7 +24,7 @@ const themeName = (state = DEFAULT_THEME, action) => {
 };
 
 const stagedResources = (state = {}, action) => {
-  const { type, id, patch } = action;
+  const { type, id, patch, timestamp } = action;
   let newState;
 
   switch (type) {
@@ -40,7 +40,14 @@ const stagedResources = (state = {}, action) => {
 
       // TODO: there needs to be a deep copy here...
       // this is temp code to test our the pattern.
-      newState[id] = { ...newState[id], ...patch };
+      // We should also take into consideration to
+      // perform a deep merge for our merged resources,
+      // and maybe when merging rather performing at the root
+      // we could nest our changes in the merged object further in the json
+      if (typeof newState[id] === 'undefined') newState[id] = {};
+      newState[id].changes = { ...newState[id].changes, ...patch };
+
+      newState[id] = { ...newState[id], lastChange: timestamp };
 
       return newState;
 

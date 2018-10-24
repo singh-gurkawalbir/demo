@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import TimeAgo from 'react-timeago';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import actions from '../../actions';
@@ -145,19 +146,24 @@ class Edit extends Component {
             />
             {staged && (
               <div>
-                <Button
-                  onClick={handleCommitChanges}
-                  size="small"
-                  color="secondary">
-                  Commit Changes
-                </Button>
+                <div>
+                  <Button
+                    onClick={handleCommitChanges}
+                    size="small"
+                    color="secondary">
+                    Commit Changes
+                  </Button>
 
-                <Button
-                  onClick={handleRevertChanges}
-                  size="small"
-                  color="primary">
-                  Revert
-                </Button>
+                  <Button
+                    onClick={handleRevertChanges}
+                    size="small"
+                    color="primary">
+                    Revert
+                  </Button>
+                </div>
+
+                <span>Last Modified :</span>
+                <TimeAgo date={staged.lastChange} />
               </div>
             )}
           </form>

@@ -42,19 +42,29 @@ describe('global selectors', () => {
     });
 
     test('should return correct data when staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test E' }];
-      const patch = { name: 'text X' };
+      const exports = [
+        { _id: 1, name: 'test E', locallyModifiedLast: 'something' },
+      ];
+      const patch = { name: 'test X' };
       let state;
 
       state = reducer(
         undefined,
         actions.resource.receivedCollection('exports', exports)
       );
-      state = reducer(state, actions.resource.patchStaged(1, patch));
+
+      const patchAction = actions.resource.patchStaged(1, patch);
+      const merged = {
+        _id: 1,
+        name: 'test X',
+        locallyModifiedLast: patchAction.timestamp,
+      };
+
+      state = reducer(state, patchAction);
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: { ...exports[0], ...patch },
-        staged: patch,
+        merged,
+        staged: { changes: patch, lastChange: patchAction.timestamp },
         resource: exports[0],
       });
     });

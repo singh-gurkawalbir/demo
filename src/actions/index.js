@@ -37,7 +37,11 @@ const resource = {
   clearStaged: id => action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
 
   patchStaged: (id, patch) =>
-    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
+    action(actionTypes.RESOURCE.STAGE_PATCH, {
+      patch,
+      id,
+      timestamp: new Date(),
+    }),
 
   commitStaged: (resourceType, id) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id }),
