@@ -3,25 +3,84 @@ import reducer, * as selectors from './';
 import actions, { availableResources } from '../../actions';
 
 describe('data reducers', () => {
-  availableResources.forEach(type => {
-    describe(`${type} received action`, () => {
-      test('should store the new data', () => {
-        const data = 'test data';
-        const state = reducer(undefined, actions.resource.received(type, data));
+  availableResources.forEach(resourceType => {
+    describe(`${resourceType} received resource action`, () => {
+      test('should store the new resource if none exist', () => {
+        const resource = { _id: 1, name: 'bob' };
+        const state = reducer(
+          undefined,
+          actions.resource.received(resourceType, resource)
+        );
 
-        expect(state[type]).toEqual(data);
+        expect(state[resourceType]).toContain(resource);
       });
 
-      test('should replace existing data with the new data', () => {
+      test('should store the new resource if some exist', () => {
+        const collection = [{ _id: 1 }, { _id: 3 }];
+        const resource = { _id: 2, name: 'bob' };
+        let state;
+
+        state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+        state = reducer(
+          state,
+          actions.resource.received(resourceType, resource)
+        );
+
+        expect(state[resourceType]).toEqual([...collection, resource]);
+      });
+
+      test('should replace an existing resource if one already exists', () => {
+        const collection = [{ _id: 1 }, { _id: 2 }, { _id: 3 }];
+        const resource = { _id: 2, name: 'bob' };
+        let state;
+
+        state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+        state = reducer(
+          state,
+          actions.resource.received(resourceType, resource)
+        );
+
+        expect(state[resourceType]).toEqual([
+          collection[0],
+          resource,
+          collection[2],
+        ]);
+      });
+    });
+
+    describe(`${resourceType} received resource collection action`, () => {
+      test('should store the new collection', () => {
+        const data = 'test data';
+        const state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, data)
+        );
+
+        expect(state[resourceType]).toEqual(data);
+      });
+
+      test('should replace existing collection with the new colletion', () => {
         const data1 = 'test data';
         const data2 = 'new test data';
         let state;
 
-        state = reducer(state, actions.resource.received(type, data1));
-        expect(state[type]).toEqual(data1);
+        state = reducer(
+          state,
+          actions.resource.receivedCollection(resourceType, data1)
+        );
+        expect(state[resourceType]).toEqual(data1);
 
-        state = reducer(state, actions.resource.received(type, data2));
-        expect(state[type]).toEqual(data2);
+        state = reducer(
+          state,
+          actions.resource.receivedCollection(resourceType, data2)
+        );
+        expect(state[resourceType]).toEqual(data2);
       });
     });
   });
@@ -38,7 +97,7 @@ describe('data selectors', () => {
       const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
       const state = reducer(
         undefined,
-        actions.resource.received('exports', testExports)
+        actions.resource.receivedCollection('exports', testExports)
       );
 
       expect(selectors.resource(state, 'junk', 123)).toBeNull();
@@ -50,7 +109,7 @@ describe('data selectors', () => {
       const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
       const state = reducer(
         undefined,
-        actions.resource.received('exports', testExports)
+        actions.resource.receivedCollection('exports', testExports)
       );
 
       expect(selectors.resource(state, 'exports', 234)).toEqual(testExports[0]);
@@ -63,11 +122,11 @@ describe('data selectors', () => {
 
       state = reducer(
         undefined,
-        actions.resource.received('exports', testExports)
+        actions.resource.receivedCollection('exports', testExports)
       );
       state = reducer(
         state,
-        actions.resource.received('connections', testConnections)
+        actions.resource.receivedCollection('connections', testConnections)
       );
 
       const filledResource = {
@@ -122,7 +181,7 @@ describe('data selectors', () => {
     }));
     const state = reducer(
       undefined,
-      actions.resource.received('exports', testExports)
+      actions.resource.receivedCollection('exports', testExports)
     );
 
     test('should return all resources when name matches resource type.', () => {
@@ -154,7 +213,7 @@ describe('data selectors', () => {
       };
       const newState = reducer(
         state,
-        actions.resource.received('connections', [bobConn])
+        actions.resource.receivedCollection('connections', [bobConn])
       );
       const result = selectors.resourceList(newState, {
         type: 'exports',
@@ -212,7 +271,7 @@ describe('data selectors', () => {
     test('should return false when no data found for resourceType', () => {
       const state = reducer(
         undefined,
-        actions.resource.received('exports', [])
+        actions.resource.receivedCollection('exports', [])
       );
 
       expect(selectors.hasData(state, 'imports')).toEqual(false);
@@ -221,7 +280,7 @@ describe('data selectors', () => {
     test('should return true when data found for resourceType', () => {
       const state = reducer(
         undefined,
-        actions.resource.received('exports', [])
+        actions.resource.receivedCollection('exports', [])
       );
 
       expect(selectors.hasData(state, 'exports')).toEqual(true);

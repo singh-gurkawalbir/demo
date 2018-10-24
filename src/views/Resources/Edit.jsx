@@ -34,13 +34,13 @@ const mapDispatchToProps = (dispatch, { match }) => {
       const patch = {};
 
       patch[property] = value;
-      dispatch(actions.patchStagedResource(id, patch));
+      dispatch(actions.resource.patchStaged(id, patch));
     },
     handleCommitChanges: () => {
-      dispatch(actions.commitStagedResource(resourceType, id));
+      dispatch(actions.resource.commitStaged(resourceType, id));
     },
     handleRevertChanges: () => {
-      dispatch(actions.clearStagedResource(id));
+      dispatch(actions.resource.clearStaged(id));
     },
   };
 };
