@@ -50,18 +50,14 @@ describe('global selectors', () => {
         undefined,
         actions.resource.receivedCollection('exports', exports)
       );
-
-      const patchAction = actions.resource.patchStaged(1, patch);
-      const merged = {
-        _id: 1,
-        name: 'test X',
-      };
-
-      state = reducer(state, patchAction);
+      state = reducer(state, actions.resource.patchStaged(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged,
-        staged: { changes: patch, lastChange: patchAction.timestamp },
+        merged: {
+          _id: 1,
+          name: 'test X',
+        },
+        staged: { changes: patch, lastChange: new Date() },
         resource: exports[0],
       });
     });

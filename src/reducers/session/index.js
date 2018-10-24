@@ -24,7 +24,7 @@ const themeName = (state = DEFAULT_THEME, action) => {
 };
 
 const stagedResources = (state = {}, action) => {
-  const { type, id, patch, timestamp } = action;
+  const { type, id, patch } = action;
   let newState;
 
   switch (type) {
@@ -47,7 +47,7 @@ const stagedResources = (state = {}, action) => {
       if (typeof newState[id] === 'undefined') newState[id] = {};
       newState[id].changes = { ...newState[id].changes, ...patch };
 
-      newState[id] = { ...newState[id], lastChange: timestamp };
+      newState[id] = { ...newState[id], lastChange: new Date() };
 
       return newState;
 

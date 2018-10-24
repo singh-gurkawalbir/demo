@@ -40,7 +40,6 @@ const resource = {
     action(actionTypes.RESOURCE.STAGE_PATCH, {
       patch,
       id,
-      timestamp: new Date(),
     }),
 
   commitStaged: (resourceType, id) =>
