@@ -16,7 +16,12 @@ const API_REQUEST = 'API_REQUEST';
 const API_COMPLETE = 'API_COMPLETE';
 const API_RETRY = 'API_RETRY';
 const API_FAILURE = 'API_FAILURE';
-const baseResourceActions = [REQUEST, REQUEST_COLLECTION, RECEIVED];
+const baseResourceActions = [
+  REQUEST,
+  REQUEST_COLLECTION,
+  RECEIVED,
+  RECEIVED_COLLECTION,
+];
 const stageResourceActions = [STAGE_PATCH, STAGE_CLEAR, STAGE_COMMIT];
 
 function createResourceActionTypes(base, includeStagedActions) {
