@@ -103,9 +103,7 @@ export function resourceData(state, resourceType, id) {
   if (!r) return null;
 
   const staged = fromSession.stagedResource(state.session, id);
-  const merged = staged
-    ? { ...r, ...staged.changes, locallyModifiedLast: staged.lastChange }
-    : r;
+  const merged = staged ? { ...r, ...staged.changes } : r;
 
   return {
     resource: r,
