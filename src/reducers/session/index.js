@@ -1,22 +1,22 @@
 import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
 
-export const DEFAULT_THEME = 'dark';
 const profile = (state = null, action) => {
   if (
     action.type === actionTypes.RESOURCE.RECEIVED &&
     action.resourceType === 'profile'
   ) {
-    return action.resources;
+    return action.resource;
   }
 
   return state;
 };
 
+export const DEFAULT_THEME = 'dark';
 const themeName = (state = DEFAULT_THEME, action) => {
   switch (action.type) {
     case actionTypes.SET_THEME:
-      return action.themeName;
+      return action.name;
 
     default:
       return state;

@@ -3,44 +3,44 @@ import actionTypes from '../../actions/types';
 const initialState = {};
 
 export default (state = initialState, action) => {
-  const { type, resourceType } = action;
+  const { type, path } = action;
   let newStatus;
 
   switch (type) {
-    case actionTypes.RESOURCE.REQUEST:
-      newStatus = Object.assign({}, state[resourceType]) || {};
+    case actionTypes.API_REQUEST:
+      newStatus = Object.assign({}, state[path]) || {};
 
       newStatus.loading = true;
       delete newStatus.retry;
       delete newStatus.error;
 
-      return { ...state, [resourceType]: newStatus };
+      return { ...state, [path]: newStatus };
 
-    case actionTypes.RESOURCE.RECEIVED:
-      newStatus = Object.assign({}, state[resourceType]) || {};
+    case actionTypes.API_COMPLETE:
+      newStatus = Object.assign({}, state[path]) || {};
 
       newStatus.loading = false;
       delete newStatus.retry;
       delete newStatus.error;
 
-      return { ...state, [resourceType]: newStatus };
+      return { ...state, [path]: newStatus };
 
-    case actionTypes.RESOURCE.RETRY:
-      newStatus = Object.assign({}, state[resourceType]) || {};
+    case actionTypes.API_RETRY:
+      newStatus = Object.assign({}, state[path]) || {};
 
       newStatus.retry = newStatus.retry || 0;
       newStatus.retry += 1;
 
-      return { ...state, [resourceType]: newStatus };
+      return { ...state, [path]: newStatus };
 
-    case actionTypes.RESOURCE.FAILURE:
-      newStatus = Object.assign({}, state[resourceType]) || {};
+    case actionTypes.API_FAILURE:
+      newStatus = Object.assign({}, state[path]) || {};
 
       newStatus.error = action.message || 'unknown error';
       delete newStatus.retry;
       newStatus.loading = false;
 
-      return { ...state, [resourceType]: newStatus };
+      return { ...state, [path]: newStatus };
 
     default:
       return state;

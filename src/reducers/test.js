@@ -31,7 +31,7 @@ describe('global selectors', () => {
       const exports = [{ _id: 1, name: 'test E' }];
       const state = reducer(
         undefined,
-        actions.resource.received('exports', exports)
+        actions.resource.receivedCollection('exports', exports)
       );
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
@@ -46,7 +46,10 @@ describe('global selectors', () => {
       const patch = { name: 'text X' };
       let state;
 
-      state = reducer(undefined, actions.resource.received('exports', exports));
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
       state = reducer(state, actions.resource.patchStaged(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({

@@ -2,19 +2,49 @@ import actionTypes from '../../actions/types';
 
 const resourceTypesToIgnore = ['profile'];
 
-// Updates an entity cache in response to any action with response.data.
-export default (state = {}, action) => {
-  const { type, resources, resourceType } = action;
+function replaceOrInsertResource(state, type, resource) {
+  // handle case of no collection
+  if (!state[type]) {
+    return { ...state, [type]: [resource] };
+  }
 
+  // if we have a collection, look for a match
+  const collection = state[type];
+  const index = collection.findIndex(r => r._id === resource._id);
+
+  // insert if not found, replace if found...
+  if (index === -1) {
+    return { ...state, [type]: [...collection, resource] };
+  }
+
+  const newColletion = [
+    ...collection.slice(0, index),
+    resource,
+    ...collection.slice(index + 1),
+  ];
+
+  return { ...state, [type]: newColletion };
+}
+
+export default (state = {}, action) => {
+  const { type, resource, collection, resourceType } = action;
+
+  // Some resources are managed by custom reducers.
+  // Lets skip those for this generic implementation
   if (resourceTypesToIgnore.find(t => t === resourceType)) {
     return state;
   }
 
-  if (type === actionTypes.RESOURCE.RECEIVED) {
-    return { ...state, [resourceType]: resources };
-  }
+  switch (type) {
+    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+      return { ...state, [resourceType]: collection };
 
-  return state;
+    case actionTypes.RESOURCE.RECEIVED:
+      return replaceOrInsertResource(state, resourceType, resource);
+
+    default:
+      return state;
+  }
 };
 
 // #region PUBLIC SELECTORS
