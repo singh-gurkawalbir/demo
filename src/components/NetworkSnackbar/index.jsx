@@ -19,7 +19,7 @@ const LinearInDertiminate = props =>
   snackbarContent: {
     w: theme.spacing.unit * 4,
     flexGrow: 0,
-    textAlign: 'center',
+    justifyContent: 'center',
   },
 }))
 class NetworkSnackbar extends Component {
