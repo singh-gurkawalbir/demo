@@ -57,7 +57,7 @@ describe('global selectors', () => {
           _id: 1,
           name: 'test X',
         },
-        staged: { changes: patch, lastChange: new Date() },
+        staged: { changes: patch, lastChange: expect.any(Date) },
         resource: exports[0],
       });
     });
