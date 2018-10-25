@@ -52,7 +52,7 @@ class TitleBar extends Component {
 
     return (
       <div className={classes.titleBox}>
-        <Typography className={classes.title} variant="display1">
+        <Typography className={classes.title} variant="h4">
           Your {itemName}
         </Typography>
         <div className={classes.secondaryHeading}>

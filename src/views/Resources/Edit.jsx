@@ -30,10 +30,15 @@ const mapDispatchToProps = (dispatch, { match }) => {
   return {
     handleInputChange: event => {
       const { value } = event.target;
-      const property = event.target.id;
-      const patch = {};
+      const path = `/${event.target.id}`;
+      const patch = [
+        {
+          op: 'replace',
+          path,
+          value,
+        },
+      ];
 
-      patch[property] = value;
       dispatch(actions.resource.patchStaged(id, patch));
     },
     handleCommitChanges: () => {
@@ -106,15 +111,15 @@ class Edit extends Component {
       handleCommitChanges,
       handleRevertChanges,
     } = this.props;
-    const { merged, staged } = resourceData;
+    const { merged, patch, conflict } = resourceData;
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
-        <Typography variant="headline">
+        <Typography variant="h5">
           {`${toName(resourceType)}: ${merged.name || ''}`}
         </Typography>
 
-        <Typography variant="subheading">ID: {merged._id}</Typography>
+        <Typography variant="subtitle1">ID: {merged._id}</Typography>
 
         <Typography variant="caption">
           Last Modified: {prettyDate(merged.lastModified)}
@@ -143,7 +148,7 @@ class Edit extends Component {
               className={classes.textField}
               margin="normal"
             />
-            {staged && (
+            {patch && (
               <div>
                 <Button
                   onClick={handleCommitChanges}
@@ -158,13 +163,19 @@ class Edit extends Component {
                   color="primary">
                   Revert
                 </Button>
+                {conflict && (
+                  <div>
+                    Merge Conflict:
+                    {JSON.stringify(conflict)}
+                  </div>
+                )}
               </div>
             )}
           </form>
         </div>
       </LoadResources>
     ) : (
-      <Typography variant="headline">
+      <Typography variant="h5">
         No {toName(resourceType)} found with id {id}.
       </Typography>
     );

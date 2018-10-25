@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import jsonPatch from 'fast-json-patch';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
@@ -93,17 +94,32 @@ export function resourceStatus(state, resourceType) {
 }
 
 export function resourceData(state, resourceType, id) {
-  const r = resource(state, resourceType, id);
+  const master = resource(state, resourceType, id);
 
-  if (!r) return null;
+  if (!master) return {};
 
-  const staged = fromSession.stagedResource(state.session, id);
-  const merged = staged ? { ...r, ...staged } : r;
+  const { patch, conflict } = fromSession.stagedResource(state.session, id);
+  // console.log('patch:', patch);
+  let merged = master;
 
-  return {
-    resource: r,
-    staged,
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      jsonPatch.deepClone(master),
+      patch
+    );
+
+    // console.log('patchResult', patchResult);
+    merged = patchResult.newDocument;
+  }
+
+  const data = {
+    master,
+    patch,
     merged,
   };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
 }
 // #endregion

@@ -78,7 +78,7 @@ export default class ListPipelines extends Component {
             ))}
           </List>
         ) : (
-          <Typography variant="subheading" className={classes.empty}>
+          <Typography variant="subtitle1" className={classes.empty}>
             <em>Create a new pipeline to get started.</em>
           </Typography>
         )}

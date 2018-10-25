@@ -67,11 +67,11 @@ class Resources extends Component {
     const { allResources, classes } = this.props;
     const NoEdit = () => (
       <div>
-        <Typography variant="title">
+        <Typography variant="h6">
           The left sidebar lists all your resources organized by type.
         </Typography>
         <br />
-        <Typography variant="subheading">
+        <Typography variant="subtitle1">
           Use the keyword search to help find the resoure you are looking for.
         </Typography>
       </div>
@@ -86,7 +86,7 @@ class Resources extends Component {
             classes={{
               paper: classes.drawerPaper,
             }}>
-            <Typography variant="headline">Available Resources</Typography>
+            <Typography variant="h5">Available Resources</Typography>
             <SearchOptions />
             {allResources.map(r => (
               <FilteredResources key={`${r.type}-section`} list={r} />

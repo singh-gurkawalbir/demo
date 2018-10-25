@@ -101,10 +101,7 @@ export default class Appbar extends Component {
               <MenuIcon className={classes.icon} />
             </IconButton>
             <Link className={classes.playground} to="/pg/">
-              <Typography
-                variant="title"
-                color="inherit"
-                className={classes.flex}>
+              <Typography variant="h6" color="inherit" className={classes.flex}>
                 integrator.io
               </Typography>
             </Link>

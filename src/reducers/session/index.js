@@ -24,8 +24,9 @@ const themeName = (state = DEFAULT_THEME, action) => {
 };
 
 const stagedResources = (state = {}, action) => {
-  const { type, id, patch } = action;
+  const { type, id, patch, conflict } = action;
   let newState;
+  let newPatch;
 
   switch (type) {
     case actionTypes.RESOURCE.STAGE_CLEAR:
@@ -38,9 +39,36 @@ const stagedResources = (state = {}, action) => {
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState = Object.assign({}, state);
 
-      // TODO: there needs to be a deep copy here...
-      // this is temp code to test our the pattern.
-      newState[id] = { ...newState[id], ...patch };
+      newState[id] = newState[id] || {};
+      newPatch = newState[id].patch || [];
+
+      // if the previous patch is modifying the same prior field, remove
+      // the prior patch so we dont accumulate single character patches.
+      if (
+        patch.length === 1 &&
+        newPatch.length > 0 &&
+        newPatch[newPatch.length - 1].path === patch[0].path
+      ) {
+        newPatch.pop();
+      }
+
+      newState[id] = {
+        ...newState[id],
+        lastChange: Date.now(),
+        patch: [...newPatch, ...patch],
+      };
+
+      return newState;
+
+    case actionTypes.RESOURCE.STAGE_CONFLICT:
+      newState = Object.assign({}, state);
+
+      newState[id] = newState[id] || {};
+
+      newState[id] = {
+        ...newState[id],
+        conflict: { ...newState[id].conflict, ...conflict },
+      };
 
       return newState;
 
@@ -79,9 +107,7 @@ export default combineReducers({
   stagedResources,
 });
 
-// *****************
-// PUBLIC SELECTORS
-// *****************
+// #region PUBLIC SELECTORS
 export function avatarUrl(state) {
   if (!state || !state.profile) return undefined;
 
@@ -108,8 +134,9 @@ export function filter(state, name) {
 
 export function stagedResource(state, id) {
   if (!state || !state.stagedResources || !id) {
-    return null;
+    return {};
   }
 
-  return state.stagedResources[id];
+  return state.stagedResources[id] || {};
 }
+// #endregion

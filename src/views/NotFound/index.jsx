@@ -8,7 +8,7 @@ export default class NotFound extends Component {
   render() {
     return (
       <Fragment>
-        <Typography variant="display1">404: Page not found</Typography>
+        <Typography variant="h4">404: Page not found</Typography>
         <Link to="/">Home</Link>
       </Fragment>
     );

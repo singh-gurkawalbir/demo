@@ -21,14 +21,14 @@ describe('global selectors', () => {
   });
 
   describe('resourceData', () => {
-    test('should return null on bad state or args.', () => {
-      expect(selectors.resourceData()).toBeNull();
-      expect(selectors.resourceData({})).toBeNull();
-      expect(selectors.resourceData({ data: {} })).toBeNull();
+    test('should return {} on bad state or args.', () => {
+      expect(selectors.resourceData()).toEqual({});
+      expect(selectors.resourceData({})).toEqual({});
+      expect(selectors.resourceData({ data: {} })).toEqual({});
     });
 
     test('should return correct data when no staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test E' }];
+      const exports = [{ _id: 1, name: 'test A' }];
       const state = reducer(
         undefined,
         actions.resource.receivedCollection('exports', exports)
@@ -37,13 +37,13 @@ describe('global selectors', () => {
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
         merged: exports[0],
         staged: undefined,
-        resource: exports[0],
+        master: exports[0],
       });
     });
 
     test('should return correct data when staged data exists.', () => {
-      const exports = [{ _id: 1, name: 'test E' }];
-      const patch = { name: 'text X' };
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
       let state;
 
       state = reducer(
@@ -53,9 +53,9 @@ describe('global selectors', () => {
       state = reducer(state, actions.resource.patchStaged(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        merged: { ...exports[0], ...patch },
-        staged: patch,
-        resource: exports[0],
+        merged: { _id: 1, name: 'patch X' },
+        patch,
+        master: exports[0],
       });
     });
   });

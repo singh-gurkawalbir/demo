@@ -106,9 +106,7 @@ class ResourceList extends Component {
     if (!list.count) {
       return (
         <Paper className={classes.paper} elevation={4}>
-          <Typography variant="headline" component="h3">
-            You have no {displayName}.
-          </Typography>
+          <Typography variant="h3">You have no {displayName}.</Typography>
           <Typography component="p">
             You can create new {displayName} by logging into:
             <a href={process.env.API_ENDPOINT}>{process.env.API_ENDPOINT}</a>.
