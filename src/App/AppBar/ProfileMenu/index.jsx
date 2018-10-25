@@ -195,10 +195,8 @@ class AppBar extends Component {
                   />
                 </Grid>
                 <Grid item>
-                  <Typography variant="headline" component="h2">
-                    {profile.name}
-                  </Typography>
-                  <Typography component="h3">{profile.email}</Typography>
+                  <Typography variant="h5">{profile.name}</Typography>
+                  <Typography variant="h6">{profile.email}</Typography>
                 </Grid>
               </Grid>
               <div>

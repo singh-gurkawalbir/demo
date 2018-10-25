@@ -9,8 +9,6 @@ export default async (path, opts = {}) => {
     credentials: 'same-origin', // this is needed to instruct fetch to send cookies
 
     headers: {
-      // now that we session auth, no need for token...
-      // Authorization: `Bearer ${process.env.API_TOKEN}`,
       ...(opts.headers || {
         'Content-Type': 'application/json; charset=utf-8',
       }),

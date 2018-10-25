@@ -41,6 +41,9 @@ const resource = {
 
   commitStaged: (resourceType, id) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id }),
+
+  commitConflict: (id, conflict) =>
+    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
 };
 const profile = {
   request: () => resource.request('profile'),

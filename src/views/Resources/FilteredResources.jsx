@@ -41,9 +41,7 @@ class FilteredResources extends Component {
     const resourceType = list.type;
 
     if (!list.count) {
-      return (
-        <Typography variant="headline">You have no {resourceType}.</Typography>
-      );
+      return <Typography variant="h5">You have no {resourceType}.</Typography>;
     }
 
     const daysOld = lastModified => (
@@ -55,9 +53,7 @@ class FilteredResources extends Component {
     return (
       <Fragment>
         <div className={classes.root}>
-          <Typography variant="headline">
-            {resourceType.toUpperCase()}
-          </Typography>
+          <Typography variant="h5">{resourceType.toUpperCase()}</Typography>
           <List>
             {list.resources.map(r => (
               <ListItem
