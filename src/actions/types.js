@@ -9,6 +9,7 @@ export const RECEIVED_COLLECTION = 'RECEIVED_COLLECTION';
 
 const STAGE_PATCH = 'STAGE_PATCH';
 const STAGE_CLEAR = 'STAGE_CLEAR';
+const STAGE_UNDO = 'STAGE_UNDO';
 const STAGE_COMMIT = 'STAGE_COMMIT';
 const STAGE_CONFLICT = 'STAGE_CONFLICT';
 // The action types below are used for managing network activity.
@@ -26,6 +27,7 @@ const baseResourceActions = [
 const stageResourceActions = [
   STAGE_PATCH,
   STAGE_CLEAR,
+  STAGE_UNDO,
   STAGE_COMMIT,
   STAGE_CONFLICT,
 ];

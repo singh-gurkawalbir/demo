@@ -44,6 +44,9 @@ const mapDispatchToProps = (dispatch, { match }) => {
     handleCommitChanges: () => {
       dispatch(actions.resource.commitStaged(resourceType, id));
     },
+    handleUndoChange: () => {
+      dispatch(actions.resource.undoStaged(id));
+    },
     handleRevertChanges: () => {
       dispatch(actions.resource.clearStaged(id));
     },
@@ -108,6 +111,7 @@ class Edit extends Component {
       resourceType,
       classes,
       handleInputChange,
+      handleUndoChange,
       handleCommitChanges,
       handleRevertChanges,
     } = this.props;
@@ -161,8 +165,13 @@ class Edit extends Component {
                   onClick={handleRevertChanges}
                   size="small"
                   color="primary">
-                  Revert
+                  Revert All
                 </Button>
+
+                <Button onClick={handleUndoChange} size="small" color="primary">
+                  Undo Last Change
+                </Button>
+
                 {conflict && (
                   <div>
                     Merge Conflict:
