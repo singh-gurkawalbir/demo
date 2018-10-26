@@ -58,7 +58,6 @@ const stagedResources = (state = {}, action) => {
 
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState = Object.assign({}, state);
-
       newState[id] = newState[id] || {};
       newPatch = newState[id].patch || [];
 

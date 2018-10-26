@@ -1,12 +1,21 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
-import { allLoadingOrErrored } from '../../reducers';
+import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
+  isLoadingAnyResource: isLoadingAnyResource(state),
 });
+const LinearInDertiminate = props => props.show && <LinearProgress />;
+const Dismiss = props =>
+  props.show && (
+    <Button variant="contained" color="secondary" onClick={props.onClick}>
+      Dismiss
+    </Button>
+  );
 
 @withStyles(theme => ({
   snackbar: {
@@ -15,20 +24,31 @@ const mapStateToProps = state => ({
   snackbarContent: {
     w: theme.spacing.unit * 4,
     flexGrow: 0,
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 }))
 class NetworkSnackbar extends Component {
+  state = { showSnackbar: true };
+
+  handleCloseSnackbar = () => {
+    this.setState({
+      showSnackbar: false,
+    });
+  };
+
+  isLoading() {}
   render() {
-    const { allLoadingOrErrored, classes } = this.props;
+    const { showSnackbar } = this.state;
+    const { isLoadingAnyResource, allLoadingOrErrored, classes } = this.props;
 
     if (!allLoadingOrErrored) {
       return null;
     }
 
     const notification = r => {
-      if (r.error) {
+      if (r.error)
         return <li key={r.name}>{`Error loading ${r.name}. (${r.error})`}</li>;
-      }
 
       let msg = `Loading ${r.name}...`;
 
@@ -39,7 +59,16 @@ class NetworkSnackbar extends Component {
       return <li key={r.name}>{msg}</li>;
     };
 
-    const msg = <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>;
+    const msg = (
+      <div>
+        <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
+        <LinearInDertiminate show={isLoadingAnyResource} />
+        <Dismiss
+          show={!isLoadingAnyResource}
+          onClick={this.handleCloseSnackbar}
+        />
+      </div>
+    );
 
     return (
       <Snackbar
@@ -57,7 +86,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open
+        open={showSnackbar}
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}

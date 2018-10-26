@@ -28,6 +28,11 @@ export default rootReducer;
 export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
+
+export function isLoadingAnyResource(state) {
+  return fromComms.isLoadingAnyResource(state.comms);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
