@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
+import stage, * as fromStage from './stage';
+import filters, * as fromFilters from './filters';
 
 const profile = (state = null, action) => {
   if (
@@ -23,104 +25,11 @@ const themeName = (state = DEFAULT_THEME, action) => {
   }
 };
 
-const stagedResources = (state = {}, action) => {
-  const { type, id, patch, conflict } = action;
-  let newState;
-  let newPatch;
-
-  switch (type) {
-    case actionTypes.RESOURCE.STAGE_CLEAR:
-      // we can't clear if there is no staged data
-      if (!state[id] || !state[id].patch || !state[id].patch.length) {
-        return state;
-      }
-
-      newState = Object.assign({}, state);
-
-      // drop all staged patches.
-      delete newState[id].patch;
-      delete newState[id].lastChange;
-
-      return newState;
-
-    case actionTypes.RESOURCE.STAGE_UNDO:
-      // we can't undo if there is no staged data
-      if (!state[id] || !state[id].patch || !state[id].patch.length) {
-        return state;
-      }
-
-      newState = Object.assign({}, state);
-
-      // drop last patch.
-      newState[id].patch.pop();
-
-      return newState;
-
-    case actionTypes.RESOURCE.STAGE_PATCH:
-      newState = Object.assign({}, state);
-      newState[id] = newState[id] || {};
-      newPatch = newState[id].patch || [];
-
-      // if the previous patch is modifying the same path as the prior patch,
-      // remove the prior patch so we dont accumulate single character patches.
-      if (
-        patch.length === 1 &&
-        newPatch.length > 0 &&
-        newPatch[newPatch.length - 1].path === patch[0].path
-      ) {
-        newPatch.pop(); // throw away partial patch.
-      }
-
-      newState[id] = {
-        ...newState[id],
-        lastChange: Date.now(),
-        patch: [...newPatch, ...patch],
-      };
-
-      return newState;
-
-    case actionTypes.RESOURCE.STAGE_CONFLICT:
-      newState = Object.assign({}, state);
-
-      newState[id] = newState[id] || {};
-
-      newState[id].conflict = conflict;
-
-      return newState;
-
-    default:
-      return state;
-  }
-};
-
-const filters = (state = {}, action) => {
-  const { type, name, filter } = action;
-  let newState;
-
-  switch (type) {
-    case actionTypes.CLEAR_FILTER:
-      newState = Object.assign({}, state);
-
-      delete newState[name];
-
-      return newState;
-
-    case actionTypes.PATCH_FILTER:
-      newState = Object.assign({}, state);
-      newState[name] = { ...newState[name], ...filter };
-
-      return newState;
-
-    default:
-      return state;
-  }
-};
-
 export default combineReducers({
   profile,
   themeName,
   filters,
-  stagedResources,
+  stage,
 });
 
 // #region PUBLIC SELECTORS
@@ -141,18 +50,14 @@ export function userTheme(state) {
 }
 
 export function filter(state, name) {
-  if (!state || !state.filters) {
-    return {};
-  }
+  if (!state) return {};
 
-  return state.filters[name] || {};
+  return fromFilters.filter(state.filters, name);
 }
 
 export function stagedResource(state, id) {
-  if (!state || !state.stagedResources || !id) {
-    return {};
-  }
+  if (!state) return {};
 
-  return state.stagedResources[id] || {};
+  return fromStage.stagedResource(state.stage, id);
 }
 // #endregion

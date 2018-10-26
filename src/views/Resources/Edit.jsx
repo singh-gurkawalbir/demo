@@ -152,34 +152,38 @@ class Edit extends Component {
               className={classes.textField}
               margin="normal"
             />
-            {patch && (
-              <div>
-                <Button
-                  onClick={handleCommitChanges}
-                  size="small"
-                  color="secondary">
-                  Commit Changes
-                </Button>
+            {patch &&
+              patch.length && (
+                <div>
+                  <Button
+                    onClick={handleCommitChanges}
+                    size="small"
+                    color="secondary">
+                    Commit Changes
+                  </Button>
 
-                <Button
-                  onClick={handleRevertChanges}
-                  size="small"
-                  color="primary">
-                  Revert All
-                </Button>
+                  <Button
+                    onClick={handleRevertChanges}
+                    size="small"
+                    color="primary">
+                    Revert All
+                  </Button>
 
-                <Button onClick={handleUndoChange} size="small" color="primary">
-                  Undo Last Change
-                </Button>
+                  <Button
+                    onClick={handleUndoChange}
+                    size="small"
+                    color="primary">
+                    Undo Last Change
+                  </Button>
 
-                {conflict && (
-                  <div>
-                    Merge Conflict:
-                    {JSON.stringify(conflict)}
-                  </div>
-                )}
-              </div>
-            )}
+                  {conflict && (
+                    <div>
+                      Merge Conflict:
+                      {JSON.stringify(conflict)}
+                    </div>
+                  )}
+                </div>
+              )}
           </form>
         </div>
       </LoadResources>
