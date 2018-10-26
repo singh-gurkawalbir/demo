@@ -29,8 +29,8 @@ export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
 
-export function isLoadingAllResources(state) {
-  return fromComms.isLoadingAllResources(state.comms);
+export function isLoadingAnyResource(state) {
+  return fromComms.isLoadingAnyResource(state.comms);
 }
 
 // #endregion
