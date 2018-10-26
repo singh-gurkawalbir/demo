@@ -24,30 +24,67 @@ const themeName = (state = DEFAULT_THEME, action) => {
 };
 
 const stagedResources = (state = {}, action) => {
-  const { type, id, patch } = action;
+  const { type, id, patch, conflict } = action;
   let newState;
+  let newPatch;
 
   switch (type) {
     case actionTypes.RESOURCE.STAGE_CLEAR:
+      // we can't clear if there is no staged data
+      if (!state[id] || !state[id].patch || !state[id].patch.length) {
+        return state;
+      }
+
       newState = Object.assign({}, state);
 
-      delete newState[id];
+      // drop all staged patches.
+      delete newState[id].patch;
+      delete newState[id].lastChange;
+
+      return newState;
+
+    case actionTypes.RESOURCE.STAGE_UNDO:
+      // we can't undo if there is no staged data
+      if (!state[id] || !state[id].patch || !state[id].patch.length) {
+        return state;
+      }
+
+      newState = Object.assign({}, state);
+
+      // drop last patch.
+      newState[id].patch.pop();
 
       return newState;
 
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState = Object.assign({}, state);
+      newState[id] = newState[id] || {};
+      newPatch = newState[id].patch || [];
 
-      // TODO: there needs to be a deep copy here...
-      // this is temp code to test our the pattern.
-      // We should also take into consideration to
-      // perform a deep merge for our merged resources,
-      // and maybe when merging rather performing at the root
-      // we could nest our changes in the merged object further in the json
-      if (typeof newState[id] === 'undefined') newState[id] = {};
-      newState[id].changes = { ...newState[id].changes, ...patch };
+      // if the previous patch is modifying the same path as the prior patch,
+      // remove the prior patch so we dont accumulate single character patches.
+      if (
+        patch.length === 1 &&
+        newPatch.length > 0 &&
+        newPatch[newPatch.length - 1].path === patch[0].path
+      ) {
+        newPatch.pop(); // throw away partial patch.
+      }
 
-      newState[id] = { ...newState[id], lastChange: new Date() };
+      newState[id] = {
+        ...newState[id],
+        lastChange: Date.now(),
+        patch: [...newPatch, ...patch],
+      };
+
+      return newState;
+
+    case actionTypes.RESOURCE.STAGE_CONFLICT:
+      newState = Object.assign({}, state);
+
+      newState[id] = newState[id] || {};
+
+      newState[id].conflict = conflict;
 
       return newState;
 
@@ -86,9 +123,7 @@ export default combineReducers({
   stagedResources,
 });
 
-// *****************
-// PUBLIC SELECTORS
-// *****************
+// #region PUBLIC SELECTORS
 export function avatarUrl(state) {
   if (!state || !state.profile) return undefined;
 
@@ -115,8 +150,9 @@ export function filter(state, name) {
 
 export function stagedResource(state, id) {
   if (!state || !state.stagedResources || !id) {
-    return null;
+    return {};
   }
 
-  return state.stagedResources[id];
+  return state.stagedResources[id] || {};
 }
+// #endregion

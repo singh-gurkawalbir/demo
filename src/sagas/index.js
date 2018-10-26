@@ -7,11 +7,12 @@ import {
   select,
 } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-// import jsonPatch from 'fast-json-patch';
+import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
 import api from '../utils/api';
 import * as selectors from '../reducers';
+import util from '../utils/array';
 
 const tryCount = 3;
 
@@ -78,23 +79,31 @@ export function* getResourceCollection({ resourceType }) {
 export function* commitStagedChanges({ resourceType, id }) {
   const getResourceData = state =>
     selectors.resourceData(state, resourceType, id);
-  const { staged, merged, resource } = yield select(getResourceData);
+  const { patch, merged, master } = yield select(getResourceData);
 
-  if (!staged) return; // nothing to do.
+  // console.log('resourceData', resourceData);
+  // const { patch, merged, master } = resourceData;
+
+  if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const latest = yield call(apiCallWithRetry, path);
+  const upstream = yield call(apiCallWithRetry, path);
 
   // console.log('latest', latest);
   // console.log('resource', resource);
 
-  if (latest.lastModified !== resource.lastModified) {
-    // for now, just force a reload and skip the stage commit
-    // we can add this later.
-    yield put(actions.resource.request(resourceType, id));
+  if (upstream.lastModified !== master.lastModified) {
+    let conflict = jsonPatch.compare(master, upstream);
 
-    // console.log(latest.lastModified, resource.lastModified);
-    // console.log(jsonPatch.compare(resource, latest));
+    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+    conflict = util.removeItem(conflict, p => p.path === '/connection');
+
+    yield put(actions.resource.commitConflict(id, conflict));
+    // yield put(actions.resource.received(resourceType, latest));
+
+    // console.log(server.lastModified, master.lastModified);
+    // console.log(conflict);
+
     return;
   }
 

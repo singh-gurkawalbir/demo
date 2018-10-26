@@ -2,25 +2,147 @@
 import reducer, * as selectors from './';
 import actions from '../../actions';
 
-describe('session reducers', () => {
-  describe(`PROFILE.RECEIVED action`, () => {
-    test('should store the new profile', () => {
-      const mockProfile = 'the profile!';
-      const state = reducer(undefined, actions.profile.received(mockProfile));
+describe(`profile reducer`, () => {
+  test('should store the new profile.', () => {
+    const mockProfile = 'the profile!';
+    const state = reducer(undefined, actions.profile.received(mockProfile));
 
-      expect(state.profile).toEqual(mockProfile);
+    expect(state.profile).toEqual(mockProfile);
+  });
+
+  test('should replace existing profile with a new one.', () => {
+    const mockProfile1 = 'the profile!';
+    const mockProfile2 = 'the other profile!';
+    let state;
+
+    state = reducer(state, actions.profile.received(mockProfile1));
+    expect(state.profile).toEqual(mockProfile1);
+
+    state = reducer(state, actions.profile.received(mockProfile2));
+    expect(state.profile).toEqual(mockProfile2);
+  });
+});
+
+describe('stagedResources reducers', () => {
+  describe(`STAGE_CLEAR action`, () => {
+    test('should do nothing if there is nothing staged', () => {
+      const id = 123;
+      const state = reducer(undefined, actions.resource.clearStaged(id));
+
+      expect(state.stagedResources[id]).toBeUndefined();
     });
 
-    test('should replace existing profile with a new one', () => {
-      const mockProfile1 = 'the profile!';
-      const mockProfile2 = 'the other profile!';
+    test('should clear staged patches if id matches', () => {
+      const id = 123;
+      const patch = { op: 'replace', path: '/name', value: 'ABC' };
       let state;
 
-      state = reducer(state, actions.profile.received(mockProfile1));
-      expect(state.profile).toEqual(mockProfile1);
+      state = reducer(state, actions.resource.patchStaged(id, [patch]));
+      state = reducer(
+        state,
+        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
+      );
+      expect(state.stagedResources[id].patch.length).toEqual(2);
 
-      state = reducer(state, actions.profile.received(mockProfile2));
-      expect(state.profile).toEqual(mockProfile2);
+      state = reducer(state, actions.resource.clearStaged(id));
+      expect(state.stagedResources[id].patch).toBeUndefined();
+    });
+  });
+
+  describe(`STAGE_UNDO action`, () => {
+    test('should do nothing if there is nothing staged.', () => {
+      const id = 123;
+      const state = reducer(undefined, actions.resource.undoStaged(id));
+
+      expect(state.stagedResources[id]).toBeUndefined();
+    });
+
+    test('should undo last staged patch if id matches.', () => {
+      const id = 123;
+      const patch = { op: 'replace', path: '/name', value: 'ABC' };
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, [patch]));
+      state = reducer(
+        state,
+        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
+      );
+      expect(state.stagedResources[id].patch.length).toEqual(2);
+
+      state = reducer(state, actions.resource.undoStaged(id));
+      expect(state.stagedResources[id].patch).toEqual([patch]);
+    });
+  });
+
+  describe(`STAGE_PATCH action`, () => {
+    test('should add patch if none yet exist.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch));
+
+      expect(state.stagedResources[id]).toEqual({
+        patch,
+        lastChange: expect.any(Number), // date is epoc date
+      });
+    });
+
+    test('should add subsequent patch if id matches and patch exists', () => {
+      const id = 123;
+      const patch1 = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const patch2 = [{ op: 'replace', path: '/desc', value: '123' }];
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch1));
+      state = reducer(state, actions.resource.patchStaged(id, patch2));
+
+      expect(state.stagedResources[id]).toEqual({
+        patch: [...patch1, ...patch2],
+        lastChange: expect.any(Number), // date is epoc date
+      });
+    });
+
+    test('should replace subsequent patch if id matches and patch path matches', () => {
+      const id = 123;
+      const patch1 = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const patch2 = [{ op: 'replace', path: '/name', value: '123' }];
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch1));
+      state = reducer(state, actions.resource.patchStaged(id, patch2));
+
+      expect(state.stagedResources[id]).toEqual({
+        patch: [{ op: 'replace', path: '/name', value: '123' }],
+        lastChange: expect.any(Number), // date is epoc date
+      });
+    });
+  });
+
+  describe(`STAGE_CONFLICT action`, () => {
+    test('should add conflict to stage if none yet exist.', () => {
+      const id = 123;
+      const conflict = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const state = reducer(
+        undefined,
+        actions.resource.commitConflict(id, conflict)
+      );
+
+      expect(state.stagedResources[id]).toEqual({ conflict });
+    });
+
+    test('should add subsequent patch if id matches and patch exists', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch));
+      state = reducer(state, actions.resource.commitConflict(id, conflict));
+
+      expect(state.stagedResources[id]).toEqual({
+        patch,
+        conflict,
+        lastChange: expect.any(Number), // date is epoc date
+      });
     });
   });
 });
@@ -149,6 +271,29 @@ describe('session selectors', () => {
       );
 
       expect(selectors.filter(state, 'testFilter')).toEqual(testFilter);
+    });
+  });
+
+  describe(`stagedResource`, () => {
+    test('should return empty object when no match found.', () => {
+      expect(selectors.stagedResource(undefined, 'key')).toEqual({});
+      expect(selectors.stagedResource({}, 'key')).toEqual({});
+    });
+
+    test('should return staged respource when match found.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch));
+      state = reducer(state, actions.resource.commitConflict(id, conflict));
+
+      expect(selectors.stagedResource(state, id)).toEqual({
+        patch,
+        conflict,
+        lastChange: expect.any(Number), // date is epoc date
+      });
     });
   });
 });

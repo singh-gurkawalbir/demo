@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import TimeAgo from 'react-timeago';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import actions from '../../actions';
@@ -31,14 +30,22 @@ const mapDispatchToProps = (dispatch, { match }) => {
   return {
     handleInputChange: event => {
       const { value } = event.target;
-      const property = event.target.id;
-      const patch = {};
+      const path = `/${event.target.id}`;
+      const patch = [
+        {
+          op: 'replace',
+          path,
+          value,
+        },
+      ];
 
-      patch[property] = value;
       dispatch(actions.resource.patchStaged(id, patch));
     },
     handleCommitChanges: () => {
       dispatch(actions.resource.commitStaged(resourceType, id));
+    },
+    handleUndoChange: () => {
+      dispatch(actions.resource.undoStaged(id));
     },
     handleRevertChanges: () => {
       dispatch(actions.resource.clearStaged(id));
@@ -104,18 +111,19 @@ class Edit extends Component {
       resourceType,
       classes,
       handleInputChange,
+      handleUndoChange,
       handleCommitChanges,
       handleRevertChanges,
     } = this.props;
-    const { merged, staged } = resourceData;
+    const { merged, patch, conflict } = resourceData;
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
-        <Typography variant="headline">
+        <Typography variant="h5">
           {`${toName(resourceType)}: ${merged.name || ''}`}
         </Typography>
 
-        <Typography variant="subheading">ID: {merged._id}</Typography>
+        <Typography variant="subtitle1">ID: {merged._id}</Typography>
 
         <Typography variant="caption">
           Last Modified: {prettyDate(merged.lastModified)}
@@ -144,33 +152,39 @@ class Edit extends Component {
               className={classes.textField}
               margin="normal"
             />
-            {staged && (
+            {patch && (
               <div>
-                <div>
-                  <Button
-                    onClick={handleCommitChanges}
-                    size="small"
-                    color="secondary">
-                    Commit Changes
-                  </Button>
+                <Button
+                  onClick={handleCommitChanges}
+                  size="small"
+                  color="secondary">
+                  Commit Changes
+                </Button>
 
-                  <Button
-                    onClick={handleRevertChanges}
-                    size="small"
-                    color="primary">
-                    Revert
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleRevertChanges}
+                  size="small"
+                  color="primary">
+                  Revert All
+                </Button>
 
-                <span>Last Modified :</span>
-                <TimeAgo date={staged.lastChange} />
+                <Button onClick={handleUndoChange} size="small" color="primary">
+                  Undo Last Change
+                </Button>
+
+                {conflict && (
+                  <div>
+                    Merge Conflict:
+                    {JSON.stringify(conflict)}
+                  </div>
+                )}
               </div>
             )}
           </form>
         </div>
       </LoadResources>
     ) : (
-      <Typography variant="headline">
+      <Typography variant="h5">
         No {toName(resourceType)} found with id {id}.
       </Typography>
     );

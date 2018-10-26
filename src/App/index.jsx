@@ -89,9 +89,7 @@ class App extends Component {
     if (loading) {
       return (
         <Paper elevation={4}>
-          <Typography variant="headline" component="h3">
-            Authenticating.
-          </Typography>
+          <Typography variant="h3">Authenticating.</Typography>
           <Spinner loading />
         </Paper>
       );
