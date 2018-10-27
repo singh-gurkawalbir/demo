@@ -39,16 +39,15 @@ const resource = {
   undoStaged: id => action(actionTypes.RESOURCE.STAGE_UNDO, { id }),
 
   patchStaged: (id, patch) =>
-    action(actionTypes.RESOURCE.STAGE_PATCH, {
-      patch,
-      id,
-    }),
+    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
 
   commitStaged: (resourceType, id) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id }),
 
   commitConflict: (id, conflict) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
+
+  clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 };
 const profile = {
   request: () => resource.request('profile'),

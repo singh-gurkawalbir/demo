@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
+import ConflictAlertDialog from './ConflictAlertDialog';
 
 // TODO: Write a saga to ratelimit the keyword search
 // to prevent dom updates unnecessarily
@@ -49,6 +50,13 @@ const mapDispatchToProps = (dispatch, { match }) => {
     },
     handleRevertChanges: () => {
       dispatch(actions.resource.clearStaged(id));
+    },
+    handleConflict: skipCommit => {
+      if (!skipCommit) {
+        dispatch(actions.resource.commitStaged(resourceType, id));
+      }
+
+      dispatch(actions.resource.clearConflict(id));
     },
   };
 };
@@ -114,8 +122,10 @@ class Edit extends Component {
       handleUndoChange,
       handleCommitChanges,
       handleRevertChanges,
+      handleConflict,
     } = this.props;
     const { merged, patch, conflict } = resourceData;
+    // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
@@ -152,8 +162,16 @@ class Edit extends Component {
               className={classes.textField}
               margin="normal"
             />
+            {conflict && (
+              <ConflictAlertDialog
+                conflict={conflict}
+                handleCommit={() => handleConflict(false)}
+                handleCancel={() => handleConflict(true)}
+              />
+            )}
+
             {patch &&
-              patch.length && (
+              patch.length > 0 && (
                 <div>
                   <Button
                     onClick={handleCommitChanges}
@@ -175,13 +193,6 @@ class Edit extends Component {
                     color="primary">
                     Undo Last Change
                   </Button>
-
-                  {conflict && (
-                    <div>
-                      Merge Conflict:
-                      {JSON.stringify(conflict)}
-                    </div>
-                  )}
                 </div>
               )}
           </form>

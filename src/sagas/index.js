@@ -87,19 +87,19 @@ export function* commitStagedChanges({ resourceType, id }) {
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const upstream = yield call(apiCallWithRetry, path);
+  const origin = yield call(apiCallWithRetry, path);
 
   // console.log('latest', latest);
   // console.log('resource', resource);
 
-  if (upstream.lastModified !== master.lastModified) {
-    let conflict = jsonPatch.compare(master, upstream);
+  if (origin.lastModified !== master.lastModified) {
+    let conflict = jsonPatch.compare(master, origin);
 
     conflict = util.removeItem(conflict, p => p.path === '/lastModified');
     conflict = util.removeItem(conflict, p => p.path === '/connection');
 
     yield put(actions.resource.commitConflict(id, conflict));
-    // yield put(actions.resource.received(resourceType, latest));
+    yield put(actions.resource.received(resourceType, origin));
 
     // console.log(server.lastModified, master.lastModified);
     // console.log(conflict);
