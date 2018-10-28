@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
@@ -110,6 +111,9 @@ const prettyDate = dateString => {
     marginRight: theme.spacing.unit,
     width: '90%',
   },
+  dates: {
+    color: theme.palette.text.secondary,
+  },
 }))
 class Edit extends Component {
   render() {
@@ -135,9 +139,15 @@ class Edit extends Component {
 
         <Typography variant="subtitle1">ID: {merged._id}</Typography>
 
-        <Typography variant="caption">
+        <Typography variant="caption" className={classes.dates}>
           Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
+
+        {patch && (
+          <Typography variant="caption" className={classes.dates}>
+            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} /> ago.
+          </Typography>
+        )}
 
         {relatedComponents(merged, classes.relatedContent)}
 

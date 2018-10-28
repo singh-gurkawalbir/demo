@@ -29,7 +29,7 @@ export default (state = {}, action) => {
       newState = Object.assign({}, state);
 
       // drop last patch.
-      if (newState[id].patch.length) {
+      if (newState[id].patch.length > 1) {
         newState[id].patch.pop();
       } else {
         delete newState[id].patch;
