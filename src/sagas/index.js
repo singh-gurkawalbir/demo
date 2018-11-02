@@ -27,8 +27,6 @@ export function* apiCallWithRetry(path, opts) {
 
       return successResponse;
     } catch (error) {
-      console.log('Got error from parent saga', error);
-
       if (error.status >= 400 && error.status < 500) {
         // give up and let the parent saga try.
         console.log('threw from api call with rety saga');
@@ -61,6 +59,9 @@ export function* getResource({ resourceType, id }) {
     return resource;
   } catch (error) {
     switch (error.status) {
+      case 404:
+        yield put(actions.api.failure(path, error.message));
+        break;
       case 401:
         // redirect to sigin page
         yield put(actions.auth.failure(path));
@@ -93,6 +94,9 @@ export function* getResourceCollection({ resourceType }) {
       case 401:
         // redirect to sigin page
 
+        break;
+      case 404:
+        yield put(actions.api.failure(path, error.message));
         break;
       case 429:
         // too many get requests

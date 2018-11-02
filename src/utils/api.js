@@ -33,8 +33,6 @@ export default async (path, opts = {}) => {
   try {
     const response = await fetch(`/api${path}`, options);
 
-    console.log(`check  ${response.status}`);
-
     if (response.status >= 400 && response.status < 500) {
       const body = await response.json();
 
