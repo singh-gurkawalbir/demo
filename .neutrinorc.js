@@ -80,7 +80,7 @@ module.exports = {
           publicPath: '/pg',
           host: 'localhost.io',
           historyApiFallback: {
-            disableDotRule: true,
+            index: '/pg/index.html',
           },
         },
         eslint: {

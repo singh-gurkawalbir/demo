@@ -11,6 +11,12 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+const auth = {
+  request: path => action(actionTypes.AUTH_REQUEST, { path }),
+  complete: path => action(actionTypes.AUTH_SUCCESSFUL, { path }),
+  failure: (path, message) =>
+    action(actionTypes.AUTH_FAILURE, { path, message }),
+};
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
   retry: path => action(actionTypes.API_RETRY, { path }),
@@ -66,4 +72,5 @@ export default {
   resource,
   profile,
   api,
+  auth,
 };

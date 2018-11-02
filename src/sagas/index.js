@@ -27,10 +27,13 @@ export function* apiCallWithRetry(path, opts) {
 
       return successResponse;
     } catch (error) {
-      // TODO: analyze error and dispatch(put) different actions as need.
-      // for example, if we get a 401, we should dispatch a redirect action
-      // to the login page. Possibly some 4xx errors could also have custom
-      // behavior, etc..
+      console.log('Got error from parent saga', error);
+
+      if (error.status >= 400 && error.status < 500) {
+        // give up and let the parent saga try.
+        console.log('threw from api call with rety saga');
+        throw error;
+      }
 
       if (i < tryCount - 1) {
         yield call(delay, 2000);
@@ -39,7 +42,6 @@ export function* apiCallWithRetry(path, opts) {
         // attempts failed after 'tryCount' attempts
         // this time yield an error...
         yield put(actions.api.failure(path, error.message));
-
         // the parent saga may need to know if there was an error for
         // its own "Data story"...
         throw new Error(error);
@@ -57,8 +59,23 @@ export function* getResource({ resourceType, id }) {
     yield put(actions.resource.received(resourceType, resource));
 
     return resource;
-  } catch (e) {
-    return undefined;
+  } catch (error) {
+    switch (error.status) {
+      case 401:
+        // redirect to sigin page
+        yield put(actions.auth.failure(path));
+
+        break;
+      case 429:
+        // too many get requests
+        yield call(delay, 2000);
+        yield put(actions.api.retry(path));
+        break;
+      default:
+        // generic message to the user that the
+        // saga failed and services team working on it
+        return undefined;
+    }
   }
 }
 
@@ -71,8 +88,22 @@ export function* getResourceCollection({ resourceType }) {
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
-  } catch (e) {
-    return undefined;
+  } catch (error) {
+    switch (error.status) {
+      case 401:
+        // redirect to sigin page
+
+        break;
+      case 429:
+        // too many get requests
+        // Indicate loading in the network snackbar
+        break;
+
+      default:
+        // generic message to the user that the
+        // saga failed and services team working on it
+        return undefined;
+    }
   }
 }
 
@@ -107,20 +138,43 @@ export function* commitStagedChanges({ resourceType, id }) {
     return;
   }
 
-  const updated = yield call(apiCallWithRetry, path, {
-    method: 'put',
-    body: JSON.stringify(merged),
-  });
+  try {
+    const updated = yield call(apiCallWithRetry, path, {
+      method: 'put',
+      body: JSON.stringify(merged),
+    });
 
-  yield put(actions.resource.received(resourceType, updated));
-
-  // console.log('response from put:', updated);
-
-  // TODO: check for error response and deliver correct error message by
-  // updating the comms store? somehow we need 4xx errrors that contain
-  // business rule violations to show up on the edit page.
-
-  yield put(actions.resource.clearStaged(id));
+    yield put(actions.resource.received(resourceType, updated));
+    yield put(actions.resource.clearStaged(id));
+  } catch (error) {
+    switch (error.status) {
+      case 400:
+        // form validation errors;
+        break;
+      case 401:
+        // redirect to sigin page
+        break;
+      case 409:
+        // Exisiting job inplace, resubmiting again
+        // it shouldn't be here
+        break;
+      case 413:
+        // Sending more data in the request body than server restrictions
+        break;
+      case 415:
+        // Incorrect media type, we should enforce in the UI end
+        break;
+      case 422:
+        // unprocessable entity, occurs when there is a cumulative error
+        break;
+      case 429:
+        // Throtling error, repeated requests
+        break;
+      default:
+        // any other error, Give a generic message to the user
+        return undefined;
+    }
+  }
 }
 
 export default function* rootSaga() {
