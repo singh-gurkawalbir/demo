@@ -1,14 +1,36 @@
 import { combineReducers } from 'redux';
+import reduceReducers from 'reduce-reducers';
 import jsonPatch from 'fast-json-patch';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
+import auth, * as fromAuth from './authentication';
+import user, * as fromUser from './user';
+import actionTypes from '../actions/types';
 
-const rootReducer = combineReducers({
+const userDeletion = (state = null, action) => {
+  // TODO: Have to verify auth failure request
+  // Delete cookie
+  const patch = [{ op: 'remove', path: '/user/profile' }];
+
+  if (action.type === actionTypes.AUTH_FAILURE) {
+    const document = jsonPatch.deepClone(state);
+    const newState = jsonPatch.applyPatch(document, patch);
+
+    return newState.newDocument;
+  }
+
+  return state;
+};
+
+const combinedReducers = combineReducers({
   session,
   data,
+  user,
+  auth,
   comms,
 });
+const rootReducer = reduceReducers(combinedReducers, userDeletion);
 
 export default rootReducer;
 
@@ -33,6 +55,10 @@ export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
 }
 
+export function isLoadingProfile(state) {
+  return fromAuth.isProfileLoading(state.auth);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
@@ -41,11 +67,11 @@ export function filter(state, name) {
 }
 
 export function avatarUrl(state) {
-  return fromSession.avatarUrl(state.session);
+  return fromUser.avatarUrl(state.user);
 }
 
 export function userProfile(state) {
-  return state && state.session && state.session.profile;
+  return state && state.user && state.user.profile;
 }
 
 export function hasProfile(state) {

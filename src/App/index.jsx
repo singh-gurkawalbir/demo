@@ -12,13 +12,24 @@ import AppBar from './AppBar';
 import Spinner from '../components/Spinner';
 import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
+import { isLoadingProfile } from '../reducers';
 import loadable from '../utils/loadable';
-import { auth } from '../utils/api';
+import { authParams } from '../utils/api';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
+import actions from '../actions';
 
 const mapStateToProps = state => ({
-  themeName: state.session.themeName,
+  themeName: state.user.themeName,
+  authenticated: state.auth.authenticated,
+  error: state.auth.failure,
+
+  isLoadingProfile: isLoadingProfile(state),
+});
+const mapDispatchToProps = dispatch => ({
+  handleAuthentication: (path, message) => {
+    dispatch(actions.auth.request(path, message));
+  },
 });
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
@@ -35,6 +46,9 @@ const Exports = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../views/Imports')
 );
+const SignIn = loadable(() =>
+  import(/* webpackChunkName: 'Exports' */ '../views/SignIn')
+);
 
 @hot(module)
 class App extends Component {
@@ -45,34 +59,12 @@ class App extends Component {
   // TODO: authenticated should be in our redux session store...
   // we need to create a new action creator and reducer for this.
   state = {
-    loading: false,
     showDrawer: false,
-    authenticated: false,
   };
+  componentDidMount() {
+    const { handleAuthentication } = this.props;
 
-  async componentDidMount() {
-    this.setState({ loading: true });
-
-    try {
-      this.setState({
-        authenticated: await this.setAuthCookie(),
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      this.setState({
-        loading: false,
-        error,
-      });
-    }
-  }
-
-  async setAuthCookie() {
-    const isSuccess = await auth();
-
-    // console.log(`auth success: ${isSuccess}`);
-
-    return isSuccess;
+    handleAuthentication(authParams.path, authParams.opts.body);
   }
 
   handleToggleDrawer = () => {
@@ -80,13 +72,15 @@ class App extends Component {
   };
 
   render() {
-    const { loading, error, showDrawer, authenticated } = this.state;
-    const { themeName } = this.props;
+    const { showDrawer } = this.state;
+    const { themeName, authenticated, isLoadingProfile, error } = this.props;
     const customTheme = themeProvider(themeName);
 
+    console.log(` auth ${authenticated}`);
     // console.log('theme:', customTheme);
+    console.log(`auth ${JSON.stringify(this.state)}`);
 
-    if (loading) {
+    if (isLoadingProfile) {
       return (
         <Paper elevation={4}>
           <Typography variant="h3">Authenticating.</Typography>
@@ -100,7 +94,7 @@ class App extends Component {
     }
 
     if (!authenticated) {
-      return <ErrorPanel error="Authentication failed!" />;
+      return <SignIn error="Authentication failed!, User unauthenticated" />;
     }
 
     return (
@@ -120,11 +114,11 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
-
             <Switch>
               <Route path="/pg/resources" component={Resources} />
               <Route path="/pg/exports" component={Exports} />
               <Route path="/pg/imports" component={Imports} />
+              <Route path="/pg/signin" component={SignIn} />
               <Route path="/pg" component={Dashboard} />
               <Route component={NotFound} />
             </Switch>
@@ -135,4 +129,4 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, null)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

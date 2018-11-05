@@ -24,7 +24,7 @@ const mapStateToProps = state => ({
   isProfileDataReady: isProfileDataReady(state),
   profile: userProfile(state),
   avatarUrl: avatarUrl(state),
-  themeName: state.session.themeName,
+  themeName: state.user.themeName,
 });
 const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {

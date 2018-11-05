@@ -1,30 +1,42 @@
+//  import actionTypes from '../../actions/types';
+
 import actionTypes from '../../actions/types';
 
-export default (state = {}, action) => {
-  const { type, path } = action;
-  let newStatus;
+export default (state = false, action) => {
+  console.log(`In reducer ${JSON.stringify(action)}`);
+  let newState;
 
-  switch (type) {
-    case actionTypes.AUTH_REQ:
-      newStatus = Object.assign({}, state[path]) || {};
-      newStatus.loading = true;
-      newStatus.authenticated = false;
+  switch (action.type) {
+    case actionTypes.AUTH_REQUEST: {
+      newState = Object.assign({}, state) || {};
+      newState.loading = true;
+      newState.authenticated = false;
 
-      return newStatus;
-    case actionTypes.AUTH_SUCCESSFUL:
-      newStatus = Object.assign({}, state[path]) || {};
-      newStatus.loading = false;
-      newStatus.authenticated = true;
+      return newState;
+    }
 
-      return newStatus;
-    case actionTypes.AUTH_FAILURE:
-      newStatus = Object.assign({}, state[path]) || {};
-      newStatus.loading = false;
-      newStatus.authenticated = false;
-      newStatus.doneTrying = true;
+    case actionTypes.AUTH_SUCCESSFUL: {
+      newState = Object.assign({}, state) || {};
+      newState.loading = false;
+      newState.authenticated = true;
 
-      return newStatus;
+      return newState;
+    }
+
+    case actionTypes.AUTH_FAILURE: {
+      newState = Object.assign({}, state) || {};
+      newState.loading = false;
+      newState.authenticated = false;
+      newState.failure = action.payload;
+
+      return newState;
+    }
+
     default:
       return state;
   }
 };
+
+export function isProfileLoading(state) {
+  return state.loading && !state.authenticated;
+}

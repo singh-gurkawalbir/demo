@@ -12,7 +12,8 @@ function action(type, payload = {}) {
 }
 
 const auth = {
-  request: path => action(actionTypes.AUTH_REQUEST, { path }),
+  request: (path, message) =>
+    action(actionTypes.AUTH_REQUEST, { path, message }),
   complete: path => action(actionTypes.AUTH_SUCCESSFUL, { path }),
   failure: (path, message) =>
     action(actionTypes.AUTH_FAILURE, { path, message }),
