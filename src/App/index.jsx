@@ -10,14 +10,13 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
 import Spinner from '../components/Spinner';
-import ErrorPanel from '../components/ErrorPanel';
+// import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import { isLoadingProfile } from '../reducers';
 import loadable from '../utils/loadable';
-import { authParams } from '../utils/api';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
-import actions from '../actions';
+import SignIn from '../views/SignIn';
 
 const mapStateToProps = state => ({
   themeName: state.user.themeName,
@@ -26,11 +25,11 @@ const mapStateToProps = state => ({
 
   isLoadingProfile: isLoadingProfile(state),
 });
-const mapDispatchToProps = dispatch => ({
-  handleAuthentication: (path, message) => {
-    dispatch(actions.auth.request(path, message));
-  },
-});
+// const mapDispatchToProps = dispatch => ({
+//   handleAuthentication: (path, message) => {
+//     dispatch(actions.auth.request(path, message));
+//   },
+// });
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
@@ -46,9 +45,9 @@ const Exports = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../views/Imports')
 );
-const SignIn = loadable(() =>
-  import(/* webpackChunkName: 'Exports' */ '../views/SignIn')
-);
+// const SignIn = loadable(() =>
+//   import(/* webpackChunkName: 'Imports' */ '../views/SignIn')
+// );
 
 @hot(module)
 class App extends Component {
@@ -61,11 +60,6 @@ class App extends Component {
   state = {
     showDrawer: false,
   };
-  componentDidMount() {
-    const { handleAuthentication } = this.props;
-
-    handleAuthentication(authParams.path, authParams.opts.body);
-  }
 
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
@@ -73,7 +67,7 @@ class App extends Component {
 
   render() {
     const { showDrawer } = this.state;
-    const { themeName, authenticated, isLoadingProfile, error } = this.props;
+    const { themeName, authenticated, isLoadingProfile } = this.props;
     const customTheme = themeProvider(themeName);
 
     console.log(` auth ${authenticated}`);
@@ -89,13 +83,9 @@ class App extends Component {
       );
     }
 
-    if (error) {
-      return <ErrorPanel error={error} />;
-    }
-
-    if (!authenticated) {
-      return <SignIn error="Authentication failed!, User unauthenticated" />;
-    }
+    // if (error) {
+    //   return <ErrorPanel error={error} />;
+    // }
 
     return (
       <MuiThemeProvider theme={customTheme}>
@@ -129,4 +119,4 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, null)(App);

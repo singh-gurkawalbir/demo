@@ -38,6 +38,7 @@ export function* apiCallWithRetry(path, opts) {
 
       if (error.status >= 400 && error.status < 500) {
         // give up and let the parent saga try.
+        yield put(actions.api.complete(path));
         console.log('threw from api call with rety saga');
         throw error;
       }

@@ -27,7 +27,7 @@ export default (state = false, action) => {
       newState = Object.assign({}, state) || {};
       newState.loading = false;
       newState.authenticated = false;
-      newState.failure = action.payload;
+      newState.failure = action.message;
 
       return newState;
     }
