@@ -9,13 +9,33 @@ const errorMessageTimeOut = {
 
 function APIException(response) {
   this.status = response.status;
-  this.message = response.message;
+
+  if (process.env.NODE_ENV === `development`) {
+    this.message = response.message;
+  }
+
+  this.message = 'Error';
 }
+
+export const authParams = {
+  opts: {
+    credentials: 'same-origin', // this is needed to instruct fetch to send cookies
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: process.env.API_EMAIL,
+      password: process.env.API_PASSWORD,
+    }),
+    method: 'POST',
+  },
+  path: '/signin?no_redirect=true',
+};
 
 export const api = async (path, opts = {}) => {
   let options;
 
-  if (path !== '/signin?no_redirect=true')
+  if (path !== authParams.path)
     options = {
       ...opts,
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
@@ -29,15 +49,11 @@ export const api = async (path, opts = {}) => {
   else {
     options = opts;
   }
-  // 200 to less than 500 json
-  // greater than 500 text
 
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
   await delay(2);
   let req;
-
-  console.log(`check opts ${JSON.stringify(options)}`);
 
   // TODO: Since refactoring was a bit tricky
   // Im using this request path determination logic for now
@@ -81,21 +97,6 @@ export const api = async (path, opts = {}) => {
     if (e instanceof APIException) throw e;
     else throw new APIException({ ...errorMessageTimeOut });
   }
-};
-
-export const authParams = {
-  opts: {
-    credentials: 'same-origin', // this is needed to instruct fetch to send cookies
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: process.env.API_EMAIL,
-      password: process.env.API_PASSWORD,
-    }),
-    method: 'POST',
-  },
-  path: '/signin?no_redirect=true',
 };
 
 // export const auth = async () => {

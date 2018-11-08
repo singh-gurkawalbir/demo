@@ -99,6 +99,23 @@ const mapDispatchToProps = dispatch => ({
   },
 }))
 class SignIn extends Component {
+  componentDidMount() {
+    if (process.env.AUTO_LOGIN === 'true') {
+      const e = {
+        target: {
+          email: {
+            value: process.env.API_EMAIL,
+          },
+          password: {
+            value: process.env.API_PASSWORD,
+          },
+        },
+        preventDefault: () => {},
+      };
+
+      this.handleOnSubmit(e);
+    }
+  }
   handleOnSubmit = e => {
     e.preventDefault();
     const payload = JSON.stringify({
@@ -111,8 +128,6 @@ class SignIn extends Component {
 
   render() {
     const { classes, error, authenticated } = this.props;
-
-    console.log(`check error ${error}`);
 
     if (authenticated) return <Redirect to="/pg" />;
 

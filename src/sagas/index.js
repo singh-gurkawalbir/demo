@@ -28,7 +28,6 @@ export function* apiCallWithRetry(path, opts) {
       return successResponse;
     } catch (error) {
       if (error.status === 302) {
-        console.log('Redirect because of auth failure');
         yield put(
           actions.auth.failure(authParams.path, 'Authentication Failure')
         );
@@ -37,7 +36,6 @@ export function* apiCallWithRetry(path, opts) {
       if (error.status >= 400 && error.status < 500) {
         // give up and let the parent saga try.
         yield put(actions.api.complete(path));
-        console.log('threw from api call with rety saga');
         throw error;
       }
 
@@ -190,8 +188,6 @@ export function* commitStagedChanges({ resourceType, id }) {
 }
 
 function* authAndGetProfile({ path, message }) {
-  console.log('In saga');
-
   try {
     let apiAuthentications;
 
@@ -206,7 +202,6 @@ function* authAndGetProfile({ path, message }) {
       const payload = Object.assign({}, authParams.opts);
 
       payload.body = message;
-      console.log(`check ${JSON.stringify(payload)}`);
       apiAuthentications = yield call(apiCallWithRetry, path, payload);
     }
 

@@ -98,7 +98,10 @@ module.exports = {
         },
       },
     ],
-    ['@neutrinojs/env', ['API_ENDPOINT', 'API_EMAIL', 'API_PASSWORD']],
+    [
+      '@neutrinojs/env',
+      ['API_ENDPOINT', 'API_EMAIL', 'API_PASSWORD', 'AUTO_LOGIN'],
+    ],
     neutrino => {
       neutrino.config.devServer.proxy({
         '/signin': {

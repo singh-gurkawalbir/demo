@@ -3,7 +3,6 @@
 import actionTypes from '../../actions/types';
 
 export default (state = false, action) => {
-  console.log(`In reducer ${JSON.stringify(action)}`);
   let newState;
 
   switch (action.type) {
