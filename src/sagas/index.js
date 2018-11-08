@@ -32,8 +32,6 @@ export function* apiCallWithRetry(path, opts) {
         yield put(
           actions.auth.failure(authParams.path, 'Authentication Failure')
         );
-
-        return;
       }
 
       if (error.status >= 400 && error.status < 500) {

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import reduceReducers from 'reduce-reducers';
+// import reduceReducers from 'reduce-reducers';
 import jsonPatch from 'fast-json-patch';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -8,20 +8,20 @@ import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 
-const userDeletion = (state = null, action) => {
-  // TODO: Have to verify auth failure request
-  // Delete cookie
-  const patch = [{ op: 'remove', path: '/user/profile' }];
+// const userDeletion = (state = null, action) => {
+//   // TODO: Have to verify auth failure request
+//   // Delete cookie
+//   const patch = [{ op: 'remove', path: '/user/profile' }];
 
-  if (action.type === actionTypes.AUTH_FAILURE) {
-    const document = jsonPatch.deepClone(state);
-    const newState = jsonPatch.applyPatch(document, patch);
+//   if (action.type === actionTypes.AUTH_FAILURE) {
+//     const document = jsonPatch.deepClone(state);
+//     const newState = jsonPatch.applyPatch(document, patch);
 
-    return newState.newDocument;
-  }
+//     return newState.newDocument;
+//   }
 
-  return state;
-};
+//   return state;
+// };
 
 const combinedReducers = combineReducers({
   session,
@@ -30,7 +30,13 @@ const combinedReducers = combineReducers({
   auth,
   comms,
 });
-const rootReducer = reduceReducers(combinedReducers, userDeletion);
+const rootReducer = (state, action) => {
+  if (action.type === actionTypes.USER_LOGOUT) {
+    return {};
+  }
+
+  return combinedReducers(state, action);
+};
 
 export default rootReducer;
 
@@ -72,6 +78,22 @@ export function avatarUrl(state) {
 
 export function userProfile(state) {
   return state && state.user && state.user.profile;
+}
+
+export function isAuthenticated(state) {
+  return state && state.auth && state.auth.authenticated;
+}
+
+export function authenticationErrored(state) {
+  return state && state.auth && state.auth.failure;
+}
+
+export function isAuthDialogOpen(state) {
+  return state && state.auth && state.auth.authDialog;
+}
+
+export function themeName(state) {
+  return state && state.user && state.user.themeName;
 }
 
 export function hasProfile(state) {

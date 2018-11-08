@@ -11,6 +11,7 @@ export default (state = false, action) => {
       newState = Object.assign({}, state) || {};
       newState.loading = true;
       newState.authenticated = false;
+      delete newState.failure;
 
       return newState;
     }
@@ -19,6 +20,7 @@ export default (state = false, action) => {
       newState = Object.assign({}, state) || {};
       newState.loading = false;
       newState.authenticated = true;
+      delete newState.authDialog;
 
       return newState;
     }
@@ -26,6 +28,12 @@ export default (state = false, action) => {
     case actionTypes.AUTH_FAILURE: {
       newState = Object.assign({}, state) || {};
       newState.loading = false;
+
+      if (newState.authenticated) {
+        newState.authDialog = true;
+      }
+
+      newState.authenticated = false;
       newState.authenticated = false;
       newState.failure = action.message;
 

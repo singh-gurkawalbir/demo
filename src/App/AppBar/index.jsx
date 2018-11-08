@@ -8,9 +8,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
+import { isAuthenticated } from '../../reducers';
 
 const mapStateToProps = state => ({
-  authenticated: state.auth.authenticated,
+  authenticated: isAuthenticated(state),
   // error: state.auth.failure,
   // isLoadingProfile: isLoadingProfile(state),
 });

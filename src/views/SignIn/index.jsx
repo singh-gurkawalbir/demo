@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import { authParams } from '../../utils/api';
+import { isAuthenticated, authenticationErrored } from '../../reducers';
 
 const variantIcon = {
   error: ErrorIcon,
@@ -61,10 +62,11 @@ MySnackbarContent.propTypes = {
 
 const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 const mapStateToProps = state => ({
-  authenticated: state.auth.authenticated,
-  error: state.auth.failure,
+  authenticated: isAuthenticated(state),
+  error: authenticationErrored(state),
   // isLoadingProfile: isLoadingProfile(state),
 });
+// TODO:
 const mapDispatchToProps = dispatch => ({
   handleAuthentication: (path, message) => {
     dispatch(actions.auth.request(path, message));
@@ -109,6 +111,8 @@ class SignIn extends Component {
 
   render() {
     const { classes, error, authenticated } = this.props;
+
+    console.log(`check error ${error}`);
 
     if (authenticated) return <Redirect to="/pg" />;
 

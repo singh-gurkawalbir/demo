@@ -17,6 +17,7 @@ import {
   hasProfile,
   userProfile,
   avatarUrl,
+  themeName,
 } from '../../../reducers';
 
 const mapStateToProps = state => ({
@@ -24,7 +25,7 @@ const mapStateToProps = state => ({
   isProfileDataReady: isProfileDataReady(state),
   profile: userProfile(state),
   avatarUrl: avatarUrl(state),
-  themeName: state.user.themeName,
+  themeName: themeName(state),
 });
 const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {
@@ -32,6 +33,9 @@ const mapDispatchToProps = dispatch => ({
   },
   requestProfile: () => {
     dispatch(actions.profile.request());
+  },
+  handleUserLogout: () => {
+    dispatch(actions.userLogout());
   },
 });
 
@@ -121,7 +125,6 @@ class AppBar extends Component {
       this.setState({ anchorEl: event.currentTarget });
     }
   };
-
   handleThemeChange = event => {
     this.props.onSetTheme(event.target.value);
   };
@@ -139,6 +142,7 @@ class AppBar extends Component {
       themeName,
       avatarUrl,
       isProfileDataReady,
+      handleUserLogout,
     } = this.props;
 
     if (!isProfileDataReady) {
@@ -220,7 +224,7 @@ class AppBar extends Component {
                 My Profile
               </Button>
               <Button
-                onClick={this.handleClose}
+                onClick={handleUserLogout}
                 variant="contained"
                 size="small"
                 color="primary"

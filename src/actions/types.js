@@ -21,6 +21,7 @@ const API_FAILURE = 'API_FAILURE';
 const AUTH_REQUEST = 'AUTH_REQUEST';
 const AUTH_SUCCESSFUL = 'AUTH_SUCCESSFUL';
 const AUTH_FAILURE = 'AUTH_FAILURE';
+const USER_LOGOUT = 'USER_LOGOUT';
 const baseResourceActions = [
   REQUEST,
   REQUEST_COLLECTION,
@@ -51,6 +52,7 @@ const PROFILE = createResourceActionTypes('PROFILE');
 const RESOURCE = createResourceActionTypes('RESOURCE', true);
 
 export default {
+  USER_LOGOUT,
   SET_THEME,
   PATCH_FILTER,
   CLEAR_FILTER,

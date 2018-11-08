@@ -4,34 +4,38 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Redirect,
+  withRouter,
+} from 'react-router-dom';
+import { themeName, isAuthenticated, isAuthDialogOpen } from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
-import Spinner from '../components/Spinner';
 // import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
-import { isLoadingProfile } from '../reducers';
 import loadable from '../utils/loadable';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import SignIn from '../views/SignIn';
+// import AlertDialog from '../components/AuthDialog';
 
 const mapStateToProps = state => ({
-  themeName: state.user.themeName,
-  authenticated: state.auth.authenticated,
-  error: state.auth.failure,
-
-  isLoadingProfile: isLoadingProfile(state),
+  themeName: themeName(state),
+  authenticated: isAuthenticated(state),
+  isAuthDialogOpen: isAuthDialogOpen(state),
 });
 // const mapDispatchToProps = dispatch => ({
 //   handleAuthentication: (path, message) => {
 //     dispatch(actions.auth.request(path, message));
 //   },
 // });
-const Dashboard = loadable(() =>
-  import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
+const Dashboard = withRouter(
+  loadable(() =>
+    import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
+  )
 );
 const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
@@ -45,9 +49,29 @@ const Exports = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../views/Imports')
 );
+
 // const SignIn = loadable(() =>
 //   import(/* webpackChunkName: 'Imports' */ '../views/SignIn')
 // );
+function PrivateRoute({ component: Component, authenticated, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        authenticated ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/pg/signin',
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
 @hot(module)
 class App extends Component {
@@ -67,25 +91,8 @@ class App extends Component {
 
   render() {
     const { showDrawer } = this.state;
-    const { themeName, authenticated, isLoadingProfile } = this.props;
+    const { themeName, authenticated } = this.props;
     const customTheme = themeProvider(themeName);
-
-    console.log(` auth ${authenticated}`);
-    // console.log('theme:', customTheme);
-    console.log(`auth ${JSON.stringify(this.state)}`);
-
-    if (isLoadingProfile) {
-      return (
-        <Paper elevation={4}>
-          <Typography variant="h3">Authenticating.</Typography>
-          <Spinner loading />
-        </Paper>
-      );
-    }
-
-    // if (error) {
-    //   return <ErrorPanel error={error} />;
-    // }
 
     return (
       <MuiThemeProvider theme={customTheme}>
@@ -104,12 +111,29 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
+
             <Switch>
-              <Route path="/pg/resources" component={Resources} />
-              <Route path="/pg/exports" component={Exports} />
-              <Route path="/pg/imports" component={Imports} />
+              <PrivateRoute
+                authenticated={authenticated}
+                path="/pg/resources"
+                component={Resources}
+              />
+              <PrivateRoute
+                authenticated={authenticated}
+                path="/pg/exports"
+                component={Exports}
+              />
+              <PrivateRoute
+                authenticated={authenticated}
+                path="/pg/imports"
+                component={Imports}
+              />
               <Route path="/pg/signin" component={SignIn} />
-              <Route path="/pg" component={Dashboard} />
+              <PrivateRoute
+                authenticated={authenticated}
+                path="/pg"
+                component={Dashboard}
+              />
               <Route component={NotFound} />
             </Switch>
           </Fragment>
