@@ -5,6 +5,7 @@ import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
 
+const networkThreshold = 1000;
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
@@ -29,8 +30,27 @@ const Dismiss = props =>
   },
 }))
 class NetworkSnackbar extends Component {
-  state = { showSnackbar: true };
+  state = {
+    showSnackbar: true,
+    timestamp: null,
+    shouldRerender: true,
+  };
+  componentWillReceiveProps() {
+    const { timestamp } = this.state;
+    const now = Date.now();
 
+    console.log(`check timestamp of frame ${now / 1000 - timestamp / 1000}`);
+
+    if (now - timestamp < networkThreshold)
+      this.setState({ shouldRerender: false });
+    else {
+      this.setState({ shouldRerender: true });
+      this.setState({ timestamp: now });
+    }
+  }
+  shouldComponentUpdate() {
+    return this.state.shouldRerender;
+  }
   handleCloseSnackbar = () => {
     this.setState({
       showSnackbar: false,
