@@ -186,27 +186,14 @@ export function* commitStagedChanges({ resourceType, id }) {
     }
   }
 }
-/*
-TODO: rename it to Auth
-*/
 
-function* authAndGetProfile({ path, message }) {
+function* auth({ path, message }) {
   try {
-    let apiAuthentications;
+    // replace credentials in the request body
+    const payload = Object.assign({}, authParams.opts);
 
-    if (!path && !message) {
-      apiAuthentications = yield call(
-        apiCallWithRetry,
-        authParams.path,
-        authParams.opts
-      );
-    } else {
-      // replace credentials in the request body
-      const payload = Object.assign({}, authParams.opts);
-
-      payload.body = message;
-      apiAuthentications = yield call(apiCallWithRetry, path, payload);
-    }
+    payload.body = message;
+    const apiAuthentications = yield call(apiCallWithRetry, path, payload);
 
     yield put(actions.auth.complete(authParams.path));
 
@@ -234,7 +221,7 @@ function* authAndGetProfile({ path, message }) {
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actionTypes.AUTH_REQUEST, authAndGetProfile),
+    takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),

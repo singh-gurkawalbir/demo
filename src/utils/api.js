@@ -35,6 +35,7 @@ export const authParams = {
 export const api = async (path, opts = {}) => {
   let options;
 
+  // TODO: I could pass the opts for every api call but a lot of extra code
   if (path !== authParams.path)
     options = {
       ...opts,

@@ -20,6 +20,7 @@ import loadable from '../utils/loadable';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import SignIn from '../views/SignIn';
+import AuthDialog from '../components/AuthDialog';
 // import AlertDialog from '../components/AuthDialog';
 
 const mapStateToProps = state => ({
@@ -100,7 +101,7 @@ class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            <NetworkSnackbar />
+            {authenticated && <NetworkSnackbar />}
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
@@ -111,7 +112,7 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
-
+            {authenticated && <AuthDialog />}
             <Switch>
               <PrivateRoute
                 authenticated={authenticated}

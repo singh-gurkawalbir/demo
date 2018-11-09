@@ -11,7 +11,11 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import { authParams } from '../../utils/api';
-import { isAuthenticated, authenticationErrored } from '../../reducers';
+import {
+  userProfileEmail,
+  isAuthenticated,
+  authenticationErrored,
+} from '../../reducers';
 
 const variantIcon = {
   error: ErrorIcon,
@@ -64,6 +68,7 @@ const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 const mapStateToProps = state => ({
   authenticated: isAuthenticated(state),
   error: authenticationErrored(state),
+  email: userProfileEmail(state),
   // isLoadingProfile: isLoadingProfile(state),
 });
 // TODO:
@@ -100,7 +105,10 @@ const mapDispatchToProps = dispatch => ({
 }))
 class SignIn extends Component {
   componentDidMount() {
-    if (process.env.AUTO_LOGIN === 'true') {
+    if (
+      process.env.AUTO_LOGIN === 'true' &&
+      process.env.NODE_ENV === 'development'
+    ) {
       const e = {
         target: {
           email: {
@@ -127,7 +135,7 @@ class SignIn extends Component {
   };
 
   render() {
-    const { classes, error, authenticated } = this.props;
+    const { classes, error, authenticated, dialogOpen, email } = this.props;
 
     if (authenticated) return <Redirect to="/pg" />;
 
@@ -139,6 +147,7 @@ class SignIn extends Component {
             label="Email"
             rowsMax="1"
             margin="normal"
+            value={dialogOpen ? email : ''}
             className={classes.textField}
           />
           <TextField

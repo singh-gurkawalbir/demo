@@ -80,6 +80,10 @@ export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
 
+export function userProfileEmail(state) {
+  return state && state.user && state.user.profile && state.user.profile.email;
+}
+
 export function isAuthenticated(state) {
   return state && state.auth && state.auth.authenticated;
 }
