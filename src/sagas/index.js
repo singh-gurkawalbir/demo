@@ -210,7 +210,7 @@ function* authAndGetProfile({ path, message }) {
 
     yield put(actions.auth.complete(authParams.path));
 
-    yield call(getResource, { resourceType: 'profile' });
+    // yield call(getResource, { resourceType: 'profile' });
 
     return apiAuthentications.succes;
   } catch (error) {
@@ -220,7 +220,8 @@ function* authAndGetProfile({ path, message }) {
         yield put(
           actions.auth.failure(authParams.path, 'Authentication Failure')
         );
-
+        // all sagas should inherit this behavior
+        yield put(actions.deleteProfile());
         break;
       }
 

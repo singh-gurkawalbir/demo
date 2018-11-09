@@ -9,6 +9,13 @@ const profile = (state = null, action) => {
     return action.resource;
   }
 
+  if (action.type === actionTypes.DELETE_PROFILE) {
+    // Except for email delete everything
+    const email = state.email || {};
+
+    return email;
+  }
+
   return state;
 };
 

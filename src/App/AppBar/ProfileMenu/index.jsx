@@ -107,9 +107,9 @@ class AppBar extends Component {
   };
 
   async componentDidMount() {
-    const { hasProfileData, requestProfile } = this.props;
+    const { hasProfile, requestProfile } = this.props;
 
-    if (!hasProfileData) {
+    if (!hasProfile) {
       requestProfile();
     }
   }
