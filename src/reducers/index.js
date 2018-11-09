@@ -93,7 +93,7 @@ export function authenticationErrored(state) {
 }
 
 export function isAuthDialogOpen(state) {
-  return state && state.auth && state.auth.authDialog;
+  return !!(state && state.auth && state.auth.authDialog);
 }
 
 export function themeName(state) {

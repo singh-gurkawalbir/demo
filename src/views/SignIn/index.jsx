@@ -68,7 +68,7 @@ const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 const mapStateToProps = state => ({
   authenticated: isAuthenticated(state),
   error: authenticationErrored(state),
-  email: userProfileEmail(state),
+  userEmail: userProfileEmail(state),
   // isLoadingProfile: isLoadingProfile(state),
 });
 // TODO:
@@ -104,6 +104,9 @@ const mapDispatchToProps = dispatch => ({
   },
 }))
 class SignIn extends Component {
+  state = {
+    email: '',
+  };
   componentDidMount() {
     if (
       process.env.AUTO_LOGIN === 'true' &&
@@ -124,6 +127,10 @@ class SignIn extends Component {
       this.handleOnSubmit(e);
     }
   }
+
+  handleOnChangeEmail = e => {
+    this.setState({ email: e.target.value });
+  };
   handleOnSubmit = e => {
     e.preventDefault();
     const payload = JSON.stringify({
@@ -135,7 +142,8 @@ class SignIn extends Component {
   };
 
   render() {
-    const { classes, error, authenticated, dialogOpen, email } = this.props;
+    const { classes, error, authenticated, dialogOpen, userEmail } = this.props;
+    const { email } = this.state;
 
     if (authenticated) return <Redirect to="/pg" />;
 
@@ -147,8 +155,10 @@ class SignIn extends Component {
             label="Email"
             rowsMax="1"
             margin="normal"
-            value={dialogOpen ? email : ''}
+            value={dialogOpen ? userEmail : email}
+            onChange={this.handleOnChangeEmail}
             className={classes.textField}
+            disabled={dialogOpen}
           />
           <TextField
             id="password"

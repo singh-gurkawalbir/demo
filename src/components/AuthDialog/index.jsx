@@ -9,11 +9,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import SignIn from '../../views/SignIn';
 import { isAuthDialogOpen } from '../../reducers';
 
-const mapStateToProps = state => {
-  const dialogOpen = isAuthDialogOpen(state);
-
-  return dialogOpen;
-};
+const mapStateToProps = state => ({
+  dialogOpen: isAuthDialogOpen(state),
+});
 
 class AlertDialog extends Component {
   // state = {

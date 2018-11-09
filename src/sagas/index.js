@@ -197,8 +197,6 @@ function* auth({ path, message }) {
 
     yield put(actions.auth.complete(authParams.path));
 
-    // yield call(getResource, { resourceType: 'profile' });
-
     return apiAuthentications.succes;
   } catch (error) {
     switch (error.status) {
