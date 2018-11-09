@@ -153,6 +153,7 @@ class SignIn extends Component {
           <TextField
             id="email"
             label="Email"
+            type="email"
             rowsMax="1"
             margin="normal"
             value={dialogOpen ? userEmail : email}
@@ -163,7 +164,7 @@ class SignIn extends Component {
           <TextField
             id="password"
             label="Password"
-            multiline
+            type="password"
             rowsMax="1"
             margin="normal"
             className={classes.textField}
