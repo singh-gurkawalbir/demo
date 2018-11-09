@@ -186,6 +186,9 @@ export function* commitStagedChanges({ resourceType, id }) {
     }
   }
 }
+/*
+TODO: rename it to Auth
+*/
 
 function* authAndGetProfile({ path, message }) {
   try {
@@ -211,21 +214,20 @@ function* authAndGetProfile({ path, message }) {
 
     return apiAuthentications.succes;
   } catch (error) {
-    yield put(actions.auth.failure(authParams.path, 'Authentication Failure'));
+    switch (error.status) {
+      case 422: {
+        // make auth error much more cleaner
+        yield put(
+          actions.auth.failure(authParams.path, 'Authentication Failure')
+        );
 
-    // switch (error.status) {
-    //   case 302: {
-    //     // make auth error much more cleaner
-    //     yield put(
-    //       actions.auth.failure(authParams.path, 'Authentication Failure')
-    //     );
-    //     break;
-    //   }
+        break;
+      }
 
-    //   default:
-    //     // any other error, Give a generic message to the user
-    //     return undefined;
-    // }
+      default:
+        // any other error, Give a generic message to the user
+        return undefined;
+    }
   }
 }
 

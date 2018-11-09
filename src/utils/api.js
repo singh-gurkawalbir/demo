@@ -63,11 +63,22 @@ export const api = async (path, opts = {}) => {
 
   try {
     const response = await fetch(req, options);
+
     // TODO: Try to get headers in the response
     // to determine whether a json or text
+    console.log('Headers ');
+    console.log(`check ${response.headers.get('content-type')}`);
+    console.log(`check ${response.headers.get('content-length')}`);
 
-    if (response.status >= 400 && response.status < 500) {
-      const body = await response.json();
+    if (response.status >= 400 && response.status < 600) {
+      let body;
+
+      if (
+        response.headers.get('content-type') ===
+        'application/json; charset=utf-8'
+      )
+        body = await response.json();
+      else body = await response.text();
 
       throw new APIException({
         status: response.status,
@@ -75,20 +86,18 @@ export const api = async (path, opts = {}) => {
       });
     }
 
-    if (response.status >= 500 && response.status < 600) {
-      // development mode you would like to show it up
-      const body = await response.text();
-
-      throw new APIException({ status: response.status, message: body });
-    }
-
+    // TODO: in our development we perform
+    // a no redirect in our auth sign in requests
+    // because it can redirect to our current io application
+    // So this may not be necessary for
     if (response.status === 302) {
-      // development mode you would like to show it up
       const body = await response.json();
 
       throw new APIException({ status: response.status, message: body });
     }
 
+    // For 204 content-length header does not show up
+    // So using response status to prevent performing .json()
     if (response.status === 204) return null;
     const body = await response.json();
 

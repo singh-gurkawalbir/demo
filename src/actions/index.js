@@ -66,6 +66,7 @@ const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const userLogout = () => action(actionTypes.USER_LOGOUT, {});
+// const deleteProfile = () => action(actionTypes.USER_LOGOUT, {});
 
 export default {
   userLogout,
