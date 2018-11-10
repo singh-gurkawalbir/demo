@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import Typography from '@material-ui/core/Typography';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
@@ -12,7 +13,7 @@ import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import CodeEditor from '../../components/CodeEditor';
+import CodeEditor from '../../components/CodeEditor2';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import './afe.css';
@@ -39,6 +40,9 @@ const mapDispatchToProps = (dispatch, { id }) => ({
   const gridItemBorder = `solid 1px ${theme.palette.primary.light}`;
 
   return {
+    dialogContent: {
+      paddingBottom: 0,
+    },
     gridContainer: {
       display: 'grid',
       gridGap: '5px',
@@ -80,14 +84,9 @@ const mapDispatchToProps = (dispatch, { id }) => ({
       backgroundColor: theme.palette.primary.main,
       borderBottom: gridItemBorder,
     },
-    // the below css have no positive effects. :(
-    cmOverride: {
-      height: '100%', // calc(100% - 32px);
-      overflow: 'auto' /* you can use hidden here as well */,
-    },
     toolbarContainer: {
-      marginLeft: `${theme.spacing.unit}px`,
-      padding: `0px ${theme.spacing.unit * 2}px`,
+      margin: `0 ${theme.spacing.unit}px`,
+      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
       display: 'flex',
     },
     toolbarItem: {
@@ -99,6 +98,9 @@ const mapDispatchToProps = (dispatch, { id }) => ({
       justifyContent: 'flex-start',
       // background: theme.palette.background.default,
     },
+    fullScreen: {
+      marginLeft: `${theme.spacing.unit * 2}px`,
+    },
   };
 })
 class AFE extends Component {
@@ -107,7 +109,7 @@ class AFE extends Component {
     fullScreen: false,
   };
 
-  handleLayoutChange = (event, layout) => this.setState({ layout });
+  handleLayoutChange = (event, layout) => layout && this.setState({ layout });
   handleFullScreenClick = () =>
     this.setState({ fullScreen: !this.state.fullScreen });
 
@@ -132,7 +134,7 @@ class AFE extends Component {
     } = this.props;
     const { rules, data, result } = editor;
     const { layout, fullScreen } = this.state;
-    const size = fullScreen ? { height: '81vh' } : { height, width };
+    const size = fullScreen ? { height: '87vh' } : { height, width };
     const gridTemplate = classes[`gridTemplate${layout}`];
 
     return (
@@ -144,7 +146,7 @@ class AFE extends Component {
         maxWidth={false}>
         <div className={classes.toolbarContainer}>
           <div className={classes.toolbarItem}>
-            <h3>{title}</h3>
+            <Typography variant="h5">{title}</Typography>
           </div>
           <div className={classes.toggleContainer}>
             <ToggleButtonGroup
@@ -162,6 +164,7 @@ class AFE extends Component {
               </ToggleButton>
             </ToggleButtonGroup>
             <ToggleButton
+              className={classes.fullScreen}
               value="max"
               onClick={this.handleFullScreenClick}
               selected={fullScreen}>
@@ -169,7 +172,7 @@ class AFE extends Component {
             </ToggleButton>
           </div>
         </div>
-        <DialogContent>
+        <DialogContent className={classes.dialogContent}>
           <div
             className={classNames(classes.gridContainer, gridTemplate)}
             style={size}>
@@ -177,13 +180,7 @@ class AFE extends Component {
               <div className={classes.title}>RULES</div>
               <CodeEditor
                 value={rules}
-                className={classes.cmOverride}
-                options={{
-                  editorDidMount: e => e.setSize(null, 'auto'),
-                  mode: 'javascript',
-                  theme: 'material',
-                  lineNumbers: true,
-                }}
+                mode="handlebars"
                 onChange={handleRuleChange}
               />
             </div>
@@ -193,11 +190,7 @@ class AFE extends Component {
               <div>
                 <CodeEditor
                   value={data}
-                  options={{
-                    mode: 'javascript',
-                    theme: 'material',
-                    lineNumbers: true,
-                  }}
+                  mode="json"
                   onChange={handleDataChange}
                 />
               </div>

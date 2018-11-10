@@ -51,6 +51,20 @@ export function userTheme(state) {
   return state.themeName;
 }
 
+export function editorTheme(state) {
+  const defaultEditorTheme = 'github';
+
+  if (!state) return defaultEditorTheme;
+
+  // props = ui theme, values = editor theme.
+  const themeMap = {
+    light: 'github',
+    dark: 'monokai',
+  };
+
+  return themeMap[userTheme(state)] || defaultEditorTheme;
+}
+
 export function filter(state, name) {
   if (!state) return {};
 
