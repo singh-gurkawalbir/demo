@@ -3,6 +3,7 @@ import jsonPatch from 'fast-json-patch';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
+import resourceDefaults from './resourceDefaults';
 
 const rootReducer = combineReducers({
   session,
@@ -38,6 +39,18 @@ export function isLoadingAnyResource(state) {
 // #region PUBLIC SESSION SELECTORS
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
+}
+
+export function editor(state, id) {
+  if (!state) return {};
+
+  return fromSession.editor(state.session, id);
+}
+
+export function editorProcessorOptions(state, id) {
+  if (!state) return {};
+
+  return fromSession.editorProcessorOptions(state.session, id);
 }
 
 export function avatarUrl(state) {
@@ -124,6 +137,31 @@ export function resourceData(state, resourceType, id) {
   };
 
   if (conflict) data.conflict = conflict;
+
+  return data;
+}
+
+export function newResourceData(state, resourceType, id) {
+  const master = resourceDefaults[resourceType];
+  const { patch } = fromSession.stagedResource(state.session, id);
+  // console.log('patch:', patch);
+  let merged = master;
+
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      jsonPatch.deepClone(master),
+      patch
+    );
+
+    // console.log('patchResult', patchResult);
+    merged = patchResult.newDocument;
+  }
+
+  const data = {
+    master,
+    patch,
+    merged,
+  };
 
   return data;
 }

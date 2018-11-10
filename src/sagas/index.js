@@ -123,10 +123,40 @@ export function* commitStagedChanges({ resourceType, id }) {
   yield put(actions.resource.clearStaged(id));
 }
 
+/* Sample /processors/[name] request body 
+{
+  rules: { strict: false, template: 'v1/exports/?x={{lastExportDateTime}} ' },
+  data: {
+    export: { name: 'HTTP - Exports from staging.integrator.io' },
+    lastExportDateTime: '2018-11-08T17:53:51.702Z',
+  },
+};
+*/
+export function* evaluateProcessor({ id }) {
+  const getProcessorOptions = state =>
+    selectors.editorProcessorOptions(state, id);
+  const { processor, options } = yield select(getProcessorOptions);
+  // console.log('editorProcessorOptions', processor, options);
+  const path = `/processors/${processor}`;
+  const opts = {
+    method: 'post',
+    body: JSON.stringify(options),
+  };
+
+  try {
+    const results = yield call(apiCallWithRetry, path, opts);
+
+    return yield put(actions.editor.evaluateResponse(id, results));
+  } catch (e) {
+    return yield put(actions.editor.evaluateFailure(id, e.message));
+  }
+}
+
 export default function* rootSaga() {
   yield all([
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+    takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
   ]);
 }

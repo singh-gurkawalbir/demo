@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Switch, Link, Route } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,7 +10,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import ImageIcon from '@material-ui/icons/Image';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import shortid from 'shortid';
 import actions from '../../actions';
 
 const mapDispatchToProps = (dispatch, { list }) => ({
@@ -31,6 +33,10 @@ const mapDispatchToProps = (dispatch, { list }) => ({
   listItem: {
     paddingTop: 0,
   },
+  addResource: {
+    left: theme.spacing.unit * 2,
+    bottom: theme.spacing.unit / 2,
+  },
 }))
 class FilteredResources extends Component {
   // TODO: use this component to highlight the matching text in the resuts:
@@ -39,11 +45,6 @@ class FilteredResources extends Component {
   render() {
     const { list, classes, handleMore } = this.props;
     const resourceType = list.type;
-
-    if (!list.count) {
-      return <Typography variant="h5">You have no {resourceType}.</Typography>;
-    }
-
     const daysOld = lastModified => (
       <span>
         Modified <TimeAgo date={lastModified} /> ago.
@@ -51,9 +52,35 @@ class FilteredResources extends Component {
     );
 
     return (
-      <Fragment>
-        <div className={classes.root}>
-          <Typography variant="h5">{resourceType.toUpperCase()}</Typography>
+      <div className={classes.root}>
+        <Typography variant="h5">
+          {resourceType.toUpperCase()}
+          <Switch>
+            <Route
+              path="/pg/resources/:resourceType/add/:id"
+              render={() => null}
+            />
+
+            <Route
+              render={() => (
+                <Button
+                  mini
+                  variant="fab"
+                  color="primary"
+                  aria-label="Add"
+                  component={Link}
+                  to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
+                  className={classes.addResource}>
+                  <AddIcon />
+                </Button>
+              )}
+            />
+          </Switch>
+        </Typography>
+
+        {!list.count ? (
+          <Typography variant="h6">None.</Typography>
+        ) : (
           <List>
             {list.resources.map(r => (
               <ListItem
@@ -82,8 +109,8 @@ class FilteredResources extends Component {
               </Button>
             )}
           </List>
-        </div>
-      </Fragment>
+        )}
+      </div>
     );
   }
 }

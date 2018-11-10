@@ -1,0 +1,14 @@
+.CodeMirror {
+  height: auto;
+}
+
+ignore.CodeMirror-scroll {
+  height: auto;
+}
+
+.react-codemirror2 {
+  min-height: 150px;
+  height: calc(100% - 20px);
+  width: 100%;
+  overflow: auto; /* you can use hidden here as well */
+}

@@ -2,7 +2,6 @@ import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
-// import classNames from 'classnames';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,6 +9,7 @@ import LoadResources from '../../components/LoadResources';
 import { availableResources } from '../../actions';
 import FilteredResources from './FilteredResources';
 import Edit from './Edit';
+import Add from './Add';
 import SearchOptions from './SearchOptions';
 import * as selectors from '../../reducers';
 
@@ -89,7 +89,10 @@ class Resources extends Component {
             <Typography variant="h5">Available Resources</Typography>
             <SearchOptions />
             {allResources.map(r => (
-              <FilteredResources key={`${r.type}-section`} list={r} />
+              <Route
+                key={`${r.type}-section`}
+                component={() => <FilteredResources list={r} />}
+              />
             ))}
           </Drawer>
           <main className={classes.content}>
@@ -97,6 +100,10 @@ class Resources extends Component {
               <Route
                 path="/pg/resources/:resourceType/edit/:id"
                 component={Edit}
+              />
+              <Route
+                path="/pg/resources/:resourceType/add/:id"
+                render={props => <Add key={props.match.params.id} {...props} />}
               />
               <Route component={NoEdit} />
             </Switch>

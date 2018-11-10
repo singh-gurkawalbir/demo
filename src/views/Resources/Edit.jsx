@@ -9,11 +9,9 @@ import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
+import AFE from '../../components/AFE';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
-
-// TODO: Write a saga to ratelimit the keyword search
-// to prevent dom updates unnecessarily
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -116,6 +114,18 @@ const prettyDate = dateString => {
   },
 }))
 class Edit extends Component {
+  state = {
+    showEditor: false,
+  };
+
+  handleOpenHookEditor = () => {
+    this.setState({ showEditor: true });
+  };
+
+  handleCloseHookEditor = () => {
+    this.setState({ showEditor: false });
+  };
+
   render() {
     const {
       id,
@@ -172,6 +182,26 @@ class Edit extends Component {
               className={classes.textField}
               margin="normal"
             />
+            <Button
+              onClick={this.handleOpenHookEditor}
+              size="small"
+              color="secondary">
+              Edit PreSavePage Hook
+            </Button>
+
+            {this.state.showEditor && (
+              <AFE
+                id={`${id}-hook`}
+                width="80vw"
+                height="65vh"
+                open
+                title="PreSavePage Hook Editor"
+                processor="handlebars"
+                rules="a is {{a}} and b is {{b}}, while c is {{c}}."
+                data={JSON.stringify({ a: 123, b: true, c: 'abc' }, null, 2)}
+                onEditorClose={this.handleCloseHookEditor}
+              />
+            )}
             {conflict && (
               <ConflictAlertDialog
                 conflict={conflict}

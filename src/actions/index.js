@@ -57,11 +57,27 @@ const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
+// #region Editor actions
+const editor = {
+  init: (id, processor, rules, data) =>
+    action(actionTypes.EDITOR_INIT, { id, processor, rules, data }),
+  ruleChange: (id, rules) =>
+    action(actionTypes.EDITOR_RULE_CHANGE, { id, rules }),
+  dataChange: (id, data) =>
+    action(actionTypes.EDITOR_DATA_CHANGE, { id, data }),
+  evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
+  evaluateFailure: (id, error) =>
+    action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
+  evaluateResponse: (id, result) =>
+    action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
+};
+// #endregion
 
 export default {
   setTheme,
   patchFilter,
   clearFilter,
+  editor,
   resource,
   profile,
   api,

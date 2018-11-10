@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
 import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
+import editors, * as fromEditors from './editors';
 
 const profile = (state = null, action) => {
   if (
@@ -29,6 +30,7 @@ export default combineReducers({
   profile,
   themeName,
   filters,
+  editors,
   stage,
 });
 
@@ -53,6 +55,18 @@ export function filter(state, name) {
   if (!state) return {};
 
   return fromFilters.filter(state.filters, name);
+}
+
+export function editor(state, id) {
+  if (!state) return {};
+
+  return fromEditors.editor(state.editors, id);
+}
+
+export function editorProcessorOptions(state, id) {
+  if (!state) return {};
+
+  return fromEditors.editorProcessorOptions(state.editors, id);
 }
 
 export function stagedResource(state, id) {
