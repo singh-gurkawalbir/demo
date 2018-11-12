@@ -67,9 +67,6 @@ export const api = async (path, opts = {}) => {
 
     // TODO: Try to get headers in the response
     // to determine whether a json or text
-    console.log('Headers ');
-    console.log(`check ${response.headers.get('content-type')}`);
-    console.log(`check ${response.headers.get('content-length')}`);
 
     if (response.status >= 400 && response.status < 600) {
       let body;
@@ -83,7 +80,7 @@ export const api = async (path, opts = {}) => {
 
       throw new APIException({
         status: response.status,
-        message: { ...body.errors },
+        message: { ...body },
       });
     }
 
@@ -94,7 +91,7 @@ export const api = async (path, opts = {}) => {
     if (response.status === 302) {
       const body = await response.json();
 
-      throw new APIException({ status: response.status, message: body });
+      throw new APIException({ status: response.status, message: { ...body } });
     }
 
     // For 204 content-length header does not show up

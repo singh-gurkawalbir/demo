@@ -5,7 +5,7 @@ import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
 
-// const networkThreshold = 1000;
+const networkThreshold = 100;
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
@@ -32,36 +32,23 @@ const Dismiss = props =>
 class NetworkSnackbar extends Component {
   state = {
     showSnackbar: true,
-    // timestamp: null,
-    // shouldRerender: true,
   };
-  /**
-   * TODO: Think further on this...it can result in a frozen UI state
-   * The final state may get skipped in the threshold
-   */
-  // componentWillReceiveProps() {
-  //   const { timestamp } = this.state;
-  //   const now = Date.now();
-
-  //   console.log(`check timestamp of frame ${now / 1000 - timestamp / 1000}`);
-
-  //   if (now - timestamp < networkThreshold)
-  //     this.setState({ shouldRerender: false });
-  //   else {
-  //     this.setState({ shouldRerender: true });
-  //     this.setState({ timestamp: now });
-  //   }
-  // }
-  // shouldComponentUpdate() {
-  //   return this.state.shouldRerender;
-  // }
   handleCloseSnackbar = () => {
     this.setState({
       showSnackbar: false,
     });
   };
 
-  isLoading() {}
+  isShowingMessage(r) {
+    /**
+     * Compare the the intial Api request timestamp
+     * with current time
+     */
+    if (r.timestamp === 0) return false;
+
+    return Date.now() - r.timestamp >= networkThreshold;
+  }
+
   render() {
     const { showSnackbar } = this.state;
     const { isLoadingAnyResource, allLoadingOrErrored, classes } = this.props;
@@ -80,7 +67,7 @@ class NetworkSnackbar extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return <li key={r.name}>{msg}</li>;
+      return this.isShowingMessage(r) ? <li key={r.name}>{msg}</li> : '';
     };
 
     const msg = (

@@ -28,9 +28,8 @@ export function* apiCallWithRetry(path, opts) {
       return successResponse;
     } catch (error) {
       if (error.status === 302) {
-        yield put(
-          actions.auth.failure(authParams.path, 'Authentication Failure')
-        );
+        yield put(actions.auth.failure('Authentication Failure'));
+        throw error;
       }
 
       if (error.status >= 400 && error.status < 500) {
@@ -48,7 +47,7 @@ export function* apiCallWithRetry(path, opts) {
         yield put(actions.api.failure(path, error.message));
         // the parent saga may need to know if there was an error for
         // its own "Data story"...
-        throw new Error(error);
+        throw error;
       }
     }
   }
@@ -64,25 +63,14 @@ export function* getResource({ resourceType, id }) {
 
     return resource;
   } catch (error) {
-    switch (error.status) {
-      case 404:
-        yield put(actions.api.failure(path, error.message));
-        break;
-      case 401:
-        // redirect to sigin page
-        yield put(actions.auth.failure(path));
+    if (error.status === 401) {
+      yield put(actions.auth.failure('Authentication Failure'));
+      yield put(actions.deleteProfile());
 
-        break;
-      case 429:
-        // too many get requests
-        yield call(delay, 2000);
-        yield put(actions.api.retry(path));
-        break;
-      default:
-        // generic message to the user that the
-        // saga failed and services team working on it
-        return undefined;
+      return;
     }
+
+    return undefined;
   }
 }
 
@@ -98,17 +86,10 @@ export function* getResourceCollection({ resourceType }) {
   } catch (error) {
     switch (error.status) {
       case 401:
-        // redirect to sigin page
+        yield put(actions.auth.failure('Authentication Failure'));
+        yield put(actions.deleteProfile());
 
-        break;
-      case 404:
-        yield put(actions.api.failure(path, error.message));
-        break;
-      case 429:
-        // too many get requests
-        // Indicate loading in the network snackbar
-        break;
-
+        return;
       default:
         // generic message to the user that the
         // saga failed and services team working on it
@@ -140,10 +121,6 @@ export function* commitStagedChanges({ resourceType, id }) {
     conflict = util.removeItem(conflict, p => p.path === '/connection');
 
     yield put(actions.resource.commitConflict(id, conflict));
-    // yield put(actions.resource.received(resourceType, latest));
-
-    // console.log(server.lastModified, master.lastModified);
-    // console.log(conflict);
 
     return;
   }
@@ -157,63 +134,28 @@ export function* commitStagedChanges({ resourceType, id }) {
     yield put(actions.resource.received(resourceType, updated));
     yield put(actions.resource.clearStaged(id));
   } catch (error) {
-    switch (error.status) {
-      case 400:
-        // form validation errors;
-        break;
-      case 401:
-        // redirect to sigin page
-        break;
-      case 409:
-        // Exisiting job inplace, resubmiting again
-        // it shouldn't be here
-        break;
-      case 413:
-        // Sending more data in the request body than server restrictions
-        break;
-      case 415:
-        // Incorrect media type, we should enforce in the UI end
-        break;
-      case 422:
-        // unprocessable entity, occurs when there is a cumulative error
-        break;
-      case 429:
-        // Throtling error, repeated requests
-        break;
-      default:
-        // any other error, Give a generic message to the user
-        return undefined;
-    }
+    // Dave would handle this part
   }
 }
 
-function* auth({ path, message }) {
+function* auth({ message }) {
   try {
     // replace credentials in the request body
-    const payload = Object.assign({}, authParams.opts);
+    const payload = { ...authParams.opts, body: message };
+    const apiAuthentications = yield call(
+      apiCallWithRetry,
+      authParams.path,
+      payload
+    );
 
-    payload.body = message;
-    const apiAuthentications = yield call(apiCallWithRetry, path, payload);
-
-    yield put(actions.auth.complete(authParams.path));
+    yield put(actions.auth.complete());
 
     return apiAuthentications.succes;
   } catch (error) {
-    switch (error.status) {
-      case 422: {
-        // make auth error much more cleaner
-        yield put(
-          actions.auth.failure(authParams.path, 'Authentication Failure')
-        );
-        // all sagas should inherit this behavior
-        yield put(actions.deleteProfile());
-        break;
-      }
+    yield put(actions.auth.failure('Authentication Failure'));
+    yield put(actions.deleteProfile());
 
-      default:
-        // any other error, Give a generic message to the user
-        return undefined;
-    }
+    return undefined;
   }
 }
 

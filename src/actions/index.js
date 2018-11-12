@@ -12,11 +12,9 @@ function action(type, payload = {}) {
 }
 
 const auth = {
-  request: (path, message) =>
-    action(actionTypes.AUTH_REQUEST, { path, message }),
-  complete: path => action(actionTypes.AUTH_SUCCESSFUL, { path }),
-  failure: (path, message) =>
-    action(actionTypes.AUTH_FAILURE, { path, message }),
+  request: message => action(actionTypes.AUTH_REQUEST, { message }),
+  complete: () => action(actionTypes.AUTH_SUCCESSFUL),
+  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
 };
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
@@ -65,8 +63,8 @@ const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
-const userLogout = () => action(actionTypes.USER_LOGOUT, {});
-const deleteProfile = () => action(actionTypes.DELETE_PROFILE, {});
+const userLogout = () => action(actionTypes.USER_LOGOUT);
+const deleteProfile = () => action(actionTypes.DELETE_PROFILE);
 
 export default {
   userLogout,

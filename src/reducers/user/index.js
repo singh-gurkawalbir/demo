@@ -11,9 +11,9 @@ const profile = (state = null, action) => {
 
   if (action.type === actionTypes.DELETE_PROFILE) {
     // Except for email delete everything
-    const email = state.email || {};
+    if (!state) return {};
 
-    return email;
+    return { ...state.email };
   }
 
   return state;
@@ -34,6 +34,9 @@ export default combineReducers({
   profile,
   themeName,
 });
+
+// #region PUBLIC SESSION SELECTORS
+
 export function avatarUrl(state) {
   if (!state || !state.profile) return undefined;
 
@@ -49,3 +52,5 @@ export function userTheme(state) {
 
   return state.themeName;
 }
+
+// #endregion PUBLIC SESSION SELECTORS

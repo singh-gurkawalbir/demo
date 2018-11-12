@@ -36,7 +36,3 @@ export default (state = false, action) => {
       return state;
   }
 };
-
-export function isProfileLoading(state) {
-  return state.loading && !state.authenticated;
-}
