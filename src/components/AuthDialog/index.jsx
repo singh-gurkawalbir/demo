@@ -7,10 +7,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignIn from '../../views/SignIn';
-import { isAuthDialogOpen } from '../../reducers';
+import { isSessionExpired } from '../../reducers';
 
 const mapStateToProps = state => ({
-  dialogOpen: isAuthDialogOpen(state),
+  dialogOpen: isSessionExpired(state),
 });
 
 class AlertDialog extends Component {

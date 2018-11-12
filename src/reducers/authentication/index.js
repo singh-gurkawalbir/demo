@@ -7,34 +7,27 @@ export default (state = false, action) => {
 
   switch (action.type) {
     case actionTypes.AUTH_REQUEST: {
-      newState = Object.assign({}, state) || {};
-      newState.loading = true;
-      newState.authenticated = false;
+      newState = { ...state, loading: true, authenticated: false };
       delete newState.failure;
 
       return newState;
     }
 
     case actionTypes.AUTH_SUCCESSFUL: {
-      newState = Object.assign({}, state) || {};
-      newState.loading = false;
-      newState.authenticated = true;
-      delete newState.authDialog;
+      newState = { ...state, loading: false, authenticated: true };
+      delete newState.sessionExpired;
 
       return newState;
     }
 
     case actionTypes.AUTH_FAILURE: {
-      newState = Object.assign({}, state) || {};
-      newState.loading = false;
+      newState = { ...state, loading: false, failure: action.message };
 
       if (newState.authenticated) {
-        newState.authDialog = true;
+        newState.sessionExpired = true;
       }
 
       newState.authenticated = false;
-      newState.authenticated = false;
-      newState.failure = action.message;
 
       return newState;
     }

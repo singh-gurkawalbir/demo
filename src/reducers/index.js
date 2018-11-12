@@ -92,8 +92,8 @@ export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
 }
 
-export function isAuthDialogOpen(state) {
-  return !!(state && state.auth && state.auth.authDialog);
+export function isSessionExpired(state) {
+  return !!(state && state.auth && state.auth.sessionExpired);
 }
 
 export function themeName(state) {

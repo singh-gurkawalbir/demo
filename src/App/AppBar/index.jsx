@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,8 +12,6 @@ import { isAuthenticated } from '../../reducers';
 
 const mapStateToProps = state => ({
   authenticated: isAuthenticated(state),
-  // error: state.auth.failure,
-  // isLoadingProfile: isLoadingProfile(state),
 });
 
 @withStyles(theme => ({
@@ -106,23 +104,24 @@ export class Appbar extends Component {
         <AppBar position="static">
           <Toolbar>
             {authenticated && (
-              <IconButton
-                onClick={onToggleDrawer}
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="Menu">
-                <MenuIcon className={classes.icon} />
-              </IconButton>
-            )}
-            {authenticated && (
-              <Link className={classes.playground} to="/pg/">
-                <Typography
-                  variant="h6"
+              <Fragment>
+                <IconButton
+                  onClick={onToggleDrawer}
+                  className={classes.menuButton}
                   color="inherit"
-                  className={classes.flex}>
-                  integrator.io
-                </Typography>
-              </Link>
+                  aria-label="Menu">
+                  <MenuIcon className={classes.icon} />
+                </IconButton>
+
+                <Link className={classes.playground} to="/pg/">
+                  <Typography
+                    variant="h6"
+                    color="inherit"
+                    className={classes.flex}>
+                    integrator.io
+                  </Typography>
+                </Link>
+              </Fragment>
             )}
             <img
               src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"

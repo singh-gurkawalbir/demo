@@ -4,39 +4,24 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-  withRouter,
-} from 'react-router-dom';
-import { themeName, isAuthenticated, isAuthDialogOpen } from '../reducers';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { themeName, isAuthenticated } from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
-// import ErrorPanel from '../components/ErrorPanel';
 import themeProvider from '../themeProvider';
 import loadable from '../utils/loadable';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import SignIn from '../views/SignIn';
 import AuthDialog from '../components/AuthDialog';
-// import AlertDialog from '../components/AuthDialog';
+import PrivateRoute from './PrivateRoute';
 
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
-  isAuthDialogOpen: isAuthDialogOpen(state),
 });
-// const mapDispatchToProps = dispatch => ({
-//   handleAuthentication: (path, message) => {
-//     dispatch(actions.auth.request(path, message));
-//   },
-// });
-const Dashboard = withRouter(
-  loadable(() =>
-    import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
-  )
+const Dashboard = loadable(() =>
+  import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
 );
 const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
@@ -50,29 +35,6 @@ const Exports = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../views/Imports')
 );
-
-// const SignIn = loadable(() =>
-//   import(/* webpackChunkName: 'Imports' */ '../views/SignIn')
-// );
-function PrivateRoute({ component: Component, authenticated, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={props =>
-        authenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/pg/signin',
-              state: { from: props.location },
-            }}
-          />
-        )
-      }
-    />
-  );
-}
 
 @hot(module)
 class App extends Component {
@@ -112,7 +74,7 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
-            {authenticated && <AuthDialog />}
+            <AuthDialog />
             <Switch>
               <PrivateRoute
                 authenticated={authenticated}
