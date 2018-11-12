@@ -24,27 +24,47 @@ const mapStateToProps = state => ({
 })
 class CodeEditor2 extends Component {
   handleChange = value => {
+    this.resize();
+
     if (this.props.onChange) {
       this.props.onChange(value);
     }
   };
 
+  resize() {
+    // console.log('resizing to fit...');
+    this.aceEditor.editor.resize();
+  }
+
+  componentDidMount() {
+    this.resize();
+  }
+
   render() {
     const { theme, value, mode, classes } = this.props;
+
+    // console.log('rendering ace editor...');
 
     return (
       <AceEditor
         className={classes.root}
         value={value}
         mode={mode}
+        width="100%"
+        height="100%"
         // enableLiveAutocompletion
         theme={theme}
         onChange={this.handleChange}
         // name={name}
+        ref={c => {
+          this.aceEditor = c;
+        }}
         editorProps={{ $blockScrolling: true }}
       />
     );
   }
 }
 
-export default connect(mapStateToProps)(CodeEditor2);
+export default connect(mapStateToProps, null, null, { withRef: true })(
+  CodeEditor2
+);

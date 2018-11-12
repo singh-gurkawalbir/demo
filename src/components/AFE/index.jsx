@@ -179,6 +179,8 @@ class AFE extends Component {
             <div className={classNames(classes.gridItem, classes.rule)}>
               <div className={classes.title}>RULES</div>
               <CodeEditor
+                // ref={c => (this.ruleEditor = c)}
+                name="rules"
                 value={rules}
                 mode="handlebars"
                 onChange={handleRuleChange}
@@ -187,13 +189,13 @@ class AFE extends Component {
 
             <div className={classNames(classes.gridItem, classes.data)}>
               <div className={classes.title}>DATA</div>
-              <div>
-                <CodeEditor
-                  value={data}
-                  mode="json"
-                  onChange={handleDataChange}
-                />
-              </div>
+              <CodeEditor
+                // ref={c => (this.dataEditor = c)}
+                name="data"
+                value={data}
+                mode="json"
+                onChange={handleDataChange}
+              />
             </div>
 
             <div className={classNames(classes.gridItem, classes.result)}>
