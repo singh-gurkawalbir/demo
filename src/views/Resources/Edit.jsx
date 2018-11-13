@@ -16,10 +16,15 @@ import ConflictAlertDialog from './ConflictAlertDialog';
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const resourceData = selectors.resourceData(state, resourceType, id);
+  const { _connectionId } = resourceData.merged;
+  const connection = _connectionId
+    ? selectors.resource(state, 'connections', _connectionId)
+    : null;
 
   return {
     resourceType,
     resourceData,
+    connection,
     id,
   };
 };
@@ -58,26 +63,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
       dispatch(actions.resource.clearConflict(id));
     },
   };
-};
-
-const relatedComponents = (resource, className) => {
-  const { connection } = resource;
-  const components = [];
-
-  if (connection) {
-    components.push(
-      <Link
-        key="conn"
-        className={className}
-        to={`/pg/resources/connections/edit/${connection._id}`}>
-        <Button size="small" color="secondary">
-          Connected to {connection.name || connection._id}
-        </Button>
-      </Link>
-    );
-  }
-
-  return components;
 };
 
 const toName = resourceType =>
@@ -130,6 +115,7 @@ class Edit extends Component {
     const {
       id,
       resourceData,
+      connection,
       resourceType,
       classes,
       handleInputChange,
@@ -159,7 +145,16 @@ class Edit extends Component {
           </Typography>
         )}
 
-        {relatedComponents(merged, classes.relatedContent)}
+        {connection && (
+          <Link
+            key="conn"
+            className={classes.relatedContent}
+            to={`/pg/resources/connections/edit/${connection._id}`}>
+            <Button size="small" color="secondary">
+              Connected to {connection.name || connection._id}
+            </Button>
+          </Link>
+        )}
 
         <div className={classes.editableFields}>
           <form>

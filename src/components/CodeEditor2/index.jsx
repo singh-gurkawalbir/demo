@@ -41,7 +41,7 @@ class CodeEditor2 extends Component {
   }
 
   render() {
-    const { theme, value, mode, classes } = this.props;
+    const { theme, value, mode, showGutter, classes } = this.props;
 
     // console.log('rendering ace editor...');
 
@@ -53,6 +53,7 @@ class CodeEditor2 extends Component {
         width="100%"
         height="100%"
         showPrintMargin={false}
+        showGutter={showGutter}
         // enableLiveAutocompletion
         theme={theme}
         onChange={this.handleChange}
@@ -66,6 +67,4 @@ class CodeEditor2 extends Component {
   }
 }
 
-export default connect(mapStateToProps, null, null, { withRef: true })(
-  CodeEditor2
-);
+export default connect(mapStateToProps)(CodeEditor2);

@@ -197,6 +197,7 @@ class AFE extends Component {
                 name="rules"
                 value={rules}
                 mode={config.rulesMode}
+                showGutter={config.rulesShowGutter}
                 onChange={handleRuleChange}
               />
             </div>
@@ -208,6 +209,7 @@ class AFE extends Component {
                 name="data"
                 value={data}
                 mode={config.dataMode}
+                showGutter={config.dataShowGutter}
                 onChange={handleDataChange}
               />
             </div>

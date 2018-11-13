@@ -48,18 +48,6 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-const getConnectionMap = connections => {
-  if (!connections) return {};
-
-  const cMap = {};
-
-  // convert conn array to hash keyed from conn id.
-  // lets join exports and connection into hybrid obj.
-  connections.map(c => (cMap[c._id] = c));
-
-  return cMap;
-};
-
 export function resource(state, resourceType, id) {
   // console.log('fetch', resourceType, id);
 
@@ -75,16 +63,7 @@ export function resource(state, resourceType, id) {
 
   if (!match) return null;
 
-  const clone = Object.assign({}, match);
-
-  if (!clone._connectionId) return clone;
-
-  const cMap = getConnectionMap(state.connections);
-  const conn = cMap[clone._connectionId];
-
-  clone.connection = conn;
-
-  return clone;
+  return match;
 }
 
 export function resourceList(state, { type, take, keyword }) {
@@ -108,29 +87,15 @@ export function resourceList(state, { type, take, keyword }) {
   result.total = resources.length;
   result.count = resources.length;
 
-  const cMap = getConnectionMap(state.connections);
-  const filled = resources.map(r => {
-    const copy = Object.assign({}, r);
-
-    if (r._connectionId) {
-      copy.connection = Object.assign({}, cMap[r._connectionId]);
-    }
-
-    return copy;
-  });
   const matchTest = r => {
     if (!keyword) return true;
 
-    let searchableText = `${r._id}|${r.name}|${r.description}`;
-
-    if (r.connection) {
-      searchableText += `|${r.connection.name}|${r.connection.type}`;
-    }
+    const searchableText = `${r._id}|${r.name}|${r.description}`;
 
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const filtered = filled.filter(matchTest);
+  const filtered = resources.filter(matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;

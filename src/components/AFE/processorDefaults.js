@@ -9,14 +9,17 @@ export default {
     showRules: true,
     rulesTitle: 'RULES',
     rulesMode: 'json',
+    rulesShowGutter: false,
 
     showData: true,
     dataTitle: 'DATA',
     dataMode: 'json',
+    dataShowGutter: false,
 
     showResult: true,
     resultTitle: 'RESULT',
     resultMode: 'text',
+    resultShowGutter: false,
   },
   handlebars: {
     layout: 'Row',
@@ -33,7 +36,9 @@ export default {
     height: '60vh',
     rulesTitle: 'SCRIPT',
     rulesMode: 'javascript',
+    rulesShowGutter: true,
     dataTitle: 'INPUT',
+    dataShowGutter: true,
     resultTitle: 'OUTPUT',
   },
 };

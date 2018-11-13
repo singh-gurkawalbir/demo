@@ -96,7 +96,6 @@ export function* commitStagedChanges({ resourceType, id }) {
     let conflict = jsonPatch.compare(master, origin);
 
     conflict = util.removeItem(conflict, p => p.path === '/lastModified');
-    conflict = util.removeItem(conflict, p => p.path === '/connection');
 
     yield put(actions.resource.commitConflict(id, conflict));
     yield put(actions.resource.received(resourceType, origin));
@@ -123,15 +122,6 @@ export function* commitStagedChanges({ resourceType, id }) {
   yield put(actions.resource.clearStaged(id));
 }
 
-/* Sample /processors/[name] request body 
-{
-  rules: { strict: false, template: 'v1/exports/?x={{lastExportDateTime}} ' },
-  data: {
-    export: { name: 'HTTP - Exports from staging.integrator.io' },
-    lastExportDateTime: '2018-11-08T17:53:51.702Z',
-  },
-};
-*/
 export function* evaluateProcessor({ id }) {
   const getProcessorOptions = state =>
     selectors.editorProcessorOptions(state, id);
