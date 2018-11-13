@@ -57,6 +57,7 @@ const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
+//
 // #region Editor actions
 const editor = {
   init: (id, processor, rules, data) =>

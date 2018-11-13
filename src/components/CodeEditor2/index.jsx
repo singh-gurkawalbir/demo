@@ -52,6 +52,7 @@ class CodeEditor2 extends Component {
         mode={mode}
         width="100%"
         height="100%"
+        showPrintMargin={false}
         // enableLiveAutocompletion
         theme={theme}
         onChange={this.handleChange}

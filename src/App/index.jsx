@@ -29,6 +29,9 @@ const NotFound = loadable(() =>
 const Resources = loadable(() =>
   import(/* webpackChunkName: 'Resources' */ '../views/Resources')
 );
+const Processors = loadable(() =>
+  import(/* webpackChunkName: 'Processors' */ '../views/Processors')
+);
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/Exports')
 );
@@ -123,6 +126,7 @@ class App extends Component {
 
             <Switch>
               <Route path="/pg/resources" component={Resources} />
+              <Route path="/pg/processors" component={Processors} />
               <Route path="/pg/exports" component={Exports} />
               <Route path="/pg/imports" component={Imports} />
               <Route path="/pg" component={Dashboard} />

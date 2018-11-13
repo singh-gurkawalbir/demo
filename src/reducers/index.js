@@ -76,6 +76,11 @@ export function resource(state, resourceType, id) {
 export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
+
+export function processors(state) {
+  return fromData.processors(state.data);
+}
+
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS

@@ -192,8 +192,7 @@ class Edit extends Component {
             {this.state.showEditor && (
               <AFE
                 id={`${id}-hook`}
-                width="80vw"
-                height="65vh"
+                overrides={{ layout: 'Compact', height: '40vw', width: '75vh' }}
                 open
                 title="PreSavePage Hook Editor"
                 processor="handlebars"

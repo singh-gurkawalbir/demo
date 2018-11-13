@@ -151,4 +151,16 @@ export function resourceList(state, { type, take, keyword }) {
 export function hasData(state, resourceType) {
   return !!(state && state[resourceType]);
 }
+
+const processorBlacklist = ['exportDataConverter'];
+
+export function processors(state) {
+  const processorMap = state.processors;
+
+  if (!processorMap) return [];
+
+  const list = Object.entries(processorMap).map(i => i[1]);
+
+  return list.filter(p => !processorBlacklist.includes(p.name));
+}
 // #endregion

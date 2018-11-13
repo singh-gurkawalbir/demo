@@ -16,7 +16,8 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import CodeEditor from '../../components/CodeEditor2';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import './afe.css';
+// import './afe.css';
+import processorDefaults from './processorDefaults';
 
 const mapStateToProps = (state, { id }) => ({
   editor: selectors.editor(state, id),
@@ -68,7 +69,7 @@ const mapDispatchToProps = (dispatch, { id }) => ({
       border: gridItemBorder,
       overflow: 'hidden',
       minWidth: '150px',
-      minHeight: '150px',
+      minHeight: '100px',
     },
     rule: {
       gridArea: 'rule',
@@ -114,8 +115,14 @@ class AFE extends Component {
     this.setState({ fullScreen: !this.state.fullScreen });
 
   componentDidMount() {
-    const { processor, rules, data, handleInit } = this.props;
+    const { processor, rules, data, handleInit, overrides } = this.props;
+    const config = {
+      ...processorDefaults.global,
+      ...processorDefaults[processor],
+      ...overrides,
+    };
 
+    this.setState({ layout: config.layout, fullScreen: config.fullScreen });
     handleInit(processor, rules, data);
   }
 
@@ -123,19 +130,26 @@ class AFE extends Component {
     const {
       open,
       title,
-      height,
-      width,
+      overrides,
       editor,
       onEditorClose,
       handlePreview,
       handleRuleChange,
       handleDataChange,
       classes,
+      processor,
     } = this.props;
     const { rules, data, result } = editor;
     const { layout, fullScreen } = this.state;
-    const size = fullScreen ? { height: '87vh' } : { height, width };
     const gridTemplate = classes[`gridTemplate${layout}`];
+    const config = {
+      ...processorDefaults.global,
+      ...processorDefaults[processor],
+      ...overrides,
+    };
+    const size = fullScreen
+      ? { height: '87vh' }
+      : { height: config.height, width: config.width };
 
     return (
       <Dialog
@@ -177,29 +191,29 @@ class AFE extends Component {
             className={classNames(classes.gridContainer, gridTemplate)}
             style={size}>
             <div className={classNames(classes.gridItem, classes.rule)}>
-              <div className={classes.title}>RULES</div>
+              <div className={classes.title}>{config.rulesTitle}</div>
               <CodeEditor
                 // ref={c => (this.ruleEditor = c)}
                 name="rules"
                 value={rules}
-                mode="handlebars"
+                mode={config.rulesMode}
                 onChange={handleRuleChange}
               />
             </div>
 
             <div className={classNames(classes.gridItem, classes.data)}>
-              <div className={classes.title}>DATA</div>
+              <div className={classes.title}>{config.dataTitle}</div>
               <CodeEditor
                 // ref={c => (this.dataEditor = c)}
                 name="data"
                 value={data}
-                mode="json"
+                mode={config.dataMode}
                 onChange={handleDataChange}
               />
             </div>
 
             <div className={classNames(classes.gridItem, classes.result)}>
-              <div className={classes.title}>RESULT</div>
+              <div className={classes.title}>{config.resultTitle}</div>
               {result && result.data}
             </div>
           </div>
