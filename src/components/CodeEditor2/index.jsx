@@ -8,6 +8,7 @@ import 'brace/mode/json';
 import 'brace/mode/xml';
 import 'brace/theme/monokai';
 import 'brace/theme/github';
+import 'brace/ext/language_tools';
 import * as selectors from '../../reducers/session';
 
 const mapStateToProps = state => ({
@@ -41,12 +42,21 @@ class CodeEditor2 extends Component {
   }
 
   render() {
-    const { theme, value, mode, showGutter, classes } = this.props;
+    const {
+      name,
+      theme,
+      value,
+      mode,
+      showGutter,
+      enableLiveAutocompletion,
+      classes,
+    } = this.props;
 
     // console.log('rendering ace editor...');
 
     return (
       <AceEditor
+        name={name}
         className={classes.root}
         value={value}
         mode={mode}
@@ -54,12 +64,17 @@ class CodeEditor2 extends Component {
         height="100%"
         showPrintMargin={false}
         showGutter={showGutter}
-        // enableLiveAutocompletion
+        // enableLiveAutocompletion={enableLiveAutocompletion}
         theme={theme}
         onChange={this.handleChange}
-        // name={name}
         ref={c => {
           this.aceEditor = c;
+        }}
+        setOptions={{
+          // enableBasicAutocompletion: false,
+          enableLiveAutocompletion,
+          // showLineNumbers: true,
+          tabSize: 2,
         }}
         editorProps={{ $blockScrolling: true }}
       />

@@ -110,6 +110,11 @@ class AFE extends Component {
     fullScreen: false,
   };
 
+  handleClose = shouldCommit => {
+    const { editor, onEditorClose } = this.props;
+
+    onEditorClose(shouldCommit, editor);
+  };
   handleLayoutChange = (event, layout) => layout && this.setState({ layout });
   handleFullScreenClick = () =>
     this.setState({ fullScreen: !this.state.fullScreen });
@@ -132,7 +137,6 @@ class AFE extends Component {
       title,
       overrides,
       editor,
-      onEditorClose,
       handlePreview,
       handleRuleChange,
       handleDataChange,
@@ -155,7 +159,7 @@ class AFE extends Component {
       <Dialog
         fullScreen={fullScreen}
         open={open}
-        onClose={onEditorClose}
+        onClose={() => this.handleClose()}
         scroll="paper"
         maxWidth={false}>
         <div className={classes.toolbarContainer}>
@@ -198,6 +202,7 @@ class AFE extends Component {
                 value={rules}
                 mode={config.rulesMode}
                 showGutter={config.rulesShowGutter}
+                enableLiveAutocompletion={config.rulesEnableLiveAutocompletion}
                 onChange={handleRuleChange}
               />
             </div>
@@ -210,6 +215,7 @@ class AFE extends Component {
                 value={data}
                 mode={config.dataMode}
                 showGutter={config.dataShowGutter}
+                enableLiveAutocompletion={config.dataEnableLiveAutocompletion}
                 onChange={handleDataChange}
               />
             </div>
@@ -222,10 +228,10 @@ class AFE extends Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={handlePreview}>Preview</Button>
-          <Button onClick={onEditorClose} color="primary">
+          <Button onClick={() => this.handleClose()} color="primary">
             Cancel
           </Button>
-          <Button onClick={onEditorClose}>Save</Button>
+          <Button onClick={() => this.handleClose(true)}>Save</Button>
         </DialogActions>
       </Dialog>
     );

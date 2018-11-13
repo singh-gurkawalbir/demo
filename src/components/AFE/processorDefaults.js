@@ -10,11 +10,13 @@ export default {
     rulesTitle: 'RULES',
     rulesMode: 'json',
     rulesShowGutter: false,
+    rulesEnableLiveAutocompletion: false,
 
     showData: true,
     dataTitle: 'DATA',
     dataMode: 'json',
     dataShowGutter: false,
+    dataEnableLiveAutocompletion: false,
 
     showResult: true,
     resultTitle: 'RESULT',
@@ -27,7 +29,9 @@ export default {
     height: '60vh',
     rulesTitle: 'TEMPLATE',
     rulesMode: 'handlebars',
+    rulesEnableLiveAutocompletion: true,
     dataTitle: 'SAMPLE DATA',
+
     resultTitle: 'RESULT',
   },
   javascript: {
@@ -37,8 +41,10 @@ export default {
     rulesTitle: 'SCRIPT',
     rulesMode: 'javascript',
     rulesShowGutter: true,
+    rulesEnableLiveAutocompletion: true,
     dataTitle: 'INPUT',
     dataShowGutter: true,
+    dataEnableLiveAutocompletion: true,
     resultTitle: 'OUTPUT',
   },
 };

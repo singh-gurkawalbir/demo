@@ -4,20 +4,17 @@ import AFE from '../../components/AFE';
 
 @hot(module)
 export default class Editor extends Component {
-  handleClose = () => {
-    this.props.history.goBack();
-  };
-
   render() {
-    const { name } = this.props.match.params;
+    const { id, processor, data, handleClose } = this.props;
 
     return (
       <AFE
-        id={`${name}`}
+        id={id}
+        data={data}
         open
-        title={`${name} Editor`}
-        processor={name}
-        onEditorClose={this.handleClose}
+        title={`${processor} Editor`}
+        processor={processor}
+        onEditorClose={handleClose}
       />
     );
   }

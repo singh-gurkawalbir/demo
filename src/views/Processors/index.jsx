@@ -1,18 +1,15 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { Switch, Route, Link } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
 import { withStyles } from '@material-ui/core/styles';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import Editor from './Editor';
+import WorkArea from './WorkArea';
+import ProcessorListItem from './ProcessorListItem';
 
 const mapStateToProps = state => ({
   processors: selectors.processors(state),
@@ -48,13 +45,38 @@ const drawerWidth = 320;
   },
 }))
 class Processors extends Component {
+  state = {
+    processor: null,
+    rawData: '',
+  };
+
+  componentDidMount() {
+    const rawData = JSON.stringify({ a: 123, b: 'abc', c: true }, null, 2);
+
+    this.setState({ rawData });
+  }
+
+  handleProcessorChange = processor => {
+    this.setState({ processor });
+  };
+
+  handleClose = (shouldCommit, editorValues) => {
+    const { data } = editorValues;
+
+    if (shouldCommit) {
+      this.handleRawDataChange(data);
+    }
+
+    this.handleProcessorChange(null);
+  };
+
+  handleRawDataChange = rawData => {
+    this.setState({ rawData });
+  };
+
   render() {
     const { processors, classes } = this.props;
-    const NoEdit = () => (
-      <Typography variant="h6">
-        The left sidebar lists all available processors.
-      </Typography>
-    );
+    const { rawData, processor } = this.state;
 
     return (
       <LoadResources required resources={['processors']}>
@@ -65,32 +87,27 @@ class Processors extends Component {
             classes={{
               paper: classes.drawerPaper,
             }}>
-            <Typography variant="h5">Available Processors</Typography>
+            <Typography variant="h6">Available Processors</Typography>
             <List>
               {processors.map(p => (
-                <ListItem
-                  className={classes.listItem}
-                  button
+                <ProcessorListItem
                   key={p.name}
-                  component={Link}
-                  to={`/pg/processors/${p.name}`}>
-                  <Avatar>
-                    <ImageIcon />
-                  </Avatar>
-                  <ListItemText
-                    primary={p.label || p.name}
-                    secondary={p.description}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                </ListItem>
+                  item={p}
+                  onClick={this.handleProcessorChange}
+                />
               ))}
             </List>
           </Drawer>
           <main className={classes.content}>
-            <Switch>
-              <Route path="/pg/processors/:name" component={Editor} />
-              <Route component={NoEdit} />
-            </Switch>
+            <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
+            {processor && (
+              <Editor
+                id="rawData"
+                data={rawData}
+                processor={processor}
+                handleClose={this.handleClose}
+              />
+            )}
           </main>
         </div>
       </LoadResources>

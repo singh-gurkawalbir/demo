@@ -58,7 +58,7 @@ export function editorTheme(state) {
 
   // props = ui theme, values = editor theme.
   const themeMap = {
-    light: 'github',
+    light: 'tomorrow',
     dark: 'monokai',
   };
 
