@@ -164,4 +164,7 @@ class ResourceList extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ResourceList);
