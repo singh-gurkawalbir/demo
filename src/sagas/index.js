@@ -138,7 +138,7 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 }
 
-function* auth({ message }) {
+export function* auth({ message }) {
   try {
     // replace credentials in the request body
     const payload = { ...authParams.opts, body: message };

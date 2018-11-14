@@ -60,3 +60,14 @@ describe('global selectors', () => {
     });
   });
 });
+
+describe('Reducers in the root reducer', () => {
+  test('should wipe out the redux store in a user logout action', () => {
+    const someInitialState = {
+      profile: { email: 'sds' },
+    };
+    const state = reducer(someInitialState, actions.auth.userLogout());
+
+    expect(state).toEqual({});
+  });
+});

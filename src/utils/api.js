@@ -7,7 +7,7 @@ const errorMessageTimeOut = {
   status: 1001,
 };
 
-function APIException(response) {
+export function APIException(response) {
   this.status = response.status;
 
   if (process.env.NODE_ENV === `development`) {

@@ -2,7 +2,7 @@
 
 import actionTypes from '../../actions/types';
 
-export default (state = false, action) => {
+export default (state = {}, action) => {
   let newState;
 
   switch (action.type) {
