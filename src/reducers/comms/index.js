@@ -9,7 +9,7 @@ export default (state = initialState, action) => {
 
   switch (type) {
     case actionTypes.API_REQUEST:
-      newStatus = Object.assign({}, state[path]) || {};
+      newStatus = Object.assign({}, state[path]);
       newStatus.timestamp = timestamp;
       newStatus.loading = true;
       delete newStatus.retry;
@@ -18,7 +18,7 @@ export default (state = initialState, action) => {
       return { ...state, [path]: newStatus };
 
     case actionTypes.API_COMPLETE:
-      newStatus = Object.assign({}, state[path]) || {};
+      newStatus = Object.assign({}, state[path]);
       newStatus.loading = false;
       delete newStatus.retry;
       delete newStatus.error;
@@ -27,7 +27,7 @@ export default (state = initialState, action) => {
       return { ...state, [path]: newStatus };
 
     case actionTypes.API_RETRY:
-      newStatus = Object.assign({}, state[path]) || {};
+      newStatus = Object.assign({}, state[path]);
       newStatus.retry = newStatus.retry || 0;
       newStatus.retry += 1;
       delete newStatus.timestamp;
@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
       return { ...state, [path]: newStatus };
 
     case actionTypes.API_FAILURE:
-      newStatus = Object.assign({}, state[path]) || {};
+      newStatus = Object.assign({}, state[path]);
       newStatus.timestamp = timestamp;
       newStatus.error = action.message || 'unknown error';
       delete newStatus.retry;

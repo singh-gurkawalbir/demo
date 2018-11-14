@@ -5,7 +5,6 @@ import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
 
-const networkThreshold = 100;
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
@@ -46,7 +45,7 @@ class NetworkSnackbar extends Component {
      */
     if (r.timestamp === 0) return false;
 
-    return Date.now() - r.timestamp >= networkThreshold;
+    return Date.now() - r.timestamp >= Number(process.env.NETWORK_THRESHOLD);
   }
 
   render() {

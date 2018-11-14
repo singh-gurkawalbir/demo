@@ -17,9 +17,7 @@ const mapStateToProps = state => ({
   authenticated: isAuthenticated(state),
   error: authenticationErrored(state),
   userEmail: userProfileEmail(state),
-  // isLoadingProfile: isLoadingProfile(state),
 });
-// TODO:
 const mapDispatchToProps = dispatch => ({
   handleAuthentication: message => {
     dispatch(actions.auth.request(message));

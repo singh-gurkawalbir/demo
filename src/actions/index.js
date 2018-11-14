@@ -15,6 +15,7 @@ const auth = {
   request: message => action(actionTypes.AUTH_REQUEST, { message }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  userLogout: () => action(actionTypes.USER_LOGOUT),
 };
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
@@ -58,16 +59,14 @@ const resource = {
 const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
+  deleteProfile: () => action(actionTypes.DELETE_PROFILE),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
-const userLogout = () => action(actionTypes.USER_LOGOUT);
-const deleteProfile = () => action(actionTypes.DELETE_PROFILE);
 
 export default {
-  userLogout,
   setTheme,
   patchFilter,
   clearFilter,
@@ -75,5 +74,4 @@ export default {
   profile,
   api,
   auth,
-  deleteProfile,
 };
