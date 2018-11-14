@@ -33,9 +33,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
   const { id, resourceType } = match.params;
 
   return {
-    handleInputChange: event => {
-      const { value } = event.target;
-      const path = `/${event.target.id}`;
+    handlePatchResource: (path, value) => {
       const patch = [
         {
           op: 'replace',
@@ -103,11 +101,25 @@ class Edit extends Component {
     showEditor: false,
   };
 
+  handleInputChange = event => {
+    const { handlePatchResource } = this.props;
+    const { value } = event.target;
+    const path = `/${event.target.id}`;
+
+    handlePatchResource(path, value);
+  };
+
   handleOpenHookEditor = () => {
     this.setState({ showEditor: true });
   };
 
-  handleCloseHookEditor = () => {
+  handleCloseHookEditor = (shouldCommit, editorValues) => {
+    const { handlePatchResource } = this.props;
+
+    if (shouldCommit) {
+      handlePatchResource('hooks/presavepage', editorValues.rules);
+    }
+
     this.setState({ showEditor: false });
   };
 
@@ -193,7 +205,7 @@ class Edit extends Component {
                 processor="handlebars"
                 rules="a is {{a}} and b is {{b}}, while c is {{c}}."
                 data={JSON.stringify({ a: 123, b: true, c: 'abc' }, null, 2)}
-                onEditorClose={this.handleCloseHookEditor}
+                onClose={this.handleCloseHookEditor}
               />
             )}
             {conflict && (

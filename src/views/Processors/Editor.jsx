@@ -5,7 +5,7 @@ import AFE from '../../components/AFE';
 @hot(module)
 export default class Editor extends Component {
   render() {
-    const { id, processor, data, handleClose } = this.props;
+    const { id, processor, data, onClose } = this.props;
 
     return (
       <AFE
@@ -14,7 +14,7 @@ export default class Editor extends Component {
         open
         title={`${processor} Editor`}
         processor={processor}
-        onEditorClose={handleClose}
+        onClose={onClose}
       />
     );
   }

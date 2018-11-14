@@ -111,9 +111,9 @@ class AFE extends Component {
   };
 
   handleClose = shouldCommit => {
-    const { editor, onEditorClose } = this.props;
+    const { editor, onClose } = this.props;
 
-    onEditorClose(shouldCommit, editor);
+    onClose(shouldCommit, editor);
   };
   handleLayoutChange = (event, layout) => layout && this.setState({ layout });
   handleFullScreenClick = () =>

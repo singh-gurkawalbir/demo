@@ -105,7 +105,7 @@ class Processors extends Component {
                 id="rawData"
                 data={rawData}
                 processor={processor}
-                handleClose={this.handleClose}
+                onClose={this.handleClose}
               />
             )}
           </main>
