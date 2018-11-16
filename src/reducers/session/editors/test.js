@@ -26,12 +26,12 @@ describe('editor reducers', () => {
     };
     const newState = reducer(undefined, editorInitialized);
 
-    expect(newState[1]).toMatchObject(
-      { data: someDefaultData },
-      { rules: someDefaultArrayOfRules },
-      { defaultData: someDefaultData },
-      { defaultRules: someDefaultArrayOfRules }
-    );
+    expect(newState[1]).toMatchObject({
+      data: someDefaultData,
+      rules: someDefaultArrayOfRules,
+      defaultData: someDefaultData,
+      defaultRules: someDefaultArrayOfRules,
+    });
   });
 
   test('should reset data with default values', () => {
@@ -52,26 +52,25 @@ describe('editor reducers', () => {
     };
     const dataChangedState = reducer(editorIntialized, someDataChanged);
 
-    expect(dataChangedState[1]).toMatchObject(
-      { data: 'someChange' },
-      { defaultData: someDefaultData }
-    );
+    expect(dataChangedState[1]).toMatchObject({
+      data: 'someChange',
+    });
 
-    const editorRESET = {
+    const editorReset = {
       id: 1,
       type: actionTypes.EDITOR_RESET,
       rules: someDefaultArrayOfRules,
       data: 'someChange',
     };
-    const resetState = reducer(dataChangedState, editorRESET);
+    const resetState = reducer(dataChangedState, editorReset);
 
-    expect(resetState[1]).toMatchObject(
-      { data: someDefaultData },
-      { defaultData: someDefaultData }
-    );
+    expect(resetState[1]).toMatchObject({
+      data: someDefaultData,
+      defaultData: someDefaultData,
+    });
   });
 
-  test('should git rid off all errors and evaluations in reset editor', () => {
+  test('should update last rule or data when the corresponding actions is dispatched', () => {
     const someDefaultArrayOfRules = [{ a: 1 }, { b: 3 }];
     const someDefaultData = [{ d: 3 }, { e: 5 }];
     const editorInitialized = {
@@ -81,15 +80,39 @@ describe('editor reducers', () => {
       data: someDefaultData,
     };
     const editorIntialized = reducer(undefined, editorInitialized);
+    const someDataChanged = {
+      id: 1,
+      type: actionTypes.EDITOR_DATA_CHANGE,
+      rules: someDefaultArrayOfRules,
+      data: 'someDataChange',
+    };
+    const dataChangedState = reducer(editorIntialized, someDataChanged);
+
+    expect(dataChangedState[1]).toMatchObject({ data: 'someDataChange' });
+
+    const someRuleChanged = {
+      id: 1,
+      type: actionTypes.EDITOR_RULE_CHANGE,
+      rules: 'someRuleChange',
+      data: 'anotherDataChange',
+    };
+    // Data change should be ignored by the reducer only rule should be affected
+    const ruleChangedState = reducer(dataChangedState, someRuleChanged);
+
+    expect(ruleChangedState[1]).toMatchObject({
+      data: 'someDataChange',
+      rules: 'someRuleChange',
+    });
+  });
+
+  test('should git rid off all errors and evaluations in reset editor', () => {
+    const someDefaultArrayOfRules = [{ a: 1 }, { b: 3 }];
     const editorEvaluationFailure = {
       id: 1,
       type: actionTypes.EDITOR_EVALUATE_FAILURE,
       error: 'someError',
     };
-    const editorFailureState = reducer(
-      editorIntialized,
-      editorEvaluationFailure
-    );
+    const editorFailureState = reducer(undefined, editorEvaluationFailure);
 
     expect(editorFailureState[1]).toMatchObject({ error: 'someError' });
 
@@ -111,7 +134,7 @@ describe('editor reducers', () => {
       result: 'some result',
     };
     const editorEvaluationSuccessState = reducer(
-      editorIntialized,
+      undefined,
       editorEvaluationSuccess
     );
 

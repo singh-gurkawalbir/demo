@@ -24,6 +24,8 @@ export default function reducer(state = {}, action) {
       newState[id] = { ...newState[id], lastChange: Date.now() };
       newState[id].rules = newState[id].defaultRules;
       newState[id].data = newState[id].defaultData;
+      delete newState[id].error;
+      delete newState[id].result;
 
       return newState;
 
