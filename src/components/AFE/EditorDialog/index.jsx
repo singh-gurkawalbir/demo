@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -76,8 +76,8 @@ class EditorDialog extends Component {
       title,
       handlePreview,
       classes,
-      width = '60vw',
-      height = '60vh',
+      width = '70vw',
+      height = '50vh',
     } = this.props;
     const { layout, fullScreen } = this.state;
     const size = fullScreen ? { height } : { height, width };
@@ -98,13 +98,13 @@ class EditorDialog extends Component {
               value={layout}
               exclusive
               onChange={this.handleLayoutChange}>
-              <ToggleButton value="Column">
+              <ToggleButton value="column">
                 <ViewColumnIcon />
               </ToggleButton>
-              <ToggleButton value="Compact">
+              <ToggleButton value="compact">
                 <ViewCompactIcon />
               </ToggleButton>
-              <ToggleButton value="Row">
+              <ToggleButton value="row">
                 <ViewRowIcon />
               </ToggleButton>
             </ToggleButtonGroup>
@@ -118,7 +118,7 @@ class EditorDialog extends Component {
           </div>
         </div>
         <DialogContent style={size} className={classes.dialogContent}>
-          {children}
+          {cloneElement(children, { layout })}
         </DialogContent>
         <DialogActions>
           <Button onClick={handlePreview}>Preview</Button>

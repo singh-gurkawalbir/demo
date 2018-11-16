@@ -30,23 +30,23 @@ const mapDispatchToProps = (dispatch, { id }) => ({
 @withStyles(() => ({
   compactTemplate: {
     gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr',
-    gridTemplateAreas: '"rule data" "rule result"', // "error error"',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule data" "rule result" "error error"',
   },
   compact2Template: {
     gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr',
-    gridTemplateAreas: '"rule data" "result data"',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule data" "result data" "error error"',
   },
   columnTemplate: {
     gridTemplateColumns: '1fr',
-    gridTemplateRows: '1fr 1ft 1fr',
-    gridTemplateAreas: '"rule" "data" "result"',
+    gridTemplateRows: '1fr 1ft 1fr 0fr',
+    gridTemplateAreas: '"rule" "data" "result" "error"',
   },
   rowTemplate: {
     gridTemplateColumns: '1fr 1fr 1fr',
-    gridTemplateRows: '1fr',
-    gridTemplateAreas: '"rule data result"',
+    gridTemplateRows: '4fr 0fr',
+    gridTemplateAreas: '"rule data result" "error error error"',
   },
 }))
 class Editor extends Component {
@@ -128,6 +128,7 @@ class Editor extends Component {
         </PanelGridItem>
         {error && (
           <PanelGridItem gridArea="error">
+            <PanelTitle>Console</PanelTitle>
             <CodePanel name="error" value={error} mode="json" />
           </PanelGridItem>
         )}

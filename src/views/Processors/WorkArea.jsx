@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper } from '@material-ui/core';
 import CodeEditor from '../../components/CodeEditor2';
 import UrlEditor from '../../components/AFE/Editor/UrlEditor';
+import HttpRequestBodyEditor from '../../components/AFE/Editor/HttpRequestBodyEditor';
 import EditorDialog from '../../components/AFE/EditorDialog';
 
 @hot(module)
@@ -55,7 +56,11 @@ export default class WorkArea extends Component {
           </div>
 
           <EditorDialog id="test2" title="RelativeURI Editor">
-            <UrlEditor id="test2" rules="template {{abc}}." data={rawData} />
+            <HttpRequestBodyEditor
+              id="test2"
+              rules="template {{abc}}."
+              data={rawData}
+            />
           </EditorDialog>
         </Paper>
       </Fragment>
