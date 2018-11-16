@@ -29,8 +29,8 @@ const NotFound = loadable(() =>
 const Resources = loadable(() =>
   import(/* webpackChunkName: 'Resources' */ '../views/Resources')
 );
-const Processors = loadable(() =>
-  import(/* webpackChunkName: 'Processors' */ '../views/Processors')
+const Editors = loadable(() =>
+  import(/* webpackChunkName: 'Editors' */ '../views/Editors')
 );
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/Exports')
@@ -86,8 +86,8 @@ class App extends Component {
               />
               <PrivateRoute
                 authenticated={authenticated}
-                path="/pg/processors"
-                component={Processors}
+                path="/pg/editors"
+                component={Editors}
               />
               <PrivateRoute
                 authenticated={authenticated}

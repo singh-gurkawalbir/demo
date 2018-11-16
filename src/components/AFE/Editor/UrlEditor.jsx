@@ -26,6 +26,8 @@ export default class UrlEditor extends Component {
         ruleTitle="Url Template"
         dataTitle="Sample Data"
         resultTitle="Evaluated Result"
+        showFullScreen={false}
+        showLayoutOptions={false}
       />
     );
   }
