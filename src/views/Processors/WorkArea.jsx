@@ -3,6 +3,8 @@ import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper } from '@material-ui/core';
 import CodeEditor from '../../components/CodeEditor2';
+import UrlEditor from '../../components/AFE/Editor/UrlEditor';
+import EditorDialog from '../../components/AFE/EditorDialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -47,6 +49,14 @@ export default class WorkArea extends Component {
               onChange={onChange}
             />
           </div>
+          <br />
+          <div className={classes.rawDataContainer}>
+            <UrlEditor id="test1" rules="tempate {{abc}}." data={rawData} />
+          </div>
+
+          <EditorDialog id="test2" title="RelativeURI Editor">
+            <UrlEditor id="test2" rules="template {{abc}}." data={rawData} />
+          </EditorDialog>
         </Paper>
       </Fragment>
     );

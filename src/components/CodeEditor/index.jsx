@@ -8,6 +8,9 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/theme/monokai.css';
 
+// This component is no longer used. We can move back to CodeMirror,
+// but for now we are experimenting with react-ace instead.
+// please use the "CodeEditor2" component.
 @withStyles({
   root: {
     fontSize: 16,

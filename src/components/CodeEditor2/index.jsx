@@ -7,7 +7,7 @@ import 'brace/mode/handlebars';
 import 'brace/mode/json';
 import 'brace/mode/xml';
 import 'brace/theme/monokai';
-import 'brace/theme/github';
+import 'brace/theme/tomorrow';
 import 'brace/ext/language_tools';
 import * as selectors from '../../reducers/session';
 
@@ -16,15 +16,23 @@ const mapStateToProps = state => ({
 });
 
 @withStyles({
-  root: {
-    fontSize: 16,
-    width: '100%',
-    height: '100%',
-    position: 'relative',
-  },
+  // root: {
+  //   fontSize: 16,
+  //   width: '100%',
+  //   height: '100%',
+  //   position: 'relative',
+  // },
 })
 class CodeEditor2 extends Component {
   handleChange = value => {
+    // anytime the container DOM element changes size (both height and width)
+    // the resize method of the editor needs to be fired so it can internally
+    // adjust it's internal variables that control the controlled scrollbars
+    // and basic functionality.
+    // TODO:
+    // We are cheating here and calling the resize on EVERY change... The better
+    // approach would be to onyl call resize whenever the parent component
+    // changed its size...
     this.resize();
 
     if (this.props.onChange) {
@@ -47,6 +55,9 @@ class CodeEditor2 extends Component {
       theme,
       value,
       mode,
+      readOnly,
+      width,
+      height,
       showGutter,
       enableLiveAutocompletion,
       classes,
@@ -60,8 +71,9 @@ class CodeEditor2 extends Component {
         className={classes.root}
         value={value}
         mode={mode}
-        width="100%"
-        height="100%"
+        readOnly={readOnly}
+        width={width || '100%'}
+        height={height || '100%'}
         showPrintMargin={false}
         showGutter={showGutter}
         // enableLiveAutocompletion={enableLiveAutocompletion}

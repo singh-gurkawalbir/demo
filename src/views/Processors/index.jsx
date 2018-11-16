@@ -14,12 +14,11 @@ import ProcessorListItem from './ProcessorListItem';
 const mapStateToProps = state => ({
   processors: selectors.processors(state),
 });
-const drawerWidth = 320;
+const drawerWidth = 330;
 
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
-    minHeight: 500,
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -35,6 +34,7 @@ const drawerWidth = 320;
   drawerPaper: {
     position: 'relative',
     width: drawerWidth,
+    height: `calc(100vh - ${theme.spacing.unit * 8}px)`,
     padding: theme.spacing.unit,
   },
 
