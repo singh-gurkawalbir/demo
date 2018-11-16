@@ -199,6 +199,7 @@ describe('comms selectors', () => {
           isLoading: true,
           name: 'exports',
           retryCount: 0,
+          timestamp: expect.any(Number),
         },
       ]);
     });
@@ -222,12 +223,14 @@ describe('comms selectors', () => {
           isLoading: true,
           name: pathA,
           retryCount: 0,
+          timestamp: expect.any(Number),
         },
         {
           error: undefined,
           isLoading: true,
           name: pathB,
           retryCount: 0,
+          timestamp: expect.any(Number),
         },
       ]);
     });
@@ -248,6 +251,7 @@ describe('comms selectors', () => {
           isLoading: false,
           name: path,
           retryCount: 0,
+          timestamp: expect.any(Number),
         },
       ]);
     });

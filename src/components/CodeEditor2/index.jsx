@@ -9,10 +9,10 @@ import 'brace/mode/xml';
 import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/ext/language_tools';
-import * as selectors from '../../reducers/session';
+import * as selectors from '../../reducers/user';
 
 const mapStateToProps = state => ({
-  theme: selectors.editorTheme(state.session),
+  theme: selectors.editorTheme(state.user),
 });
 
 @withStyles({

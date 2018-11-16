@@ -11,6 +11,12 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+const auth = {
+  request: message => action(actionTypes.AUTH_REQUEST, { message }),
+  complete: () => action(actionTypes.AUTH_SUCCESSFUL),
+  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  userLogout: () => action(actionTypes.USER_LOGOUT),
+};
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
   retry: path => action(actionTypes.API_RETRY, { path }),
@@ -52,6 +58,7 @@ const resource = {
 const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
+  deleteProfile: () => action(actionTypes.DELETE_PROFILE),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
@@ -82,4 +89,5 @@ export default {
   resource,
   profile,
   api,
+  auth,
 };

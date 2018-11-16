@@ -1,12 +1,18 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
+import { isAuthenticated } from '../../reducers';
+
+const mapStateToProps = state => ({
+  authenticated: isAuthenticated(state),
+});
 
 @withStyles(theme => ({
   root: {
@@ -73,7 +79,7 @@ import ProfileMenu from './ProfileMenu';
     },
   },
 }))
-export default class Appbar extends Component {
+export class Appbar extends Component {
   state = {
     anchorEl: null,
   };
@@ -91,35 +97,44 @@ export default class Appbar extends Component {
   };
 
   render() {
-    const { classes, onToggleDrawer } = this.props;
+    const { classes, onToggleDrawer, authenticated } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <IconButton
-              onClick={onToggleDrawer}
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Menu">
-              <MenuIcon className={classes.icon} />
-            </IconButton>
-            <Link className={classes.playground} to="/pg/">
-              <Typography variant="h6" color="inherit" className={classes.flex}>
-                integrator.io
-              </Typography>
-            </Link>
+            {authenticated && (
+              <Fragment>
+                <IconButton
+                  onClick={onToggleDrawer}
+                  className={classes.menuButton}
+                  color="inherit"
+                  aria-label="Menu">
+                  <MenuIcon className={classes.icon} />
+                </IconButton>
 
+                <Link className={classes.playground} to="/pg/">
+                  <Typography
+                    variant="h6"
+                    color="inherit"
+                    className={classes.flex}>
+                    integrator.io
+                  </Typography>
+                </Link>
+              </Fragment>
+            )}
             <img
               src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
               srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
               alt="Celigo Logo"
               className={classes.celigoLogo}
             />
-            <ProfileMenu />
+            {authenticated && <ProfileMenu />}
           </Toolbar>
         </AppBar>
       </div>
     );
   }
 }
+
+export default connect(mapStateToProps, null)(Appbar);
