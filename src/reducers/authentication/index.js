@@ -1,5 +1,3 @@
-//  import actionTypes from '../../actions/types';
-
 import actionTypes from '../../actions/types';
 
 export default (state = {}, action) => {

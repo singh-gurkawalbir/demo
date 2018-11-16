@@ -132,6 +132,36 @@ describe('stage reducers', () => {
       });
     });
   });
+
+  describe(`CLEAR_CONFLICT action`, () => {
+    test('should do nothing if no conflict yet exists.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const stateA = reducer(
+        undefined,
+        actions.resource.patchStaged(id, patch)
+      );
+      const stateB = reducer(stateA, actions.resource.clearConflict(id));
+
+      expect(stateA).toEqual(stateB);
+    });
+
+    test('should should clear conflict if one exists', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
+      const stateA = reducer(
+        undefined,
+        actions.resource.patchStaged(id, patch)
+      );
+      let stateB;
+
+      stateB = reducer(stateA, actions.resource.commitConflict(id, conflict));
+      stateB = reducer(stateB, actions.resource.clearConflict(id));
+
+      expect(stateA).toEqual(stateB);
+    });
+  });
 });
 
 describe('stage selectors', () => {

@@ -43,6 +43,13 @@ export default class AppDrawer extends Component {
               <ListItemText primary="Resources" />
             </ListItem>
 
+            <ListItem button component={Link} to="/pg/processors">
+              <ListItemIcon>
+                <DataUsageIcon />
+              </ListItemIcon>
+              <ListItemText primary="Processors" />
+            </ListItem>
+
             <Divider />
             <Divider />
 
