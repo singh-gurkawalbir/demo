@@ -29,15 +29,25 @@ const Dismiss = props =>
   },
 }))
 class NetworkSnackbar extends Component {
-  state = { showSnackbar: true };
-
+  state = {
+    showSnackbar: true,
+  };
   handleCloseSnackbar = () => {
     this.setState({
       showSnackbar: false,
     });
   };
 
-  isLoading() {}
+  isShowingMessage(r) {
+    /**
+     * Compare the the intial Api request timestamp
+     * with current time
+     */
+    if (r.timestamp === 0) return false;
+
+    return Date.now() - r.timestamp >= Number(process.env.NETWORK_THRESHOLD);
+  }
+
   render() {
     const { showSnackbar } = this.state;
     const { isLoadingAnyResource, allLoadingOrErrored, classes } = this.props;
@@ -56,7 +66,7 @@ class NetworkSnackbar extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return <li key={r.name}>{msg}</li>;
+      return this.isShowingMessage(r) ? <li key={r.name}>{msg}</li> : '';
     };
 
     const msg = (

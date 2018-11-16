@@ -18,6 +18,16 @@ const theme = themeProvider('light');
 
 module.exports = {
   use: [
+    // [
+    //   'neutrino-preset-mozilla-frontend-infra/node',
+    //   {
+    //     // Add additional Babel plugins, presets, or env options
+    //     babel: {
+    //       plugins: ['babel-plugin-transform-optional-chaining'],
+    //     },
+    //   },
+    // ],
+
     [
       '@neutrinojs/jest',
       {
@@ -80,10 +90,11 @@ module.exports = {
           publicPath: '/pg',
           host: 'localhost.io',
           historyApiFallback: {
-            disableDotRule: true,
+            index: '/pg/index.html',
           },
         },
         eslint: {
+          //  parser: 'babel-eslint',
           // plugins: ['jest'],
           // globals: {
           //   expect: true,
@@ -98,7 +109,16 @@ module.exports = {
         },
       },
     ],
-    ['@neutrinojs/env', ['API_ENDPOINT', 'API_EMAIL', 'API_PASSWORD']],
+    [
+      '@neutrinojs/env',
+      [
+        'API_ENDPOINT',
+        'API_EMAIL',
+        'API_PASSWORD',
+        'AUTO_LOGIN',
+        'NETWORK_THRESHOLD',
+      ],
+    ],
     neutrino => {
       neutrino.config.devServer.proxy({
         '/signin': {
@@ -130,5 +150,3 @@ module.exports = {
     },
   ],
 };
-
-//

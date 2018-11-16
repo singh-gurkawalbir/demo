@@ -10,7 +10,7 @@ import { delay } from 'redux-saga';
 import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
-import api from '../utils/api';
+import { api, authParams } from '../utils/api';
 import * as selectors from '../reducers';
 import util from '../utils/array';
 
@@ -27,10 +27,16 @@ export function* apiCallWithRetry(path, opts) {
 
       return successResponse;
     } catch (error) {
-      // TODO: analyze error and dispatch(put) different actions as need.
-      // for example, if we get a 401, we should dispatch a redirect action
-      // to the login page. Possibly some 4xx errors could also have custom
-      // behavior, etc..
+      if (error.status === 302) {
+        yield put(actions.auth.failure('Authentication Failure'));
+        throw error;
+      }
+
+      if (error.status >= 400 && error.status < 500) {
+        // give up and let the parent saga try.
+        yield put(actions.api.complete(path));
+        throw error;
+      }
 
       if (i < tryCount - 1) {
         yield call(delay, 2000);
@@ -39,10 +45,9 @@ export function* apiCallWithRetry(path, opts) {
         // attempts failed after 'tryCount' attempts
         // this time yield an error...
         yield put(actions.api.failure(path, error.message));
-
         // the parent saga may need to know if there was an error for
         // its own "Data story"...
-        throw new Error(error);
+        throw error;
       }
     }
   }
@@ -57,7 +62,14 @@ export function* getResource({ resourceType, id }) {
     yield put(actions.resource.received(resourceType, resource));
 
     return resource;
-  } catch (e) {
+  } catch (error) {
+    if (error.status === 401) {
+      yield put(actions.auth.failure('Authentication Failure'));
+      yield put(actions.profile.deleteProfile());
+
+      return;
+    }
+
     return undefined;
   }
 }
@@ -71,8 +83,18 @@ export function* getResourceCollection({ resourceType }) {
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
-  } catch (e) {
-    return undefined;
+  } catch (error) {
+    switch (error.status) {
+      case 401:
+        yield put(actions.auth.failure('Authentication Failure'));
+        yield put(actions.profile.deleteProfile());
+
+        return;
+      default:
+        // generic message to the user that the
+        // saga failed and services team working on it
+        return undefined;
+    }
   }
 }
 
@@ -99,32 +121,47 @@ export function* commitStagedChanges({ resourceType, id }) {
     conflict = util.removeItem(conflict, p => p.path === '/connection');
 
     yield put(actions.resource.commitConflict(id, conflict));
-    // yield put(actions.resource.received(resourceType, latest));
-
-    // console.log(server.lastModified, master.lastModified);
-    // console.log(conflict);
 
     return;
   }
 
-  const updated = yield call(apiCallWithRetry, path, {
-    method: 'put',
-    body: JSON.stringify(merged),
-  });
+  try {
+    const updated = yield call(apiCallWithRetry, path, {
+      method: 'put',
+      body: JSON.stringify(merged),
+    });
 
-  yield put(actions.resource.received(resourceType, updated));
+    yield put(actions.resource.received(resourceType, updated));
+    yield put(actions.resource.clearStaged(id));
+  } catch (error) {
+    // Dave would handle this part
+  }
+}
 
-  // console.log('response from put:', updated);
+export function* auth({ message }) {
+  try {
+    // replace credentials in the request body
+    const payload = { ...authParams.opts, body: message };
+    const apiAuthentications = yield call(
+      apiCallWithRetry,
+      authParams.path,
+      payload
+    );
 
-  // TODO: check for error response and deliver correct error message by
-  // updating the comms store? somehow we need 4xx errrors that contain
-  // business rule violations to show up on the edit page.
+    yield put(actions.auth.complete());
 
-  yield put(actions.resource.clearStaged(id));
+    return apiAuthentications.succes;
+  } catch (error) {
+    yield put(actions.auth.failure('Authentication Failure'));
+    yield put(actions.profile.deleteProfile());
+
+    return undefined;
+  }
 }
 
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),

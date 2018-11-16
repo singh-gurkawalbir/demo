@@ -1,4 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles';
+import { DEFAULT_THEME } from './reducers/user';
 
 const Roboto300 = { fontFamily: 'Roboto300, sans-serif' };
 const Roboto400 = { fontFamily: 'Roboto400, sans-serif' };
@@ -47,7 +48,15 @@ const defaultTheme = {
 };
 
 export default name => {
-  const theme = createMuiTheme({ ...defaultTheme, ...themes[name].overrides });
+  let themeName;
+
+  if (!name) themeName = DEFAULT_THEME;
+  else themeName = name;
+
+  const theme = createMuiTheme({
+    ...defaultTheme,
+    ...themes[themeName].overrides,
+  });
 
   return {
     ...theme,

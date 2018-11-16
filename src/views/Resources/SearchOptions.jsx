@@ -56,4 +56,7 @@ class SearchOptions extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchOptions);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SearchOptions);

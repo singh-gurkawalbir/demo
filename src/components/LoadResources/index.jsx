@@ -62,4 +62,7 @@ class LoadResources extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoadResources);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoadResources);

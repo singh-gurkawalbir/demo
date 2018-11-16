@@ -3,12 +3,24 @@ import jsonPatch from 'fast-json-patch';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
+import auth from './authentication';
+import user, * as fromUser from './user';
+import actionTypes from '../actions/types';
 
-const rootReducer = combineReducers({
+const combinedReducers = combineReducers({
   session,
   data,
+  user,
+  auth,
   comms,
 });
+const rootReducer = (state, action) => {
+  if (action.type === actionTypes.USER_LOGOUT) {
+    return {};
+  }
+
+  return combinedReducers(state, action);
+};
 
 export default rootReducer;
 
@@ -41,11 +53,31 @@ export function filter(state, name) {
 }
 
 export function avatarUrl(state) {
-  return fromSession.avatarUrl(state.session);
+  return fromUser.avatarUrl(state.user);
 }
 
 export function userProfile(state) {
-  return state && state.session && state.session.profile;
+  return state && state.user && state.user.profile;
+}
+
+export function userProfileEmail(state) {
+  return state && state.user && state.user.profile && state.user.profile.email;
+}
+
+export function isAuthenticated(state) {
+  return state && state.auth && state.auth.authenticated;
+}
+
+export function authenticationErrored(state) {
+  return state && state.auth && state.auth.failure;
+}
+
+export function isSessionExpired(state) {
+  return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function themeName(state) {
+  return state && state.user && state.user.themeName;
 }
 
 export function hasProfile(state) {

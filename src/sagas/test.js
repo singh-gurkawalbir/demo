@@ -9,8 +9,18 @@ import rootSaga, {
   apiCallWithRetry,
   getResource,
   getResourceCollection,
+  auth,
 } from './';
-import api from '../utils/api';
+import { api, APIException, authParams } from '../utils/api';
+
+const status500 = new APIException({
+  status: 500,
+  message: 'error',
+});
+const status422 = new APIException({
+  status: 422,
+  message: 'authentication failure',
+});
 
 describe(`root saga`, () => {
   // NOTE, this test has little value... I added it to
@@ -41,6 +51,7 @@ describe(`apiCallWithRetry saga`, () => {
 
     const callEffect = saga.next().value;
 
+    console.log(`Effect ${JSON.stringify(callEffect)}`);
     expect(callEffect).toEqual(call(api, path, opts));
 
     const mockData = { id: 1 };
@@ -71,7 +82,9 @@ describe(`apiCallWithRetry saga`, () => {
 
     // lets throw an exception to simulate a failed API call
     // this should result in a delay, then retry action, then api call
-    expect(saga.throw().value).toEqual(call(delay, 2000));
+    // lets throw a 500 status code exception and expect the retry
+
+    expect(saga.throw(status500).value).toEqual(call(delay, 2000));
     expect(saga.next().value).toEqual(put(actions.api.retry(path)));
     expect(saga.next().value).toEqual(callApiEffect);
 
@@ -154,7 +167,7 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, path));
 
-      const final = saga.throw();
+      const final = saga.throw(status500);
 
       expect(final.done).toBe(true);
       expect(final.value).toBeUndefined();
@@ -195,10 +208,43 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, path));
 
-      const final = saga.throw();
+      const final = saga.throw(status500);
 
       expect(final.done).toBe(true);
       expect(final.value).toBeUndefined();
     });
+  });
+});
+
+describe('auth saga flow', () => {
+  test('action to set authentication to true when auth is successful', () => {
+    const message = 'someUserCredentials';
+    const saga = auth({ message });
+    const callEffect = saga.next().value;
+    const payload = { ...authParams.opts, body: message };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, authParams.path, payload)
+    );
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(put(actions.auth.complete()));
+  });
+
+  test('should dispatch a delete profile action when authentication fails', () => {
+    const message = 'someUserCredentials';
+    const saga = auth({ message });
+    const callEffect = saga.next().value;
+    const payload = { ...authParams.opts, body: message };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, authParams.path, payload)
+    );
+    expect(saga.throw(status422).value).toEqual(
+      put(actions.auth.failure('Authentication Failure'))
+    );
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(put(actions.profile.deleteProfile()));
   });
 });
