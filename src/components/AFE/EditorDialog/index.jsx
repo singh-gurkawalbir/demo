@@ -118,7 +118,7 @@ class EditorDialog extends Component {
           </div>
         </div>
         <DialogContent style={size} className={classes.dialogContent}>
-          {cloneElement(children, { layout })}
+          {children && cloneElement(children, { layout })}
         </DialogContent>
         <DialogActions>
           <Button onClick={handlePreview}>Preview</Button>

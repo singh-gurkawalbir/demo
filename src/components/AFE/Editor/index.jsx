@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import CodePanel from '../panels/CodePanel';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
@@ -95,8 +96,6 @@ class Editor extends Component {
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
 
-    console.log(result);
-
     return (
       <PanelGrid className={gridTemplate}>
         <PanelGridItem gridArea="rule">
@@ -128,7 +127,9 @@ class Editor extends Component {
         </PanelGridItem>
         {error && (
           <PanelGridItem gridArea="error">
-            <PanelTitle>Console</PanelTitle>
+            <PanelTitle>
+              <Typography color="error">Error</Typography>
+            </PanelTitle>
             <CodePanel name="error" value={error} mode="json" />
           </PanelGridItem>
         )}

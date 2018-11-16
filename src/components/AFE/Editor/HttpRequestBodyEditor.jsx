@@ -18,7 +18,7 @@ export default class Handlebars extends Component {
         resultMode={mode}
         ruleTitle={`HTTP Body Template (${mode})`}
         dataTitle="Data"
-        resultTitle="Body"
+        resultTitle="Final HTTP Body"
       />
     );
   }

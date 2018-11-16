@@ -1,19 +1,15 @@
 import { hot } from 'react-hot-loader';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component, cloneElement } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
-import LoadResources from '../../components/LoadResources';
-import * as selectors from '../../reducers';
-import Editor from './Editor';
+import UrlEditor from '../../components/AFE/Editor/UrlEditor';
+import HttpRequestBodyEditor from '../../components/AFE/Editor/HttpRequestBodyEditor';
+import EditorDialog from '../../components/AFE/EditorDialog';
 import WorkArea from './WorkArea';
 import ProcessorListItem from './ProcessorListItem';
 
-const mapStateToProps = state => ({
-  processors: selectors.processors(state),
-});
 const drawerWidth = 330;
 
 @hot(module)
@@ -44,9 +40,9 @@ const drawerWidth = 330;
     padding: theme.spacing.unit * 3,
   },
 }))
-class Processors extends Component {
+export default class Processors extends Component {
   state = {
-    processor: null,
+    editorName: null,
     rawData: '',
   };
 
@@ -56,8 +52,8 @@ class Processors extends Component {
     this.setState({ rawData });
   }
 
-  handleProcessorChange = processor => {
-    this.setState({ processor });
+  handleEditorChange = editorName => {
+    this.setState({ editorName });
   };
 
   handleClose = (shouldCommit, editorValues) => {
@@ -67,52 +63,77 @@ class Processors extends Component {
       this.handleRawDataChange(data);
     }
 
-    this.handleProcessorChange(null);
+    this.handleEditorChange(null);
   };
 
   handleRawDataChange = rawData => {
     this.setState({ rawData });
   };
 
+  getEditor = () => {
+    const { editorName } = this.state;
+
+    switch (editorName) {
+      case 'UrlEditor':
+        return <UrlEditor />;
+      case 'HttpRequestBodyEditor':
+        return <HttpRequestBodyEditor />;
+      default:
+        return null;
+    }
+  };
+
   render() {
-    const { processors, classes } = this.props;
-    const { rawData, processor } = this.state;
+    const { classes } = this.props;
+    const { rawData, editorName } = this.state;
+    const editors = [
+      {
+        name: 'UrlEditor',
+        label: 'Url Editor',
+        description:
+          'This editor lets you create and test url templates against your raw data.',
+      },
+      {
+        name: 'HttpRequestBodyEditor',
+        label: 'Http Request Body',
+        description:
+          'This editor lets you create and test json or xml templates against your raw data.',
+      },
+    ];
 
     return (
-      <LoadResources required resources={['processors']}>
-        <div className={classes.appFrame}>
-          <Drawer
-            variant="permanent"
-            anchor="left"
-            classes={{
-              paper: classes.drawerPaper,
-            }}>
-            <Typography variant="h6">Available Processors</Typography>
-            <List>
-              {processors.map(p => (
-                <ProcessorListItem
-                  key={p.name}
-                  item={p}
-                  onClick={this.handleProcessorChange}
-                />
-              ))}
-            </List>
-          </Drawer>
-          <main className={classes.content}>
-            <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
-            {processor && (
-              <Editor
-                id="rawData"
-                data={rawData}
-                processor={processor}
-                onClose={this.handleClose}
+      <div className={classes.appFrame}>
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawerPaper,
+          }}>
+          <Typography align="center" variant="h6">
+            Available Editors
+          </Typography>
+          <List>
+            {editors.map(p => (
+              <ProcessorListItem
+                key={p.name}
+                item={p}
+                onClick={this.handleEditorChange}
               />
-            )}
-          </main>
-        </div>
-      </LoadResources>
+            ))}
+          </List>
+        </Drawer>
+        <main className={classes.content}>
+          <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
+          {editorName && (
+            <EditorDialog
+              id="e1"
+              title={`${editorName} Editor`}
+              onClose={this.handleClose}>
+              {cloneElement(this.getEditor(), { id: 'e1', data: rawData })}
+            </EditorDialog>
+          )}
+        </main>
+      </div>
     );
   }
 }
-
-export default connect(mapStateToProps, null)(Processors);

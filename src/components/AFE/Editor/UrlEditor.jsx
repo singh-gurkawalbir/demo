@@ -5,8 +5,8 @@ import Editor from './';
 @withStyles(() => ({
   gridTemplate: {
     gridTemplateColumns: '2fr 1fr',
-    gridTemplateRows: '2fr 1fr',
-    gridTemplateAreas: '"rule data" "result data"',
+    gridTemplateRows: '2fr 1fr 0fr',
+    gridTemplateAreas: '"rule data" "result data" "error error"',
   },
 }))
 export default class UrlEditor extends Component {

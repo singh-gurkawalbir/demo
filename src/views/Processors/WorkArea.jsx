@@ -3,9 +3,9 @@ import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper } from '@material-ui/core';
 import CodeEditor from '../../components/CodeEditor2';
-import UrlEditor from '../../components/AFE/Editor/UrlEditor';
-import HttpRequestBodyEditor from '../../components/AFE/Editor/HttpRequestBodyEditor';
-import EditorDialog from '../../components/AFE/EditorDialog';
+// import UrlEditor from '../../components/AFE/Editor/UrlEditor';
+// import x from '../../components/AFE/Editor/HttpRequestBodyEditor';
+// import EditorDialog from '../../components/AFE/EditorDialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -51,7 +51,7 @@ export default class WorkArea extends Component {
             />
           </div>
           <br />
-          <div className={classes.rawDataContainer}>
+          {/* <div className={classes.rawDataContainer}>
             <UrlEditor id="test1" rules="tempate {{abc}}." data={rawData} />
           </div>
 
@@ -61,7 +61,7 @@ export default class WorkArea extends Component {
               rules="template {{abc}}."
               data={rawData}
             />
-          </EditorDialog>
+          </EditorDialog> */}
         </Paper>
       </Fragment>
     );

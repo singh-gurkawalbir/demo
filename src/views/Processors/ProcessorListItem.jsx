@@ -11,7 +11,7 @@ export default class ProcessorListItem extends Component {
     const { item, onClick } = this.props;
 
     return (
-      <ListItem button key={item.name} onClick={() => onClick(item.name)}>
+      <ListItem button onClick={() => onClick(item.name)}>
         <Avatar>
           <ImageIcon />
         </Avatar>

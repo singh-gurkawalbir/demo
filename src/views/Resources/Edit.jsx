@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
-import AFE from '../../components/AFE';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
 
@@ -97,30 +96,12 @@ const prettyDate = dateString => {
   },
 }))
 class Edit extends Component {
-  state = {
-    showEditor: false,
-  };
-
   handleInputChange = event => {
     const { handlePatchResource } = this.props;
     const { value } = event.target;
     const path = `/${event.target.id}`;
 
     handlePatchResource(path, value);
-  };
-
-  handleOpenHookEditor = () => {
-    this.setState({ showEditor: true });
-  };
-
-  handleCloseHookEditor = (shouldCommit, editorValues) => {
-    const { handlePatchResource } = this.props;
-
-    if (shouldCommit) {
-      handlePatchResource('hooks/presavepage', editorValues.rules);
-    }
-
-    this.setState({ showEditor: false });
   };
 
   render() {
@@ -130,7 +111,6 @@ class Edit extends Component {
       connection,
       resourceType,
       classes,
-      handleInputChange,
       handleUndoChange,
       handleCommitChanges,
       handleRevertChanges,
@@ -175,7 +155,7 @@ class Edit extends Component {
               label="Name"
               rowsMax="4"
               value={merged.name || ''}
-              onChange={handleInputChange}
+              onChange={this.handleInputChange}
               className={classes.textField}
               margin="normal"
             />
@@ -185,29 +165,11 @@ class Edit extends Component {
               multiline
               rowsMax="4"
               value={merged.description || ''}
-              onChange={handleInputChange}
+              onChange={this.handleInputChange}
               className={classes.textField}
               margin="normal"
             />
-            <Button
-              onClick={this.handleOpenHookEditor}
-              size="small"
-              color="secondary">
-              Edit PreSavePage Hook
-            </Button>
 
-            {this.state.showEditor && (
-              <AFE
-                id={`${id}-hook`}
-                overrides={{ layout: 'Compact', height: '40vw', width: '75vh' }}
-                open
-                title="PreSavePage Hook Editor"
-                processor="handlebars"
-                rules="a is {{a}} and b is {{b}}, while c is {{c}}."
-                data={JSON.stringify({ a: 123, b: true, c: 'abc' }, null, 2)}
-                onClose={this.handleCloseHookEditor}
-              />
-            )}
             {conflict && (
               <ConflictAlertDialog
                 conflict={conflict}
