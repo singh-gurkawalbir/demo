@@ -15,7 +15,7 @@ const auth = {
   request: message => action(actionTypes.AUTH_REQUEST, { message }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  userLogout: () => action(actionTypes.USER_LOGOUT),
+  logout: () => action(actionTypes.USER_LOGOUT),
 };
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
@@ -58,7 +58,7 @@ const resource = {
 const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
-  deleteProfile: () => action(actionTypes.DELETE_PROFILE),
+  delete: () => action(actionTypes.DELETE_PROFILE),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>

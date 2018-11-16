@@ -33,10 +33,7 @@ describe('user reducers', () => {
         },
       };
       const initialProfileState = reducer(undefined, action);
-      const state = reducer(
-        initialProfileState,
-        actions.profile.deleteProfile()
-      );
+      const state = reducer(initialProfileState, actions.profile.delete());
 
       expect(state.profile).toEqual({ email: action.resource.email });
     });

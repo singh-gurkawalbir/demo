@@ -245,6 +245,6 @@ describe('auth saga flow', () => {
     );
     const effect = saga.next().value;
 
-    expect(effect).toEqual(put(actions.profile.deleteProfile()));
+    expect(effect).toEqual(put(actions.profile.delete()));
   });
 });

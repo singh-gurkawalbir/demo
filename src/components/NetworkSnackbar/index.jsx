@@ -38,7 +38,7 @@ class NetworkSnackbar extends Component {
     });
   };
 
-  isShowingMessage(r) {
+  isLongWait(r) {
     /**
      * Compare the the intial Api request timestamp
      * with current time
@@ -66,7 +66,7 @@ class NetworkSnackbar extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return this.isShowingMessage(r) ? <li key={r.name}>{msg}</li> : '';
+      return this.isLongWait(r) ? <li key={r.name}>{msg}</li> : '';
     };
 
     const msg = (

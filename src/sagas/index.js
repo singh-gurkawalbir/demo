@@ -65,7 +65,7 @@ export function* getResource({ resourceType, id }) {
   } catch (error) {
     if (error.status === 401) {
       yield put(actions.auth.failure('Authentication Failure'));
-      yield put(actions.profile.deleteProfile());
+      yield put(actions.profile.delete());
 
       return;
     }
@@ -87,7 +87,7 @@ export function* getResourceCollection({ resourceType }) {
     switch (error.status) {
       case 401:
         yield put(actions.auth.failure('Authentication Failure'));
-        yield put(actions.profile.deleteProfile());
+        yield put(actions.profile.delete());
 
         return;
       default:
@@ -153,7 +153,7 @@ export function* auth({ message }) {
     return apiAuthentications.succes;
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
-    yield put(actions.profile.deleteProfile());
+    yield put(actions.profile.delete());
 
     return undefined;
   }
