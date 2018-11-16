@@ -51,7 +51,6 @@ describe(`apiCallWithRetry saga`, () => {
 
     const callEffect = saga.next().value;
 
-    console.log(`Effect ${JSON.stringify(callEffect)}`);
     expect(callEffect).toEqual(call(api, path, opts));
 
     const mockData = { id: 1 };
