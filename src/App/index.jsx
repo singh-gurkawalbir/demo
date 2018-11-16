@@ -29,6 +29,9 @@ const NotFound = loadable(() =>
 const Resources = loadable(() =>
   import(/* webpackChunkName: 'Resources' */ '../views/Resources')
 );
+const Processors = loadable(() =>
+  import(/* webpackChunkName: 'Processors' */ '../views/Processors')
+);
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/Exports')
 );
@@ -83,6 +86,11 @@ class App extends Component {
               />
               <PrivateRoute
                 authenticated={authenticated}
+                path="/pg/processors"
+                component={Processors}
+              />
+              <PrivateRoute
+                authenticated={authenticated}
                 path="/pg/exports"
                 component={Exports}
               />
@@ -106,7 +114,4 @@ class App extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(App);
+export default connect(mapStateToProps, null)(App);

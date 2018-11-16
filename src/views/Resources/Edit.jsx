@@ -6,20 +6,24 @@ import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
-
-// TODO: Write a saga to ratelimit the keyword search
-// to prevent dom updates unnecessarily
+import ConflictAlertDialog from './ConflictAlertDialog';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const resourceData = selectors.resourceData(state, resourceType, id);
+  const { _connectionId } = resourceData.merged;
+  const connection = _connectionId
+    ? selectors.resource(state, 'connections', _connectionId)
+    : null;
 
   return {
     resourceType,
     resourceData,
+    connection,
     id,
   };
 };
@@ -28,9 +32,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
   const { id, resourceType } = match.params;
 
   return {
-    handleInputChange: event => {
-      const { value } = event.target;
-      const path = `/${event.target.id}`;
+    handlePatchResource: (path, value) => {
       const patch = [
         {
           op: 'replace',
@@ -50,27 +52,14 @@ const mapDispatchToProps = (dispatch, { match }) => {
     handleRevertChanges: () => {
       dispatch(actions.resource.clearStaged(id));
     },
+    handleConflict: skipCommit => {
+      if (!skipCommit) {
+        dispatch(actions.resource.commitStaged(resourceType, id));
+      }
+
+      dispatch(actions.resource.clearConflict(id));
+    },
   };
-};
-
-const relatedComponents = (resource, className) => {
-  const { connection } = resource;
-  const components = [];
-
-  if (connection) {
-    components.push(
-      <Link
-        key="conn"
-        className={className}
-        to={`/pg/resources/connections/edit/${connection._id}`}>
-        <Button size="small" color="secondary">
-          Connected to {connection.name || connection._id}
-        </Button>
-      </Link>
-    );
-  }
-
-  return components;
 };
 
 const toName = resourceType =>
@@ -102,20 +91,33 @@ const prettyDate = dateString => {
     marginRight: theme.spacing.unit,
     width: '90%',
   },
+  dates: {
+    color: theme.palette.text.secondary,
+  },
 }))
 class Edit extends Component {
+  handleInputChange = event => {
+    const { handlePatchResource } = this.props;
+    const { value } = event.target;
+    const path = `/${event.target.id}`;
+
+    handlePatchResource(path, value);
+  };
+
   render() {
     const {
       id,
       resourceData,
+      connection,
       resourceType,
       classes,
-      handleInputChange,
       handleUndoChange,
       handleCommitChanges,
       handleRevertChanges,
+      handleConflict,
     } = this.props;
     const { merged, patch, conflict } = resourceData;
+    // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
@@ -125,11 +127,26 @@ class Edit extends Component {
 
         <Typography variant="subtitle1">ID: {merged._id}</Typography>
 
-        <Typography variant="caption">
+        <Typography variant="caption" className={classes.dates}>
           Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
 
-        {relatedComponents(merged, classes.relatedContent)}
+        {patch && (
+          <Typography variant="caption" className={classes.dates}>
+            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} /> ago.
+          </Typography>
+        )}
+
+        {connection && (
+          <Link
+            key="conn"
+            className={classes.relatedContent}
+            to={`/pg/resources/connections/edit/${connection._id}`}>
+            <Button size="small" color="secondary">
+              Connected to {connection.name || connection._id}
+            </Button>
+          </Link>
+        )}
 
         <div className={classes.editableFields}>
           <form>
@@ -138,7 +155,7 @@ class Edit extends Component {
               label="Name"
               rowsMax="4"
               value={merged.name || ''}
-              onChange={handleInputChange}
+              onChange={this.handleInputChange}
               className={classes.textField}
               margin="normal"
             />
@@ -148,38 +165,44 @@ class Edit extends Component {
               multiline
               rowsMax="4"
               value={merged.description || ''}
-              onChange={handleInputChange}
+              onChange={this.handleInputChange}
               className={classes.textField}
               margin="normal"
             />
-            {patch && patch.length && (
-              <div>
-                <Button
-                  onClick={handleCommitChanges}
-                  size="small"
-                  color="secondary">
-                  Commit Changes
-                </Button>
 
-                <Button
-                  onClick={handleRevertChanges}
-                  size="small"
-                  color="primary">
-                  Revert All
-                </Button>
-
-                <Button onClick={handleUndoChange} size="small" color="primary">
-                  Undo Last Change
-                </Button>
-
-                {conflict && (
-                  <div>
-                    Merge Conflict:
-                    {JSON.stringify(conflict)}
-                  </div>
-                )}
-              </div>
+            {conflict && (
+              <ConflictAlertDialog
+                conflict={conflict}
+                handleCommit={() => handleConflict(false)}
+                handleCancel={() => handleConflict(true)}
+              />
             )}
+
+            {patch &&
+              patch.length > 0 && (
+                <div>
+                  <Button
+                    onClick={handleCommitChanges}
+                    size="small"
+                    color="secondary">
+                    Commit Changes
+                  </Button>
+
+                  <Button
+                    onClick={handleRevertChanges}
+                    size="small"
+                    color="primary">
+                    Revert All
+                  </Button>
+
+                  <Button
+                    onClick={handleUndoChange}
+                    size="small"
+                    color="primary">
+                    Undo Last Change
+                  </Button>
+                </div>
+              )}
           </form>
         </div>
       </LoadResources>
@@ -191,7 +214,4 @@ class Edit extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Edit);
+export default connect(mapStateToProps, mapDispatchToProps)(Edit);

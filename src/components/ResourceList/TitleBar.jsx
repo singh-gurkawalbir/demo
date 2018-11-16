@@ -71,7 +71,4 @@ class TitleBar extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TitleBar);
+export default connect(mapStateToProps, mapDispatchToProps)(TitleBar);

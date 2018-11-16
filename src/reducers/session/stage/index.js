@@ -22,14 +22,18 @@ export default (state = {}, action) => {
 
     case actionTypes.RESOURCE.STAGE_UNDO:
       // we can't undo if there is no staged data
-      if (!state[id] || !state[id].patch || !state[id].patch.length) {
+      if (!state[id] || !state[id].patch) {
         return state;
       }
 
       newState = Object.assign({}, state);
 
       // drop last patch.
-      newState[id].patch.pop();
+      if (newState[id].patch.length > 1) {
+        newState[id].patch.pop();
+      } else {
+        delete newState[id].patch;
+      }
 
       return newState;
 
@@ -60,6 +64,17 @@ export default (state = {}, action) => {
       newState = Object.assign({}, state);
       newState[id] = newState[id] || {};
       newState[id].conflict = conflict;
+
+      return newState;
+
+    case actionTypes.RESOURCE.CLEAR_CONFLICT:
+      if (!state[id] || !state[id].conflict) {
+        return state;
+      }
+
+      newState = Object.assign({}, state);
+
+      delete newState[id].conflict;
 
       return newState;
 

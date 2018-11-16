@@ -109,18 +109,18 @@ export function* commitStagedChanges({ resourceType, id }) {
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const upstream = yield call(apiCallWithRetry, path);
+  const origin = yield call(apiCallWithRetry, path);
 
   // console.log('latest', latest);
   // console.log('resource', resource);
 
-  if (upstream.lastModified !== master.lastModified) {
-    let conflict = jsonPatch.compare(master, upstream);
+  if (origin.lastModified !== master.lastModified) {
+    let conflict = jsonPatch.compare(master, origin);
 
     conflict = util.removeItem(conflict, p => p.path === '/lastModified');
-    conflict = util.removeItem(conflict, p => p.path === '/connection');
 
     yield put(actions.resource.commitConflict(id, conflict));
+    yield put(actions.resource.received(resourceType, origin));
 
     return;
   }
@@ -159,11 +159,32 @@ export function* auth({ message }) {
   }
 }
 
+export function* evaluateProcessor({ id }) {
+  const getProcessorOptions = state =>
+    selectors.editorProcessorOptions(state, id);
+  const { processor, options } = yield select(getProcessorOptions);
+  // console.log('editorProcessorOptions', processor, options);
+  const path = `/processors/${processor}`;
+  const opts = {
+    method: 'post',
+    body: JSON.stringify(options),
+  };
+
+  try {
+    const results = yield call(apiCallWithRetry, path, opts);
+
+    return yield put(actions.editor.evaluateResponse(id, results));
+  } catch (e) {
+    return yield put(actions.editor.evaluateFailure(id, e.message));
+  }
+}
+
 export default function* rootSaga() {
   yield all([
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+    takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
   ]);
 }

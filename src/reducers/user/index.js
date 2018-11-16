@@ -37,7 +37,6 @@ export default combineReducers({
 });
 
 // #region PUBLIC SESSION SELECTORS
-
 export function avatarUrl(state) {
   if (!state || !state.profile) return undefined;
 
@@ -54,4 +53,17 @@ export function userTheme(state) {
   return state.themeName;
 }
 
+export function editorTheme(state) {
+  const defaultEditorTheme = 'tomorrow';
+
+  if (!state) return defaultEditorTheme;
+
+  // props = ui theme, values = editor theme.
+  const themeMap = {
+    light: 'tomorrow',
+    dark: 'monokai',
+  };
+
+  return themeMap[userTheme(state)] || defaultEditorTheme;
+}
 // #endregion PUBLIC SESSION SELECTORS

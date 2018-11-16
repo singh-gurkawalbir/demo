@@ -114,28 +114,6 @@ describe('data selectors', () => {
 
       expect(selectors.resource(state, 'exports', 234)).toEqual(testExports[0]);
     });
-
-    test('should return matching and return filled resource if "connected" by via _connectionId.', () => {
-      const testExports = [{ _id: 234, name: 'A', _connectionId: 99 }];
-      const testConnections = [{ _id: 99, name: 'A' }];
-      let state;
-
-      state = reducer(
-        undefined,
-        actions.resource.receivedCollection('exports', testExports)
-      );
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('connections', testConnections)
-      );
-
-      const filledResource = {
-        ...Object.assign({}, testExports[0]),
-        connection: testConnections[0],
-      };
-
-      expect(selectors.resource(state, 'exports', 234)).toEqual(filledResource);
-    });
   });
 
   describe('resourceList', () => {
@@ -203,26 +181,6 @@ describe('data selectors', () => {
       const namesFromResources = resources.map(r => r.name);
 
       expect(namesFromResources).toEqual(['bill', 'bing']);
-    });
-
-    test('should return only resources matching keyword in connection name.', () => {
-      const bobConn = {
-        _id: `conn-bob-id`,
-        name: 'testName',
-        description: `Test description`,
-      };
-      const newState = reducer(
-        state,
-        actions.resource.receivedCollection('connections', [bobConn])
-      );
-      const result = selectors.resourceList(newState, {
-        type: 'exports',
-        keyword: 'testN',
-      });
-      const { resources } = result;
-      const namesFromResources = resources.map(r => r.name);
-
-      expect(namesFromResources).toEqual(['bob']);
     });
 
     test('should return resources limited in count by take.', () => {
