@@ -39,12 +39,12 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     gridTemplateRows: '1fr 1fr 0fr',
     gridTemplateAreas: '"rule data" "result data" "error error"',
   },
-  columnTemplate: {
+  rowTemplate: {
     gridTemplateColumns: '1fr',
     gridTemplateRows: '1fr 1ft 1fr 0fr',
     gridTemplateAreas: '"rule" "data" "result" "error"',
   },
-  rowTemplate: {
+  columnTemplate: {
     gridTemplateColumns: '1fr 1fr 1fr',
     gridTemplateRows: '4fr 0fr',
     gridTemplateAreas: '"rule data result" "error error error"',
@@ -130,7 +130,12 @@ class Editor extends Component {
             <PanelTitle>
               <Typography color="error">Error</Typography>
             </PanelTitle>
-            <CodePanel name="error" value={error} mode="json" />
+            <CodePanel
+              showGutter={false}
+              name="error"
+              value={error}
+              mode="json"
+            />
           </PanelGridItem>
         )}
       </PanelGrid>

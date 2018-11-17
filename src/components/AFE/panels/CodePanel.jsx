@@ -31,12 +31,23 @@ export default class CodePanel extends Component {
       ...defaults[mode],
       ...overrides,
     };
+    let safeValue = '';
+
+    if (value) {
+      if (typeof value === 'string') {
+        safeValue = value;
+      } else if (typeof value === 'object') {
+        safeValue = JSON.stringify(value, null, 2);
+      } else {
+        safeValue = `${value}`;
+      }
+    }
 
     return (
       <CodeEditor
         // ref={c => (this.editor = c)}
         name={name}
-        value={value}
+        value={safeValue}
         mode={mode}
         readOnly={readOnly}
         height={height}

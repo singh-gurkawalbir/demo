@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../components/AFE/EditorDialog/UrlEditorDialog';
+import MergeEditorDialog from '../../components/AFE/EditorDialog/MergeEditorDialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/EditorDialog/HttpRequestBodyEditorDialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
@@ -89,6 +90,14 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'MergeEditor':
+        return (
+          <MergeEditorDialog
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -109,6 +118,12 @@ export default class Editors extends Component {
         label: 'Http Request Body',
         description:
           'This editor lets you create and test json or xml templates against your raw data.',
+      },
+      {
+        name: 'MergeEditor',
+        label: 'Merge Editor',
+        description:
+          'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
       },
     ];
 

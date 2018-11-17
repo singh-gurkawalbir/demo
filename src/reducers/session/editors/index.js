@@ -85,7 +85,13 @@ export function editorProcessorOptions(state, id) {
       };
 
     default:
-      return { processor, rules, data };
+      return {
+        processor,
+        options: {
+          rules: JSON.parse(rules),
+          data: [JSON.parse(data)],
+        },
+      };
   }
 }
 // #endregion

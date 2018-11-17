@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import EditorDialog from './';
-import HttpRequestBodyEditor from '../Editor/HttpRequestBodyEditor';
+import MergeEditor from '../Editor/MergeEditor';
 
-export default class UrlEditorDialog extends Component {
+export default class MergeEditorDialog extends Component {
   render() {
     const {
       id,
@@ -11,19 +11,21 @@ export default class UrlEditorDialog extends Component {
       onClose,
       open = true,
       title,
-      width = '85vw',
-      height = '60vh',
+      layout = 'column',
+      width = '80vw',
+      height = '50vh',
     } = this.props;
 
     return (
       <EditorDialog
         id={id}
         open={open}
+        layout={layout}
         title={title}
         width={width}
         height={height}
         onClose={onClose}>
-        <HttpRequestBodyEditor id={id} rule={rule} data={data} />
+        <MergeEditor id={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }
