@@ -9,7 +9,7 @@
     "build": "neutrino build --require dotenv/config",
     "lint": "neutrino lint",
     "test": "neutrino test --verbose",
-    "coverage": "neutrino test --coverage",
+    "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --coverage && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config"
   },
@@ -43,11 +43,11 @@
     "lodash": "4.17.11"
   },
   "devDependencies": {
+    "@neutrinojs/jest": "8.3.0",
     "babel-register": "6.26.0",
     "dotenv": "5.0.1",
     "jest": "23.6.0",
     "neutrino": "8.3.0",
-    "@neutrinojs/jest": "8.3.0",
     "neutrino-preset-mozilla-frontend-infra": "4.1.0",
     "prettier-eslint": "8.8.2"
   }

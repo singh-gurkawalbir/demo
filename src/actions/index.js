@@ -16,6 +16,7 @@ const auth = {
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   logout: () => action(actionTypes.USER_LOGOUT),
+  checkAuth: () => action(actionTypes.SESSION_VALID),
 };
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),

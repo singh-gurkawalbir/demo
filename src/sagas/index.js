@@ -179,8 +179,23 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
+function* setAuthWhenSessionValid() {
+  try {
+    const resp = yield call(getResource, actions.profile.request());
+
+    if (resp) {
+      yield put(actions.auth.complete());
+    }
+
+    return resp;
+  } catch (e) {
+    yield put(actions.auth.userLogout());
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.SESSION_VALID, setAuthWhenSessionValid),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

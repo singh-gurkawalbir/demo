@@ -15,10 +15,17 @@ import NetworkSnackbar from '../components/NetworkSnackbar';
 import SignIn from '../views/SignIn';
 import AuthDialog from '../components/AuthDialog';
 import PrivateRoute from './PrivateRoute';
+import actions from '../actions';
 
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
+  isProfileLoading: state && state.auth && state.auth.loading,
+});
+const mapDispatchToProps = dispatch => ({
+  validateSession: () => {
+    dispatch(actions.auth.checkAuth());
+  },
 });
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
@@ -55,10 +62,29 @@ class App extends Component {
     this.setState({ showDrawer: !this.state.showDrawer });
   };
 
+  componentDidMount() {
+    const { validateSession } = this.props;
+
+    validateSession();
+  }
+  shouldComponentUpdate(props) {
+    const shouldUpdate = !!props.isProfileLoading;
+
+    return shouldUpdate;
+  }
+
   render() {
     const { showDrawer } = this.state;
-    const { themeName, authenticated } = this.props;
+    const { themeName, authenticated, isProfileLoading } = this.props;
     const customTheme = themeProvider(themeName);
+    const shouldRenderLoading = isProfileLoading && !authenticated;
+
+    // Session validation going through at this step
+    if (shouldRenderLoading) {
+      return <div />;
+    }
+
+    console.log(`render ${shouldRenderLoading}`);
 
     return (
       <MuiThemeProvider theme={customTheme}>
@@ -114,4 +140,7 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, null)(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

@@ -120,8 +120,12 @@ export function isProfileDataReady(state) {
   return !!(
     state &&
     hasProfile(state) &&
-    !fromComms.isLoading(state.comms, 'profile')
+    !fromComms.isLoading(state.comms, '/profile')
   );
+}
+
+export function isProfileLoading(state) {
+  return !!(state && fromComms.isLoading(state.comms, '/profile'));
 }
 
 export function isDataReady(state, resource) {
