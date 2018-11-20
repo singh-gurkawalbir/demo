@@ -12,9 +12,12 @@ export default class PrivateRoute extends Component {
    */
 
   render() {
-    const { component: Component, authenticated, rest } = this.props;
-
-    this.props.location.state;
+    const {
+      component: Component,
+      authenticated,
+      redirectTo,
+      rest,
+    } = this.props;
 
     return (
       <Route
@@ -25,7 +28,7 @@ export default class PrivateRoute extends Component {
           ) : (
             <Redirect
               to={{
-                pathname: '/pg/signin',
+                pathname: redirectTo,
                 state: { from: props.location },
               }}
             />

@@ -185,16 +185,27 @@ function* setAuthWhenSessionValid() {
 
     if (resp) {
       yield put(actions.auth.complete());
+    } else {
+      yield put(actions.auth.userLogout());
     }
-
-    return resp;
   } catch (e) {
     yield put(actions.auth.userLogout());
   }
 }
 
+function* invalidateSession({ path, opts }) {
+  try {
+    yield call(apiCallWithRetry, path, opts);
+    yield put(actions.auth.clearStore());
+  } catch (e) {
+    yield put(actions.auth.clearStore());
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
+
     takeEvery(actionTypes.SESSION_VALID, setAuthWhenSessionValid),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),

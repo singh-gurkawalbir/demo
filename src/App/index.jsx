@@ -5,7 +5,14 @@ import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { themeName, isAuthenticated } from '../reducers';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  themeName,
+  isAuthenticated,
+  isAuthInitiliazed,
+  isAuthLoading,
+  authenticationErrored,
+} from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
 import themeProvider from '../themeProvider';
@@ -20,7 +27,9 @@ import actions from '../actions';
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
-  isProfileLoading: state && state.auth && state.auth.loading,
+  isAuthIntialized: isAuthInitiliazed(state),
+  isAuthLoading: isAuthLoading(state),
+  isAuthErrored: !!authenticationErrored(state),
 });
 const mapDispatchToProps = dispatch => ({
   validateSession: () => {
@@ -58,33 +67,28 @@ class App extends Component {
     showDrawer: false,
   };
 
+  componentWillMount() {
+    const { isAuthIntialized, validateSession } = this.props;
+
+    if (isAuthIntialized) validateSession();
+  }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
   };
 
-  componentDidMount() {
-    const { validateSession } = this.props;
-
-    validateSession();
-  }
-  shouldComponentUpdate(props) {
-    const shouldUpdate = !!props.isProfileLoading;
-
-    return shouldUpdate;
-  }
-
   render() {
     const { showDrawer } = this.state;
-    const { themeName, authenticated, isProfileLoading } = this.props;
+    const {
+      themeName,
+      authenticated,
+      isAuthLoading,
+      isAuthIntialized,
+      isAuthErrored,
+    } = this.props;
     const customTheme = themeProvider(themeName);
-    const shouldRenderLoading = isProfileLoading && !authenticated;
 
-    // Session validation going through at this step
-    if (shouldRenderLoading) {
-      return <div />;
-    }
-
-    console.log(`render ${shouldRenderLoading}`);
+    if (!isAuthErrored && (isAuthIntialized || isAuthLoading))
+      return <CircularProgress color="primary" />;
 
     return (
       <MuiThemeProvider theme={customTheme}>
@@ -108,27 +112,32 @@ class App extends Component {
               <PrivateRoute
                 authenticated={authenticated}
                 path="/pg/resources"
+                redirectTo="/pg/signin"
                 component={Resources}
               />
               <PrivateRoute
                 authenticated={authenticated}
                 path="/pg/processors"
+                redirectTo="/pg/signin"
                 component={Processors}
               />
               <PrivateRoute
                 authenticated={authenticated}
                 path="/pg/exports"
+                redirectTo="/pg/signin"
                 component={Exports}
               />
               <PrivateRoute
                 authenticated={authenticated}
                 path="/pg/imports"
+                redirectTo="/pg/signin"
                 component={Imports}
               />
               <Route path="/pg/signin" component={SignIn} />
               <PrivateRoute
                 authenticated={authenticated}
                 path="/pg"
+                redirectTo="/pg/signin"
                 component={Dashboard}
               />
               <Route component={NotFound} />

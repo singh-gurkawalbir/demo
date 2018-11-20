@@ -16,7 +16,7 @@ const combinedReducers = combineReducers({
   comms,
 });
 const rootReducer = (state, action) => {
-  if (action.type === actionTypes.USER_LOGOUT) {
+  if (action.type === actionTypes.CLEAR_STORE) {
     return {};
   }
 
@@ -78,7 +78,15 @@ export function userProfileEmail(state) {
 }
 
 export function isAuthenticated(state) {
-  return state && state.auth && state.auth.authenticated;
+  return !!(state && state.auth && state.auth.authenticated);
+}
+
+export function isAuthInitiliazed(state) {
+  return !!(state && state.auth && state.auth.initialized);
+}
+
+export function isAuthLoading(state) {
+  return !!(state && state.auth && state.auth.loading);
 }
 
 export function authenticationErrored(state) {
