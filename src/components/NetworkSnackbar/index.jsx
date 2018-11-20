@@ -3,11 +3,15 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
+import actions from '../../actions';
 import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
+});
+const mapDispatchToProps = dispatch => ({
+  handleClearComms: () => dispatch(actions.clearComms()),
 });
 const LinearInDertiminate = props => props.show && <LinearProgress />;
 const Dismiss = props =>
@@ -29,15 +33,6 @@ const Dismiss = props =>
   },
 }))
 class NetworkSnackbar extends Component {
-  state = {
-    showSnackbar: true,
-  };
-  handleCloseSnackbar = () => {
-    this.setState({
-      showSnackbar: false,
-    });
-  };
-
   isLongWait(r) {
     /**
      * Compare the the intial Api request timestamp
@@ -49,8 +44,12 @@ class NetworkSnackbar extends Component {
   }
 
   render() {
-    const { showSnackbar } = this.state;
-    const { isLoadingAnyResource, allLoadingOrErrored, classes } = this.props;
+    const {
+      isLoadingAnyResource,
+      allLoadingOrErrored,
+      handleClearComms,
+      classes,
+    } = this.props;
 
     if (!allLoadingOrErrored) {
       return null;
@@ -73,10 +72,7 @@ class NetworkSnackbar extends Component {
       <div>
         <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
         <LinearInDertiminate show={isLoadingAnyResource} />
-        <Dismiss
-          show={!isLoadingAnyResource}
-          onClick={this.handleCloseSnackbar}
-        />
+        <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
       </div>
     );
 
@@ -96,7 +92,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open={showSnackbar}
+        open
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}
@@ -105,4 +101,7 @@ class NetworkSnackbar extends Component {
   }
 }
 
-export default connect(mapStateToProps)(NetworkSnackbar);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NetworkSnackbar);

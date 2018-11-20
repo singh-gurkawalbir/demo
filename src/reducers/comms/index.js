@@ -43,7 +43,8 @@ export default (state = initialState, action) => {
       delete newStatus.timestamp;
 
       return { ...state, [path]: newStatus };
-
+    case actionTypes.CLEAR_COMMS:
+      return {};
     default:
       return state;
   }

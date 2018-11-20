@@ -33,6 +33,7 @@ const CLEAR_STORE = 'CLEAR_STORE';
 const DELETE_PROFILE = 'DELETE_PROFILE';
 const EDITOR_RESET = 'EDITOR_RESET';
 const SESSION_VALID = 'SESSION_VALID';
+const CLEAR_COMMS = 'CLEAR_COMMS';
 const baseResourceActions = [
   REQUEST,
   REQUEST_COLLECTION,
@@ -66,6 +67,7 @@ const RESOURCE = createResourceActionTypes('RESOURCE', true);
 export default {
   USER_LOGOUT,
   CLEAR_STORE,
+  CLEAR_COMMS,
   SET_THEME,
   PATCH_FILTER,
   CLEAR_FILTER,

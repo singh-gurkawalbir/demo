@@ -11,6 +11,24 @@ import actions from '../../actions';
 describe('comms reducers', () => {
   const path = '/test/path/';
 
+  describe(`clear comms action `, () => {
+    test('clear the comms part of the redux store', () => {
+      // a completed api action
+
+      const newState = reducer(undefined, actions.api.request(path));
+      const completedApiActionState = reducer(
+        newState,
+        actions.api.complete(path)
+      );
+      // now wipe out the comms store
+      const wipedOutCommsState = reducer(
+        completedApiActionState,
+        actions.clearComms()
+      );
+
+      expect(wipedOutCommsState).toEqual({});
+    });
+  });
   describe(`request action`, () => {
     test('should set loading flag', () => {
       const newState = reducer(undefined, actions.api.request(path));

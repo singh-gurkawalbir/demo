@@ -70,6 +70,7 @@ const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
+const clearComms = () => action(actionTypes.CLEAR_COMMS);
 //
 // #region Editor actions
 const editor = {
@@ -88,6 +89,7 @@ const editor = {
 // #endregion
 
 export default {
+  clearComms,
   setTheme,
   patchFilter,
   clearFilter,
