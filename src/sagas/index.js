@@ -186,10 +186,10 @@ function* setAuthWhenSessionValid() {
     if (resp) {
       yield put(actions.auth.complete());
     } else {
-      yield put(actions.auth.userLogout());
+      yield put(actions.auth.logout());
     }
   } catch (e) {
-    yield put(actions.auth.userLogout());
+    yield put(actions.auth.logout());
   }
 }
 

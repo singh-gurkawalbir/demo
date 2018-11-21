@@ -76,6 +76,7 @@ const clearComms = () => action(actionTypes.CLEAR_COMMS);
 const editor = {
   init: (id, processor, rules, data) =>
     action(actionTypes.EDITOR_INIT, { id, processor, rules, data }),
+  reset: id => action(actionTypes.EDITOR_RESET, { id }),
   ruleChange: (id, rules) =>
     action(actionTypes.EDITOR_RULE_CHANGE, { id, rules }),
   dataChange: (id, data) =>
