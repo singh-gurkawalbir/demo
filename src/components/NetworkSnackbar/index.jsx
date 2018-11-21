@@ -4,11 +4,16 @@ import { withStyles } from '@material-ui/core/styles';
 import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import actions from '../../actions';
-import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
+import {
+  allLoadingOrErrored,
+  isLoadingAnyResource,
+  isCommsBelowNetworkThreshold,
+} from '../../reducers';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
+  isCommsBelowNetworkThreshold: isCommsBelowNetworkThreshold(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleClearComms: () => dispatch(actions.clearComms()),
@@ -33,20 +38,11 @@ const Dismiss = props =>
   },
 }))
 class NetworkSnackbar extends Component {
-  isLongWait(r) {
-    /**
-     * Compare the the intial Api request timestamp
-     * with current time
-     */
-    if (r.timestamp === 0) return false;
-
-    return Date.now() - r.timestamp >= Number(process.env.NETWORK_THRESHOLD);
-  }
-
   render() {
     const {
       isLoadingAnyResource,
       allLoadingOrErrored,
+      isCommsBelowNetworkThreshold,
       handleClearComms,
       classes,
     } = this.props;
@@ -65,7 +61,7 @@ class NetworkSnackbar extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return this.isLongWait(r) ? <li key={r.name}>{msg}</li> : '';
+      return <li key={r.name}>{msg}</li>;
     };
 
     const msg = (
@@ -92,7 +88,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open
+        open={!isCommsBelowNetworkThreshold || !isLoadingAnyResource}
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}

@@ -4,6 +4,11 @@
   "main": "index.js",
   "author": "Celigo Inc.",
   "license": "",
+  "jest": {
+    "setupFiles": [
+      "jest-date-mock"
+    ]
+  },
   "scripts": {
     "start": "neutrino start --require dotenv/config",
     "build": "neutrino build --require dotenv/config",
@@ -47,6 +52,7 @@
     "babel-register": "6.26.0",
     "dotenv": "5.0.1",
     "jest": "23.6.0",
+    "jest-date-mock": "^1.0.5",
     "neutrino": "8.3.0",
     "neutrino-preset-mozilla-frontend-infra": "4.1.0",
     "prettier-eslint": "8.8.2"

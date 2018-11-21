@@ -46,6 +46,10 @@ export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
 }
 
+export function isCommsBelowNetworkThreshold(state) {
+  return fromComms.isCommsBelowNetworkThreshold(state.comms);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS

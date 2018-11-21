@@ -4,47 +4,51 @@ const initialState = {};
 
 export default (state = initialState, action) => {
   const { type, path } = action;
-  let newStatus;
+  let newState;
   const timestamp = Date.now();
 
   switch (type) {
     case actionTypes.API_REQUEST:
-      newStatus = Object.assign({}, state[path]);
-      newStatus.timestamp = timestamp;
-      newStatus.loading = true;
-      delete newStatus.retry;
-      delete newStatus.error;
+      newState = Object.assign({}, state[path]);
+      newState.timestamp = timestamp;
+      newState.loading = true;
+      delete newState.retry;
+      delete newState.error;
 
-      return { ...state, [path]: newStatus };
+      return { ...state, [path]: newState };
 
     case actionTypes.API_COMPLETE:
-      newStatus = Object.assign({}, state[path]);
-      newStatus.loading = false;
-      delete newStatus.retry;
-      delete newStatus.error;
-      delete newStatus.timestamp;
+      newState = Object.assign({}, state[path]);
+      newState.loading = false;
+      delete newState.retry;
+      delete newState.error;
+      delete newState.timestamp;
 
-      return { ...state, [path]: newStatus };
+      return { ...state, [path]: newState };
 
     case actionTypes.API_RETRY:
-      newStatus = Object.assign({}, state[path]);
-      newStatus.retry = newStatus.retry || 0;
-      newStatus.retry += 1;
-      delete newStatus.timestamp;
+      newState = Object.assign({}, state[path]);
+      newState.retry = newState.retry || 0;
+      newState.retry += 1;
+      newState.timestamp = timestamp;
 
-      return { ...state, [path]: newStatus };
+      return { ...state, [path]: newState };
 
     case actionTypes.API_FAILURE:
-      newStatus = Object.assign({}, state[path]);
-      newStatus.timestamp = timestamp;
-      newStatus.error = action.message || 'unknown error';
-      delete newStatus.retry;
-      newStatus.loading = false;
-      delete newStatus.timestamp;
+      newState = Object.assign({}, state[path]);
+      newState.error = action.message || 'unknown error';
+      delete newState.retry;
+      newState.loading = false;
+      delete newState.timestamp;
 
-      return { ...state, [path]: newStatus };
+      return { ...state, [path]: newState };
     case actionTypes.CLEAR_COMMS:
-      return {};
+      newState = Object.assign({}, state);
+      Object.keys(newState).forEach(i => {
+        if (newState[i].error) delete newState[i];
+      });
+
+      return newState;
     default:
       return state;
   }
@@ -89,6 +93,21 @@ export function allLoadingOrErrored(state) {
   });
 
   return resources.length ? resources : null;
+}
+
+// function verifyThreshold( )
+export function isCommsBelowNetworkThreshold(state) {
+  if (!state || typeof state !== 'object') {
+    return false;
+  }
+
+  return (
+    Object.keys(state).filter(
+      resource =>
+        Date.now() - timestampComms(state, resource) <=
+        Number(process.env.NETWORK_THRESHOLD)
+    ).length > 0
+  );
 }
 
 export function isLoadingAnyResource(state) {
