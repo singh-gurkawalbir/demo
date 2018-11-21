@@ -9,7 +9,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   themeName,
   isAuthenticated,
-  isAuthInitiliazed,
   isAuthLoading,
   authenticationErrored,
 } from '../reducers';
@@ -27,7 +26,6 @@ import actions from '../actions';
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
-  isAuthIntialized: isAuthInitiliazed(state),
   isAuthLoading: isAuthLoading(state),
   isAuthErrored: !!authenticationErrored(state),
 });
@@ -68,9 +66,9 @@ class App extends Component {
   };
 
   componentWillMount() {
-    const { isAuthIntialized, validateSession } = this.props;
+    const { validateSession, isAuthLoading } = this.props;
 
-    if (isAuthIntialized) validateSession();
+    if (isAuthLoading) validateSession();
   }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
@@ -82,13 +80,9 @@ class App extends Component {
       themeName,
       authenticated,
       isAuthLoading,
-      isAuthIntialized,
       isAuthErrored,
     } = this.props;
     const customTheme = themeProvider(themeName);
-
-    if (!isAuthErrored && (isAuthIntialized || isAuthLoading))
-      return <CircularProgress color="primary" />;
 
     return (
       <MuiThemeProvider theme={customTheme}>
@@ -102,46 +96,51 @@ class App extends Component {
               onSetTheme={this.handleSetTheme}
               themeName={themeName}
             />
-
             <AppDrawer
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
             <AuthDialog />
-            <Switch>
-              <PrivateRoute
-                authenticated={authenticated}
-                path="/pg/resources"
-                redirectTo="/pg/signin"
-                component={Resources}
-              />
-              <PrivateRoute
-                authenticated={authenticated}
-                path="/pg/processors"
-                redirectTo="/pg/signin"
-                component={Processors}
-              />
-              <PrivateRoute
-                authenticated={authenticated}
-                path="/pg/exports"
-                redirectTo="/pg/signin"
-                component={Exports}
-              />
-              <PrivateRoute
-                authenticated={authenticated}
-                path="/pg/imports"
-                redirectTo="/pg/signin"
-                component={Imports}
-              />
-              <Route path="/pg/signin" component={SignIn} />
-              <PrivateRoute
-                authenticated={authenticated}
-                path="/pg"
-                redirectTo="/pg/signin"
-                component={Dashboard}
-              />
-              <Route component={NotFound} />
-            </Switch>
+            {!isAuthErrored && isAuthLoading ? (
+              <CircularProgress color="primary" />
+            ) : (
+              <Fragment>
+                <Switch>
+                  <PrivateRoute
+                    authenticated={authenticated}
+                    path="/pg/resources"
+                    redirectTo="/pg/signin"
+                    component={Resources}
+                  />
+                  <PrivateRoute
+                    authenticated={authenticated}
+                    path="/pg/processors"
+                    redirectTo="/pg/signin"
+                    component={Processors}
+                  />
+                  <PrivateRoute
+                    authenticated={authenticated}
+                    path="/pg/exports"
+                    redirectTo="/pg/signin"
+                    component={Exports}
+                  />
+                  <PrivateRoute
+                    authenticated={authenticated}
+                    path="/pg/imports"
+                    redirectTo="/pg/signin"
+                    component={Imports}
+                  />
+                  <Route path="/pg/signin" component={SignIn} />
+                  <PrivateRoute
+                    authenticated={authenticated}
+                    path="/pg"
+                    redirectTo="/pg/signin"
+                    component={Dashboard}
+                  />
+                  <Route component={NotFound} />
+                </Switch>
+              </Fragment>
+            )}
           </Fragment>
         </BrowserRouter>
       </MuiThemeProvider>

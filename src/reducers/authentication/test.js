@@ -6,7 +6,7 @@ describe('authentication reducers', () => {
   test('any other action return default state', () => {
     const newState = reducer(undefined, 'someaction');
 
-    expect(newState).toEqual({ initialized: true });
+    expect(newState).toEqual({ loading: true });
   });
 
   test('any other action return original state', () => {
