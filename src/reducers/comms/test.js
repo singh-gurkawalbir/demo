@@ -14,20 +14,18 @@ describe('comms reducers', () => {
 
   describe(`clear comms action `, () => {
     test('clear the comms part of the redux store', () => {
-      // a completed api action
-
       const newState = reducer(undefined, actions.api.request(path));
       let completedApiActionState = reducer(
         newState,
         actions.api.complete(path)
       );
+      const failedApiResourcePath = '/sisnifdif';
 
       completedApiActionState = reducer(
         completedApiActionState,
-        actions.api.failure('/sisnifdif')
+        actions.api.failure(failedApiResourcePath)
       );
 
-      // expect(completedApiActionState).toEqual({});
       // now wipe out the comms store
       const wipedOutCommsState = reducer(
         completedApiActionState,
@@ -35,7 +33,7 @@ describe('comms reducers', () => {
       );
 
       expect(wipedOutCommsState).not.toMatchObject({
-        path: { loading: false },
+        failedApiResourcePath: { loading: false },
       });
     });
   });
@@ -286,12 +284,10 @@ describe('comms selectors', () => {
 
     test('isComms selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
       advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-      process.env.NETWORK_THRESHOLD = 100;
 
-      // const now = Date.now();
       const state = reducer(undefined, actions.api.request(path));
 
-      advanceBy(50); // advance time 3 seconds
+      advanceBy(50);
 
       expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
 
@@ -301,16 +297,14 @@ describe('comms selectors', () => {
       clear();
     });
 
-    test('verify for multiple resources', () => {
+    test('verify isComms selector for multiple resources', () => {
       advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-      process.env.NETWORK_THRESHOLD = 100;
 
-      // const now = Date.now();
       let state = reducer(undefined, actions.api.request(path));
 
       state = reducer(state, actions.api.request('someotherResource'));
 
-      advanceBy(50); // advance time 3 seconds
+      advanceBy(50);
 
       expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
       state = reducer(state, actions.api.complete(path));

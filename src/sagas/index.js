@@ -10,7 +10,7 @@ import { delay } from 'redux-saga';
 import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
-import { api, authParams } from '../utils/api';
+import { api, authParams, logoutParams } from '../utils/api';
 import * as selectors from '../reducers';
 import util from '../utils/array';
 
@@ -193,9 +193,9 @@ function* setAuthWhenSessionValid() {
   }
 }
 
-function* invalidateSession({ path, opts }) {
+function* invalidateSession() {
   try {
-    yield call(apiCallWithRetry, path, opts);
+    yield call(apiCallWithRetry, logoutParams.path, logoutParams.opts);
     yield put(actions.auth.clearStore());
   } catch (e) {
     yield put(actions.auth.clearStore());
@@ -205,8 +205,7 @@ function* invalidateSession({ path, opts }) {
 export default function* rootSaga() {
   yield all([
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
-
-    takeEvery(actionTypes.SESSION_VALID, setAuthWhenSessionValid),
+    takeEvery(actionTypes.INIT_SESSION, setAuthWhenSessionValid),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

@@ -46,9 +46,11 @@ describe('authentication reducers', () => {
       });
     });
 
-    test('and modal sessionExpired modal shows up then going through a successful auth cycle show clear isSessionExpired', () => {
+    test('if the sessionExpired modal shows up, subsequently going through a successful auth cycle should clear isSessionExpired', () => {
       const someFailureMsg = 'Error';
+      // user is previously authenticated
       const authenticatedState = reducer(undefined, actions.auth.complete());
+      // but due to an expired session comm's activity the modal shows up
       const authenticationFailureState = reducer(
         authenticatedState,
         actions.auth.failure(someFailureMsg)
