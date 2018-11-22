@@ -12,6 +12,7 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
+import { logoutParams } from '../../../utils/api';
 import {
   isProfileDataReady,
   hasProfile,
@@ -35,7 +36,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.profile.request());
   },
   handleUserLogout: () => {
-    dispatch(actions.auth.userLogout());
+    dispatch(actions.auth.logout(logoutParams.path, logoutParams.opts));
   },
 });
 
@@ -239,4 +240,7 @@ class AppBar extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppBar);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppBar);

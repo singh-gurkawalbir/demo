@@ -115,4 +115,7 @@ class FilteredResources extends Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(FilteredResources);
+export default connect(
+  null,
+  mapDispatchToProps
+)(FilteredResources);

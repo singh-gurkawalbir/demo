@@ -31,11 +31,24 @@ export const authParams = {
   },
   path: '/signin?no_redirect=true',
 };
+export const logoutParams = {
+  opts: {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': ' application/x-www-form-urlencoded',
+    },
+    body: {
+      _csrf: 'undefined',
+    },
+    method: 'POST',
+  },
+  path: '/signout?no_redirect=true',
+};
 
 export const api = async (path, opts = {}) => {
   let options;
 
-  if (path !== authParams.path)
+  if (path !== authParams.path || path !== logoutParams.path)
     options = {
       ...opts,
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
@@ -55,8 +68,14 @@ export const api = async (path, opts = {}) => {
   await delay(2);
   let req;
 
-  if (path !== '/signin?no_redirect=true') req = `/api${path}`;
-  else req = path;
+  if (
+    path === '/signin?no_redirect=true' ||
+    path === '/signout?no_redirect=true'
+  ) {
+    req = path;
+  } else {
+    req = `/api${path}`;
+  }
 
   try {
     const response = await fetch(req, options);

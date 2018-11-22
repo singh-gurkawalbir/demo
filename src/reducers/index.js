@@ -16,7 +16,7 @@ const combinedReducers = combineReducers({
   comms,
 });
 const rootReducer = (state, action) => {
-  if (action.type === actionTypes.USER_LOGOUT) {
+  if (action.type === actionTypes.CLEAR_STORE) {
     return {};
   }
 
@@ -44,6 +44,10 @@ export function allLoadingOrErrored(state) {
 
 export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
+}
+
+export function isCommsBelowNetworkThreshold(state) {
+  return fromComms.isCommsBelowNetworkThreshold(state.comms);
 }
 
 // #endregion
@@ -78,7 +82,15 @@ export function userProfileEmail(state) {
 }
 
 export function isAuthenticated(state) {
-  return state && state.auth && state.auth.authenticated;
+  return !!(state && state.auth && state.auth.authenticated);
+}
+
+export function isAuthInitiliazed(state) {
+  return !!(state && state.auth && state.auth.initialized);
+}
+
+export function isAuthLoading(state) {
+  return !!(state && state.auth && state.auth.loading);
 }
 
 export function authenticationErrored(state) {
@@ -120,8 +132,12 @@ export function isProfileDataReady(state) {
   return !!(
     state &&
     hasProfile(state) &&
-    !fromComms.isLoading(state.comms, 'profile')
+    !fromComms.isLoading(state.comms, '/profile')
   );
+}
+
+export function isProfileLoading(state) {
+  return !!(state && fromComms.isLoading(state.comms, '/profile'));
 }
 
 export function isDataReady(state, resource) {

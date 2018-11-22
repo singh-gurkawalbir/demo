@@ -65,7 +65,7 @@ export function* getResource({ resourceType, id }) {
   } catch (error) {
     if (error.status === 401) {
       yield put(actions.auth.failure('Authentication Failure'));
-      yield put(actions.profile.deleteProfile());
+      yield put(actions.profile.delete());
 
       return;
     }
@@ -87,7 +87,7 @@ export function* getResourceCollection({ resourceType }) {
     switch (error.status) {
       case 401:
         yield put(actions.auth.failure('Authentication Failure'));
-        yield put(actions.profile.deleteProfile());
+        yield put(actions.profile.delete());
 
         return;
       default:
@@ -153,7 +153,7 @@ export function* auth({ message }) {
     return apiAuthentications.succes;
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
-    yield put(actions.profile.deleteProfile());
+    yield put(actions.profile.delete());
 
     return undefined;
   }
@@ -179,8 +179,34 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
+function* setAuthWhenSessionValid() {
+  try {
+    const resp = yield call(getResource, actions.profile.request());
+
+    if (resp) {
+      yield put(actions.auth.complete());
+    } else {
+      yield put(actions.auth.logout());
+    }
+  } catch (e) {
+    yield put(actions.auth.logout());
+  }
+}
+
+function* invalidateSession({ path, opts }) {
+  try {
+    yield call(apiCallWithRetry, path, opts);
+    yield put(actions.auth.clearStore());
+  } catch (e) {
+    yield put(actions.auth.clearStore());
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
+
+    takeEvery(actionTypes.SESSION_VALID, setAuthWhenSessionValid),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

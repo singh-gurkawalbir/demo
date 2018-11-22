@@ -51,7 +51,6 @@ describe(`apiCallWithRetry saga`, () => {
 
     const callEffect = saga.next().value;
 
-    console.log(`Effect ${JSON.stringify(callEffect)}`);
     expect(callEffect).toEqual(call(api, path, opts));
 
     const mockData = { id: 1 };
@@ -245,6 +244,6 @@ describe('auth saga flow', () => {
     );
     const effect = saga.next().value;
 
-    expect(effect).toEqual(put(actions.profile.deleteProfile()));
+    expect(effect).toEqual(put(actions.profile.delete()));
   });
 });

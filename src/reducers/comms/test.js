@@ -3,6 +3,7 @@
 // the linter precommit step will fail. ...and the IDE doesnt like the globals
 // either.
 /* global describe, test, expect */
+import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import reducer, * as selectors from './';
 import actions from '../../actions';
 
@@ -11,6 +12,33 @@ import actions from '../../actions';
 describe('comms reducers', () => {
   const path = '/test/path/';
 
+  describe(`clear comms action `, () => {
+    test('clear the comms part of the redux store', () => {
+      // a completed api action
+
+      const newState = reducer(undefined, actions.api.request(path));
+      let completedApiActionState = reducer(
+        newState,
+        actions.api.complete(path)
+      );
+
+      completedApiActionState = reducer(
+        completedApiActionState,
+        actions.api.failure('/sisnifdif')
+      );
+
+      // expect(completedApiActionState).toEqual({});
+      // now wipe out the comms store
+      const wipedOutCommsState = reducer(
+        completedApiActionState,
+        actions.clearComms()
+      );
+
+      expect(wipedOutCommsState).not.toMatchObject({
+        path: { loading: false },
+      });
+    });
+  });
   describe(`request action`, () => {
     test('should set loading flag', () => {
       const newState = reducer(undefined, actions.api.request(path));
@@ -254,6 +282,44 @@ describe('comms selectors', () => {
           timestamp: expect.any(Number),
         },
       ]);
+    });
+
+    test('isComms selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
+      advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+      process.env.NETWORK_THRESHOLD = 100;
+
+      // const now = Date.now();
+      const state = reducer(undefined, actions.api.request(path));
+
+      advanceBy(50); // advance time 3 seconds
+
+      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
+
+      advanceBy(20000); // advance sufficiently large time
+
+      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(false);
+      clear();
+    });
+
+    test('verify for multiple resources', () => {
+      advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+      process.env.NETWORK_THRESHOLD = 100;
+
+      // const now = Date.now();
+      let state = reducer(undefined, actions.api.request(path));
+
+      state = reducer(state, actions.api.request('someotherResource'));
+
+      advanceBy(50); // advance time 3 seconds
+
+      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
+      state = reducer(state, actions.api.complete(path));
+      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
+
+      advanceBy(20000); // advance sufficiently large time
+
+      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(false);
+      clear();
     });
   });
 });
