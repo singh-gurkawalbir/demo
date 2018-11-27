@@ -35,7 +35,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.profile.request());
   },
   handleUserLogout: () => {
-    dispatch(actions.auth.userLogout());
+    dispatch(actions.auth.logout());
   },
 });
 

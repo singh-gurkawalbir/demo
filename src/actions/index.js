@@ -15,7 +15,9 @@ const auth = {
   request: message => action(actionTypes.AUTH_REQUEST, { message }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  userLogout: () => action(actionTypes.USER_LOGOUT),
+  logout: () => action(actionTypes.USER_LOGOUT),
+  clearStore: () => action(actionTypes.CLEAR_STORE),
+  initSession: () => action(actionTypes.INIT_SESSION),
 };
 const api = {
   request: path => action(actionTypes.API_REQUEST, { path }),
@@ -58,18 +60,20 @@ const resource = {
 const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
-  deleteProfile: () => action(actionTypes.DELETE_PROFILE),
+  delete: () => action(actionTypes.DELETE_PROFILE),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
+const clearComms = () => action(actionTypes.CLEAR_COMMS);
 //
 // #region Editor actions
 const editor = {
   init: (id, processor, options) =>
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
+  reset: id => action(actionTypes.EDITOR_RESET, { id }),
   evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
   evaluateFailure: (id, error) =>
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
@@ -79,6 +83,7 @@ const editor = {
 // #endregion
 
 export default {
+  clearComms,
   setTheme,
   patchFilter,
   clearFilter,

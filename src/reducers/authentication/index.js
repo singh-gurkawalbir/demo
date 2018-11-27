@@ -1,6 +1,6 @@
 import actionTypes from '../../actions/types';
 
-export default (state = {}, action) => {
+export default function(state = { loading: true }, action) {
   let newState;
 
   switch (action.type) {
@@ -30,7 +30,8 @@ export default (state = {}, action) => {
       return newState;
     }
 
-    default:
+    default: {
       return state;
+    }
   }
-};
+}

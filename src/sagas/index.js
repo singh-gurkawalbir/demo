@@ -10,7 +10,7 @@ import { delay } from 'redux-saga';
 import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
-import { api, authParams } from '../utils/api';
+import { api, authParams, logoutParams } from '../utils/api';
 import * as selectors from '../reducers';
 import util from '../utils/array';
 
@@ -65,7 +65,7 @@ export function* getResource({ resourceType, id }) {
   } catch (error) {
     if (error.status === 401) {
       yield put(actions.auth.failure('Authentication Failure'));
-      yield put(actions.profile.deleteProfile());
+      yield put(actions.profile.delete());
 
       return;
     }
@@ -87,7 +87,7 @@ export function* getResourceCollection({ resourceType }) {
     switch (error.status) {
       case 401:
         yield put(actions.auth.failure('Authentication Failure'));
-        yield put(actions.profile.deleteProfile());
+        yield put(actions.profile.delete());
 
         return;
       default:
@@ -153,7 +153,7 @@ export function* auth({ message }) {
     return apiAuthentications.succes;
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
-    yield put(actions.profile.deleteProfile());
+    yield put(actions.profile.delete());
 
     return undefined;
   }
@@ -179,8 +179,33 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
+function* setAuthWhenSessionValid() {
+  try {
+    const resp = yield call(getResource, actions.profile.request());
+
+    if (resp) {
+      yield put(actions.auth.complete());
+    } else {
+      yield put(actions.auth.logout());
+    }
+  } catch (e) {
+    yield put(actions.auth.logout());
+  }
+}
+
+function* invalidateSession() {
+  try {
+    yield call(apiCallWithRetry, logoutParams.path, logoutParams.opts);
+    yield put(actions.auth.clearStore());
+  } catch (e) {
+    yield put(actions.auth.clearStore());
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
+    takeEvery(actionTypes.INIT_SESSION, setAuthWhenSessionValid),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

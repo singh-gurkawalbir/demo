@@ -20,11 +20,15 @@ export default function reducer(state = {}, action) {
 
     case actionTypes.EDITOR_RESET:
       newState = Object.assign({}, state);
+
       newState[id] = {
         ...newState[id],
         ...newState[id].defaultOptions,
         lastChange: Date.now(),
       };
+
+      delete newState[id].error;
+      delete newState[id].result;
 
       return newState;
 

@@ -5,7 +5,12 @@ import { hot } from 'react-hot-loader';
 @hot(module)
 export default class PrivateRoute extends Component {
   render() {
-    const { component: Component, authenticated, rest } = this.props;
+    const {
+      component: Component,
+      authenticated,
+      redirectTo = '/pg/signin',
+      rest,
+    } = this.props;
 
     return (
       <Route
@@ -16,7 +21,7 @@ export default class PrivateRoute extends Component {
           ) : (
             <Redirect
               to={{
-                pathname: '/pg/signin',
+                pathname: redirectTo,
                 state: { from: props.location },
               }}
             />

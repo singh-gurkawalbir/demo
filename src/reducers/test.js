@@ -66,7 +66,7 @@ describe('Reducers in the root reducer', () => {
     const someInitialState = {
       profile: { email: 'sds' },
     };
-    const state = reducer(someInitialState, actions.auth.userLogout());
+    const state = reducer(someInitialState, actions.auth.clearStore());
 
     expect(state).toEqual({});
   });

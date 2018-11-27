@@ -3,11 +3,20 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
-import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
+import actions from '../../actions';
+import {
+  allLoadingOrErrored,
+  isLoadingAnyResource,
+  isCommsBelowNetworkThreshold,
+} from '../../reducers';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
+  isCommsBelowNetworkThreshold: isCommsBelowNetworkThreshold(state),
+});
+const mapDispatchToProps = dispatch => ({
+  handleClearComms: () => dispatch(actions.clearComms()),
 });
 const LinearInDertiminate = props => props.show && <LinearProgress />;
 const Dismiss = props =>
@@ -29,28 +38,14 @@ const Dismiss = props =>
   },
 }))
 class NetworkSnackbar extends Component {
-  state = {
-    showSnackbar: true,
-  };
-  handleCloseSnackbar = () => {
-    this.setState({
-      showSnackbar: false,
-    });
-  };
-
-  isShowingMessage(r) {
-    /**
-     * Compare the the intial Api request timestamp
-     * with current time
-     */
-    if (r.timestamp === 0) return false;
-
-    return Date.now() - r.timestamp >= Number(process.env.NETWORK_THRESHOLD);
-  }
-
   render() {
-    const { showSnackbar } = this.state;
-    const { isLoadingAnyResource, allLoadingOrErrored, classes } = this.props;
+    const {
+      isLoadingAnyResource,
+      allLoadingOrErrored,
+      isCommsBelowNetworkThreshold,
+      handleClearComms,
+      classes,
+    } = this.props;
 
     if (!allLoadingOrErrored) {
       return null;
@@ -66,17 +61,14 @@ class NetworkSnackbar extends Component {
         msg += ` Retry ${r.retryCount}`;
       }
 
-      return this.isShowingMessage(r) ? <li key={r.name}>{msg}</li> : '';
+      return <li key={r.name}>{msg}</li>;
     };
 
     const msg = (
       <div>
         <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
         <LinearInDertiminate show={isLoadingAnyResource} />
-        <Dismiss
-          show={!isLoadingAnyResource}
-          onClick={this.handleCloseSnackbar}
-        />
+        <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
       </div>
     );
 
@@ -96,7 +88,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open={showSnackbar}
+        open={!isCommsBelowNetworkThreshold || !isLoadingAnyResource}
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}
@@ -105,4 +97,7 @@ class NetworkSnackbar extends Component {
   }
 }
 
-export default connect(mapStateToProps)(NetworkSnackbar);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NetworkSnackbar);
