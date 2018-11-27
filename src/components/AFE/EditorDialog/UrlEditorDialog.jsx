@@ -24,7 +24,7 @@ export default class UrlEditorDialog extends Component {
         height={height}
         onClose={onClose}
         showLayoutOptions={false}>
-        <UrlEditor id={id} rule={rule} data={data} />
+        <UrlEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }

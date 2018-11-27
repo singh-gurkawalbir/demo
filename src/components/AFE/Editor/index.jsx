@@ -1,32 +1,11 @@
 import { Component } from 'react';
-import { func, string } from 'prop-types';
-import { connect } from 'react-redux';
+import { func } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../panels/CodePanel';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
-
-const mapStateToProps = (state, { id }) => ({
-  editor: selectors.editor(state, id),
-});
-const mapDispatchToProps = (dispatch, { id }) => ({
-  pushRuleChange: rule => {
-    dispatch(actions.editor.ruleChange(id, rule));
-  },
-  pushDataChange: data => {
-    dispatch(actions.editor.dataChange(id, data));
-  },
-  handleInit: (processor, rules, data) => {
-    dispatch(actions.editor.init(id, processor, rules, data));
-  },
-  handlePreview: () => {
-    dispatch(actions.editor.evaluateRequest(id));
-  },
-});
 
 @withStyles(() => ({
   compactTemplate: {
@@ -50,33 +29,18 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     gridTemplateAreas: '"rule data result" "error error error"',
   },
 }))
-class Editor extends Component {
+export default class Editor extends Component {
   static propTypes = {
-    id: string.isRequired,
-    processor: string.isRequired,
-    onChange: func,
-  };
-
-  handleDataChange = data => {
-    const { pushDataChange, onDataChange } = this.props;
-
-    pushDataChange(data);
-
-    if (onDataChange) onDataChange(data);
-  };
-
-  handleRuleChange = rule => {
-    const { pushRuleChange, onRuleChange } = this.props;
-
-    pushRuleChange(rule);
-
-    if (onRuleChange) onRuleChange(rule);
+    handleInit: func.isRequired,
+    handleRuleChange: func.isRequired,
+    handleDataChange: func.isRequired,
+    getEditor: func.isRequired,
   };
 
   componentDidMount() {
-    const { processor, rules, data, handleInit } = this.props;
+    const { handleInit } = this.props;
 
-    handleInit(processor, rules, data);
+    handleInit();
   }
 
   render() {
@@ -84,15 +48,17 @@ class Editor extends Component {
       classes,
       layout = 'compact',
       templateClassName,
-      editor,
+      getEditor,
       ruleMode,
       ruleTitle,
       dataMode,
       dataTitle,
       resultMode,
       resultTitle,
+      handleRuleChange,
+      handleDataChange,
     } = this.props;
-    const { rule, data, result, error } = editor;
+    const { rule, data, result, error } = getEditor();
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
 
@@ -101,10 +67,10 @@ class Editor extends Component {
         <PanelGridItem gridArea="rule">
           <PanelTitle>{ruleTitle}</PanelTitle>
           <CodePanel
-            name="rules"
+            name="rule"
             value={rule}
             mode={ruleMode}
-            onChange={this.handleRuleChange}
+            onChange={handleRuleChange}
           />
         </PanelGridItem>
         <PanelGridItem gridArea="data">
@@ -113,7 +79,7 @@ class Editor extends Component {
             name="data"
             value={data}
             mode={dataMode}
-            onChange={this.handleDataChange}
+            onChange={handleDataChange}
           />
         </PanelGridItem>
         <PanelGridItem gridArea="result">
@@ -130,17 +96,10 @@ class Editor extends Component {
             <PanelTitle>
               <Typography color="error">Error</Typography>
             </PanelTitle>
-            <CodePanel
-              showGutter={false}
-              name="error"
-              value={error}
-              mode="json"
-            />
+            <CodePanel readOnly name="error" value={error} mode="json" />
           </PanelGridItem>
         )}
       </PanelGrid>
     );
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Editor);

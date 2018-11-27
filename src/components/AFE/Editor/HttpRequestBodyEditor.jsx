@@ -1,17 +1,17 @@
 import { Component } from 'react';
-import Editor from './';
+import HandlebarsEditor from './HandlebarsEditor';
 
 export default class HttpRequestBodyEditor extends Component {
   render() {
-    const { id, rule, data, contentType, layout = 'row' } = this.props;
+    const { editorId, contentType, layout = 'row', rule, data } = this.props;
     const mode = contentType || 'json';
 
     return (
-      <Editor
-        id={id}
-        processor="handlebars"
+      <HandlebarsEditor
+        editorId={editorId}
         rule={rule}
         data={data}
+        strict={false}
         ruleMode="handlebars"
         dataMode="json"
         layout={layout}

@@ -3,14 +3,12 @@ import Editor from './';
 
 export default class MergeEditor extends Component {
   render() {
-    const { id, rule, data, layout = 'column' } = this.props;
+    const { editorId, layout = 'column' } = this.props;
 
     return (
       <Editor
-        id={id}
+        editorId={editorId}
         processor="merge"
-        rule={rule}
-        data={data}
         ruleMode="json"
         dataMode="json"
         resultMode="json"

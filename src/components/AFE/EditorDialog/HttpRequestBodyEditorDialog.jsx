@@ -23,7 +23,7 @@ export default class UrlEditorDialog extends Component {
         width={width}
         height={height}
         onClose={onClose}>
-        <HttpRequestBodyEditor id={id} rule={rule} data={data} />
+        <HttpRequestBodyEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }

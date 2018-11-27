@@ -161,13 +161,14 @@ export function* auth({ message }) {
 
 export function* evaluateProcessor({ id }) {
   const getProcessorOptions = state =>
-    selectors.editorProcessorOptions(state, id);
-  const { processor, options } = yield select(getProcessorOptions);
-  // console.log('editorProcessorOptions', processor, options);
+    selectors.processorRequestOptions(state, id);
+  const { processor, body } = yield select(getProcessorOptions);
+
+  console.log(`editorProcessorOptions for ${id}`, processor, body);
   const path = `/processors/${processor}`;
   const opts = {
     method: 'post',
-    body: JSON.stringify(options),
+    body: JSON.stringify(body),
   };
 
   try {

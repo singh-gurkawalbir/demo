@@ -59,10 +59,10 @@ export function editor(state, id) {
   return fromSession.editor(state.session, id);
 }
 
-export function editorProcessorOptions(state, id) {
+export function processorRequestOptions(state, id) {
   if (!state) return {};
 
-  return fromSession.editorProcessorOptions(state.session, id);
+  return fromSession.processorRequestOptions(state.session, id);
 }
 
 export function avatarUrl(state) {

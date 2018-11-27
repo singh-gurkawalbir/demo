@@ -25,7 +25,7 @@ export default class MergeEditorDialog extends Component {
         width={width}
         height={height}
         onClose={onClose}>
-        <MergeEditor id={id} rule={rule} data={data} />
+        <MergeEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }
