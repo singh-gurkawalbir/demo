@@ -1,5 +1,4 @@
 const { join } = require('path');
-const merge = require('deepmerge');
 
 require('babel-register')({
   plugins: [
@@ -47,10 +46,6 @@ module.exports = {
           'src/reducers/**/*.{js,jsx}',
           'src/sagas/**/*.{js,jsx}',
           // 'src/utils/**/*.{js,jsx}',
-        ],
-        coveragePathIgnorePatterns: [
-          '<rootDir>/build/',
-          '<rootDir>/node_modules/',
         ],
         coverageThreshold: {
           global: {

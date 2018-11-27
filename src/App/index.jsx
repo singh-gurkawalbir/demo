@@ -30,8 +30,8 @@ const mapStateToProps = state => ({
   isAuthErrored: !!authenticationErrored(state),
 });
 const mapDispatchToProps = dispatch => ({
-  validateSession: () => {
-    dispatch(actions.auth.checkAuth());
+  initSession: () => {
+    dispatch(actions.auth.initSession());
   },
 });
 const Dashboard = loadable(() =>
@@ -66,9 +66,9 @@ class App extends Component {
   };
 
   componentWillMount() {
-    const { validateSession, isAuthLoading } = this.props;
+    const { initSession, isAuthLoading } = this.props;
 
-    if (isAuthLoading) validateSession();
+    if (isAuthLoading) initSession();
   }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
@@ -104,42 +104,40 @@ class App extends Component {
             {!isAuthErrored && isAuthLoading ? (
               <CircularProgress color="primary" />
             ) : (
-              <Fragment>
-                <Switch>
-                  <PrivateRoute
-                    authenticated={authenticated}
-                    path="/pg/resources"
-                    redirectTo="/pg/signin"
-                    component={Resources}
-                  />
-                  <PrivateRoute
-                    authenticated={authenticated}
-                    path="/pg/processors"
-                    redirectTo="/pg/signin"
-                    component={Processors}
-                  />
-                  <PrivateRoute
-                    authenticated={authenticated}
-                    path="/pg/exports"
-                    redirectTo="/pg/signin"
-                    component={Exports}
-                  />
-                  <PrivateRoute
-                    authenticated={authenticated}
-                    path="/pg/imports"
-                    redirectTo="/pg/signin"
-                    component={Imports}
-                  />
-                  <Route path="/pg/signin" component={SignIn} />
-                  <PrivateRoute
-                    authenticated={authenticated}
-                    path="/pg"
-                    redirectTo="/pg/signin"
-                    component={Dashboard}
-                  />
-                  <Route component={NotFound} />
-                </Switch>
-              </Fragment>
+              <Switch>
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg/resources"
+                  redirectTo="/pg/signin"
+                  component={Resources}
+                />
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg/processors"
+                  redirectTo="/pg/signin"
+                  component={Processors}
+                />
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg/exports"
+                  redirectTo="/pg/signin"
+                  component={Exports}
+                />
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg/imports"
+                  redirectTo="/pg/signin"
+                  component={Imports}
+                />
+                <Route path="/pg/signin" component={SignIn} />
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg"
+                  redirectTo="/pg/signin"
+                  component={Dashboard}
+                />
+                <Route component={NotFound} />
+              </Switch>
             )}
           </Fragment>
         </BrowserRouter>
