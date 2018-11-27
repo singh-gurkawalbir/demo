@@ -11,11 +11,13 @@ import Editor from './HandlebarsEditor';
 }))
 export default class UrlEditor extends Component {
   render() {
-    const { editorId, classes } = this.props;
+    const { editorId, classes, rule, data } = this.props;
 
     return (
       <Editor
         editorId={editorId}
+        rule={rule}
+        data={data}
         templateClassName={classes.gridTemplate}
         ruleMode="handlebars"
         dataMode="json"

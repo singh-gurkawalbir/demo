@@ -163,8 +163,7 @@ export function* evaluateProcessor({ id }) {
   const getProcessorOptions = state =>
     selectors.processorRequestOptions(state, id);
   const { processor, body } = yield select(getProcessorOptions);
-
-  console.log(`editorProcessorOptions for ${id}`, processor, body);
+  // console.log(`editorProcessorOptions for ${id}`, processor, body);
   const path = `/processors/${processor}`;
   const opts = {
     method: 'post',

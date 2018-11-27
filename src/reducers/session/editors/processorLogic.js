@@ -11,7 +11,7 @@ function validateJsonString(s) {
 const allLogic = {
   merge: {
     requestBody: editor => ({
-      rules: JSON.parse(editor.rules),
+      rules: JSON.parse(editor.rule),
       data: [JSON.parse(editor.data)],
     }),
     validate: editor => ({

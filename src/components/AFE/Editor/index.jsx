@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { func } from 'prop-types';
+import { func, string } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../panels/CodePanel';
@@ -31,10 +31,13 @@ import PanelGridItem from '../PanelGridItem';
 }))
 export default class Editor extends Component {
   static propTypes = {
+    rule: string,
+    data: string,
+    result: string,
+    error: string,
     handleInit: func.isRequired,
     handleRuleChange: func.isRequired,
     handleDataChange: func.isRequired,
-    getEditor: func.isRequired,
   };
 
   componentDidMount() {
@@ -48,17 +51,19 @@ export default class Editor extends Component {
       classes,
       layout = 'compact',
       templateClassName,
-      getEditor,
+      rule,
       ruleMode,
       ruleTitle,
+      data,
       dataMode,
       dataTitle,
+      result,
       resultMode,
       resultTitle,
+      error,
       handleRuleChange,
       handleDataChange,
     } = this.props;
-    const { rule, data, result, error } = getEditor();
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
 
@@ -84,12 +89,7 @@ export default class Editor extends Component {
         </PanelGridItem>
         <PanelGridItem gridArea="result">
           <PanelTitle>{resultTitle}</PanelTitle>
-          <CodePanel
-            name="result"
-            value={result && result.data}
-            mode={resultMode}
-            readOnly
-          />
+          <CodePanel name="result" value={result} mode={resultMode} readOnly />
         </PanelGridItem>
         {error && (
           <PanelGridItem gridArea="error">
