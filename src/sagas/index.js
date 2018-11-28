@@ -16,8 +16,10 @@ import util from '../utils/array';
 
 const tryCount = 3;
 
-export function* apiCallWithRetry(path, opts) {
-  yield put(actions.api.request(path));
+export function* apiCallWithRetry(path, opts, message = path) {
+  // todo path and message
+
+  yield put(actions.api.request(path, message));
 
   for (let i = 0; i < tryCount; i += 1) {
     try {
@@ -53,11 +55,11 @@ export function* apiCallWithRetry(path, opts) {
   }
 }
 
-export function* getResource({ resourceType, id }) {
+export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, path);
+    const resource = yield call(apiCallWithRetry, path, message);
 
     yield put(actions.resource.received(resourceType, resource));
 
@@ -138,14 +140,16 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 }
 
-export function* auth({ message }) {
+export function* auth({ email, password }) {
   try {
     // replace credentials in the request body
-    const payload = { ...authParams.opts, body: message };
+    const credentialsBody = JSON.stringify({ email, password });
+    const payload = { ...authParams.opts, body: credentialsBody };
     const apiAuthentications = yield call(
       apiCallWithRetry,
       authParams.path,
-      payload
+      payload,
+      'Authenticating User'
     );
 
     yield put(actions.auth.complete());
@@ -179,9 +183,17 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
-function* setAuthWhenSessionValid() {
+// TODO:rename initialize app
+// auth.initalized
+function* initializeApp() {
   try {
-    const resp = yield call(getResource, actions.profile.request());
+    // initializin
+
+    const resp = yield call(
+      getResource,
+      actions.profile.request(),
+      'Initializing application'
+    );
 
     if (resp) {
       yield put(actions.auth.complete());
@@ -195,17 +207,34 @@ function* setAuthWhenSessionValid() {
 
 function* invalidateSession() {
   try {
-    yield call(apiCallWithRetry, logoutParams.path, logoutParams.opts);
+    yield call(
+      apiCallWithRetry,
+      logoutParams.path,
+      logoutParams.opts,
+      'Logging out user'
+    );
     yield put(actions.auth.clearStore());
   } catch (e) {
     yield put(actions.auth.clearStore());
   }
 }
 
+function* changePassword({ message }) {
+  try {
+    const payload = { method: 'PUT', body: message };
+    const path = '/change-password';
+
+    yield call(apiCallWithRetry, path, payload, "Changing user's password");
+  } catch (e) {
+    yield put(actions.auth.failure('Authentication Failure'));
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
-    takeEvery(actionTypes.INIT_SESSION, setAuthWhenSessionValid),
+    takeEvery(actionTypes.INIT_SESSION, initializeApp),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

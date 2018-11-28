@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   themeName,
   isAuthenticated,
-  isAuthLoading,
   authenticationErrored,
+  isUserLoggedOut,
+  isAuthInitialized,
 } from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
@@ -26,8 +27,9 @@ import actions from '../actions';
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
-  isAuthLoading: isAuthLoading(state),
+  isAuthInitialized: isAuthInitialized(state),
   isAuthErrored: !!authenticationErrored(state),
+  isUserLoggedOut: isUserLoggedOut(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -66,9 +68,9 @@ class App extends Component {
   };
 
   componentWillMount() {
-    const { initSession, isAuthLoading } = this.props;
+    const { initSession, isAuthInitialized } = this.props;
 
-    if (isAuthLoading) initSession();
+    if (!isAuthInitialized) initSession();
   }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
@@ -79,8 +81,8 @@ class App extends Component {
     const {
       themeName,
       authenticated,
-      isAuthLoading,
-      isAuthErrored,
+      isAuthInitialized,
+      isUserLoggedOut,
     } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -90,7 +92,7 @@ class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            {authenticated && <NetworkSnackbar />}
+            <NetworkSnackbar />
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
@@ -100,10 +102,9 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
+            {/* is app initialized */}
             <AuthDialog />
-            {!isAuthErrored && isAuthLoading ? (
-              <CircularProgress color="primary" />
-            ) : (
+            {(isAuthInitialized || !isUserLoggedOut) && (
               <Switch>
                 <PrivateRoute
                   authenticated={authenticated}

@@ -3,7 +3,7 @@ import actionTypes from '../../actions/types';
 const initialState = {};
 
 export default (state = initialState, action) => {
-  const { type, path } = action;
+  const { type, path, message } = action;
   let newState;
   const timestamp = Date.now();
 
@@ -12,6 +12,7 @@ export default (state = initialState, action) => {
       newState = Object.assign({}, state[path]);
       newState.timestamp = timestamp;
       newState.loading = true;
+      newState.message = message;
       delete newState.retry;
       delete newState.error;
 
@@ -59,6 +60,10 @@ export function isLoading(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].loading);
 }
 
+export function requestMessage(state, resourceName) {
+  return (state && state[resourceName] && state[resourceName].message) || '';
+}
+
 export function timestampComms(state, resourceName) {
   return (state && state[resourceName] && state[resourceName].timestamp) || 0;
 }
@@ -84,6 +89,7 @@ export function allLoadingOrErrored(state) {
       isLoading: isLoading(state, key),
       retryCount: retryCount(state, key),
       timestamp: timestampComms(state, key),
+      message: requestMessage(state, key),
       error: error(state, key),
     };
 

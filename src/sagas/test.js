@@ -47,7 +47,7 @@ describe(`apiCallWithRetry saga`, () => {
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
 
     const callEffect = saga.next().value;
 
@@ -72,7 +72,7 @@ describe(`apiCallWithRetry saga`, () => {
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
 
     const callEffect = saga.next().value;
     const callApiEffect = call(api, path, opts);
@@ -106,7 +106,7 @@ describe(`apiCallWithRetry saga`, () => {
     const mockError = new Error('mock');
     const requestEffect = saga.next().value;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
     const callApiEffect = call(api, path, opts);
 
     for (let i = 0; i < 3; i += 1) {
@@ -137,13 +137,14 @@ availableResources.forEach(type => {
 
     test('should succeed on successfull api call', () => {
       // assign
+
       const saga = getResource(actions.resource.request(type, id));
       const path = `/${type}/${id}`;
       const mockResource = { id: 1, name: 'bob' };
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
 
       const effect = saga.next(mockResource).value;
 
@@ -164,7 +165,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
 
       const final = saga.throw(status500);
 
@@ -216,14 +217,20 @@ availableResources.forEach(type => {
 });
 
 describe('auth saga flow', () => {
+  const authMessage = 'Authenticating User';
+
   test('action to set authentication to true when auth is successful', () => {
-    const message = 'someUserCredentials';
-    const saga = auth({ message });
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const saga = auth({ email, password });
     const callEffect = saga.next().value;
-    const payload = { ...authParams.opts, body: message };
+    const payload = {
+      ...authParams.opts,
+      body: JSON.stringify({ email, password }),
+    };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload)
+      call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
     const effect = saga.next().value;
 
@@ -231,13 +238,17 @@ describe('auth saga flow', () => {
   });
 
   test('should dispatch a delete profile action when authentication fails', () => {
-    const message = 'someUserCredentials';
-    const saga = auth({ message });
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const saga = auth({ email, password });
     const callEffect = saga.next().value;
-    const payload = { ...authParams.opts, body: message };
+    const payload = {
+      ...authParams.opts,
+      body: JSON.stringify({ email, password }),
+    };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload)
+      call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
     expect(saga.throw(status422).value).toEqual(
       put(actions.auth.failure('Authentication Failure'))

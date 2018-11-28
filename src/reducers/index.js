@@ -85,12 +85,16 @@ export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
 
-export function isAuthInitiliazed(state) {
+export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
 
 export function isAuthLoading(state) {
   return !!(state && state.auth && state.auth.loading);
+}
+
+export function isUserLoggedOut(state) {
+  return !!(state && state.auth);
 }
 
 export function authenticationErrored(state) {

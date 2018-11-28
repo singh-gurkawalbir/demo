@@ -19,8 +19,8 @@ const mapStateToProps = state => ({
   userEmail: userProfileEmail(state),
 });
 const mapDispatchToProps = dispatch => ({
-  handleAuthentication: message => {
-    dispatch(actions.auth.request(message));
+  handleAuthentication: (email, password) => {
+    dispatch(actions.auth.request(email, password));
   },
 });
 
@@ -79,12 +79,10 @@ class SignIn extends Component {
   };
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
-      email: e.target.email.value,
-      password: e.target.password.value,
-    });
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-    this.props.handleAuthentication(payload);
+    this.props.handleAuthentication(email, password);
   };
 
   render() {
@@ -100,7 +98,6 @@ class SignIn extends Component {
             id="email"
             label="Email"
             type="email"
-            rowsMax="1"
             margin="normal"
             value={dialogOpen ? userEmail : email}
             onChange={this.handleOnChangeEmail}
@@ -111,7 +108,6 @@ class SignIn extends Component {
             id="password"
             label="Password"
             type="password"
-            rowsMax="1"
             margin="normal"
             className={classes.textField}
           />

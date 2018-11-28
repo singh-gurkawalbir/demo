@@ -12,15 +12,19 @@ function action(type, payload = {}) {
 }
 
 const auth = {
-  request: message => action(actionTypes.AUTH_REQUEST, { message }),
+  request: (email, password) =>
+    action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   logout: () => action(actionTypes.USER_LOGOUT),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
+  changePassword: message =>
+    action(actionTypes.USER_CHANGE_PASSWORD, { message }),
 };
 const api = {
-  request: path => action(actionTypes.API_REQUEST, { path }),
+  request: (path, message) =>
+    action(actionTypes.API_REQUEST, { path, message }),
   retry: path => action(actionTypes.API_RETRY, { path }),
   complete: path => action(actionTypes.API_COMPLETE, { path }),
   failure: (path, message) =>
