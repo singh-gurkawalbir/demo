@@ -2,7 +2,7 @@ import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper } from '@material-ui/core';
-import CodeEditor from '../../components/CodeEditor2';
+import CodeEditor from '../../components/CodeEditor';
 // import UrlEditor from '../../components/AFE/Editor/UrlEditor';
 // import x from '../../components/AFE/Editor/HttpRequestBodyEditor';
 // import EditorDialog from '../../components/AFE/EditorDialog';

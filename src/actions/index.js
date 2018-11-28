@@ -70,13 +70,10 @@ const clearComms = () => action(actionTypes.CLEAR_COMMS);
 //
 // #region Editor actions
 const editor = {
-  init: (id, processor, rules, data) =>
-    action(actionTypes.EDITOR_INIT, { id, processor, rules, data }),
+  init: (id, processor, options) =>
+    action(actionTypes.EDITOR_INIT, { id, processor, options }),
+  patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
-  ruleChange: (id, rules) =>
-    action(actionTypes.EDITOR_RULE_CHANGE, { id, rules }),
-  dataChange: (id, data) =>
-    action(actionTypes.EDITOR_DATA_CHANGE, { id, data }),
   evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
   evaluateFailure: (id, error) =>
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),

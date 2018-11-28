@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Editor from './';
+import Editor from './HandlebarsEditor';
 
 @withStyles(() => ({
   gridTemplate: {
@@ -11,12 +11,11 @@ import Editor from './';
 }))
 export default class UrlEditor extends Component {
   render() {
-    const { id, rule, data, classes } = this.props;
+    const { editorId, classes, rule, data } = this.props;
 
     return (
       <Editor
-        id={id}
-        processor="handlebars"
+        editorId={editorId}
         rule={rule}
         data={data}
         templateClassName={classes.gridTemplate}
@@ -26,6 +25,8 @@ export default class UrlEditor extends Component {
         ruleTitle="Url Template"
         dataTitle="Sample Data"
         resultTitle="Evaluated Result"
+        showFullScreen={false}
+        showLayoutOptions={false}
       />
     );
   }

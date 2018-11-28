@@ -75,6 +75,8 @@ class EditorDialog extends Component {
       open = true,
       title,
       handlePreview,
+      showLayoutOptions = true,
+      showFullScreen = true,
       classes,
       width = '70vw',
       height = '50vh',
@@ -94,27 +96,31 @@ class EditorDialog extends Component {
             <Typography variant="h5">{title}</Typography>
           </div>
           <div className={classes.toggleContainer}>
-            <ToggleButtonGroup
-              value={layout}
-              exclusive
-              onChange={this.handleLayoutChange}>
-              <ToggleButton value="column">
-                <ViewColumnIcon />
+            {showLayoutOptions && (
+              <ToggleButtonGroup
+                value={layout}
+                exclusive
+                onChange={this.handleLayoutChange}>
+                <ToggleButton value="column">
+                  <ViewColumnIcon />
+                </ToggleButton>
+                <ToggleButton value="compact">
+                  <ViewCompactIcon />
+                </ToggleButton>
+                <ToggleButton value="row">
+                  <ViewRowIcon />
+                </ToggleButton>
+              </ToggleButtonGroup>
+            )}
+            {showFullScreen && (
+              <ToggleButton
+                className={classes.fullScreen}
+                value="max"
+                onClick={this.handleFullScreenClick}
+                selected={fullScreen}>
+                <ZoomOutIcon />
               </ToggleButton>
-              <ToggleButton value="compact">
-                <ViewCompactIcon />
-              </ToggleButton>
-              <ToggleButton value="row">
-                <ViewRowIcon />
-              </ToggleButton>
-            </ToggleButtonGroup>
-            <ToggleButton
-              className={classes.fullScreen}
-              value="max"
-              onClick={this.handleFullScreenClick}
-              selected={fullScreen}>
-              <ZoomOutIcon />
-            </ToggleButton>
+            )}
           </div>
         </div>
         <DialogContent style={size} className={classes.dialogContent}>

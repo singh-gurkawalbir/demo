@@ -22,10 +22,10 @@ export function editor(state, id) {
   return fromEditors.editor(state.editors, id);
 }
 
-export function editorProcessorOptions(state, id) {
+export function processorRequestOptions(state, id) {
   if (!state) return {};
 
-  return fromEditors.editorProcessorOptions(state.editors, id);
+  return fromEditors.processorRequestOptions(state.editors, id);
 }
 
 export function stagedResource(state, id) {

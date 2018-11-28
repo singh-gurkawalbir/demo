@@ -239,7 +239,4 @@ class AppBar extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppBar);
+export default connect(mapStateToProps, mapDispatchToProps)(AppBar);

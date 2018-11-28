@@ -53,7 +53,4 @@ class AlertDialog extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(AlertDialog);
+export default connect(mapStateToProps, null)(AlertDialog);

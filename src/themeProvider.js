@@ -22,6 +22,17 @@ const themes = {
     },
   },
 };
+/*
+Celigo Blue - #0E7DC1
+Celigo Lt Blue #12C7FF
+Celigo Orange - #FFA424
+Celigo Charcoal Grey - #424E59
+Celigo Dark Grey - #677A89 - TEXT
+Celigo Grey -#95ABBC
+Celigo Lt Grey -#D6E4ED
+Celigo Super Lt Grey - #F0F5F9
+Celigo White - #FFFFFF
+*/
 const defaultTheme = {
   typography: {
     useNextVariants: true,
