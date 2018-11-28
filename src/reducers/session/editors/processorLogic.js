@@ -41,23 +41,35 @@ function getLogic(editor) {
   return logic;
 }
 
-export default {
-  requestOptions: editor => ({
+const validate = editor => {
+  const result = getLogic(editor).validate(editor);
+  const errors = [];
+
+  if (result.ruleError) {
+    errors.push(result.ruleError);
+  }
+
+  if (result.dataError) {
+    errors.push(result.dataError);
+  }
+
+  return errors;
+};
+
+const requestOptions = editor => {
+  const validationErrors = validate(editor);
+
+  if (validationErrors.length) {
+    return { errors: validationErrors };
+  }
+
+  return {
     processor: editor.processor,
     body: getLogic(editor).requestBody(editor),
-  }),
-  validate: editor => {
-    const result = getLogic(editor).validate(editor);
-    const errors = [];
+  };
+};
 
-    if (result.ruleError) {
-      errors.push(result.ruleError);
-    }
-
-    if (result.dataError) {
-      errors.push(result.dataError);
-    }
-
-    return errors;
-  },
+export default {
+  requestOptions,
+  validate,
 };

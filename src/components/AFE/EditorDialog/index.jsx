@@ -138,7 +138,4 @@ class EditorDialog extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditorDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(EditorDialog);
