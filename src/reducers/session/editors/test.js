@@ -10,6 +10,7 @@ describe('editor reducers', () => {
 
     expect(newState).toEqual(oldState);
   });
+
   test('should return the default data and rules when editor is inialized', () => {
     // {
     //   type, processor, id, rules, data, result, error;
@@ -129,6 +130,85 @@ describe('editor selectors', () => {
     test('should return empty object when no match found.', () => {
       expect(selectors.editor(undefined, 'key')).toEqual({});
       expect(selectors.editor({}, 'key')).toEqual({});
+    });
+  });
+
+  describe(`processorRequestOptions`, () => {
+    test('should return empty object when no match found.', () => {
+      expect(selectors.processorRequestOptions(undefined, 'missingId')).toEqual(
+        {}
+      );
+      expect(selectors.processorRequestOptions({}, 'missingId')).toEqual({});
+    });
+
+    const processorTestData = [
+      {
+        processor: 'handlebars',
+        valid: {
+          initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
+          expectedRequest: {
+            body: {
+              data: { a: 123 },
+              rules: { strict: true, template: '{{a}}' },
+            },
+            processor: 'handlebars',
+          },
+        },
+        invalid: {
+          initOpts: { template: '{{a}', data: '{a: xxx}' },
+          expectedErrors: ['Unexpected token a in JSON at position 1'],
+        },
+      },
+      {
+        processor: 'merge',
+        valid: {
+          initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
+          expectedRequest: {
+            body: {
+              data: [{ a: 123 }],
+              rules: { b: true },
+            },
+            processor: 'merge',
+          },
+        },
+        invalid: {
+          initOpts: { rule: '{a: xx}', data: '{b: t}' },
+          expectedErrors: [
+            'Unexpected token a in JSON at position 1',
+            'Unexpected token b in JSON at position 1',
+          ],
+        },
+      },
+    ];
+
+    processorTestData.forEach(testData => {
+      describe(`${testData.processor}`, () => {
+        test(`should return correct opts for valid editor.`, () => {
+          const id = 1;
+          const state = reducer(
+            undefined,
+            actions.editor.init(id, testData.processor, testData.valid.initOpts)
+          );
+          const requestOpts = selectors.processorRequestOptions(state, id);
+
+          expect(requestOpts).toEqual(testData.valid.expectedRequest);
+        });
+
+        test(`should return errors for invalid editor.`, () => {
+          const id = 1;
+          const state = reducer(
+            undefined,
+            actions.editor.init(
+              id,
+              testData.processor,
+              testData.invalid.initOpts
+            )
+          );
+          const requestOpts = selectors.processorRequestOptions(state, id);
+
+          expect(requestOpts.errors).toEqual(testData.invalid.expectedErrors);
+        });
+      });
     });
   });
 });

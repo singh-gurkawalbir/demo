@@ -162,7 +162,14 @@ export function* auth({ message }) {
 export function* evaluateProcessor({ id }) {
   const getProcessorOptions = state =>
     selectors.processorRequestOptions(state, id);
-  const { processor, body } = yield select(getProcessorOptions);
+  const { errors, processor, body } = yield select(getProcessorOptions);
+
+  if (errors && errors.length) {
+    return yield put(
+      actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2))
+    );
+  }
+
   // console.log(`editorProcessorOptions for ${id}`, processor, body);
   const path = `/processors/${processor}`;
   const opts = {

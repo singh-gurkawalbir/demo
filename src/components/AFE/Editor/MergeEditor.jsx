@@ -30,9 +30,6 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
       })
     );
   },
-  handlePreview: () => {
-    dispatch(actions.editor.evaluateRequest(editorId));
-  },
 });
 
 class MergeEditor extends Component {

@@ -133,7 +133,4 @@ class Add extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Add);
+export default connect(mapStateToProps, mapDispatchToProps)(Add);
