@@ -99,20 +99,16 @@ export function* getResourceCollection({ resourceType }) {
 }
 
 export function* commitStagedChanges({ resourceType, id }) {
-  const getResourceData = state =>
-    selectors.resourceData(state, resourceType, id);
-  const { patch, merged, master } = yield select(getResourceData);
-
-  // console.log('resourceData', resourceData);
-  // const { patch, merged, master } = resourceData;
+  const { patch, merged, master } = yield select(
+    selectors.resourceData,
+    resourceType,
+    id
+  );
 
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
   const origin = yield call(apiCallWithRetry, path);
-
-  // console.log('latest', latest);
-  // console.log('resource', resource);
 
   if (origin.lastModified !== master.lastModified) {
     let conflict = jsonPatch.compare(master, origin);
@@ -160,9 +156,13 @@ export function* auth({ message }) {
 }
 
 export function* evaluateProcessor({ id }) {
-  const getProcessorOptions = state =>
-    selectors.processorRequestOptions(state, id);
-  const { errors, processor, body } = yield select(getProcessorOptions);
+  const reqOpts = yield select(selectors.processorRequestOptions, id);
+
+  if (!reqOpts) {
+    return; // nothing to do...
+  }
+
+  const { errors, processor, body } = reqOpts;
 
   if (errors && errors.length) {
     return yield put(

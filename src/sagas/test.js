@@ -2,14 +2,17 @@
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import actions, { availableResources } from '../actions';
+import * as selectors from '../reducers';
 import rootSaga, {
   apiCallWithRetry,
   getResource,
   getResourceCollection,
   auth,
+  evaluateProcessor,
+  commitStagedChanges,
 } from './';
 import { api, APIException, authParams } from '../utils/api';
 
@@ -245,5 +248,191 @@ describe('auth saga flow', () => {
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.profile.delete()));
+  });
+});
+
+describe('evaluateProcessor saga', () => {
+  test('should do nothing if no editor exists with given id', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+
+    const effect = saga.next();
+
+    expect(effect.done).toEqual(true);
+  });
+
+  test('should complete with dispatch of failure action when editor has validation errors.', () => {
+    const id = 1;
+    const errors = ['error'];
+    const saga = evaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+
+    const putEffect = saga.next({ errors }).value;
+
+    expect(putEffect).toEqual(
+      put(actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2)))
+    );
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should complete with dispatch of evaluate response when editor is valid.', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+
+    const selectResponse = { processor: 'p', body: 'body' };
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'post',
+      body: '"body"',
+    };
+
+    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
+
+    const apiResult = 'result';
+    const putEffect = saga.next(apiResult).value;
+
+    console.log(putEffect);
+
+    expect(putEffect).toEqual(
+      put(actions.editor.evaluateResponse(id, apiResult))
+    );
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should complete with dispatch of evaluate failure when api call fails.', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+
+    const selectResponse = { processor: 'p', body: 'body' };
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'post',
+      body: '"body"',
+    };
+
+    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
+
+    const putEffect = saga.throw(new Error('boom')).value;
+
+    expect(putEffect).toEqual(put(actions.editor.evaluateFailure(id, 'boom')));
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+});
+
+describe('commitStagedChanges saga', () => {
+  const id = 1;
+  const resourceType = 'dogs';
+
+  test('should do nothing if no staged changes exist.', () => {
+    const saga = commitStagedChanges({ resourceType, id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(
+      select(selectors.resourceData, resourceType, id)
+    );
+
+    const effect = saga.next({});
+
+    expect(effect.done).toEqual(true);
+  });
+
+  test('should complete with dispatch of conflict and received actions when origin does not match master.', () => {
+    const saga = commitStagedChanges({ resourceType, id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(
+      select(selectors.resourceData, resourceType, id)
+    );
+
+    const callEffect = saga.next({ master: { lastModified: 50 }, patch: true })
+      .value;
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, `/${resourceType}/${id}`)
+    );
+
+    const origin = { id, lastModified: 100 };
+    const putEffect = saga.next(origin).value;
+    const conflict = [
+      {
+        op: 'add',
+        path: '/id',
+        value: 1,
+      },
+    ];
+
+    expect(putEffect).toEqual(
+      put(actions.resource.commitConflict(id, conflict))
+    );
+
+    expect(saga.next().value).toEqual(
+      put(actions.resource.received(resourceType, origin))
+    );
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should complete with dispatch of received and clear stage actions when commit succeeds.', () => {
+    const saga = commitStagedChanges({ resourceType, id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(
+      select(selectors.resourceData, resourceType, id)
+    );
+
+    const origin = { id, lastModified: 100 };
+    const merged = { id, lastModified: 100 };
+    const path = `/${resourceType}/${id}`;
+    const getCallEffect = saga.next({
+      master: { lastModified: 100 },
+      merged,
+      patch: true,
+    }).value;
+
+    expect(getCallEffect).toEqual(call(apiCallWithRetry, path));
+
+    const putCallEffect = saga.next(merged, origin).value;
+
+    expect(putCallEffect).toEqual(
+      call(apiCallWithRetry, path, {
+        method: 'put',
+        body: JSON.stringify(merged),
+      })
+    );
+
+    const updated = { id: 1 };
+    const putEffect = saga.next(updated).value;
+
+    expect(putEffect).toEqual(
+      put(actions.resource.received(resourceType, updated))
+    );
+
+    expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
   });
 });
