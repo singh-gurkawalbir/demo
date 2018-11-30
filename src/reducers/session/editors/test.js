@@ -143,6 +143,34 @@ describe('editor selectors', () => {
 
     const processorTestData = [
       {
+        processor: 'csvParser',
+        valid: {
+          initOpts: {
+            rowDelimiter: 'cr',
+            columnDelimiter: ',',
+            hasHeaderRow: true,
+            trimSpaces: true,
+            data: 'a,b,c',
+          },
+          expectedRequest: {
+            body: {
+              data: 'a,b,c',
+              rules: {
+                rowDelimiter: 'cr',
+                columnDelimiter: ',',
+                hasHeaderRow: true,
+                trimSpaces: true,
+              },
+            },
+            processor: 'csvParser',
+          },
+        },
+        invalid: {
+          initOpts: { data: '' },
+          expectedErrors: ['Must provide some sample data.'],
+        },
+      },
+      {
         processor: 'handlebars',
         valid: {
           initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
