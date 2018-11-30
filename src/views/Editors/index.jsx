@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../components/AFE/EditorDialog/UrlEditorDialog';
 import MergeEditorDialog from '../../components/AFE/EditorDialog/MergeEditorDialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/EditorDialog/HttpRequestBodyEditorDialog';
+import CsvParseEditorDialog from '../../components/AFE/EditorDialog/CsvParseEditorDialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
@@ -98,6 +99,15 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+
+      case 'CsvParseEditor':
+        return (
+          <CsvParseEditorDialog
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -124,6 +134,12 @@ export default class Editors extends Component {
         label: 'Merge Editor',
         description:
           'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
+      },
+      {
+        name: 'CsvParseEditor',
+        label: 'CSV Parser',
+        description:
+          'This processor converts comma seperated values into JSON.',
       },
     ];
 

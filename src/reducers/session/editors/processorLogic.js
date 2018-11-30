@@ -9,6 +9,23 @@ function validateJsonString(s) {
 }
 
 const allLogic = {
+  csvParser: {
+    requestBody: editor => ({
+      rules: {
+        columnDelimiter: editor.columnDelimiter,
+        rowDelimiter: editor.rowDelimiter,
+        keyColumns: editor.keyColumns,
+        hasHeaderRow: editor.hasHeaderRow,
+        trimSpaces: editor.trimSpaces,
+      },
+      data: editor.data,
+    }),
+    validate: editor => ({
+      ruleError: null,
+      dataError:
+        !editor.data && !editor.data.length && 'Must provide some sample data.',
+    }),
+  },
   merge: {
     requestBody: editor => ({
       rules: JSON.parse(editor.rule),
