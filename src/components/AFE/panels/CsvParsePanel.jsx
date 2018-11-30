@@ -34,8 +34,8 @@ class CsvParsePanel extends Component {
   render() {
     const { editor, patchEditor, classes } = this.props;
     const {
-      columnDelimiter = ',',
-      rowDelimiter = 'cr',
+      columnDelimiter = '',
+      rowDelimiter = '',
       // keyColumns,
       hasHeaderRow = true,
       trimSpaces = true,
