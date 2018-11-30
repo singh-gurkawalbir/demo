@@ -11,6 +11,7 @@ const defaults = {
   },
   text: {
     showGutter: false,
+    showInvisibles: true,
   },
 };
 
@@ -53,6 +54,7 @@ export default class CodePanel extends Component {
         height={height}
         width={width}
         showGutter={config.showGutter}
+        showInvisibles={config.showInvisibles}
         enableLiveAutocompletion={config.enableLiveAutocompletion}
         onChange={onChange}
       />

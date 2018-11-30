@@ -59,7 +59,7 @@ class csvParseEditor extends Component {
           <CodePanel
             name="data"
             value={data}
-            mode="csv"
+            mode="text"
             onChange={handleDataChange}
           />
         </PanelGridItem>

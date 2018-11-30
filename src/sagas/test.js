@@ -302,8 +302,6 @@ describe('evaluateProcessor saga', () => {
     const apiResult = 'result';
     const putEffect = saga.next(apiResult).value;
 
-    console.log(putEffect);
-
     expect(putEffect).toEqual(
       put(actions.editor.evaluateResponse(id, apiResult))
     );

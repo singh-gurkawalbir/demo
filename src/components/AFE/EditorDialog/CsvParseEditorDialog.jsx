@@ -21,7 +21,7 @@ export default class CsvParseEditorDialog extends Component {
         id={id}
         open={open}
         showLayoutOptions={false}
-        showFullScreen={false}
+        showFullScreen
         layout={layout}
         title={title}
         width={width}

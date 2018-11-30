@@ -78,6 +78,7 @@ export default class Editors extends Component {
       case 'UrlEditor':
         return (
           <UrlEditorDialog
+            title="Create URL template"
             id={editorName}
             data={rawData}
             onClose={this.handleClose}
@@ -86,6 +87,7 @@ export default class Editors extends Component {
       case 'HttpRequestBodyEditor':
         return (
           <HttpRequestBodyEditorDialog
+            title="Create HTTP Request Body"
             id={editorName}
             data={rawData}
             onClose={this.handleClose}
@@ -94,6 +96,7 @@ export default class Editors extends Component {
       case 'MergeEditor':
         return (
           <MergeEditorDialog
+            title="Apply Default Values"
             id={editorName}
             data={rawData}
             onClose={this.handleClose}
@@ -103,6 +106,7 @@ export default class Editors extends Component {
       case 'CsvParseEditor':
         return (
           <CsvParseEditorDialog
+            title="Delimited File Parser"
             id={editorName}
             data={rawData}
             onClose={this.handleClose}

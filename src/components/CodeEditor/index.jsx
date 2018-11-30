@@ -58,6 +58,7 @@ class CodeEditor extends Component {
       width,
       height,
       showGutter,
+      showInvisibles,
       enableLiveAutocompletion,
       classes,
     } = this.props;
@@ -84,6 +85,7 @@ class CodeEditor extends Component {
         setOptions={{
           // enableBasicAutocompletion: false,
           enableLiveAutocompletion,
+          showInvisibles,
           // showLineNumbers: true,
           tabSize: 2,
         }}
