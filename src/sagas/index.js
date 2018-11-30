@@ -2,7 +2,7 @@ import {
   all,
   call,
   put,
-  // takeLatest,
+  takeLatest,
   takeEvery,
   select,
 } from 'redux-saga/effects';
@@ -186,6 +186,22 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
+export function* autoEvaluateProcessor({ id }) {
+  const editor = yield select(selectors.editor, id);
+
+  if (!editor || (editor.violations && editor.violations.length)) {
+    return; // nothing to do...
+  }
+
+  if (!editor.autoEvaluate) return;
+
+  if (editor.autoEvaluateDelay) {
+    yield call(delay, editor.autoEvaluateDelay);
+  }
+
+  return yield call(evaluateProcessor, { id });
+}
+
 function* setAuthWhenSessionValid() {
   try {
     const resp = yield call(getResource, actions.profile.request());
@@ -218,5 +234,6 @@ export default function* rootSaga() {
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
     takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+    takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
   ]);
 }

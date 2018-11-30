@@ -19,7 +19,13 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
     dispatch(actions.editor.patch(editorId, { data }));
   },
   handleInit: () => {
-    dispatch(actions.editor.init(editorId, 'csvParser', { data, ...rule }));
+    dispatch(
+      actions.editor.init(editorId, 'csvParser', {
+        data,
+        autoEvaluate: true,
+        ...rule,
+      })
+    );
   },
 });
 
@@ -59,7 +65,7 @@ class csvParseEditor extends Component {
           <CodePanel
             name="data"
             value={data}
-            mode="csv"
+            mode="text"
             onChange={handleDataChange}
           />
         </PanelGridItem>

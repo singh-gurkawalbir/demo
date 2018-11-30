@@ -25,6 +25,8 @@ const mapDispatchToProps = (dispatch, { editorId, strict, rule, data }) => ({
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
         strict,
+        autoEvaluate: true,
+        autoEvaluateDelay: 300,
         template: rule,
         data,
       })

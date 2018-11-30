@@ -10,16 +10,31 @@ function validateJsonString(s) {
 
 const allLogic = {
   csvParser: {
-    requestBody: editor => ({
-      rules: {
-        columnDelimiter: editor.columnDelimiter,
-        rowDelimiter: editor.rowDelimiter,
-        keyColumns: editor.keyColumns,
-        hasHeaderRow: editor.hasHeaderRow,
-        trimSpaces: editor.trimSpaces,
-      },
-      data: editor.data,
-    }),
+    requestBody: editor => {
+      const rowDelimiterMap = {
+        '': undefined,
+        cr: '\r',
+        lf: '\n',
+        crlf: '\r\n',
+      };
+      const columnDelimiterMap = {
+        '': undefined,
+        ',': ',',
+        '|': '|',
+        tab: '\t',
+      };
+
+      return {
+        rules: {
+          columnDelimiter: columnDelimiterMap[editor.columnDelimiter],
+          rowDelimiter: rowDelimiterMap[editor.rowDelimiter],
+          keyColumns: editor.keyColumns,
+          hasHeaderRow: editor.hasHeaderRow,
+          trimSpaces: editor.trimSpaces,
+        },
+        data: editor.data,
+      };
+    },
     validate: editor => ({
       ruleError: null,
       dataError:

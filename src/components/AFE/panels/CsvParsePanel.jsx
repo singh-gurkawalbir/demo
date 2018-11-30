@@ -34,8 +34,8 @@ class CsvParsePanel extends Component {
   render() {
     const { editor, patchEditor, classes } = this.props;
     const {
-      columnDelimiter = ',',
-      rowDelimiter = 'cr',
+      columnDelimiter = '',
+      rowDelimiter = '',
       // keyColumns,
       hasHeaderRow = true,
       trimSpaces = true,
@@ -72,15 +72,16 @@ class CsvParsePanel extends Component {
               }
               inputProps={{ id: 'rowDelimiter' }}>
               <option value="">Auto Detect</option>
-              <option value="cr">\n</option>
-              <option value="lf">\r</option>
-              <option value="crlf">\n\r</option>
+              <option value="cr">CR (\r)</option>
+              <option value="lf">LF (\n)</option>
+              <option value="crlf">CRLF (\r\n)</option>
             </Select>
           </FormControl>
 
           <FormControlLabel
             control={
               <Checkbox
+                color="primary"
                 checked={hasHeaderRow}
                 onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
               />
@@ -90,6 +91,7 @@ class CsvParsePanel extends Component {
           <FormControlLabel
             control={
               <Checkbox
+                color="primary"
                 checked={trimSpaces}
                 onChange={() => patchEditor('trimSpaces', !trimSpaces)}
               />

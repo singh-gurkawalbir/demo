@@ -146,8 +146,8 @@ describe('editor selectors', () => {
         processor: 'csvParser',
         valid: {
           initOpts: {
-            rowDelimiter: 'cr',
-            columnDelimiter: ',',
+            rowDelimiter: 'crlf',
+            columnDelimiter: 'tab',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',
@@ -156,8 +156,8 @@ describe('editor selectors', () => {
             body: {
               data: 'a,b,c',
               rules: {
-                rowDelimiter: 'cr',
-                columnDelimiter: ',',
+                rowDelimiter: '\r\n',
+                columnDelimiter: '\t',
                 hasHeaderRow: true,
                 trimSpaces: true,
               },
