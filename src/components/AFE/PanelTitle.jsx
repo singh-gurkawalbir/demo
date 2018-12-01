@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
   title: {
     paddingLeft: theme.spacing.unit,
     backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.common.white,
     borderBottom: `solid 1px ${theme.palette.secondary.light}`,
   },
 }))

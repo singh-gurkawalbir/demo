@@ -45,6 +45,10 @@ const mapDispatchToProps = (dispatch, { id }) => ({
   fullScreen: {
     marginLeft: `${theme.spacing.unit * 2}px`,
   },
+  actions: {
+    marginRight: theme.spacing.unit * 3 - 2,
+    marginBottom: theme.spacing.unit * 1.5,
+  },
 }))
 class EditorDialog extends Component {
   state = {
@@ -127,14 +131,19 @@ class EditorDialog extends Component {
         <DialogContent style={size} className={classes.dialogContent}>
           {children && cloneElement(children, { layout })}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className={classes.actions}>
           {!editor.autoEvaluate && (
             <Button onClick={handlePreview}>Preview</Button>
           )}
-          <Button onClick={() => this.handleClose()} color="primary">
+          <Button
+            variant="contained"
+            onClick={() => this.handleClose()}
+            color="secondary">
             Cancel
           </Button>
-          <Button onClick={() => this.handleClose(true)}>Save</Button>
+          <Button variant="contained" onClick={() => this.handleClose(true)}>
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     );
