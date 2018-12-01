@@ -26,9 +26,14 @@ const mapStateToProps = state => ({
     flex: 1,
   },
   celigoLogo: {
-    width: 120,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    float: 'left',
+    position: 'static',
+    height: 55,
+    width: 140,
+    // marginLeft: theme.spacing.unit * 2,
+    background: `url(${
+      process.env.CDN_BASE_URI
+    }flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   playground: {
     textDecoration: 'none',
@@ -115,14 +120,10 @@ export class Appbar extends Component {
             </IconButton>
 
             <div className={classes.flex}>
-              <Link className={classes.playground} to="/pg/">
-                <img
-                  src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
-                  srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
-                  alt="Celigo Logo"
-                  className={classNames(classes.celigoLogo)}
-                />
-              </Link>
+              <Link
+                className={classNames(classes.celigoLogo, classes.playground)}
+                to="/pg/"
+              />
             </div>
             {authenticated && <ProfileMenu />}
           </Toolbar>

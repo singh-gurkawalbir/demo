@@ -34,6 +34,12 @@ const themes = {
           light: '#12C7FF', // Celigo Lt Blue #12C7FF
           main: '#0E7DC1', // Celigo Blue
         },
+        // text: {
+        //   primary: '#rrggbb',
+        //   secondary: '#rrggbb',
+        //   disabled: '#rrggbb',
+        //   hint: '#rrggbb',
+        // },
       },
     },
   },
