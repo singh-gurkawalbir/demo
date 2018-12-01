@@ -4,35 +4,73 @@ import { DEFAULT_THEME } from './reducers/user';
 const Roboto300 = { fontFamily: 'Roboto300, sans-serif' };
 const Roboto400 = { fontFamily: 'Roboto400, sans-serif' };
 const Roboto500 = { fontFamily: 'Roboto500, sans-serif' };
+/*
+  Celigo Blue - #0E7DC1
+  Celigo Lt Blue #12C7FF
+  Celigo Orange - #FFA424
+  Celigo Charcoal Grey - #424E59
+  Celigo Dark Grey - #6A7B89 - TEXT
+  Celigo Grey -#95ABBC
+  Celigo Lt Grey -#D6E4ED
+  Celigo Super Lt Grey - #F0F5F9
+  Celigo White - #FFFFFF
+*/
 const themes = {
   light: {
     name: 'Celigo Light Theme',
     overrides: {
+      appBarBackground: '#6A7B89', // Celigo Dark Grey,
       palette: {
         type: 'light',
+        background: {
+          paper: '#D6E4ED', // Lt Grey
+          default: '#F0F5F9', // Celigo Super Lt Grey
+        },
+        // action: {[object]},
+        primary: {
+          main: '#FFA424', // Celigo Orange
+        },
+        secondary: {
+          light: '#12C7FF', // Celigo Lt Blue #12C7FF
+          main: '#0E7DC1', // Celigo Blue
+        },
+        // text: {
+        //   primary: '#rrggbb',
+        //   secondary: '#rrggbb',
+        //   disabled: '#rrggbb',
+        //   hint: '#rrggbb',
+        // },
       },
     },
   },
   dark: {
     name: 'Celigo Dark Theme',
     overrides: {
+      appBarBackground: '#323E49',
+      // appBarBackground: '#424E59', // Celigo Charcoal Grey,
       palette: {
         type: 'dark',
+        background: {
+          paper: '#677A89', // Dark Grey
+          default: '#424E59', // Celigo Charcoal Grey,
+        },
+        // action: {[object]},
+        primary: {
+          main: '#FFA424', // Celigo Orange
+        },
+        secondary: {
+          light: '#12C7FF', // Celigo Lt Blue #12C7FF
+          main: '#0E7DC1', // Celigo Blue
+        },
+        // error: {
+        //   light: '#rrggbb',
+        //   main: '#rrggbb',
+        //   dark: '#rrggbb',
+        // },
       },
     },
   },
 };
-/*
-Celigo Blue - #0E7DC1
-Celigo Lt Blue #12C7FF
-Celigo Orange - #FFA424
-Celigo Charcoal Grey - #424E59
-Celigo Dark Grey - #677A89 - TEXT
-Celigo Grey -#95ABBC
-Celigo Lt Grey -#D6E4ED
-Celigo Super Lt Grey - #F0F5F9
-Celigo White - #FFFFFF
-*/
 const defaultTheme = {
   typography: {
     useNextVariants: true,

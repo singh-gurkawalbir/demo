@@ -81,7 +81,7 @@ class CsvParsePanel extends Component {
           <FormControlLabel
             control={
               <Checkbox
-                color="primary"
+                // color="primary"
                 checked={hasHeaderRow}
                 onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
               />
@@ -91,7 +91,7 @@ class CsvParsePanel extends Component {
           <FormControlLabel
             control={
               <Checkbox
-                color="primary"
+                // color="primary"
                 checked={trimSpaces}
                 onChange={() => patchEditor('trimSpaces', !trimSpaces)}
               />

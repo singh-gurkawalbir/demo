@@ -219,7 +219,7 @@ class AppBar extends Component {
                 onClick={this.handleClose}
                 variant="contained"
                 size="small"
-                color="primary"
+                color="secondary"
                 className={classes.button}>
                 My Profile
               </Button>

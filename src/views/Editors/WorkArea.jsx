@@ -7,12 +7,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import CodeEditor from '../../components/CodeEditor';
-
-const sampleData = {
-  json: { id: 123, name: 'Bob', active: true },
-  csv: `id,name,active\n123,bob,true`,
-  xml: `<user id="123"><name>bob<name><active>true</active></user>`,
-};
+import sampleData from './sampleData';
 
 @hot(module)
 @withStyles(theme => ({
@@ -23,7 +18,7 @@ const sampleData = {
     height: '25vh',
   },
   caption: {
-    marginTop: `${theme.spacing.unit}px`,
+    marginTop: `${theme.spacing.unit * 2}px`,
   },
   title: {
     marginBottom: `${theme.spacing.unit}px`,
@@ -36,11 +31,12 @@ const sampleData = {
   },
   sampleType: {
     float: 'right',
+    paddingBottom: `${theme.spacing.unit}px`,
   },
 }))
 export default class WorkArea extends Component {
   state = {
-    sampleType: 'json',
+    sampleType: 'json1',
   };
 
   handleChange = event => {
@@ -48,12 +44,12 @@ export default class WorkArea extends Component {
     const sampleType = event.target.value;
 
     this.setState({ sampleType });
-    onChange(sampleData[sampleType]);
+    onChange(sampleData[sampleType].data);
   };
   render() {
     const { rawData, onChange, classes } = this.props;
     const { sampleType } = this.state;
-    const mode = sampleType === 'csv' ? 'text' : sampleType;
+    const { mode } = sampleData[sampleType];
 
     return (
       <Fragment>
@@ -63,7 +59,7 @@ export default class WorkArea extends Component {
 
         <Paper className={classes.paper}>
           <Typography variant="body1">
-            Click on a processor in the left margin to launch it. The raw data
+            Click on any editor in the left margin to launch it. The raw data
             below will be used as the input.
           </Typography>
 
@@ -81,11 +77,12 @@ export default class WorkArea extends Component {
                 <Select
                   value={this.state.sampleType}
                   onChange={this.handleChange}
-                  displayEmpty
-                  className={classes.selectEmpty}>
-                  <MenuItem value="json">JSON Sample</MenuItem>
-                  <MenuItem value="csv">CSV Sample</MenuItem>
-                  <MenuItem value="xml">XML Sample</MenuItem>
+                  displayEmpty>
+                  {Object.keys(sampleData).map(key => (
+                    <MenuItem key={key} value={key}>
+                      {sampleData[key].name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </div>

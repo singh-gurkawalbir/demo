@@ -1,8 +1,9 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
@@ -18,13 +19,21 @@ const mapStateToProps = state => ({
   root: {
     flexGrow: 1,
   },
+  appBar: {
+    backgroundColor: theme.appBarBackground,
+  },
   flex: {
     flex: 1,
   },
   celigoLogo: {
-    width: 120,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    float: 'left',
+    position: 'static',
+    height: 55,
+    width: 140,
+    // marginLeft: theme.spacing.unit * 2,
+    background: `url(${
+      process.env.CDN_BASE_URI
+    }flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   playground: {
     textDecoration: 'none',
@@ -101,34 +110,21 @@ export class Appbar extends Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar className={classes.appBar} position="static">
           <Toolbar>
-            {authenticated && (
-              <Fragment>
-                <IconButton
-                  onClick={onToggleDrawer}
-                  className={classes.menuButton}
-                  color="inherit"
-                  aria-label="Menu">
-                  <MenuIcon className={classes.icon} />
-                </IconButton>
+            <IconButton
+              onClick={onToggleDrawer}
+              className={classes.menuButton}
+              aria-label="Menu">
+              <MenuIcon className={classes.icon} />
+            </IconButton>
 
-                <Link className={classes.playground} to="/pg/">
-                  <Typography
-                    variant="h6"
-                    color="inherit"
-                    className={classes.flex}>
-                    integrator.io
-                  </Typography>
-                </Link>
-              </Fragment>
-            )}
-            <img
-              src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
-              srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
-              alt="Celigo Logo"
-              className={classes.celigoLogo}
-            />
+            <div className={classes.flex}>
+              <Link
+                className={classNames(classes.celigoLogo, classes.playground)}
+                to="/pg/"
+              />
+            </div>
             {authenticated && <ProfileMenu />}
           </Toolbar>
         </AppBar>

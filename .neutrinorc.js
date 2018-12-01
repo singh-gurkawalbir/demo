@@ -112,6 +112,7 @@ module.exports = {
         'API_PASSWORD',
         'AUTO_LOGIN',
         'NETWORK_THRESHOLD',
+        'CDN_BASE_URI',
       ],
     ],
     neutrino => {
