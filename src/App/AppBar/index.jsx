@@ -1,8 +1,9 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
@@ -17,6 +18,9 @@ const mapStateToProps = state => ({
 @withStyles(theme => ({
   root: {
     flexGrow: 1,
+  },
+  appBar: {
+    backgroundColor: theme.appBarBackground,
   },
   flex: {
     flex: 1,
@@ -101,34 +105,25 @@ export class Appbar extends Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar className={classes.appBar} position="static">
           <Toolbar>
-            {authenticated && (
-              <Fragment>
-                <IconButton
-                  onClick={onToggleDrawer}
-                  className={classes.menuButton}
-                  color="inherit"
-                  aria-label="Menu">
-                  <MenuIcon className={classes.icon} />
-                </IconButton>
+            <IconButton
+              onClick={onToggleDrawer}
+              className={classes.menuButton}
+              aria-label="Menu">
+              <MenuIcon className={classes.icon} />
+            </IconButton>
 
-                <Link className={classes.playground} to="/pg/">
-                  <Typography
-                    variant="h6"
-                    color="inherit"
-                    className={classes.flex}>
-                    integrator.io
-                  </Typography>
-                </Link>
-              </Fragment>
-            )}
-            <img
-              src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
-              srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
-              alt="Celigo Logo"
-              className={classes.celigoLogo}
-            />
+            <div className={classes.flex}>
+              <Link className={classes.playground} to="/pg/">
+                <img
+                  src="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg"
+                  srcSet="https://www.celigo.com/wp-content/uploads/celigo-logo-white.svg 1x"
+                  alt="Celigo Logo"
+                  className={classNames(classes.celigoLogo)}
+                />
+              </Link>
+            </div>
             {authenticated && <ProfileMenu />}
           </Toolbar>
         </AppBar>

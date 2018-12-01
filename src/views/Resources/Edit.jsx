@@ -184,21 +184,21 @@ class Edit extends Component {
                   <Button
                     onClick={handleCommitChanges}
                     size="small"
-                    color="secondary">
+                    color="primary">
                     Commit Changes
                   </Button>
 
                   <Button
                     onClick={handleRevertChanges}
                     size="small"
-                    color="primary">
+                    color="secondary">
                     Revert All
                   </Button>
 
                   <Button
                     onClick={handleUndoChange}
                     size="small"
-                    color="primary">
+                    color="secondary">
                     Undo Last Change
                   </Button>
                 </div>
