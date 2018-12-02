@@ -4,12 +4,11 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 // import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
 import { isAuthenticated } from '../../reducers';
+import WaffleBox from './WaffleBox';
 
 const mapStateToProps = state => ({
   authenticated: isAuthenticated(state),
@@ -35,58 +34,6 @@ const mapStateToProps = state => ({
       process.env.CDN_BASE_URI
     }flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
-  playground: {
-    textDecoration: 'none',
-    color: 'white',
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  icon: {
-    fill: theme.palette.light,
-  },
-  bigAvatar: {
-    marginLeft: theme.spacing.unit,
-    width: 60,
-    height: 60,
-  },
-  button: {
-    margin: theme.spacing.unit,
-  },
-  profileMenu: {
-    padding: theme.spacing.unit,
-  },
-  arrow: {
-    position: 'absolute',
-    fontSize: 7,
-    width: '3em',
-    height: '3em',
-    '&::before': {
-      content: '""',
-      margin: 'auto',
-      display: 'block',
-      width: 0,
-      height: 0,
-      borderStyle: 'solid',
-    },
-  },
-  popper: {
-    zIndex: 1,
-    '&[x-placement*="bottom"] $arrow': {
-      top: 0,
-      left: 0,
-      marginTop: '-0.9em',
-      width: '3em',
-      height: '1em',
-      '&::before': {
-        borderWidth: '0 1em 1em 1em',
-        borderColor: `transparent transparent ${
-          theme.palette.background.paper
-        } transparent`,
-      },
-    },
-  },
 }))
 export class Appbar extends Component {
   state = {
@@ -106,25 +53,16 @@ export class Appbar extends Component {
   };
 
   render() {
-    const { classes, onToggleDrawer, authenticated } = this.props;
+    const { classes, authenticated } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar} position="static">
           <Toolbar>
-            <IconButton
-              onClick={onToggleDrawer}
-              className={classes.menuButton}
-              aria-label="Menu">
-              <MenuIcon className={classes.icon} />
-            </IconButton>
-
             <div className={classes.flex}>
-              <Link
-                className={classNames(classes.celigoLogo, classes.playground)}
-                to="/pg/"
-              />
+              <Link className={classNames(classes.celigoLogo)} to="/pg/" />
             </div>
+            <WaffleBox />
             {authenticated && <ProfileMenu />}
           </Toolbar>
         </AppBar>
