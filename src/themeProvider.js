@@ -20,6 +20,7 @@ const themes = {
     name: 'Celigo Light Theme',
     overrides: {
       appBarBackground: '#6A7B89', // Celigo Dark Grey,
+      appBarContrast: '#F0F5F9', // Celigo Super Lt Grey,
       palette: {
         type: 'light',
         background: {
@@ -46,8 +47,9 @@ const themes = {
   dark: {
     name: 'Celigo Dark Theme',
     overrides: {
-      appBarBackground: '#323E49',
       // appBarBackground: '#424E59', // Celigo Charcoal Grey,
+      appBarBackground: '#323E49',
+      appBarContrast: '#95ABBC', // Celigo Grey,
       palette: {
         type: 'dark',
         background: {
