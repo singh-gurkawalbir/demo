@@ -8,7 +8,7 @@ export default class PrivateRoute extends Component {
     const {
       component: Component,
       authenticated,
-      redirectTo,
+      redirectTo = '/pg/signin',
       rest,
     } = this.props;
 

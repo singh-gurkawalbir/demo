@@ -1,56 +1,98 @@
 import { Component } from 'react';
-import { bool, func, shape, string } from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import { Controlled } from 'react-codemirror2';
-import 'codemirror/mode/xml/xml';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
-import 'codemirror/theme/monokai.css';
+import AceEditor from 'react-ace';
+import 'brace/mode/javascript';
+import 'brace/mode/handlebars';
+import 'brace/mode/json';
+import 'brace/mode/xml';
+import 'brace/theme/monokai';
+import 'brace/theme/tomorrow';
+import 'brace/ext/language_tools';
+import * as selectors from '../../reducers/user';
 
-// This component is no longer used. We can move back to CodeMirror,
-// but for now we are experimenting with react-ace instead.
-// please use the "CodeEditor2" component.
+const mapStateToProps = state => ({
+  theme: selectors.editorTheme(state.user),
+});
+
 @withStyles({
-  root: {
-    fontSize: 16,
-  },
+  // root: {
+  //   fontSize: 16,
+  //   width: '100%',
+  //   height: '100%',
+  //   position: 'relative',
+  // },
 })
-export default class CodeEditor extends Component {
-  static propTypes = {
-    value: string.isRequired,
-    onChange: func,
-    options: shape({
-      mode: string,
-      theme: string,
-      lineNumbers: bool,
-    }),
-  };
+class CodeEditor extends Component {
+  handleChange = value => {
+    // anytime the container DOM element changes size (both height and width)
+    // the resize method of the editor needs to be fired so it can internally
+    // adjust it's internal variables that control the controlled scrollbars
+    // and basic functionality.
+    // TODO: We are cheating here and calling the resize on EVERY change...
+    // The better approach would be to onyl call resize whenever the parent
+    // component changed its size...
+    this.resize();
 
-  static defaultProps = {
-    onChange: null,
-    options: {
-      theme: 'material',
-      lineNumbers: true,
-    },
-  };
-
-  handleTextUpdate = (editor, data, value) => {
     if (this.props.onChange) {
       this.props.onChange(value);
     }
   };
 
+  resize() {
+    // console.log('resizing to fit...');
+    this.aceEditor.editor.resize();
+  }
+
+  componentDidMount() {
+    this.resize();
+  }
+
   render() {
-    const { value, options, classes } = this.props;
+    const {
+      name,
+      theme,
+      value,
+      mode,
+      readOnly,
+      width,
+      height,
+      showGutter,
+      showInvisibles,
+      enableLiveAutocompletion,
+      classes,
+    } = this.props;
+
+    // console.log('rendering ace editor...');
 
     return (
-      <Controlled
+      <AceEditor
+        name={name}
         className={classes.root}
         value={value}
-        options={options}
-        onBeforeChange={this.handleTextUpdate}
+        mode={mode}
+        readOnly={readOnly}
+        width={width || '100%'}
+        height={height || '100%'}
+        showPrintMargin={false}
+        showGutter={showGutter}
+        // enableLiveAutocompletion={enableLiveAutocompletion}
+        theme={theme}
+        onChange={this.handleChange}
+        ref={c => {
+          this.aceEditor = c;
+        }}
+        setOptions={{
+          // enableBasicAutocompletion: false,
+          enableLiveAutocompletion,
+          showInvisibles,
+          // showLineNumbers: true,
+          tabSize: 2,
+        }}
+        editorProps={{ $blockScrolling: true }}
       />
     );
   }
 }
+
+export default connect(mapStateToProps)(CodeEditor);

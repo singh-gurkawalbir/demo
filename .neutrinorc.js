@@ -31,11 +31,6 @@ module.exports = {
     [
       '@neutrinojs/jest',
       {
-        // TODO: add jest config to set proper threshholds for "success"
-        // this will be important when we force a precommit rule to pass
-        // the jest test runner... the thresholds are needed to tell the
-        // jest cli to not return error codes... Lets set code coverage to
-        // 80%.
         bail: false,
         testRegex: undefined,
         collectCoverage: true,
@@ -117,6 +112,7 @@ module.exports = {
         'API_PASSWORD',
         'AUTO_LOGIN',
         'NETWORK_THRESHOLD',
+        'CDN_BASE_URI',
       ],
     ],
     neutrino => {

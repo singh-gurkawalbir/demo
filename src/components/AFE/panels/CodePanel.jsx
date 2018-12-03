@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import CodeEditor from '../../../components/CodeEditor2';
+import CodeEditor from '../../../components/CodeEditor';
 
 const defaults = {
   global: {
@@ -11,6 +11,7 @@ const defaults = {
   },
   text: {
     showGutter: false,
+    showInvisibles: true,
   },
 };
 
@@ -31,17 +32,29 @@ export default class CodePanel extends Component {
       ...defaults[mode],
       ...overrides,
     };
+    let safeValue = '';
+
+    if (value) {
+      if (typeof value === 'string') {
+        safeValue = value;
+      } else if (typeof value === 'object') {
+        safeValue = JSON.stringify(value, null, 2);
+      } else {
+        safeValue = `${value}`;
+      }
+    }
 
     return (
       <CodeEditor
         // ref={c => (this.editor = c)}
         name={name}
-        value={value}
+        value={safeValue}
         mode={mode}
         readOnly={readOnly}
         height={height}
         width={width}
         showGutter={config.showGutter}
+        showInvisibles={config.showInvisibles}
         enableLiveAutocompletion={config.enableLiveAutocompletion}
         onChange={onChange}
       />

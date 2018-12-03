@@ -114,7 +114,4 @@ class Resources extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(Resources);
+export default connect(mapStateToProps, null)(Resources);

@@ -107,11 +107,12 @@ export function isCommsBelowNetworkThreshold(state) {
     return false;
   }
 
+  const networkThreshold = +process.env.NETWORK_THRESHOLD;
+
   return (
     Object.keys(state).filter(
       resource =>
-        Date.now() - timestampComms(state, resource) <=
-        Number(process.env.NETWORK_THRESHOLD)
+        Date.now() - timestampComms(state, resource) <= networkThreshold
     ).length > 0
   );
 }

@@ -85,4 +85,29 @@ describe('user reducers', () => {
       );
     });
   });
+  describe(`editor theme selector`, () => {
+    test('should return default editor theme if no state exists', () => {
+      expect(selectors.editorTheme(undefined)).toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
+    });
+
+    test('should return default editor theme when user theme set to unknown type.', () => {
+      const theme = 'unknown';
+      const state = reducer(undefined, actions.setTheme(theme));
+
+      expect(selectors.editorTheme(state)).toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
+    });
+
+    test('should return correct editor theme when user theme set.', () => {
+      const theme = 'dark';
+      const state = reducer(undefined, actions.setTheme(theme));
+
+      expect(selectors.editorTheme(state)).not.toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
+    });
+  });
 });

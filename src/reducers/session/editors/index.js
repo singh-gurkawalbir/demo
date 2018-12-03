@@ -1,7 +1,8 @@
 import actionTypes from '../../../actions/types';
+import processorLogic from './processorLogic';
 
 export default function reducer(state = {}, action) {
-  const { type, processor, id, rules, data, result, error } = action;
+  const { type, processor, id, options, patch, result, error } = action;
   let newState;
 
   switch (type) {
@@ -10,10 +11,8 @@ export default function reducer(state = {}, action) {
 
       newState[id] = {
         processor,
-        rules,
-        data,
-        defaultRules: rules,
-        defaultData: data,
+        defaultOptions: options,
+        ...options,
         lastChange: Date.now(),
       };
 
@@ -21,23 +20,21 @@ export default function reducer(state = {}, action) {
 
     case actionTypes.EDITOR_RESET:
       newState = Object.assign({}, state);
-      newState[id] = { ...newState[id], lastChange: Date.now() };
-      newState[id].rules = newState[id].defaultRules;
-      newState[id].data = newState[id].defaultData;
+
+      newState[id] = {
+        ...newState[id],
+        ...newState[id].defaultOptions,
+        lastChange: Date.now(),
+      };
+
       delete newState[id].error;
       delete newState[id].result;
 
       return newState;
 
-    case actionTypes.EDITOR_RULE_CHANGE:
+    case actionTypes.EDITOR_PATCH:
       newState = Object.assign({}, state);
-      newState[id] = { ...newState[id], rules, lastChange: Date.now() };
-
-      return newState;
-
-    case actionTypes.EDITOR_DATA_CHANGE:
-      newState = Object.assign({}, state);
-      newState[id] = { ...newState[id], data, lastChange: Date.now() };
+      newState[id] = { ...newState[id], ...patch, lastChange: Date.now() };
 
       return newState;
 
@@ -66,28 +63,20 @@ export function editor(state, id) {
     return {};
   }
 
-  return state[id] || {};
+  const editor = state[id];
+
+  if (!editor) return {};
+
+  return { ...editor, violations: processorLogic.validate(editor) };
 }
 
-export function editorProcessorOptions(state, id) {
+export function processorRequestOptions(state, id) {
   if (!state || !state[id]) {
     return {};
   }
 
-  const { processor, rules, data } = state[id];
+  const editor = state[id];
 
-  switch (processor) {
-    case 'handlebars':
-      return {
-        processor,
-        options: {
-          rules: { strict: false, template: rules },
-          data: JSON.parse(data),
-        },
-      };
-
-    default:
-      return { processor, rules, data };
-  }
+  return processorLogic.requestOptions(editor);
 }
 // #endregion

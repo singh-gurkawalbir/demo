@@ -97,7 +97,4 @@ class NetworkSnackbar extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NetworkSnackbar);
+export default connect(mapStateToProps, mapDispatchToProps)(NetworkSnackbar);

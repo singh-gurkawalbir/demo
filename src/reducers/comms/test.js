@@ -300,7 +300,7 @@ describe('comms selectors', () => {
 
       const state = reducer(undefined, actions.api.request(path));
 
-      advanceBy(50);
+      advanceBy(5);
 
       expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
 

@@ -45,8 +45,8 @@ const NotFound = loadable(() =>
 const Resources = loadable(() =>
   import(/* webpackChunkName: 'Resources' */ '../views/Resources')
 );
-const Processors = loadable(() =>
-  import(/* webpackChunkName: 'Processors' */ '../views/Processors')
+const Editors = loadable(() =>
+  import(/* webpackChunkName: 'Editors' */ '../views/Editors')
 );
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../views/Exports')
@@ -109,32 +109,27 @@ class App extends Component {
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg/resources"
-                  redirectTo="/pg/signin"
                   component={Resources}
                 />
                 <PrivateRoute
                   authenticated={authenticated}
-                  path="/pg/processors"
-                  redirectTo="/pg/signin"
-                  component={Processors}
+                  path="/pg/editors"
+                  component={Editors}
                 />
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg/exports"
-                  redirectTo="/pg/signin"
                   component={Exports}
                 />
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg/imports"
-                  redirectTo="/pg/signin"
                   component={Imports}
                 />
                 <Route path="/pg/signin" component={SignIn} />
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg"
-                  redirectTo="/pg/signin"
                   component={Dashboard}
                 />
                 <Route component={NotFound} />
@@ -147,7 +142,4 @@ class App extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

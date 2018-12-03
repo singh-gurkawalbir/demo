@@ -21,6 +21,8 @@ const profile = (state = null, action) => {
 };
 
 export const DEFAULT_THEME = 'dark';
+export const DEFAULT_EDITOR_THEME = 'tomorrow';
+
 const themeName = (state = DEFAULT_THEME, action) => {
   switch (action.type) {
     case actionTypes.SET_THEME:

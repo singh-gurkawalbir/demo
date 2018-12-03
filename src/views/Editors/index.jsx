@@ -1,14 +1,15 @@
 import { hot } from 'react-hot-loader';
-import { Component, cloneElement } from 'react';
+import { Component } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
-import UrlEditor from '../../components/AFE/Editor/UrlEditor';
-import HttpRequestBodyEditor from '../../components/AFE/Editor/HttpRequestBodyEditor';
-import EditorDialog from '../../components/AFE/EditorDialog';
+import UrlEditorDialog from '../../components/AFE/EditorDialog/UrlEditorDialog';
+import MergeEditorDialog from '../../components/AFE/EditorDialog/MergeEditorDialog';
+import HttpRequestBodyEditorDialog from '../../components/AFE/EditorDialog/HttpRequestBodyEditorDialog';
+import CsvParseEditorDialog from '../../components/AFE/EditorDialog/CsvParseEditorDialog';
 import WorkArea from './WorkArea';
-import ProcessorListItem from './ProcessorListItem';
+import EditorListItem from './EditorListItem';
 
 const drawerWidth = 330;
 
@@ -40,7 +41,7 @@ const drawerWidth = 330;
     padding: theme.spacing.unit * 3,
   },
 }))
-export default class Processors extends Component {
+export default class Editors extends Component {
   state = {
     editorName: null,
     rawData: '',
@@ -71,13 +72,46 @@ export default class Processors extends Component {
   };
 
   getEditor = () => {
-    const { editorName } = this.state;
+    const { editorName, rawData } = this.state;
 
     switch (editorName) {
       case 'UrlEditor':
-        return <UrlEditor />;
+        return (
+          <UrlEditorDialog
+            title="Create URL template"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       case 'HttpRequestBodyEditor':
-        return <HttpRequestBodyEditor />;
+        return (
+          <HttpRequestBodyEditorDialog
+            title="Create HTTP Request Body"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
+      case 'MergeEditor':
+        return (
+          <MergeEditorDialog
+            title="Apply Default Values"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
+
+      case 'CsvParseEditor':
+        return (
+          <CsvParseEditorDialog
+            title="Delimited File Parser"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -99,6 +133,18 @@ export default class Processors extends Component {
         description:
           'This editor lets you create and test json or xml templates against your raw data.',
       },
+      {
+        name: 'MergeEditor',
+        label: 'Merge Editor',
+        description:
+          'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
+      },
+      {
+        name: 'CsvParseEditor',
+        label: 'CSV Parser',
+        description:
+          'This processor converts comma seperated values into JSON.',
+      },
     ];
 
     return (
@@ -114,7 +160,7 @@ export default class Processors extends Component {
           </Typography>
           <List>
             {editors.map(p => (
-              <ProcessorListItem
+              <EditorListItem
                 key={p.name}
                 item={p}
                 onClick={this.handleEditorChange}
@@ -122,16 +168,11 @@ export default class Processors extends Component {
             ))}
           </List>
         </Drawer>
+
+        {editorName && this.getEditor()}
+
         <main className={classes.content}>
           <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
-          {editorName && (
-            <EditorDialog
-              id="e1"
-              title={`${editorName} Editor`}
-              onClose={this.handleClose}>
-              {cloneElement(this.getEditor(), { id: 'e1', data: rawData })}
-            </EditorDialog>
-          )}
         </main>
       </div>
     );

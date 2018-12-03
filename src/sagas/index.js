@@ -2,7 +2,7 @@ import {
   all,
   call,
   put,
-  // takeLatest,
+  takeLatest,
   takeEvery,
   select,
 } from 'redux-saga/effects';
@@ -101,20 +101,16 @@ export function* getResourceCollection({ resourceType }) {
 }
 
 export function* commitStagedChanges({ resourceType, id }) {
-  const getResourceData = state =>
-    selectors.resourceData(state, resourceType, id);
-  const { patch, merged, master } = yield select(getResourceData);
-
-  // console.log('resourceData', resourceData);
-  // const { patch, merged, master } = resourceData;
+  const { patch, merged, master } = yield select(
+    selectors.resourceData,
+    resourceType,
+    id
+  );
 
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
   const origin = yield call(apiCallWithRetry, path);
-
-  // console.log('latest', latest);
-  // console.log('resource', resource);
 
   if (origin.lastModified !== master.lastModified) {
     let conflict = jsonPatch.compare(master, origin);
@@ -164,14 +160,25 @@ export function* auth({ email, password }) {
 }
 
 export function* evaluateProcessor({ id }) {
-  const getProcessorOptions = state =>
-    selectors.editorProcessorOptions(state, id);
-  const { processor, options } = yield select(getProcessorOptions);
-  // console.log('editorProcessorOptions', processor, options);
+  const reqOpts = yield select(selectors.processorRequestOptions, id);
+
+  if (!reqOpts) {
+    return; // nothing to do...
+  }
+
+  const { errors, processor, body } = reqOpts;
+
+  if (errors && errors.length) {
+    return yield put(
+      actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2))
+    );
+  }
+
+  // console.log(`editorProcessorOptions for ${id}`, processor, body);
   const path = `/processors/${processor}`;
   const opts = {
     method: 'post',
-    body: JSON.stringify(options),
+    body: JSON.stringify(body),
   };
 
   try {
@@ -183,12 +190,24 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
-// TODO:rename initialize app
-// auth.initalized
-function* initializeApp() {
-  try {
-    // initializin
+export function* autoEvaluateProcessor({ id }) {
+  const editor = yield select(selectors.editor, id);
 
+  if (!editor || (editor.violations && editor.violations.length)) {
+    return; // nothing to do...
+  }
+
+  if (!editor.autoEvaluate) return;
+
+  if (editor.autoEvaluateDelay) {
+    yield call(delay, editor.autoEvaluateDelay);
+  }
+
+  return yield call(evaluateProcessor, { id });
+}
+
+export function* initializeApp() {
+  try {
     const resp = yield call(
       getResource,
       actions.profile.request(),
@@ -205,7 +224,7 @@ function* initializeApp() {
   }
 }
 
-function* invalidateSession() {
+export function* invalidateSession() {
   try {
     yield call(
       apiCallWithRetry,
@@ -219,20 +238,20 @@ function* invalidateSession() {
   }
 }
 
-function* changePassword({ message }) {
-  try {
-    const payload = { method: 'PUT', body: message };
-    const path = '/change-password';
+// function* changePassword({ message }) {
+//   try {
+//     const payload = { method: 'PUT', body: message };
+//     const path = '/change-password';
 
-    yield call(apiCallWithRetry, path, payload, "Changing user's password");
-  } catch (e) {
-    yield put(actions.auth.failure('Authentication Failure'));
-  }
-}
+//     yield call(apiCallWithRetry, path, payload, "Changing user's password");
+//   } catch (e) {
+//     yield put(actions.auth.failure('Authentication Failure'));
+//   }
+// }
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
+    // takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
     takeEvery(actionTypes.INIT_SESSION, initializeApp),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
@@ -240,5 +259,6 @@ export default function* rootSaga() {
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
     takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+    takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
   ]);
 }

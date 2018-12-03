@@ -10,7 +10,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import ImageIcon from '@material-ui/icons/Image';
-import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import shortid from 'shortid';
 import actions from '../../actions';
@@ -35,7 +34,7 @@ const mapDispatchToProps = (dispatch, { list }) => ({
   },
   addResource: {
     left: theme.spacing.unit * 2,
-    bottom: theme.spacing.unit / 2,
+    bottom: theme.spacing.unit / 4,
   },
 }))
 class FilteredResources extends Component {
@@ -64,14 +63,13 @@ class FilteredResources extends Component {
             <Route
               render={() => (
                 <Button
-                  mini
-                  variant="fab"
-                  color="primary"
+                  size="small"
+                  variant="contained"
                   aria-label="Add"
                   component={Link}
                   to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
                   className={classes.addResource}>
-                  <AddIcon />
+                  Add
                 </Button>
               )}
             />
@@ -104,7 +102,7 @@ class FilteredResources extends Component {
               <Button
                 onClick={handleMore(list.count + 2)}
                 size="small"
-                color="secondary">
+                variant="outlined">
                 Show more results ({list.filtered - list.count} left)
               </Button>
             )}
@@ -115,7 +113,4 @@ class FilteredResources extends Component {
   }
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(FilteredResources);
+export default connect(null, mapDispatchToProps)(FilteredResources);

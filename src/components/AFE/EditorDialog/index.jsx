@@ -45,6 +45,10 @@ const mapDispatchToProps = (dispatch, { id }) => ({
   fullScreen: {
     marginLeft: `${theme.spacing.unit * 2}px`,
   },
+  actions: {
+    marginRight: theme.spacing.unit * 3 - 2,
+    marginBottom: theme.spacing.unit * 1.5,
+  },
 }))
 class EditorDialog extends Component {
   state = {
@@ -75,9 +79,12 @@ class EditorDialog extends Component {
       open = true,
       title,
       handlePreview,
+      showLayoutOptions = true,
+      showFullScreen = true,
       classes,
       width = '70vw',
       height = '50vh',
+      editor,
     } = this.props;
     const { layout, fullScreen } = this.state;
     const size = fullScreen ? { height } : { height, width };
@@ -94,45 +101,53 @@ class EditorDialog extends Component {
             <Typography variant="h5">{title}</Typography>
           </div>
           <div className={classes.toggleContainer}>
-            <ToggleButtonGroup
-              value={layout}
-              exclusive
-              onChange={this.handleLayoutChange}>
-              <ToggleButton value="column">
-                <ViewColumnIcon />
+            {showLayoutOptions && (
+              <ToggleButtonGroup
+                value={layout}
+                exclusive
+                onChange={this.handleLayoutChange}>
+                <ToggleButton value="column">
+                  <ViewColumnIcon />
+                </ToggleButton>
+                <ToggleButton value="compact">
+                  <ViewCompactIcon />
+                </ToggleButton>
+                <ToggleButton value="row">
+                  <ViewRowIcon />
+                </ToggleButton>
+              </ToggleButtonGroup>
+            )}
+            {showFullScreen && (
+              <ToggleButton
+                className={classes.fullScreen}
+                value="max"
+                onClick={this.handleFullScreenClick}
+                selected={fullScreen}>
+                <ZoomOutIcon />
               </ToggleButton>
-              <ToggleButton value="compact">
-                <ViewCompactIcon />
-              </ToggleButton>
-              <ToggleButton value="row">
-                <ViewRowIcon />
-              </ToggleButton>
-            </ToggleButtonGroup>
-            <ToggleButton
-              className={classes.fullScreen}
-              value="max"
-              onClick={this.handleFullScreenClick}
-              selected={fullScreen}>
-              <ZoomOutIcon />
-            </ToggleButton>
+            )}
           </div>
         </div>
         <DialogContent style={size} className={classes.dialogContent}>
           {children && cloneElement(children, { layout })}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handlePreview}>Preview</Button>
-          <Button onClick={() => this.handleClose()} color="primary">
+        <DialogActions className={classes.actions}>
+          {!editor.autoEvaluate && (
+            <Button onClick={handlePreview}>Preview</Button>
+          )}
+          <Button
+            variant="contained"
+            onClick={() => this.handleClose()}
+            color="secondary">
             Cancel
           </Button>
-          <Button onClick={() => this.handleClose(true)}>Save</Button>
+          <Button variant="contained" onClick={() => this.handleClose(true)}>
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     );
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditorDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(EditorDialog);
