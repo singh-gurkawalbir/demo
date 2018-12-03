@@ -113,4 +113,5 @@ class FilteredResources extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(null, mapDispatchToProps)(FilteredResources);

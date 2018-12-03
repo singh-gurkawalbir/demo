@@ -33,9 +33,21 @@ const themeName = (state = DEFAULT_THEME, action) => {
   }
 };
 
+const preferences = (state = {}, action) => {
+  if (
+    action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
+    action.resourceType === 'preferences'
+  ) {
+    return action.collection;
+  }
+
+  return state;
+};
+
 export default combineReducers({
   profile,
   themeName,
+  preferences,
 });
 
 // #region PUBLIC SESSION SELECTORS

@@ -238,20 +238,21 @@ export function* invalidateSession() {
   }
 }
 
-// function* changePassword({ message }) {
-//   try {
-//     const payload = { method: 'PUT', body: message };
-//     const path = '/change-password';
+function* changePassword({ message }) {
+  const path = '/change-password';
 
-//     yield call(apiCallWithRetry, path, payload, "Changing user's password");
-//   } catch (e) {
-//     yield put(actions.auth.failure('Authentication Failure'));
-//   }
-// }
+  try {
+    const payload = { method: 'PUT', body: message };
+
+    yield call(apiCallWithRetry, path, payload, "Changing user's password");
+  } catch (e) {
+    yield put(actions.api.failure(path, 'Invalid Credentials'));
+  }
+}
 
 export default function* rootSaga() {
   yield all([
-    // takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
+    takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
     takeEvery(actionTypes.INIT_SESSION, initializeApp),
     takeEvery(actionTypes.AUTH_REQUEST, auth),

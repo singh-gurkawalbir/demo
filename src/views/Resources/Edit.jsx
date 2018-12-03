@@ -178,31 +178,30 @@ class Edit extends Component {
               />
             )}
 
-            {patch &&
-              patch.length > 0 && (
-                <div>
-                  <Button
-                    onClick={handleCommitChanges}
-                    size="small"
-                    color="primary">
-                    Commit Changes
-                  </Button>
+            {patch && patch.length > 0 && (
+              <div>
+                <Button
+                  onClick={handleCommitChanges}
+                  size="small"
+                  color="primary">
+                  Commit Changes
+                </Button>
 
-                  <Button
-                    onClick={handleRevertChanges}
-                    size="small"
-                    color="secondary">
-                    Revert All
-                  </Button>
+                <Button
+                  onClick={handleRevertChanges}
+                  size="small"
+                  color="secondary">
+                  Revert All
+                </Button>
 
-                  <Button
-                    onClick={handleUndoChange}
-                    size="small"
-                    color="secondary">
-                    Undo Last Change
-                  </Button>
-                </div>
-              )}
+                <Button
+                  onClick={handleUndoChange}
+                  size="small"
+                  color="secondary">
+                  Undo Last Change
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </LoadResources>
@@ -214,4 +213,7 @@ class Edit extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Edit);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Edit);

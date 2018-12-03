@@ -77,9 +77,15 @@ export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
 
+export function userPreferences(state) {
+  return state && state.user && state.user.preferences;
+}
+
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
+
+// #region AUTHENTICATION SELECTORS
 
 export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
@@ -103,6 +109,12 @@ export function authenticationErrored(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+// #endregion AUTHENTICATION SELECTORS
+
+export function changePasswordFailure(state) {
+  return state && state.comms && state.comms['/change-password'];
 }
 
 export function themeName(state) {

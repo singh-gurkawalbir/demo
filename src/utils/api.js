@@ -9,12 +9,11 @@ const errorMessageTimeOut = {
 
 export function APIException(response) {
   this.status = response.status;
+  this.message = 'Error';
 
   if (process.env.NODE_ENV === `development`) {
     this.message = response.message;
   }
-
-  this.message = 'Error';
 }
 
 export const authParams = {
@@ -65,7 +64,7 @@ export const api = async (path, opts = {}) => {
 
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
-  await delay(2);
+  await delay(1000);
   let req;
 
   if (
@@ -76,6 +75,8 @@ export const api = async (path, opts = {}) => {
   } else {
     req = `/api${path}`;
   }
+
+  console.log(`api ${JSON.stringify(req)}`);
 
   try {
     const response = await fetch(req, options);
@@ -104,6 +105,19 @@ export const api = async (path, opts = {}) => {
       const body = await response.json();
 
       throw new APIException({ status: response.status, message: { ...body } });
+    }
+
+    // when session is invalidated then we
+    // expect to get a 200 response with the response url with the sign in page
+    if (response.status === 200) {
+      if (
+        response.url ===
+        `${window.location.protocol}//${window.location.host}/signin`
+      )
+        throw new APIException({
+          status: 401,
+          message: 'Session Expired',
+        });
     }
 
     // For 204 content-length header does not show up

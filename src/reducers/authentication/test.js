@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+
 import reducer from './';
 import actions from '../../actions';
 
@@ -70,7 +71,6 @@ describe('authentication reducers', () => {
 
       expect(sucessfulAuthenticatedState).toEqual({
         initialized: true,
-
         loading: false,
         authenticated: true,
       });

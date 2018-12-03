@@ -2,19 +2,13 @@ import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { Redirect } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import {
-  userProfileEmail,
-  isAuthenticated,
-  authenticationErrored,
-} from '../../reducers';
+import { userProfileEmail, authenticationErrored } from '../../reducers';
 
 const mapStateToProps = state => ({
-  authenticated: isAuthenticated(state),
   error: authenticationErrored(state),
   userEmail: userProfileEmail(state),
 });
@@ -86,10 +80,8 @@ class SignIn extends Component {
   };
 
   render() {
-    const { classes, error, authenticated, dialogOpen, userEmail } = this.props;
+    const { classes, error, dialogOpen, userEmail } = this.props;
     const { email } = this.state;
-
-    if (authenticated) return <Redirect to="/pg" />;
 
     return (
       <div className={classes.editableFields}>
@@ -137,4 +129,5 @@ class SignIn extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

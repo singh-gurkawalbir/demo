@@ -37,4 +37,5 @@ const mapDispatchToProps = (dispatch, { editorId, strict, rule, data }) => ({
   },
 });
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(Editor);

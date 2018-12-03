@@ -53,4 +53,5 @@ class AlertDialog extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, null)(AlertDialog);

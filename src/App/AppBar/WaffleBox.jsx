@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import AppsIcon from '@material-ui/icons/Apps';
 import Button from '@material-ui/core/Button';
-import ArrowPopper from '../../components/AFE/ArrowPopper';
+import ArrowPopper from '../../components/ArrowPopper';
 
 @withStyles(theme => ({
   icon: {

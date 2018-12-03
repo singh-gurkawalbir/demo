@@ -98,6 +98,7 @@ module.exports = {
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
+            
             'react/no-did-mount-set-state': 'off',
             'no-underscore-dangle': 'off',
           },

@@ -71,4 +71,5 @@ class TitleBar extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(TitleBar);

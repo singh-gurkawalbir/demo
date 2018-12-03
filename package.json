@@ -15,7 +15,7 @@
     "lint": "neutrino lint",
     "test": "neutrino test --verbose --require dotenv/config",
     "coverage": "neutrino test --coverage --require dotenv/config",
-    "precommit": "neutrino test --coverage && neutrino stage",
+    "precommit": "neutrino test --coverage  --require dotenv/config && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config"
   },
   "dependencies": {

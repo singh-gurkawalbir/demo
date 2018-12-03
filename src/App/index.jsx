@@ -8,10 +8,10 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   themeName,
-  isAuthenticated,
   authenticationErrored,
   isUserLoggedOut,
   isAuthInitialized,
+  isAuthenticated,
 } from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
@@ -27,9 +27,11 @@ import actions from '../actions';
 const mapStateToProps = state => ({
   themeName: themeName(state),
   authenticated: isAuthenticated(state),
+
   isAuthInitialized: isAuthInitialized(state),
   isAuthErrored: !!authenticationErrored(state),
   isUserLoggedOut: isUserLoggedOut(state),
+  // isSessionExpired: !!(state && state.auth && state.auth.sessionExpired),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -53,6 +55,9 @@ const Exports = loadable(() =>
 );
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../views/Imports')
+);
+const MyAccount = loadable(() =>
+  import(/* webpackChunkName: 'MyAccount' */ '../views/MyAccount')
 );
 
 @hot(module)
@@ -83,6 +88,7 @@ class App extends Component {
       authenticated,
       isAuthInitialized,
       isUserLoggedOut,
+      // isSessionExpired,
     } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -107,15 +113,16 @@ class App extends Component {
             {(isAuthInitialized || !isUserLoggedOut) && (
               <Switch>
                 <PrivateRoute
-                  authenticated={authenticated}
                   path="/pg/resources"
                   component={Resources}
+                  authenticated={authenticated}
                 />
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg/editors"
                   component={Editors}
                 />
+
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg/exports"
@@ -126,12 +133,19 @@ class App extends Component {
                   path="/pg/imports"
                   component={Imports}
                 />
+                <PrivateRoute
+                  authenticated={authenticated}
+                  path="/pg/myAccount"
+                  component={MyAccount}
+                />
                 <Route path="/pg/signin" component={SignIn} />
+
                 <PrivateRoute
                   authenticated={authenticated}
                   path="/pg"
                   component={Dashboard}
                 />
+
                 <Route component={NotFound} />
               </Switch>
             )}
@@ -142,4 +156,7 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

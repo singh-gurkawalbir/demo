@@ -6,7 +6,6 @@ export default function(state = { initialized: false }, action) {
   switch (action.type) {
     case actionTypes.AUTH_REQUEST: {
       newState = { ...state, loading: true, authenticated: false };
-      delete newState.failure;
 
       return newState;
     }
@@ -19,6 +18,7 @@ export default function(state = { initialized: false }, action) {
         initialized: true,
       };
       delete newState.sessionExpired;
+      delete newState.failure;
 
       return newState;
     }

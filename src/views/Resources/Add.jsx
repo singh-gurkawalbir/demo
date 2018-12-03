@@ -133,4 +133,5 @@ class Add extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(Add);
