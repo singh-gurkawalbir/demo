@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route, NavLink } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import LoadResources from '../../components/LoadResources';
 
@@ -61,14 +61,6 @@ const Subscription = loadable(() =>
   },
 }))
 export default class MyAccount extends Component {
-  // state = {
-  //   selectedIndex: 0,
-  // };
-  // handleListItemClick = (event, index) => {
-  //   this.setState({ selectedIndex: index });
-  // };
-
-  shouldDisplay = (selectedIndex, index) => selectedIndex !== index;
   render() {
     const { classes } = this.props;
 
@@ -89,21 +81,28 @@ export default class MyAccount extends Component {
                 }}>
                 <List>
                   <ListItem>
-                    <Link className={classes.link} to="/pg/myAccount/users">
+                    <NavLink
+                      activeStyle={{ fontWeight: 'bold' }}
+                      className={classes.link}
+                      to="/pg/myAccount/users">
                       Users
-                    </Link>
+                    </NavLink>
                   </ListItem>
                   <ListItem>
-                    <Link className={classes.link} to="/pg/myAccount/profiles">
+                    <NavLink
+                      activeStyle={{ fontWeight: 'bold' }}
+                      className={classes.link}
+                      to="/pg/myAccount/profiles">
                       Profiles
-                    </Link>
+                    </NavLink>
                   </ListItem>
                   <ListItem>
-                    <Link
+                    <NavLink
+                      activeStyle={{ fontWeight: 'bold' }}
                       className={classes.link}
                       to="/pg/myAccount/subscription">
                       Subscription
-                    </Link>
+                    </NavLink>
                   </ListItem>
                 </List>
               </Drawer>

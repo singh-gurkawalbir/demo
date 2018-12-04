@@ -7,16 +7,18 @@ export default class PrivateRoute extends Component {
   render() {
     const {
       component: Component,
-      authenticated,
+      isAuthenticated,
       redirectTo = '/pg/signin',
+      isSessionExpired,
       rest,
     } = this.props;
 
     return (
       <Route
         {...rest}
+        exact
         render={props =>
-          authenticated ? (
+          isAuthenticated || isSessionExpired ? (
             <Component {...props} />
           ) : (
             <Redirect

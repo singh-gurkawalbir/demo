@@ -76,8 +76,6 @@ export const api = async (path, opts = {}) => {
     req = `/api${path}`;
   }
 
-  console.log(`api ${JSON.stringify(req)}`);
-
   try {
     const response = await fetch(req, options);
 
