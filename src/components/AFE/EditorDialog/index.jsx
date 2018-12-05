@@ -40,14 +40,14 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    // background: theme.palette.background.default,
   },
   fullScreen: {
     marginLeft: `${theme.spacing.unit * 2}px`,
   },
   actions: {
     marginRight: theme.spacing.unit * 3 - 2,
-    marginBottom: theme.spacing.unit * 1.5,
+    marginTop: 0, // theme.spacing.unit / 2,
+    marginBottom: theme.spacing.double,
   },
 }))
 class EditorDialog extends Component {
@@ -135,13 +135,13 @@ class EditorDialog extends Component {
           {!editor.autoEvaluate && (
             <Button onClick={handlePreview}>Preview</Button>
           )}
-          <Button
-            variant="contained"
-            onClick={() => this.handleClose()}
-            color="secondary">
+          <Button variant="contained" onClick={() => this.handleClose()}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => this.handleClose(true)}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => this.handleClose(true)}>
             Save
           </Button>
         </DialogActions>

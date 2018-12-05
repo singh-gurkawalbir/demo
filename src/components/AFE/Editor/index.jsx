@@ -70,7 +70,7 @@ export default class Editor extends Component {
     return (
       <PanelGrid className={gridTemplate}>
         <PanelGridItem gridArea="rule">
-          <PanelTitle>{ruleTitle}</PanelTitle>
+          <PanelTitle title={ruleTitle} />
           <CodePanel
             name="rule"
             value={rule}
@@ -79,7 +79,7 @@ export default class Editor extends Component {
           />
         </PanelGridItem>
         <PanelGridItem gridArea="data">
-          <PanelTitle>{dataTitle}</PanelTitle>
+          <PanelTitle title={dataTitle} />
           <CodePanel
             name="data"
             value={data}
@@ -88,7 +88,7 @@ export default class Editor extends Component {
           />
         </PanelGridItem>
         <PanelGridItem gridArea="result">
-          <PanelTitle>{resultTitle}</PanelTitle>
+          <PanelTitle title={resultTitle} />
           <CodePanel name="result" value={result} mode={resultMode} readOnly />
         </PanelGridItem>
         {error && (

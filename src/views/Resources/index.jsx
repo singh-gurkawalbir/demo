@@ -33,13 +33,11 @@ const mapStateToProps = state => {
   };
 };
 
-const drawerWidth = 320;
-
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
-    minHeight: 500,
     zIndex: 1,
+    height: '100%',
     overflow: 'hidden',
     position: 'relative',
     display: 'flex',
@@ -53,7 +51,8 @@ const drawerWidth = 320;
 
   drawerPaper: {
     position: 'relative',
-    width: drawerWidth,
+    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
+    width: theme.drawerWidth,
     padding: theme.spacing.unit,
   },
 

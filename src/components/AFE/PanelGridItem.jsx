@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 @withStyles(theme => ({
   gridItem: {
-    border: `solid 1px ${theme.palette.background.default}`,
+    border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
     minWidth: '150px',
     minHeight: '100px',

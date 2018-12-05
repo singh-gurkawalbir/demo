@@ -1,18 +1,23 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
 @withStyles(theme => ({
   title: {
     paddingLeft: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.common.white,
-    borderBottom: `solid 1px ${theme.palette.background.default}`,
+    backgroundColor: theme.editor.panelBackground,
+    // color: theme.palette.text.main,
+    borderBottom: `solid 1px ${theme.editor.panelBorder}`,
   },
 }))
 export default class PanelTitle extends Component {
   render() {
-    const { children, classes } = this.props;
+    const { title, children, classes } = this.props;
 
-    return <div className={classes.title}>{children}</div>;
+    return (
+      <div className={classes.title}>
+        {title ? <Typography variant="body1">{title}</Typography> : children}
+      </div>
+    );
   }
 }

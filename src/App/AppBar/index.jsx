@@ -19,7 +19,7 @@ const mapStateToProps = state => ({
     flexGrow: 1,
   },
   appBar: {
-    backgroundColor: theme.appBarBackground,
+    backgroundColor: theme.appBar.background,
   },
   toolbar: {
     height: 55,
@@ -32,6 +32,8 @@ const mapStateToProps = state => ({
     paddingLeft: theme.spacing.unit * 3,
     flex: 1,
   },
+  // TODO: This does nothing...
+  // figure out how to affect child elements under container
   iconContainer: {
     '&button': {
       padding: theme.spacing.unit - 1,
@@ -49,7 +51,7 @@ const mapStateToProps = state => ({
     }flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   navLink: {
-    color: theme.appBarContrast,
+    color: theme.appBar.contrast,
     paddingRight: theme.spacing.unit * 3,
     letterSpacing: '1.3px',
     fontSize: '13px',

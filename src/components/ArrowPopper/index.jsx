@@ -89,7 +89,7 @@ export default class ArrowPopper extends Component {
     const {
       id,
       anchorEl,
-      placement,
+      placement = 'bottom-end',
       classes,
       children,
       onClose,
@@ -102,7 +102,7 @@ export default class ArrowPopper extends Component {
       <Popper
         id={id}
         anchorEl={anchorEl}
-        placement={placement || 'bottom-end'}
+        placement={placement}
         disablePortal={false}
         open={open}
         className={classes.popper}

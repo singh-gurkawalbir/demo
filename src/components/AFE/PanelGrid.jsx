@@ -2,10 +2,10 @@ import { Component } from 'react';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
-@withStyles(() => ({
+@withStyles(theme => ({
   gridContainer: {
     display: 'grid',
-    gridGap: '5px',
+    gridGap: `${theme.spacing.double}px`,
     alignItems: 'stretch',
     height: '100%',
   },

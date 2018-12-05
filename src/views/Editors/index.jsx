@@ -11,8 +11,6 @@ import CsvParseEditorDialog from '../../components/AFE/EditorDialog/CsvParseEdit
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
-const drawerWidth = 330;
-
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
@@ -30,8 +28,8 @@ const drawerWidth = 330;
 
   drawerPaper: {
     position: 'relative',
-    width: drawerWidth,
-    height: `calc(100vh - ${theme.spacing.unit * 8}px)`,
+    width: theme.drawerWidth,
+    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
     padding: theme.spacing.unit,
   },
 
