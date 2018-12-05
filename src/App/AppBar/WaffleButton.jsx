@@ -6,11 +6,12 @@ import { Typography } from '@material-ui/core';
 
 @withStyles(theme => ({
   button: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     display: 'block',
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 6.5,
     '&:before': {
+      // border: `solid ${theme.palette.text.secondary} 1px`,
       position: 'absolute',
       top: 0,
       left: '50%',

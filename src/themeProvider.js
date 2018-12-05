@@ -24,8 +24,9 @@ const themes = {
       palette: {
         type: 'light',
         background: {
-          paper: '#D9D8DC', // Lt Grey
-          default: '#F0F5F9', // Celigo Super Lt Grey
+          // paper: '#D9D8DC', // Lt Grey
+          paper: '#F0F5F9', // Celigo SuperLt Grey
+          default: '#FFF', // White
         },
         // action: {[object]},
         primary: {
