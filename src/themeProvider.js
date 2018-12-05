@@ -11,7 +11,7 @@ const Roboto500 = { fontFamily: 'Roboto500, sans-serif' };
   Celigo Charcoal Grey - #424E59
   Celigo Dark Grey - #6A7B89 - TEXT
   Celigo Grey -#95ABBC
-  Celigo Lt Grey -#D6E4ED
+  Celigo Lt Grey -#D9D8DC // was D6E4ED?
   Celigo Super Lt Grey - #F0F5F9
   Celigo White - #FFFFFF
 */
@@ -24,7 +24,7 @@ const themes = {
       palette: {
         type: 'light',
         background: {
-          paper: '#D6E4ED', // Lt Grey
+          paper: '#D9D8DC', // Lt Grey
           default: '#F0F5F9', // Celigo Super Lt Grey
         },
         // action: {[object]},
