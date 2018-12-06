@@ -224,6 +224,7 @@ describe('comms selectors', () => {
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
           message: 'Loading Exports',
           error: undefined,
           isLoading: true,
@@ -255,6 +256,7 @@ describe('comms selectors', () => {
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
           message: 'Some msg indicating loading of Resource',
           error: undefined,
           isLoading: true,
@@ -263,6 +265,7 @@ describe('comms selectors', () => {
           timestamp: expect.any(Number),
         },
         {
+          isHidden: false,
           message: 'Some msg indicating loading of Resource',
           error: undefined,
           isLoading: true,
@@ -285,6 +288,7 @@ describe('comms selectors', () => {
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
           message: '',
           error: 'my nice error',
           isLoading: false,

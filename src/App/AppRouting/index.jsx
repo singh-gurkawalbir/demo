@@ -1,11 +1,9 @@
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { connect } from 'react-redux';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
-import { isSessionExpired, isAuthenticated } from '../../reducers';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -28,67 +26,24 @@ const Imports = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
-const mapStateToProps = state => ({
-  isAuthenticated: isAuthenticated(state),
-  isSessionExpired: isSessionExpired(state),
-});
 
 @hot(module)
-class AppRouting extends Component {
+export default class AppRouting extends Component {
   render() {
-    const { isAuthenticated, isSessionExpired } = this.props;
-
     return (
       <Switch>
         <Route exact path="/pg/signin" component={SignIn} />
 
-        <PrivateRoute
-          path="/pg/resources"
-          component={Resources}
-          isAuthenticated={isAuthenticated}
-          isSessionExpired={isSessionExpired}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuthenticated}
-          path="/pg/editors"
-          component={Editors}
-          isSessionExpired={isSessionExpired}
-        />
+        <PrivateRoute path="/pg/resources" component={Resources} />
+        <PrivateRoute path="/pg/editors" component={Editors} />
 
-        <PrivateRoute
-          isAuthenticated={isAuthenticated}
-          path="/pg/exports"
-          component={Exports}
-          isSessionExpired={isSessionExpired}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuthenticated}
-          path="/pg/imports"
-          component={Imports}
-          isSessionExpired={isSessionExpired}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuthenticated}
-          path="/pg/myAccount"
-          component={MyAccount}
-          isSessionExpired={isSessionExpired}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuthenticated}
-          path="/pg"
-          component={Dashboard}
-          isSessionExpired={isSessionExpired}
-        />
+        <PrivateRoute path="/pg/exports" component={Exports} />
+        <PrivateRoute path="/pg/imports" component={Imports} />
+        <PrivateRoute path="/pg/myAccount" component={MyAccount} />
+        <PrivateRoute path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />
       </Switch>
     );
   }
 }
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    null
-  )(AppRouting)
-);

@@ -1,3 +1,5 @@
+import { authParams, logoutParams } from './apiPaths';
+
 const delay = delay =>
   new Promise(fulfill => {
     setTimeout(fulfill, delay);
@@ -15,34 +17,6 @@ export function APIException(response) {
     this.message = response.message;
   }
 }
-
-export const authParams = {
-  opts: {
-    credentials: 'same-origin', // this is needed to instruct fetch to send cookies
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: process.env.API_EMAIL,
-      password: process.env.API_PASSWORD,
-    }),
-    method: 'POST',
-  },
-  path: '/signin?no_redirect=true',
-};
-export const logoutParams = {
-  opts: {
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': ' application/x-www-form-urlencoded',
-    },
-    body: {
-      _csrf: 'undefined',
-    },
-    method: 'POST',
-  },
-  path: '/signout?no_redirect=true',
-};
 
 export const api = async (path, opts = {}) => {
   let options;

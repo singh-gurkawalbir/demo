@@ -17,7 +17,8 @@ import rootSaga, {
   initializeApp,
   invalidateSession,
 } from './';
-import { api, APIException, authParams, logoutParams } from '../utils/api';
+import { api, APIException } from '../utils/api';
+import { authParams, logoutParams } from '../utils/apiPaths';
 
 const status500 = new APIException({
   status: 500,
@@ -47,13 +48,38 @@ describe(`apiCallWithRetry saga`, () => {
   const path = '/test/me';
   const opts = { method: 'patch' };
 
+  describe('should hide comms message ', () => {
+    test('should hide all comms message when apiCallWithRetry is made by default', () => {
+      const saga = apiCallWithRetry(path, opts);
+      const requestEffect = saga.next().value;
+      const showMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, showMessage))
+      );
+    });
+
+    test('should hide all comms message when apiCallWithRetry is made by default', () => {
+      const showMessage = true;
+      const someMessage = 'something';
+      const saga = apiCallWithRetry(path, opts, someMessage, showMessage);
+      const requestEffect = saga.next().value;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, someMessage, showMessage))
+      );
+    });
+  });
   test('should succeed on successfull api call', () => {
     const saga = apiCallWithRetry(path, opts);
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
 
     const callEffect = saga.next().value;
 
@@ -77,8 +103,11 @@ describe(`apiCallWithRetry saga`, () => {
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
 
     const callEffect = saga.next().value;
     const callApiEffect = call(api, path, opts);
@@ -111,8 +140,11 @@ describe(`apiCallWithRetry saga`, () => {
     const saga = apiCallWithRetry(path, opts);
     const mockError = new Error('mock');
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path, path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
     const callApiEffect = call(api, path, opts);
 
     for (let i = 0; i < 3; i += 1) {

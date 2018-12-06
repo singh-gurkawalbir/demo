@@ -5,17 +5,23 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Button } from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ChangePassword from './ChangePassword';
 import ChangeEmail from './ChangeEmail';
-import { userProfile, userPreferences } from '../../reducers';
+import actions from '../../actions';
+import { userProfilePeferencesProps } from '../../reducers';
 
 export const ProfilesItem = () => <Typography variant="h6">Profile</Typography>;
 
 const mapStateToProps = state => ({
-  profile: userProfile(state),
-  preferences: userPreferences(state),
+  userProfilePeferences: userProfilePeferencesProps(state),
+});
+const mapDispatchToProps = dispatch => ({
+  clearSuccessComms: () => dispatch(actions.api.clearSuccessComms()),
+  clearComms: () => dispatch(actions.clearComms()),
+  persistProfilesData: message => dispatch(actions.profile.update(message)),
 });
 
 @withStyles(theme => ({
@@ -37,14 +43,18 @@ const mapStateToProps = state => ({
     textDecoration: 'none',
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    // marginLeft: theme.spacing.unit,
+    // marginRight: theme.spacing.unit,
+    flex: 1,
     width: '70%',
   },
   editRowElement: {
-    display: 'inline-flex',
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex',
+    justifyContent: 'flex-start' /* center horizontally */,
+    alignItems: 'center' /* center vertically */,
+    height: '50%',
     width: '70%',
   },
 }))
@@ -52,16 +62,53 @@ class ProfilesComponent extends Component {
   state = {
     openPasswordModal: false,
     openEmailModal: false,
-    ...this.props.profile,
-    ...this.props.preferences,
+    ...this.props.userProfilePeferences,
   };
 
+  checkSaveEnabled = userDetails => {
+    if (userDetails === undefined) return false;
+    const res = Object.keys(userDetails)
+      .filter(prop => prop !== '_id')
+      .reduce(
+        (acc, prop) => acc || userDetails[prop] !== this.state[prop],
+        false
+      );
+
+    return res;
+  };
+  componentWillMount() {
+    this.checkSaveEnabled(this.props.userProfilePeferencesProps);
+  }
+  handleOnSubmit = () => {
+    const copyState = { ...this.state };
+
+    delete copyState.openPasswordModal;
+    delete copyState.openEmailModal;
+
+    this.props.persistProfilesData(copyState);
+  };
   handleOnChangeData = e => {
     this.setState({ [e.target.id]: e.target.value });
+    this.checkSaveEnabled();
+  };
+  handleOnChangeDataCheckbox = e => {
+    this.setState({ [e.target.id]: e.target.checked });
+    this.checkSaveEnabled();
+  };
+  handleOpenModal = modalKey => {
+    this.props.clearSuccessComms();
+    this.setState({ [modalKey]: true });
   };
 
+  handleCloseModal = modalKey => {
+    this.props.clearComms();
+    this.setState({ [modalKey]: false });
+  };
   render() {
-    const { classes, handleChangePassword } = this.props;
+    const { classes, handleChangePassword, userProfilePeferences } = this.props;
+    // console.log(`check ${JSON.stringify(this.state)}`);
+    // console.log(`check props ${JSON.stringify(userProfilePeferences)}`);
+    const saveButtonEnabled = this.checkSaveEnabled(userProfilePeferences);
 
     return (
       <div>
@@ -82,35 +129,43 @@ class ProfilesComponent extends Component {
             margin="normal"
             value={this.state.email}
             className={classes.textField}
-            onChange={this.handleOnChangeData}
+            disabled
           />
 
           <Button
-            color="primary"
+            color="secondary"
             variant="contained"
-            onClick={() => this.setState({ openEmailModal: true })}>
+            style={{
+              flex: 1,
+              display: 'inline-block',
+              height: '50%',
+              width: '50%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+            onClick={() => this.handleOpenModal('openEmailModal')}>
             Edit Email
           </Button>
         </div>
         <ChangeEmail
           show={this.state.openEmailModal}
-          onhandleClose={() => this.setState({ openEmailModal: false })}
+          onhandleClose={() => this.handleCloseModal('openEmailModal')}
           handleChangePassword={handleChangePassword}
         />
         <div className={classes.textField}>
           <InputLabel>
             Edit Password:
             <Button
-              color="primary"
+              color="secondary"
               variant="contained"
-              onClick={() => this.setState({ openPasswordModal: true })}>
+              onClick={() => this.handleOpenModal('openPasswordModal')}>
               Edit Password
             </Button>
           </InputLabel>
         </div>
         <ChangePassword
           show={this.state.openPasswordModal}
-          onhandleClose={() => this.setState({ openPasswordModal: false })}
+          onhandleClose={() => this.handleCloseModal('openPasswordModal')}
           handleChangePassword={handleChangePassword}
         />
         <TextField
@@ -163,13 +218,22 @@ class ProfilesComponent extends Component {
                 label="Developer Mode"
                 margin="normal"
                 checked={this.state.developer}
-                onChange={this.handleOnChangeData}
+                onClick={this.handleOnChangeDataCheckbox}
                 className={classes.textField}
                 color="primary"
               />
             }
           />
         </div>
+        <Divider />
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.handleOnSubmit}
+          disabled={!saveButtonEnabled}>
+          save
+        </Button>
       </div>
     );
   }
@@ -177,5 +241,5 @@ class ProfilesComponent extends Component {
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(ProfilesComponent);

@@ -21,14 +21,17 @@ const auth = {
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: message =>
     action(actionTypes.USER_CHANGE_PASSWORD, { message }),
+  changeEmail: message => action(actionTypes.USER_CHANGE_EMAIL, { message }),
 };
 const api = {
-  request: (path, message) =>
-    action(actionTypes.API_REQUEST, { path, message }),
+  request: (path, message, hidden) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden }),
   retry: path => action(actionTypes.API_RETRY, { path }),
-  complete: path => action(actionTypes.API_COMPLETE, { path }),
+  complete: (path, message) =>
+    action(actionTypes.API_COMPLETE, { path, message }),
   failure: (path, message) =>
     action(actionTypes.API_FAILURE, { path, message }),
+  clearSuccessComms: () => action(actionTypes.CLEAR_SUCCESS_COMMS),
 };
 const resource = {
   request: (resourceType, id) =>
@@ -65,6 +68,7 @@ const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
   delete: () => action(actionTypes.DELETE_PROFILE),
+  update: message => action(actionTypes.UPDATE_PROFILE, { message }),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>

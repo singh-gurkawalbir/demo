@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from './ModalDialog';
-import { changePasswordFailure } from '../../reducers';
+import { changePasswordFailure, changePasswordSuccess } from '../../reducers';
 
 const mapDispatchToProps = dispatch => ({
   changePassword: message => {
@@ -13,6 +13,7 @@ const mapDispatchToProps = dispatch => ({
 });
 const mapStateToProps = state => ({
   error: changePasswordFailure(state),
+  success: changePasswordSuccess(state),
 });
 
 class ChangePassword extends Component {
@@ -26,35 +27,52 @@ class ChangePassword extends Component {
     this.props.changePassword(payload);
   };
   render() {
-    const { show, onhandleClose, error } = this.props;
+    const { show, onhandleClose, error, success } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={onhandleClose}>
+      <ModalDialog
+        show={show}
+        handleClose={() => {
+          onhandleClose();
+        }}>
         <span>Change Password</span>
-        <span>
-          {`Please note that clicking 'Change Password' will sign you out of the
+        {success ? (
+          <span>{success}</span>
+        ) : (
+          <span>
+            {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
-          <form id="myForm" onSubmit={this.handleOnSubmit}>
-            <TextField
-              id="currentPassword"
-              label="Current Password"
-              margin="normal"
-            />
-            <br />
-            <TextField id="newPassword" label="New Password" margin="normal" />
-          </form>
-        </span>
-        <Fragment>
-          {error && <span>error</span>}
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            form="myForm"
-            value="Submit">
-            change password
-          </Button>
-        </Fragment>
+            <form id="myForm" onSubmit={this.handleOnSubmit}>
+              <TextField
+                id="currentPassword"
+                label="Current Password"
+                margin="normal"
+              />
+              <br />
+              <TextField
+                id="newPassword"
+                label="New Password"
+                margin="normal"
+              />
+            </form>
+          </span>
+        )}
+
+        {success ? (
+          <span />
+        ) : (
+          <Fragment>
+            {error && <span>{error}</span>}
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              form="myForm"
+              value="Submit">
+              change password
+            </Button>
+          </Fragment>
+        )}
       </ModalDialog>
     );
   }

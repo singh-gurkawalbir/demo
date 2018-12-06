@@ -7,6 +7,7 @@ import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
+import { changePasswordParams, changeEmailParams } from '../utils/apiPaths';
 
 const combinedReducers = combineReducers({
   session,
@@ -81,6 +82,36 @@ export function userPreferences(state) {
   return state && state.user && state.user.preferences;
 }
 
+export function userProfilePeferencesProps(state) {
+  const profile = userProfile(state);
+  const preferences = userPreferences(state);
+  const {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+  } = { ...profile, ...preferences };
+
+  return {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+  };
+}
+
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
@@ -114,7 +145,39 @@ export function isSessionExpired(state) {
 // #endregion AUTHENTICATION SELECTORS
 
 export function changePasswordFailure(state) {
-  return state && state.comms && state.comms['/change-password'];
+  return (
+    state &&
+    state.comms &&
+    state.comms[changePasswordParams.path] &&
+    state.comms[changePasswordParams.path].error
+  );
+}
+
+export function changePasswordSuccess(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changePasswordParams.path] &&
+    state.comms[changePasswordParams.path].success
+  );
+}
+
+export function changeEmailFailure(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changeEmailParams.path] &&
+    state.comms[changeEmailParams.path].error
+  );
+}
+
+export function changeEmailSuccess(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changeEmailParams.path] &&
+    state.comms[changeEmailParams.path].success
+  );
 }
 
 export function themeName(state) {

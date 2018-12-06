@@ -1,9 +1,16 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, withRouter } from 'react-router-dom';
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
+import { connect } from 'react-redux';
+import { isSessionExpired, isAuthenticated } from '../../../reducers';
+
+const mapStateToProps = state => ({
+  isAuthenticated: isAuthenticated(state),
+  isSessionExpired: isSessionExpired(state),
+});
 
 @hot(module)
-export default class PrivateRoute extends Component {
+class PrivateRoute extends Component {
   render() {
     const {
       component: Component,
@@ -33,3 +40,10 @@ export default class PrivateRoute extends Component {
     );
   }
 }
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    null
+  )(PrivateRoute)
+);

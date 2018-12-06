@@ -5,22 +5,26 @@ import actions from '../../actions';
 
 describe('user reducers', () => {
   describe('profile reducers', () => {
-    test('when profile resource request is received should get resource message', () => {
-      const state = reducer(undefined, actions.profile.received('something'));
+    const someTestProfile1 = { name: 'profile 1' };
+    const someTestProfile2 = { name: 'profile 2' };
 
-      expect(state.profile).toEqual('something');
+    test('when profile resource request is received should get resource message', () => {
+      const state = reducer(
+        undefined,
+        actions.profile.received(someTestProfile1)
+      );
+
+      expect(state.profile).toEqual(someTestProfile1);
     });
 
     test('should replace existing profile with a new one.', () => {
-      const mockProfile1 = 'the profile!';
-      const mockProfile2 = 'the other profile!';
       let state;
 
-      state = reducer(state, actions.profile.received(mockProfile1));
-      expect(state.profile).toEqual(mockProfile1);
+      state = reducer(state, actions.profile.received(someTestProfile1));
+      expect(state.profile).toEqual(someTestProfile1);
 
-      state = reducer(state, actions.profile.received(mockProfile2));
-      expect(state.profile).toEqual(mockProfile2);
+      state = reducer(state, actions.profile.received(someTestProfile2));
+      expect(state.profile).toEqual(someTestProfile2);
     });
 
     test('when delete profile action is dispatched wipe out user profile info except for the user email ', () => {

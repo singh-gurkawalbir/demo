@@ -8,9 +8,6 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
-// const mapStateToProps = state => ({
-//   dialogOpen: isSessionExpired(state),
-// });
 @withStyles(theme => ({
   modalDialog: {
     padding: 4 * theme.spacing.unit,
@@ -59,8 +56,3 @@ export default class ModalDialog extends Component {
     );
   }
 }
-
-// export default connect(
-//   mapStateToProps,
-//   null
-// )(ModalDialog);

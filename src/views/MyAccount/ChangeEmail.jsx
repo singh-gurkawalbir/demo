@@ -1,56 +1,72 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from './ModalDialog';
+import { changeEmailFailure, changeEmailSuccess } from '../../reducers';
 
 const mapDispatchToProps = dispatch => ({
-  changePassword: message => {
-    dispatch(actions.auth.changePassword(message));
+  changeEmail: message => {
+    dispatch(actions.auth.changeEmail(message));
   },
+});
+const mapStateToProps = state => ({
+  error: changeEmailFailure(state),
+  success: changeEmailSuccess(state),
 });
 
 class ChangeEmail extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
     const payload = JSON.stringify({
-      currentPassword: e.target.currentPassword.value,
-      newPassword: e.target.newPassword.value,
+      newEmail: e.target.newEmail.value,
+      password: e.target.password.value,
     });
 
-    this.props.changePassword(payload);
+    this.props.changeEmail(payload);
   };
   render() {
-    const { show, onhandleClose } = this.props;
+    const { show, onhandleClose, error, success } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={onhandleClose}>
+      <ModalDialog show={show} handleClose={() => onhandleClose()}>
         <span>Change Email</span>
-        <span>
-          <form id="myForm" onSubmit={this.handleOnSubmit}>
-            <TextField id="newEmail" label="New Email" margin="normal" />
-            <br />
+        {success ? (
+          <span>Success</span>
+        ) : (
+          <span>
+            <form id="myForm" onSubmit={this.handleOnSubmit}>
+              <TextField id="newEmail" label="New Email" margin="normal" />
+              <br />
 
-            <TextField id="password" label="Password" margin="normal" />
-          </form>
-          {`Note: we require your current password again to help safeguard your integrator.io account.`}
-        </span>
+              <TextField id="password" label="Password" margin="normal" />
+            </form>
+            {`Note: we require your current password again to help safeguard your integrator.io account.`}
+          </span>
+        )}
+        {success ? (
+          <span />
+        ) : (
+          <Fragment>
+            {error && <span>{error}</span>}
 
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          form="myForm"
-          value="Submit">
-          change email
-        </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              form="myForm"
+              value="Submit">
+              change email
+            </Button>
+          </Fragment>
+        )}
       </ModalDialog>
     );
   }
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ChangeEmail);
