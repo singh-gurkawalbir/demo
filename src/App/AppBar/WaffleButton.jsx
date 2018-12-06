@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 
 @withStyles(theme => ({
   button: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.disabled,
     display: 'block',
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 6.5,
@@ -19,7 +19,8 @@ import { Typography } from '@material-ui/core';
       backgroundSize: theme.spacing.triple,
       padding: theme.spacing.triple,
       content: '""',
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.appBar.iconBackground,
+      // opacity: '0.6',
       borderRadius: '50%',
       backgroundImage: `url(${process.env.CDN_BASE_URI}icons/icon/flow.png)`,
       backgroundRepeat: 'no-repeat',
@@ -29,6 +30,7 @@ import { Typography } from '@material-ui/core';
       color: theme.palette.text.primary,
     },
     '&:hover::before': {
+      // opacity: '1',
       backgroundColor: theme.palette.secondary.light,
       backgroundImage: `url(${
         process.env.CDN_BASE_URI

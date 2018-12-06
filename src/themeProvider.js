@@ -25,6 +25,8 @@ const themes = {
         background: celigo.darkGrey,
         contrast: celigo.superLightGrey,
         hover: celigo.white,
+        // Deprecated: Temporary until the waffle icons are built properly...
+        iconBackground: celigo.lightGrey,
       },
       editor: {
         panelBackground: celigo.superLightGrey,
@@ -60,6 +62,7 @@ const themes = {
         background: celigo.darkDarkGrey,
         contrast: celigo.grey,
         hover: celigo.white,
+        iconBackground: celigo.grey,
       },
       editor: {
         panelBackground: celigo.darkDarkGrey,
