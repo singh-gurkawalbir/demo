@@ -12,19 +12,26 @@ function action(type, payload = {}) {
 }
 
 const auth = {
-  request: message => action(actionTypes.AUTH_REQUEST, { message }),
+  request: (email, password) =>
+    action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   logout: () => action(actionTypes.USER_LOGOUT),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
+  changePassword: message =>
+    action(actionTypes.USER_CHANGE_PASSWORD, { message }),
+  changeEmail: message => action(actionTypes.USER_CHANGE_EMAIL, { message }),
 };
 const api = {
-  request: path => action(actionTypes.API_REQUEST, { path }),
+  request: (path, message, hidden) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden }),
   retry: path => action(actionTypes.API_RETRY, { path }),
-  complete: path => action(actionTypes.API_COMPLETE, { path }),
+  complete: (path, message) =>
+    action(actionTypes.API_COMPLETE, { path, message }),
   failure: (path, message) =>
     action(actionTypes.API_FAILURE, { path, message }),
+  clearSuccessComms: () => action(actionTypes.CLEAR_SUCCESS_COMMS),
 };
 const resource = {
   request: (resourceType, id) =>
@@ -61,6 +68,7 @@ const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
   delete: () => action(actionTypes.DELETE_PROFILE),
+  update: message => action(actionTypes.UPDATE_PROFILE, { message }),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>

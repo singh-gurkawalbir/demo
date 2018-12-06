@@ -56,4 +56,5 @@ class SearchOptions extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(SearchOptions);

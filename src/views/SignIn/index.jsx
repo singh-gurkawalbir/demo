@@ -9,18 +9,18 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import {
   userProfileEmail,
-  isAuthenticated,
   authenticationErrored,
+  isAuthenticated,
 } from '../../reducers';
 
 const mapStateToProps = state => ({
-  authenticated: isAuthenticated(state),
   error: authenticationErrored(state),
   userEmail: userProfileEmail(state),
+  authenticated: isAuthenticated(state),
 });
 const mapDispatchToProps = dispatch => ({
-  handleAuthentication: message => {
-    dispatch(actions.auth.request(message));
+  handleAuthentication: (email, password) => {
+    dispatch(actions.auth.request(email, password));
   },
 });
 
@@ -79,19 +79,28 @@ class SignIn extends Component {
   };
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
-      email: e.target.email.value,
-      password: e.target.password.value,
-    });
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-    this.props.handleAuthentication(payload);
+    this.props.handleAuthentication(email, password);
   };
 
+  iAmModalCheck(modal) {
+    return !!modal;
+  }
   render() {
-    const { classes, error, authenticated, dialogOpen, userEmail } = this.props;
+    const {
+      classes,
+      error,
+      dialogOpen,
+      userEmail,
+      iAmModal,
+      authenticated,
+    } = this.props;
     const { email } = this.state;
 
-    if (authenticated) return <Redirect to="/pg" />;
+    if (authenticated && !this.iAmModalCheck(iAmModal))
+      return <Redirect to="/pg" />;
 
     return (
       <div className={classes.editableFields}>
@@ -100,7 +109,6 @@ class SignIn extends Component {
             id="email"
             label="Email"
             type="email"
-            rowsMax="1"
             margin="normal"
             value={dialogOpen ? userEmail : email}
             onChange={this.handleOnChangeEmail}
@@ -111,7 +119,6 @@ class SignIn extends Component {
             id="password"
             label="Password"
             type="password"
-            rowsMax="1"
             margin="normal"
             className={classes.textField}
           />
@@ -141,4 +148,5 @@ class SignIn extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

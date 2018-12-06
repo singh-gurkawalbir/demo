@@ -1,19 +1,24 @@
 import actionTypes from '../../actions/types';
 
-export default function(state = { loading: true }, action) {
+export default function(state = { initialized: false }, action) {
   let newState;
 
   switch (action.type) {
     case actionTypes.AUTH_REQUEST: {
       newState = { ...state, loading: true, authenticated: false };
-      delete newState.failure;
 
       return newState;
     }
 
     case actionTypes.AUTH_SUCCESSFUL: {
-      newState = { ...state, loading: false, authenticated: true };
+      newState = {
+        ...state,
+        loading: false,
+        authenticated: true,
+        initialized: true,
+      };
       delete newState.sessionExpired;
+      delete newState.failure;
 
       return newState;
     }

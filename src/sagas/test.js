@@ -14,8 +14,11 @@ import rootSaga, {
   evaluateProcessor,
   autoEvaluateProcessor,
   commitStagedChanges,
+  initializeApp,
+  invalidateSession,
 } from './';
-import { api, APIException, authParams } from '../utils/api';
+import { api, APIException } from '../utils/api';
+import { authParams, logoutParams } from '../utils/apiPaths';
 
 const status500 = new APIException({
   status: 500,
@@ -45,13 +48,38 @@ describe(`apiCallWithRetry saga`, () => {
   const path = '/test/me';
   const opts = { method: 'patch' };
 
+  describe('should hide comms message ', () => {
+    test('should hide all comms message when apiCallWithRetry is made by default', () => {
+      const saga = apiCallWithRetry(path, opts);
+      const requestEffect = saga.next().value;
+      const showMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, showMessage))
+      );
+    });
+
+    test('should hide all comms message when apiCallWithRetry is made by default', () => {
+      const showMessage = true;
+      const someMessage = 'something';
+      const saga = apiCallWithRetry(path, opts, someMessage, showMessage);
+      const requestEffect = saga.next().value;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, someMessage, showMessage))
+      );
+    });
+  });
   test('should succeed on successfull api call', () => {
     const saga = apiCallWithRetry(path, opts);
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
 
     const callEffect = saga.next().value;
 
@@ -75,8 +103,11 @@ describe(`apiCallWithRetry saga`, () => {
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
 
     const callEffect = saga.next().value;
     const callApiEffect = call(api, path, opts);
@@ -109,8 +140,11 @@ describe(`apiCallWithRetry saga`, () => {
     const saga = apiCallWithRetry(path, opts);
     const mockError = new Error('mock');
     const requestEffect = saga.next().value;
+    const showMessage = false;
 
-    expect(requestEffect).toEqual(put(actions.api.request(path)));
+    expect(requestEffect).toEqual(
+      put(actions.api.request(path, path, showMessage))
+    );
     const callApiEffect = call(api, path, opts);
 
     for (let i = 0; i < 3; i += 1) {
@@ -141,13 +175,14 @@ availableResources.forEach(type => {
 
     test('should succeed on successfull api call', () => {
       // assign
+
       const saga = getResource(actions.resource.request(type, id));
       const path = `/${type}/${id}`;
       const mockResource = { id: 1, name: 'bob' };
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
 
       const effect = saga.next(mockResource).value;
 
@@ -168,7 +203,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
 
       const final = saga.throw(status500);
 
@@ -220,14 +255,20 @@ availableResources.forEach(type => {
 });
 
 describe('auth saga flow', () => {
+  const authMessage = 'Authenticating User';
+
   test('action to set authentication to true when auth is successful', () => {
-    const message = 'someUserCredentials';
-    const saga = auth({ message });
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const saga = auth({ email, password });
     const callEffect = saga.next().value;
-    const payload = { ...authParams.opts, body: message };
+    const payload = {
+      ...authParams.opts,
+      body: JSON.stringify({ email, password }),
+    };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload)
+      call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
     const effect = saga.next().value;
 
@@ -235,13 +276,17 @@ describe('auth saga flow', () => {
   });
 
   test('should dispatch a delete profile action when authentication fails', () => {
-    const message = 'someUserCredentials';
-    const saga = auth({ message });
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const saga = auth({ email, password });
     const callEffect = saga.next().value;
-    const payload = { ...authParams.opts, body: message };
+    const payload = {
+      ...authParams.opts,
+      body: JSON.stringify({ email, password }),
+    };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload)
+      call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
     expect(saga.throw(status422).value).toEqual(
       put(actions.auth.failure('Authentication Failure'))
@@ -508,5 +553,81 @@ describe('commitStagedChanges saga', () => {
     const finalEffect = saga.next();
 
     expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+  describe('initialize app saga', () => {
+    test('should set authentication flag true when the user successfuly makes a profile call when there is a valid user session ', () => {
+      const saga = initializeApp();
+      const getProfileResourceEffect = saga.next().value;
+
+      expect(getProfileResourceEffect).toEqual(
+        call(getResource, actions.profile.request(), 'Initializing application')
+      );
+      const mockResp = 'some response';
+      const authCompletedEffect = saga.next(mockResp).value;
+
+      expect(authCompletedEffect).toEqual(put(actions.auth.complete()));
+    });
+
+    test('should dispatch a user logout when the user does not get a response from the Profile call', () => {
+      const saga = initializeApp();
+      const getProfileResourceEffect = saga.next().value;
+
+      expect(getProfileResourceEffect).toEqual(
+        call(getResource, actions.profile.request(), 'Initializing application')
+      );
+      const authLogoutEffect = saga.next().value;
+
+      expect(authLogoutEffect).toEqual(put(actions.auth.logout()));
+    });
+
+    test('should dispatch a user logout when the api call has failed', () => {
+      const saga = initializeApp();
+      const getProfileResourceEffect = saga.next().value;
+
+      expect(getProfileResourceEffect).toEqual(
+        call(getResource, actions.profile.request(), 'Initializing application')
+      );
+      expect(saga.throw(new Error('Some error')).value).toEqual(
+        put(actions.auth.logout())
+      );
+    });
+  });
+
+  describe('invalidate session app', () => {
+    test('Should invalidate session when user attempts to logout', () => {
+      const saga = invalidateSession();
+      const logOutUserEffect = saga.next().value;
+
+      expect(logOutUserEffect).toEqual(
+        call(
+          apiCallWithRetry,
+          logoutParams.path,
+          logoutParams.opts,
+          'Logging out user'
+        )
+      );
+
+      const clearStoreEffect = saga.next().value;
+
+      expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
+    });
+
+    test('Should invalidate session when user attempts to logout irrespective of any api failure', () => {
+      const saga = invalidateSession();
+      const logOutUserEffect = saga.next().value;
+
+      expect(logOutUserEffect).toEqual(
+        call(
+          apiCallWithRetry,
+          logoutParams.path,
+          logoutParams.opts,
+          'Logging out user'
+        )
+      );
+
+      const clearStoreEffect = saga.throw(new Error('Some error')).value;
+
+      expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
+    });
   });
 });

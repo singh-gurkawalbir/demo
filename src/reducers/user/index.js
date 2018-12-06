@@ -6,13 +6,15 @@ const profile = (state = null, action) => {
     action.type === actionTypes.RESOURCE.RECEIVED &&
     action.resourceType === 'profile'
   ) {
-    return action.resource;
+    const newState = { ...state, ...action.resource };
+
+    return newState;
   }
 
   if (action.type === actionTypes.DELETE_PROFILE) {
     // Except for email delete everything
 
-    if (!state) return {};
+    if (!state || !state.email) return {};
 
     return { email: state.email };
   }
@@ -33,9 +35,23 @@ const themeName = (state = DEFAULT_THEME, action) => {
   }
 };
 
+const preferences = (state = {}, action) => {
+  if (
+    action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
+    action.resourceType === 'preferences'
+  ) {
+    const newState = { ...state, ...action.collection };
+
+    return newState;
+  }
+
+  return state;
+};
+
 export default combineReducers({
   profile,
   themeName,
+  preferences,
 });
 
 // #region PUBLIC SESSION SELECTORS

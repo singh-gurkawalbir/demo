@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
+import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import {
@@ -152,9 +153,11 @@ class AppBar extends Component {
             onClick={this.handleClose}
             variant="contained"
             size="small"
-            color="secondary"
-            className={classes.button}>
-            My Profile
+            color="primary"
+            className={classes.button}
+            component={Link}
+            to="/pg/myAccount/profiles">
+            My Account
           </Button>
           <Button
             onClick={handleUserLogout}
@@ -170,4 +173,5 @@ class AppBar extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppBar);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(AppBar);

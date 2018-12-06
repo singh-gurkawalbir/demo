@@ -53,9 +53,9 @@ class NetworkSnackbar extends Component {
 
     const notification = r => {
       if (r.error)
-        return <li key={r.name}>{`Error loading ${r.name}. (${r.error})`}</li>;
+        return <li key={r.name}>{`Error ${r.message}. (${r.error})`}</li>;
 
-      let msg = `Loading ${r.name}...`;
+      let msg = ` ${r.message}...`;
 
       if (r.retryCount > 0) {
         msg += ` Retry ${r.retryCount}`;
@@ -97,4 +97,5 @@ class NetworkSnackbar extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(NetworkSnackbar);

@@ -7,6 +7,7 @@ import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
+import { changePasswordParams, changeEmailParams } from '../utils/apiPaths';
 
 const combinedReducers = combineReducers({
   session,
@@ -77,20 +78,60 @@ export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
 
+export function userPreferences(state) {
+  return state && state.user && state.user.preferences;
+}
+
+export function userProfilePeferencesProps(state) {
+  const profile = userProfile(state);
+  const preferences = userPreferences(state);
+  const {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+  } = { ...profile, ...preferences };
+
+  return {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+  };
+}
+
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
+
+// #region AUTHENTICATION SELECTORS
 
 export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
 
-export function isAuthInitiliazed(state) {
+export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
 
 export function isAuthLoading(state) {
   return !!(state && state.auth && state.auth.loading);
+}
+
+export function isUserLoggedOut(state) {
+  return !!(state && state.auth);
 }
 
 export function authenticationErrored(state) {
@@ -99,6 +140,44 @@ export function authenticationErrored(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+// #endregion AUTHENTICATION SELECTORS
+
+export function changePasswordFailure(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changePasswordParams.path] &&
+    state.comms[changePasswordParams.path].error
+  );
+}
+
+export function changePasswordSuccess(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changePasswordParams.path] &&
+    state.comms[changePasswordParams.path].success
+  );
+}
+
+export function changeEmailFailure(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changeEmailParams.path] &&
+    state.comms[changeEmailParams.path].error
+  );
+}
+
+export function changeEmailSuccess(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changeEmailParams.path] &&
+    state.comms[changeEmailParams.path].success
+  );
 }
 
 export function themeName(state) {

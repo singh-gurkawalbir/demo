@@ -214,13 +214,18 @@ describe('comms selectors', () => {
 
     test('should return proper result when 1 resource is loading.', () => {
       // assign
-      const state = reducer(undefined, actions.api.request('exports'));
+      const state = reducer(
+        undefined,
+        actions.api.request('exports', 'Loading Exports')
+      );
       // act
       const result = selectors.allLoadingOrErrored(state);
 
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
+          message: 'Loading Exports',
           error: undefined,
           isLoading: true,
           name: 'exports',
@@ -236,8 +241,14 @@ describe('comms selectors', () => {
       const pathB = `${path}/456`;
       let state;
 
-      state = reducer(state, actions.api.request(pathA));
-      state = reducer(state, actions.api.request(pathB));
+      state = reducer(
+        state,
+        actions.api.request(pathA, 'Some msg indicating loading of Resource')
+      );
+      state = reducer(
+        state,
+        actions.api.request(pathB, 'Some msg indicating loading of Resource')
+      );
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -245,6 +256,8 @@ describe('comms selectors', () => {
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
+          message: 'Some msg indicating loading of Resource',
           error: undefined,
           isLoading: true,
           name: pathA,
@@ -252,6 +265,8 @@ describe('comms selectors', () => {
           timestamp: expect.any(Number),
         },
         {
+          isHidden: false,
+          message: 'Some msg indicating loading of Resource',
           error: undefined,
           isLoading: true,
           name: pathB,
@@ -273,6 +288,8 @@ describe('comms selectors', () => {
       // assert
       expect(result).toEqual([
         {
+          isHidden: false,
+          message: '',
           error: 'my nice error',
           isLoading: false,
           name: path,

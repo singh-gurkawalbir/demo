@@ -185,35 +185,34 @@ class Edit extends Component {
               />
             )}
 
-            {patch &&
-              patch.length > 0 && (
-                <div className={classes.actions}>
-                  <Button
-                    onClick={handleRevertChanges}
-                    className={classes.actionButton}
-                    size="small"
-                    variant="contained">
-                    Revert All
-                  </Button>
+            {patch && patch.length > 0 && (
+              <div className={classes.actions}>
+                <Button
+                  onClick={handleRevertChanges}
+                  className={classes.actionButton}
+                  size="small"
+                  variant="contained">
+                  Revert All
+                </Button>
 
-                  <Button
-                    onClick={handleUndoChange}
-                    className={classes.actionButton}
-                    size="small"
-                    variant="contained">
-                    Undo Last Change
-                  </Button>
+                <Button
+                  onClick={handleUndoChange}
+                  className={classes.actionButton}
+                  size="small"
+                  variant="contained">
+                  Undo Last Change
+                </Button>
 
-                  <Button
-                    onClick={handleCommitChanges}
-                    className={classes.actionButton}
-                    size="small"
-                    variant="contained"
-                    color="secondary">
-                    Commit Changes
-                  </Button>
-                </div>
-              )}
+                <Button
+                  onClick={handleCommitChanges}
+                  className={classes.actionButton}
+                  size="small"
+                  variant="contained"
+                  color="secondary">
+                  Commit Changes
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </LoadResources>
@@ -225,4 +224,5 @@ class Edit extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Edit);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(Edit);

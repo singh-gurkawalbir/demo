@@ -3,7 +3,7 @@ import actionTypes from '../../actions/types';
 const initialState = {};
 
 export default (state = initialState, action) => {
-  const { type, path } = action;
+  const { type, path, message, hidden } = action;
   let newState;
   const timestamp = Date.now();
 
@@ -12,14 +12,18 @@ export default (state = initialState, action) => {
       newState = Object.assign({}, state[path]);
       newState.timestamp = timestamp;
       newState.loading = true;
+      newState.message = message;
+      newState.hidden = hidden;
       delete newState.retry;
       delete newState.error;
+      delete newState.success;
 
       return { ...state, [path]: newState };
 
     case actionTypes.API_COMPLETE:
       newState = Object.assign({}, state[path]);
       newState.loading = false;
+      newState.success = message;
       delete newState.retry;
       delete newState.error;
       delete newState.timestamp;
@@ -36,7 +40,7 @@ export default (state = initialState, action) => {
 
     case actionTypes.API_FAILURE:
       newState = Object.assign({}, state[path]);
-      newState.error = action.message || 'unknown error';
+      newState.error = message || 'unknown error';
       delete newState.retry;
       newState.loading = false;
       delete newState.timestamp;
@@ -46,6 +50,14 @@ export default (state = initialState, action) => {
       newState = Object.assign({}, state);
       Object.keys(newState).forEach(i => {
         if (newState[i].error) delete newState[i];
+      });
+
+      return newState;
+
+    case actionTypes.CLEAR_SUCCESS_COMMS:
+      newState = Object.assign({}, state);
+      Object.keys(newState).forEach(i => {
+        if (newState[i].success) delete newState[i];
       });
 
       return newState;
@@ -59,12 +71,20 @@ export function isLoading(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].loading);
 }
 
+export function requestMessage(state, resourceName) {
+  return (state && state[resourceName] && state[resourceName].message) || '';
+}
+
 export function timestampComms(state, resourceName) {
   return (state && state[resourceName] && state[resourceName].timestamp) || 0;
 }
 
 export function retryCount(state, resourceName) {
   return (state && state[resourceName] && state[resourceName].retry) || 0;
+}
+
+function isHidden(state, resourceName) {
+  return !!(state && state[resourceName] && state[resourceName].hidden);
 }
 
 export function error(state, resourceName) {
@@ -84,10 +104,12 @@ export function allLoadingOrErrored(state) {
       isLoading: isLoading(state, key),
       retryCount: retryCount(state, key),
       timestamp: timestampComms(state, key),
+      message: requestMessage(state, key),
       error: error(state, key),
+      isHidden: isHidden(state, key),
     };
 
-    if (status.isLoading || status.error) {
+    if ((status.isLoading || status.error) && !status.isHidden) {
       resources.push(status);
     }
   });
@@ -95,7 +117,6 @@ export function allLoadingOrErrored(state) {
   return resources.length ? resources : null;
 }
 
-// function verifyThreshold( )
 export function isCommsBelowNetworkThreshold(state) {
   if (!state || typeof state !== 'object') {
     return false;
@@ -106,7 +127,8 @@ export function isCommsBelowNetworkThreshold(state) {
   return (
     Object.keys(state).filter(
       resource =>
-        Date.now() - timestampComms(state, resource) <= networkThreshold
+        Date.now() - timestampComms(state, resource) <= networkThreshold &&
+        !isHidden(state, resource)
     ).length > 0
   );
 }
@@ -117,8 +139,9 @@ export function isLoadingAnyResource(state) {
   }
 
   return (
-    Object.keys(state).filter(resource => isLoading(state, resource)).length !==
-    0
+    Object.keys(state).filter(
+      resource => isLoading(state, resource) && !isHidden(state, resource)
+    ).length !== 0
   );
 }
 // #endregion

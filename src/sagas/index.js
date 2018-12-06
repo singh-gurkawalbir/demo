@@ -10,14 +10,22 @@ import { delay } from 'redux-saga';
 import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
-import { api, authParams, logoutParams } from '../utils/api';
+import { api } from '../utils/api';
+import {
+  authParams,
+  logoutParams,
+  changePasswordParams,
+  changeEmailParams,
+  updateProfileParams,
+  updatePreferencesParams,
+} from '../utils/apiPaths';
 import * as selectors from '../reducers';
 import util from '../utils/array';
 
 const tryCount = 3;
 
-export function* apiCallWithRetry(path, opts) {
-  yield put(actions.api.request(path));
+export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
+  yield put(actions.api.request(path, message, hidden));
 
   for (let i = 0; i < tryCount; i += 1) {
     try {
@@ -53,11 +61,11 @@ export function* apiCallWithRetry(path, opts) {
   }
 }
 
-export function* getResource({ resourceType, id }) {
+export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, path);
+    const resource = yield call(apiCallWithRetry, path, message);
 
     yield put(actions.resource.received(resourceType, resource));
 
@@ -134,14 +142,16 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 }
 
-export function* auth({ message }) {
+export function* auth({ email, password }) {
   try {
     // replace credentials in the request body
-    const payload = { ...authParams.opts, body: message };
+    const credentialsBody = JSON.stringify({ email, password });
+    const payload = { ...authParams.opts, body: credentialsBody };
     const apiAuthentications = yield call(
       apiCallWithRetry,
       authParams.path,
-      payload
+      payload,
+      'Authenticating User'
     );
 
     yield put(actions.auth.complete());
@@ -202,9 +212,13 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(evaluateProcessor, { id });
 }
 
-function* setAuthWhenSessionValid() {
+export function* initializeApp() {
   try {
-    const resp = yield call(getResource, actions.profile.request());
+    const resp = yield call(
+      getResource,
+      actions.profile.request(),
+      'Initializing application'
+    );
 
     if (resp) {
       yield put(actions.auth.complete());
@@ -216,19 +230,144 @@ function* setAuthWhenSessionValid() {
   }
 }
 
-function* invalidateSession() {
+export function* invalidateSession() {
   try {
-    yield call(apiCallWithRetry, logoutParams.path, logoutParams.opts);
+    yield call(
+      apiCallWithRetry,
+      logoutParams.path,
+      logoutParams.opts,
+      'Logging out user'
+    );
     yield put(actions.auth.clearStore());
   } catch (e) {
     yield put(actions.auth.clearStore());
   }
 }
 
+function* changePassword({ message }) {
+  // const path = '/change-password';
+
+  try {
+    const payload = { ...changePasswordParams.opts, body: message };
+
+    yield call(
+      apiCallWithRetry,
+      changePasswordParams.path,
+      payload,
+      "Changing user's password",
+      true
+    );
+    yield put(
+      actions.api.complete(
+        changePasswordParams.path,
+        'Success!! Changed user password '
+      )
+    );
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        changePasswordParams.path,
+        'Current password falied to authenticate.  Please try again.'
+      )
+    );
+  }
+}
+
+function* updatePreferences(message) {
+  if (message === {}) return;
+
+  try {
+    const payload = {
+      ...updatePreferencesParams.opts,
+      body: JSON.stringify(message),
+    };
+
+    yield call(
+      apiCallWithRetry,
+      updatePreferencesParams.path,
+      payload,
+      "Updating user's info"
+    );
+    yield put(actions.resource.receivedCollection('preferences', message));
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        updatePreferencesParams.path,
+        'Could not update user Preferences'
+      )
+    );
+  }
+}
+
+function* updateProfile(message) {
+  try {
+    const payload = {
+      ...updateProfileParams.opts,
+      body: JSON.stringify(message),
+    };
+
+    yield call(
+      apiCallWithRetry,
+      updateProfileParams.path,
+      payload,
+      "Updating user's info"
+    );
+    yield put(actions.resource.received('profile', message));
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        updateProfileParams.path,
+        'Could not update user Profile'
+      )
+    );
+  }
+}
+
+function* updateUserPreferences({ message }) {
+  const { _id, timeFormat, dateFormat } = message;
+
+  yield updatePreferences({ _id, timeFormat, dateFormat });
+  const copy = message;
+
+  delete copy.dateFormat;
+  delete copy.timeFormat;
+  yield updateProfile(copy);
+}
+
+function* changeEmail({ message }) {
+  try {
+    const payload = { ...changeEmailParams.opts, body: message };
+
+    yield call(
+      apiCallWithRetry,
+      changeEmailParams.path,
+      payload,
+      "Changing user's Email",
+      true
+    );
+    yield put(
+      actions.api.complete(
+        changeEmailParams.path,
+        'Success!! Sent user change Email setup to you email'
+      )
+    );
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        changeEmailParams.path,
+        '"Cannot change user Email , Please try again."'
+      )
+    );
+  }
+}
+
 export default function* rootSaga() {
   yield all([
+    takeEvery(actionTypes.UPDATE_PROFILE, updateUserPreferences),
+    takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
+    takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
-    takeEvery(actionTypes.INIT_SESSION, setAuthWhenSessionValid),
+    takeEvery(actionTypes.INIT_SESSION, initializeApp),
     takeEvery(actionTypes.AUTH_REQUEST, auth),
     takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),

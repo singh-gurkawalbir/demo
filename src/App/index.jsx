@@ -4,54 +4,35 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { BrowserRouter } from 'react-router-dom';
+import AppRouting from './AppRouting';
+// import SignIn from '../views/SignIn';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   themeName,
-  isAuthenticated,
-  isAuthLoading,
   authenticationErrored,
+  isUserLoggedOut,
+  isAuthInitialized,
 } from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
 import themeProvider from '../themeProvider';
-import loadable from '../utils/loadable';
 import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
-import SignIn from '../views/SignIn';
 import AuthDialog from '../components/AuthDialog';
-import PrivateRoute from './PrivateRoute';
 import actions from '../actions';
 
 const mapStateToProps = state => ({
   themeName: themeName(state),
-  authenticated: isAuthenticated(state),
-  isAuthLoading: isAuthLoading(state),
+  isAuthInitialized: isAuthInitialized(state),
   isAuthErrored: !!authenticationErrored(state),
+  isUserLoggedOut: isUserLoggedOut(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
     dispatch(actions.auth.initSession());
   },
 });
-const Dashboard = loadable(() =>
-  import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard')
-);
-const NotFound = loadable(() =>
-  import(/* webpackChunkName: 'NotFound' */ '../views/NotFound')
-);
-const Resources = loadable(() =>
-  import(/* webpackChunkName: 'Resources' */ '../views/Resources')
-);
-const Editors = loadable(() =>
-  import(/* webpackChunkName: 'Editors' */ '../views/Editors')
-);
-const Exports = loadable(() =>
-  import(/* webpackChunkName: 'Exports' */ '../views/Exports')
-);
-const Imports = loadable(() =>
-  import(/* webpackChunkName: 'Imports' */ '../views/Imports')
-);
 
 @hot(module)
 class App extends Component {
@@ -66,9 +47,9 @@ class App extends Component {
   };
 
   componentWillMount() {
-    const { initSession, isAuthLoading } = this.props;
+    const { initSession, isAuthInitialized } = this.props;
 
-    if (isAuthLoading) initSession();
+    if (!isAuthInitialized) initSession();
   }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
@@ -76,12 +57,7 @@ class App extends Component {
 
   render() {
     const { showDrawer } = this.state;
-    const {
-      themeName,
-      authenticated,
-      isAuthLoading,
-      isAuthErrored,
-    } = this.props;
+    const { themeName, isAuthInitialized, isUserLoggedOut } = this.props;
     const customTheme = themeProvider(themeName);
 
     return (
@@ -90,7 +66,7 @@ class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            {authenticated && <NetworkSnackbar />}
+            <NetworkSnackbar />
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
@@ -100,40 +76,9 @@ class App extends Component {
               open={showDrawer}
               onToggleDrawer={this.handleToggleDrawer}
             />
+            {/* is app initialized */}
             <AuthDialog />
-            {!isAuthErrored && isAuthLoading ? (
-              <CircularProgress color="primary" />
-            ) : (
-              <Switch>
-                <PrivateRoute
-                  authenticated={authenticated}
-                  path="/pg/resources"
-                  component={Resources}
-                />
-                <PrivateRoute
-                  authenticated={authenticated}
-                  path="/pg/editors"
-                  component={Editors}
-                />
-                <PrivateRoute
-                  authenticated={authenticated}
-                  path="/pg/exports"
-                  component={Exports}
-                />
-                <PrivateRoute
-                  authenticated={authenticated}
-                  path="/pg/imports"
-                  component={Imports}
-                />
-                <Route path="/pg/signin" component={SignIn} />
-                <PrivateRoute
-                  authenticated={authenticated}
-                  path="/pg"
-                  component={Dashboard}
-                />
-                <Route component={NotFound} />
-              </Switch>
-            )}
+            {(isAuthInitialized || !isUserLoggedOut) && <AppRouting />}
           </Fragment>
         </BrowserRouter>
       </MuiThemeProvider>
@@ -141,4 +86,5 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(App);

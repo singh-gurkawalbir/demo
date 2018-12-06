@@ -95,5 +95,5 @@ export class Appbar extends Component {
     );
   }
 }
-
+// prettier-ignore
 export default connect(mapStateToProps, null)(Appbar);

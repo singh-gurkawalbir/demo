@@ -86,4 +86,5 @@ class csvParseEditor extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(csvParseEditor);

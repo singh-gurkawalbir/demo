@@ -121,4 +121,5 @@ class Resources extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, null)(Resources);

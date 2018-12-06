@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+
 import reducer from './';
 import actions from '../../actions';
 
@@ -6,7 +7,7 @@ describe('authentication reducers', () => {
   test('any other action return default state', () => {
     const newState = reducer(undefined, 'someaction');
 
-    expect(newState).toEqual({ loading: true });
+    expect(newState).toEqual({ initialized: false });
   });
 
   test('any other action return original state', () => {
@@ -20,6 +21,7 @@ describe('authentication reducers', () => {
       const newState = reducer(undefined, actions.auth.request());
 
       expect(newState).toEqual({
+        initialized: false,
         loading: true,
         authenticated: false,
       });
@@ -31,6 +33,7 @@ describe('authentication reducers', () => {
       const newState = reducer(undefined, actions.auth.complete());
 
       expect(newState).toEqual({
+        initialized: true,
         loading: false,
         authenticated: true,
       });
@@ -41,6 +44,8 @@ describe('authentication reducers', () => {
       const finalState = reducer(newState, actions.auth.complete());
 
       expect(finalState).toEqual({
+        initialized: true,
+
         loading: false,
         authenticated: true,
       });
@@ -65,6 +70,7 @@ describe('authentication reducers', () => {
       );
 
       expect(sucessfulAuthenticatedState).toEqual({
+        initialized: true,
         loading: false,
         authenticated: true,
       });
@@ -77,6 +83,8 @@ describe('authentication reducers', () => {
       const newState = reducer(undefined, actions.auth.failure(someFailureMsg));
 
       expect(newState).toEqual({
+        initialized: false,
+
         loading: false,
         authenticated: false,
         failure: someFailureMsg,
@@ -92,6 +100,7 @@ describe('authentication reducers', () => {
       );
 
       expect(newState).toEqual({
+        initialized: true,
         loading: false,
         authenticated: false,
         sessionExpired: true,

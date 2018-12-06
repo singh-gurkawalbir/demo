@@ -104,4 +104,5 @@ class CsvParsePanel extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(CsvParsePanel);

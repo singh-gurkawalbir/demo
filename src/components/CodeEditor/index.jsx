@@ -95,4 +95,5 @@ class CodeEditor extends Component {
   }
 }
 
+// prettier-ignore
 export default connect(mapStateToProps)(CodeEditor);
