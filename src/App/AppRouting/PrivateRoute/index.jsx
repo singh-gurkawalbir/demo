@@ -41,9 +41,5 @@ class PrivateRoute extends Component {
   }
 }
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    null
-  )(PrivateRoute)
-);
+// prettier-ignore
+export default withRouter(connect(mapStateToProps,null)(PrivateRoute));

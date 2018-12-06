@@ -66,7 +66,5 @@ class ChangeEmail extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChangeEmail);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(ChangeEmail);

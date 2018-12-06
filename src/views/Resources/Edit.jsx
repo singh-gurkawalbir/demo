@@ -89,10 +89,17 @@ const prettyDate = dateString => {
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: '90%',
+    width: `calc(100% - ${theme.spacing.double}px)`,
   },
   dates: {
     color: theme.palette.text.secondary,
+  },
+  actions: {
+    textAlign: 'right',
+  },
+  actionButton: {
+    marginTop: theme.spacing.double,
+    marginLeft: theme.spacing.double,
   },
 }))
 class Edit extends Component {
@@ -142,7 +149,7 @@ class Edit extends Component {
             key="conn"
             className={classes.relatedContent}
             to={`/pg/resources/connections/edit/${connection._id}`}>
-            <Button size="small" color="secondary">
+            <Button size="small" color="primary">
               Connected to {connection.name || connection._id}
             </Button>
           </Link>
@@ -179,26 +186,30 @@ class Edit extends Component {
             )}
 
             {patch && patch.length > 0 && (
-              <div>
-                <Button
-                  onClick={handleCommitChanges}
-                  size="small"
-                  color="primary">
-                  Commit Changes
-                </Button>
-
+              <div className={classes.actions}>
                 <Button
                   onClick={handleRevertChanges}
+                  className={classes.actionButton}
                   size="small"
-                  color="secondary">
+                  variant="contained">
                   Revert All
                 </Button>
 
                 <Button
                   onClick={handleUndoChange}
+                  className={classes.actionButton}
                   size="small"
-                  color="secondary">
+                  variant="contained">
                   Undo Last Change
+                </Button>
+
+                <Button
+                  onClick={handleCommitChanges}
+                  className={classes.actionButton}
+                  size="small"
+                  variant="contained"
+                  color="secondary">
+                  Commit Changes
                 </Button>
               </div>
             )}
@@ -213,7 +224,5 @@ class Edit extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Edit);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(Edit);

@@ -57,11 +57,11 @@ class csvParseEditor extends Component {
     return (
       <PanelGrid className={classes.template}>
         <PanelGridItem gridArea="rule">
-          <PanelTitle>CSV Parse Options</PanelTitle>
+          <PanelTitle title="CSV Parse Options" />
           <CsvParsePanel editorId={editorId} />
         </PanelGridItem>
         <PanelGridItem gridArea="data">
-          <PanelTitle>CSV to Parse</PanelTitle>
+          <PanelTitle title="CSV to Parse" />
           <CodePanel
             name="data"
             value={data}
@@ -70,7 +70,7 @@ class csvParseEditor extends Component {
           />
         </PanelGridItem>
         <PanelGridItem gridArea="result">
-          <PanelTitle>Parsed Result</PanelTitle>
+          <PanelTitle title="Parsed Result" />
           <CodePanel name="result" value={parsedData} mode="json" readOnly />
         </PanelGridItem>
         {error && (

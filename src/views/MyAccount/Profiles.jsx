@@ -239,7 +239,5 @@ class ProfilesComponent extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProfilesComponent);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(ProfilesComponent);

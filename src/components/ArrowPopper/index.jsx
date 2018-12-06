@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -85,7 +86,15 @@ export default class ArrowPopper extends Component {
   };
 
   render() {
-    const { id, anchorEl, placement, classes, children, onClose } = this.props;
+    const {
+      id,
+      anchorEl,
+      placement = 'bottom-end',
+      classes,
+      children,
+      onClose,
+      className,
+    } = this.props;
     const open = Boolean(anchorEl);
     const { arrowEl } = this.state;
 
@@ -93,7 +102,7 @@ export default class ArrowPopper extends Component {
       <Popper
         id={id}
         anchorEl={anchorEl}
-        placement={placement || 'bottom-end'}
+        placement={placement}
         disablePortal={false}
         open={open}
         className={classes.popper}
@@ -113,7 +122,9 @@ export default class ArrowPopper extends Component {
         }}>
         <span className={classes.arrow} ref={this.handlearrowEl} />
         <ClickAwayListener onClickAway={onClose}>
-          <Paper className={classes.paper}>{children}</Paper>
+          <Paper className={classNames(classes.paper, className)}>
+            {children}
+          </Paper>
         </ClickAwayListener>
       </Popper>
     );

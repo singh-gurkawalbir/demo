@@ -4,65 +4,89 @@ import { DEFAULT_THEME } from './reducers/user';
 const Roboto300 = { fontFamily: 'Roboto300, sans-serif' };
 const Roboto400 = { fontFamily: 'Roboto400, sans-serif' };
 const Roboto500 = { fontFamily: 'Roboto500, sans-serif' };
-/*
-  Celigo Blue - #0E7DC1
-  Celigo Lt Blue #12C7FF
-  Celigo Orange - #FFA424
-  Celigo Charcoal Grey - #424E59
-  Celigo Dark Grey - #6A7B89 - TEXT
-  Celigo Grey -#95ABBC
-  Celigo Lt Grey -#D6E4ED
-  Celigo Super Lt Grey - #F0F5F9
-  Celigo White - #FFFFFF
-*/
+const celigo = {
+  blue: '#0E7DC1',
+  lightBlue: '#12C7FF',
+  orange: '#FFA424',
+  grey: '#95ABBC',
+  darkGrey: '#6A7B89', // - TEXT
+  charcoalGrey: '#424E59',
+  darkDarkGrey: '#323E49',
+  lightGrey: '#D9D8DC', // was D6E4ED?'
+  superLightGrey: '#F0F5F9',
+  superDuperLightGrey: '#F8FAFC',
+  white: '#FFFFFF',
+};
 const themes = {
   light: {
     name: 'Celigo Light Theme',
     overrides: {
-      appBarBackground: '#6A7B89', // Celigo Dark Grey,
-      appBarContrast: '#F0F5F9', // Celigo Super Lt Grey,
+      appBar: {
+        background: celigo.darkGrey,
+        contrast: celigo.superLightGrey,
+        hover: celigo.white,
+        // Deprecated: Temporary until the waffle icons are built properly...
+        iconBackground: celigo.lightGrey,
+      },
+      editor: {
+        panelBackground: celigo.superLightGrey,
+        panelBorder: celigo.superLightGrey,
+      },
       palette: {
         type: 'light',
         background: {
-          paper: '#D6E4ED', // Lt Grey
-          default: '#F0F5F9', // Celigo Super Lt Grey
+          paper: celigo.superDuperLightGrey,
+          default: celigo.white,
         },
         // action: {[object]},
         primary: {
-          main: '#FFA424', // Celigo Orange
+          main: celigo.orange,
         },
         secondary: {
-          light: '#12C7FF', // Celigo Lt Blue #12C7FF
-          main: '#0E7DC1', // Celigo Blue
+          light: celigo.lightBlue,
+          main: celigo.blue,
         },
-        // text: {
-        //   primary: '#rrggbb',
-        //   secondary: '#rrggbb',
-        //   disabled: '#rrggbb',
-        //   hint: '#rrggbb',
-        // },
+        text: {
+          primary: celigo.darkGrey,
+          // secondary: '#rrggbb',
+          // disabled: '#rrggbb',
+          // hint: '#rrggbb',
+        },
       },
     },
   },
   dark: {
     name: 'Celigo Dark Theme',
     overrides: {
-      // appBarBackground: '#424E59', // Celigo Charcoal Grey,
-      appBarBackground: '#323E49',
-      appBarContrast: '#95ABBC', // Celigo Grey,
+      appBar: {
+        background: celigo.darkDarkGrey,
+        contrast: celigo.grey,
+        hover: celigo.white,
+        iconBackground: celigo.grey,
+      },
+      editor: {
+        panelBackground: celigo.darkDarkGrey,
+        panelBorder: celigo.darkDarkGrey,
+      },
       palette: {
         type: 'dark',
         background: {
-          paper: '#677A89', // Dark Grey
-          default: '#424E59', // Celigo Charcoal Grey,
+          paper: celigo.darkGrey,
+          default: celigo.charcoalGrey,
         },
         // action: {[object]},
         primary: {
-          main: '#FFA424', // Celigo Orange
+          main: celigo.orange,
         },
         secondary: {
-          light: '#12C7FF', // Celigo Lt Blue #12C7FF
-          main: '#0E7DC1', // Celigo Blue
+          light: celigo.lightBlue,
+          main: celigo.blue,
+        },
+        text: {
+          primary: celigo.lightGrey,
+          // secondary: '#rrggbb',
+          // disabled: '#rrggbb',
+          // hint: '#rrggbb',
         },
         // error: {
         //   light: '#rrggbb',
@@ -95,7 +119,7 @@ const defaultTheme = {
     triple: 24,
     quad: 32,
   },
-  drawerWidth: 240,
+  drawerWidth: 320,
 };
 
 export default name => {

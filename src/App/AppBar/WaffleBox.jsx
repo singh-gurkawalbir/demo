@@ -1,14 +1,31 @@
 import { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import AppsIcon from '@material-ui/icons/Apps';
-import Button from '@material-ui/core/Button';
 import ArrowPopper from '../../components/ArrowPopper';
+import WaffleButton from './WaffleButton';
+import WaffleIcon from './WaffleIcon';
 
 @withStyles(theme => ({
-  icon: {
-    fill: theme.appBarContrast,
+  waffleIcon: {
+    fill: theme.appBar.contrast,
+    width: 21,
+    height: 21,
+    '&:hover': {
+      fill: theme.appBar.hover,
+    },
+  },
+  wafflePopper: {
+    width: '300px',
+    maxHeight: '450px',
+    padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
+    display: 'flex',
+    flexWrap: 'wrap',
+    overflowY: 'auto',
+  },
+  buttonContainer: {
+    flex: 'auto',
+    width: 70,
+    padding: theme.spacing.unit,
   },
 }))
 export default class WaffleBox extends Component {
@@ -29,30 +46,44 @@ export default class WaffleBox extends Component {
   };
 
   render() {
-    const { anchorEl, open } = this.state;
+    const { anchorEl } = this.state;
     const { classes } = this.props;
+    const open = !!anchorEl;
+    const buttons = [
+      { title: 'Editors', path: '/pg/editors' },
+      { title: 'Resources', path: '/pg/resources' },
+      { title: 'Home', path: '/pg' },
+      { title: 'Home 2', path: '/pg' },
+      { title: 'Home 3', path: '/pg' },
+      { title: 'Home 4', path: '/pg' },
+      { title: 'Home 5', path: '/pg' },
+      { title: 'Home 6', path: '/pg' },
+      { title: 'Home 7', path: '/pg' },
+    ];
 
     return (
       <Fragment>
         <IconButton
-          aria-owns={open ? 'profileOptions' : null}
+          aria-owns={open ? 'waffleBox' : null}
           aria-haspopup="true"
           onClick={this.handleMenu}>
-          <AppsIcon fontSize="large" className={classes.icon} />
+          <WaffleIcon className={classes.waffleIcon} />
         </IconButton>
         <ArrowPopper
+          placement="left"
+          className={classes.wafflePopper}
           id="waffleBox"
           onClose={this.handleClose}
           anchorEl={anchorEl}>
-          <Button component={Link} to="/pg/editors" onClick={this.handleClose}>
-            Editors
-          </Button>
-          <Button
-            component={Link}
-            to="/pg/resources"
-            onClick={this.handleClose}>
-            Resources
-          </Button>
+          {buttons.map(b => (
+            <div key={b.title} className={classes.buttonContainer}>
+              <WaffleButton
+                to={b.path}
+                title={b.title}
+                onClick={this.handleClose}
+              />
+            </div>
+          ))}
         </ArrowPopper>
       </Fragment>
     );

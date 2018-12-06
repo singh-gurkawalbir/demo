@@ -86,7 +86,5 @@ class App extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(App);

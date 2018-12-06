@@ -19,10 +19,26 @@ const mapStateToProps = state => ({
     flexGrow: 1,
   },
   appBar: {
-    backgroundColor: theme.appBarBackground,
+    backgroundColor: theme.appBar.background,
   },
-  flex: {
+  toolbar: {
+    height: 55,
+    minHeight: 55,
+  },
+  logoContainer: {
+    flex: '1 1 1',
+  },
+  navLinksContainer: {
+    paddingLeft: theme.spacing.unit * 3,
     flex: 1,
+  },
+  // TODO: This does nothing...
+  // figure out how to affect child elements under container
+  iconContainer: {
+    '&button': {
+      padding: theme.spacing.unit - 1,
+      margin: theme.spacing.unit / 2,
+    },
   },
   celigoLogo: {
     float: 'left',
@@ -34,36 +50,45 @@ const mapStateToProps = state => ({
       process.env.CDN_BASE_URI
     }flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
+  navLink: {
+    color: theme.appBar.contrast,
+    paddingRight: theme.spacing.unit * 3,
+    letterSpacing: '1.3px',
+    fontSize: '13px',
+    fontWeight: 500,
+    textDecoration: 'none',
+    textTransform: 'uppercase',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
 }))
 export class Appbar extends Component {
-  state = {
-    anchorEl: null,
-  };
-
-  handleMenu = event => {
-    if (this.state.anchorEl) {
-      this.setState({ anchorEl: null });
-    } else {
-      this.setState({ anchorEl: event.currentTarget });
-    }
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   render() {
     const { classes, authenticated } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar} position="static">
-          <Toolbar>
-            <div className={classes.flex}>
+          <Toolbar className={classes.toolbar}>
+            <div className={classes.logoContainer}>
               <Link className={classNames(classes.celigoLogo)} to="/pg/" />
             </div>
-            <WaffleBox />
-            {authenticated && <ProfileMenu />}
+            <div className={classes.navLinksContainer}>
+              <Link className={classes.navLink} to="/pg/">
+                Home
+              </Link>
+              <Link className={classes.navLink} to="/pg/editors">
+                Editors
+              </Link>
+              <Link className={classes.navLink} to="/pg/resources">
+                Resources
+              </Link>
+            </div>
+            <div className={classes.iconContainer}>
+              <WaffleBox />
+              {authenticated && <ProfileMenu />}
+            </div>
           </Toolbar>
         </AppBar>
       </div>

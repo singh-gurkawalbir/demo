@@ -78,7 +78,5 @@ class ChangePassword extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChangePassword);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(ChangePassword);

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -39,6 +39,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @withStyles(theme => ({
+  avatarButton: {
+    padding: theme.spacing.unit,
+  },
+  avatar: {
+    width: theme.spacing.quad,
+    height: theme.spacing.quad,
+  },
   bigAvatar: {
     marginLeft: theme.spacing.unit,
     width: 60,
@@ -93,8 +100,9 @@ class AppBar extends Component {
     }
 
     return (
-      <div>
+      <Fragment>
         <IconButton
+          className={classes.avatarButton}
           aria-owns={open ? 'profileOptions' : null}
           aria-haspopup="true"
           onClick={this.handleMenu}
@@ -160,12 +168,10 @@ class AppBar extends Component {
             Sign Out
           </Button>
         </ArrowPopper>
-      </div>
+      </Fragment>
     );
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppBar);
+// prettier-ignore
+export default connect(mapStateToProps,mapDispatchToProps)(AppBar);

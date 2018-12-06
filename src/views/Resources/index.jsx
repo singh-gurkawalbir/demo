@@ -2,9 +2,10 @@ import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 import LoadResources from '../../components/LoadResources';
 import { availableResources } from '../../actions';
 import FilteredResources from './FilteredResources';
@@ -32,13 +33,11 @@ const mapStateToProps = state => {
   };
 };
 
-const drawerWidth = 320;
-
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
-    minHeight: 500,
     zIndex: 1,
+    height: '100%',
     overflow: 'hidden',
     position: 'relative',
     display: 'flex',
@@ -52,14 +51,18 @@ const drawerWidth = 320;
 
   drawerPaper: {
     position: 'relative',
-    width: drawerWidth,
+    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
+    width: theme.drawerWidth,
     padding: theme.spacing.unit,
   },
 
   content: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.triple,
+  },
+  paper: {
+    padding: theme.spacing.double,
   },
 }))
 class Resources extends Component {
@@ -96,17 +99,21 @@ class Resources extends Component {
             ))}
           </Drawer>
           <main className={classes.content}>
-            <Switch>
-              <Route
-                path="/pg/resources/:resourceType/edit/:id"
-                component={Edit}
-              />
-              <Route
-                path="/pg/resources/:resourceType/add/:id"
-                render={props => <Add key={props.match.params.id} {...props} />}
-              />
-              <Route component={NoEdit} />
-            </Switch>
+            <Paper className={classes.paper}>
+              <Switch>
+                <Route
+                  path="/pg/resources/:resourceType/edit/:id"
+                  component={Edit}
+                />
+                <Route
+                  path="/pg/resources/:resourceType/add/:id"
+                  render={props => (
+                    <Add key={props.match.params.id} {...props} />
+                  )}
+                />
+                <Route component={NoEdit} />
+              </Switch>
+            </Paper>
           </main>
         </div>
       </LoadResources>
