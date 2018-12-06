@@ -7,9 +7,12 @@ import WaffleIcon from './WaffleIcon';
 
 @withStyles(theme => ({
   waffleIcon: {
-    fill: theme.appBarContrast,
+    fill: theme.appBar.contrast,
     width: 21,
     height: 21,
+    '&:hover': {
+      fill: theme.appBar.hover,
+    },
   },
   wafflePopper: {
     width: '300px',
@@ -43,30 +46,31 @@ export default class WaffleBox extends Component {
   };
 
   render() {
-    const { anchorEl, open } = this.state;
+    const { anchorEl } = this.state;
     const { classes } = this.props;
+    const open = !!anchorEl;
     const buttons = [
       { title: 'Editors', path: '/pg/editors' },
       { title: 'Resources', path: '/pg/resources' },
-      { title: 'Exports', path: '/pg/exports' },
-      { title: 'Imports', path: '/pg/imports' },
       { title: 'Home', path: '/pg' },
       { title: 'Home 2', path: '/pg' },
       { title: 'Home 3', path: '/pg' },
       { title: 'Home 4', path: '/pg' },
       { title: 'Home 5', path: '/pg' },
       { title: 'Home 6', path: '/pg' },
+      { title: 'Home 7', path: '/pg' },
     ];
 
     return (
       <Fragment>
         <IconButton
-          aria-owns={open ? 'profileOptions' : null}
+          aria-owns={open ? 'waffleBox' : null}
           aria-haspopup="true"
           onClick={this.handleMenu}>
           <WaffleIcon className={classes.waffleIcon} />
         </IconButton>
         <ArrowPopper
+          placement="left"
           className={classes.wafflePopper}
           id="waffleBox"
           onClose={this.handleClose}
