@@ -125,6 +125,7 @@ class Edit extends Component {
     } = this.props;
     const { merged, patch, conflict } = resourceData;
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
+    const hasPatch = patch && patch.length > 0;
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
@@ -138,7 +139,7 @@ class Edit extends Component {
           Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
 
-        {patch && (
+        {hasPatch && (
           <Typography variant="caption" className={classes.dates}>
             Unsaved changes made <TimeAgo date={Date(patch.lastChange)} /> ago.
           </Typography>
@@ -185,7 +186,7 @@ class Edit extends Component {
               />
             )}
 
-            {patch && patch.length > 0 && (
+            {hasPatch && (
               <div className={classes.actions}>
                 <Button
                   onClick={handleRevertChanges}

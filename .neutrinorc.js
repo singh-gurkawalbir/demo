@@ -118,6 +118,7 @@ module.exports = {
         'AUTO_LOGIN',
         'NETWORK_THRESHOLD',
         'CDN_BASE_URI',
+        'ADD_NETWORK_LATENCY',
       ],
     ],
     neutrino => {

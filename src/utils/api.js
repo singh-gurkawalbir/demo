@@ -38,7 +38,7 @@ export const api = async (path, opts = {}) => {
 
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
-  await delay(1000);
+  await delay(process.env.ADD_NETWORK_LATENCY || 0);
   let req;
 
   if (
