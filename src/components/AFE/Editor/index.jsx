@@ -7,7 +7,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 
-@withStyles(() => ({
+@withStyles(theme => ({
   compactTemplate: {
     gridTemplateColumns: '1fr 1fr',
     gridTemplateRows: '1fr 1fr 0fr',
@@ -27,6 +27,10 @@ import PanelGridItem from '../PanelGridItem';
     gridTemplateColumns: '1fr 1fr 1fr',
     gridTemplateRows: '4fr 0fr',
     gridTemplateAreas: '"rule data result" "error error error"',
+  },
+  errorGridItem: {
+    // height: '25%',
+    marginBottom: theme.spacing.double,
   },
 }))
 export default class Editor extends Component {
@@ -61,11 +65,19 @@ export default class Editor extends Component {
       resultMode,
       resultTitle,
       error,
+      violations,
       handleRuleChange,
       handleDataChange,
     } = this.props;
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
+    const errorText = [
+      JSON.stringify(error),
+      violations && violations.ruleError,
+      violations && violations.dataError,
+    ]
+      .filter(e => !!e)
+      .join('\n');
 
     return (
       <PanelGrid className={gridTemplate}>
@@ -91,12 +103,18 @@ export default class Editor extends Component {
           <PanelTitle title={resultTitle} />
           <CodePanel name="result" value={result} mode={resultMode} readOnly />
         </PanelGridItem>
-        {error && (
-          <PanelGridItem gridArea="error">
+        {errorText && (
+          <PanelGridItem className={classes.errorGridItem} gridArea="error">
             <PanelTitle>
               <Typography color="error">Error</Typography>
             </PanelTitle>
-            <CodePanel readOnly name="error" value={error} mode="json" />
+            <CodePanel
+              readOnly
+              overrides={{ wrap: true }}
+              mode="text"
+              name="error"
+              value={errorText}
+            />
           </PanelGridItem>
         )}
       </PanelGrid>

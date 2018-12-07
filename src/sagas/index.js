@@ -172,12 +172,10 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
-  const { errors, processor, body } = reqOpts;
+  const { violations, processor, body } = reqOpts;
 
-  if (errors && errors.length) {
-    return yield put(
-      actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2))
-    );
+  if (violations) {
+    return yield put(actions.editor.validateFailure(id, violations));
   }
 
   // console.log(`editorProcessorOptions for ${id}`, processor, body);
@@ -373,6 +371,10 @@ export default function* rootSaga() {
     takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
     takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
     takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+    // since the reducers handle actions FIRST, it is safe to re-use the same
+    // editor_init action to trigger auto-evaluation for the initial editor
+    // state.
+    takeEvery(actionTypes.EDITOR_INIT, autoEvaluateProcessor),
     takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
   ]);
 }

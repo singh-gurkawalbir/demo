@@ -83,6 +83,8 @@ const editor = {
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
   evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
+  validateFailure: (id, violations) =>
+    action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
   evaluateFailure: (id, error) =>
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>

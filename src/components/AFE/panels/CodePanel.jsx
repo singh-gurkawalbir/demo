@@ -56,6 +56,7 @@ export default class CodePanel extends Component {
         showGutter={config.showGutter}
         showInvisibles={config.showInvisibles}
         enableLiveAutocompletion={config.enableLiveAutocompletion}
+        wrap={config.wrap}
         onChange={onChange}
       />
     );

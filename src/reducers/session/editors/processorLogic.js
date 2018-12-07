@@ -74,25 +74,20 @@ function getLogic(editor) {
 }
 
 const validate = editor => {
-  const result = getLogic(editor).validate(editor);
-  const errors = [];
+  const violations = getLogic(editor).validate(editor);
 
-  if (result.ruleError) {
-    errors.push(result.ruleError);
+  if (!violations.ruleError && !violations.dataError) {
+    return false;
   }
 
-  if (result.dataError) {
-    errors.push(result.dataError);
-  }
-
-  return errors;
+  return violations;
 };
 
 const requestOptions = editor => {
-  const validationErrors = validate(editor);
+  const violations = validate(editor);
 
-  if (validationErrors.length) {
-    return { errors: validationErrors };
+  if (violations) {
+    return { violations };
   }
 
   return {

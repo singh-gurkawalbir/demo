@@ -2,7 +2,16 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 
 export default function reducer(state = {}, action) {
-  const { type, processor, id, options, patch, result, error } = action;
+  const {
+    type,
+    processor,
+    id,
+    options,
+    patch,
+    result,
+    error,
+    violations,
+  } = action;
   let newState;
 
   switch (type) {
@@ -27,6 +36,7 @@ export default function reducer(state = {}, action) {
         lastChange: Date.now(),
       };
 
+      delete newState[id].violations;
       delete newState[id].error;
       delete newState[id].result;
 
@@ -42,6 +52,17 @@ export default function reducer(state = {}, action) {
       newState = Object.assign({}, state);
       newState[id] = { ...newState[id], result };
       delete newState[id].error;
+      delete newState[id].violations;
+
+      return newState;
+
+    case actionTypes.EDITOR_VALIDATE_FAILURE:
+      newState = Object.assign({}, state);
+      newState[id] = { ...newState[id], violations };
+
+      // Maybe we dont delete the results on violations?
+      // lets experiment with it and see how the UX is...
+      // delete newState[id].result;
 
       return newState;
 
