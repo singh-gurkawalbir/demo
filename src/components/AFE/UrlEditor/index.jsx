@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Editor from './HandlebarsEditor';
+import Editor from '../HandlebarsEditor';
 
 @withStyles(() => ({
   gridTemplate: {

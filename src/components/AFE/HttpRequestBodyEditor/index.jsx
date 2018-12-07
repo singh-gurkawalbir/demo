@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import HandlebarsEditor from './HandlebarsEditor';
+import HandlebarsEditor from '../HandlebarsEditor';
 
 export default class HttpRequestBodyEditor extends Component {
   render() {

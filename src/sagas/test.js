@@ -312,16 +312,16 @@ describe('evaluateProcessor saga', () => {
 
   test('should complete with dispatch of failure action when editor has validation errors.', () => {
     const id = 1;
-    const errors = ['error'];
+    const violations = ['violations'];
     const saga = evaluateProcessor({ id });
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
-    const putEffect = saga.next({ errors }).value;
+    const putEffect = saga.next({ violations }).value;
 
     expect(putEffect).toEqual(
-      put(actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2)))
+      put(actions.editor.validateFailure(id, violations))
     );
 
     const finalEffect = saga.next();

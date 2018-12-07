@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import EditorDialog from './';
-import HttpRequestBodyEditor from '../Editor/HttpRequestBodyEditor';
+import EditorDialog from '../EditorDialog';
+import HttpRequestBodyEditor from './';
 
 export default class UrlEditorDialog extends Component {
   render() {

@@ -4,10 +4,10 @@ import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
-import UrlEditorDialog from '../../components/AFE/EditorDialog/UrlEditorDialog';
-import MergeEditorDialog from '../../components/AFE/EditorDialog/MergeEditorDialog';
-import HttpRequestBodyEditorDialog from '../../components/AFE/EditorDialog/HttpRequestBodyEditorDialog';
-import CsvParseEditorDialog from '../../components/AFE/EditorDialog/CsvParseEditorDialog';
+import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
+import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
+import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
+import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 

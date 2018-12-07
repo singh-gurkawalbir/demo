@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import EditorDialog from './';
-import MergeEditor from '../Editor/MergeEditor';
+import EditorDialog from '../EditorDialog';
+import UrlEditor from './';
 
-export default class MergeEditorDialog extends Component {
+export default class UrlEditorDialog extends Component {
   render() {
     const {
       id,
@@ -11,8 +11,7 @@ export default class MergeEditorDialog extends Component {
       onClose,
       open = true,
       title,
-      layout = 'column',
-      width = '80vw',
+      width = '70vw',
       height = '50vh',
     } = this.props;
 
@@ -20,12 +19,12 @@ export default class MergeEditorDialog extends Component {
       <EditorDialog
         id={id}
         open={open}
-        layout={layout}
         title={title}
         width={width}
         height={height}
-        onClose={onClose}>
-        <MergeEditor editorId={id} rule={rule} data={data} />
+        onClose={onClose}
+        showLayoutOptions={false}>
+        <UrlEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }

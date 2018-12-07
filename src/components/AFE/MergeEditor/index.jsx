@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Editor from './';
+import Editor from '../GenericEditor';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
@@ -12,6 +12,7 @@ const mapStateToProps = (state, { editorId }) => {
     data: editor.data,
     result: editor.result ? JSON.stringify(editor.result.data[0], null, 2) : '',
     error: editor.error,
+    violations: editor.violations,
   };
 };
 
@@ -34,36 +35,16 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
 
 class MergeEditor extends Component {
   render() {
-    const {
-      rule,
-      data,
-      result,
-      error,
-      editorId,
-      layout = 'column',
-      handleRuleChange,
-      handleDataChange,
-      handleInit,
-    } = this.props;
-
     return (
       <Editor
-        editorId={editorId}
+        {...this.props}
         processor="merge"
-        rule={rule}
         ruleMode="json"
-        data={data}
         dataMode="json"
-        result={result}
         resultMode="json"
-        error={error}
-        layout={layout}
         ruleTitle="Default Object"
         dataTitle="Merge Target"
         resultTitle="Final Object"
-        handleRuleChange={handleRuleChange}
-        handleDataChange={handleDataChange}
-        handleInit={handleInit}
       />
     );
   }

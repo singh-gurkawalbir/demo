@@ -36,7 +36,6 @@ const allLogic = {
       };
     },
     validate: editor => ({
-      ruleError: null,
       dataError:
         !editor.data && !editor.data.length && 'Must provide some sample data.',
     }),
@@ -57,7 +56,6 @@ const allLogic = {
       data: JSON.parse(editor.data),
     }),
     validate: editor => ({
-      ruleError: null,
       dataError: validateJsonString(editor.data),
     }),
   },
