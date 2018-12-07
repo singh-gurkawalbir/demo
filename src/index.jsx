@@ -7,7 +7,7 @@ import { createLogger } from 'redux-logger';
 import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
-import { loadState, saveState } from './session';
+import { loadState, saveState } from './utils/session';
 
 const middleware = [];
 const sagaMiddleware = createSagaMiddleware();
