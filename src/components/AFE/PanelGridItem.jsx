@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 @withStyles(theme => ({
@@ -19,7 +20,7 @@ import { withStyles } from '@material-ui/core/styles';
 }))
 export default class PanelGridItem extends Component {
   render() {
-    const { classes, children, gridArea } = this.props;
+    const { classes, className, children, gridArea } = this.props;
 
     if (!children.length) {
       return (
@@ -30,7 +31,9 @@ export default class PanelGridItem extends Component {
     }
 
     return (
-      <div className={classes.gridItem} style={{ gridArea }}>
+      <div
+        className={classNames(className, classes.gridItem)}
+        style={{ gridArea }}>
         <div className={classes.flexContainer}>
           <div className={classes.title}>{children[0]}</div>
           <div className={classes.panel}>{children[1]}</div>

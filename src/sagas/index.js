@@ -172,12 +172,10 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
-  const { errors, processor, body } = reqOpts;
+  const { violations, processor, body } = reqOpts;
 
-  if (errors && errors.length) {
-    return yield put(
-      actions.editor.evaluateFailure(id, JSON.stringify(errors, null, 2))
-    );
+  if (violations) {
+    return yield put(actions.editor.validateFailure(id, violations));
   }
 
   // console.log(`editorProcessorOptions for ${id}`, processor, body);

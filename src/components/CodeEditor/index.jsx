@@ -57,13 +57,14 @@ class CodeEditor extends Component {
       readOnly,
       width,
       height,
+      wrap,
       showGutter,
       showInvisibles,
       enableLiveAutocompletion,
       classes,
     } = this.props;
 
-    // console.log('rendering ace editor...');
+    // console.log('rendering ace editor...', wrap);
 
     return (
       <AceEditor
@@ -86,6 +87,7 @@ class CodeEditor extends Component {
           // enableBasicAutocompletion: false,
           enableLiveAutocompletion,
           showInvisibles,
+          wrap,
           // showLineNumbers: true,
           tabSize: 2,
         }}
