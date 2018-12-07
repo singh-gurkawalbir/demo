@@ -167,7 +167,7 @@ describe('editor selectors', () => {
         },
         invalid: {
           initOpts: { data: '' },
-          expectedErrors: ['Must provide some sample data.'],
+          violations: { dataError: 'Must provide some sample data.' },
         },
       },
       {
@@ -184,7 +184,7 @@ describe('editor selectors', () => {
         },
         invalid: {
           initOpts: { template: '{{a}', data: '{a: xxx}' },
-          expectedErrors: ['Unexpected token a in JSON at position 1'],
+          violations: { dataError: 'Unexpected token a in JSON at position 1' },
         },
       },
       {
@@ -200,11 +200,11 @@ describe('editor selectors', () => {
           },
         },
         invalid: {
-          initOpts: { rule: '{a: xx}', data: '{b: t}' },
-          expectedErrors: [
-            'Unexpected token a in JSON at position 1',
-            'Unexpected token b in JSON at position 1',
-          ],
+          initOpts: { rule: '{a: xx}', data: '{"b": t}' },
+          violations: {
+            dataError: 'Unexpected token } in JSON at position 7',
+            ruleError: 'Unexpected token a in JSON at position 1',
+          },
         },
       },
     ];
@@ -234,7 +234,7 @@ describe('editor selectors', () => {
           );
           const requestOpts = selectors.processorRequestOptions(state, id);
 
-          expect(requestOpts.errors).toEqual(testData.invalid.expectedErrors);
+          expect(requestOpts.violations).toEqual(testData.invalid.violations);
         });
       });
     });

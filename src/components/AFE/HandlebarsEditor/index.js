@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Editor from './';
+import Editor from '../GenericEditor';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);

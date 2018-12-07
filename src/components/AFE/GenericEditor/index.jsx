@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { func, string } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import CodePanel from '../panels/CodePanel';
+import CodePanel from './CodePanel';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
