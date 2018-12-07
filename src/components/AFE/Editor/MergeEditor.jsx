@@ -12,6 +12,7 @@ const mapStateToProps = (state, { editorId }) => {
     data: editor.data,
     result: editor.result ? JSON.stringify(editor.result.data[0], null, 2) : '',
     error: editor.error,
+    violations: editor.violations,
   };
 };
 
@@ -34,36 +35,39 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
 
 class MergeEditor extends Component {
   render() {
-    const {
-      rule,
-      data,
-      result,
-      error,
-      editorId,
-      layout = 'column',
-      handleRuleChange,
-      handleDataChange,
-      handleInit,
-    } = this.props;
+    // const {
+    //   rule,
+    //   data,
+    //   result,
+    //   error,
+    //   violations,
+    //   editorId,
+    //   layout = 'column',
+    //   handleRuleChange,
+    //   handleDataChange,
+    //   handleInit,
+    // } = this.props;
 
     return (
       <Editor
-        editorId={editorId}
+        {...this.props}
+        // editorId={editorId}
         processor="merge"
-        rule={rule}
+        // rule={rule}
         ruleMode="json"
-        data={data}
+        // data={data}
         dataMode="json"
-        result={result}
+        // result={result}
         resultMode="json"
-        error={error}
-        layout={layout}
+        // error={error}
+        // violations={violations}
+        // layout={layout}
         ruleTitle="Default Object"
         dataTitle="Merge Target"
         resultTitle="Final Object"
-        handleRuleChange={handleRuleChange}
-        handleDataChange={handleDataChange}
-        handleInit={handleInit}
+        // handleRuleChange={handleRuleChange}
+        // handleDataChange={handleDataChange}
+        // handleInit={handleInit}
       />
     );
   }

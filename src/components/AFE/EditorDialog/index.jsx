@@ -88,6 +88,7 @@ class EditorDialog extends Component {
     } = this.props;
     const { layout, fullScreen } = this.state;
     const size = fullScreen ? { height } : { height, width };
+    const showPreviewAction = !editor.violations && !editor.autoEvaluate;
 
     return (
       <Dialog
@@ -132,7 +133,7 @@ class EditorDialog extends Component {
           {children && cloneElement(children, { layout })}
         </DialogContent>
         <DialogActions className={classes.actions}>
-          {!editor.autoEvaluate && (
+          {showPreviewAction && (
             <Button onClick={handlePreview}>Preview</Button>
           )}
           <Button variant="contained" onClick={() => this.handleClose()}>
