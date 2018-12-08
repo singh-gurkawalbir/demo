@@ -8,6 +8,7 @@ import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
 import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
+import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
@@ -110,6 +111,16 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+
+      case 'TransformEditor':
+        return (
+          <TransformEditorDialog
+            title="Transform Editor"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -142,6 +153,12 @@ export default class Editors extends Component {
         label: 'CSV Parser',
         description:
           'This processor converts comma seperated values into JSON.',
+      },
+      {
+        name: 'TransformEditor',
+        label: 'Transform Editor',
+        description:
+          'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
       },
     ];
 
