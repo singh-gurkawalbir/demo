@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { func, object } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
 import TransformPanel from './TransformPanel';
 import PanelGrid from '../PanelGrid';
@@ -10,6 +9,7 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import ErrorGridItem from '../ErrorGridItem';
 
 const mapStateToProps = (state, { editorId }) => ({
   editor: selectors.editor(state, editorId),
@@ -22,7 +22,7 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
     dispatch(
       actions.editor.init(editorId, 'transform', {
         data,
-        autoEvaluate: false,
+        autoEvaluate: true,
         rule,
       })
     );
@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
 
 @withStyles(() => ({
   template: {
-    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
   },
@@ -51,7 +51,7 @@ class TransformEditor extends Component {
 
   render() {
     const { editorId, classes, editor, handleDataChange } = this.props;
-    const { data, result, error } = editor;
+    const { data, result, error, violations } = editor;
     const parsedData = result ? result.data : '';
 
     return (
@@ -60,6 +60,7 @@ class TransformEditor extends Component {
           <PanelTitle title="Transform Rules" />
           <TransformPanel editorId={editorId} />
         </PanelGridItem>
+
         <PanelGridItem gridArea="data">
           <PanelTitle title="Incoming Data" />
           <CodePanel
@@ -69,18 +70,16 @@ class TransformEditor extends Component {
             onChange={handleDataChange}
           />
         </PanelGridItem>
+
         <PanelGridItem gridArea="result">
           <PanelTitle title="Transformed Data" />
           <CodePanel name="result" value={parsedData} mode="json" readOnly />
         </PanelGridItem>
-        {error && (
-          <PanelGridItem gridArea="error">
-            <PanelTitle>
-              <Typography color="error">Error</Typography>
-            </PanelTitle>
-            <CodePanel readOnly name="error" value={error} mode="json" />
-          </PanelGridItem>
-        )}
+
+        <ErrorGridItem
+          error={error ? error.message : null}
+          violations={violations}
+        />
       </PanelGrid>
     );
   }

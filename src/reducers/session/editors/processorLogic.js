@@ -52,11 +52,11 @@ const allLogic = {
   },
   transform: {
     requestBody: editor => ({
-      rules: [JSON.parse(editor.rule)],
+      rules: editor.rule ? [JSON.parse(editor.rule)] : [],
       data: JSON.parse(editor.data),
     }),
     validate: editor => ({
-      ruleError: validateJsonString(editor.rule),
+      ruleError: editor.rule ? validateJsonString(editor.rule) : null,
       dataError: validateJsonString(editor.data),
     }),
   },

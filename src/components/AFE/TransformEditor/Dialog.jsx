@@ -7,9 +7,8 @@ export default class TransformEditorDialog extends Component {
     const { id, rule, data } = this.props;
     const defaults = {
       layout: 'column',
-      width: '80vw',
+      width: '85vw',
       height: '60vh',
-      fullscreen: true,
       open: true,
     };
     const dialogProps = Object.assign({}, defaults, this.props);
@@ -22,7 +21,7 @@ export default class TransformEditorDialog extends Component {
     delete dialogProps.data;
 
     return (
-      <EditorDialog {...dialogProps} showLayoutOptions={false} showFullScreen>
+      <EditorDialog {...dialogProps} showLayoutOptions={false}>
         <TransformEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
