@@ -5,6 +5,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import { Input, Chip, MenuItem } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -18,6 +19,27 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     dispatch(actions.editor.patch(editorId, { [option]: value }));
   },
 });
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+const getColumns = result => {
+  if (!result || !result.data || !result.data.length) {
+    return [];
+  }
+
+  const sampleRecord = Array.isArray(result.data[0])
+    ? result.data[0][0]
+    : result.data[0];
+
+  return Object.keys(sampleRecord);
+};
 
 @withStyles(theme => ({
   container: {
@@ -36,10 +58,20 @@ class CsvParsePanel extends Component {
     const {
       columnDelimiter = '',
       rowDelimiter = '',
-      // keyColumns,
+      keyColumns = [],
       hasHeaderRow = true,
       trimSpaces = true,
+      result,
     } = editor;
+    const allColumns = getColumns(result);
+    // const getStyles = (col, that) => ({
+    //   fontWeight:
+    //     (keyColumns).indexOf(col) === -1
+    //       ? that.props.theme.typography.fontWeightRegular
+    //       : that.props.theme.typography.fontWeightMedium,
+    // });
+
+    console.log(result, allColumns);
 
     return (
       <div className={classes.container}>
@@ -98,6 +130,36 @@ class CsvParsePanel extends Component {
             }
             label="Trim Spaces"
           />
+          {allColumns && (
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="select-multiple-chip">
+                Key Columns
+              </InputLabel>
+              <Select
+                multiple
+                value={keyColumns}
+                onChange={e => patchEditor('keyColumns', e.target.value)}
+                input={<Input id="select-multiple-chip" />}
+                renderValue={keyColumns => (
+                  <div className={classes.chips}>
+                    {keyColumns.map(col => (
+                      <Chip key={col} label={col} className={classes.chip} />
+                    ))}
+                  </div>
+                )}
+                MenuProps={MenuProps}>
+                {allColumns.map(name => (
+                  <MenuItem
+                    key={name}
+                    value={name}
+                    // style={getStyles(name, this)}
+                  >
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </FormGroup>
       </div>
     );
