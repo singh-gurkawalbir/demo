@@ -52,7 +52,7 @@ class TransformEditor extends Component {
   render() {
     const { editorId, classes, editor, handleDataChange } = this.props;
     const { data, result, error, violations } = editor;
-    const parsedData = result ? result.data : '';
+    const parsedData = result && result.data && result.data[0];
 
     return (
       <PanelGrid className={classes.template}>
@@ -77,7 +77,7 @@ class TransformEditor extends Component {
           <CodePanel
             name="result"
             overrides={{ showGutter: false }}
-            value={parsedData}
+            value={parsedData || ''}
             mode="json"
             readOnly
           />

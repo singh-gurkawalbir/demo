@@ -30,11 +30,15 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
   },
 }))
 class TransformPanel extends Component {
-  handleUpdate(row, value, field) {
+  handleUpdate(row, event, field) {
+    const { value } = event.target;
     const { patchEditor, editor } = this.props;
     const { rule = [] } = editor;
 
-    console.log(`"${row}"`, value, field);
+    event.preventDefault();
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+    // console.log(`"${row}"`, value, field);
 
     if (row !== undefined) {
       rule[row][field] = value;
@@ -52,15 +56,16 @@ class TransformPanel extends Component {
       : [];
     // console.log(rule);
     const handleExtractUpdate = row => event =>
-      this.handleUpdate(row, event.target.value, 'extract');
+      this.handleUpdate(row, event, 'extract');
     const handleGenerateUpdate = row => event =>
-      this.handleUpdate(row, event.target.value, 'generate');
+      this.handleUpdate(row, event, 'generate');
 
     return (
       <div className={classes.container}>
         {rule.map(r => (
           <div className={classes.rowContainer} key={r.row}>
             <Input
+              autoFocus
               defaultValue={r.extract}
               placeholder="extract"
               className={classes.input}
@@ -74,15 +79,15 @@ class TransformPanel extends Component {
             />
           </div>
         ))}
-        <div key="-1" className={classes.rowContainer}>
+        <div key="new" className={classes.rowContainer}>
           <Input
-            defaultValue=""
+            value=""
             placeholder="extract"
             className={classes.input}
             onChange={handleExtractUpdate()}
           />
           <Input
-            defaultValue=""
+            value=""
             placeholder="generate"
             className={classes.input}
             onChange={handleGenerateUpdate()}
