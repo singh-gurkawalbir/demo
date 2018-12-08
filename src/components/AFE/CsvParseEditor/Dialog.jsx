@@ -6,7 +6,6 @@ export default class CsvParseEditorDialog extends Component {
   render() {
     const { id, rule, data } = this.props;
     const defaults = {
-      layout: 'column',
       width: '80vw',
       height: '50vh',
       open: true,

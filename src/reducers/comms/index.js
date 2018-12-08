@@ -122,9 +122,7 @@ export function isCommsBelowNetworkThreshold(state) {
     return false;
   }
 
-  const networkThreshold = +process.env.NETWORK_THRESHOLD;
-
-  // console.log(networkThreshold);
+  const networkThreshold = Number(process.env.NETWORK_THRESHOLD);
 
   return (
     Object.keys(state).filter(

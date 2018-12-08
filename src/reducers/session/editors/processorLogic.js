@@ -50,6 +50,16 @@ const allLogic = {
       dataError: validateJsonString(editor.data),
     }),
   },
+  transform: {
+    requestBody: editor => ({
+      rules: [JSON.parse(editor.rule)],
+      data: JSON.parse(editor.data),
+    }),
+    validate: editor => ({
+      ruleError: validateJsonString(editor.rule),
+      dataError: validateJsonString(editor.data),
+    }),
+  },
   handlebars: {
     requestBody: editor => ({
       rules: { strict: !!editor.strict, template: editor.template },

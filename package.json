@@ -13,7 +13,7 @@
     "start": "neutrino start --require dotenv/config",
     "build": "neutrino build --require dotenv/config",
     "lint": "neutrino lint",
-    "test": "neutrino test --verbose --require dotenv/config",
+    "test": "neutrino test --require dotenv/config --verbose",
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --coverage --require dotenv/config && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config"
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@neutrinojs/jest": "8.3.0",
     "babel-register": "6.26.0",
-    "dotenv": "5.0.1",
+    "dotenv": "6.2.0",
     "jest": "23.6.0",
     "jest-date-mock": "1.0.6",
     "neutrino": "8.3.0",
