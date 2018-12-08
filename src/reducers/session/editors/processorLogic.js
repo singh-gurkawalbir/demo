@@ -52,11 +52,10 @@ const allLogic = {
   },
   transform: {
     requestBody: editor => ({
-      rules: editor.rule ? [JSON.parse(editor.rule)] : [],
-      data: JSON.parse(editor.data),
+      rules: { version: '1', rules: [editor.rule || []] },
+      data: [JSON.parse(editor.data)],
     }),
     validate: editor => ({
-      ruleError: editor.rule ? validateJsonString(editor.rule) : null,
       dataError: validateJsonString(editor.data),
     }),
   },
@@ -93,6 +92,8 @@ const validate = editor => {
 
 const requestOptions = editor => {
   const violations = validate(editor);
+
+  console.log(editor);
 
   if (violations) {
     return { violations };

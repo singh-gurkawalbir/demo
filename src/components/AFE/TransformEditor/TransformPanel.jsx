@@ -50,9 +50,7 @@ class TransformPanel extends Component {
     const rule = editor.rule
       ? editor.rule.map((r, n) => ({ ...r, row: n }))
       : [];
-
-    console.log(rule);
-
+    // console.log(rule);
     const handleExtractUpdate = row => event =>
       this.handleUpdate(row, event.target.value, 'extract');
     const handleGenerateUpdate = row => event =>
@@ -66,28 +64,28 @@ class TransformPanel extends Component {
               defaultValue={r.extract}
               placeholder="extract"
               className={classes.input}
-              onBlur={handleExtractUpdate(r.row)}
+              onChange={handleExtractUpdate(r.row)}
             />
             <Input
               defaultValue={r.generate}
               placeholder="generate"
               className={classes.input}
-              onBlur={handleGenerateUpdate(r.row)}
+              onChange={handleGenerateUpdate(r.row)}
             />
           </div>
         ))}
-        <div className={classes.rowContainer}>
+        <div key="-1" className={classes.rowContainer}>
           <Input
             defaultValue=""
             placeholder="extract"
             className={classes.input}
-            onBlur={handleExtractUpdate()}
+            onChange={handleExtractUpdate()}
           />
           <Input
             defaultValue=""
             placeholder="generate"
             className={classes.input}
-            onBlur={handleGenerateUpdate()}
+            onChange={handleGenerateUpdate()}
           />
         </div>
       </div>

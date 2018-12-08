@@ -66,14 +66,21 @@ class TransformEditor extends Component {
           <CodePanel
             name="data"
             value={data}
-            mode="text"
+            mode="json"
+            overrides={{ showGutter: false }}
             onChange={handleDataChange}
           />
         </PanelGridItem>
 
         <PanelGridItem gridArea="result">
           <PanelTitle title="Transformed Data" />
-          <CodePanel name="result" value={parsedData} mode="json" readOnly />
+          <CodePanel
+            name="result"
+            overrides={{ showGutter: false }}
+            value={parsedData}
+            mode="json"
+            readOnly
+          />
         </PanelGridItem>
 
         <ErrorGridItem
