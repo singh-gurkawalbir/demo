@@ -2,12 +2,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { func, object } from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
 import CsvParsePanel from './CsvParsePanel';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
+import ErrorGridItem from '../ErrorGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
@@ -51,7 +51,7 @@ class csvParseEditor extends Component {
 
   render() {
     const { editorId, classes, editor, handleDataChange } = this.props;
-    const { data, result, error } = editor;
+    const { data, result, error, violations } = editor;
     const parsedData = result ? result.data : '';
 
     return (
@@ -73,14 +73,11 @@ class csvParseEditor extends Component {
           <PanelTitle title="Parsed Result" />
           <CodePanel name="result" value={parsedData} mode="json" readOnly />
         </PanelGridItem>
-        {error && (
-          <PanelGridItem gridArea="error">
-            <PanelTitle>
-              <Typography color="error">Error</Typography>
-            </PanelTitle>
-            <CodePanel readOnly name="error" value={error} mode="json" />
-          </PanelGridItem>
-        )}
+
+        <ErrorGridItem
+          error={error ? error.message : null}
+          violations={violations}
+        />
       </PanelGrid>
     );
   }

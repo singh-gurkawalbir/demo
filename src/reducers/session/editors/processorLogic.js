@@ -93,8 +93,6 @@ const validate = editor => {
 const requestOptions = editor => {
   const violations = validate(editor);
 
-  console.log(editor);
-
   if (violations) {
     return { violations };
   }
