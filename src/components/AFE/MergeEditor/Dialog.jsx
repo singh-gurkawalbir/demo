@@ -4,27 +4,17 @@ import MergeEditor from './';
 
 export default class MergeEditorDialog extends Component {
   render() {
-    const {
-      id,
-      rule,
-      data,
-      onClose,
-      open = true,
-      title,
-      layout = 'column',
-      width = '80vw',
-      height = '50vh',
-    } = this.props;
+    const defaults = {
+      layout: 'column',
+      width: '80vw',
+      height: '50vh',
+      open: true,
+    };
+    const { id, rule, data, ...other } = this.props;
+    const props = Object.assign({}, defaults, other);
 
     return (
-      <EditorDialog
-        id={id}
-        open={open}
-        layout={layout}
-        title={title}
-        width={width}
-        height={height}
-        onClose={onClose}>
+      <EditorDialog id={id} {...props}>
         <MergeEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );

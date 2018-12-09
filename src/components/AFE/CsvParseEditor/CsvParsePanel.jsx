@@ -71,7 +71,7 @@ class CsvParsePanel extends Component {
     //       : that.props.theme.typography.fontWeightMedium,
     // });
 
-    console.log(result, allColumns);
+    // console.log(result, allColumns);
 
     return (
       <div className={classes.container}>
