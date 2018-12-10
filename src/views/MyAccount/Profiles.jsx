@@ -11,12 +11,12 @@ import Typography from '@material-ui/core/Typography';
 import ChangePassword from './ChangePassword';
 import ChangeEmail from './ChangeEmail';
 import actions from '../../actions';
-import { userProfilePeferencesProps } from '../../reducers';
+import { userProfilePreferencesProps } from '../../reducers';
 
 export const ProfilesItem = () => <Typography variant="h6">Profile</Typography>;
 
 const mapStateToProps = state => ({
-  userProfilePeferences: userProfilePeferencesProps(state),
+  userProfilePreferencesProps: userProfilePreferencesProps(state),
 });
 const mapDispatchToProps = dispatch => ({
   clearSuccessComms: () => dispatch(actions.api.clearSuccessComms()),
@@ -57,12 +57,20 @@ const mapDispatchToProps = dispatch => ({
     height: '50%',
     width: '70%',
   },
+  editEmailButton: {
+    flex: 1,
+    display: 'inline-block',
+    height: '50%',
+    width: '50%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
 }))
 class ProfilesComponent extends Component {
   state = {
     openPasswordModal: false,
     openEmailModal: false,
-    ...this.props.userProfilePeferences,
+    ...this.props.userProfilePreferencesProps,
   };
 
   checkSaveEnabled = userDetails => {
@@ -76,9 +84,6 @@ class ProfilesComponent extends Component {
 
     return res;
   };
-  componentWillMount() {
-    this.checkSaveEnabled(this.props.userProfilePeferencesProps);
-  }
   handleOnSubmit = () => {
     const copyState = { ...this.state };
 
@@ -89,11 +94,9 @@ class ProfilesComponent extends Component {
   };
   handleOnChangeData = e => {
     this.setState({ [e.target.id]: e.target.value });
-    this.checkSaveEnabled();
   };
   handleOnChangeDataCheckbox = e => {
     this.setState({ [e.target.id]: e.target.checked });
-    this.checkSaveEnabled();
   };
   handleOpenModal = modalKey => {
     this.props.clearSuccessComms();
@@ -105,10 +108,14 @@ class ProfilesComponent extends Component {
     this.setState({ [modalKey]: false });
   };
   render() {
-    const { classes, handleChangePassword, userProfilePeferences } = this.props;
-    // console.log(`check ${JSON.stringify(this.state)}`);
-    // console.log(`check props ${JSON.stringify(userProfilePeferences)}`);
-    const saveButtonEnabled = this.checkSaveEnabled(userProfilePeferences);
+    const {
+      classes,
+      handleChangePassword,
+      userProfilePreferencesProps,
+    } = this.props;
+    const saveButtonEnabled = this.checkSaveEnabled(
+      userProfilePreferencesProps
+    );
 
     return (
       <div>
@@ -135,14 +142,7 @@ class ProfilesComponent extends Component {
           <Button
             color="secondary"
             variant="contained"
-            style={{
-              flex: 1,
-              display: 'inline-block',
-              height: '50%',
-              width: '50%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
+            className={classes.editEmailButton}
             onClick={() => this.handleOpenModal('openEmailModal')}>
             Edit Email
           </Button>

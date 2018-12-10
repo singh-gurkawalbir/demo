@@ -16,9 +16,21 @@ import rootSaga, {
   commitStagedChanges,
   initializeApp,
   invalidateSession,
+  changePassword,
+  changeEmail,
+  updatePreferences,
+  updateProfile,
+  updateUserProfileAndPreferences,
 } from './';
-import { api, APIException } from '../utils/api';
-import { authParams, logoutParams } from '../utils/apiPaths';
+import { api, APIException } from './api';
+import {
+  authParams,
+  logoutParams,
+  changePasswordParams,
+  changeEmailParams,
+  updatePreferencesParams,
+  updateProfileParams,
+} from './api/apiPaths';
 
 const status500 = new APIException({
   status: 500,
@@ -27,6 +39,10 @@ const status500 = new APIException({
 const status422 = new APIException({
   status: 422,
   message: 'authentication failure',
+});
+const status403 = new APIException({
+  status: 403,
+  message: 'User unauthoritzed action  ',
 });
 
 describe(`root saga`, () => {
@@ -264,7 +280,7 @@ describe('auth saga flow', () => {
     const callEffect = saga.next().value;
     const payload = {
       ...authParams.opts,
-      body: JSON.stringify({ email, password }),
+      body: { email, password },
     };
 
     expect(callEffect).toEqual(
@@ -282,7 +298,7 @@ describe('auth saga flow', () => {
     const callEffect = saga.next().value;
     const payload = {
       ...authParams.opts,
-      body: JSON.stringify({ email, password }),
+      body: { email, password },
     };
 
     expect(callEffect).toEqual(
@@ -340,7 +356,7 @@ describe('evaluateProcessor saga', () => {
     const callEffect = saga.next(selectResponse).value;
     const opts = {
       method: 'post',
-      body: '"body"',
+      body: 'body',
     };
 
     expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
@@ -368,7 +384,7 @@ describe('evaluateProcessor saga', () => {
     const callEffect = saga.next(selectResponse).value;
     const opts = {
       method: 'post',
-      body: '"body"',
+      body: 'body',
     };
 
     expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
@@ -537,7 +553,7 @@ describe('commitStagedChanges saga', () => {
     expect(putCallEffect).toEqual(
       call(apiCallWithRetry, path, {
         method: 'put',
-        body: JSON.stringify(merged),
+        body: merged,
       })
     );
 
@@ -628,6 +644,238 @@ describe('commitStagedChanges saga', () => {
       const clearStoreEffect = saga.throw(new Error('Some error')).value;
 
       expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
+    });
+  });
+
+  describe('change password saga ', () => {
+    test('Should update user password with correct user password in the db and also merge the data in the redux store', () => {
+      const updatedPassword = {
+        newPassword: 'abc',
+        currentPassword: 'def',
+      };
+      const saga = changePassword({ updatedPassword });
+      const apiCallEffect = saga.next().value;
+
+      expect(apiCallEffect).toEqual(
+        call(
+          apiCallWithRetry,
+          changePasswordParams.path,
+          { ...changePasswordParams.opts, body: updatedPassword },
+          "Changing user's password",
+          true
+        )
+      );
+
+      expect(saga.next().value).toEqual(
+        put(
+          actions.api.complete(
+            changePasswordParams.path,
+            'Success!! Changed user password'
+          )
+        )
+      );
+    });
+
+    test('should generate appropriate failure message for whatever reason', () => {
+      const updatedPassword = {
+        newPassword: 'abc',
+        currentPassword: 'def',
+      };
+      const saga = changePassword({ updatedPassword });
+      const apiCallEffect = saga.next().value;
+
+      expect(apiCallEffect).toEqual(
+        call(
+          apiCallWithRetry,
+          changePasswordParams.path,
+          { ...changePasswordParams.opts, body: updatedPassword },
+          "Changing user's password",
+          true
+        )
+      );
+
+      expect(saga.throw(new Error()).value).toEqual(
+        put(
+          actions.api.failure(
+            changePasswordParams.path,
+            'Invalid credentials provided.  Please try again.'
+          )
+        )
+      );
+    });
+  });
+  describe('change user email saga', () => {
+    test("should change user's Email and successfuly", () => {
+      const updatedEmail = {
+        newEmail: 'something@gmail.com',
+        password: 'abc',
+      };
+      const saga = changeEmail({ updatedEmail });
+
+      expect(saga.next().value).toEqual(
+        call(
+          apiCallWithRetry,
+          changeEmailParams.path,
+          { ...changeEmailParams.opts, body: updatedEmail },
+          "Changing user's Email",
+          true
+        )
+      );
+      expect(saga.next().value).toEqual(
+        put(
+          actions.api.complete(
+            changeEmailParams.path,
+            'Success!! Sent user change Email setup to you email'
+          )
+        )
+      );
+    });
+
+    test('should generate appropriate error message when user attempts to change an existing email', () => {
+      const updatedEmail = {
+        newEmail: 'something@gmail.com',
+        password: 'abc',
+      };
+      const saga = changeEmail({ updatedEmail });
+
+      expect(saga.next().value).toEqual(
+        call(
+          apiCallWithRetry,
+          changeEmailParams.path,
+          { ...changeEmailParams.opts, body: updatedEmail },
+          "Changing user's Email",
+          true
+        )
+      );
+
+      expect(saga.throw(status403).value).toEqual(
+        put(
+          actions.api.failure(
+            changeEmailParams.path,
+            'Existing email provided, Please try again.'
+          )
+        )
+      );
+    });
+
+    test('should generate appropriate error message for any other error', () => {
+      const updatedEmail = {
+        newEmail: 'something@gmail.com',
+        password: 'abc',
+      };
+      const saga = changeEmail({ updatedEmail });
+
+      expect(saga.next().value).toEqual(
+        call(
+          apiCallWithRetry,
+          changeEmailParams.path,
+          { ...changeEmailParams.opts, body: updatedEmail },
+          "Changing user's Email",
+          true
+        )
+      );
+
+      expect(saga.throw(new Error()).value).toEqual(
+        put(
+          actions.api.failure(
+            changeEmailParams.path,
+            'Cannot change user Email , Please try again.'
+          )
+        )
+      );
+    });
+  });
+  describe('update user and profile preferences sagas', () => {
+    describe('update preferences saga', () => {
+      test("should update user's preferences successfuly", () => {
+        const somePreferences = {
+          timeFormat: 'something',
+        };
+        const saga = updatePreferences(somePreferences);
+
+        expect(saga.next().value).toEqual(
+          call(
+            apiCallWithRetry,
+            updatePreferencesParams.path,
+            { ...updatePreferencesParams.opts, body: somePreferences },
+            "Updating user's info"
+          )
+        );
+        expect(saga.next().value).toEqual(
+          put(
+            actions.resource.receivedCollection('preferences', somePreferences)
+          )
+        );
+      });
+
+      test('should generate the appropriate message failure in a api failure and not update the redux store', () => {
+        const somePreferences = {
+          timeFormat: 'something',
+        };
+        const saga = updatePreferences(somePreferences);
+
+        expect(saga.next().value).toEqual(
+          call(
+            apiCallWithRetry,
+            updatePreferencesParams.path,
+            { ...updatePreferencesParams.opts, body: somePreferences },
+            "Updating user's info"
+          )
+        );
+        expect(saga.throw(new Error()).value).toEqual(
+          put(
+            actions.api.failure(
+              updatePreferencesParams.path,
+              'Could not update user Preferences'
+            )
+          )
+        );
+      });
+    });
+    describe('update profile saga', () => {
+      test("should update user's profile successfuly", () => {
+        const someProfile = {
+          name: 'something',
+        };
+        const saga = updateProfile(someProfile);
+
+        expect(saga.next().value).toEqual(
+          call(
+            apiCallWithRetry,
+            updateProfileParams.path,
+            { ...updateProfileParams.opts, body: someProfile },
+            "Updating user's info"
+          )
+        );
+
+        expect(saga.next().value).toEqual(
+          put(actions.resource.received('profile', someProfile))
+        );
+      });
+
+      test('should generate the appropriate message failure in a api failure and not update the redux store', () => {
+        const someProfile = {
+          name: 'something',
+        };
+        const saga = updateProfile(someProfile);
+
+        expect(saga.next().value).toEqual(
+          call(
+            apiCallWithRetry,
+            updateProfileParams.path,
+            { ...updateProfileParams.opts, body: someProfile },
+            "Updating user's info"
+          )
+        );
+        expect(saga.throw(new Error()).value).toEqual(
+          put(
+            actions.api.failure(
+              updateProfileParams.path,
+              'Could not update user Profile'
+            )
+          )
+        );
+      });
     });
   });
 });

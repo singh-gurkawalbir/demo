@@ -19,10 +19,10 @@ const mapStateToProps = state => ({
 class ChangePassword extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
+    const payload = {
       currentPassword: e.target.currentPassword.value,
       newPassword: e.target.newPassword.value,
-    });
+    };
 
     this.props.changePassword(payload);
   };
@@ -30,11 +30,7 @@ class ChangePassword extends Component {
     const { show, onhandleClose, error, success } = this.props;
 
     return (
-      <ModalDialog
-        show={show}
-        handleClose={() => {
-          onhandleClose();
-        }}>
+      <ModalDialog show={show} handleClose={onhandleClose}>
         <span>Change Password</span>
         {success ? (
           <span>{success}</span>
@@ -42,7 +38,7 @@ class ChangePassword extends Component {
           <span>
             {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
-            <form id="myForm" onSubmit={this.handleOnSubmit}>
+            <form id="changePasswordForm" onSubmit={this.handleOnSubmit}>
               <TextField
                 id="currentPassword"
                 label="Current Password"
@@ -67,7 +63,7 @@ class ChangePassword extends Component {
               variant="contained"
               color="primary"
               type="submit"
-              form="myForm"
+              form="changePasswordForm"
               value="Submit">
               change password
             </Button>

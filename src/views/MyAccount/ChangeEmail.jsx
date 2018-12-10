@@ -19,10 +19,10 @@ const mapStateToProps = state => ({
 class ChangeEmail extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
+    const payload = {
       newEmail: e.target.newEmail.value,
       password: e.target.password.value,
-    });
+    };
 
     this.props.changeEmail(payload);
   };
@@ -30,13 +30,13 @@ class ChangeEmail extends Component {
     const { show, onhandleClose, error, success } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={() => onhandleClose()}>
+      <ModalDialog show={show} handleClose={onhandleClose}>
         <span>Change Email</span>
         {success ? (
           <span>Success</span>
         ) : (
           <span>
-            <form id="myForm" onSubmit={this.handleOnSubmit}>
+            <form id="changeEmailForm" onSubmit={this.handleOnSubmit}>
               <TextField id="newEmail" label="New Email" margin="normal" />
               <br />
 
@@ -55,7 +55,7 @@ class ChangeEmail extends Component {
               variant="contained"
               color="primary"
               type="submit"
-              form="myForm"
+              form="changeEmailForm"
               value="Submit">
               change email
             </Button>
