@@ -4,10 +4,10 @@ export const authParams = {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
+    body: {
       email: process.env.API_EMAIL,
       password: process.env.API_PASSWORD,
-    }),
+    },
     method: 'POST',
   },
   path: '/signin?no_redirect=true',

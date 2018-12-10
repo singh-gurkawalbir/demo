@@ -36,6 +36,10 @@ export const api = async (path, opts = {}) => {
     options = opts;
   }
 
+  if (options.body) {
+    options.body = JSON.stringify(options.body);
+  }
+
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
   await delay(process.env.ADD_NETWORK_LATENCY || 0);

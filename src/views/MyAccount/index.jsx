@@ -18,18 +18,6 @@ const Profiles = loadable(() =>
 const Subscription = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription')
 );
-// const WrappedListItem = ({
-//   selectedIndexElement,
-//   index,
-//   onItemClick,
-//   children,
-// }) => (
-//   <ListItem
-//     selected={selectedIndexElement === index}
-//     onClick={event => onItemClick(event, index)}>
-//     {children}
-//   </ListItem>
-// );
 
 @hot(module)
 @withStyles(theme => ({
@@ -59,6 +47,12 @@ const Subscription = loadable(() =>
     textAlign: 'center',
     padding: theme.spacing.unit,
   },
+  activeLink: {
+    fontWeight: 'bold',
+  },
+  flex: {
+    flex: 1,
+  },
 }))
 export default class MyAccount extends Component {
   render() {
@@ -72,7 +66,7 @@ export default class MyAccount extends Component {
           </div>
           <Divider />
           <div className={classes.root}>
-            <div style={{ flex: 1 }}>
+            <div className={classes.flex}>
               <Drawer
                 variant="permanent"
                 anchor="left"
@@ -82,7 +76,7 @@ export default class MyAccount extends Component {
                 <List>
                   <ListItem>
                     <NavLink
-                      activeStyle={{ fontWeight: 'bold' }}
+                      activeClassName={classes.activeLink}
                       className={classes.link}
                       to="/pg/myAccount/users">
                       Users
@@ -90,7 +84,7 @@ export default class MyAccount extends Component {
                   </ListItem>
                   <ListItem>
                     <NavLink
-                      activeStyle={{ fontWeight: 'bold' }}
+                      activeClassName={classes.activeLink}
                       className={classes.link}
                       to="/pg/myAccount/profiles">
                       Profiles
@@ -98,7 +92,7 @@ export default class MyAccount extends Component {
                   </ListItem>
                   <ListItem>
                     <NavLink
-                      activeStyle={{ fontWeight: 'bold' }}
+                      activeClassName={classes.activeLink}
                       className={classes.link}
                       to="/pg/myAccount/subscription">
                       Subscription

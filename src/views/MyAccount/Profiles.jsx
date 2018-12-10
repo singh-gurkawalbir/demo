@@ -57,6 +57,14 @@ const mapDispatchToProps = dispatch => ({
     height: '50%',
     width: '70%',
   },
+  editEmailButton: {
+    flex: 1,
+    display: 'inline-block',
+    height: '50%',
+    width: '50%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
 }))
 class ProfilesComponent extends Component {
   state = {
@@ -76,9 +84,6 @@ class ProfilesComponent extends Component {
 
     return res;
   };
-  componentWillMount() {
-    this.checkSaveEnabled(this.props.userProfilePeferencesProps);
-  }
   handleOnSubmit = () => {
     const copyState = { ...this.state };
 
@@ -89,11 +94,9 @@ class ProfilesComponent extends Component {
   };
   handleOnChangeData = e => {
     this.setState({ [e.target.id]: e.target.value });
-    this.checkSaveEnabled();
   };
   handleOnChangeDataCheckbox = e => {
     this.setState({ [e.target.id]: e.target.checked });
-    this.checkSaveEnabled();
   };
   handleOpenModal = modalKey => {
     this.props.clearSuccessComms();
@@ -106,8 +109,6 @@ class ProfilesComponent extends Component {
   };
   render() {
     const { classes, handleChangePassword, userProfilePeferences } = this.props;
-    // console.log(`check ${JSON.stringify(this.state)}`);
-    // console.log(`check props ${JSON.stringify(userProfilePeferences)}`);
     const saveButtonEnabled = this.checkSaveEnabled(userProfilePeferences);
 
     return (
@@ -135,14 +136,7 @@ class ProfilesComponent extends Component {
           <Button
             color="secondary"
             variant="contained"
-            style={{
-              flex: 1,
-              display: 'inline-block',
-              height: '50%',
-              width: '50%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
+            className={classes.editEmailButton}
             onClick={() => this.handleOpenModal('openEmailModal')}>
             Edit Email
           </Button>
