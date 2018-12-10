@@ -10,7 +10,7 @@ import { delay } from 'redux-saga';
 import jsonPatch from 'fast-json-patch';
 import actions from '../actions';
 import actionTypes from '../actions/types';
-import { api } from '../utils/api';
+import { api } from './api';
 import {
   authParams,
   logoutParams,
@@ -18,7 +18,7 @@ import {
   changeEmailParams,
   updateProfileParams,
   updatePreferencesParams,
-} from '../utils/apiPaths';
+} from './api/apiPaths';
 import * as selectors from '../reducers';
 import util from '../utils/array';
 
@@ -242,7 +242,7 @@ export function* invalidateSession() {
   }
 }
 
-function* changePassword({ updatedPassword }) {
+export function* changePassword({ updatedPassword }) {
   try {
     const payload = { ...changePasswordParams.opts, body: updatedPassword };
 
@@ -256,7 +256,7 @@ function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.complete(
         changePasswordParams.path,
-        'Success!! Changed user password '
+        'Success!! Changed user password'
       )
     );
   } catch (e) {
@@ -269,7 +269,7 @@ function* changePassword({ updatedPassword }) {
   }
 }
 
-function* updatePreferences(preferences) {
+export function* updatePreferences(preferences) {
   if (preferences === {}) return;
 
   try {
@@ -295,7 +295,7 @@ function* updatePreferences(preferences) {
   }
 }
 
-function* updateProfile(profile) {
+export function* updateProfile(profile) {
   try {
     const payload = {
       ...updateProfileParams.opts,
@@ -319,7 +319,9 @@ function* updateProfile(profile) {
   }
 }
 
-function* updateUserProfileAndPreferences({ profilePreferencesPayload }) {
+export function* updateUserProfileAndPreferences({
+  profilePreferencesPayload,
+}) {
   const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
 
   yield updatePreferences({ _id, timeFormat, dateFormat });
@@ -332,7 +334,7 @@ function* updateUserProfileAndPreferences({ profilePreferencesPayload }) {
   yield updateProfile(profile);
 }
 
-function* changeEmail({ updatedEmail }) {
+export function* changeEmail({ updatedEmail }) {
   try {
     const payload = { ...changeEmailParams.opts, body: updatedEmail };
 

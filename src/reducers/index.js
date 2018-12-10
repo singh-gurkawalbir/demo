@@ -7,7 +7,7 @@ import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
-import { changePasswordParams, changeEmailParams } from '../utils/apiPaths';
+import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 
 const combinedReducers = combineReducers({
   session,
