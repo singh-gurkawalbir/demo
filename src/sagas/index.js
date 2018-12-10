@@ -242,11 +242,9 @@ export function* invalidateSession() {
   }
 }
 
-function* changePassword({ message }) {
-  // const path = '/change-password';
-
+function* changePassword({ updatedPassword }) {
   try {
-    const payload = { ...changePasswordParams.opts, body: message };
+    const payload = { ...changePasswordParams.opts, body: updatedPassword };
 
     yield call(
       apiCallWithRetry,
@@ -265,19 +263,19 @@ function* changePassword({ message }) {
     yield put(
       actions.api.failure(
         changePasswordParams.path,
-        'Current password falied to authenticate.  Please try again.'
+        'Invalid credentials provided.  Please try again.'
       )
     );
   }
 }
 
-function* updatePreferences(message) {
-  if (message === {}) return;
+function* updatePreferences(preferences) {
+  if (preferences === {}) return;
 
   try {
     const payload = {
       ...updatePreferencesParams.opts,
-      body: message,
+      body: preferences,
     };
 
     yield call(
@@ -286,7 +284,7 @@ function* updatePreferences(message) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.receivedCollection('preferences', message));
+    yield put(actions.resource.receivedCollection('preferences', preferences));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -297,11 +295,11 @@ function* updatePreferences(message) {
   }
 }
 
-function* updateProfile(message) {
+function* updateProfile(profile) {
   try {
     const payload = {
       ...updateProfileParams.opts,
-      body: message,
+      body: profile,
     };
 
     yield call(
@@ -310,7 +308,7 @@ function* updateProfile(message) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.received('profile', message));
+    yield put(actions.resource.received('profile', profile));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -321,20 +319,22 @@ function* updateProfile(message) {
   }
 }
 
-function* updateUserPreferences({ message }) {
-  const { _id, timeFormat, dateFormat } = message;
+function* updateUserProfileAndPreferences({ profilePreferencesPayload }) {
+  const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
 
   yield updatePreferences({ _id, timeFormat, dateFormat });
-  const copy = message;
+  const copy = { ...profilePreferencesPayload };
 
   delete copy.dateFormat;
   delete copy.timeFormat;
-  yield updateProfile(copy);
+  const profile = copy;
+
+  yield updateProfile(profile);
 }
 
-function* changeEmail({ message }) {
+function* changeEmail({ updatedEmail }) {
   try {
-    const payload = { ...changeEmailParams.opts, body: message };
+    const payload = { ...changeEmailParams.opts, body: updatedEmail };
 
     yield call(
       apiCallWithRetry,
@@ -350,10 +350,21 @@ function* changeEmail({ message }) {
       )
     );
   } catch (e) {
+    if (e.status === 403) {
+      yield put(
+        actions.api.failure(
+          changeEmailParams.path,
+          'Existing email provided, Please try again.'
+        )
+      );
+
+      return;
+    }
+
     yield put(
       actions.api.failure(
         changeEmailParams.path,
-        '"Cannot change user Email , Please try again."'
+        'Cannot change user Email , Please try again.'
       )
     );
   }
@@ -361,7 +372,10 @@ function* changeEmail({ message }) {
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actionTypes.UPDATE_PROFILE, updateUserPreferences),
+    takeEvery(
+      actionTypes.UPDATE_PROFILE_PREFERENCES,
+      updateUserProfileAndPreferences
+    ),
     takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
     takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
     takeEvery(actionTypes.USER_LOGOUT, invalidateSession),

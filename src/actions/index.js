@@ -19,9 +19,10 @@ const auth = {
   logout: () => action(actionTypes.USER_LOGOUT),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
-  changePassword: message =>
-    action(actionTypes.USER_CHANGE_PASSWORD, { message }),
-  changeEmail: message => action(actionTypes.USER_CHANGE_EMAIL, { message }),
+  changePassword: updatedPassword =>
+    action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
+  changeEmail: updatedEmail =>
+    action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
 };
 const api = {
   request: (path, message, hidden) =>
@@ -68,7 +69,10 @@ const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
   delete: () => action(actionTypes.DELETE_PROFILE),
-  update: message => action(actionTypes.UPDATE_PROFILE, { message }),
+  update: profilePreferencesPayload =>
+    action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
+      profilePreferencesPayload,
+    }),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>

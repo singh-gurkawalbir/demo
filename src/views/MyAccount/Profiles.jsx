@@ -11,12 +11,12 @@ import Typography from '@material-ui/core/Typography';
 import ChangePassword from './ChangePassword';
 import ChangeEmail from './ChangeEmail';
 import actions from '../../actions';
-import { userProfilePeferencesProps } from '../../reducers';
+import { userProfilePreferencesProps } from '../../reducers';
 
 export const ProfilesItem = () => <Typography variant="h6">Profile</Typography>;
 
 const mapStateToProps = state => ({
-  userProfilePeferences: userProfilePeferencesProps(state),
+  userProfilePreferencesProps: userProfilePreferencesProps(state),
 });
 const mapDispatchToProps = dispatch => ({
   clearSuccessComms: () => dispatch(actions.api.clearSuccessComms()),
@@ -70,7 +70,7 @@ class ProfilesComponent extends Component {
   state = {
     openPasswordModal: false,
     openEmailModal: false,
-    ...this.props.userProfilePeferences,
+    ...this.props.userProfilePreferencesProps,
   };
 
   checkSaveEnabled = userDetails => {
@@ -108,8 +108,14 @@ class ProfilesComponent extends Component {
     this.setState({ [modalKey]: false });
   };
   render() {
-    const { classes, handleChangePassword, userProfilePeferences } = this.props;
-    const saveButtonEnabled = this.checkSaveEnabled(userProfilePeferences);
+    const {
+      classes,
+      handleChangePassword,
+      userProfilePreferencesProps,
+    } = this.props;
+    const saveButtonEnabled = this.checkSaveEnabled(
+      userProfilePreferencesProps
+    );
 
     return (
       <div>

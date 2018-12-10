@@ -82,7 +82,7 @@ export function userPreferences(state) {
   return state && state.user && state.user.preferences;
 }
 
-export function userProfilePeferencesProps(state) {
+export function userProfilePreferencesProps(state) {
   const profile = userProfile(state);
   const preferences = userPreferences(state);
   const {
@@ -143,7 +143,7 @@ export function isSessionExpired(state) {
 }
 
 // #endregion AUTHENTICATION SELECTORS
-
+// #region PASSWORD & EMAIL update selectors for modals
 export function changePasswordFailure(state) {
   return (
     state &&
@@ -179,6 +179,8 @@ export function changeEmailSuccess(state) {
     state.comms[changeEmailParams.path].success
   );
 }
+
+// #endregion PASSWORD & EMAIL update selectors for modals
 
 export function themeName(state) {
   return state && state.user && state.user.themeName;
