@@ -264,7 +264,7 @@ describe('auth saga flow', () => {
     const callEffect = saga.next().value;
     const payload = {
       ...authParams.opts,
-      body: JSON.stringify({ email, password }),
+      body: { email, password },
     };
 
     expect(callEffect).toEqual(
@@ -282,7 +282,7 @@ describe('auth saga flow', () => {
     const callEffect = saga.next().value;
     const payload = {
       ...authParams.opts,
-      body: JSON.stringify({ email, password }),
+      body: { email, password },
     };
 
     expect(callEffect).toEqual(
@@ -340,7 +340,7 @@ describe('evaluateProcessor saga', () => {
     const callEffect = saga.next(selectResponse).value;
     const opts = {
       method: 'post',
-      body: '"body"',
+      body: 'body',
     };
 
     expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
@@ -368,7 +368,7 @@ describe('evaluateProcessor saga', () => {
     const callEffect = saga.next(selectResponse).value;
     const opts = {
       method: 'post',
-      body: '"body"',
+      body: 'body',
     };
 
     expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
@@ -537,7 +537,7 @@ describe('commitStagedChanges saga', () => {
     expect(putCallEffect).toEqual(
       call(apiCallWithRetry, path, {
         method: 'put',
-        body: JSON.stringify(merged),
+        body: merged,
       })
     );
 

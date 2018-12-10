@@ -19,10 +19,10 @@ const mapStateToProps = state => ({
 class ChangeEmail extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
+    const payload = {
       newEmail: e.target.newEmail.value,
       password: e.target.password.value,
-    });
+    };
 
     this.props.changeEmail(payload);
   };

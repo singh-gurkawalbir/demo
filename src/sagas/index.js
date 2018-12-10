@@ -132,7 +132,7 @@ export function* commitStagedChanges({ resourceType, id }) {
   try {
     const updated = yield call(apiCallWithRetry, path, {
       method: 'put',
-      body: JSON.stringify(merged),
+      body: merged,
     });
 
     yield put(actions.resource.received(resourceType, updated));
@@ -145,7 +145,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 export function* auth({ email, password }) {
   try {
     // replace credentials in the request body
-    const credentialsBody = JSON.stringify({ email, password });
+    const credentialsBody = { email, password };
     const payload = { ...authParams.opts, body: credentialsBody };
     const apiAuthentications = yield call(
       apiCallWithRetry,
@@ -182,7 +182,7 @@ export function* evaluateProcessor({ id }) {
   const path = `/processors/${processor}`;
   const opts = {
     method: 'post',
-    body: JSON.stringify(body),
+    body,
   };
 
   try {
@@ -277,7 +277,7 @@ function* updatePreferences(message) {
   try {
     const payload = {
       ...updatePreferencesParams.opts,
-      body: JSON.stringify(message),
+      body: message,
     };
 
     yield call(
@@ -301,7 +301,7 @@ function* updateProfile(message) {
   try {
     const payload = {
       ...updateProfileParams.opts,
-      body: JSON.stringify(message),
+      body: message,
     };
 
     yield call(

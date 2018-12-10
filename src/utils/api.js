@@ -36,6 +36,7 @@ export const api = async (path, opts = {}) => {
     options = opts;
   }
 
+  // all request bodies we stringify
   if (options.body) {
     options.body = JSON.stringify(options.body);
   }
