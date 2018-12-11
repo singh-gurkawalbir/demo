@@ -190,6 +190,11 @@ export function* evaluateProcessor({ id }) {
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {
+    if (e.status === 401) {
+      yield put(actions.auth.failure('Authentication Failure'));
+      yield put(actions.profile.delete());
+    }
+
     return yield put(actions.editor.evaluateFailure(id, e.message));
   }
 }
