@@ -2,7 +2,7 @@ import { Component } from 'react';
 import EditorDialog from '../EditorDialog';
 import HttpRequestBodyEditor from './';
 
-export default class UrlEditorDialog extends Component {
+export default class HttpRequestBodyDialog extends Component {
   render() {
     const {
       id,

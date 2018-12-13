@@ -12,12 +12,10 @@ export default function reducer(state = {}, action) {
     error,
     violations,
   } = action;
-  let newState;
+  const newState = Object.assign({}, state);
 
   switch (type) {
     case actionTypes.EDITOR_INIT:
-      newState = Object.assign({}, state);
-
       newState[id] = {
         processor,
         defaultOptions: options,
@@ -28,8 +26,6 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_RESET:
-      newState = Object.assign({}, state);
-
       newState[id] = {
         ...newState[id],
         ...newState[id].defaultOptions,
@@ -43,13 +39,11 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_PATCH:
-      newState = Object.assign({}, state);
       newState[id] = { ...newState[id], ...patch, lastChange: Date.now() };
 
       return newState;
 
     case actionTypes.EDITOR_EVALUATE_RESPONSE:
-      newState = Object.assign({}, state);
       newState[id] = { ...newState[id], result };
       delete newState[id].error;
       delete newState[id].violations;
@@ -57,7 +51,6 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_VALIDATE_FAILURE:
-      newState = Object.assign({}, state);
       newState[id] = { ...newState[id], violations };
 
       // Maybe we dont delete the results on violations?
@@ -67,7 +60,6 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_EVALUATE_FAILURE:
-      newState = Object.assign({}, state);
       newState[id] = { ...newState[id], error };
       delete newState[id].result;
 

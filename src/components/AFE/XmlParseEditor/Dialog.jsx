@@ -1,13 +1,13 @@
 import { Component } from 'react';
 import EditorDialog from '../EditorDialog';
-import CsvParseEditor from './';
+import XmlParseEditor from './';
 
-export default class CsvParseEditorDialog extends Component {
+export default class XmlParseEditorDialog extends Component {
   render() {
     const { id, rule, data, ...other } = this.props;
     const defaults = {
       width: '80vw',
-      height: '50vh',
+      height: '70vh',
       open: true,
     };
     const dialogProps = Object.assign({}, defaults, other);
@@ -18,7 +18,7 @@ export default class CsvParseEditorDialog extends Component {
         {...dialogProps}
         showLayoutOptions={false}
         showFullScreen>
-        <CsvParseEditor editorId={id} rule={rule} data={data} />
+        <XmlParseEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
   }
