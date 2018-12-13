@@ -8,6 +8,7 @@ import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
 import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
+import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
@@ -112,6 +113,17 @@ export default class Editors extends Component {
           />
         );
 
+      case 'XmlParseEditor':
+        return (
+          <XmlParseEditorDialog
+            title="XML Parser"
+            id={editorName}
+            // rules={{ attributePrefix: 'test_' }}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
+
       case 'TransformEditor':
         return (
           <TransformEditorDialog
@@ -154,6 +166,13 @@ export default class Editors extends Component {
         description:
           'This processor converts comma seperated values into JSON.',
       },
+      {
+        name: 'XmlParseEditor',
+        label: 'XML Parser',
+        description:
+          'This processor wll convert XML to JSON controlled by an set of parse options.',
+      },
+
       {
         name: 'TransformEditor',
         label: 'Transform Editor',

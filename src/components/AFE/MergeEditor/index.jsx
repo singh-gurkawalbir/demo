@@ -7,13 +7,7 @@ import Editor from '../GenericEditor';
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
 
-  return {
-    rule: editor.rule,
-    data: editor.data,
-    result: editor.result ? JSON.stringify(editor.result.data[0], null, 2) : '',
-    error: editor.error,
-    violations: editor.violations,
-  };
+  return { ...editor };
 };
 
 const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({

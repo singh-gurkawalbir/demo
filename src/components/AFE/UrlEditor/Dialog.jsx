@@ -4,26 +4,16 @@ import UrlEditor from './';
 
 export default class UrlEditorDialog extends Component {
   render() {
-    const {
-      id,
-      rule,
-      data,
-      onClose,
-      open = true,
-      title,
-      width = '70vw',
-      height = '50vh',
-    } = this.props;
+    const defaults = {
+      open: true,
+      width: '70vw',
+      height: '50vh',
+    };
+    const { id, rule, data, ...other } = this.props;
+    const props = Object.assign({}, defaults, other);
 
     return (
-      <EditorDialog
-        id={id}
-        open={open}
-        title={title}
-        width={width}
-        height={height}
-        onClose={onClose}
-        showLayoutOptions={false}>
+      <EditorDialog id={id} {...props} showLayoutOptions={false}>
         <UrlEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );

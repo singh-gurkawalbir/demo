@@ -36,7 +36,7 @@ import sampleData from './sampleData';
 }))
 export default class WorkArea extends Component {
   state = {
-    sampleType: 'json1',
+    sampleType: 'xml1',
   };
 
   handleChange = event => {
