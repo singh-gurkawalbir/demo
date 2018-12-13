@@ -9,6 +9,36 @@ function validateJsonString(s) {
 }
 
 const allLogic = {
+  xmlParser: {
+    requestBody: editor => {
+      const rules = {
+        resourcePath: editor.resourcePath,
+        doc: {
+          parsers: [
+            {
+              type: 'xml',
+              rules: {
+                V0_json: !editor.leanJson,
+                trimSpaces: editor.trimSpaces,
+                stripNewLineChars: editor.stripNewLineChars,
+                attributePrefix: editor.attributePrefix,
+                textNodeName: editor.textNodeName,
+              },
+            },
+          ],
+        },
+      };
+
+      return {
+        data: editor.data,
+        rules,
+      };
+    },
+    validate: editor => ({
+      dataError:
+        !editor.data && !editor.data.length && 'Must provide some sample data.',
+    }),
+  },
   csvParser: {
     requestBody: editor => {
       const rowDelimiterMap = {
