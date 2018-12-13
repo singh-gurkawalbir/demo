@@ -1,5 +1,4 @@
 /* global describe, test, expect */
-
 import reducer from './';
 import actions from '../../actions';
 

@@ -32,7 +32,6 @@ const api = {
     action(actionTypes.API_COMPLETE, { path, message }),
   failure: (path, message) =>
     action(actionTypes.API_FAILURE, { path, message }),
-  clearSuccessComms: () => action(actionTypes.CLEAR_SUCCESS_COMMS),
 };
 const resource = {
   request: (resourceType, id) =>

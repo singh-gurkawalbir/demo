@@ -4,16 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { LinearProgress, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import actions from '../../actions';
-import {
-  allLoadingOrErrored,
-  isLoadingAnyResource,
-  isCommsBelowNetworkThreshold,
-} from '../../reducers';
+import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
+import { COMM_STATES } from '../../reducers/comms';
 
 const mapStateToProps = state => ({
   allLoadingOrErrored: allLoadingOrErrored(state),
   isLoadingAnyResource: isLoadingAnyResource(state),
-  isCommsBelowNetworkThreshold: isCommsBelowNetworkThreshold(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleClearComms: () => dispatch(actions.clearComms()),
@@ -42,7 +38,6 @@ class NetworkSnackbar extends Component {
     const {
       isLoadingAnyResource,
       allLoadingOrErrored,
-      isCommsBelowNetworkThreshold,
       handleClearComms,
       classes,
     } = this.props;
@@ -52,8 +47,8 @@ class NetworkSnackbar extends Component {
     }
 
     const notification = r => {
-      if (r.error)
-        return <li key={r.name}>{`Error ${r.message}. (${r.error})`}</li>;
+      if (r.status === COMM_STATES.ERROR)
+        return <li key={r.name}>{`Error ${r.message}.`}</li>;
 
       let msg = ` ${r.message}...`;
 
@@ -88,7 +83,7 @@ class NetworkSnackbar extends Component {
           vertical: 'top',
           horizontal: 'center',
         }}
-        open={!isCommsBelowNetworkThreshold || !isLoadingAnyResource}
+        open
         // autoHideDuration={6000}
         // onClose={this.handleClose}
         message={msg}

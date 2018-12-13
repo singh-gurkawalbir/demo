@@ -2,6 +2,13 @@ import actionTypes from '../../actions/types';
 
 const initialState = {};
 
+export const COMM_STATES = {
+  LOADING: 'loading',
+  ERROR: 'error',
+  SUCCESS: 'success',
+};
+Object.freeze(COMM_STATES);
+
 export default (state = initialState, action) => {
   const { type, path, message, hidden } = action;
   let newState;
@@ -11,21 +18,18 @@ export default (state = initialState, action) => {
     case actionTypes.API_REQUEST:
       newState = Object.assign({}, state[path]);
       newState.timestamp = timestamp;
-      newState.loading = true;
+      newState.status = COMM_STATES.LOADING;
       newState.message = message;
       newState.hidden = hidden;
       delete newState.retry;
-      delete newState.error;
-      delete newState.success;
 
       return { ...state, [path]: newState };
 
     case actionTypes.API_COMPLETE:
       newState = Object.assign({}, state[path]);
-      newState.loading = false;
-      newState.success = message;
+      newState.status = COMM_STATES.SUCCESS;
+      newState.message = message;
       delete newState.retry;
-      delete newState.error;
       delete newState.timestamp;
 
       return { ...state, [path]: newState };
@@ -40,27 +44,30 @@ export default (state = initialState, action) => {
 
     case actionTypes.API_FAILURE:
       newState = Object.assign({}, state[path]);
-      newState.error = message || 'unknown error';
+      newState.status = COMM_STATES.ERROR;
+      newState.message = message || 'unknown error';
       delete newState.retry;
-      newState.loading = false;
       delete newState.timestamp;
 
       return { ...state, [path]: newState };
     case actionTypes.CLEAR_COMMS:
       newState = Object.assign({}, state);
       Object.keys(newState).forEach(i => {
-        if (newState[i].error) delete newState[i];
+        if (
+          newState[i].status === COMM_STATES.ERROR ||
+          newState[i].status === COMM_STATES.SUCCESS
+        )
+          delete newState[i];
       });
 
       return newState;
+    // case actionTypes.CLEAR_SUCCESS_COMMS:
+    //   newState = Object.assign({}, state);
+    //   Object.keys(newState).forEach(i => {
+    //     if (newState[i].success) delete newState[i];
+    //   });
 
-    case actionTypes.CLEAR_SUCCESS_COMMS:
-      newState = Object.assign({}, state);
-      Object.keys(newState).forEach(i => {
-        if (newState[i].success) delete newState[i];
-      });
-
-      return newState;
+    //   return newState;
     default:
       return state;
   }
@@ -68,7 +75,15 @@ export default (state = initialState, action) => {
 
 // #region PUBLIC SELECTORS
 export function isLoading(state, resourceName) {
-  return !!(state && state[resourceName] && state[resourceName].loading);
+  return !!(
+    state &&
+    state[resourceName] &&
+    state[resourceName].status === COMM_STATES.LOADING
+  );
+}
+
+function commStatus(state, resourceName) {
+  return state && state[resourceName] && state[resourceName].status;
 }
 
 export function requestMessage(state, resourceName) {
@@ -99,18 +114,21 @@ export function allLoadingOrErrored(state) {
   const resources = [];
 
   Object.keys(state).forEach(key => {
-    const status = {
+    const comm = {
       name: key,
-      isLoading: isLoading(state, key),
+      status: commStatus(state, key),
       retryCount: retryCount(state, key),
       timestamp: timestampComms(state, key),
       message: requestMessage(state, key),
-      error: error(state, key),
       isHidden: isHidden(state, key),
     };
 
-    if ((status.isLoading || status.error) && !status.isHidden) {
-      resources.push(status);
+    if (
+      (comm.status === COMM_STATES.LOADING ||
+        comm.status === COMM_STATES.ERROR) &&
+      !comm.isHidden
+    ) {
+      resources.push(comm);
     }
   });
 

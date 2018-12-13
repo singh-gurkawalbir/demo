@@ -144,21 +144,36 @@ export function isSessionExpired(state) {
 
 // #endregion AUTHENTICATION SELECTORS
 // #region PASSWORD & EMAIL update selectors for modals
-export function changePasswordFailure(state) {
-  return (
-    state &&
-    state.comms &&
-    state.comms[changePasswordParams.path] &&
-    state.comms[changePasswordParams.path].error
-  );
-}
 
 export function changePasswordSuccess(state) {
   return (
     state &&
     state.comms &&
     state.comms[changePasswordParams.path] &&
-    state.comms[changePasswordParams.path].success
+    state.comms[changePasswordParams.path].status &&
+    state.comms[changePasswordParams.path].status ===
+      fromComms.COMM_STATES.SUCCESS
+  );
+}
+
+export function changePasswordFailure(state) {
+  return (
+    state &&
+    state.comms &&
+    state.comms[changePasswordParams.path] &&
+    state.comms[changePasswordParams.path].status &&
+    state.comms[changePasswordParams.path].status ===
+      fromComms.COMM_STATES.ERROR
+  );
+}
+
+export function changePasswordMsg(state) {
+  return (
+    (state &&
+      state.comms &&
+      state.comms[changePasswordParams.path] &&
+      state.comms[changePasswordParams.path].message) ||
+    ''
   );
 }
 
@@ -167,7 +182,8 @@ export function changeEmailFailure(state) {
     state &&
     state.comms &&
     state.comms[changeEmailParams.path] &&
-    state.comms[changeEmailParams.path].error
+    state.comms[changeEmailParams.path].status &&
+    state.comms[changeEmailParams.path].status === fromComms.COMM_STATES.ERROR
   );
 }
 
@@ -176,7 +192,18 @@ export function changeEmailSuccess(state) {
     state &&
     state.comms &&
     state.comms[changeEmailParams.path] &&
-    state.comms[changeEmailParams.path].success
+    state.comms[changeEmailParams.path].status &&
+    state.comms[changeEmailParams.path].status === fromComms.COMM_STATES.SUCCESS
+  );
+}
+
+export function changeEmailMsg(state) {
+  return (
+    (state &&
+      state.comms &&
+      state.comms[changeEmailParams.path] &&
+      state.comms[changeEmailParams.path].message) ||
+    ''
   );
 }
 
@@ -299,4 +326,5 @@ export function newResourceData(state, resourceType, id) {
 
   return data;
 }
+
 // #endregion
