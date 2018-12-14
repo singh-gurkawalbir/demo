@@ -40,6 +40,7 @@ class CsvParsePanel extends Component {
       stripNewLineChars,
       textNodeName,
       attributePrefix,
+      listNodes,
     } = editor;
 
     return (
@@ -98,6 +99,18 @@ class CsvParsePanel extends Component {
                   shrink: true,
                 }}
                 onChange={e => patchEditor('attributePrefix', e.target.value)}
+              />
+              <TextField
+                label="List Nodes"
+                placeholder="none"
+                multiline
+                rowsMax={4}
+                className={classes.textField}
+                defaultValue={listNodes}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={e => patchEditor('listNodes', e.target.value)}
               />
             </Fragment>
           )}

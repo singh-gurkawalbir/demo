@@ -17,12 +17,14 @@ const allLogic = {
           parsers: [
             {
               type: 'xml',
+              version: 1,
               rules: {
                 V0_json: !editor.leanJson,
                 trimSpaces: editor.trimSpaces,
                 stripNewLineChars: editor.stripNewLineChars,
                 attributePrefix: editor.attributePrefix,
                 textNodeName: editor.textNodeName,
+                listNodes: [editor.listNodes],
               },
             },
           ],
