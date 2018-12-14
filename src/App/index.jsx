@@ -55,6 +55,7 @@ class App extends Component {
     if (allLoadingOrErrored === null) return;
     let shouldShow = true;
 
+    // should show if all comm activities are below the threshold.
     shouldShow =
       allLoadingOrErrored.filter(
         resource =>
@@ -62,7 +63,6 @@ class App extends Component {
           Date.now() - resource.timestamp <
             Number(process.env.NETWORK_THRESHOLD)
       ).length === 0;
-    console.log(`should show ${shouldShow}`);
     this.setState({ showSnackBar: shouldShow });
   };
 
