@@ -10,35 +10,32 @@ import { withStyles } from '@material-ui/core/styles';
 
 @withStyles(theme => ({
   modalDialog: {
-    padding: 4 * theme.spacing.unit,
+    padding: theme.spacing.quad,
     minWidth: 500,
   },
   modalContent: {
     width: '100',
   },
+  iconButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+  },
 }))
 export default class ModalDialog extends Component {
   render() {
-    // const { open } = this.state;
     const { classes, show, handleClose } = this.props;
-
-    // if (!show) return null;
 
     return (
       <div>
-        <Dialog
-          open={show}
-          className={classes.modalDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description">
-          <DialogTitle id="alert-dialog-title">
+        <Dialog open={show} className={classes.modalDialog}>
+          <DialogTitle>
             {this.props.children[0]}
 
             <IconButton
-              aria-label="Delete"
               onClick={handleClose}
               color="primary"
-              style={{ position: 'absolute', top: '10px', right: '10px' }}
+              className={classes.iconButton}
               autoFocus>
               <SvgIcon>
                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />

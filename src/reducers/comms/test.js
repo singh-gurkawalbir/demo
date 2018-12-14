@@ -8,6 +8,7 @@ import reducer, * as selectors from './';
 import actions from '../../actions';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
+const STATES = selectors.COMM_STATES;
 
 describe('comms reducers', () => {
   const path = '/test/path/';
@@ -41,7 +42,7 @@ describe('comms reducers', () => {
     test('should set loading flag', () => {
       const newState = reducer(undefined, actions.api.request(path));
 
-      expect(newState[path].loading).toBe(true);
+      expect(newState[path].status).toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
@@ -60,11 +61,11 @@ describe('comms reducers', () => {
     test('should clear loading flag', () => {
       const state = reducer(undefined, actions.api.request(path));
 
-      expect(state[path].loading).toBe(true);
+      expect(state[path].status).toBe(STATES.LOADING);
 
       const newState = reducer(state, actions.api.complete(path));
 
-      expect(newState[path].loading).toBe(false);
+      expect(newState[path].status).not.toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
@@ -83,24 +84,23 @@ describe('comms reducers', () => {
     test('should set error message', () => {
       const state = reducer(undefined, actions.api.failure(path, 'error'));
 
-      expect(state[path].error).toEqual('error');
+      expect(state[path].message).toEqual('error');
     });
-
     test('should default an error message if none is provided in the action', () => {
       const state = reducer(undefined, actions.api.failure(path));
 
-      expect(state[path].error).toEqual('unknown error');
+      expect(state[path].message).toEqual('unknown error');
     });
     test('should clear loading and retry count', () => {
       let state = reducer(undefined, actions.api.request(path));
 
       state = reducer(state, actions.api.retry(path));
-      expect(state[path].loading).toBe(true);
+      expect(state[path].status).toBe(STATES.LOADING);
       expect(state[path].retry).toBe(1);
 
       state = reducer(state, actions.api.failure(path, 'error'));
 
-      expect(state[path].loading).toBe(false);
+      expect(state[path].status).toBe(STATES.ERROR);
       expect(state[path].retry).toBeUndefined();
     });
   });
@@ -226,8 +226,7 @@ describe('comms selectors', () => {
         {
           isHidden: false,
           message: 'Loading Exports',
-          error: undefined,
-          isLoading: true,
+          status: STATES.LOADING,
           name: 'exports',
           retryCount: 0,
           timestamp: expect.any(Number),
@@ -258,8 +257,7 @@ describe('comms selectors', () => {
         {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
-          error: undefined,
-          isLoading: true,
+          status: STATES.LOADING,
           name: pathA,
           retryCount: 0,
           timestamp: expect.any(Number),
@@ -267,8 +265,7 @@ describe('comms selectors', () => {
         {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
-          error: undefined,
-          isLoading: true,
+          status: STATES.LOADING,
           name: pathB,
           retryCount: 0,
           timestamp: expect.any(Number),
@@ -289,9 +286,8 @@ describe('comms selectors', () => {
       expect(result).toEqual([
         {
           isHidden: false,
-          message: '',
-          error: 'my nice error',
-          isLoading: false,
+          message: 'my nice error',
+          status: STATES.ERROR,
           name: path,
           retryCount: 0,
           timestamp: expect.any(Number),
@@ -313,7 +309,6 @@ describe('comms selectors', () => {
       expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(false);
       clear();
     });
-
     test('verify isComms selector for multiple resources', () => {
       advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
 

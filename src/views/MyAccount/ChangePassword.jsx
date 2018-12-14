@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from './ModalDialog';
-import { changePasswordFailure, changePasswordSuccess } from '../../reducers';
+import {
+  changePasswordFailure,
+  changePasswordSuccess,
+  changePasswordMsg,
+} from '../../reducers';
 
 const mapDispatchToProps = dispatch => ({
   changePassword: message => {
@@ -14,35 +18,32 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => ({
   error: changePasswordFailure(state),
   success: changePasswordSuccess(state),
+  message: changePasswordMsg(state),
 });
 
 class ChangePassword extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
+    const payload = {
       currentPassword: e.target.currentPassword.value,
       newPassword: e.target.newPassword.value,
-    });
+    };
 
     this.props.changePassword(payload);
   };
   render() {
-    const { show, onhandleClose, error, success } = this.props;
+    const { show, onhandleClose, error, success, message } = this.props;
 
     return (
-      <ModalDialog
-        show={show}
-        handleClose={() => {
-          onhandleClose();
-        }}>
+      <ModalDialog show={show} handleClose={onhandleClose}>
         <span>Change Password</span>
         {success ? (
-          <span>{success}</span>
+          <span>{message}</span>
         ) : (
           <span>
             {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
-            <form id="myForm" onSubmit={this.handleOnSubmit}>
+            <form id="changePasswordForm" onSubmit={this.handleOnSubmit}>
               <TextField
                 id="currentPassword"
                 label="Current Password"
@@ -62,12 +63,12 @@ class ChangePassword extends Component {
           <span />
         ) : (
           <Fragment>
-            {error && <span>{error}</span>}
+            {error && <span>{message}</span>}
             <Button
               variant="contained"
               color="primary"
               type="submit"
-              form="myForm"
+              form="changePasswordForm"
               value="Submit">
               change password
             </Button>

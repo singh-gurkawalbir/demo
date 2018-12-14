@@ -2,7 +2,6 @@ import { React, Component } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { connect } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignIn from '../../views/SignIn';
 import { isSessionExpired } from '../../reducers';
@@ -36,9 +35,7 @@ class AlertDialog extends Component {
             {'Please login again'}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              <SignIn iAmModal />
-            </DialogContentText>
+            <SignIn dialogOpen={dialogOpen} iAmModal />
           </DialogContent>
           {/* <DialogActions>
             <Button onClick={this.handleClose} color="primary" autoFocus>

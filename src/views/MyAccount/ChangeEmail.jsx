@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from './ModalDialog';
-import { changeEmailFailure, changeEmailSuccess } from '../../reducers';
+import {
+  changeEmailFailure,
+  changeEmailSuccess,
+  changeEmailMsg,
+} from '../../reducers';
 
 const mapDispatchToProps = dispatch => ({
   changeEmail: message => {
@@ -14,29 +18,31 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => ({
   error: changeEmailFailure(state),
   success: changeEmailSuccess(state),
+  message: changeEmailMsg(state),
 });
 
 class ChangeEmail extends Component {
   handleOnSubmit = e => {
     e.preventDefault();
-    const payload = JSON.stringify({
+    const payload = {
       newEmail: e.target.newEmail.value,
       password: e.target.password.value,
-    });
+    };
 
     this.props.changeEmail(payload);
   };
+
   render() {
-    const { show, onhandleClose, error, success } = this.props;
+    const { show, onhandleClose, error, success, message } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={() => onhandleClose()}>
+      <ModalDialog show={show} handleClose={onhandleClose}>
         <span>Change Email</span>
         {success ? (
-          <span>Success</span>
+          <span>{message}</span>
         ) : (
           <span>
-            <form id="myForm" onSubmit={this.handleOnSubmit}>
+            <form id="changeEmailForm" onSubmit={this.handleOnSubmit}>
               <TextField id="newEmail" label="New Email" margin="normal" />
               <br />
 
@@ -49,13 +55,13 @@ class ChangeEmail extends Component {
           <span />
         ) : (
           <Fragment>
-            {error && <span>{error}</span>}
+            {error && <span>{message}</span>}
 
             <Button
               variant="contained"
               color="primary"
               type="submit"
-              form="myForm"
+              form="changeEmailForm"
               value="Submit">
               change email
             </Button>

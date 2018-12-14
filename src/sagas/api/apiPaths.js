@@ -4,10 +4,10 @@ export const authParams = {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
+    body: {
       email: process.env.API_EMAIL,
       password: process.env.API_PASSWORD,
-    }),
+    },
     method: 'POST',
   },
   path: '/signin?no_redirect=true',
@@ -19,11 +19,11 @@ export const logoutParams = {
       'Content-Type': ' application/x-www-form-urlencoded',
     },
     body: {
-      _csrf: 'undefined',
+      _csrf: undefined,
     },
     method: 'POST',
   },
-  path: '/signout?no_redirect=true',
+  path: '/signout',
 };
 
 export const changePasswordParams = {
@@ -53,3 +53,7 @@ export const updatePreferencesParams = {
   },
   path: '/preferences',
 };
+
+export function getHostAndProtocol() {
+  return { protocol: window.location.protocol, host: window.location.host };
+}
