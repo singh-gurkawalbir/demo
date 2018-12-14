@@ -259,7 +259,6 @@ export function resourceStatus(state, resourceType) {
   const hasData = fromData.hasData(state.data, resourceType);
   const isLoading = fromComms.isLoading(state.comms, resourceType);
   const retryCount = fromComms.retryCount(state.comms, resourceType);
-  const error = fromComms.error(state.comms, resourceType);
   const isReady = hasData && !isLoading;
 
   return {
@@ -268,7 +267,6 @@ export function resourceStatus(state, resourceType) {
     isLoading,
     retryCount,
     isReady,
-    error,
   };
 }
 

@@ -102,10 +102,6 @@ function isHidden(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].hidden);
 }
 
-export function error(state, resourceName) {
-  return state && state[resourceName] && state[resourceName].error;
-}
-
 export function allLoadingOrErrored(state) {
   if (!state || typeof state !== 'object') {
     return null;

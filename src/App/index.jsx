@@ -6,14 +6,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter } from 'react-router-dom';
 import AppRouting from './AppRouting';
-// import SignIn from '../views/SignIn';
-// import CircularProgress from '@material-ui/core/CircularProgress';
-import {
-  themeName,
-  authenticationErrored,
-  isUserLoggedOut,
-  isAuthInitialized,
-} from '../reducers';
+import * as selectors from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
 import themeProvider from '../themeProvider';
@@ -21,18 +14,21 @@ import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import AuthDialog from '../components/AuthDialog';
 import actions from '../actions';
+import { COMM_STATES } from '../reducers/comms';
 
 const mapStateToProps = state => ({
-  themeName: themeName(state),
-  isAuthInitialized: isAuthInitialized(state),
-  isAuthErrored: !!authenticationErrored(state),
-  isUserLoggedOut: isUserLoggedOut(state),
+  themeName: selectors.themeName(state),
+  isAuthInitialized: selectors.isAuthInitialized(state),
+  isAuthErrored: !!selectors.authenticationErrored(state),
+  isUserLoggedOut: selectors.isUserLoggedOut(state),
+  allLoadingOrErrored: selectors.allLoadingOrErrored(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
     dispatch(actions.auth.initSession());
   },
 });
+let timer = null;
 
 @hot(module)
 class App extends Component {
@@ -44,6 +40,7 @@ class App extends Component {
   // we need to create a new action creator and reducer for this.
   state = {
     showDrawer: false,
+    showSnackBar: false,
   };
 
   componentWillMount() {
@@ -51,12 +48,42 @@ class App extends Component {
 
     if (!isAuthInitialized) initSession();
   }
+  shouldShowNetworkSnackBar = () => {
+    // Should show failure
+    const { allLoadingOrErrored } = this.props;
+
+    if (allLoadingOrErrored === null) return;
+    let shouldShow = true;
+
+    shouldShow =
+      allLoadingOrErrored.filter(
+        resource =>
+          resource.status === COMM_STATES.LOADING &&
+          Date.now() - resource.timestamp <
+            Number(process.env.NETWORK_THRESHOLD)
+      ).length === 0;
+    console.log(`should show ${shouldShow}`);
+    this.setState({ showSnackBar: shouldShow });
+  };
+
+  componentDidMount() {
+    // start the timer
+    // selector show network snackbar
+    // check condition to show network snackbar or not
+
+    timer = setInterval(this.shouldShowNetworkSnackBar, 50);
+  }
+
+  componentDidUnMount() {
+    // start the timer
+    clearInterval(timer);
+  }
   handleToggleDrawer = () => {
     this.setState({ showDrawer: !this.state.showDrawer });
   };
 
   render() {
-    const { showDrawer } = this.state;
+    const { showDrawer, showSnackBar } = this.state;
     const { themeName, isAuthInitialized, isUserLoggedOut } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -66,7 +93,7 @@ class App extends Component {
         <CssBaseline />
         <BrowserRouter>
           <Fragment>
-            <NetworkSnackbar />
+            {showSnackBar && <NetworkSnackbar />}
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
               onSetTheme={this.handleSetTheme}
