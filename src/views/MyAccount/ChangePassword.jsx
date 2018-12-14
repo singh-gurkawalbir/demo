@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from './ModalDialog';
-import { changePasswordFailure, changePasswordSuccess } from '../../reducers';
+import {
+  changePasswordFailure,
+  changePasswordSuccess,
+  changePasswordMsg,
+} from '../../reducers';
 
 const mapDispatchToProps = dispatch => ({
   changePassword: message => {
@@ -14,6 +18,7 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => ({
   error: changePasswordFailure(state),
   success: changePasswordSuccess(state),
+  message: changePasswordMsg(state),
 });
 
 class ChangePassword extends Component {
@@ -27,13 +32,13 @@ class ChangePassword extends Component {
     this.props.changePassword(payload);
   };
   render() {
-    const { show, onhandleClose, error, success } = this.props;
+    const { show, onhandleClose, error, success, message } = this.props;
 
     return (
       <ModalDialog show={show} handleClose={onhandleClose}>
         <span>Change Password</span>
         {success ? (
-          <span>{success}</span>
+          <span>{message}</span>
         ) : (
           <span>
             {`Please note that clicking 'Change Password' will sign you out of the
@@ -58,7 +63,7 @@ class ChangePassword extends Component {
           <span />
         ) : (
           <Fragment>
-            {error && <span>{error}</span>}
+            {error && <span>{message}</span>}
             <Button
               variant="contained"
               color="primary"

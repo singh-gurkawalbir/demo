@@ -1,4 +1,4 @@
-import { authParams, logoutParams } from './apiPaths';
+import { authParams, logoutParams, getHostAndProtocol } from './apiPaths';
 
 const delay = delay =>
   new Promise(fulfill => {
@@ -7,6 +7,10 @@ const delay = delay =>
 const errorMessageTimeOut = {
   message: 'Resource not available ',
   status: 1001,
+};
+const sessionExpired = {
+  message: 'Session Expired',
+  status: 401,
 };
 
 export function APIException(response) {
@@ -18,10 +22,16 @@ export function APIException(response) {
   }
 }
 
-export const api = async (path, opts = {}) => {
+function createAppropriatePathAndOptions(path, opts) {
   let options;
+  let req;
 
-  if (path !== authParams.path || path !== logoutParams.path)
+  if (path === authParams.path || path === logoutParams.path) {
+    req = path;
+    options = opts;
+  } else {
+    // all regular api requests go in here
+    req = `/api${path}`;
     options = {
       ...opts,
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
@@ -32,9 +42,47 @@ export const api = async (path, opts = {}) => {
         }),
       },
     };
-  else {
-    options = opts;
   }
+
+  return { req, options };
+}
+
+export async function throwExceptionUsingTheResponse(response) {
+  let body;
+
+  if (
+    response.headers.get('content-type') === 'application/json; charset=utf-8'
+  ) {
+    body = await response.json();
+  } else body = await response.text();
+
+  throw new APIException({
+    status: response.status,
+    message: { ...body },
+  });
+}
+
+function checkToThrowSessionValidationException(response) {
+  // when session is invalidated then we
+  // expect to get a 200 response with the response url being the sign in page
+
+  if (response.status === 200) {
+    const { host, protocol } = getHostAndProtocol();
+
+    if (response.url === `${protocol}//${host}/signin`) {
+      throw new APIException({
+        ...sessionExpired,
+      });
+    }
+  }
+}
+
+async function introduceNetworkLatency() {
+  await delay(process.env.ADD_NETWORK_LATENCY || 0);
+}
+
+export const api = async (path, opts = {}) => {
+  const { options, req } = createAppropriatePathAndOptions(path, opts);
 
   // all request bodies we stringify
   if (options.body) {
@@ -43,59 +91,16 @@ export const api = async (path, opts = {}) => {
 
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
-  await delay(process.env.ADD_NETWORK_LATENCY || 0);
-  let req;
-
-  if (
-    path === '/signin?no_redirect=true' ||
-    path === '/signout?no_redirect=true'
-  ) {
-    req = path;
-  } else {
-    req = `/api${path}`;
-  }
+  await introduceNetworkLatency();
 
   try {
     const response = await fetch(req, options);
 
     if (response.status >= 400 && response.status < 600) {
-      let body;
-
-      if (
-        response.headers.get('content-type') ===
-        'application/json; charset=utf-8'
-      )
-        body = await response.json();
-      else body = await response.text();
-
-      throw new APIException({
-        status: response.status,
-        message: { ...body },
-      });
+      await throwExceptionUsingTheResponse(response);
     }
 
-    // TODO: in our development we perform
-    // a no redirect in our auth sign in requests
-    // because it can redirect to our current io application
-    // So this may not be necessary for
-    if (response.status === 302) {
-      const body = await response.json();
-
-      throw new APIException({ status: response.status, message: { ...body } });
-    }
-
-    // when session is invalidated then we
-    // expect to get a 200 response with the response url with the sign in page
-    if (response.status === 200) {
-      if (
-        response.url ===
-        `${window.location.protocol}//${window.location.host}/signin`
-      )
-        throw new APIException({
-          status: 401,
-          message: 'Session Expired',
-        });
-    }
+    checkToThrowSessionValidationException(response);
 
     // For 204 content-length header does not show up
     // So using response status to prevent performing .json()

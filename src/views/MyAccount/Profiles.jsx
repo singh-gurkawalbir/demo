@@ -19,7 +19,6 @@ const mapStateToProps = state => ({
   userProfilePreferencesProps: userProfilePreferencesProps(state),
 });
 const mapDispatchToProps = dispatch => ({
-  clearSuccessComms: () => dispatch(actions.api.clearSuccessComms()),
   clearComms: () => dispatch(actions.clearComms()),
   persistProfilesData: message => dispatch(actions.profile.update(message)),
 });
@@ -99,12 +98,11 @@ class ProfilesComponent extends Component {
     this.setState({ [e.target.id]: e.target.checked });
   };
   handleOpenModal = modalKey => {
-    this.props.clearSuccessComms();
+    this.props.clearComms();
     this.setState({ [modalKey]: true });
   };
 
   handleCloseModal = modalKey => {
-    this.props.clearComms();
     this.setState({ [modalKey]: false });
   };
   render() {
