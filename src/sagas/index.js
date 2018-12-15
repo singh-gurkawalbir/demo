@@ -3,8 +3,7 @@ import { all, call, put } from 'redux-saga/effects';
 import actions from '../actions';
 import { resourceSagas } from './resources';
 import { modalsSagas } from './modals';
-import { editorSagas } from './editor';
-import { processorSagas } from './editor/processor';
+import editorSagas from './editor';
 import { authenticationSagas } from './authentication';
 import { api } from './api';
 
@@ -51,7 +50,6 @@ export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
 export default function* rootSaga() {
   yield all([
     ...resourceSagas,
-    ...processorSagas,
     ...editorSagas,
     ...modalsSagas,
     ...authenticationSagas,

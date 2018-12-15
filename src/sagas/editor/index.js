@@ -1,47 +1,57 @@
-import jsonPatch from 'fast-json-patch';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
-import util from '../../utils/array';
 import { apiCallWithRetry } from '../index';
 
-export function* commitStagedChanges({ resourceType, id }) {
-  const { patch, merged, master } = yield select(
-    selectors.resourceData,
-    resourceType,
-    id
-  );
+export function* evaluateProcessor({ id }) {
+  const reqOpts = yield select(selectors.processorRequestOptions, id);
 
-  if (!patch) return; // nothing to do.
-
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const origin = yield call(apiCallWithRetry, path);
-
-  if (origin.lastModified !== master.lastModified) {
-    let conflict = jsonPatch.compare(master, origin);
-
-    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
-
-    yield put(actions.resource.commitConflict(id, conflict));
-    yield put(actions.resource.received(resourceType, origin));
-
-    return;
+  if (!reqOpts) {
+    return; // nothing to do...
   }
 
-  try {
-    const updated = yield call(apiCallWithRetry, path, {
-      method: 'put',
-      body: merged,
-    });
+  const { violations, processor, body } = reqOpts;
 
-    yield put(actions.resource.received(resourceType, updated));
-    yield put(actions.resource.clearStaged(id));
-  } catch (error) {
-    // Dave would handle this part
+  if (violations) {
+    return yield put(actions.editor.validateFailure(id, violations));
+  }
+
+  // console.log(`editorProcessorOptions for ${id}`, processor, body);
+  const path = `/processors/${processor}`;
+  const opts = {
+    method: 'post',
+    body,
+  };
+
+  try {
+    const results = yield call(apiCallWithRetry, path, opts);
+
+    return yield put(actions.editor.evaluateResponse(id, results));
+  } catch (e) {
+    return yield put(actions.editor.evaluateFailure(id, e.message));
   }
 }
 
-export const editorSagas = [
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+export function* autoEvaluateProcessor({ id }) {
+  const editor = yield select(selectors.editor, id);
+
+  if (!editor || (editor.violations && editor.violations.length)) {
+    return; // nothing to do...
+  }
+
+  if (!editor.autoEvaluate) return;
+
+  if (editor.autoEvaluateDelay) {
+    yield call(delay, editor.autoEvaluateDelay);
+  }
+
+  return yield call(evaluateProcessor, { id });
+}
+
+export default [
+  takeEvery(actionTypes.EDITOR_INIT, autoEvaluateProcessor),
+  takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
+  takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
 ];

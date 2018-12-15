@@ -1,58 +1,36 @@
 /* global describe, test, expect */
+import { delay } from 'redux-saga';
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { commitStagedChanges } from './';
+import { autoEvaluateProcessor, evaluateProcessor } from './';
 
-describe('commitStagedChanges saga', () => {
-  const id = 1;
-  const resourceType = 'dogs';
-
-  test('should do nothing if no staged changes exist.', () => {
-    const saga = commitStagedChanges({ resourceType, id });
+describe('evaluateProcessor saga', () => {
+  test('should do nothing if no editor exists with given id', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
     const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
-    );
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
-    const effect = saga.next({});
+    const effect = saga.next();
 
     expect(effect.done).toEqual(true);
   });
 
-  test('should complete with dispatch of conflict and received actions when origin does not match master.', () => {
-    const saga = commitStagedChanges({ resourceType, id });
+  test('should complete with dispatch of failure action when editor has validation errors.', () => {
+    const id = 1;
+    const violations = ['violations'];
+    const saga = evaluateProcessor({ id });
     const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
-    );
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
-    const callEffect = saga.next({ master: { lastModified: 50 }, patch: true })
-      .value;
-
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, `/${resourceType}/${id}`)
-    );
-
-    const origin = { id, lastModified: 100 };
-    const putEffect = saga.next(origin).value;
-    const conflict = [
-      {
-        op: 'add',
-        path: '/id',
-        value: 1,
-      },
-    ];
+    const putEffect = saga.next({ violations }).value;
 
     expect(putEffect).toEqual(
-      put(actions.resource.commitConflict(id, conflict))
-    );
-
-    expect(saga.next().value).toEqual(
-      put(actions.resource.received(resourceType, origin))
+      put(actions.editor.validateFailure(id, violations))
     );
 
     const finalEffect = saga.next();
@@ -60,42 +38,128 @@ describe('commitStagedChanges saga', () => {
     expect(finalEffect).toEqual({ done: true, value: undefined });
   });
 
-  test('should complete with dispatch of received and clear stage actions when commit succeeds.', () => {
-    const saga = commitStagedChanges({ resourceType, id });
+  test('should complete with dispatch of evaluate response when editor is valid.', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
     const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
-    );
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
-    const origin = { id, lastModified: 100 };
-    const merged = { id, lastModified: 100 };
-    const path = `/${resourceType}/${id}`;
-    const getCallEffect = saga.next({
-      master: { lastModified: 100 },
-      merged,
-      patch: true,
-    }).value;
+    const selectResponse = { processor: 'p', body: 'body' };
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'post',
+      body: 'body',
+    };
 
-    expect(getCallEffect).toEqual(call(apiCallWithRetry, path));
+    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
 
-    const putCallEffect = saga.next(merged, origin).value;
-
-    expect(putCallEffect).toEqual(
-      call(apiCallWithRetry, path, {
-        method: 'put',
-        body: merged,
-      })
-    );
-
-    const updated = { id: 1 };
-    const putEffect = saga.next(updated).value;
+    const apiResult = 'result';
+    const putEffect = saga.next(apiResult).value;
 
     expect(putEffect).toEqual(
-      put(actions.resource.received(resourceType, updated))
+      put(actions.editor.evaluateResponse(id, apiResult))
     );
 
-    expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should complete with dispatch of evaluate failure when api call fails.', () => {
+    const id = 1;
+    const saga = evaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+
+    const selectResponse = { processor: 'p', body: 'body' };
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'post',
+      body: 'body',
+    };
+
+    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
+
+    const putEffect = saga.throw(new Error('boom')).value;
+
+    expect(putEffect).toEqual(put(actions.editor.evaluateFailure(id, 'boom')));
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+});
+
+describe('autoEvaluateProcessor saga', () => {
+  const id = 1;
+
+  test('should do nothing if no editor exists with given id', () => {
+    const saga = autoEvaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    const effect = saga.next();
+
+    expect(effect.done).toEqual(true);
+  });
+
+  test('should do nothing if editor existsbut auto evaluate is off.', () => {
+    const saga = autoEvaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    const effect = saga.next({ autoEvaluate: false });
+
+    expect(effect.done).toEqual(true);
+  });
+
+  test('should not pause if no delay is set.', () => {
+    const saga = autoEvaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    const callEffect = saga.next({ autoEvaluate: true }).value;
+
+    expect(callEffect).toEqual(call(evaluateProcessor, { id }));
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should not pause if no delay is set.', () => {
+    const saga = autoEvaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    const callEffect = saga.next({ autoEvaluate: true }).value;
+
+    expect(callEffect).toEqual(call(evaluateProcessor, { id }));
+
+    const finalEffect = saga.next();
+
+    expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+
+  test('should pause if delay is set.', () => {
+    const saga = autoEvaluateProcessor({ id });
+    const selectEffect = saga.next().value;
+    const autoEvaluateDelay = 200;
+
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    let callEffect = saga.next({ autoEvaluate: true, autoEvaluateDelay }).value;
+
+    expect(callEffect).toEqual(call(delay, autoEvaluateDelay));
+
+    callEffect = saga.next().value;
+    expect(callEffect).toEqual(call(evaluateProcessor, { id }));
 
     const finalEffect = saga.next();
 

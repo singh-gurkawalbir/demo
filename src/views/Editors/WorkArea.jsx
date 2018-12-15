@@ -39,6 +39,13 @@ export default class WorkArea extends Component {
     sampleType: 'xml1',
   };
 
+  componentDidMount() {
+    const { sampleType } = this.state;
+    const { onChange } = this.props;
+
+    onChange(sampleData[sampleType].data);
+  }
+
   handleChange = event => {
     const { onChange } = this.props;
     const sampleType = event.target.value;
@@ -46,6 +53,7 @@ export default class WorkArea extends Component {
     this.setState({ sampleType });
     onChange(sampleData[sampleType].data);
   };
+
   render() {
     const { rawData, onChange, classes } = this.props;
     const { sampleType } = this.state;
