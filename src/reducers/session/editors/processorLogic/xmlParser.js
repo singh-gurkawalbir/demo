@@ -3,7 +3,7 @@ const parseNodes = nodesAsText => {
 
   const nodes = nodesAsText.split('\n');
 
-  console.log('parsed node text', nodes);
+  // console.log('parsed node text', nodes);
 
   return nodes;
 };

@@ -3,7 +3,7 @@ import { delay } from 'redux-saga';
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { apiCallWithRetry } from '../../index';
+import { apiCallWithRetry } from '../index';
 import { autoEvaluateProcessor, evaluateProcessor } from './';
 
 describe('evaluateProcessor saga', () => {
