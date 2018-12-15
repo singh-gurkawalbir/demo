@@ -1,3 +1,13 @@
+const parseNodes = nodesAsText => {
+  if (!nodesAsText) return;
+
+  const nodes = nodesAsText.split('\n');
+
+  console.log('parsed node text', nodes);
+
+  return nodes;
+};
+
 const requestBody = editor => {
   const rules = {
     resourcePath: editor.resourcePath,
@@ -12,7 +22,7 @@ const requestBody = editor => {
             stripNewLineChars: editor.stripNewLineChars,
             attributePrefix: editor.attributePrefix,
             textNodeName: editor.textNodeName,
-            listNodes: [editor.listNodes],
+            listNodes: parseNodes(editor.listNodes),
           },
         },
       ],

@@ -36,8 +36,8 @@ class CsvParsePanel extends Component {
     const { editor, patchEditor, classes } = this.props;
     const {
       leanJson,
-      trimSpaces,
-      stripNewLineChars,
+      trimSpaces = false,
+      stripNewLineChars = false,
       textNodeName,
       attributePrefix,
       listNodes,
@@ -60,7 +60,7 @@ class CsvParsePanel extends Component {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={leanJson}
+                    checked={trimSpaces}
                     onChange={() => patchEditor('trimSpaces', !trimSpaces)}
                   />
                 }

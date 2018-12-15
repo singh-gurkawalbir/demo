@@ -24,7 +24,7 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
         data,
         autoEvaluate: true,
         leanJson: true,
-        trimSpaces: true,
+        trimSpaces: false,
         ...rule,
       })
     );
