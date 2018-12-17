@@ -11,7 +11,7 @@ describe('editor reducers', () => {
     expect(newState).toEqual(oldState);
   });
 
-  test('should return the default data and rules when editor is inialized', () => {
+  test('should return the default data and rules when editor is initialized', () => {
     // {
     //   type, processor, id, rules, data, result, error;
     // }
@@ -204,6 +204,82 @@ describe('editor selectors', () => {
           violations: {
             dataError: 'Unexpected token } in JSON at position 7',
             ruleError: 'Unexpected token a in JSON at position 1',
+          },
+        },
+      },
+      {
+        processor: 'transform',
+        valid: {
+          initOpts: {
+            rule: [{ extract: 'a', generate: 'A' }],
+            data: '{"a": 123}',
+          },
+          expectedRequest: {
+            body: {
+              data: [{ a: 123 }],
+              rules: {
+                version: '1',
+                rules: [[{ extract: 'a', generate: 'A' }]],
+              },
+            },
+            processor: 'transform',
+          },
+        },
+        invalid: {
+          initOpts: {
+            rule: [{ extract: 'a', generate: 'A' }],
+            data: '{"a: 123}',
+          },
+          violations: {
+            dataError: 'Unexpected token a in JSON at position 2',
+          },
+        },
+      },
+      {
+        processor: 'xmlParser',
+        valid: {
+          initOpts: {
+            leanJson: true,
+            trimSpaces: true,
+            stripNewLineChars: true,
+            attributePrefix: '@',
+            textNodeName: '#',
+            listNodes: '/doc',
+            data: '<doc>empty</doc>',
+          },
+          expectedRequest: {
+            body: {
+              data: '<doc>empty</doc>',
+              rules: {
+                resourcePath: undefined,
+                doc: {
+                  parsers: [
+                    {
+                      type: 'xml',
+                      version: 1,
+                      rules: {
+                        V0_json: false,
+                        trimSpaces: true,
+                        stripNewLineChars: true,
+                        attributePrefix: '@',
+                        textNodeName: '#',
+                        listNodes: ['/doc'],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            processor: 'xmlParser',
+          },
+        },
+        invalid: {
+          initOpts: {
+            leanJson: true,
+            data: '',
+          },
+          violations: {
+            dataError: 'Must provide some sample data.',
           },
         },
       },

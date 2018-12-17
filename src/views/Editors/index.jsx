@@ -47,12 +47,6 @@ export default class Editors extends Component {
     rawData: '',
   };
 
-  componentDidMount() {
-    const rawData = JSON.stringify({ a: 123, b: 'abc', c: true }, null, 2);
-
-    this.setState({ rawData });
-  }
-
   handleEditorChange = editorName => {
     this.setState({ editorName });
   };
