@@ -1,3 +1,13 @@
+export const getCSRFParams = {
+  opts: {
+    credentials: 'same-origin', // this is needed to instruct fetch to send cookies
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  },
+  path: '/csrf?contentType=application/json',
+};
 export const authParams = {
   opts: {
     credentials: 'same-origin', // this is needed to instruct fetch to send cookies
@@ -16,7 +26,7 @@ export const logoutParams = {
   opts: {
     credentials: 'same-origin',
     headers: {
-      'Content-Type': ' application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
     },
     body: {
       _csrf: undefined,
