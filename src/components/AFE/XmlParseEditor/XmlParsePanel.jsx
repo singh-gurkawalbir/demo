@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     marginTop: theme.spacing.double,
   },
 }))
-class CsvParsePanel extends Component {
+class XmlParsePanel extends Component {
   render() {
     const { editor, patchEditor, classes } = this.props;
     const {
@@ -41,6 +41,8 @@ class CsvParsePanel extends Component {
       textNodeName,
       attributePrefix,
       listNodes,
+      includeNodes,
+      excludeNodes,
     } = editor;
 
     return (
@@ -100,6 +102,7 @@ class CsvParsePanel extends Component {
                 }}
                 onChange={e => patchEditor('attributePrefix', e.target.value)}
               />
+
               <TextField
                 label="List Nodes"
                 placeholder="none"
@@ -112,6 +115,32 @@ class CsvParsePanel extends Component {
                 }}
                 onChange={e => patchEditor('listNodes', e.target.value)}
               />
+
+              <TextField
+                label="Nodes to Include"
+                placeholder="all"
+                multiline
+                rowsMax={4}
+                className={classes.textField}
+                defaultValue={includeNodes}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={e => patchEditor('includeNodes', e.target.value)}
+              />
+
+              <TextField
+                label="Nodes to Exclude"
+                placeholder="none"
+                multiline
+                rowsMax={4}
+                className={classes.textField}
+                defaultValue={excludeNodes}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={e => patchEditor('excludeNodes', e.target.value)}
+              />
             </Fragment>
           )}
         </FormGroup>
@@ -121,4 +150,4 @@ class CsvParsePanel extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(CsvParsePanel);
+export default connect(mapStateToProps, mapDispatchToProps)(XmlParsePanel);
