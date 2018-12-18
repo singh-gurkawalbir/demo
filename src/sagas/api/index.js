@@ -1,4 +1,9 @@
-import { authParams, logoutParams, getHostAndProtocol } from './apiPaths';
+import {
+  authParams,
+  logoutParams,
+  getHostAndProtocol,
+  getCSRFParams,
+} from './apiPaths';
 
 const delay = delay =>
   new Promise(fulfill => {
@@ -26,7 +31,11 @@ function createAppropriatePathAndOptions(path, opts) {
   let options;
   let req;
 
-  if (path === authParams.path || path === logoutParams.path) {
+  if (
+    path === authParams.path ||
+    path === logoutParams.path ||
+    path === getCSRFParams.path
+  ) {
     req = path;
     options = opts;
   } else {
@@ -39,6 +48,7 @@ function createAppropriatePathAndOptions(path, opts) {
       headers: {
         ...(opts.headers || {
           'Content-Type': 'application/json; charset=utf-8',
+          'x-csrf-token': sessionStorage.getItem('_csrf'),
         }),
       },
     };
