@@ -126,6 +126,12 @@ module.exports = {
         '/signin': {
           target: process.env.API_ENDPOINT,
         },
+        '/signout': {
+          target: process.env.API_ENDPOINT,
+        },
+        '/csrf': {
+          target: process.env.API_ENDPOINT,
+        },
         '/api': {
           target: process.env.API_ENDPOINT,
           // pathRewrite: {
