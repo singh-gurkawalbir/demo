@@ -115,9 +115,9 @@ class Add extends Component {
         <div className={classes.editableFields}>
           <CodeEditor
             value={editorValue}
-            options={{ mode: 'javascript' }}
+            options={{ mode: 'json' }}
             onChange={this.handleInputChange}
-            mode="javascript"
+            mode="json"
           />
           {error && <Typography color="error">{error}</Typography>}
           {dirty && (

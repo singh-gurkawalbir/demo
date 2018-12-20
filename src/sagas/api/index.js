@@ -95,7 +95,7 @@ export const api = async (path, opts = {}) => {
   const { options, req } = createAppropriatePathAndOptions(path, opts);
 
   // all request bodies we stringify
-  if (options.body) {
+  if (options && options.body) {
     options.body = JSON.stringify(options.body);
   }
 

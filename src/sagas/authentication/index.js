@@ -7,7 +7,12 @@ import { getResource } from '../resources';
 
 export function* auth({ email, password }) {
   try {
-    const apiCSRFToken = yield call(apiCallWithRetry, getCSRFParams.path);
+    const apiCSRFToken = yield call(
+      apiCallWithRetry,
+      getCSRFParams.path,
+      null,
+      'Requesting CSRF token'
+    );
     const { _csrf } = apiCSRFToken;
     // replace credentials in the request body
     const credentialsBody = { email, password, _csrf };

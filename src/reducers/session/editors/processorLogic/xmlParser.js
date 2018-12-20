@@ -10,7 +10,7 @@ const parseNodes = nodesAsText => {
 
 const requestBody = editor => {
   const rules = {
-    resourcePath: editor.resourcePath,
+    // resourcePath: '/Contact', // editor.resourcePath,
     doc: {
       parsers: [
         {
@@ -23,6 +23,8 @@ const requestBody = editor => {
             attributePrefix: editor.attributePrefix,
             textNodeName: editor.textNodeName,
             listNodes: parseNodes(editor.listNodes),
+            includeNodes: parseNodes(editor.includeNodes),
+            excludeNodes: parseNodes(editor.excludeNodes),
           },
         },
       ],
