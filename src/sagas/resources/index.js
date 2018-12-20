@@ -6,13 +6,9 @@ import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
 
-const resourceData = state => {
-  selectors.resource.resourceData(state.resource);
-};
-
 export function* commitStagedChanges({ resourceType, id }) {
   const { patch, merged, master } = yield select(
-    resourceData,
+    selectors.resourceData,
     resourceType,
     id
   );

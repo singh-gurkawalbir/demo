@@ -16,6 +16,43 @@ require('babel-register')({
 const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
 
+const getProxyOpts = () => {
+  const target = process.env.API_ENDPOINT;
+  const isSecure = target.toLowerCase().startsWith('https://');
+
+  console.log('is API secure? ' + isSecure);
+
+  const commonOpts = {
+    target,
+    secure: false,
+    changeOrigin: true,
+    // pathRewrite: {
+    //  '^/api': '',
+    // },
+  };
+
+  if (!isSecure) {
+    return commonOpts;
+  }
+
+  return Object.assign({}, commonOpts, {
+    onProxyRes: proxyRes => {
+      // Strip the cookie `secure` attribute, otherwise prod cookies
+      // will be rejected by the browser when using non-HTTPS localhost:
+      // https://github.com/nodejitsu/node-http-proxy/pull/1166
+      const removeSecure = str => str.replace(/; Secure/i, '');
+      // console.log(proxyRes.headers);
+      const setCookie = proxyRes.headers['set-cookie'];
+
+      if (setCookie) {
+        proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
+          ? setCookie.map(removeSecure)
+          : removeSecure(setCookie);
+      }
+    },
+  });
+};
+
 module.exports = {
   use: [
     // [
@@ -122,37 +159,13 @@ module.exports = {
       ],
     ],
     neutrino => {
+      const proxyOpts = getProxyOpts();
+
       neutrino.config.devServer.proxy({
-        '/signin': {
-          target: process.env.API_ENDPOINT,
-        },
-        '/signout': {
-          target: process.env.API_ENDPOINT,
-        },
-        '/csrf': {
-          target: process.env.API_ENDPOINT,
-        },
-        '/api': {
-          target: process.env.API_ENDPOINT,
-          // pathRewrite: {
-          //  '^/api': '',
-          // },
-          secure: false,
-          changeOrigin: true,
-          onProxyRes: proxyRes => {
-            // Strip the cookie `secure` attribute, otherwise prod cookies
-            // will be rejected by the browser when using non-HTTPS localhost:
-            // https://github.com/nodejitsu/node-http-proxy/pull/1166
-            // const removeSecure = str => str.replace(/; secure/i, '')
-            // const setCookie = proxyRes.headers['set-cookie']
-            //
-            // if (setCookie) {
-            //   proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
-            //     ? setCookie.map(removeSecure)
-            //     : removeSecure(setCookie)
-            // }
-          },
-        },
+        '/signin': proxyOpts,
+        '/signout': proxyOpts,
+        '/csrf': proxyOpts,
+        '/api': proxyOpts,
       });
       neutrino.config.output.publicPath('/pg/');
     },
