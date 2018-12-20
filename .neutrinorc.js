@@ -18,39 +18,43 @@ const theme = themeProvider('light');
 
 const getProxyOpts = () => {
   const target = process.env.API_ENDPOINT;
-  const isSecure = target.toLowerCase().startsWith('https://');
+  const secure = target.toLowerCase().startsWith('https://');
 
-  console.log('is API secure? ' + isSecure);
+  console.log('is API secure? ' + secure);
 
-  const commonOpts = {
+  const opts = {
     target,
-    secure: false,
+    secure,
     changeOrigin: true,
     // pathRewrite: {
     //  '^/api': '',
     // },
   };
 
-  if (!isSecure) {
-    return commonOpts;
-  }
-
-  return Object.assign({}, commonOpts, {
-    onProxyRes: proxyRes => {
+  if (secure) {
+    opts.onProxyRes = proxyRes => {
       // Strip the cookie `secure` attribute, otherwise prod cookies
       // will be rejected by the browser when using non-HTTPS localhost:
       // https://github.com/nodejitsu/node-http-proxy/pull/1166
       const removeSecure = str => str.replace(/; Secure/i, '');
-      // console.log(proxyRes.headers);
+
+      // *** Note we also need to replace the cookie domain so the
+      // browser associates it with this local dev server...
+      // the regex in use matches any domain (prod, dev, stage, etc)
+      const swapDomain = str =>
+        str.replace(/Domain=(.*?).io;/i, 'Domain=.localhost.io;');
+
       const setCookie = proxyRes.headers['set-cookie'];
 
       if (setCookie) {
         proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
-          ? setCookie.map(removeSecure)
-          : removeSecure(setCookie);
+          ? setCookie.map(c => swapDomain(removeSecure(c)))
+          : swapDomain(removeSecure(setCookie));
       }
-    },
-  });
+    };
+  }
+
+  return opts;
 };
 
 module.exports = {
