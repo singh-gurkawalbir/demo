@@ -24,7 +24,7 @@ const getProxyOpts = () => {
 
   const commonOpts = {
     target,
-    secure: false,
+    secure: isSecure,
     changeOrigin: true,
     // pathRewrite: {
     //  '^/api': '',
