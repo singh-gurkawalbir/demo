@@ -16,6 +16,47 @@ require('babel-register')({
 const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
 
+const getProxyOpts = () => {
+  const target = process.env.API_ENDPOINT;
+  const secure = target.toLowerCase().startsWith('https://');
+
+  console.log('is API secure? ' + secure);
+
+  const opts = {
+    target,
+    secure,
+    changeOrigin: true,
+    // pathRewrite: {
+    //  '^/api': '',
+    // },
+  };
+
+  if (secure) {
+    opts.onProxyRes = proxyRes => {
+      // Strip the cookie `secure` attribute, otherwise prod cookies
+      // will be rejected by the browser when using non-HTTPS localhost:
+      // https://github.com/nodejitsu/node-http-proxy/pull/1166
+      const removeSecure = str => str.replace(/; Secure/i, '');
+
+      // *** Note we also need to replace the cookie domain so the
+      // browser associates it with this local dev server...
+      // the regex in use matches any domain (prod, dev, stage, etc)
+      const swapDomain = str =>
+        str.replace(/Domain=(.*?).io;/i, 'Domain=.localhost.io;');
+
+      const setCookie = proxyRes.headers['set-cookie'];
+
+      if (setCookie) {
+        proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
+          ? setCookie.map(c => swapDomain(removeSecure(c)))
+          : swapDomain(removeSecure(setCookie));
+      }
+    };
+  }
+
+  return opts;
+};
+
 module.exports = {
   use: [
     // [
@@ -45,8 +86,8 @@ module.exports = {
         coverageThreshold: {
           global: {
             statements: 75,
-            branches: 70,
-            functions: 70,
+            branches: 65,
+            functions: 65,
             lines: 80,
           },
         },
@@ -122,31 +163,13 @@ module.exports = {
       ],
     ],
     neutrino => {
+      const proxyOpts = getProxyOpts();
+
       neutrino.config.devServer.proxy({
-        '/signin': {
-          target: process.env.API_ENDPOINT,
-        },
-        '/api': {
-          target: process.env.API_ENDPOINT,
-          // pathRewrite: {
-          //  '^/api': '',
-          // },
-          secure: false,
-          changeOrigin: true,
-          onProxyRes: proxyRes => {
-            // Strip the cookie `secure` attribute, otherwise prod cookies
-            // will be rejected by the browser when using non-HTTPS localhost:
-            // https://github.com/nodejitsu/node-http-proxy/pull/1166
-            // const removeSecure = str => str.replace(/; secure/i, '')
-            // const setCookie = proxyRes.headers['set-cookie']
-            //
-            // if (setCookie) {
-            //   proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
-            //     ? setCookie.map(removeSecure)
-            //     : removeSecure(setCookie)
-            // }
-          },
-        },
+        '/signin': proxyOpts,
+        '/signout': proxyOpts,
+        '/csrf': proxyOpts,
+        '/api': proxyOpts,
       });
       neutrino.config.output.publicPath('/pg/');
     },

@@ -63,10 +63,10 @@ export default class ConflictAlertDialog extends Component {
           </Table>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel} color="primary">
+          <Button variant="contained" onClick={handleCancel}>
             Cancel and Review
           </Button>
-          <Button onClick={handleCommit} color="secondary">
+          <Button variant="contained" onClick={handleCommit} color="secondary">
             Complete Commit
           </Button>
         </DialogActions>

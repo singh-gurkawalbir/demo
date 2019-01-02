@@ -3,6 +3,7 @@ node_modules
 *.swp
 .idea/
 *.log
+*.old
 .Rhistory
 .env
 /styleguide
