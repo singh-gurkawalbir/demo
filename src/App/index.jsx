@@ -14,7 +14,6 @@ import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import AuthDialog from '../components/AuthDialog';
 import actions from '../actions';
-import { COMM_STATES } from '../reducers/comms';
 
 const mapStateToProps = state => ({
   themeName: selectors.themeName(state),
@@ -22,6 +21,9 @@ const mapStateToProps = state => ({
   isAuthErrored: !!selectors.authenticationErrored(state),
   isUserLoggedOut: selectors.isUserLoggedOut(state),
   allLoadingOrErrored: selectors.allLoadingOrErrored(state),
+  isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
+    state
+  ),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -50,19 +52,11 @@ class App extends Component {
   }
   shouldShowNetworkSnackBar = () => {
     // Should show failure
-    const { allLoadingOrErrored } = this.props;
-
-    if (allLoadingOrErrored === null) return;
+    const { isAllLoadingCommsAboveThresold } = this.props;
     let shouldShow = true;
 
     // should show if all comm activities are below the threshold.
-    shouldShow =
-      allLoadingOrErrored.filter(
-        resource =>
-          resource.status === COMM_STATES.LOADING &&
-          Date.now() - resource.timestamp <
-            Number(process.env.NETWORK_THRESHOLD)
-      ).length === 0;
+    shouldShow = isAllLoadingCommsAboveThresold;
     this.setState({ showSnackBar: shouldShow });
   };
 

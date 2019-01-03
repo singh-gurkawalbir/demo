@@ -51,6 +51,20 @@ export function isCommsBelowNetworkThreshold(state) {
   return fromComms.isCommsBelowNetworkThreshold(state.comms);
 }
 
+export function isAllLoadingCommsAboveThresold(state) {
+  const loadingOrErrored = allLoadingOrErrored(state);
+
+  if (loadingOrErrored === null) return;
+
+  return (
+    loadingOrErrored.filter(
+      resource =>
+        resource.status === fromComms.COMM_STATES.LOADING &&
+        Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
+    ).length === 0
+  );
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS

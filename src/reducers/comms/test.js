@@ -3,7 +3,6 @@
 // the linter precommit step will fail. ...and the IDE doesnt like the globals
 // either.
 /* global describe, test, expect */
-import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import reducer, * as selectors from './';
 import actions from '../../actions';
 
@@ -293,39 +292,6 @@ describe('comms selectors', () => {
           timestamp: expect.any(Number),
         },
       ]);
-    });
-
-    test('isComms selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
-      advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-
-      const state = reducer(undefined, actions.api.request(path));
-
-      advanceBy(5);
-
-      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
-
-      advanceBy(20000); // advance sufficiently large time
-
-      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(false);
-      clear();
-    });
-    test('verify isComms selector for multiple resources', () => {
-      advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-
-      let state = reducer(undefined, actions.api.request(path));
-
-      state = reducer(state, actions.api.request('someotherResource'));
-
-      advanceBy(50);
-
-      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
-      state = reducer(state, actions.api.complete(path));
-      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(true);
-
-      advanceBy(20000); // advance sufficiently large time
-
-      expect(selectors.isCommsBelowNetworkThreshold(state)).toBe(false);
-      clear();
     });
   });
 });
