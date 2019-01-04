@@ -53,13 +53,21 @@ class App extends Component {
   shouldShowNetworkSnackBar = () => {
     // Should show failure
     const { isAllLoadingCommsAboveThresold } = this.props;
+    const { showSnackBar } = this.state;
     let shouldShow = true;
 
     // should show if all comm activities are below the threshold.
     shouldShow = isAllLoadingCommsAboveThresold;
-    this.setState({ showSnackBar: shouldShow });
-  };
+    // Prevent calling a setstate all the time ...
+    // this would trigger a rerender unnecessarily.
+    // could be done through using shouldComponentUpdate
+    // nextState but we have to define entire behavior
+    // of should rerender and might be an expensive operation
+    // performing comparisons against other props
 
+    if (showSnackBar !== shouldShow)
+      this.setState({ showSnackBar: shouldShow });
+  };
   componentDidMount() {
     // start the timer
     // selector show network snackbar
