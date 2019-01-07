@@ -4,16 +4,21 @@ import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import { getResource } from '../resources';
+import {
+  setCSRFToken,
+  removeCSRFToken,
+  getCSRFToken,
+} from '../../utils/session';
 
 export function* auth({ email, password }) {
   try {
-    const apiCSRFToken = yield call(
+    const csrfTokenResponse = yield call(
       apiCallWithRetry,
       getCSRFParams.path,
       null,
       'Requesting CSRF token'
     );
-    const { _csrf } = apiCSRFToken;
+    const { _csrf } = csrfTokenResponse;
     // replace credentials in the request body
     const credentialsBody = { email, password, _csrf };
     const payload = { ...authParams.opts, body: credentialsBody };
@@ -24,7 +29,7 @@ export function* auth({ email, password }) {
       'Authenticating User'
     );
 
-    sessionStorage.setItem('_csrf', apiAuthentications._csrf);
+    yield call(setCSRFToken, apiAuthentications._csrf);
     yield put(actions.auth.complete());
 
     return apiAuthentications.succes;
@@ -45,9 +50,12 @@ export function* initializeApp() {
     );
 
     if (resp) {
-      const apiCSRFToken = yield call(apiCallWithRetry, getCSRFParams.path);
+      const csrfTokenResponse = yield call(
+        apiCallWithRetry,
+        getCSRFParams.path
+      );
 
-      sessionStorage.setItem('_csrf', apiCSRFToken._csrf);
+      yield call(setCSRFToken, csrfTokenResponse._csrf);
       yield put(actions.auth.complete());
     } else {
       yield put(actions.auth.logout());
@@ -59,17 +67,17 @@ export function* initializeApp() {
 
 export function* invalidateSession() {
   try {
-    logoutParams.opts.body._csrf = sessionStorage.getItem('_csrf');
+    logoutParams.opts.body._csrf = yield call(getCSRFToken);
     yield call(
       apiCallWithRetry,
       logoutParams.path,
       logoutParams.opts,
       'Logging out user'
     );
-    sessionStorage.removeItem('_csrf');
+    yield call(removeCSRFToken);
     yield put(actions.auth.clearStore());
   } catch (e) {
-    sessionStorage.removeItem('_csrf');
+    yield call(removeCSRFToken);
     yield put(actions.auth.clearStore());
   }
 }
