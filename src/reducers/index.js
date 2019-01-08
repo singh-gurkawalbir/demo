@@ -51,6 +51,20 @@ export function isCommsBelowNetworkThreshold(state) {
   return fromComms.isCommsBelowNetworkThreshold(state.comms);
 }
 
+export function isAllLoadingCommsAboveThresold(state) {
+  const loadingOrErrored = allLoadingOrErrored(state);
+
+  if (loadingOrErrored === null) return;
+
+  return (
+    loadingOrErrored.filter(
+      resource =>
+        resource.status === fromComms.COMM_STATES.LOADING &&
+        Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
+    ).length === 0
+  );
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
@@ -259,7 +273,6 @@ export function resourceStatus(state, resourceType) {
   const hasData = fromData.hasData(state.data, resourceType);
   const isLoading = fromComms.isLoading(state.comms, resourceType);
   const retryCount = fromComms.retryCount(state.comms, resourceType);
-  const error = fromComms.error(state.comms, resourceType);
   const isReady = hasData && !isLoading;
 
   return {
@@ -268,7 +281,6 @@ export function resourceStatus(state, resourceType) {
     isLoading,
     retryCount,
     isReady,
-    error,
   };
 }
 

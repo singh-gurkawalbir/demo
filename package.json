@@ -9,6 +9,20 @@
       "jest-date-mock"
     ]
   },
+  "babel": {
+    "plugins": [
+      [
+        "transform-es2015-modules-commonjs",
+        {
+          "useBuiltIns": true
+        }
+      ],
+      "transform-object-rest-spread",
+      "transform-async-to-generator"
+    ],
+    "sourceMaps": true,
+    "retainLines": true
+  },
   "scripts": {
     "start": "neutrino start --require dotenv/config",
     "build": "neutrino build --require dotenv/config",
@@ -27,6 +41,7 @@
     "dexie": "2.0.4",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
+    "lodash": "4.17.11",
     "mdi-react": "4.4.0",
     "prop-types": "15.6.2",
     "react": "16.6.0",
@@ -39,19 +54,19 @@
     "react-redux": "5.0.7",
     "react-router-dom": "4.3.1",
     "react-timeago": "4.1.9",
+    "redbox-react": "1.6.0",
     "redux": "4.0.1",
     "redux-logger": "3.0.6",
     "redux-saga": "0.16.2",
-    "redbox-react": "1.6.0",
     "shortid": "2.2.13",
-    "typeface-roboto": "0.0.54",
-    "lodash": "4.17.11"
+    "typeface-roboto": "0.0.54"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-optional-chaining": "^7.2.0",
     "@neutrinojs/jest": "8.3.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-register": "6.26.0",
     "dotenv": "6.2.0",
-    "jest": "23.6.0",
     "jest-date-mock": "1.0.6",
     "neutrino": "8.3.0",
     "neutrino-preset-mozilla-frontend-infra": "4.1.0",

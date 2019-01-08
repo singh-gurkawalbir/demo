@@ -102,10 +102,6 @@ function isHidden(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].hidden);
 }
 
-export function error(state, resourceName) {
-  return state && state[resourceName] && state[resourceName].error;
-}
-
 export function allLoadingOrErrored(state) {
   if (!state || typeof state !== 'object') {
     return null;
@@ -135,24 +131,8 @@ export function allLoadingOrErrored(state) {
   return resources.length ? resources : null;
 }
 
-export function isCommsBelowNetworkThreshold(state) {
-  if (!state || typeof state !== 'object') {
-    return false;
-  }
-
-  const networkThreshold = Number(process.env.NETWORK_THRESHOLD);
-
-  return (
-    Object.keys(state).filter(
-      resource =>
-        Date.now() - timestampComms(state, resource) <= networkThreshold &&
-        !isHidden(state, resource)
-    ).length > 0
-  );
-}
-
 export function isLoadingAnyResource(state) {
-  if (!state || typeof state !== 'object') {
+  if (!state || typeof state !== "object") {
     return null;
   }
 

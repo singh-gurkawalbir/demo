@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import reducer, * as selectors from './';
 import actions from '../actions';
 
@@ -69,5 +70,42 @@ describe('Reducers in the root reducer', () => {
     const state = reducer(someInitialState, actions.auth.clearStore());
 
     expect(state).toEqual({});
+  });
+});
+
+describe('Comm selector to verify comms exceeding threshold', () => {
+  const path = '/somePath';
+
+  test('selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
+    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+
+    const state = reducer(undefined, actions.api.request(path));
+
+    advanceBy(5);
+
+    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+
+    advanceBy(20000); // advance sufficiently large time
+
+    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(true);
+    clear();
+  });
+  test('verify comm selector for multiple resources', () => {
+    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+
+    let state = reducer(undefined, actions.api.request(path));
+
+    state = reducer(state, actions.api.request('someotherResource'));
+
+    advanceBy(50);
+
+    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+    state = reducer(state, actions.api.complete(path));
+    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+
+    advanceBy(20000); // advance sufficiently large time
+
+    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(true);
+    clear();
   });
 });

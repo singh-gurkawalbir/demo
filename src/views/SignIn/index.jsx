@@ -126,10 +126,7 @@ class SignIn extends Component {
           {error && (
             <div>
               <br />
-              <Typography
-                color="error"
-                variant="display1"
-                className={classes.margin}>
+              <Typography color="error" variant="h5" className={classes.margin}>
                 Authentication Failure!
               </Typography>
             </div>
