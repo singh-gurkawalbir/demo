@@ -4,6 +4,7 @@ import {
   getHostAndProtocol,
   getCSRFParams,
 } from './apiPaths';
+import { getCSRFToken } from '../../utils/session';
 
 const delay = delay =>
   new Promise(fulfill => {
@@ -48,7 +49,7 @@ function createAppropriatePathAndOptions(path, opts) {
       headers: {
         ...(opts.headers || {
           'Content-Type': 'application/json; charset=utf-8',
-          'x-csrf-token': sessionStorage.getItem('_csrf'),
+          'x-csrf-token': getCSRFToken(),
         }),
       },
     };
