@@ -1,3 +1,5 @@
+const CSRF_TOKEN = '_csrf';
+
 export const loadState = () => {
   try {
     const serializedState = sessionStorage.getItem('state');
@@ -18,4 +20,14 @@ export const saveState = state => {
   } catch (err) {
     // have to do something here when deserialization does not go through
   }
+};
+
+export const setCSRFToken = token => {
+  sessionStorage.setItem(CSRF_TOKEN, token);
+};
+
+export const getCSRFToken = () => sessionStorage.getItem(CSRF_TOKEN);
+
+export const removeCSRFToken = () => {
+  sessionStorage.removeItem(CSRF_TOKEN);
 };

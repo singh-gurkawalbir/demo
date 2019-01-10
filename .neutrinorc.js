@@ -17,9 +17,10 @@ const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
 const localAPI = 'https://staging.integrator.io';
 const getProxyOpts = () => {
-  //If not defined point to local instance
-  const target = process.env.API_ENDPOINT || localAPI;
-  const secure = target.toLowerCase().startsWith('https://');
+  console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
+
+  const target = process.env.API_ENDPOINT || '';
+  const secure = target && target.toLowerCase().startsWith('https://');
 
   console.log('is API secure? ' + secure + ' ' + target);
 
