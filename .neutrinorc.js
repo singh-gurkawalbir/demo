@@ -17,8 +17,10 @@ const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
 
 const getProxyOpts = () => {
-  const target = process.env.API_ENDPOINT;
-  const secure = target.toLowerCase().startsWith('https://');
+  console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
+
+  const target = process.env.API_ENDPOINT || '';
+  const secure = target && target.toLowerCase().startsWith('https://');
 
   console.log('is API secure? ' + secure);
 
