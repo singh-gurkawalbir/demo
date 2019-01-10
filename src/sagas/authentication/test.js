@@ -22,8 +22,8 @@ describe('auth saga flow', () => {
       ...authParams.opts,
       body: { email, password, _csrf },
     };
-
     const getCSRFEffect = saga.next().value;
+
     expect(getCSRFEffect).toEqual(
       call(
         apiCallWithRetry,
@@ -33,15 +33,18 @@ describe('auth saga flow', () => {
       )
     );
 
-    const callEffect = saga.next({ _csrf: _csrf }).value;
+    const callEffect = saga.next({ _csrf }).value;
+
     expect(callEffect).toEqual(
       call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
 
     const setCSRFEffect = saga.next({ _csrf: _csrfAfterSignIn }).value;
+
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
     const effect = saga.next().value;
+
     expect(effect).toEqual(put(actions.auth.complete()));
   });
 
@@ -49,10 +52,9 @@ describe('auth saga flow', () => {
     const email = 'someUserEmail';
     const password = 'someUserPassword';
     const _csrf = 'someCSRF';
-    const _csrfAfterSignIn = 'someOtherCSRF';
     const saga = auth({ email, password });
-
     const getCSRFEffect = saga.next().value;
+
     expect(getCSRFEffect).toEqual(
       call(
         apiCallWithRetry,
@@ -62,7 +64,7 @@ describe('auth saga flow', () => {
       )
     );
 
-    const callEffect = saga.next({ _csrf: _csrf }).value;
+    const callEffect = saga.next({ _csrf }).value;
     const payload = {
       ...authParams.opts,
       body: { email, password, _csrf },
@@ -90,12 +92,15 @@ describe('initialize app saga', () => {
     );
     const mockResp = 'some response';
     const getCSRFEffect = saga.next(mockResp).value;
+
     expect(getCSRFEffect).toEqual(call(apiCallWithRetry, getCSRFParams.path));
 
     const setCSRFEffect = saga.next({ _csrf: 'someCSRF' }).value;
+
     expect(setCSRFEffect).toEqual(call(setCSRFToken, 'someCSRF'));
 
     const authCompletedEffect = saga.next().value;
+
     expect(authCompletedEffect).toEqual(put(actions.auth.complete()));
   });
 
@@ -127,8 +132,8 @@ describe('initialize app saga', () => {
 describe('invalidate session app', () => {
   test('Should invalidate session when user attempts to logout', () => {
     const saga = invalidateSession();
-
     const getCSRFTokenEffect = saga.next().value;
+
     expect(getCSRFTokenEffect).toEqual(expect.anything());
 
     const logOutUserEffect = saga.next('someCSRF1').value;
@@ -143,6 +148,7 @@ describe('invalidate session app', () => {
     );
 
     const removeCSRFTokenEffect = saga.next().value;
+
     expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));
 
     const clearStoreEffect = saga.next().value;
@@ -152,8 +158,8 @@ describe('invalidate session app', () => {
 
   test('Should invalidate session when user attempts to logout irrespective of any api failure', () => {
     const saga = invalidateSession();
-
     const getCSRFTokenEffect = saga.next().value;
+
     expect(getCSRFTokenEffect).toEqual(expect.anything());
 
     const logOutUserEffect = saga.next().value;
@@ -167,8 +173,10 @@ describe('invalidate session app', () => {
       )
     );
     const removeCSRFTokenEffect = saga.throw(new Error('Some error')).value;
+
     expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));
     const clearStoreEffect = saga.next().value;
+
     expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
   });
 });

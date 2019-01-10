@@ -132,7 +132,7 @@ export function allLoadingOrErrored(state) {
 }
 
 export function isLoadingAnyResource(state) {
-  if (!state || typeof state !== "object") {
+  if (!state || typeof state !== 'object') {
     return null;
   }
 
