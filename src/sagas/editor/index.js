@@ -4,6 +4,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
+import { getResource } from '../resources';
 
 export function* evaluateProcessor({ id }) {
   const reqOpts = yield select(selectors.processorRequestOptions, id);
@@ -12,7 +13,9 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
-  const { violations, processor, body } = reqOpts;
+  const { violations, processor, body, resourcePath } = reqOpts;
+
+  if (processor === 'xmlParser') body.rules = { ...body.rules, resourcePath };
 
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
@@ -34,11 +37,21 @@ export function* evaluateProcessor({ id }) {
   }
 }
 
-export function* autoEvaluateProcessor({ id }) {
+export function* autoEvaluateProcessor({ id, processor }) {
   const editor = yield select(selectors.editor, id);
 
   if (!editor || (editor.violations && editor.violations.length)) {
     return; // nothing to do...
+  }
+
+  if (!editor.helperFunctions && editor.processor === 'handlebars') {
+    const allHelperFunctions = yield call(getResource, {
+      resourceType: 'processors',
+      message: 'Getting Helper functions',
+    });
+    const { helperFunctions } = allHelperFunctions[processor];
+
+    yield put(actions.editor.updateHelperFunctions(id, helperFunctions));
   }
 
   if (!editor.autoEvaluate) return;

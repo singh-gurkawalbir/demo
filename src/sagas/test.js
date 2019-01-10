@@ -73,7 +73,7 @@ describe(`apiCallWithRetry saga`, () => {
       put(actions.api.request(path, path, showMessage))
     );
 
-    const callEffect = saga.next().value;
+    const callEffect = saga.next('some Response').value;
 
     expect(callEffect).toEqual(call(api, path, opts));
 

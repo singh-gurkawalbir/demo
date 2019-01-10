@@ -15,12 +15,13 @@ require('babel-register')({
 
 const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
-
+const localAPI = 'https://staging.integrator.io';
 const getProxyOpts = () => {
-  const target = process.env.API_ENDPOINT;
+  //If not defined point to local instance
+  const target = process.env.API_ENDPOINT || localAPI;
   const secure = target.toLowerCase().startsWith('https://');
 
-  console.log('is API secure? ' + secure);
+  console.log('is API secure? ' + secure + ' ' + target);
 
   const opts = {
     target,

@@ -41,6 +41,7 @@ const requestOptions = editor => {
 
   return {
     processor: editor.processor,
+    resourcePath: editor.resourcePath,
     body: getLogic(editor).requestBody(editor),
   };
 };

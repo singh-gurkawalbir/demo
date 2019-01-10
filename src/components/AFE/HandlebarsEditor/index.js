@@ -9,6 +9,7 @@ const mapStateToProps = (state, { editorId }) => {
   return {
     rule: editor.template,
     data: editor.data,
+    helperFunctions: editor.helperFunctions,
     result: editor.result ? editor.result.data : '',
     error: editor.error && editor.error.message,
     violations: editor.violations,

@@ -49,6 +49,7 @@ export default class Editor extends Component {
   render() {
     const {
       classes,
+      helperFunctions,
       layout = 'compact',
       templateClassName,
       rule,
@@ -75,6 +76,7 @@ export default class Editor extends Component {
           <CodePanel
             name="rule"
             value={rule}
+            suggestions={helperFunctions}
             mode={ruleMode}
             onChange={handleRuleChange}
           />

@@ -26,7 +26,7 @@
   "scripts": {
     "start": "neutrino start --require dotenv/config",
     "build": "neutrino build --require dotenv/config",
-    "lint": "neutrino lint",
+    "lint": "neutrino lint  --require dotenv/config",
     "test": "neutrino test --require dotenv/config --verbose",
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --coverage --require dotenv/config && neutrino stage",
@@ -62,7 +62,6 @@
     "typeface-roboto": "0.0.54"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-optional-chaining": "^7.2.0",
     "@neutrinojs/jest": "8.3.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-register": "6.26.0",

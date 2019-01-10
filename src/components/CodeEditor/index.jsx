@@ -9,10 +9,14 @@ import 'brace/mode/xml';
 import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/ext/language_tools';
+import jsonComputePaths from '../../utils/jsonPaths';
 import * as selectors from '../../reducers/user';
+import * as helpers from '../../editorSetup/completers';
+import handlebarCompleterSetup from '../../editorSetup/editorCompleterSetup/index';
 
 const mapStateToProps = state => ({
   theme: selectors.editorTheme(state.user),
+  editors: state && state.session && state.session.editors,
 });
 
 @withStyles({
@@ -24,29 +28,42 @@ const mapStateToProps = state => ({
   // },
 })
 class CodeEditor extends Component {
-  handleChange = value => {
-    // anytime the container DOM element changes size (both height and width)
-    // the resize method of the editor needs to be fired so it can internally
-    // adjust it's internal variables that control the controlled scrollbars
-    // and basic functionality.
-    // TODO: We are cheating here and calling the resize on EVERY change...
-    // The better approach would be to onyl call resize whenever the parent
-    // component changed its size...
-    this.resize();
-
-    if (this.props.onChange) {
-      this.props.onChange(value);
-    }
-  };
-
-  resize() {
-    // console.log('resizing to fit...');
-    this.aceEditor.editor.resize();
-  }
-
   componentDidMount() {
     this.resize();
   }
+
+  handleChange = value => {
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
+
+    this.resize();
+  };
+
+  resize() {
+    this.aceEditor.editor.resize();
+  }
+  loadJSONHints = () => {
+    // When loading the code pannel expect the data code editor to load
+    // When the data code editor loads then compute the JSON hints for the
+    // editor
+    const { name, mode, value, suggestions } = this.props;
+
+    if (name === 'rule') {
+      helpers.FunctionCompleters.functionsHints = suggestions;
+    } else if (name === 'data') {
+      let jsonHints = [];
+
+      if (mode === 'json') {
+        try {
+          jsonHints = jsonComputePaths(JSON.parse(value));
+          helpers.JsonCompleters.jsonHints = jsonHints;
+        } catch (e) {
+          jsonHints = [];
+        }
+      }
+    }
+  };
 
   render() {
     const {
@@ -60,11 +77,10 @@ class CodeEditor extends Component {
       wrap,
       showGutter,
       showInvisibles,
-      enableLiveAutocompletion,
       classes,
     } = this.props;
 
-    // console.log('rendering ace editor...', wrap);
+    this.loadJSONHints();
 
     return (
       <AceEditor
@@ -77,15 +93,19 @@ class CodeEditor extends Component {
         height={height || '100%'}
         showPrintMargin={false}
         showGutter={showGutter}
-        // enableLiveAutocompletion={enableLiveAutocompletion}
+        enableLiveAutocompletion={name === 'rule' && mode === 'handlebars'}
+        enableBasicAutocompletion={name === 'rule' && mode === 'handlebars'}
         theme={theme}
+        onLoad={editor => {
+          if (name === 'rule' && mode === 'handlebars') {
+            handlebarCompleterSetup(editor);
+          }
+        }}
         onChange={this.handleChange}
         ref={c => {
           this.aceEditor = c;
         }}
         setOptions={{
-          // enableBasicAutocompletion: false,
-          enableLiveAutocompletion,
           showInvisibles,
           wrap,
           // showLineNumbers: true,

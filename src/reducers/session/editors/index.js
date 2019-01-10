@@ -10,11 +10,19 @@ export default function reducer(state = {}, action) {
     patch,
     result,
     error,
+    helperFunctions,
     violations,
   } = action;
   const newState = Object.assign({}, state);
 
   switch (type) {
+    case actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS:
+      newState[id] = {
+        helperFunctions,
+        ...newState[id],
+      };
+
+      return newState;
     case actionTypes.EDITOR_INIT:
       newState[id] = {
         processor,
