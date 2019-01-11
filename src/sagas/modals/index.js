@@ -36,7 +36,7 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences(preferences) {
+export function* updatePreferences({ preferences }) {
   if (preferences === {}) return;
 
   try {
@@ -91,7 +91,7 @@ export function* updateUserProfileAndPreferences({
 }) {
   const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
 
-  yield updatePreferences({ _id, timeFormat, dateFormat });
+  yield updatePreferences({ preferences: { _id, timeFormat, dateFormat } });
   const copy = { ...profilePreferencesPayload };
 
   delete copy.dateFormat;
@@ -144,6 +144,7 @@ export const modalsSagas = [
     actionTypes.UPDATE_PROFILE_PREFERENCES,
     updateUserProfileAndPreferences
   ),
+  takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
 ];

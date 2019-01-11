@@ -159,37 +159,35 @@ describe('all modal sagas', () => {
   describe('update user and profile preferences sagas', () => {
     describe('update preferences saga', () => {
       test("should update user's preferences successfuly", () => {
-        const somePreferences = {
+        const preferences = {
           timeFormat: 'something',
         };
-        const saga = updatePreferences(somePreferences);
+        const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
           call(
             apiCallWithRetry,
             updatePreferencesParams.path,
-            { ...updatePreferencesParams.opts, body: somePreferences },
+            { ...updatePreferencesParams.opts, body: preferences },
             "Updating user's info"
           )
         );
         expect(saga.next().value).toEqual(
-          put(
-            actions.resource.receivedCollection('preferences', somePreferences)
-          )
+          put(actions.resource.receivedCollection('preferences', preferences))
         );
       });
 
       test('should generate the appropriate message failure in a api failure and not update the redux store', () => {
-        const somePreferences = {
+        const preferences = {
           timeFormat: 'something',
         };
-        const saga = updatePreferences(somePreferences);
+        const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
           call(
             apiCallWithRetry,
             updatePreferencesParams.path,
-            { ...updatePreferencesParams.opts, body: somePreferences },
+            { ...updatePreferencesParams.opts, body: preferences },
             "Updating user's info"
           )
         );

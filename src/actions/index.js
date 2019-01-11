@@ -72,6 +72,9 @@ const profile = {
     action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
       profilePreferencesPayload,
     }),
+  requestPreferences: () => resource.request('preferences'),
+  updatePreferences: preferences =>
+    action(actionTypes.UPDATE_PREFERENCES, { preferences }),
 };
 const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>

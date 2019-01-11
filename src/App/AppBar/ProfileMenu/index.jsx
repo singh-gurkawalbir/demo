@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
+import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import {
   isProfileDataReady,
@@ -17,12 +18,14 @@ import {
   userProfile,
   avatarUrl,
   themeName,
+  userPreferences,
 } from '../../../reducers';
 
 const mapStateToProps = state => ({
   hasProfile: hasProfile(state),
   isProfileDataReady: isProfileDataReady(state),
   profile: userProfile(state),
+  preferences: userPreferences(state),
   avatarUrl: avatarUrl(state),
   themeName: themeName(state),
 });
@@ -33,8 +36,16 @@ const mapDispatchToProps = dispatch => ({
   requestProfile: () => {
     dispatch(actions.profile.request());
   },
+  requestPreferences: () => {
+    dispatch(actions.profile.requestPreferences());
+  },
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
+  },
+  updateThemeNameInPreferences: (themeName, profile, preferences) => {
+    const payload = { _id: profile._id, ...preferences, themeName };
+
+    dispatch(actions.profile.updatePreferences(payload));
   },
 });
 
@@ -76,7 +87,11 @@ class AppBar extends Component {
     }
   };
   handleThemeChange = event => {
-    this.props.onSetTheme(event.target.value);
+    const { preferences, profile } = this.props;
+    const themeName = event.target.value;
+
+    this.props.onSetTheme(themeName);
+    this.props.updateThemeNameInPreferences(themeName, profile, preferences);
   };
 
   handleClose = () => {
@@ -100,75 +115,77 @@ class AppBar extends Component {
     }
 
     return (
-      <Fragment>
-        <IconButton
-          className={classes.avatarButton}
-          aria-owns={open ? 'profileOptions' : null}
-          aria-haspopup="true"
-          onClick={this.handleMenu}
-          color="inherit">
-          <Avatar
-            alt={profile.name}
-            src={avatarUrl}
-            className={classes.avatar}
-          />
-        </IconButton>
-        <ArrowPopper
-          id="profileOptions"
-          anchorEl={anchorEl}
-          placement="bottom-end"
-          open={open}
-          onClose={this.handleClose}>
-          <Grid
-            container
-            spacing={16}
-            direction="row"
-            justify="flex-start"
-            alignItems="flex-start">
-            <Grid item>
-              <Avatar
-                alt={profile.name}
-                src={avatarUrl}
-                className={classes.bigAvatar}
-              />
+      <LoadResources resources={['preferences']}>
+        <Fragment>
+          <IconButton
+            className={classes.avatarButton}
+            aria-owns={open ? 'profileOptions' : null}
+            aria-haspopup="true"
+            onClick={this.handleMenu}
+            color="inherit">
+            <Avatar
+              alt={profile.name}
+              src={avatarUrl}
+              className={classes.avatar}
+            />
+          </IconButton>
+          <ArrowPopper
+            id="profileOptions"
+            anchorEl={anchorEl}
+            placement="bottom-end"
+            open={open}
+            onClose={this.handleClose}>
+            <Grid
+              container
+              spacing={16}
+              direction="row"
+              justify="flex-start"
+              alignItems="flex-start">
+              <Grid item>
+                <Avatar
+                  alt={profile.name}
+                  src={avatarUrl}
+                  className={classes.bigAvatar}
+                />
+              </Grid>
+              <Grid item>
+                <Typography variant="h5">{profile.name}</Typography>
+                <Typography variant="h6">{profile.email}</Typography>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Typography variant="h5">{profile.name}</Typography>
-              <Typography variant="h6">{profile.email}</Typography>
-            </Grid>
-          </Grid>
-          <div>
-            <FormControl className={classes.formControl}>
-              <Select
-                native
-                value={themeName}
-                onChange={this.handleThemeChange}
-                inputProps={{ name: 'themeName' }}>
-                <option value="light">Celigo Light Theme</option>
-                <option value="dark">Celigo Dark Theme</option>
-              </Select>
-            </FormControl>
-          </div>
-          <Button
-            onClick={this.handleClose}
-            variant="contained"
-            size="small"
-            color="primary"
-            className={classes.button}
-            component={Link}
-            to="/pg/myAccount/profiles">
-            My Account
-          </Button>
-          <Button
-            onClick={handleUserLogout}
-            variant="contained"
-            size="small"
-            color="primary"
-            className={classes.button}>
-            Sign Out
-          </Button>
-        </ArrowPopper>
-      </Fragment>
+            <div>
+              <FormControl className={classes.formControl}>
+                <Select
+                  native
+                  value={themeName}
+                  onChange={this.handleThemeChange}
+                  inputProps={{ name: 'themeName' }}>
+                  <option value="light">Celigo Light Theme</option>
+                  <option value="dark">Celigo Dark Theme</option>
+                </Select>
+              </FormControl>
+            </div>
+            <Button
+              onClick={this.handleClose}
+              variant="contained"
+              size="small"
+              color="primary"
+              className={classes.button}
+              component={Link}
+              to="/pg/myAccount/profiles">
+              My Account
+            </Button>
+            <Button
+              onClick={handleUserLogout}
+              variant="contained"
+              size="small"
+              color="primary"
+              className={classes.button}>
+              Sign Out
+            </Button>
+          </ArrowPopper>
+        </Fragment>
+      </LoadResources>
     );
   }
 }

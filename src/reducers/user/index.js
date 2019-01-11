@@ -26,13 +26,18 @@ export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
 const themeName = (state = DEFAULT_THEME, action) => {
-  switch (action.type) {
-    case actionTypes.SET_THEME:
-      return action.name;
-
-    default:
-      return state;
+  if (
+    action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
+    action.resourceType === 'preferences'
+  ) {
+    return action.collection.themeName || DEFAULT_THEME;
   }
+
+  if (action.type === actionTypes.SET_THEME) {
+    return action.name || DEFAULT_THEME;
+  }
+
+  return state;
 };
 
 const preferences = (state = {}, action) => {

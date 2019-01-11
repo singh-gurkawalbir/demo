@@ -42,24 +42,45 @@ describe('user reducers', () => {
       expect(state.profile).toEqual({ email: action.resource.email });
     });
   });
-  describe(`SET_THEME action`, () => {
-    test('should set the theme on first dispatch', () => {
-      const theme = 'fancy';
-      const state = reducer(undefined, actions.setTheme(theme));
+  describe('SET_THEME reducer', () => {
+    describe('SET_THEME action', () => {
+      test('should set the theme on first dispatch', () => {
+        const theme = 'fancy';
+        const state = reducer(undefined, actions.setTheme(theme));
 
-      expect(state.themeName).toEqual(theme);
+        expect(state.themeName).toEqual(theme);
+      });
+
+      test('should replace theme on subsequent dispatches', () => {
+        const theme1 = 'fancy';
+        const theme2 = 'simple';
+        let state;
+
+        state = reducer(state, actions.setTheme(theme1));
+        expect(state.themeName).toEqual(theme1);
+
+        state = reducer(state, actions.setTheme(theme2));
+        expect(state.themeName).toEqual(theme2);
+      });
     });
 
-    test('should replace theme on subsequent dispatches', () => {
-      const theme1 = 'fancy';
-      const theme2 = 'simple';
-      let state;
+    describe('Get preferences resource should intialize the set theme', () => {
+      test('should set the theme on first dispatch', () => {
+        const theme = 'fancy';
+        const req = actions.resource.receivedCollection('preferences', {
+          themeName: theme,
+        });
+        const state = reducer(undefined, req);
 
-      state = reducer(state, actions.setTheme(theme1));
-      expect(state.themeName).toEqual(theme1);
+        expect(state.themeName).toEqual(theme);
+      });
 
-      state = reducer(state, actions.setTheme(theme2));
-      expect(state.themeName).toEqual(theme2);
+      test('if the theme does not show up in the preferences switch to default theme', () => {
+        const req = actions.resource.receivedCollection('preferences', {});
+        const state = reducer(undefined, req);
+
+        expect(state.themeName).toEqual(selectors.DEFAULT_THEME);
+      });
     });
   });
   describe(`user theme selectors`, () => {
