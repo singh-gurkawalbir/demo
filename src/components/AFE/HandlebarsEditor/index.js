@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import * as completers from '../editorSetup/completers';
 import Editor from '../GenericEditor';
 
 const mapStateToProps = (state, { editorId }) => {
@@ -9,7 +10,8 @@ const mapStateToProps = (state, { editorId }) => {
   return {
     rule: editor.template,
     data: editor.data,
-    helperFunctions: editor.helperFunctions,
+    jsonHints: completers.loadJSONHints(editor.data),
+    helperFunctions: selectors.editorHelperFunctions(state),
     result: editor.result ? editor.result.data : '',
     error: editor.error && editor.error.message,
     violations: editor.violations,

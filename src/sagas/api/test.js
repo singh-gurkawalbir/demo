@@ -9,6 +9,9 @@ describe('async api tests ', () => {
   process.env.NODE_ENV = `development`;
   const protocol = 'someProtocol:';
   const host = 'someHost';
+
+  window.sessionStorage = {};
+
   const respBody = { a: 1, b: 3 };
   const _400Resp = {
     status: 405,
@@ -35,7 +38,6 @@ describe('async api tests ', () => {
 
   test('should throw an exception when the user gets a 400 level response status and the response should go into the exception body', async () => {
     window.fetch = jest.fn().mockImplementationOnce(() => _400Resp);
-    window.sessionStorage = {};
     window.sessionStorage.getItem = jest.fn().mockImplementationOnce(() => {});
 
     try {
@@ -74,7 +76,6 @@ describe('async api tests ', () => {
     }));
 
     window.fetch = jest.fn().mockImplementationOnce(() => sessionExpiredResp);
-    window.sessionStorage = {};
     window.sessionStorage.getItem = jest.fn().mockImplementationOnce(() => {});
 
     try {
@@ -92,7 +93,6 @@ describe('async api tests ', () => {
   test('should give the response back to the calle for an ok response ', async () => {
     // TODO:Unable to mock the location host protocol
     window.fetch = jest.fn().mockImplementationOnce(() => _200Resp);
-    window.sessionStorage = {};
     window.sessionStorage.getItem = jest.fn().mockImplementationOnce(() => {});
 
     const resp = await api('/someapi');

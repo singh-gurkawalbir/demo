@@ -50,6 +50,7 @@ export default class Editor extends Component {
     const {
       classes,
       helperFunctions,
+      jsonHints,
       layout = 'compact',
       templateClassName,
       rule,
@@ -76,7 +77,8 @@ export default class Editor extends Component {
           <CodePanel
             name="rule"
             value={rule}
-            suggestions={helperFunctions}
+            helperFunctions={helperFunctions}
+            jsonHints={jsonHints}
             mode={ruleMode}
             onChange={handleRuleChange}
           />

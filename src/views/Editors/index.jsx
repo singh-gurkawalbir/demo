@@ -4,6 +4,8 @@ import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import actions from '../../actions';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
@@ -12,6 +14,12 @@ import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
+
+const mapDispatchToProps = dispatch => ({
+  updateHelperFunctions: () => {
+    dispatch(actions.editor.getHelperFunctions());
+  },
+});
 
 @hot(module)
 @withStyles(theme => ({
@@ -41,12 +49,16 @@ import EditorListItem from './EditorListItem';
     padding: theme.spacing.unit * 3,
   },
 }))
-export default class Editors extends Component {
+class Editors extends Component {
   state = {
     editorName: null,
     rawData: '',
   };
-
+  componentDidMount() {
+    // check if you need to update helper functions
+    // better to scope the update here
+    this.props.updateHelperFunctions();
+  }
   handleEditorChange = editorName => {
     this.setState({ editorName });
   };
@@ -206,3 +218,8 @@ export default class Editors extends Component {
     );
   }
 }
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Editors);

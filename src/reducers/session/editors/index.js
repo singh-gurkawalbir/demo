@@ -13,13 +13,13 @@ export default function reducer(state = {}, action) {
     helperFunctions,
     violations,
   } = action;
-  const newState = Object.assign({}, state);
+  let newState = Object.assign({}, state);
 
   switch (type) {
     case actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS:
-      newState[id] = {
+      newState = {
         helperFunctions,
-        ...newState[id],
+        ...newState,
       };
 
       return newState;

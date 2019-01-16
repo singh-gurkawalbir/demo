@@ -26,7 +26,8 @@ export default class CodePanel extends Component {
       width,
       onChange,
       overrides,
-      suggestions,
+      helperFunctions,
+      jsonHints,
     } = this.props;
     const config = {
       ...defaults.global,
@@ -48,7 +49,8 @@ export default class CodePanel extends Component {
     return (
       <CodeEditor
         // ref={c => (this.editor = c)}
-        suggestions={suggestions}
+        helperFunctions={helperFunctions}
+        jsonHints={jsonHints}
         name={name}
         value={safeValue}
         mode={mode}

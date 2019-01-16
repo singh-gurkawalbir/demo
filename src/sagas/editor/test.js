@@ -1,10 +1,16 @@
-/* global describe, test, expect */
+/* global describe, test, expect,jest */
 import { delay } from 'redux-saga';
+import { advanceTo, clear } from 'jest-date-mock';
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { autoEvaluateProcessor, evaluateProcessor } from './';
+import {
+  autoEvaluateProcessor,
+  evaluateProcessor,
+  checkToUpdateHelperFunctions,
+} from './';
+import { getResource } from '../resources';
 
 describe('evaluateProcessor saga', () => {
   test('should do nothing if no editor exists with given id', () => {
@@ -164,5 +170,111 @@ describe('autoEvaluateProcessor saga', () => {
     const finalEffect = saga.next();
 
     expect(finalEffect).toEqual({ done: true, value: undefined });
+  });
+});
+
+describe('checkToUpdateHelperFunctions saga', () => {
+  process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 1;
+  window.localStorage = {};
+
+  test(`should create a new helperFunction instance when there isn't any in the local storage `, () => {
+    localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
+    localStorage.setItem = jest.fn();
+    const someDateEpoch = 1234;
+
+    advanceTo(someDateEpoch); // reset to date time.
+
+    const saga = checkToUpdateHelperFunctions();
+    const getResourceEffect = saga.next().value;
+    const mockHelperResp = {
+      handlebars: { helperFunctions: ['add', 'substract'] },
+    };
+
+    expect(getResourceEffect).toEqual(
+      call(getResource, {
+        resourceType: 'processors',
+        message: 'Getting Helper functions',
+      })
+    );
+    saga.next(mockHelperResp).value;
+    expect(localStorage.setItem).toBeCalledWith(
+      'helperFunctions',
+      JSON.stringify({
+        updateTime: someDateEpoch,
+        helperFunctions: mockHelperResp.handlebars.helperFunctions,
+      })
+    );
+
+    clear();
+  });
+
+  test(`should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is larger `, () => {
+    const recentDateEpoch = 1100;
+    const olderDateEpoch = 1000;
+    const mockHelperFunctions = ['add', 'substract'];
+
+    // setting a threshold interval to not cause an update
+    process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 200;
+
+    localStorage.getItem = jest.fn().mockImplementationOnce(() =>
+      JSON.stringify({
+        updateTime: olderDateEpoch,
+        helperFunctions: mockHelperFunctions,
+      })
+    );
+    localStorage.setItem = jest.fn();
+    // advance the time to be less than the interval
+    advanceTo(recentDateEpoch);
+
+    const saga = checkToUpdateHelperFunctions();
+
+    expect(saga.next().value).toEqual(
+      put(actions.editor.updateHelperFunctions(mockHelperFunctions))
+    );
+
+    clear();
+  });
+
+  test(`should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is smaller `, () => {
+    const recentDateEpoch = 1100;
+    const olderDateEpoch = 1000;
+    const mockHelperFunctions = ['add', 'substract'];
+
+    // setting a threshold interval to cause an update
+    process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 50;
+
+    localStorage.getItem = jest.fn().mockImplementationOnce(() =>
+      JSON.stringify({
+        updateTime: olderDateEpoch,
+        helperFunctions: mockHelperFunctions,
+      })
+    );
+    localStorage.setItem = jest.fn();
+
+    // advance the time to sufficiently exceed the interval
+    advanceTo(recentDateEpoch);
+
+    const saga = checkToUpdateHelperFunctions();
+
+    expect(saga.next().value).toEqual(
+      call(getResource, {
+        resourceType: 'processors',
+        message: 'Getting Helper functions',
+      })
+    );
+    const mockHelperResp = {
+      handlebars: { helperFunctions: mockHelperFunctions },
+    };
+
+    // localStorage Data needs to be stringified
+    saga.next(mockHelperResp).value;
+    expect(localStorage.setItem).toBeCalledWith(
+      'helperFunctions',
+      JSON.stringify({
+        updateTime: recentDateEpoch,
+        helperFunctions: mockHelperResp.handlebars.helperFunctions,
+      })
+    );
+    clear();
   });
 });

@@ -78,6 +78,16 @@ export function editor(state, id) {
   return fromSession.editor(state.session, id);
 }
 
+export function editorHelperFunctions(state) {
+  return (
+    (state &&
+      state.session &&
+      state.session.editors &&
+      state.session.editors.helperFunctions) ||
+    []
+  );
+}
+
 export function processorRequestOptions(state, id) {
   if (!state) return {};
 
