@@ -42,8 +42,21 @@ const mapDispatchToProps = dispatch => ({
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
   },
-  updateThemeNameInPreferences: (themeName, profile, preferences) => {
-    const payload = { _id: profile._id, ...preferences, themeName };
+  updateThemeNameInPreferences: (themeName, preferences) => {
+    const { defaultAShareId, accounts } = preferences;
+    let payload;
+
+    if (!defaultAShareId || defaultAShareId === 'own')
+      payload = { ...preferences, themeName };
+    else {
+      let accountPreferences = preferences.accounts[defaultAShareId];
+
+      accountPreferences = { ...accountPreferences, themeName };
+      payload = {
+        ...preferences,
+        accounts: { ...accounts, accountPreferences },
+      };
+    }
 
     dispatch(actions.profile.updatePreferences(payload));
   },
@@ -87,11 +100,11 @@ class AppBar extends Component {
     }
   };
   handleThemeChange = event => {
-    const { preferences, profile } = this.props;
+    const { preferences } = this.props;
     const themeName = event.target.value;
 
     this.props.onSetTheme(themeName);
-    this.props.updateThemeNameInPreferences(themeName, profile, preferences);
+    this.props.updateThemeNameInPreferences(themeName, preferences);
   };
 
   handleClose = () => {
