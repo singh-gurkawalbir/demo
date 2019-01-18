@@ -25,9 +25,8 @@ export default class CodePanel extends Component {
       height,
       width,
       onChange,
+      enableAutocomplete,
       overrides,
-      helperFunctions,
-      jsonHints,
     } = this.props;
     const config = {
       ...defaults.global,
@@ -49,8 +48,6 @@ export default class CodePanel extends Component {
     return (
       <CodeEditor
         // ref={c => (this.editor = c)}
-        helperFunctions={helperFunctions}
-        jsonHints={jsonHints}
         name={name}
         value={safeValue}
         mode={mode}
@@ -59,7 +56,7 @@ export default class CodePanel extends Component {
         width={width}
         showGutter={config.showGutter}
         showInvisibles={config.showInvisibles}
-        enableLiveAutocompletion={config.enableLiveAutocompletion}
+        enableAutocomplete={enableAutocomplete}
         wrap={config.wrap}
         onChange={onChange}
       />

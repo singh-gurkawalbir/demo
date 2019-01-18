@@ -10,7 +10,6 @@ import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/ext/language_tools';
 import * as selectors from '../../reducers/user';
-import * as helpers from '../AFE/editorSetup/completers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
 const mapStateToProps = state => ({
@@ -49,17 +48,6 @@ class CodeEditor extends Component {
   resize() {
     this.aceEditor.editor.resize();
   }
-  loadJSONHints = () => {
-    const { helperFunctions, jsonHints } = this.props;
-
-    helpers.FunctionCompleters.functionsHints = helperFunctions;
-    helpers.JsonCompleters.jsonHints = jsonHints;
-  };
-  isHandlebarEditor = () => {
-    const { name, mode } = this.props;
-
-    return name === 'rule' && mode === 'handlebars';
-  };
 
   render() {
     const {
@@ -73,10 +61,9 @@ class CodeEditor extends Component {
       wrap,
       showGutter,
       showInvisibles,
+      enableAutocomplete,
       classes,
     } = this.props;
-
-    if (name === 'rule' && mode === 'handlebars') this.loadJSONHints();
 
     return (
       <AceEditor
@@ -89,11 +76,11 @@ class CodeEditor extends Component {
         height={height || '100%'}
         showPrintMargin={false}
         showGutter={showGutter}
-        enableLiveAutocompletion={this.isHandlebarEditor()}
-        enableBasicAutocompletion={this.isHandlebarEditor()}
+        enableLiveAutocompletion={enableAutocomplete}
+        enableBasicAutocompletion={enableAutocomplete}
         theme={theme}
         onLoad={editor => {
-          if (this.isHandlebarEditor()) {
+          if (enableAutocomplete) {
             handlebarCompleterSetup(editor);
           }
         }}

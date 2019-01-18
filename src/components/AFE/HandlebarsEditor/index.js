@@ -6,12 +6,17 @@ import Editor from '../GenericEditor';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
+  // update directly to the completers
+  const jsonHints = completers.loadJSONHints(editor.data);
+  const helperFunctions = selectors.editorHelperFunctions(state);
+  const { handleBarCompleters } = completers;
+
+  handleBarCompleters.FunctionCompleters.functionsHints = helperFunctions;
+  handleBarCompleters.JsonCompleters.jsonHints = jsonHints;
 
   return {
     rule: editor.template,
     data: editor.data,
-    jsonHints: completers.loadJSONHints(editor.data),
-    helperFunctions: selectors.editorHelperFunctions(state),
     result: editor.result ? editor.result.data : '',
     error: editor.error && editor.error.message,
     violations: editor.violations,
@@ -35,6 +40,8 @@ const mapDispatchToProps = (dispatch, { editorId, strict, rule, data }) => ({
         data,
       })
     );
+    // get Helper functions when the editor intializes
+    dispatch(actions.editor.getHelperFunctions());
   },
   handlePreview: () => {
     dispatch(actions.editor.evaluateRequest(editorId));

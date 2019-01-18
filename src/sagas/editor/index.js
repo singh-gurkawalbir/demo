@@ -53,7 +53,7 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(evaluateProcessor, { id });
 }
 
-export function* checkToUpdateHelperFunctions() {
+export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
 
@@ -90,10 +90,7 @@ export function* checkToUpdateHelperFunctions() {
 }
 
 export default [
-  takeEvery(
-    actionTypes.EDITOR_GET_HELPER_FUNCTIONS,
-    checkToUpdateHelperFunctions
-  ),
+  takeEvery(actionTypes.EDITOR_GET_HELPER_FUNCTIONS, refreshHelperFunctions),
   takeEvery(actionTypes.EDITOR_INIT, autoEvaluateProcessor),
   takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
   takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),

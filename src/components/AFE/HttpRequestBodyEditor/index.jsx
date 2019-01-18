@@ -19,6 +19,7 @@ export default class HttpRequestBodyEditor extends Component {
         ruleTitle={`HTTP Body Template (${mode})`}
         dataTitle="Data"
         resultTitle="Final HTTP Body"
+        enableAutocomplete
       />
     );
   }

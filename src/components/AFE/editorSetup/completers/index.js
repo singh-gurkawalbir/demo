@@ -83,6 +83,11 @@ export const JsonCompleters = {
   },
 };
 
+export const handleBarCompleters = {
+  JsonCompleters,
+  FunctionCompleters,
+};
+
 export const loadJSONHints = value => {
   let jsonHints = [];
 
