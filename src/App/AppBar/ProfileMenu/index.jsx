@@ -30,9 +30,6 @@ const mapStateToProps = state => ({
   themeName: themeName(state),
 });
 const mapDispatchToProps = dispatch => ({
-  onSetTheme: themeName => {
-    dispatch(actions.setTheme(themeName));
-  },
   requestProfile: () => {
     dispatch(actions.profile.request());
   },
@@ -42,23 +39,8 @@ const mapDispatchToProps = dispatch => ({
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
   },
-  updateThemeNameInPreferences: (themeName, preferences) => {
-    const { defaultAShareId, accounts } = preferences;
-    let payload;
-
-    if (!defaultAShareId || defaultAShareId === 'own')
-      payload = { ...preferences, themeName };
-    else {
-      let accountPreferences = preferences.accounts[defaultAShareId];
-
-      accountPreferences = { ...accountPreferences, themeName };
-      payload = {
-        ...preferences,
-        accounts: { ...accounts, accountPreferences },
-      };
-    }
-
-    dispatch(actions.profile.updatePreferences(payload));
+  updateThemeNameInPreferences: themeName => {
+    dispatch(actions.profile.updatePreferences(themeName));
   },
 });
 
@@ -100,11 +82,9 @@ class AppBar extends Component {
     }
   };
   handleThemeChange = event => {
-    const { preferences } = this.props;
     const themeName = event.target.value;
 
-    this.props.onSetTheme(themeName);
-    this.props.updateThemeNameInPreferences(themeName, preferences);
+    this.props.updateThemeNameInPreferences({ themeName });
   };
 
   handleClose = () => {
@@ -117,10 +97,10 @@ class AppBar extends Component {
     const {
       classes,
       profile,
-      themeName,
       avatarUrl,
       isProfileDataReady,
       handleUserLogout,
+      preferences,
     } = this.props;
 
     if (!isProfileDataReady) {
@@ -170,7 +150,7 @@ class AppBar extends Component {
               <FormControl className={classes.formControl}>
                 <Select
                   native
-                  value={themeName}
+                  value={preferences.themeName}
                   onChange={this.handleThemeChange}
                   inputProps={{ name: 'themeName' }}>
                   <option value="light">Celigo Light Theme</option>

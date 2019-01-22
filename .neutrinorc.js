@@ -162,7 +162,6 @@ module.exports = {
         'NETWORK_THRESHOLD',
         'CDN_BASE_URI',
         'ADD_NETWORK_LATENCY',
-        'SECONDS_IN_A_WEEK',
         'HELPER_FUNCTIONS_INTERVAL_UPDATE',
       ],
     ],

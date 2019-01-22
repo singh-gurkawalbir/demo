@@ -60,7 +60,6 @@ export function* checkToUpdateHelperFunctions() {
   // if update time is not defined its missing in the local storage
   // hence we have to retrieve the helper functions and
   // persit it in the local storage
-  console.log(`check ${process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE}`);
 
   if (
     !updateTime ||

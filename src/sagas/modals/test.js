@@ -1,8 +1,9 @@
 /* global describe, test, expect */
 
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import * as selectors from '../../reducers/index';
 import {
   changePasswordParams,
   updatePreferencesParams,
@@ -14,6 +15,7 @@ import {
   changeEmail,
   updatePreferences,
   updateProfile,
+  updatePreferencesToAccount,
 } from './';
 import { status403 } from '../test';
 
@@ -156,8 +158,106 @@ describe('all modal sagas', () => {
       );
     });
   });
+  describe('updatePreferencesToAccount saga', () => {
+    describe("should generate appropriate update payload into the user's prefereces", () => {
+      test(`for user accounts whom havent invited users to access their account`, () => {
+        const preferences = {
+          timeFormat: 'something',
+          themeName: 'light',
+        };
+        const saga = updatePreferencesToAccount(preferences);
+        const origPreferencesData = {
+          dateFormat: 'original date format',
+          timeFormat: 'original time format',
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          select(selectors.userOrigPreferences)
+        );
+        const expectedMergedPreferences = {
+          dateFormat: 'original date format',
+          timeFormat: 'something',
+          themeName: 'light',
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          expectedMergedPreferences
+        );
+      });
+
+      test(`for user accounts whom are owners`, () => {
+        const preferences = {
+          timeFormat: 'something',
+          themeName: 'light',
+        };
+        const saga = updatePreferencesToAccount(preferences);
+        const origPreferencesData = {
+          defaultAShareId: 'own',
+          timeFormat: 'original time format',
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          select(selectors.userOrigPreferences)
+        );
+        const expectedMergedPreferences = {
+          timeFormat: 'something',
+          themeName: 'light',
+          defaultAShareId: 'own',
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          expectedMergedPreferences
+        );
+      });
+
+      test(`for user accounts whom are owners with accepeted invited users`, () => {
+        const preferences = {
+          timeFormat: 'something',
+          themeName: 'dark',
+        };
+        const saga = updatePreferencesToAccount(preferences);
+        const origPreferencesData = {
+          defaultAShareId: '134',
+          timeFormat: 'original time format',
+          accounts: {
+            '134': {
+              themeName: 'light',
+            },
+            '24343': {
+              themeName: 'dark',
+            },
+          },
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          select(selectors.userOrigPreferences)
+        );
+        const expectedMergedPreferences = {
+          timeFormat: 'something',
+          defaultAShareId: '134',
+          accounts: {
+            '134': {
+              themeName: 'dark',
+            },
+            '24343': {
+              themeName: 'dark',
+            },
+          },
+        };
+
+        expect(saga.next(origPreferencesData).value).toEqual(
+          expectedMergedPreferences
+        );
+      });
+    });
+  });
   describe('update user and profile preferences sagas', () => {
     describe('update preferences saga', () => {
+      test('shoulde exit the saga when no preferences updates are required', () => {
+        const saga = updatePreferences({});
+
+        expect(saga.next().done).toEqual(true);
+      });
       test("should update user's preferences successfuly", () => {
         const preferences = {
           timeFormat: 'something',
@@ -165,6 +265,9 @@ describe('all modal sagas', () => {
         const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
+          call(updatePreferencesToAccount, preferences)
+        );
+        expect(saga.next(preferences).value).toEqual(
           call(
             apiCallWithRetry,
             updatePreferencesParams.path,
@@ -173,7 +276,7 @@ describe('all modal sagas', () => {
           )
         );
         expect(saga.next().value).toEqual(
-          put(actions.resource.receivedCollection('preferences', preferences))
+          put(actions.profile.updatePreferenceStore(preferences))
         );
       });
 
@@ -184,6 +287,10 @@ describe('all modal sagas', () => {
         const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
+          call(updatePreferencesToAccount, preferences)
+        );
+
+        expect(saga.next(preferences).value).toEqual(
           call(
             apiCallWithRetry,
             updatePreferencesParams.path,

@@ -25,29 +25,46 @@ const profile = (state = null, action) => {
 export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
-const themeName = (state = DEFAULT_THEME, action) => {
-  if (
-    action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
-    action.resourceType === 'preferences'
-  ) {
-    return action.collection.themeName || DEFAULT_THEME;
-  }
+// const themeName = (state = DEFAULT_THEME, action) => {
+//   if (
+//     action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
+//     action.resourceType === 'preferences'
+//   ) {
+//     return action.collection.themeName || DEFAULT_THEME;
+//   }
 
-  if (action.type === actionTypes.SET_THEME) {
-    return action.name || DEFAULT_THEME;
-  }
+//   if (action.type === actionTypes.SET_THEME) {
+//     return action.name || DEFAULT_THEME;
+//   }
 
-  return state;
-};
-
+//   return state;
+// };
+// needed both these actions to support an update RECEIVED_COLLECTION
+// is from the LoadResources component and the update Preferences allows
+// us to update the redux store directly
 const preferences = (state = {}, action) => {
   if (
     action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
     action.resourceType === 'preferences'
   ) {
-    const newState = { ...state, ...action.collection };
+    const { defaultAShareId, accounts } = action.collection;
 
-    return newState;
+    if (!defaultAShareId || defaultAShareId === 'own') {
+      return { ...state, ...action.collection };
+    }
+
+    const copyActionPayload = Object.assign({}, action.collection);
+
+    delete copyActionPayload.accounts;
+
+    // merging account specific preferences and global specific preferences
+    return { ...state, ...accounts[defaultAShareId], ...copyActionPayload };
+  }
+
+  if (action.type === actionTypes.UPDATE_PREFERENCES_STORE) {
+    const { preferences } = action;
+
+    return { ...state, ...preferences };
   }
 
   return state;
@@ -55,7 +72,6 @@ const preferences = (state = {}, action) => {
 
 export default combineReducers({
   profile,
-  themeName,
   preferences,
 });
 
@@ -68,12 +84,12 @@ export function avatarUrl(state) {
   }?d=mm&s=55`;
 }
 
-export function userTheme(state) {
-  if (!state || !state.themeName) {
-    return DEFAULT_THEME;
+export function userTheme(preferences) {
+  if (preferences && preferences.themeName) {
+    return preferences.themeName;
   }
 
-  return state.themeName;
+  return DEFAULT_THEME;
 }
 
 export function editorTheme(state) {

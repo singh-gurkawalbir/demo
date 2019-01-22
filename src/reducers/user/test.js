@@ -42,44 +42,101 @@ describe('user reducers', () => {
       expect(state.profile).toEqual({ email: action.resource.email });
     });
   });
-  describe('SET_THEME reducer', () => {
-    describe('SET_THEME action', () => {
+  describe('setting theme in preferences reducer', () => {
+    describe('should set the right theme using the preferences action', () => {
       test('should set the theme on first dispatch', () => {
-        const theme = 'fancy';
-        const state = reducer(undefined, actions.setTheme(theme));
+        const themeName = 'fancy';
+        const state = reducer(
+          undefined,
+          actions.profile.updatePreferenceStore({ themeName })
+        );
 
-        expect(state.themeName).toEqual(theme);
+        expect(state.preferences.themeName).toEqual(themeName);
       });
 
       test('should replace theme on subsequent dispatches', () => {
-        const theme1 = 'fancy';
-        const theme2 = 'simple';
+        const themeName1 = 'fancy';
+        const themeName2 = 'simple';
         let state;
 
-        state = reducer(state, actions.setTheme(theme1));
-        expect(state.themeName).toEqual(theme1);
+        state = reducer(
+          state,
+          actions.profile.updatePreferenceStore({ themeName: themeName1 })
+        );
+        expect(state.preferences.themeName).toEqual(themeName1);
 
-        state = reducer(state, actions.setTheme(theme2));
-        expect(state.themeName).toEqual(theme2);
+        state = reducer(
+          state,
+          actions.profile.updatePreferenceStore({ themeName: themeName2 })
+        );
+        expect(state.preferences.themeName).toEqual(themeName2);
       });
     });
 
-    describe('Get preferences resource should intialize the set theme', () => {
-      test('should set the theme on first dispatch', () => {
-        const theme = 'fancy';
-        const req = actions.resource.receivedCollection('preferences', {
-          themeName: theme,
-        });
+    describe('should update the preferences according correctly based on the user account type', () => {
+      test('when the user is a regular account holder without invited users and not an owner', () => {
+        const regularUserAccountPreferences = {
+          themeName: 'fancy',
+        };
+        const req = actions.resource.receivedCollection(
+          'preferences',
+          regularUserAccountPreferences
+        );
         const state = reducer(undefined, req);
 
-        expect(state.themeName).toEqual(theme);
+        expect(state.preferences).toEqual({ themeName: 'fancy' });
       });
 
-      test('if the theme does not show up in the preferences switch to default theme', () => {
-        const req = actions.resource.receivedCollection('preferences', {});
+      test('when the user is an owner', () => {
+        const regularUserAccountPreferences = {
+          defaultAShareId: 'own',
+          timeFormat: 'something',
+          themeName: 'fancy',
+        };
+        const req = actions.resource.receivedCollection(
+          'preferences',
+          regularUserAccountPreferences
+        );
         const state = reducer(undefined, req);
 
-        expect(state.themeName).toEqual(selectors.DEFAULT_THEME);
+        expect(state.preferences).toEqual(regularUserAccountPreferences);
+      });
+      test('when the user is a regular account holder and an owner', () => {
+        const regularUserAccountPreferences = {
+          defaultAShareId: 'own',
+          timeFormat: 'something',
+          themeName: 'fancy',
+        };
+        const req = actions.resource.receivedCollection(
+          'preferences',
+          regularUserAccountPreferences
+        );
+        const state = reducer(undefined, req);
+
+        expect(state.preferences).toEqual(regularUserAccountPreferences);
+      });
+
+      test('when the user is a has accepted invited users', () => {
+        const regularUserAccountPreferences = {
+          defaultAShareId: '123',
+          timeFormat: 'something',
+          accounts: {
+            '123': {
+              themeName: 'fancy',
+            },
+          },
+        };
+        const req = actions.resource.receivedCollection(
+          'preferences',
+          regularUserAccountPreferences
+        );
+        const state = reducer(undefined, req);
+
+        expect(state.preferences).toEqual({
+          timeFormat: 'something',
+          defaultAShareId: '123',
+          themeName: 'fancy',
+        });
       });
     });
   });
@@ -90,9 +147,12 @@ describe('user reducers', () => {
 
     test('should return correct theme when set.', () => {
       const theme = 'my theme';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const state = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ themeName: theme })
+      );
 
-      expect(selectors.userTheme(state)).toEqual(theme);
+      expect(selectors.userTheme(state.preferences)).toEqual(theme);
     });
   });
   describe(`avatarUrl`, () => {
@@ -118,19 +178,25 @@ describe('user reducers', () => {
     });
 
     test('should return default editor theme when user theme set to unknown type.', () => {
-      const theme = 'unknown';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const themeName = 'unknown';
+      const { preferences } = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ themeName })
+      );
 
-      expect(selectors.editorTheme(state)).toEqual(
+      expect(selectors.editorTheme(preferences)).toEqual(
         selectors.DEFAULT_EDITOR_THEME
       );
     });
 
     test('should return correct editor theme when user theme set.', () => {
       const theme = 'dark';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const { preferences } = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ theme })
+      );
 
-      expect(selectors.editorTheme(state)).not.toEqual(
+      expect(selectors.editorTheme(preferences)).not.toEqual(
         selectors.DEFAULT_EDITOR_THEME
       );
     });

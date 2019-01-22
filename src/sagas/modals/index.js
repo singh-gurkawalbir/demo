@@ -1,6 +1,7 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import * as selectors from '../../reducers';
 import {
   changeEmailParams,
   changePasswordParams,
@@ -8,6 +9,16 @@ import {
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+
+const GLOBAL_PREFERENCES = [
+  'hideGettingStarted',
+  'defaultAShareId',
+  'environment',
+  'dateFormat',
+  'timeFormat',
+  'scheduleShiftForFlowsCreatedAfter',
+  'lastLoginAt',
+];
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -36,13 +47,45 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
+export function* updatePreferencesToAccount(dataToUpdate) {
+  let origPreferences = yield select(selectors.userOrigPreferences);
+  const { defaultAShareId } = origPreferences;
+  let payload;
+  const global = {};
+  const local = {};
+
+  Object.keys(dataToUpdate).forEach(preference => {
+    if (GLOBAL_PREFERENCES.includes(preference)) {
+      global[preference] = dataToUpdate[preference];
+    } else {
+      local[preference] = dataToUpdate[preference];
+    }
+  });
+
+  if (!defaultAShareId || defaultAShareId === 'own') {
+    payload = { ...origPreferences, ...global, ...local };
+  } else {
+    origPreferences = { ...origPreferences, ...global };
+
+    origPreferences.accounts[defaultAShareId] = {
+      ...origPreferences.accounts[defaultAShareId],
+      ...local,
+    };
+    payload = origPreferences;
+  }
+
+  return payload;
+}
+
 export function* updatePreferences({ preferences }) {
-  if (preferences === {}) return;
+  if (!preferences) return;
+
+  const preferencePayload = yield call(updatePreferencesToAccount, preferences);
 
   try {
     const payload = {
       ...updatePreferencesParams.opts,
-      body: preferences,
+      body: preferencePayload,
     };
 
     yield call(
@@ -51,7 +94,8 @@ export function* updatePreferences({ preferences }) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.receivedCollection('preferences', preferences));
+
+    yield put(actions.profile.updatePreferenceStore(preferences));
   } catch (e) {
     yield put(
       actions.api.failure(
