@@ -29,9 +29,13 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
 
 class MergeEditor extends Component {
   render() {
+    const { result, ...other } = this.props;
+    const parsedData = result && result.data && result.data[0];
+
     return (
       <Editor
-        {...this.props}
+        result={parsedData}
+        {...other}
         processor="merge"
         ruleMode="json"
         dataMode="json"
