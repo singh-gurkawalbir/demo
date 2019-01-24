@@ -1,4 +1,4 @@
-import * as helpers from '../completers';
+import * as helpers from '../completers/completerUtils';
 
 export default function shouldAutocompleteOnBackSpace(editor) {
   editor.commands.on('afterExec', event => {

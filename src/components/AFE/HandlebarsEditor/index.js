@@ -10,7 +10,7 @@ const mapStateToProps = (state, { editorId }) => {
   return {
     rule: editor.template,
     data: editor.data,
-    jsonHints: completers.loadJSONHints(editor.data),
+    jsonHints: completers.loadJsonHints(editor.data),
     helperFunctions: selectors.editorHelperFunctions(state),
     result: editor.result ? editor.result.data : '',
     error: editor.error && editor.error.message,

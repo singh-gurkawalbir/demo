@@ -3,10 +3,11 @@ import * as ace from 'brace';
 import 'brace/ext/language_tools';
 import handlebarCompleterSetup from './editorCompleterSetup/index';
 import * as helpers from './completers';
+import * as utils from './completers/completerUtils';
 
 // const langTools = ace.require('ace/ext/language_tools');
 
-describe('Handle bars autocomplete', () => {
+describe('Handlebars autocomplete', () => {
   const editor = ace.edit(null);
 
   handlebarCompleterSetup(editor);
@@ -31,36 +32,57 @@ describe('Handle bars autocomplete', () => {
 
     editor.setValue('');
   });
-  test('should attempt to autocomplete when user types in a valid brace expression with the matching completions', () => {
-    editor.setOptions({
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
+  describe('utils test cases ', () => {
+    test('should remove previously uncompleted json path', () => {
+      editor.execCommand('insertstring', '{{ad');
+
+      utils.removePreceedingUncompletedText(editor, '{{ad');
+      expect(editor.getValue()).toEqual('{{');
     });
 
+    test('should insert the matching result with completing braces', () => {
+      editor.execCommand('insertstring', '{{a');
+      const matchingResult = 'a.d';
+
+      utils.insertMatchingResult(editor, matchingResult);
+      expect(editor.getValue()).toEqual(`{{${matchingResult}}}`);
+    });
+
+    test('should insert the matching result with completing braces', () => {
+      editor.execCommand('insertstring', '{{a');
+      const matchingResult = '{{add}}';
+
+      utils.insertMatchingResultAndRemovePreceedingBraces(
+        editor,
+        matchingResult
+      );
+      expect(editor.getValue()).toEqual(matchingResult);
+    });
+  });
+
+  // describe('editor util methods ', () => {
+
+  // });
+  test('should attempt to autocomplete when user types in a valid brace expression with the matching completions', () => {
     editor.execCommand('insertstring', '{{ad');
     const prevOp = editor.prevOp.command;
 
     expect(editor.completer.completions.all.length).toEqual(1);
     // check matching value as well
-    expect(editor.completer.completions.all[0].actualValue).toEqual('{{add}}');
+    expect(editor.completer.completions.all[0].matchingResult).toEqual(
+      '{{add}}'
+    );
     expect(prevOp.name).toEqual('startAutocomplete');
   });
   test('should attempt to autocomplete when user types in a value that could result in several matches', () => {
-    editor.setOptions({
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
-    });
-
     editor.execCommand('insertstring', '{{a');
     const prevOp = editor.prevOp.command;
 
     expect(editor.completer.completions.all.length).toEqual(3);
 
-    const matchingResults = editor.completer.completions.all.map(result => {
-      if (result.meta === 'helper functions') return result.actualValue;
-
-      return result.value;
-    });
+    const matchingResults = editor.completer.completions.all.map(
+      result => result.matchingResult
+    );
 
     expect(matchingResults).toEqual(['a.d', 'a.e', '{{add}}']);
     expect(prevOp.name).toEqual('startAutocomplete');

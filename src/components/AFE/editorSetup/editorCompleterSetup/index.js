@@ -1,7 +1,7 @@
 import * as helpers from '../completers';
 import shouldAutocompleteOnBackSpace from '../editorBehaviorTweaks/index';
 
-export default function handleBarAutocompleteSetup(editor) {
+export default function handleBarsAutocompleteSetup(editor) {
   shouldAutocompleteOnBackSpace(editor);
   const editorInst = editor;
 

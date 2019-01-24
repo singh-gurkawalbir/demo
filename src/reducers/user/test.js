@@ -73,50 +73,50 @@ describe('user reducers', () => {
       });
     });
 
-    describe('should update the preferences according correctly based on the user account type', () => {
-      test('when the user is a regular account holder without invited users and not an owner', () => {
+    describe('Update preferences ', () => {
+      test('should update correctly when the user is a regular account holder without invited users and not an owner', () => {
         const regularUserAccountPreferences = {
           themeName: 'fancy',
         };
-        const req = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.receivedCollection(
           'preferences',
           regularUserAccountPreferences
         );
-        const state = reducer(undefined, req);
+        const state = reducer(undefined, receivedPreferences);
 
         expect(state.preferences).toEqual({ themeName: 'fancy' });
       });
 
-      test('when the user is an owner', () => {
+      test('should update correctly when the user is an owner', () => {
         const regularUserAccountPreferences = {
           defaultAShareId: 'own',
           timeFormat: 'something',
           themeName: 'fancy',
         };
-        const req = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.receivedCollection(
           'preferences',
           regularUserAccountPreferences
         );
-        const state = reducer(undefined, req);
+        const state = reducer(undefined, receivedPreferences);
 
         expect(state.preferences).toEqual(regularUserAccountPreferences);
       });
-      test('when the user is a regular account holder and an owner', () => {
+      test('should update correctly when the user is a regular account holder and an owner', () => {
         const regularUserAccountPreferences = {
           defaultAShareId: 'own',
           timeFormat: 'something',
           themeName: 'fancy',
         };
-        const req = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.receivedCollection(
           'preferences',
           regularUserAccountPreferences
         );
-        const state = reducer(undefined, req);
+        const state = reducer(undefined, receivedPreferences);
 
         expect(state.preferences).toEqual(regularUserAccountPreferences);
       });
 
-      test('when the user is a has accepted invited users', () => {
+      test('should update correctly when the user is a has accepted invited users', () => {
         const regularUserAccountPreferences = {
           defaultAShareId: '123',
           timeFormat: 'something',
@@ -126,11 +126,11 @@ describe('user reducers', () => {
             },
           },
         };
-        const req = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.receivedCollection(
           'preferences',
           regularUserAccountPreferences
         );
-        const state = reducer(undefined, req);
+        const state = reducer(undefined, receivedPreferences);
 
         expect(state.preferences).toEqual({
           timeFormat: 'something',

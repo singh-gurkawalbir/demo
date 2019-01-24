@@ -13,9 +13,7 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
-  const { violations, processor, body, resourcePath } = reqOpts;
-
-  if (processor === 'xmlParser') body.rules = { ...body.rules, resourcePath };
+  const { violations, processor, body } = reqOpts;
 
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
