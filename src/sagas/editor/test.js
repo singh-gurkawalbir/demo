@@ -8,7 +8,7 @@ import { apiCallWithRetry } from '../index';
 import {
   autoEvaluateProcessor,
   evaluateProcessor,
-  checkToUpdateHelperFunctions,
+  refreshHelperFunctions,
 } from './';
 import { getResource } from '../resources';
 
@@ -173,7 +173,7 @@ describe('autoEvaluateProcessor saga', () => {
   });
 });
 
-describe('checkToUpdateHelperFunctions saga', () => {
+describe('refreshHelperFunctions saga', () => {
   process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 1;
   window.localStorage = {};
 
@@ -184,7 +184,7 @@ describe('checkToUpdateHelperFunctions saga', () => {
 
     advanceTo(someDateEpoch); // reset to date time.
 
-    const saga = checkToUpdateHelperFunctions();
+    const saga = refreshHelperFunctions();
     const getResourceEffect = saga.next().value;
     const mockHelperResp = {
       handlebars: { helperFunctions: ['add', 'substract'] },
@@ -226,7 +226,7 @@ describe('checkToUpdateHelperFunctions saga', () => {
     // advance the time to be less than the interval
     advanceTo(recentDateEpoch);
 
-    const saga = checkToUpdateHelperFunctions();
+    const saga = refreshHelperFunctions();
 
     expect(saga.next().value).toEqual(
       put(actions.editor.updateHelperFunctions(mockHelperFunctions))
@@ -254,7 +254,7 @@ describe('checkToUpdateHelperFunctions saga', () => {
     // advance the time to sufficiently exceed the interval
     advanceTo(recentDateEpoch);
 
-    const saga = checkToUpdateHelperFunctions();
+    const saga = refreshHelperFunctions();
 
     expect(saga.next().value).toEqual(
       call(getResource, {

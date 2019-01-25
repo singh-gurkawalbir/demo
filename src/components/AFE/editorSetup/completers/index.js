@@ -5,7 +5,7 @@ import {
   insertMatchingResult,
 } from './completerUtils';
 
-export const FunctionCompleters = {
+export const FunctionCompleter = {
   functionsHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
@@ -38,7 +38,7 @@ export const FunctionCompleters = {
   },
 };
 
-export const JsonCompleters = {
+export const JsonCompleter = {
   jsonHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
@@ -72,4 +72,15 @@ export const loadJsonHints = value => {
   } catch (e) {
     return [];
   }
+};
+
+export const handleBarsCompleters = {
+  setCompleters: (jsonData, helperFunctions) => {
+    JsonCompleter.jsonHints = loadJsonHints(jsonData);
+    FunctionCompleter.functionsHints = helperFunctions;
+  },
+  getCompleters: () => ({
+    JsonCompleter,
+    FunctionCompleter,
+  }),
 };

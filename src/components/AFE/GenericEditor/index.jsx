@@ -49,8 +49,6 @@ export default class Editor extends Component {
   render() {
     const {
       classes,
-      helperFunctions,
-      jsonHints,
       layout = 'compact',
       templateClassName,
       rule,
@@ -66,6 +64,7 @@ export default class Editor extends Component {
       violations,
       handleRuleChange,
       handleDataChange,
+      enableAutocomplete,
     } = this.props;
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
@@ -77,10 +76,9 @@ export default class Editor extends Component {
           <CodePanel
             name="rule"
             value={rule}
-            helperFunctions={helperFunctions}
-            jsonHints={jsonHints}
             mode={ruleMode}
             onChange={handleRuleChange}
+            enableAutocomplete={enableAutocomplete}
           />
         </PanelGridItem>
         <PanelGridItem gridArea="data">

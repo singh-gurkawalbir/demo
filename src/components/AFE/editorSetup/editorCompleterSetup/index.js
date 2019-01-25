@@ -5,7 +5,11 @@ export default function handleBarsAutocompleteSetup(editor) {
   shouldAutocompleteOnBackSpace(editor);
   const editorInst = editor;
 
-  editorInst.enableBasicAutocompletion = true;
-  editorInst.enableLiveAutocompletion = true;
-  editorInst.completers = [helpers.JsonCompleters, helpers.FunctionCompleters];
+  editorInst.completers = [];
+  const { handleBarsCompleters } = helpers;
+  const completers = handleBarsCompleters.getCompleters();
+
+  Object.keys(completers).forEach(key =>
+    editorInst.completers.push(completers[key])
+  );
 }
