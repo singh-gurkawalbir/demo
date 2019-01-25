@@ -11,6 +11,12 @@ export const FunctionCompleters = {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
       return callback(null, []);
 
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResultAndRemovePreceedingBraces(editor, matchingResult);
+    };
+
     return callback(
       null,
       Object.keys(this.functionsHints || [])
@@ -24,12 +30,7 @@ export const FunctionCompleters = {
             meta: 'helper functions',
             matchingResult,
             completer: {
-              insertMatch: (editor, { matchingResult }) => {
-                insertMatchingResultAndRemovePreceedingBraces(
-                  editor,
-                  matchingResult
-                );
-              },
+              insertMatch,
             },
           };
         })
@@ -42,6 +43,12 @@ export const JsonCompleters = {
   getCompletions(editor, session, pos, prefix, callback) {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
       return callback(null, []);
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResult(editor, matchingResult);
+    };
+
     callback(
       null,
       this.jsonHints
@@ -52,9 +59,7 @@ export const JsonCompleters = {
           meta: 'Json paths',
           matchingResult: hint.id,
           completer: {
-            insertMatch: (editor, { matchingResult }) => {
-              insertMatchingResult(editor, matchingResult);
-            },
+            insertMatch,
           },
         }))
     );

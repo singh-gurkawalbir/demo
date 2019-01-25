@@ -10,16 +10,6 @@ import {
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 
-const GLOBAL_PREFERENCES = [
-  'hideGettingStarted',
-  'defaultAShareId',
-  'environment',
-  'dateFormat',
-  'timeFormat',
-  'scheduleShiftForFlowsCreatedAfter',
-  'lastLoginAt',
-];
-
 export function* changePassword({ updatedPassword }) {
   try {
     const payload = { ...changePasswordParams.opts, body: updatedPassword };
@@ -47,45 +37,15 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferencesToAccount(dataToUpdate) {
-  let origPreferences = yield select(selectors.userOrigPreferences);
-  const { defaultAShareId } = origPreferences;
-  let payload;
-  const global = {};
-  const local = {};
-
-  Object.keys(dataToUpdate).forEach(preference => {
-    if (GLOBAL_PREFERENCES.includes(preference)) {
-      global[preference] = dataToUpdate[preference];
-    } else {
-      local[preference] = dataToUpdate[preference];
-    }
-  });
-
-  if (!defaultAShareId || defaultAShareId === 'own') {
-    payload = { ...origPreferences, ...global, ...local };
-  } else {
-    origPreferences = { ...origPreferences, ...global };
-
-    origPreferences.accounts[defaultAShareId] = {
-      ...origPreferences.accounts[defaultAShareId],
-      ...local,
-    };
-    payload = origPreferences;
-  }
-
-  return payload;
-}
-
 export function* updatePreferences({ preferences }) {
   if (!preferences) return;
 
-  const preferencePayload = yield call(updatePreferencesToAccount, preferences);
-
   try {
+    yield put(actions.profile.updatePreferenceStore(preferences));
+    const updatedPayload = yield select(selectors.userPreferences);
     const payload = {
       ...updatePreferencesParams.opts,
-      body: preferencePayload,
+      body: updatedPayload,
     };
 
     yield call(
@@ -94,8 +54,6 @@ export function* updatePreferences({ preferences }) {
       payload,
       "Updating user's info"
     );
-
-    yield put(actions.profile.updatePreferenceStore(preferences));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -170,8 +128,6 @@ export function* changeEmail({ updatedEmail }) {
           'Existing email provided, Please try again.'
         )
       );
-
-      return;
     }
 
     yield put(

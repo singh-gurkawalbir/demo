@@ -28,8 +28,6 @@ export const insertMatchingResult = (editor, text) => {
 };
 
 export const insertMatchingResultAndRemovePreceedingBraces = (editor, text) => {
-  JSON.stringify(`check here text ${text}`);
-
   removePreceedingUncompletedText(editor);
   // remove the first two braces
   editor.execCommand('insertstring', text.substring(2));

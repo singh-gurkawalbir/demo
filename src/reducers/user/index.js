@@ -1,6 +1,16 @@
 import { combineReducers } from 'redux';
 import actionTypes from '../../actions/types';
 
+const GLOBAL_PREFERENCES = [
+  'hideGettingStarted',
+  'defaultAShareId',
+  'environment',
+  'dateFormat',
+  'timeFormat',
+  'scheduleShiftForFlowsCreatedAfter',
+  'lastLoginAt',
+];
+const LOCAL_PREFERENCES = ['themeName'];
 const profile = (state = null, action) => {
   if (
     action.type === actionTypes.RESOURCE.RECEIVED &&
@@ -25,49 +35,42 @@ const profile = (state = null, action) => {
 export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
-// const themeName = (state = DEFAULT_THEME, action) => {
-//   if (
-//     action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
-//     action.resourceType === 'preferences'
-//   ) {
-//     return action.collection.themeName || DEFAULT_THEME;
-//   }
-
-//   if (action.type === actionTypes.SET_THEME) {
-//     return action.name || DEFAULT_THEME;
-//   }
-
-//   return state;
-// };
-// needed both these actions to support an update RECEIVED_COLLECTION
-// is from the LoadResources component and the update Preferences allows
-// us to update the redux store directly
 const preferences = (state = {}, action) => {
-  if (
-    action.type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
-    action.resourceType === 'preferences'
-  ) {
-    const { defaultAShareId, accounts } = action.collection;
+  const { type, resourceType, preferences } = action;
+  let newState = Object.assign({}, state);
 
-    if (!defaultAShareId || defaultAShareId === 'own') {
-      return { ...state, ...action.collection };
+  switch (type) {
+    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+      // we can't clear if there is no staged data
+      if (resourceType === 'preferences') return action.collection;
+
+      return newState;
+    case actionTypes.UPDATE_PREFERENCES_STORE: {
+      const { defaultAShareId, accounts } = newState;
+
+      if (!defaultAShareId || defaultAShareId === 'own') {
+        newState = { ...newState, ...preferences };
+      } else {
+        Object.keys(preferences).forEach(key => {
+          const preference = { [key]: preferences[key] };
+
+          if (GLOBAL_PREFERENCES.includes(key)) {
+            newState = { ...newState, ...preference };
+          } else {
+            accounts[defaultAShareId] = {
+              ...accounts[defaultAShareId],
+              ...preference,
+            };
+          }
+        });
+      }
+
+      return newState;
     }
 
-    const copyActionPayload = Object.assign({}, action.collection);
-
-    delete copyActionPayload.accounts;
-
-    // merging account specific preferences and global specific preferences
-    return { ...state, ...accounts[defaultAShareId], ...copyActionPayload };
+    default:
+      return state;
   }
-
-  if (action.type === actionTypes.UPDATE_PREFERENCES_STORE) {
-    const { preferences } = action;
-
-    return { ...state, ...preferences };
-  }
-
-  return state;
 };
 
 export default combineReducers({
@@ -75,7 +78,33 @@ export default combineReducers({
   preferences,
 });
 
+function pickOutRelevantPreferenceData(preferences) {
+  const allUsersPreferenceProps = [...GLOBAL_PREFERENCES, ...LOCAL_PREFERENCES];
+  const copyPreferences = Object.assign({}, preferences);
+
+  Object.keys(copyPreferences)
+    .filter(key => !allUsersPreferenceProps.includes(key))
+    .forEach(key => delete copyPreferences[key]);
+
+  return copyPreferences;
+}
 // #region PUBLIC SESSION SELECTORS
+
+export function userPreferences(state) {
+  if (!state || !state.preferences) return {};
+  const { preferences } = state;
+  const { defaultAShareId, accounts } = preferences;
+  let mergedPreferences;
+
+  if (!defaultAShareId || defaultAShareId === 'own') {
+    mergedPreferences = { ...preferences };
+  } else {
+    mergedPreferences = { ...preferences, ...accounts[defaultAShareId] };
+  }
+
+  return pickOutRelevantPreferenceData(mergedPreferences);
+}
+
 export function avatarUrl(state) {
   if (!state || !state.profile) return undefined;
 
@@ -84,9 +113,11 @@ export function avatarUrl(state) {
   }?d=mm&s=55`;
 }
 
-export function userTheme(preferences) {
-  if (preferences && preferences.themeName) {
-    return preferences.themeName;
+export function userTheme(state) {
+  const { themeName } = userPreferences(state);
+
+  if (themeName) {
+    return themeName;
   }
 
   return DEFAULT_THEME;
@@ -95,7 +126,7 @@ export function userTheme(preferences) {
 export function editorTheme(state) {
   const defaultEditorTheme = 'tomorrow';
 
-  if (!state) return defaultEditorTheme;
+  if (!state || !state.preferences) return defaultEditorTheme;
 
   // props = ui theme, values = editor theme.
   const themeMap = {
