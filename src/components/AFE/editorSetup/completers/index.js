@@ -10,7 +10,7 @@ export const shouldAutoComplete = editor => {
   return !!precedingText.match(prefixRegexp);
 };
 
-export const FunctionCompleters = {
+export const FunctionCompleter = {
   functionsHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
@@ -48,7 +48,7 @@ export const FunctionCompleters = {
   },
 };
 
-export const JsonCompleters = {
+export const JsonCompleter = {
   jsonHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
     if (prefix.length === 0 || !shouldAutoComplete(editor))
@@ -83,12 +83,7 @@ export const JsonCompleters = {
   },
 };
 
-export const handleBarCompleters = {
-  JsonCompleters,
-  FunctionCompleters,
-};
-
-export const loadJSONHints = value => {
+export const loadJsonHints = value => {
   let jsonHints = [];
 
   try {
@@ -98,4 +93,15 @@ export const loadJSONHints = value => {
   }
 
   return jsonHints;
+};
+
+export const handleBarsCompleters = {
+  setCompleters: (jsonData, helperFunctions) => {
+    JsonCompleter.jsonHints = loadJsonHints(jsonData);
+    FunctionCompleter.functionsHints = helperFunctions;
+  },
+  getCompleters: () => ({
+    JsonCompleter,
+    FunctionCompleter,
+  }),
 };

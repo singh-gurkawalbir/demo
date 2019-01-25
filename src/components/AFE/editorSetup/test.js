@@ -2,24 +2,27 @@
 import * as ace from 'brace';
 import 'brace/ext/language_tools';
 import handlebarCompleterSetup from './editorCompleterSetup/index';
-import * as helpers from './completers';
+import { handleBarsCompleters } from './completers';
 
 // const langTools = ace.require('ace/ext/language_tools');
 
 describe('Handle bars autocomplete', () => {
   const editor = ace.edit(null);
-
-  handlebarCompleterSetup(editor);
-  helpers.FunctionCompleters.functionsHints = {
+  const functionsHints = {
     add: '{{add}}',
     substract: '{{substract}}',
   };
+  const jsonData = JSON.stringify({
+    a: {
+      d: 1,
+      e: 3,
+    },
+    b: 4,
+  });
 
-  helpers.JsonCompleters.jsonHints = [
-    { id: 'a.d', type: 'string' },
-    { id: 'a.e', type: 'string' },
-    { id: 'b', type: 'string' },
-  ];
+  handleBarsCompleters.setCompleters(jsonData, functionsHints);
+  handlebarCompleterSetup(editor);
+
   //  we are doing something similar in the react end
   // but injecting directly into the JSX
   editor.setOptions({

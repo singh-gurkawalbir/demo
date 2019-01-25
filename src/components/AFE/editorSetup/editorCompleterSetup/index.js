@@ -6,7 +6,10 @@ export default function handleBarAutocompleteSetup(editor) {
   const editorInst = editor;
 
   editorInst.completers = [];
-  Object.keys(helpers.handleBarCompleters).forEach(completer =>
-    editorInst.completers.push(helpers.handleBarCompleters[completer])
+  const { handleBarsCompleters } = helpers;
+  const completers = handleBarsCompleters.getCompleters();
+
+  Object.keys(completers).forEach(key =>
+    editorInst.completers.push(completers[key])
   );
 }

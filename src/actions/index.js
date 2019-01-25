@@ -90,7 +90,8 @@ const editor = {
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  getHelperFunctions: () => action(actionTypes.EDITOR_GET_HELPER_FUNCTIONS),
+  refreshHelperFunctions: () =>
+    action(actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS),
   evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
