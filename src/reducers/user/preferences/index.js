@@ -79,7 +79,7 @@ export function userPreferences(state) {
   return pickOutRelevantPreferenceData(mergedPreferences);
 }
 
-export function userTheme(state) {
+export function appTheme(state) {
   const { themeName } = userPreferences(state);
 
   if (themeName) {
@@ -98,6 +98,6 @@ export function editorTheme(state) {
     dark: 'monokai',
   };
 
-  return themeMap[userTheme(state)] || DEFAULT_EDITOR_THEME;
+  return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
 }
 // #endregion PUBLIC SELECTORS

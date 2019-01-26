@@ -197,7 +197,7 @@ describe('user reducers', () => {
 
   describe(`user theme selectors`, () => {
     test('should return default theme if no profile exists', () => {
-      expect(selectors.userTheme(undefined)).toEqual(selectors.DEFAULT_THEME);
+      expect(selectors.appTheme(undefined)).toEqual(selectors.DEFAULT_THEME);
     });
 
     test('should return correct theme when set.', () => {
@@ -207,7 +207,7 @@ describe('user reducers', () => {
         actions.profile.updatePreferenceStore({ themeName: theme })
       );
 
-      expect(selectors.userTheme(state)).toEqual(theme);
+      expect(selectors.appTheme(state)).toEqual(theme);
     });
   });
 

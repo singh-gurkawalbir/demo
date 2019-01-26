@@ -20,11 +20,11 @@ export function avatarUrl(state) {
   return fromProfile.avatarUrl(state.profile);
 }
 
-export function userTheme(state) {
-  return fromPreferences.userTheme(state.preferences);
+export function appTheme(state) {
+  return fromPreferences.appTheme(state.preferences);
 }
 
 export function editorTheme(state) {
-  return fromPreferences.userTheme(state.preferences);
+  return fromPreferences.editorTheme(state.preferences);
 }
 // #endregion PUBLIC USER SELECTORS

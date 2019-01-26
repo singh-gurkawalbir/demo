@@ -240,13 +240,7 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 export function themeName(state) {
-  return (
-    (state &&
-      state.user &&
-      state.user.preferences &&
-      state.user.preferences.themeName) ||
-    null
-  );
+  return fromUser.appTheme((state && state.user) || null);
 }
 
 export function hasProfile(state) {
