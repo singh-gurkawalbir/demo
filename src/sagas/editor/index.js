@@ -13,9 +13,7 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
-  const { violations, processor, body, resourcePath } = reqOpts;
-
-  if (processor === 'xmlParser') body.rules = { ...body.rules, resourcePath };
+  const { violations, processor, body } = reqOpts;
 
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
@@ -60,7 +58,6 @@ export function* refreshHelperFunctions() {
   // if update time is not defined its missing in the local storage
   // hence we have to retrieve the helper functions and
   // persit it in the local storage
-  console.log(`check ${process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE}`);
 
   if (
     !updateTime ||

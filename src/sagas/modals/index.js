@@ -1,6 +1,7 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import * as selectors from '../../reducers';
 import {
   changeEmailParams,
   changePasswordParams,
@@ -37,12 +38,14 @@ export function* changePassword({ updatedPassword }) {
 }
 
 export function* updatePreferences({ preferences }) {
-  if (preferences === {}) return;
+  if (!preferences) return;
 
   try {
+    yield put(actions.profile.updatePreferenceStore(preferences));
+    const updatedPayload = yield select(selectors.userPreferences);
     const payload = {
       ...updatePreferencesParams.opts,
-      body: preferences,
+      body: updatedPayload,
     };
 
     yield call(
@@ -51,7 +54,6 @@ export function* updatePreferences({ preferences }) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.receivedCollection('preferences', preferences));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -126,8 +128,6 @@ export function* changeEmail({ updatedEmail }) {
           'Existing email provided, Please try again.'
         )
       );
-
-      return;
     }
 
     yield put(

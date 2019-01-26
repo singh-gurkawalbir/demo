@@ -1,8 +1,9 @@
 /* global describe, test, expect */
 
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import * as selectors from '../../reducers/index';
 import {
   changePasswordParams,
   updatePreferencesParams,
@@ -158,6 +159,11 @@ describe('all modal sagas', () => {
   });
   describe('update user and profile preferences sagas', () => {
     describe('update preferences saga', () => {
+      test('shoulde exit the saga when no preferences updates are required', () => {
+        const saga = updatePreferences({});
+
+        expect(saga.next().done).toEqual(true);
+      });
       test("should update user's preferences successfuly", () => {
         const preferences = {
           timeFormat: 'something',
@@ -165,6 +171,12 @@ describe('all modal sagas', () => {
         const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
+          put(actions.profile.updatePreferenceStore(preferences))
+        );
+        expect(saga.next(preferences).value).toEqual(
+          select(selectors.userPreferences)
+        );
+        expect(saga.next(preferences).value).toEqual(
           call(
             apiCallWithRetry,
             updatePreferencesParams.path,
@@ -172,25 +184,22 @@ describe('all modal sagas', () => {
             "Updating user's info"
           )
         );
-        expect(saga.next().value).toEqual(
-          put(actions.resource.receivedCollection('preferences', preferences))
-        );
       });
 
-      test('should generate the appropriate message failure in a api failure and not update the redux store', () => {
+      test('should generate the appropriate message failure in a api failure and nevertherless should update the redux store', () => {
         const preferences = {
           timeFormat: 'something',
         };
         const saga = updatePreferences({ preferences });
 
         expect(saga.next().value).toEqual(
-          call(
-            apiCallWithRetry,
-            updatePreferencesParams.path,
-            { ...updatePreferencesParams.opts, body: preferences },
-            "Updating user's info"
-          )
+          put(actions.profile.updatePreferenceStore(preferences))
         );
+
+        expect(saga.next(preferences).value).toEqual(
+          select(selectors.userPreferences)
+        );
+
         expect(saga.throw(new Error()).value).toEqual(
           put(
             actions.api.failure(

@@ -98,7 +98,6 @@ class App extends Component {
             {showSnackBar && <NetworkSnackbar />}
             <AppBar
               onToggleDrawer={this.handleToggleDrawer}
-              onSetTheme={this.handleSetTheme}
               themeName={themeName}
             />
             <AppDrawer

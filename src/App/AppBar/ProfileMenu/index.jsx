@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -12,27 +12,16 @@ import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
-import {
-  isProfileDataReady,
-  hasProfile,
-  userProfile,
-  avatarUrl,
-  themeName,
-  userPreferences,
-} from '../../../reducers';
+import * as selectors from '../../../reducers';
 
 const mapStateToProps = state => ({
-  hasProfile: hasProfile(state),
-  isProfileDataReady: isProfileDataReady(state),
-  profile: userProfile(state),
-  preferences: userPreferences(state),
-  avatarUrl: avatarUrl(state),
-  themeName: themeName(state),
+  hasProfile: selectors.hasProfile(state),
+  isProfileDataReady: selectors.isProfileDataReady(state),
+  profile: selectors.userProfile(state),
+  preferences: selectors.userPreferences(state),
+  avatarUrl: selectors.avatarUrl(state),
 });
 const mapDispatchToProps = dispatch => ({
-  onSetTheme: themeName => {
-    dispatch(actions.setTheme(themeName));
-  },
   requestProfile: () => {
     dispatch(actions.profile.request());
   },
@@ -42,10 +31,8 @@ const mapDispatchToProps = dispatch => ({
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
   },
-  updateThemeNameInPreferences: (themeName, profile, preferences) => {
-    const payload = { _id: profile._id, ...preferences, themeName };
-
-    dispatch(actions.profile.updatePreferences(payload));
+  updateThemeNameInPreferences: themeName => {
+    dispatch(actions.profile.updatePreferences({ themeName }));
   },
 });
 
@@ -87,11 +74,9 @@ class AppBar extends Component {
     }
   };
   handleThemeChange = event => {
-    const { preferences, profile } = this.props;
     const themeName = event.target.value;
 
-    this.props.onSetTheme(themeName);
-    this.props.updateThemeNameInPreferences(themeName, profile, preferences);
+    this.props.updateThemeNameInPreferences(themeName);
   };
 
   handleClose = () => {
@@ -104,11 +89,12 @@ class AppBar extends Component {
     const {
       classes,
       profile,
-      themeName,
       avatarUrl,
       isProfileDataReady,
       handleUserLogout,
+      preferences,
     } = this.props;
+    const { themeName } = preferences;
 
     if (!isProfileDataReady) {
       return null;
@@ -116,75 +102,73 @@ class AppBar extends Component {
 
     return (
       <LoadResources resources={['preferences']}>
-        <Fragment>
-          <IconButton
-            className={classes.avatarButton}
-            aria-owns={open ? 'profileOptions' : null}
-            aria-haspopup="true"
-            onClick={this.handleMenu}
-            color="inherit">
-            <Avatar
-              alt={profile.name}
-              src={avatarUrl}
-              className={classes.avatar}
-            />
-          </IconButton>
-          <ArrowPopper
-            id="profileOptions"
-            anchorEl={anchorEl}
-            placement="bottom-end"
-            open={open}
-            onClose={this.handleClose}>
-            <Grid
-              container
-              spacing={16}
-              direction="row"
-              justify="flex-start"
-              alignItems="flex-start">
-              <Grid item>
-                <Avatar
-                  alt={profile.name}
-                  src={avatarUrl}
-                  className={classes.bigAvatar}
-                />
-              </Grid>
-              <Grid item>
-                <Typography variant="h5">{profile.name}</Typography>
-                <Typography variant="h6">{profile.email}</Typography>
-              </Grid>
+        <IconButton
+          className={classes.avatarButton}
+          aria-owns={open ? 'profileOptions' : null}
+          aria-haspopup="true"
+          onClick={this.handleMenu}
+          color="inherit">
+          <Avatar
+            alt={profile.name}
+            src={avatarUrl}
+            className={classes.avatar}
+          />
+        </IconButton>
+        <ArrowPopper
+          id="profileOptions"
+          anchorEl={anchorEl}
+          placement="bottom-end"
+          open={open}
+          onClose={this.handleClose}>
+          <Grid
+            container
+            spacing={16}
+            direction="row"
+            justify="flex-start"
+            alignItems="flex-start">
+            <Grid item>
+              <Avatar
+                alt={profile.name}
+                src={avatarUrl}
+                className={classes.bigAvatar}
+              />
             </Grid>
-            <div>
-              <FormControl className={classes.formControl}>
-                <Select
-                  native
-                  value={themeName}
-                  onChange={this.handleThemeChange}
-                  inputProps={{ name: 'themeName' }}>
-                  <option value="light">Celigo Light Theme</option>
-                  <option value="dark">Celigo Dark Theme</option>
-                </Select>
-              </FormControl>
-            </div>
-            <Button
-              onClick={this.handleClose}
-              variant="contained"
-              size="small"
-              color="primary"
-              className={classes.button}
-              component={Link}
-              to="/pg/myAccount/profiles">
-              My Account
-            </Button>
-            <Button
-              onClick={handleUserLogout}
-              variant="contained"
-              size="small"
-              color="primary"
-              className={classes.button}>
-              Sign Out
-            </Button>
-          </ArrowPopper>
-        </Fragment>
+            <Grid item>
+              <Typography variant="h5">{profile.name}</Typography>
+              <Typography variant="h6">{profile.email}</Typography>
+            </Grid>
+          </Grid>
+          <div>
+            <FormControl className={classes.formControl}>
+              <Select
+                native
+                value={themeName}
+                onChange={this.handleThemeChange}
+                inputProps={{ name: 'themeName' }}>
+                <option value="light">Celigo Light Theme</option>
+                <option value="dark">Celigo Dark Theme</option>
+              </Select>
+            </FormControl>
+          </div>
+          <Button
+            onClick={this.handleClose}
+            variant="contained"
+            size="small"
+            color="primary"
+            className={classes.button}
+            component={Link}
+            to="/pg/myAccount/profiles">
+            My Account
+          </Button>
+          <Button
+            onClick={handleUserLogout}
+            variant="contained"
+            size="small"
+            color="primary"
+            className={classes.button}>
+            Sign Out
+          </Button>
+        </ArrowPopper>
       </LoadResources>
     );
   }

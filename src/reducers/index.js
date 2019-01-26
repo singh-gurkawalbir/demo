@@ -106,6 +106,10 @@ export function userPreferences(state) {
   return state && state.user && state.user.preferences;
 }
 
+export function userOrigPreferences(state) {
+  return (state && state.data && state.data.preferences) || {};
+}
+
 export function userProfilePreferencesProps(state) {
   const profile = userProfile(state);
   const preferences = userPreferences(state);
@@ -234,7 +238,13 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 export function themeName(state) {
-  return state && state.user && state.user.themeName;
+  return (
+    (state &&
+      state.user &&
+      state.user.preferences &&
+      state.user.preferences.themeName) ||
+    null
+  );
 }
 
 export function hasProfile(state) {

@@ -72,11 +72,12 @@ const profile = {
     action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
       profilePreferencesPayload,
     }),
+  updatePreferenceStore: preferences =>
+    action(actionTypes.UPDATE_PREFERENCES_STORE, { preferences }),
   requestPreferences: () => resource.request('preferences'),
   updatePreferences: preferences =>
     action(actionTypes.UPDATE_PREFERENCES, { preferences }),
 };
-const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -104,7 +105,6 @@ const editor = {
 
 export default {
   clearComms,
-  setTheme,
   patchFilter,
   clearFilter,
   editor,
