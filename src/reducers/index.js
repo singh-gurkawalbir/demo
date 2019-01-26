@@ -4,6 +4,7 @@ import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
 import resourceDefaults from './resourceDefaults';
+import accounts, * as fromAccounts from './accounts';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -13,6 +14,7 @@ const combinedReducers = combineReducers({
   session,
   data,
   user,
+  accounts,
   auth,
   comms,
 });
@@ -246,7 +248,12 @@ export function resourceList(state, options) {
 export function processors(state) {
   return fromData.processors(state.data);
 }
+// #endregion
 
+// #region PUBLIC ACCOUNTS SELECTORS
+export function sharedAccounts(state) {
+  return fromAccounts.sharedAccounts(state.accounts);
+}
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS

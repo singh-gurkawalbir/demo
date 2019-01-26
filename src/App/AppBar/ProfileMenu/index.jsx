@@ -39,6 +39,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @withStyles(theme => ({
+  popperContent: {
+    padding: theme.spacing.unit,
+  },
+
   avatarButton: {
     padding: theme.spacing.unit,
   },
@@ -115,6 +119,7 @@ class AppBar extends Component {
         </IconButton>
         <ArrowPopper
           id="profileOptions"
+          className={classes.popperContent}
           anchorEl={anchorEl}
           placement="bottom-end"
           open={open}

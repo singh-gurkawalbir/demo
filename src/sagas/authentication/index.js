@@ -10,6 +10,35 @@ import {
   getCSRFToken,
 } from '../../utils/session';
 
+export function* initializeAccount() {
+  let ashares = yield call(
+    apiCallWithRetry,
+    '/ashares/',
+    {},
+    'Retrieving Account Ownership'
+  );
+
+  // if 'ashares' has a value then this is an account owner since only
+  // account owners would have any account details returned...
+  // conversely, if this returns 'no content', then this means that the
+  // user belongs to at least one account and we need to make another
+  // call to get the ashares for which this user belongs to...
+
+  // console.log('Account Ownership Info:', ashares);
+
+  if (!ashares) {
+    ashares = yield call(
+      apiCallWithRetry,
+      '/shared/ashares',
+      {},
+      'Retrieving Account Membership'
+    );
+    // console.log('Account Membership Info:', ashares);
+  }
+
+  yield put(actions.ashares.receivedCollection(ashares));
+}
+
 export function* auth({ email, password }) {
   try {
     const csrfTokenResponse = yield call(
@@ -32,8 +61,11 @@ export function* auth({ email, password }) {
     yield call(setCSRFToken, apiAuthentications._csrf);
     yield put(actions.auth.complete());
 
+    yield call(initializeAccount);
+
     return apiAuthentications.succes;
   } catch (error) {
+    // console.log('auth error:', error);
     yield put(actions.auth.failure('Authentication Failure'));
     yield put(actions.profile.delete());
 
@@ -56,6 +88,7 @@ export function* initializeApp() {
       );
 
       yield call(setCSRFToken, csrfTokenResponse._csrf);
+
       yield put(actions.auth.complete());
     } else {
       yield put(actions.auth.logout());

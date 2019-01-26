@@ -20,7 +20,7 @@ const STAGE_UNDO = 'STAGE_UNDO';
 const STAGE_COMMIT = 'STAGE_COMMIT';
 const STAGE_CONFLICT = 'STAGE_CONFLICT';
 const CLEAR_CONFLICT = 'CLEAR_CONFLICT';
-// The action types below are used for managing network activity.
+// The API_* action types below are used for managing network activity.
 // Typically this set of actions are only dispatched in Redux Sagas.
 const API_REQUEST = 'API_REQUEST';
 const API_COMPLETE = 'API_COMPLETE';

@@ -6,9 +6,6 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 @withStyles(theme => ({
-  paper: {
-    padding: theme.spacing.unit,
-  },
   arrow: {
     position: 'absolute',
     fontSize: 7,
@@ -81,13 +78,14 @@ export default class ArrowPopper extends Component {
   state = {
     arrowEl: null,
   };
-  handlearrowEl = node => {
+  handleArrowEl = node => {
     this.setState({ arrowEl: node });
   };
 
   render() {
     const {
       id,
+      open,
       anchorEl,
       placement = 'bottom-end',
       classes,
@@ -95,7 +93,6 @@ export default class ArrowPopper extends Component {
       onClose,
       className,
     } = this.props;
-    const open = Boolean(anchorEl);
     const { arrowEl } = this.state;
 
     return (
@@ -120,7 +117,7 @@ export default class ArrowPopper extends Component {
             element: arrowEl,
           },
         }}>
-        <span className={classes.arrow} ref={this.handlearrowEl} />
+        <span className={classes.arrow} ref={this.handleArrowEl} />
         <ClickAwayListener onClickAway={onClose}>
           <Paper className={classNames(classes.paper, className)}>
             {children}
