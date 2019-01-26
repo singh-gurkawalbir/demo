@@ -27,6 +27,7 @@ export default class UrlEditor extends Component {
         resultTitle="Evaluated Result"
         showFullScreen={false}
         showLayoutOptions={false}
+        enableAutocomplete
       />
     );
   }

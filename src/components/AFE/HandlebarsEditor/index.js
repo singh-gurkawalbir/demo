@@ -1,10 +1,16 @@
 import { connect } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import * as completers from '../editorSetup/completers';
 import Editor from '../GenericEditor';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
+  // update directly to the completers
+  const jsonData = editor.data;
+  const helperFunctions = selectors.editorHelperFunctions(state);
+
+  completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
 
   return {
     rule: editor.template,
@@ -32,6 +38,8 @@ const mapDispatchToProps = (dispatch, { editorId, strict, rule, data }) => ({
         data,
       })
     );
+    // get Helper functions when the editor intializes
+    dispatch(actions.editor.refreshHelperFunctions());
   },
   handlePreview: () => {
     dispatch(actions.editor.evaluateRequest(editorId));

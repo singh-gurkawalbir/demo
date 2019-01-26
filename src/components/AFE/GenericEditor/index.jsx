@@ -64,6 +64,7 @@ export default class Editor extends Component {
       violations,
       handleRuleChange,
       handleDataChange,
+      enableAutocomplete,
     } = this.props;
     // favor custom template over pre-defined layouts.
     const gridTemplate = templateClassName || classes[`${layout}Template`];
@@ -77,6 +78,7 @@ export default class Editor extends Component {
             value={rule}
             mode={ruleMode}
             onChange={handleRuleChange}
+            enableAutocomplete={enableAutocomplete}
           />
         </PanelGridItem>
         <PanelGridItem gridArea="data">

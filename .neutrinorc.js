@@ -15,14 +15,14 @@ require('babel-register')({
 
 const themeProvider = require('./src/themeProvider').default;
 const theme = themeProvider('light');
-
 const getProxyOpts = () => {
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
 
   const target = process.env.API_ENDPOINT || '';
   const secure = target && target.toLowerCase().startsWith('https://');
 
-  console.log('is API secure? ' + secure);
+  console.log(`API Target: ${target}`);
+  if (secure) console.log('Cookie rewrite needed for secure API host.');
 
   const opts = {
     target,
@@ -162,6 +162,7 @@ module.exports = {
         'NETWORK_THRESHOLD',
         'CDN_BASE_URI',
         'ADD_NETWORK_LATENCY',
+        'HELPER_FUNCTIONS_INTERVAL_UPDATE',
       ],
     ],
     neutrino => {

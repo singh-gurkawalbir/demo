@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -10,31 +10,29 @@ import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
+import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
-import {
-  isProfileDataReady,
-  hasProfile,
-  userProfile,
-  avatarUrl,
-  themeName,
-} from '../../../reducers';
+import * as selectors from '../../../reducers';
 
 const mapStateToProps = state => ({
-  hasProfile: hasProfile(state),
-  isProfileDataReady: isProfileDataReady(state),
-  profile: userProfile(state),
-  avatarUrl: avatarUrl(state),
-  themeName: themeName(state),
+  hasProfile: selectors.hasProfile(state),
+  isProfileDataReady: selectors.isProfileDataReady(state),
+  profile: selectors.userProfile(state),
+  preferences: selectors.userPreferences(state),
+  avatarUrl: selectors.avatarUrl(state),
 });
 const mapDispatchToProps = dispatch => ({
-  onSetTheme: themeName => {
-    dispatch(actions.setTheme(themeName));
-  },
   requestProfile: () => {
     dispatch(actions.profile.request());
   },
+  requestPreferences: () => {
+    dispatch(actions.profile.requestPreferences());
+  },
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
+  },
+  updateThemeNameInPreferences: themeName => {
+    dispatch(actions.profile.updatePreferences({ themeName }));
   },
 });
 
@@ -80,7 +78,9 @@ class AppBar extends Component {
     }
   };
   handleThemeChange = event => {
-    this.props.onSetTheme(event.target.value);
+    const themeName = event.target.value;
+
+    this.props.updateThemeNameInPreferences(themeName);
   };
 
   handleClose = () => {
@@ -93,18 +93,19 @@ class AppBar extends Component {
     const {
       classes,
       profile,
-      themeName,
       avatarUrl,
       isProfileDataReady,
       handleUserLogout,
+      preferences,
     } = this.props;
+    const { themeName } = preferences;
 
     if (!isProfileDataReady) {
       return null;
     }
 
     return (
-      <Fragment>
+      <LoadResources resources={['preferences']}>
         <IconButton
           className={classes.avatarButton}
           aria-owns={open ? 'profileOptions' : null}
@@ -173,7 +174,7 @@ class AppBar extends Component {
             Sign Out
           </Button>
         </ArrowPopper>
-      </Fragment>
+      </LoadResources>
     );
   }
 }

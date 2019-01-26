@@ -76,8 +76,12 @@ const profile = {
     action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
       profilePreferencesPayload,
     }),
+  updatePreferenceStore: preferences =>
+    action(actionTypes.UPDATE_PREFERENCES_STORE, { preferences }),
+  requestPreferences: () => resource.request('preferences'),
+  updatePreferences: preferences =>
+    action(actionTypes.UPDATE_PREFERENCES, { preferences }),
 };
-const setTheme = name => action(actionTypes.SET_THEME, { name });
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -89,6 +93,10 @@ const editor = {
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
+  updateHelperFunctions: helperFunctions =>
+    action(actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
+  refreshHelperFunctions: () =>
+    action(actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS),
   evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
@@ -101,7 +109,6 @@ const editor = {
 
 export default {
   clearComms,
-  setTheme,
   patchFilter,
   clearFilter,
   editor,

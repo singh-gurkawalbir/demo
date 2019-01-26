@@ -1,6 +1,7 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import * as selectors from '../../reducers';
 import {
   changeEmailParams,
   changePasswordParams,
@@ -36,13 +37,15 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences(preferences) {
-  if (preferences === {}) return;
+export function* updatePreferences({ preferences }) {
+  if (!preferences) return;
 
   try {
+    yield put(actions.profile.updatePreferenceStore(preferences));
+    const updatedPayload = yield select(selectors.userPreferences);
     const payload = {
       ...updatePreferencesParams.opts,
-      body: preferences,
+      body: updatedPayload,
     };
 
     yield call(
@@ -51,7 +54,6 @@ export function* updatePreferences(preferences) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.receivedCollection('preferences', preferences));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -91,7 +93,7 @@ export function* updateUserProfileAndPreferences({
 }) {
   const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
 
-  yield updatePreferences({ _id, timeFormat, dateFormat });
+  yield updatePreferences({ preferences: { _id, timeFormat, dateFormat } });
   const copy = { ...profilePreferencesPayload };
 
   delete copy.dateFormat;
@@ -126,8 +128,6 @@ export function* changeEmail({ updatedEmail }) {
           'Existing email provided, Please try again.'
         )
       );
-
-      return;
     }
 
     yield put(
@@ -144,6 +144,7 @@ export const modalsSagas = [
     actionTypes.UPDATE_PROFILE_PREFERENCES,
     updateUserProfileAndPreferences
   ),
+  takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
 ];

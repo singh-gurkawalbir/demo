@@ -22,6 +22,7 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     padding: '10px',
     backgroundColor: theme.palette.background.default,
     height: '100%',
+    overflow: 'auto',
   },
   formControl: {
     margin: theme.spacing.unit,
@@ -35,13 +36,14 @@ class XmlParsePanel extends Component {
   render() {
     const { editor, patchEditor, classes } = this.props;
     const {
-      leanJson,
+      leanJson = false,
       trimSpaces = false,
       stripNewLineChars = false,
       textNodeName,
       attributePrefix,
       listNodes,
       includeNodes,
+      resourcePath,
       excludeNodes,
     } = editor;
 
@@ -51,8 +53,9 @@ class XmlParsePanel extends Component {
           <FormControlLabel
             control={
               <Checkbox
-                checked={leanJson}
-                onChange={() => patchEditor('leanJson', !leanJson)}
+                onChange={() => {
+                  patchEditor('leanJson', !leanJson);
+                }}
               />
             }
             label="Lean JSON"
@@ -140,6 +143,18 @@ class XmlParsePanel extends Component {
                   shrink: true,
                 }}
                 onChange={e => patchEditor('excludeNodes', e.target.value)}
+              />
+              <TextField
+                label="Resource path"
+                placeholder="none"
+                multiline
+                rowsMax={4}
+                className={classes.textField}
+                defaultValue={resourcePath || ''}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={e => patchEditor('resourcePath', e.target.value)}
               />
             </Fragment>
           )}

@@ -25,6 +25,7 @@ export default class CodePanel extends Component {
       height,
       width,
       onChange,
+      enableAutocomplete,
       overrides,
     } = this.props;
     const config = {
@@ -55,7 +56,7 @@ export default class CodePanel extends Component {
         width={width}
         showGutter={config.showGutter}
         showInvisibles={config.showInvisibles}
-        enableLiveAutocompletion={config.enableLiveAutocompletion}
+        enableAutocomplete={enableAutocomplete}
         wrap={config.wrap}
         onChange={onChange}
       />

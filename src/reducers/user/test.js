@@ -42,24 +42,197 @@ describe('user reducers', () => {
       expect(state.profile).toEqual({ email: action.resource.email });
     });
   });
-  describe(`SET_THEME action`, () => {
-    test('should set the theme on first dispatch', () => {
-      const theme = 'fancy';
-      const state = reducer(undefined, actions.setTheme(theme));
+  describe('setting theme in preferences reducer', () => {
+    describe('should set the right theme using the preferences action', () => {
+      test('should set the theme on first dispatch', () => {
+        const themeName = 'fancy';
+        const state = reducer(
+          undefined,
+          actions.profile.updatePreferenceStore({ themeName })
+        );
 
-      expect(state.themeName).toEqual(theme);
+        expect(state.preferences.themeName).toEqual(themeName);
+      });
+
+      test('should replace theme on subsequent dispatches', () => {
+        const themeName1 = 'fancy';
+        const themeName2 = 'simple';
+        let state;
+
+        state = reducer(
+          state,
+          actions.profile.updatePreferenceStore({ themeName: themeName1 })
+        );
+        expect(state.preferences.themeName).toEqual(themeName1);
+
+        state = reducer(
+          state,
+          actions.profile.updatePreferenceStore({ themeName: themeName2 })
+        );
+        expect(state.preferences.themeName).toEqual(themeName2);
+      });
     });
 
-    test('should replace theme on subsequent dispatches', () => {
-      const theme1 = 'fancy';
-      const theme2 = 'simple';
-      let state;
+    describe('Update preferences ', () => {
+      describe('for various user account types', () => {
+        test('should update the correct set of preferences when the user is an owner', () => {
+          const ownerAccountPreferences = {
+            defaultAShareId: 'own',
+            timeFormat: 'something',
+            themeName: 'fancy',
+          };
+          const receivedPreferences = actions.resource.receivedCollection(
+            'preferences',
+            ownerAccountPreferences
+          );
+          const state = reducer(undefined, receivedPreferences);
+          const updatePreferencePatch = actions.profile.updatePreferenceStore({
+            timeFormat: 'something else',
+            themeName: 'blue',
+          });
+          const updatedPatchState = reducer(state, updatePreferencePatch);
 
-      state = reducer(state, actions.setTheme(theme1));
-      expect(state.themeName).toEqual(theme1);
+          expect(updatedPatchState.preferences).toEqual({
+            themeName: 'blue',
+            defaultAShareId: 'own',
+            timeFormat: 'something else',
+          });
+        });
 
-      state = reducer(state, actions.setTheme(theme2));
-      expect(state.themeName).toEqual(theme2);
+        test('should generate the correct set of preferences when the user is an owner', () => {
+          const invitedUserAccountPreferences = {
+            defaultAShareId: '123',
+            timeFormat: 'something',
+            accounts: {
+              '123': {
+                themeName: 'fancy',
+              },
+              '345': {
+                themeName: 'white',
+              },
+            },
+          };
+          const receivedPreferences = actions.resource.receivedCollection(
+            'preferences',
+            invitedUserAccountPreferences
+          );
+          const state = reducer(undefined, receivedPreferences);
+          const updatePreferencePatch = actions.profile.updatePreferenceStore({
+            defaultAShareId: '123',
+            timeFormat: 'something else',
+            themeName: 'blue',
+          });
+          const updatedPatchState = reducer(state, updatePreferencePatch);
+
+          expect(updatedPatchState.preferences).toEqual({
+            defaultAShareId: '123',
+            timeFormat: 'something else',
+            accounts: {
+              '123': {
+                themeName: 'blue',
+              },
+              '345': {
+                themeName: 'white',
+              },
+            },
+          });
+        });
+      });
+
+      test('should update the preference for a preferences resource type', () => {
+        const regularUserAccountPreferences = {
+          themeName: 'fancy',
+        };
+        const receivedPreferences = actions.resource.receivedCollection(
+          'preferences',
+          regularUserAccountPreferences
+        );
+        const state = reducer(undefined, receivedPreferences);
+
+        expect(state.preferences).toEqual({ themeName: 'fancy' });
+      });
+      test('should not update preferences for any other resource type', () => {
+        const regularUserAccountPreferences = {
+          themeName: 'fancy',
+        };
+        const receivedPreferences = actions.resource.receivedCollection(
+          'someOtherResouceType',
+          regularUserAccountPreferences
+        );
+        const state = reducer(undefined, receivedPreferences);
+
+        expect(state.preferences).toEqual({});
+      });
+    });
+  });
+  describe(`user preferences selectors`, () => {
+    test('should generate nothing for payload in the preference update action', () => {
+      const regularUserAccountPreferences = {};
+      const receivedPreferencesAction = actions.resource.receivedCollection(
+        'preferences',
+        regularUserAccountPreferences
+      );
+      const state = reducer(undefined, receivedPreferencesAction);
+
+      expect(selectors.userPreferences(state)).toEqual({});
+    });
+    test('should generate the correct set of preferences when the user is a regular account holder without invited users and not an owner', () => {
+      const regularUserAccountPreferences = {
+        themeName: 'fancy',
+        timeFormat: 'something',
+      };
+      const receivedPreferencesAction = actions.resource.receivedCollection(
+        'preferences',
+        regularUserAccountPreferences
+      );
+      const state = reducer(undefined, receivedPreferencesAction);
+
+      expect(selectors.userPreferences(state)).toEqual({
+        themeName: 'fancy',
+        timeFormat: 'something',
+      });
+    });
+
+    test('should generate the correct set of preferences when the user is an owner', () => {
+      const ownerAccountPreferences = {
+        defaultAShareId: 'own',
+        timeFormat: 'something',
+        themeName: 'fancy',
+      };
+      const receivedPreferences = actions.resource.receivedCollection(
+        'preferences',
+        ownerAccountPreferences
+      );
+      const state = reducer(undefined, receivedPreferences);
+
+      expect(selectors.userPreferences(state)).toEqual({
+        themeName: 'fancy',
+        defaultAShareId: 'own',
+        timeFormat: 'something',
+      });
+    });
+
+    test('should generate the correct set of preferences when the user is an owner', () => {
+      const invitedUserAccountPreferences = {
+        defaultAShareId: '123',
+        timeFormat: 'something',
+        accounts: {
+          '123': {
+            themeName: 'fancy',
+          },
+        },
+      };
+      const receivedPreferences = actions.resource.receivedCollection(
+        'preferences',
+        invitedUserAccountPreferences
+      );
+      const state = reducer(undefined, receivedPreferences);
+
+      expect(selectors.userPreferences(state)).toEqual({
+        defaultAShareId: '123',
+        timeFormat: 'something',
+        themeName: 'fancy',
+      });
     });
   });
   describe(`user theme selectors`, () => {
@@ -69,7 +242,10 @@ describe('user reducers', () => {
 
     test('should return correct theme when set.', () => {
       const theme = 'my theme';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const state = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ themeName: theme })
+      );
 
       expect(selectors.userTheme(state)).toEqual(theme);
     });
@@ -97,19 +273,25 @@ describe('user reducers', () => {
     });
 
     test('should return default editor theme when user theme set to unknown type.', () => {
-      const theme = 'unknown';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const themeName = 'unknown';
+      const { preferences } = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ themeName })
+      );
 
-      expect(selectors.editorTheme(state)).toEqual(
+      expect(selectors.editorTheme(preferences)).toEqual(
         selectors.DEFAULT_EDITOR_THEME
       );
     });
 
     test('should return correct editor theme when user theme set.', () => {
-      const theme = 'dark';
-      const state = reducer(undefined, actions.setTheme(theme));
+      const themeName = 'dark';
+      const preferenceRecievedState = reducer(
+        undefined,
+        actions.profile.updatePreferenceStore({ themeName })
+      );
 
-      expect(selectors.editorTheme(state)).not.toEqual(
+      expect(selectors.editorTheme(preferenceRecievedState)).not.toEqual(
         selectors.DEFAULT_EDITOR_THEME
       );
     });

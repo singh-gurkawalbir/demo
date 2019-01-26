@@ -80,6 +80,16 @@ export function editor(state, id) {
   return fromSession.editor(state.session, id);
 }
 
+export function editorHelperFunctions(state) {
+  return (
+    (state &&
+      state.session &&
+      state.session.editors &&
+      state.session.editors.helperFunctions) ||
+    []
+  );
+}
+
 export function processorRequestOptions(state, id) {
   if (!state) return {};
 
@@ -96,6 +106,10 @@ export function userProfile(state) {
 
 export function userPreferences(state) {
   return state && state.user && state.user.preferences;
+}
+
+export function userOrigPreferences(state) {
+  return (state && state.data && state.data.preferences) || {};
 }
 
 export function userProfilePreferencesProps(state) {
@@ -226,7 +240,13 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 export function themeName(state) {
-  return state && state.user && state.user.themeName;
+  return (
+    (state &&
+      state.user &&
+      state.user.preferences &&
+      state.user.preferences.themeName) ||
+    null
+  );
 }
 
 export function hasProfile(state) {

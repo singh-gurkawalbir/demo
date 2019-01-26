@@ -10,9 +10,11 @@ import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/ext/language_tools';
 import * as selectors from '../../reducers/user';
+import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
 const mapStateToProps = state => ({
   theme: selectors.editorTheme(state.user),
+  editors: state && state.session && state.session.editors,
 });
 
 @withStyles({
@@ -24,7 +26,7 @@ const mapStateToProps = state => ({
   // },
 })
 class CodeEditor extends Component {
-  handleChange = value => {
+  componentDidMount() {
     // anytime the container DOM element changes size (both height and width)
     // the resize method of the editor needs to be fired so it can internally
     // adjust it's internal variables that control the controlled scrollbars
@@ -33,19 +35,18 @@ class CodeEditor extends Component {
     // The better approach would be to onyl call resize whenever the parent
     // component changed its size...
     this.resize();
+  }
 
+  handleChange = value => {
     if (this.props.onChange) {
       this.props.onChange(value);
     }
+
+    this.resize();
   };
 
   resize() {
-    // console.log('resizing to fit...');
     this.aceEditor.editor.resize();
-  }
-
-  componentDidMount() {
-    this.resize();
   }
 
   render() {
@@ -60,11 +61,9 @@ class CodeEditor extends Component {
       wrap,
       showGutter,
       showInvisibles,
-      enableLiveAutocompletion,
+      enableAutocomplete,
       classes,
     } = this.props;
-
-    // console.log('rendering ace editor...', wrap);
 
     return (
       <AceEditor
@@ -77,15 +76,19 @@ class CodeEditor extends Component {
         height={height || '100%'}
         showPrintMargin={false}
         showGutter={showGutter}
-        // enableLiveAutocompletion={enableLiveAutocompletion}
+        enableLiveAutocompletion={enableAutocomplete}
+        enableBasicAutocompletion={enableAutocomplete}
         theme={theme}
+        onLoad={editor => {
+          if (enableAutocomplete) {
+            handlebarCompleterSetup(editor);
+          }
+        }}
         onChange={this.handleChange}
         ref={c => {
           this.aceEditor = c;
         }}
         setOptions={{
-          // enableBasicAutocompletion: false,
-          enableLiveAutocompletion,
           showInvisibles,
           wrap,
           // showLineNumbers: true,
