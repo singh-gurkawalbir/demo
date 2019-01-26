@@ -10,43 +10,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import { sharedAccounts } from '../../../reducers';
+import * as selectors from '../../../reducers';
 import DownArrow from '../../../icons/DownArrow';
 
-const mapStateToProps = state => {
-  const accounts = [];
-  const shared = sharedAccounts(state);
-
-  if (!shared || shared.length === 0) {
-    return { accounts: [] };
-  }
-
-  shared.forEach(a => {
-    if (a.sandbox) {
-      accounts.push({
-        id: a.id,
-        key: a.id,
-        label: `${a.company} - Production`,
-      });
-      accounts.push({
-        id: a.id,
-        key: `${a.id}-sb`,
-        label: `${a.company} - Sandbox`,
-        sandbox: true,
-      });
-    } else {
-      accounts.push({
-        id: a.id,
-        key: a.id,
-        label: a.company,
-      });
-    }
-  });
-  accounts[accounts.length - 1].selected = true;
-
-  return { accounts };
-};
-
+const mapStateToProps = state => ({
+  accounts: selectors.accountSummary(state),
+});
 const mapDispatchToProps = dispatch => ({
   onSetTheme: themeName => {
     dispatch(actions.setTheme(themeName));

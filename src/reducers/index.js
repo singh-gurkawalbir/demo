@@ -251,8 +251,8 @@ export function processors(state) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export function sharedAccounts(state) {
-  return fromAccounts.sharedAccounts(state.accounts);
+export function accountSummary(state) {
+  return fromAccounts.accountSummary(state.accounts);
 }
 // #endregion
 

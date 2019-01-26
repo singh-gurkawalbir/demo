@@ -15,8 +15,6 @@ export default (state = [], action) => {
 
 // #region PUBLIC SELECTORS
 export function sharedAccounts(state) {
-  // console.log('fetch', resourceType, id);
-
   if (!state) {
     return null;
   }
@@ -39,5 +37,51 @@ export function sharedAccounts(state) {
   });
 
   return shared;
+}
+
+// This is a representation of the accounts likely used for selecting
+// not only account, but also environment. An item is made for each
+// account/envirinment combo, so if an account has a sandbox, then it
+// will result in 2 items in this collection.
+// TODO: find out how the preferences differentiate between prod/sandbox.
+// are there 2 preferences? or is the valiue a compound key?
+// the shape of the item in this set may likely change.
+// We probably don't need id and key
+export function accountSummary(state) {
+  const shared = sharedAccounts(state);
+
+  if (!shared || shared.length === 0) {
+    return [];
+  }
+
+  const accounts = [];
+
+  shared.forEach(a => {
+    if (a.sandbox) {
+      accounts.push({
+        id: a.id,
+        key: a.id,
+        label: `${a.company} - Production`,
+      });
+      accounts.push({
+        id: a.id,
+        key: `${a.id}-sb`,
+        label: `${a.company} - Sandbox`,
+        sandbox: true,
+      });
+    } else {
+      accounts.push({
+        id: a.id,
+        key: a.id,
+        label: a.company,
+      });
+    }
+  });
+
+  // TODO: This is temporary until Surya's PR is merged so we can set
+  // the seleted flag based off the current account stored in the preferences.
+  accounts[accounts.length - 1].selected = true;
+
+  return accounts;
 }
 // #endregion
