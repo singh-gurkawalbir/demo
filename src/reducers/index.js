@@ -4,7 +4,6 @@ import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
 import resourceDefaults from './resourceDefaults';
-import accounts, * as fromAccounts from './accounts';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -14,7 +13,6 @@ const combinedReducers = combineReducers({
   session,
   data,
   user,
-  accounts,
   auth,
   comms,
 });
@@ -147,7 +145,6 @@ export function userProfileEmail(state) {
 }
 
 // #region AUTHENTICATION SELECTORS
-
 export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
@@ -171,10 +168,9 @@ export function authenticationErrored(state) {
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
-
 // #endregion AUTHENTICATION SELECTORS
-// #region PASSWORD & EMAIL update selectors for modals
 
+// #region PASSWORD & EMAIL update selectors for modals
 export function changePasswordSuccess(state) {
   return (
     state &&
@@ -266,7 +262,7 @@ export function processors(state) {
 
 // #region PUBLIC ACCOUNTS SELECTORS
 export function accountSummary(state) {
-  return fromAccounts.accountSummary(state.accounts);
+  return fromUser.accountSummary(state.user);
 }
 // #endregion
 

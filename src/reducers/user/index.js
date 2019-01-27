@@ -1,30 +1,38 @@
 import { combineReducers } from 'redux';
-import profile, * as fromProfile from './profile';
+import accounts, * as fromAccounts from './accounts';
 import preferences, * as fromPreferences from './preferences';
+import profile, * as fromProfile from './profile';
 
 export default combineReducers({
-  profile,
+  accounts,
   preferences,
+  profile,
 });
 
 // #region PUBLIC USER SELECTORS
-export function userPreferences(state) {
-  if (!state || !state.preferences) return {};
-
-  return fromPreferences.userPreferences(state.preferences);
+// #region ACCOUNT
+export function accountSummary(state) {
+  return fromAccounts.accountSummary(state && state.accounts);
 }
+// #endregion ACCOUNT
 
-export function avatarUrl(state) {
-  if (!state || !state.profile) return undefined;
-
-  return fromProfile.avatarUrl(state.profile);
+// #region PREFERENCES
+export function userPreferences(state) {
+  return fromPreferences.userPreferences(state && state.preferences);
 }
 
 export function appTheme(state) {
-  return fromPreferences.appTheme(state.preferences);
+  return fromPreferences.appTheme(state && state.preferences);
 }
 
 export function editorTheme(state) {
-  return fromPreferences.editorTheme(state.preferences);
+  return fromPreferences.editorTheme(state && state.preferences);
 }
+// #endregion PREFERENCES
+
+// #region PROFILE
+export function avatarUrl(state) {
+  return fromProfile.avatarUrl(state && state.profile);
+}
+// #endregion PROFILE
 // #endregion PUBLIC USER SELECTORS
