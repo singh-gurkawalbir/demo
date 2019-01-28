@@ -74,6 +74,7 @@ export default class WaffleBox extends Component {
           className={classes.wafflePopper}
           id="waffleBox"
           onClose={this.handleClose}
+          open={open}
           anchorEl={anchorEl}>
           {buttons.map(b => (
             <div key={b.title} className={classes.buttonContainer}>

@@ -64,6 +64,10 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 };
+const ashares = {
+  receivedCollection: ashares =>
+    resource.receivedCollection('ashares', ashares),
+};
 const profile = {
   request: () => resource.request('profile'),
   received: profile => resource.received('profile', profile),
@@ -111,5 +115,6 @@ export default {
   resource,
   profile,
   api,
+  ashares,
   auth,
 };

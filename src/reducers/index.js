@@ -145,7 +145,6 @@ export function userProfileEmail(state) {
 }
 
 // #region AUTHENTICATION SELECTORS
-
 export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
@@ -169,10 +168,9 @@ export function authenticationErrored(state) {
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
-
 // #endregion AUTHENTICATION SELECTORS
-// #region PASSWORD & EMAIL update selectors for modals
 
+// #region PASSWORD & EMAIL update selectors for modals
 export function changePasswordSuccess(state) {
   return (
     state &&
@@ -238,13 +236,7 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 export function themeName(state) {
-  return (
-    (state &&
-      state.user &&
-      state.user.preferences &&
-      state.user.preferences.themeName) ||
-    null
-  );
+  return fromUser.appTheme((state && state.user) || null);
 }
 
 export function hasProfile(state) {
@@ -266,7 +258,12 @@ export function resourceList(state, options) {
 export function processors(state) {
   return fromData.processors(state.data);
 }
+// #endregion
 
+// #region PUBLIC ACCOUNTS SELECTORS
+export function accountSummary(state) {
+  return fromUser.accountSummary(state.user);
+}
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS

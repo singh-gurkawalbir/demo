@@ -1,6 +1,6 @@
 import actionTypes from '../../actions/types';
 
-const resourceTypesToIgnore = ['profile'];
+const resourceTypesToIgnore = ['profile', 'ashares'];
 
 function replaceOrInsertResource(state, type, resource) {
   // handle case of no collection
