@@ -12,7 +12,21 @@ export default combineReducers({
 // #region PUBLIC USER SELECTORS
 // #region ACCOUNT
 export function accountSummary(state) {
-  return fromAccounts.accountSummary(state && state.accounts);
+  const summary = fromAccounts.accountSummary(state && state.accounts);
+  const prefs = fromPreferences.userPreferences(state && state.preferences);
+
+  if (!prefs) {
+    summary[0].selected = true;
+  } else {
+    const id = prefs.defaultAShareId || summary[0].id;
+    const environment = prefs.environment || summary[0].environment;
+
+    summary.find(
+      a => a.id === id && a.environment === environment
+    ).selected = true;
+  }
+
+  return summary;
 }
 // #endregion ACCOUNT
 

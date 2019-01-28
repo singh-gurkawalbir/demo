@@ -89,14 +89,20 @@ describe('account (ashares) reducers', () => {
           actions.ashares.receivedCollection(testAccounts)
         );
         const expectedResult = [
-          { id: 'abc', key: 'abc', label: 'Celigo Inc' },
-          { id: 'def', key: 'def', label: 'Celigo Playground - Production' },
+          {
+            id: 'abc',
+            environment: 'production',
+            label: 'Celigo Inc',
+          },
           {
             id: 'def',
-            key: 'def-sb',
+            environment: 'production',
+            label: 'Celigo Playground - Production',
+          },
+          {
+            id: 'def',
             label: 'Celigo Playground - Sandbox',
-            sandbox: true,
-            selected: true,
+            environment: 'sandbox',
           },
         ];
         const result = selectors.accountSummary(state);

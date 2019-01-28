@@ -17,8 +17,10 @@ const mapStateToProps = state => ({
   accounts: selectors.accountSummary(state),
 });
 const mapDispatchToProps = dispatch => ({
-  onSetTheme: themeName => {
-    dispatch(actions.setTheme(themeName));
+  onAccountChange: (id, environment) => {
+    dispatch(
+      actions.profile.updatePreferences({ defaultAShareId: id, environment })
+    );
   },
 });
 
@@ -90,7 +92,7 @@ class AccountList extends Component {
 
   render() {
     const { open, anchorEl } = this.state;
-    const { classes, accounts } = this.props;
+    const { classes, accounts, onAccountChange } = this.props;
 
     if (!accounts || accounts.length === 0) {
       return null;
@@ -121,16 +123,19 @@ class AccountList extends Component {
             {accounts.map(a => (
               <ListItem
                 button
+                onClick={() => {
+                  onAccountChange(a.id, a.environment);
+                }}
                 classes={{
                   root: classes.itemRoot,
                   container: classes.itemContainer,
                 }}
-                key={a.key}>
+                key={`${a.id}-${a.environment}`}>
                 <ListItemText
                   classes={{ root: a.selected && classes.selected }}
                   primary={a.label}
                 />
-                {!a.sandbox && (
+                {a.environment === 'production' && (
                   <ListItemSecondaryAction>
                     <Button className={classes.leave} variant="text">
                       Leave
