@@ -170,9 +170,6 @@ describe('all modal sagas', () => {
         };
         const saga = updatePreferences({ preferences });
 
-        expect(saga.next().value).toEqual(
-          put(actions.profile.updatePreferenceStore(preferences))
-        );
         expect(saga.next(preferences).value).toEqual(
           select(selectors.userPreferences)
         );
@@ -191,10 +188,6 @@ describe('all modal sagas', () => {
           timeFormat: 'something',
         };
         const saga = updatePreferences({ preferences });
-
-        expect(saga.next().value).toEqual(
-          put(actions.profile.updatePreferenceStore(preferences))
-        );
 
         expect(saga.next(preferences).value).toEqual(
           select(selectors.userPreferences)

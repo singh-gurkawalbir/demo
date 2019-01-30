@@ -5,7 +5,7 @@
 import { delay } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry } from './';
+import rootSaga, { apiCallWithRetry, unauthenticateAndDeleteProfile } from './';
 import { api, APIException } from './api';
 
 export const status500 = new APIException({
@@ -18,9 +18,13 @@ export const status422 = new APIException({
 });
 export const status403 = new APIException({
   status: 403,
-  message: 'User unauthoritzed action  ',
+  message: 'User Forbidden action',
 });
 
+export const status401 = new APIException({
+  status: 401,
+  message: 'User unauthorized action',
+});
 describe(`root saga`, () => {
   // NOTE, this test has little value... I added it to
   // increase code coverage. I'm not really sure what business rules
@@ -158,5 +162,43 @@ describe(`apiCallWithRetry saga`, () => {
     // there should be no more iterations...
     // the generator should throw an Error.
     expect(() => saga.next()).toThrowError();
+  });
+  // All apis have a root auth behavior that would listen
+  // to session or CSRF expiration
+  describe('auth behavior', () => {
+    test('should delete profile whenever an api call with session expiration error is encountered', () => {
+      const saga = apiCallWithRetry(path, opts);
+      const requestEffect = saga.next().value;
+      const showMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, showMessage))
+      );
+      const callApiEffect = call(api, path, opts);
+
+      // first iteration should be the api call
+      expect(saga.next().value).toEqual(callApiEffect);
+      expect(saga.throw(status403).value).toEqual(
+        put(actions.api.complete(path))
+      );
+      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+    });
+    test('should delete profile whenever an api call with CSRF expiration is encountered', () => {
+      const saga = apiCallWithRetry(path, opts);
+      const requestEffect = saga.next().value;
+      const showMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, showMessage))
+      );
+      const callApiEffect = call(api, path, opts);
+
+      expect(saga.next().value).toEqual(callApiEffect);
+      expect(saga.throw(status401).value).toEqual(
+        put(actions.api.complete(path))
+      );
+
+      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+    });
   });
 });

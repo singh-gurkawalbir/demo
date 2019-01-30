@@ -10,7 +10,7 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden } = action;
+  const { type, path, message, hidden, reqType } = action;
   let newState;
   const timestamp = Date.now();
 
@@ -21,6 +21,7 @@ export default (state = initialState, action) => {
       newState.status = COMM_STATES.LOADING;
       newState.message = message;
       newState.hidden = hidden;
+      newState.reqType = reqType;
       delete newState.retry;
 
       return { ...state, [path]: newState };
@@ -74,6 +75,13 @@ export default (state = initialState, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export function commReqType(state, resourceName) {
+  return (
+    (state && state[`/${resourceName}`] && state[`/${resourceName}`].reqType) ||
+    'GET'
+  );
+}
+
 export function isLoading(state, resourceName) {
   return !!(
     state &&

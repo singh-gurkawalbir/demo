@@ -1,6 +1,6 @@
 import actionTypes from '../../../actions/types';
 
-const GLOBAL_PREFERENCES = [
+export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
   'defaultAShareId',
   'environment',
@@ -22,7 +22,7 @@ export default (state = {}, action) => {
       if (resourceType === 'preferences') return action.collection;
 
       return newState;
-    case actionTypes.UPDATE_PREFERENCES_STORE: {
+    case actionTypes.UPDATE_PREFERENCES: {
       const { defaultAShareId, accounts } = newState;
 
       if (!defaultAShareId || defaultAShareId === 'own') {

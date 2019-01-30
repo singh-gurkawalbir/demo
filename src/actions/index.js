@@ -25,8 +25,8 @@ const auth = {
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
 };
 const api = {
-  request: (path, message, hidden) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden }),
+  request: (path, message, hidden, reqType) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, reqType }),
   retry: path => action(actionTypes.API_RETRY, { path }),
   complete: (path, message) =>
     action(actionTypes.API_COMPLETE, { path, message }),
@@ -68,19 +68,21 @@ const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
-const profile = {
-  request: () => resource.request('profile'),
-  received: profile => resource.received('profile', profile),
-  delete: () => action(actionTypes.DELETE_PROFILE),
-  update: profilePreferencesPayload =>
-    action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
-      profilePreferencesPayload,
-    }),
-  updatePreferenceStore: preferences =>
-    action(actionTypes.UPDATE_PREFERENCES_STORE, { preferences }),
-  requestPreferences: () => resource.request('preferences'),
-  updatePreferences: preferences =>
-    action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+const user = {
+  profile: {
+    request: () => resource.request('profile'),
+    received: profile => resource.received('profile', profile),
+    delete: () => action(actionTypes.DELETE_PROFILE),
+    update: profilePreferencesPayload =>
+      action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
+        profilePreferencesPayload,
+      }),
+  },
+  preferences: {
+    request: () => resource.request('preferences'),
+    update: preferences =>
+      action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+  },
 };
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -113,7 +115,7 @@ export default {
   clearFilter,
   editor,
   resource,
-  profile,
+  user,
   api,
   ashares,
   auth,

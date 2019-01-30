@@ -9,7 +9,7 @@ describe('user reducers', () => {
         const themeName = 'fancy';
         const state = reducer(
           undefined,
-          actions.profile.updatePreferenceStore({ themeName })
+          actions.user.preferences.update({ themeName })
         );
 
         expect(state.themeName).toEqual(themeName);
@@ -22,13 +22,13 @@ describe('user reducers', () => {
 
         state = reducer(
           state,
-          actions.profile.updatePreferenceStore({ themeName: themeName1 })
+          actions.user.preferences.update({ themeName: themeName1 })
         );
         expect(state.themeName).toEqual(themeName1);
 
         state = reducer(
           state,
-          actions.profile.updatePreferenceStore({ themeName: themeName2 })
+          actions.user.preferences.update({ themeName: themeName2 })
         );
         expect(state.themeName).toEqual(themeName2);
       });
@@ -47,7 +47,7 @@ describe('user reducers', () => {
             ownerAccountPreferences
           );
           const state = reducer(undefined, receivedPreferences);
-          const updatePreferencePatch = actions.profile.updatePreferenceStore({
+          const updatePreferencePatch = actions.user.preferences.update({
             timeFormat: 'something else',
             themeName: 'blue',
           });
@@ -78,7 +78,7 @@ describe('user reducers', () => {
             invitedUserAccountPreferences
           );
           const state = reducer(undefined, receivedPreferences);
-          const updatePreferencePatch = actions.profile.updatePreferenceStore({
+          const updatePreferencePatch = actions.user.preferences.update({
             defaultAShareId: '123',
             timeFormat: 'something else',
             themeName: 'blue',
@@ -204,7 +204,7 @@ describe('user reducers', () => {
       const theme = 'my theme';
       const state = reducer(
         undefined,
-        actions.profile.updatePreferenceStore({ themeName: theme })
+        actions.user.preferences.update({ themeName: theme })
       );
 
       expect(selectors.appTheme(state)).toEqual(theme);
@@ -222,7 +222,7 @@ describe('user reducers', () => {
       const themeName = 'unknown';
       const state = reducer(
         undefined,
-        actions.profile.updatePreferenceStore({ themeName })
+        actions.user.preferences.update({ themeName })
       );
 
       expect(selectors.editorTheme(state)).toEqual(
@@ -234,7 +234,7 @@ describe('user reducers', () => {
       const themeName = 'dark';
       const state = reducer(
         undefined,
-        actions.profile.updatePreferenceStore({ themeName })
+        actions.user.preferences.update({ themeName })
       );
 
       expect(selectors.editorTheme(state)).not.toEqual(

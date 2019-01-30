@@ -1,6 +1,6 @@
 import jsonComputePaths from '../../../../utils/jsonPaths';
 import {
-  shouldAutoComplete,
+  textAfterBracesMatchers,
   insertMatchingResultAndRemovePreceedingBraces,
   insertMatchingResult,
 } from './completerUtils';
@@ -8,8 +8,9 @@ import {
 export const FunctionCompleter = {
   functionsHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
-    if (prefix.length === 0 || !shouldAutoComplete(editor))
-      return callback(null, []);
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
 
     const insertMatch = (editor, completionMetaData) => {
       const { matchingResult } = completionMetaData;
@@ -17,17 +18,23 @@ export const FunctionCompleter = {
       insertMatchingResultAndRemovePreceedingBraces(editor, matchingResult);
     };
 
+    const textAfterBraces = validText[1];
+
     return callback(
       null,
       Object.keys(this.functionsHints || [])
-        .filter(helperFunction => helperFunction.startsWith(prefix))
+        .filter(
+          helperFunction =>
+            textAfterBraces.length === 0 ||
+            helperFunction.startsWith(textAfterBraces)
+        )
         .map(helperFunction => {
           const matchingResult = this.functionsHints[helperFunction];
 
           return {
             caption: helperFunction,
             value: helperFunction,
-            meta: 'helper functions',
+            meta: 'helper function',
             matchingResult,
             completer: {
               insertMatch,
@@ -39,24 +46,32 @@ export const FunctionCompleter = {
 };
 
 export const JsonCompleter = {
+  identifierRegexps: [/[.*]/],
   jsonHints: [],
   getCompletions(editor, session, pos, prefix, callback) {
-    if (prefix.length === 0 || !shouldAutoComplete(editor))
-      return callback(null, []);
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
+
     const insertMatch = (editor, completionMetaData) => {
       const { matchingResult } = completionMetaData;
 
       insertMatchingResult(editor, matchingResult);
     };
 
-    callback(
+    const textAfterBraces = validText[1];
+
+    return callback(
       null,
       this.jsonHints
-        .filter(hint => hint.id.startsWith(prefix))
+        .filter(
+          hint =>
+            textAfterBraces.length === 0 || hint.id.startsWith(textAfterBraces)
+        )
         .map(hint => ({
           caption: hint.id,
           value: hint.id,
-          meta: 'Json paths',
+          meta: 'json path',
           matchingResult: hint.id,
           completer: {
             insertMatch,

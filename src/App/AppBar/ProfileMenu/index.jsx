@@ -23,16 +23,16 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   requestProfile: () => {
-    dispatch(actions.profile.request());
+    dispatch(actions.user.profile.request());
   },
   requestPreferences: () => {
-    dispatch(actions.profile.requestPreferences());
+    dispatch(actions.user.preferences.request());
   },
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
   },
   updateThemeNameInPreferences: themeName => {
-    dispatch(actions.profile.updatePreferences({ themeName }));
+    dispatch(actions.user.preferences.update({ themeName }));
   },
 });
 

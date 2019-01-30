@@ -67,7 +67,7 @@ export function* auth({ email, password }) {
   } catch (error) {
     // console.log('auth error:', error);
     yield put(actions.auth.failure('Authentication Failure'));
-    yield put(actions.profile.delete());
+    yield put(actions.user.profile.delete());
 
     return undefined;
   }
@@ -77,14 +77,15 @@ export function* initializeApp() {
   try {
     const resp = yield call(
       getResource,
-      actions.profile.request(),
+      actions.user.profile.request(),
       'Initializing application'
     );
 
     if (resp) {
       const csrfTokenResponse = yield call(
         apiCallWithRetry,
-        getCSRFParams.path
+        getCSRFParams.path,
+        getCSRFParams.opts
       );
 
       yield call(setCSRFToken, csrfTokenResponse._csrf);

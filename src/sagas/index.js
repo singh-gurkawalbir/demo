@@ -2,15 +2,26 @@ import { delay } from 'redux-saga';
 import { all, call, put } from 'redux-saga/effects';
 import actions from '../actions';
 import { resourceSagas } from './resources';
-import { modalsSagas } from './modals';
+import { userSagas } from './users';
 import editorSagas from './editor';
 import { authenticationSagas } from './authentication';
 import { api } from './api';
 
 const tryCount = 3;
 
+export function* unauthenticateAndDeleteProfile() {
+  yield put(actions.auth.failure('Authentication Failure'));
+  yield put(actions.user.profile.delete());
+}
+
 export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
-  yield put(actions.api.request(path, message, hidden));
+  const defaultOptMethod = 'GET';
+
+  if (opts && opts.method)
+    yield put(actions.api.request(path, message, hidden, opts.method));
+  else {
+    yield put(actions.api.request(path, message, hidden, defaultOptMethod));
+  }
 
   for (let i = 0; i < tryCount; i += 1) {
     try {
@@ -24,9 +35,10 @@ export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
         // give up and let the parent saga try.
         yield put(actions.api.complete(path));
 
-        if (error.status === 401) {
-          yield put(actions.auth.failure('Authentication Failure'));
-          yield put(actions.profile.delete());
+        // All api calls should have this behavior
+        // session & CSRF expiration failure should dispatch these actions
+        if (error.status === 401 || error.status === 403) {
+          yield call(unauthenticateAndDeleteProfile);
         }
 
         throw error;
@@ -51,7 +63,7 @@ export default function* rootSaga() {
   yield all([
     ...resourceSagas,
     ...editorSagas,
-    ...modalsSagas,
+    ...userSagas,
     ...authenticationSagas,
   ]);
 }

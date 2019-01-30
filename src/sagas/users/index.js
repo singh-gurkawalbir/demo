@@ -9,6 +9,7 @@ import {
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+// import { GLOBAL_PREFERENCES } from '../../reducers/user/preferences';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -37,12 +38,11 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences({ preferences }) {
-  if (!preferences) return;
+export function* updatePreferences({ ignoreAPICall = false }) {
+  if (ignoreAPICall) return;
+  const updatedPayload = yield select(selectors.userPreferences);
 
   try {
-    yield put(actions.profile.updatePreferenceStore(preferences));
-    const updatedPayload = yield select(selectors.userPreferences);
     const payload = {
       ...updatePreferencesParams.opts,
       body: updatedPayload,
@@ -139,7 +139,7 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
-export const modalsSagas = [
+export const userSagas = [
   takeEvery(
     actionTypes.UPDATE_PROFILE_PREFERENCES,
     updateUserProfileAndPreferences

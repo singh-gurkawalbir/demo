@@ -20,7 +20,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   clearComms: () => dispatch(actions.clearComms()),
-  persistProfilesData: message => dispatch(actions.profile.update(message)),
+  persistProfilesData: message =>
+    dispatch(actions.user.profile.update(message)),
 });
 
 @withStyles(theme => ({

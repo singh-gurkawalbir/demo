@@ -103,7 +103,7 @@ export function userProfile(state) {
 }
 
 export function userPreferences(state) {
-  return state && state.user && state.user.preferences;
+  return fromUser.userPreferences(state.user);
 }
 
 export function userOrigPreferences(state) {
@@ -287,10 +287,16 @@ export function isDataReady(state, resource) {
 }
 
 export function resourceStatus(state, resourceType) {
+  const reqType = fromComms.commReqType(state.comms, resourceType);
   const hasData = fromData.hasData(state.data, resourceType);
   const isLoading = fromComms.isLoading(state.comms, resourceType);
   const retryCount = fromComms.retryCount(state.comms, resourceType);
-  const isReady = hasData && !isLoading;
+
+  console.log(`check ${resourceType}`);
+
+  const isReady = hasData && (reqType !== 'GET' || !isLoading);
+
+  console.log(`check ${isReady}`);
 
   return {
     resourceType,

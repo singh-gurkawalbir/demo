@@ -8,7 +8,7 @@ export default function shouldAutocompleteOnBackSpace(editor) {
       return;
     }
 
-    if (helpers.shouldAutoComplete(editor)) {
+    if (helpers.textAfterBracesMatchers(editor)) {
       editor.execCommand('startAutocomplete');
     }
   });

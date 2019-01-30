@@ -66,6 +66,15 @@ describe('Handlebars autocomplete', () => {
   // describe('editor util methods ', () => {
 
   // });
+
+  test('should attempt to autocomplete with all results when the user types in just the brace expressions', () => {
+    editor.execCommand('insertstring', '{{');
+    const prevOp = editor.prevOp.command;
+
+    expect(editor.completer.completions.all.length).toEqual(5);
+
+    expect(prevOp.name).toEqual('startAutocomplete');
+  });
   test('should attempt to autocomplete when user types in a valid brace expression with the matching completions', () => {
     editor.execCommand('insertstring', '{{ad');
     const prevOp = editor.prevOp.command;

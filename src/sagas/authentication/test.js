@@ -78,7 +78,7 @@ describe('auth saga flow', () => {
     );
     const effect = saga.next().value;
 
-    expect(effect).toEqual(put(actions.profile.delete()));
+    expect(effect).toEqual(put(actions.user.profile.delete()));
   });
 });
 
@@ -88,12 +88,18 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request(),
+        'Initializing application'
+      )
     );
     const mockResp = 'some response';
     const getCSRFEffect = saga.next(mockResp).value;
 
-    expect(getCSRFEffect).toEqual(call(apiCallWithRetry, getCSRFParams.path));
+    expect(getCSRFEffect).toEqual(
+      call(apiCallWithRetry, getCSRFParams.path, getCSRFParams.opts)
+    );
 
     const setCSRFEffect = saga.next({ _csrf: 'someCSRF' }).value;
 
@@ -109,7 +115,11 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request(),
+        'Initializing application'
+      )
     );
     const authLogoutEffect = saga.next().value;
 
@@ -121,7 +131,11 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request(),
+        'Initializing application'
+      )
     );
     expect(saga.throw(new Error('Some error')).value).toEqual(
       put(actions.auth.logout())
