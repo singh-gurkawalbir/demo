@@ -159,11 +159,6 @@ describe('all modal sagas', () => {
   });
   describe('update user and profile preferences sagas', () => {
     describe('update preferences saga', () => {
-      test('shoulde exit the saga when no preferences updates are required', () => {
-        const saga = updatePreferences({});
-
-        expect(saga.next().done).toEqual(true);
-      });
       test("should update user's preferences successfuly", () => {
         const preferences = {
           timeFormat: 'something',
@@ -183,14 +178,25 @@ describe('all modal sagas', () => {
         );
       });
 
-      test('should generate the appropriate message failure in a api failure and nevertherless should update the redux store', () => {
+      test('should generate the appropriate message failure in a api failure ', () => {
         const preferences = {
           timeFormat: 'something',
         };
-        const saga = updatePreferences({ preferences });
+        const saga = updatePreferences();
+
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+        const payload = {
+          ...updatePreferencesParams.opts,
+          body: preferences,
+        };
 
         expect(saga.next(preferences).value).toEqual(
-          select(selectors.userPreferences)
+          call(
+            apiCallWithRetry,
+            updatePreferencesParams.path,
+            payload,
+            "Updating user's info"
+          )
         );
 
         expect(saga.throw(new Error()).value).toEqual(
@@ -208,9 +214,11 @@ describe('all modal sagas', () => {
         const someProfile = {
           name: 'something',
         };
-        const saga = updateProfile(someProfile);
+        const saga = updateProfile();
 
-        expect(saga.next().value).toEqual(
+        expect(saga.next().value).toEqual(select(selectors.userProfile));
+
+        expect(saga.next(someProfile).value).toEqual(
           call(
             apiCallWithRetry,
             updateProfileParams.path,
@@ -218,19 +226,17 @@ describe('all modal sagas', () => {
             "Updating user's info"
           )
         );
-
-        expect(saga.next().value).toEqual(
-          put(actions.resource.received('profile', someProfile))
-        );
       });
 
       test('should generate the appropriate message failure in a api failure and not update the redux store', () => {
         const someProfile = {
           name: 'something',
         };
-        const saga = updateProfile(someProfile);
+        const saga = updateProfile();
 
-        expect(saga.next().value).toEqual(
+        expect(saga.next().value).toEqual(select(selectors.userProfile));
+
+        expect(saga.next(someProfile).value).toEqual(
           call(
             apiCallWithRetry,
             updateProfileParams.path,

@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
@@ -7,7 +7,6 @@ import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import LoadResources from '../../components/LoadResources';
 
 const Users = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Users')
@@ -59,7 +58,7 @@ export default class MyAccount extends Component {
     const { classes } = this.props;
 
     return (
-      <LoadResources required resources={['preferences']}>
+      <Fragment>
         <div className={classes.appFrame}>
           <div className={classes.about}>
             <Typography variant="h5">My Account</Typography>
@@ -113,7 +112,7 @@ export default class MyAccount extends Component {
             </div>
           </div>
         </div>
-      </LoadResources>
+      </Fragment>
     );
   }
 }

@@ -51,7 +51,7 @@ describe(`apiCallWithRetry saga`, () => {
       const showMessage = false;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, showMessage))
+        put(actions.api.request(path, path, showMessage, opts.method))
       );
     });
 
@@ -62,7 +62,7 @@ describe(`apiCallWithRetry saga`, () => {
       const requestEffect = saga.next().value;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, someMessage, showMessage))
+        put(actions.api.request(path, someMessage, showMessage, opts.method))
       );
     });
   });
@@ -74,7 +74,7 @@ describe(`apiCallWithRetry saga`, () => {
     const showMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, showMessage, opts.method))
     );
 
     const callEffect = saga.next('some Response').value;
@@ -102,7 +102,7 @@ describe(`apiCallWithRetry saga`, () => {
     const showMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, showMessage, opts.method))
     );
 
     const callEffect = saga.next().value;
@@ -139,7 +139,7 @@ describe(`apiCallWithRetry saga`, () => {
     const showMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, showMessage, opts.method))
     );
     const callApiEffect = call(api, path, opts);
 
@@ -172,7 +172,7 @@ describe(`apiCallWithRetry saga`, () => {
       const showMessage = false;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, showMessage))
+        put(actions.api.request(path, path, showMessage, opts.method))
       );
       const callApiEffect = call(api, path, opts);
 
@@ -189,7 +189,7 @@ describe(`apiCallWithRetry saga`, () => {
       const showMessage = false;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, showMessage))
+        put(actions.api.request(path, path, showMessage, opts.method))
       );
       const callApiEffect = call(api, path, opts);
 

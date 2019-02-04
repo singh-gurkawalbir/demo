@@ -61,7 +61,7 @@ describe('account (ashares) reducers', () => {
       test('should return correct sandbox state if account supports sandbox.', () => {
         const state = reducer(
           null,
-          actions.ashares.receivedCollection(testAccounts)
+          actions.resource.received('ashares', testAccounts)
         );
         const expectedResult = [
           {
@@ -86,7 +86,7 @@ describe('account (ashares) reducers', () => {
       test('should return correct set of account options when account has both prod/sandbox environments enabled.', () => {
         const state = reducer(
           null,
-          actions.ashares.receivedCollection(testAccounts)
+          actions.resource.received('ashares', testAccounts)
         );
         const expectedResult = [
           {

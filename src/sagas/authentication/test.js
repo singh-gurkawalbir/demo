@@ -2,15 +2,19 @@
 import { call, put } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../';
 import actions from '../../actions';
-import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
+import { authParams, logoutParams } from '../api/apiPaths';
 import { getResource } from '../resources';
 import { status422 } from '../test';
-import { auth, initializeApp, invalidateSession } from './';
+import {
+  auth,
+  initializeApp,
+  getCSRFTokenBackend,
+  invalidateSession,
+} from './';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 
 describe('auth saga flow', () => {
   const authMessage = 'Authenticating User';
-  const requestingCSRFTokenMessage = 'Requesting CSRF token';
 
   test('action to set authentication to true when auth is successful', () => {
     const email = 'someUserEmail';
@@ -22,23 +26,15 @@ describe('auth saga flow', () => {
       ...authParams.opts,
       body: { email, password, _csrf },
     };
-    const getCSRFEffect = saga.next().value;
+    const getCSRFBackend = saga.next().value;
 
-    expect(getCSRFEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        getCSRFParams.path,
-        null,
-        requestingCSRFTokenMessage
-      )
-    );
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
-    const callEffect = saga.next({ _csrf }).value;
+    const callEffect = saga.next(_csrf).value;
 
     expect(callEffect).toEqual(
       call(apiCallWithRetry, authParams.path, payload, authMessage)
     );
-
     const setCSRFEffect = saga.next({ _csrf: _csrfAfterSignIn }).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
@@ -53,18 +49,11 @@ describe('auth saga flow', () => {
     const password = 'someUserPassword';
     const _csrf = 'someCSRF';
     const saga = auth({ email, password });
-    const getCSRFEffect = saga.next().value;
+    const getCSRFBackend = saga.next().value;
 
-    expect(getCSRFEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        getCSRFParams.path,
-        null,
-        requestingCSRFTokenMessage
-      )
-    );
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
-    const callEffect = saga.next({ _csrf }).value;
+    const callEffect = saga.next(_csrf).value;
     const payload = {
       ...authParams.opts,
       body: { email, password, _csrf },
@@ -90,16 +79,13 @@ describe('initialize app saga', () => {
     expect(getProfileResourceEffect).toEqual(
       call(
         getResource,
-        actions.user.profile.request(),
-        'Initializing application'
+        actions.user.profile.request('Initializing application')
       )
     );
     const mockResp = 'some response';
-    const getCSRFEffect = saga.next(mockResp).value;
+    const getCSRFBackend = saga.next(mockResp).value;
 
-    expect(getCSRFEffect).toEqual(
-      call(apiCallWithRetry, getCSRFParams.path, getCSRFParams.opts)
-    );
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
     const setCSRFEffect = saga.next({ _csrf: 'someCSRF' }).value;
 
@@ -117,8 +103,7 @@ describe('initialize app saga', () => {
     expect(getProfileResourceEffect).toEqual(
       call(
         getResource,
-        actions.user.profile.request(),
-        'Initializing application'
+        actions.user.profile.request('Initializing application')
       )
     );
     const authLogoutEffect = saga.next().value;
@@ -133,8 +118,7 @@ describe('initialize app saga', () => {
     expect(getProfileResourceEffect).toEqual(
       call(
         getResource,
-        actions.user.profile.request(),
-        'Initializing application'
+        actions.user.profile.request('Initializing application')
       )
     );
     expect(saga.throw(new Error('Some error')).value).toEqual(

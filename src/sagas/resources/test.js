@@ -117,7 +117,9 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, path, undefined, undefined)
+      );
 
       const effect = saga.next(mockResource).value;
 
@@ -138,7 +140,9 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, path, undefined, undefined)
+      );
 
       const final = saga.throw(status500);
 

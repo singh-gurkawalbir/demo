@@ -14,12 +14,12 @@ export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
 export default (state = {}, action) => {
-  const { type, resourceType, preferences } = action;
+  const { type, resourceType, resource, preferences } = action;
   let newState = Object.assign({}, state);
 
   switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
-      if (resourceType === 'preferences') return action.collection;
+    case actionTypes.RESOURCE.RECEIVED:
+      if (resourceType === 'preferences') return resource;
 
       return newState;
     case actionTypes.UPDATE_PREFERENCES: {

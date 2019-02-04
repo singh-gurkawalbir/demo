@@ -34,8 +34,8 @@ const api = {
     action(actionTypes.API_FAILURE, { path, message }),
 };
 const resource = {
-  request: (resourceType, id) =>
-    action(actionTypes.RESOURCE.REQUEST, { resourceType, id }),
+  request: (resourceType, id, message) =>
+    action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
 
   requestCollection: resourceType =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType }),
@@ -70,16 +70,17 @@ const ashares = {
 };
 const user = {
   profile: {
-    request: () => resource.request('profile'),
-    received: profile => resource.received('profile', profile),
+    request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
-    update: profilePreferencesPayload =>
-      action(actionTypes.UPDATE_PROFILE_PREFERENCES, {
-        profilePreferencesPayload,
-      }),
+    update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+  },
+  accounts: {
+    request: message => resource.request('ashares', undefined, message),
+    requestAshares: message =>
+      resource.request('shared/ashares', undefined, message),
   },
   preferences: {
-    request: () => resource.request('preferences'),
+    request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },

@@ -1,6 +1,11 @@
 import actionTypes from '../../actions/types';
 
-const resourceTypesToIgnore = ['profile', 'ashares'];
+export const intializationResources = ['profile', 'preferences', 'accounts'];
+const sharedAsharesResource = 'shared/ashares';
+const resourceTypesToIgnore = [
+  ...intializationResources,
+  sharedAsharesResource,
+];
 
 function replaceOrInsertResource(state, type, resource) {
   // handle case of no collection

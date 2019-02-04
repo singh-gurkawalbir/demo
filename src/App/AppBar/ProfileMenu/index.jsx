@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -10,24 +10,17 @@ import Select from '@material-ui/core/Select';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
-import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
 const mapStateToProps = state => ({
   hasProfile: selectors.hasProfile(state),
-  isProfileDataReady: selectors.isProfileDataReady(state),
+  hasPreferences: selectors.hasPreferences(state),
   profile: selectors.userProfile(state),
   preferences: selectors.userPreferences(state),
   avatarUrl: selectors.avatarUrl(state),
 });
 const mapDispatchToProps = dispatch => ({
-  requestProfile: () => {
-    dispatch(actions.user.profile.request());
-  },
-  requestPreferences: () => {
-    dispatch(actions.user.preferences.request());
-  },
   handleUserLogout: () => {
     dispatch(actions.auth.logout());
   },
@@ -62,14 +55,6 @@ class AppBar extends Component {
     anchorEl: null,
   };
 
-  async componentDidMount() {
-    const { hasProfile, requestProfile } = this.props;
-
-    if (!hasProfile) {
-      requestProfile();
-    }
-  }
-
   handleMenu = event => {
     if (this.state.anchorEl) {
       this.setState({ anchorEl: null });
@@ -94,29 +79,25 @@ class AppBar extends Component {
       classes,
       profile,
       avatarUrl,
-      isProfileDataReady,
+      hasProfile,
+      hasPreferences,
       handleUserLogout,
       preferences,
     } = this.props;
     const { themeName } = preferences;
+    const { name, email } = profile || {};
 
-    if (!isProfileDataReady) {
-      return null;
-    }
+    if (!hasProfile || !hasPreferences) return null;
 
     return (
-      <LoadResources resources={['preferences']}>
+      <Fragment>
         <IconButton
           className={classes.avatarButton}
           aria-owns={open ? 'profileOptions' : null}
           aria-haspopup="true"
           onClick={this.handleMenu}
           color="inherit">
-          <Avatar
-            alt={profile.name}
-            src={avatarUrl}
-            className={classes.avatar}
-          />
+          <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
         </IconButton>
         <ArrowPopper
           id="profileOptions"
@@ -133,14 +114,14 @@ class AppBar extends Component {
             alignItems="flex-start">
             <Grid item>
               <Avatar
-                alt={profile.name}
+                alt={name}
                 src={avatarUrl}
                 className={classes.bigAvatar}
               />
             </Grid>
             <Grid item>
-              <Typography variant="h5">{profile.name}</Typography>
-              <Typography variant="h6">{profile.email}</Typography>
+              <Typography variant="h5">{name}</Typography>
+              <Typography variant="h6">{email}</Typography>
             </Grid>
           </Grid>
           <div>
@@ -174,7 +155,7 @@ class AppBar extends Component {
             Sign Out
           </Button>
         </ArrowPopper>
-      </LoadResources>
+      </Fragment>
     );
   }
 }

@@ -46,7 +46,7 @@ export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, path, message);
+    const resource = yield call(apiCallWithRetry, path, undefined, message);
 
     yield put(actions.resource.received(resourceType, resource));
 

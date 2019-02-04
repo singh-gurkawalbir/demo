@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, all, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
@@ -9,46 +9,40 @@ import {
   removeCSRFToken,
   getCSRFToken,
 } from '../../utils/session';
+import * as selectors from '../../reducers';
+import { intializationResources } from '../../reducers/data';
 
 export function* initializeAccount() {
-  let ashares = yield call(
-    apiCallWithRetry,
-    '/ashares/',
-    {},
-    'Retrieving Account Ownership'
+  yield all(
+    intializationResources.map(resource =>
+      put(actions.user[resource].request(`Retrieving user's ${resource}`))
+    )
   );
 
-  // if 'ashares' has a value then this is an account owner since only
-  // account owners would have any account details returned...
-  // conversely, if this returns 'no content', then this means that the
-  // user belongs to at least one account and we need to make another
-  // call to get the ashares for which this user belongs to...
-
-  // console.log('Account Ownership Info:', ashares);
+  const ashares = select(selectors.hasAccounts);
 
   if (!ashares) {
-    ashares = yield call(
-      apiCallWithRetry,
-      '/shared/ashares',
-      {},
-      'Retrieving Account Membership'
+    yield put(
+      actions.user.accounts.requestAshares('Retrieving Account Membership')
     );
-    // console.log('Account Membership Info:', ashares);
   }
+}
 
-  yield put(actions.ashares.receivedCollection(ashares));
+export function* getCSRFTokenBackend() {
+  const { _csrf } = yield call(
+    apiCallWithRetry,
+    getCSRFParams.path,
+    null,
+    'Requesting CSRF token'
+  );
+
+  return _csrf;
 }
 
 export function* auth({ email, password }) {
   try {
-    const csrfTokenResponse = yield call(
-      apiCallWithRetry,
-      getCSRFParams.path,
-      null,
-      'Requesting CSRF token'
-    );
-    const { _csrf } = csrfTokenResponse;
     // replace credentials in the request body
+    const _csrf = yield call(getCSRFTokenBackend);
     const credentialsBody = { email, password, _csrf };
     const payload = { ...authParams.opts, body: credentialsBody };
     const apiAuthentications = yield call(
@@ -62,14 +56,9 @@ export function* auth({ email, password }) {
     yield put(actions.auth.complete());
 
     yield call(initializeAccount);
-
-    return apiAuthentications.succes;
   } catch (error) {
-    // console.log('auth error:', error);
     yield put(actions.auth.failure('Authentication Failure'));
     yield put(actions.user.profile.delete());
-
-    return undefined;
   }
 }
 
@@ -77,20 +66,16 @@ export function* initializeApp() {
   try {
     const resp = yield call(
       getResource,
-      actions.user.profile.request(),
-      'Initializing application'
+      actions.user.profile.request('Initializing application')
     );
 
     if (resp) {
-      const csrfTokenResponse = yield call(
-        apiCallWithRetry,
-        getCSRFParams.path,
-        getCSRFParams.opts
-      );
+      const { _csrf } = yield call(getCSRFTokenBackend);
 
-      yield call(setCSRFToken, csrfTokenResponse._csrf);
+      yield call(setCSRFToken, _csrf);
 
       yield put(actions.auth.complete());
+      yield call(initializeAccount);
     } else {
       yield put(actions.auth.logout());
     }

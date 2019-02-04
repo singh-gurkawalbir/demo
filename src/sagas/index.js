@@ -15,13 +15,9 @@ export function* unauthenticateAndDeleteProfile() {
 }
 
 export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
-  const defaultOptMethod = 'GET';
+  const method = (opts && opts.method) || 'GET';
 
-  if (opts && opts.method)
-    yield put(actions.api.request(path, message, hidden, opts.method));
-  else {
-    yield put(actions.api.request(path, message, hidden, defaultOptMethod));
-  }
+  yield put(actions.api.request(path, message, hidden, method));
 
   for (let i = 0; i < tryCount; i += 1) {
     try {
@@ -36,7 +32,7 @@ export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
         yield put(actions.api.complete(path));
 
         // All api calls should have this behavior
-        // session & CSRF expiration failure should dispatch these actions
+        // & CSRF expiration failure should dispatch these actions
         if (error.status === 401 || error.status === 403) {
           yield call(unauthenticateAndDeleteProfile);
         }

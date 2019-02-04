@@ -11,7 +11,7 @@ describe('user reducers', () => {
     test('when profile resource request is received should get resource message', () => {
       const state = reducer(
         undefined,
-        actions.user.profile.received(someTestProfile1)
+        actions.resource.received('profile', someTestProfile1)
       );
 
       expect(state).toEqual(someTestProfile1);
@@ -20,10 +20,16 @@ describe('user reducers', () => {
     test('should replace existing profile with a new one.', () => {
       let state;
 
-      state = reducer(state, actions.user.profile.received(someTestProfile1));
+      state = reducer(
+        state,
+        actions.resource.received('profile', someTestProfile1)
+      );
       expect(state).toEqual(someTestProfile1);
 
-      state = reducer(state, actions.user.profile.received(someTestProfile2));
+      state = reducer(
+        state,
+        actions.resource.received('profile', someTestProfile2)
+      );
       expect(state).toEqual(someTestProfile2);
     });
 
@@ -53,7 +59,7 @@ describe('user reducers', () => {
       const mockProfile = { emailHash: '123' };
       const state = reducer(
         undefined,
-        actions.user.profile.received(mockProfile)
+        actions.resource.received('profile', mockProfile)
       );
 
       expect(selectors.avatarUrl(state)).toEqual(

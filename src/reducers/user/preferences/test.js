@@ -42,7 +42,7 @@ describe('user reducers', () => {
             timeFormat: 'something',
             themeName: 'fancy',
           };
-          const receivedPreferences = actions.resource.receivedCollection(
+          const receivedPreferences = actions.resource.received(
             'preferences',
             ownerAccountPreferences
           );
@@ -73,7 +73,7 @@ describe('user reducers', () => {
               },
             },
           };
-          const receivedPreferences = actions.resource.receivedCollection(
+          const receivedPreferences = actions.resource.received(
             'preferences',
             invitedUserAccountPreferences
           );
@@ -100,7 +100,7 @@ describe('user reducers', () => {
         const regularUserAccountPreferences = {
           themeName: 'fancy',
         };
-        const receivedPreferences = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.received(
           'preferences',
           regularUserAccountPreferences
         );
@@ -113,7 +113,7 @@ describe('user reducers', () => {
         const regularUserAccountPreferences = {
           themeName: 'fancy',
         };
-        const receivedPreferences = actions.resource.receivedCollection(
+        const receivedPreferences = actions.resource.received(
           'someOtherResouceType',
           regularUserAccountPreferences
         );
@@ -140,7 +140,7 @@ describe('user reducers', () => {
         themeName: 'fancy',
         timeFormat: 'something',
       };
-      const receivedPreferencesAction = actions.resource.receivedCollection(
+      const receivedPreferencesAction = actions.resource.received(
         'preferences',
         regularUserAccountPreferences
       );
@@ -158,7 +158,7 @@ describe('user reducers', () => {
         timeFormat: 'something',
         themeName: 'fancy',
       };
-      const receivedPreferences = actions.resource.receivedCollection(
+      const receivedPreferences = actions.resource.received(
         'preferences',
         ownerAccountPreferences
       );
@@ -181,7 +181,7 @@ describe('user reducers', () => {
           },
         },
       };
-      const receivedPreferences = actions.resource.receivedCollection(
+      const receivedPreferences = actions.resource.received(
         'preferences',
         invitedUserAccountPreferences
       );

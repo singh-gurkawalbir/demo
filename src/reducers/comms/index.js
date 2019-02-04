@@ -76,10 +76,7 @@ export default (state = initialState, action) => {
 
 // #region PUBLIC SELECTORS
 export function commReqType(state, resourceName) {
-  return (
-    (state && state[`/${resourceName}`] && state[`/${resourceName}`].reqType) ||
-    'GET'
-  );
+  return (state && state[resourceName] && state[resourceName].reqType) || 'GET';
 }
 
 export function isLoading(state, resourceName) {

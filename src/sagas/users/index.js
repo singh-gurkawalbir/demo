@@ -38,8 +38,7 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences({ ignoreAPICall = false }) {
-  if (ignoreAPICall) return;
+export function* updatePreferences() {
   const updatedPayload = yield select(selectors.userPreferences);
 
   try {
@@ -64,11 +63,13 @@ export function* updatePreferences({ ignoreAPICall = false }) {
   }
 }
 
-export function* updateProfile(profile) {
+export function* updateProfile() {
+  const updatedPayload = yield select(selectors.userProfile);
+
   try {
     const payload = {
       ...updateProfileParams.opts,
-      body: profile,
+      body: updatedPayload,
     };
 
     yield call(
@@ -77,7 +78,6 @@ export function* updateProfile(profile) {
       payload,
       "Updating user's info"
     );
-    yield put(actions.resource.received('profile', profile));
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -86,21 +86,6 @@ export function* updateProfile(profile) {
       )
     );
   }
-}
-
-export function* updateUserProfileAndPreferences({
-  profilePreferencesPayload,
-}) {
-  const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
-
-  yield updatePreferences({ preferences: { _id, timeFormat, dateFormat } });
-  const copy = { ...profilePreferencesPayload };
-
-  delete copy.dateFormat;
-  delete copy.timeFormat;
-  const profile = copy;
-
-  yield updateProfile(profile);
 }
 
 export function* changeEmail({ updatedEmail }) {
@@ -140,10 +125,7 @@ export function* changeEmail({ updatedEmail }) {
 }
 
 export const userSagas = [
-  takeEvery(
-    actionTypes.UPDATE_PROFILE_PREFERENCES,
-    updateUserProfileAndPreferences
-  ),
+  takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
