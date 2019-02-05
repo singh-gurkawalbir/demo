@@ -1,13 +1,12 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = null, action) => {
-  const { type, resourceType, profile, resource } = action;
+  const { type, resourceType, resource, profile } = action;
   const newState = Object.assign({}, state);
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED:
-      if (resourceType === 'profile' || resourceType === 'shared/ashares')
-        return resource;
+      if (resourceType === 'profile') return resource;
 
       return newState;
 

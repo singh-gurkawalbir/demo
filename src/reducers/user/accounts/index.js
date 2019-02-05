@@ -1,10 +1,13 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = [], action) => {
-  const { type, resourceType, resource } = action;
+  const { type, resourceType, collection } = action;
 
-  if (type === actionTypes.RESOURCE.RECEIVED && resourceType === 'ashares') {
-    return [...resource];
+  if (
+    type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
+    (resourceType === 'ashares' || resourceType === 'shared/ashares')
+  ) {
+    return [...collection];
   }
 
   return state;

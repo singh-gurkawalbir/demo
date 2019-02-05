@@ -15,13 +15,12 @@ export function* changePassword({ updatedPassword }) {
   try {
     const payload = { ...changePasswordParams.opts, body: updatedPassword };
 
-    yield call(
-      apiCallWithRetry,
-      changePasswordParams.path,
-      payload,
-      "Changing user's password",
-      true
-    );
+    yield call(apiCallWithRetry, {
+      path: changePasswordParams.path,
+      opts: payload,
+      message: "Changing user's password",
+      hidden: true,
+    });
     yield put(
       actions.api.complete(
         changePasswordParams.path,
@@ -47,12 +46,11 @@ export function* updatePreferences() {
       body: updatedPayload,
     };
 
-    yield call(
-      apiCallWithRetry,
-      updatePreferencesParams.path,
-      payload,
-      "Updating user's info"
-    );
+    yield call(apiCallWithRetry, {
+      path: updatePreferencesParams.path,
+      opts: payload,
+      message: "Updating user's info",
+    });
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -72,12 +70,11 @@ export function* updateProfile() {
       body: updatedPayload,
     };
 
-    yield call(
-      apiCallWithRetry,
-      updateProfileParams.path,
-      payload,
-      "Updating user's info"
-    );
+    yield call(apiCallWithRetry, {
+      path: updateProfileParams.path,
+      opts: payload,
+      message: "Updating user's info",
+    });
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -92,13 +89,12 @@ export function* changeEmail({ updatedEmail }) {
   try {
     const payload = { ...changeEmailParams.opts, body: updatedEmail };
 
-    yield call(
-      apiCallWithRetry,
-      changeEmailParams.path,
-      payload,
-      "Changing user's Email",
-      true
-    );
+    yield call(apiCallWithRetry, {
+      path: changeEmailParams.path,
+      opts: payload,
+      message: "Changing user's Email",
+      hidden: true,
+    });
     yield put(
       actions.api.complete(
         changeEmailParams.path,

@@ -14,7 +14,8 @@ export function* unauthenticateAndDeleteProfile() {
   yield put(actions.user.profile.delete());
 }
 
-export function* apiCallWithRetry(path, opts, message = path, hidden = false) {
+export function* apiCallWithRetry(args) {
+  const { path, opts, message = path, hidden = false } = args;
   const method = (opts && opts.method) || 'GET';
 
   yield put(actions.api.request(path, message, hidden, method));

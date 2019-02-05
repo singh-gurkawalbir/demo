@@ -27,7 +27,7 @@ export function* evaluateProcessor({ id }) {
   };
 
   try {
-    const results = yield call(apiCallWithRetry, path, opts);
+    const results = yield call(apiCallWithRetry, { path, opts });
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {

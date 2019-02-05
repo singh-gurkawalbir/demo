@@ -34,7 +34,7 @@ export const FunctionCompleter = {
           return {
             caption: helperFunction,
             value: helperFunction,
-            meta: 'helper function',
+            meta: 'function',
             matchingResult,
             completer: {
               insertMatch,
@@ -71,7 +71,7 @@ export const JsonCompleter = {
         .map(hint => ({
           caption: hint.id,
           value: hint.id,
-          meta: 'json path',
+          meta: 'field',
           matchingResult: hint.id,
           completer: {
             insertMatch,

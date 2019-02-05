@@ -16,6 +16,35 @@ describe('account (ashares) reducers', () => {
     expect(newState).toEqual(someState);
   });
 
+  test('should receive the right collection for ashares resource type', () => {
+    const someState = [{ something: 'something' }];
+    const someCollection = [
+      { account1: 'something 1' },
+      { account2: 'something 2' },
+    ];
+    const asharesResourceCollectionsAction = actions.resource.receivedCollection(
+      'ashares',
+      someCollection
+    );
+    const newState = reducer(someState, asharesResourceCollectionsAction);
+
+    expect(newState).toEqual(someCollection);
+  });
+
+  test('should receive the right collection for shared/ashares resource type', () => {
+    const someState = [{ something: 'something' }];
+    const someCollection = [
+      { account1: 'something 1' },
+      { account2: 'something 2' },
+    ];
+    const asharesResourceCollectionsAction = actions.resource.receivedCollection(
+      'shared/ashares',
+      someCollection
+    );
+    const newState = reducer(someState, asharesResourceCollectionsAction);
+
+    expect(newState).toEqual(someCollection);
+  });
   describe('selectors', () => {
     const testAccounts = [
       {
@@ -61,7 +90,7 @@ describe('account (ashares) reducers', () => {
       test('should return correct sandbox state if account supports sandbox.', () => {
         const state = reducer(
           null,
-          actions.resource.received('ashares', testAccounts)
+          actions.resource.receivedCollection('ashares', testAccounts)
         );
         const expectedResult = [
           {
@@ -86,7 +115,7 @@ describe('account (ashares) reducers', () => {
       test('should return correct set of account options when account has both prod/sandbox environments enabled.', () => {
         const state = reducer(
           null,
-          actions.resource.received('ashares', testAccounts)
+          actions.resource.receivedCollection('ashares', testAccounts)
         );
         const expectedResult = [
           {

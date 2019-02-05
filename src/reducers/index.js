@@ -103,7 +103,7 @@ export function userProfile(state) {
 }
 
 export function userPreferences(state) {
-  return fromUser.userPreferences(state.user);
+  return fromUser.userPreferences((state && state.user) || null);
 }
 
 export function userOrigPreferences(state) {

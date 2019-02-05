@@ -15,7 +15,6 @@ export function accountSummary(state) {
   const summary = fromAccounts.accountSummary(state && state.accounts);
   const prefs = fromPreferences.userPreferences(state && state.preferences);
 
-  // add this clause below!
   if (!summary || summary.length === 0) return summary;
 
   if (!prefs) {

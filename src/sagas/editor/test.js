@@ -58,7 +58,9 @@ describe('evaluateProcessor saga', () => {
       body: 'body',
     };
 
-    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, { path: '/processors/p', opts })
+    );
 
     const apiResult = 'result';
     const putEffect = saga.next(apiResult).value;
@@ -86,7 +88,9 @@ describe('evaluateProcessor saga', () => {
       body: 'body',
     };
 
-    expect(callEffect).toEqual(call(apiCallWithRetry, '/processors/p', opts));
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, { path: '/processors/p', opts })
+    );
 
     const putEffect = saga.throw(new Error('boom')).value;
 

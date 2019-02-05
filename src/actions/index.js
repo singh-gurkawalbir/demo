@@ -37,8 +37,8 @@ const resource = {
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
 
-  requestCollection: resourceType =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType }),
+  requestCollection: (resourceType, message) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -75,9 +75,10 @@ const user = {
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
   },
   accounts: {
-    request: message => resource.request('ashares', undefined, message),
     requestAshares: message =>
-      resource.request('shared/ashares', undefined, message),
+      resource.requestCollection('ashares', undefined, message),
+    requestSharedAshares: message =>
+      resource.requestCollection('shared/ashares', undefined, message),
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
