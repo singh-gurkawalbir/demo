@@ -29,13 +29,12 @@ describe('all modal sagas', () => {
       const apiCallEffect = saga.next().value;
 
       expect(apiCallEffect).toEqual(
-        call(
-          apiCallWithRetry,
-          changePasswordParams.path,
-          { ...changePasswordParams.opts, body: updatedPassword },
-          "Changing user's password",
-          true
-        )
+        call(apiCallWithRetry, {
+          path: changePasswordParams.path,
+          opts: { ...changePasswordParams.opts, body: updatedPassword },
+          message: "Changing user's password",
+          hidden: true,
+        })
       );
 
       expect(saga.next().value).toEqual(
@@ -57,13 +56,12 @@ describe('all modal sagas', () => {
       const apiCallEffect = saga.next().value;
 
       expect(apiCallEffect).toEqual(
-        call(
-          apiCallWithRetry,
-          changePasswordParams.path,
-          { ...changePasswordParams.opts, body: updatedPassword },
-          "Changing user's password",
-          true
-        )
+        call(apiCallWithRetry, {
+          path: changePasswordParams.path,
+          opts: { ...changePasswordParams.opts, body: updatedPassword },
+          message: "Changing user's password",
+          hidden: true,
+        })
       );
 
       expect(saga.throw(new Error()).value).toEqual(
@@ -85,13 +83,12 @@ describe('all modal sagas', () => {
       const saga = changeEmail({ updatedEmail });
 
       expect(saga.next().value).toEqual(
-        call(
-          apiCallWithRetry,
-          changeEmailParams.path,
-          { ...changeEmailParams.opts, body: updatedEmail },
-          "Changing user's Email",
-          true
-        )
+        call(apiCallWithRetry, {
+          path: changeEmailParams.path,
+          opts: { ...changeEmailParams.opts, body: updatedEmail },
+          message: "Changing user's Email",
+          hidden: true,
+        })
       );
       expect(saga.next().value).toEqual(
         put(
@@ -111,13 +108,12 @@ describe('all modal sagas', () => {
       const saga = changeEmail({ updatedEmail });
 
       expect(saga.next().value).toEqual(
-        call(
-          apiCallWithRetry,
-          changeEmailParams.path,
-          { ...changeEmailParams.opts, body: updatedEmail },
-          "Changing user's Email",
-          true
-        )
+        call(apiCallWithRetry, {
+          path: changeEmailParams.path,
+          opts: { ...changeEmailParams.opts, body: updatedEmail },
+          message: "Changing user's Email",
+          hidden: true,
+        })
       );
 
       expect(saga.throw(status403).value).toEqual(
@@ -138,13 +134,12 @@ describe('all modal sagas', () => {
       const saga = changeEmail({ updatedEmail });
 
       expect(saga.next().value).toEqual(
-        call(
-          apiCallWithRetry,
-          changeEmailParams.path,
-          { ...changeEmailParams.opts, body: updatedEmail },
-          "Changing user's Email",
-          true
-        )
+        call(apiCallWithRetry, {
+          path: changeEmailParams.path,
+          opts: { ...changeEmailParams.opts, body: updatedEmail },
+          message: "Changing user's Email",
+          hidden: true,
+        })
       );
 
       expect(saga.throw(new Error()).value).toEqual(
@@ -159,45 +154,42 @@ describe('all modal sagas', () => {
   });
   describe('update user and profile preferences sagas', () => {
     describe('update preferences saga', () => {
-      test('shoulde exit the saga when no preferences updates are required', () => {
-        const saga = updatePreferences({});
-
-        expect(saga.next().done).toEqual(true);
-      });
       test("should update user's preferences successfuly", () => {
         const preferences = {
           timeFormat: 'something',
         };
         const saga = updatePreferences({ preferences });
 
-        expect(saga.next().value).toEqual(
-          put(actions.profile.updatePreferenceStore(preferences))
-        );
         expect(saga.next(preferences).value).toEqual(
           select(selectors.userPreferences)
         );
         expect(saga.next(preferences).value).toEqual(
-          call(
-            apiCallWithRetry,
-            updatePreferencesParams.path,
-            { ...updatePreferencesParams.opts, body: preferences },
-            "Updating user's info"
-          )
+          call(apiCallWithRetry, {
+            path: updatePreferencesParams.path,
+            opts: { ...updatePreferencesParams.opts, body: preferences },
+            message: "Updating user's info",
+          })
         );
       });
 
-      test('should generate the appropriate message failure in a api failure and nevertherless should update the redux store', () => {
+      test('should generate the appropriate message failure in a api failure ', () => {
         const preferences = {
           timeFormat: 'something',
         };
-        const saga = updatePreferences({ preferences });
+        const saga = updatePreferences();
 
-        expect(saga.next().value).toEqual(
-          put(actions.profile.updatePreferenceStore(preferences))
-        );
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+        const payload = {
+          ...updatePreferencesParams.opts,
+          body: preferences,
+        };
 
         expect(saga.next(preferences).value).toEqual(
-          select(selectors.userPreferences)
+          call(apiCallWithRetry, {
+            path: updatePreferencesParams.path,
+            opts: payload,
+            message: "Updating user's info",
+          })
         );
 
         expect(saga.throw(new Error()).value).toEqual(
@@ -215,19 +207,16 @@ describe('all modal sagas', () => {
         const someProfile = {
           name: 'something',
         };
-        const saga = updateProfile(someProfile);
+        const saga = updateProfile();
 
-        expect(saga.next().value).toEqual(
-          call(
-            apiCallWithRetry,
-            updateProfileParams.path,
-            { ...updateProfileParams.opts, body: someProfile },
-            "Updating user's info"
-          )
-        );
+        expect(saga.next().value).toEqual(select(selectors.userProfile));
 
-        expect(saga.next().value).toEqual(
-          put(actions.resource.received('profile', someProfile))
+        expect(saga.next(someProfile).value).toEqual(
+          call(apiCallWithRetry, {
+            path: updateProfileParams.path,
+            opts: { ...updateProfileParams.opts, body: someProfile },
+            message: "Updating user's info",
+          })
         );
       });
 
@@ -235,15 +224,16 @@ describe('all modal sagas', () => {
         const someProfile = {
           name: 'something',
         };
-        const saga = updateProfile(someProfile);
+        const saga = updateProfile();
 
-        expect(saga.next().value).toEqual(
-          call(
-            apiCallWithRetry,
-            updateProfileParams.path,
-            { ...updateProfileParams.opts, body: someProfile },
-            "Updating user's info"
-          )
+        expect(saga.next().value).toEqual(select(selectors.userProfile));
+
+        expect(saga.next(someProfile).value).toEqual(
+          call(apiCallWithRetry, {
+            path: updateProfileParams.path,
+            opts: { ...updateProfileParams.opts, body: someProfile },
+            message: "Updating user's info",
+          })
         );
         expect(saga.throw(new Error()).value).toEqual(
           put(

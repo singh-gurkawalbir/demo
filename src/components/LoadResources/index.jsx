@@ -40,8 +40,6 @@ class LoadResources extends Component {
   async componentDidMount() {
     const { isAllDataReady, requiredStatus, requestResource } = this.props;
 
-    // console.log('isAllDataReady:', isAllDataReady, requiredStatus);
-
     if (!isAllDataReady) {
       requiredStatus.forEach(resource => {
         if (!resource.hasData) {

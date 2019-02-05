@@ -5,7 +5,7 @@
 import { delay } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry } from './';
+import rootSaga, { apiCallWithRetry, unauthenticateAndDeleteProfile } from './';
 import { api, APIException } from './api';
 
 export const status500 = new APIException({
@@ -18,9 +18,13 @@ export const status422 = new APIException({
 });
 export const status403 = new APIException({
   status: 403,
-  message: 'User unauthoritzed action  ',
+  message: 'User Forbidden action',
 });
 
+export const status401 = new APIException({
+  status: 401,
+  message: 'User unauthorized action',
+});
 describe(`root saga`, () => {
   // NOTE, this test has little value... I added it to
   // increase code coverage. I'm not really sure what business rules
@@ -42,35 +46,40 @@ describe(`apiCallWithRetry saga`, () => {
 
   describe('should hide comms message ', () => {
     test('should hide all comms message when apiCallWithRetry is made by default', () => {
-      const saga = apiCallWithRetry(path, opts);
+      const saga = apiCallWithRetry({ path, opts });
       const requestEffect = saga.next().value;
-      const showMessage = false;
+      const hideMessage = false;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, showMessage))
+        put(actions.api.request(path, path, hideMessage, opts.method))
       );
     });
 
-    test('should hide all comms message when apiCallWithRetry is made by default', () => {
-      const showMessage = true;
+    test('should show all comms message when apiCallWithRetry is made', () => {
+      const hideMessage = true;
       const someMessage = 'something';
-      const saga = apiCallWithRetry(path, opts, someMessage, showMessage);
+      const saga = apiCallWithRetry({
+        path,
+        opts,
+        message: someMessage,
+        hidden: hideMessage,
+      });
       const requestEffect = saga.next().value;
 
       expect(requestEffect).toEqual(
-        put(actions.api.request(path, someMessage, showMessage))
+        put(actions.api.request(path, someMessage, hideMessage, opts.method))
       );
     });
   });
   test('should succeed on successfull api call', () => {
-    const saga = apiCallWithRetry(path, opts);
+    const saga = apiCallWithRetry({ path, opts });
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
-    const showMessage = false;
+    const hideMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, hideMessage, opts.method))
     );
 
     const callEffect = saga.next('some Response').value;
@@ -91,14 +100,14 @@ describe(`apiCallWithRetry saga`, () => {
   });
 
   test('should finally succeed after initial failed api call', () => {
-    const saga = apiCallWithRetry(path, opts);
+    const saga = apiCallWithRetry({ path, opts });
     // next() of generator functions always return:
     // { done: [true|false], value: {[right side of yield]} }
     const requestEffect = saga.next().value;
-    const showMessage = false;
+    const hideMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, hideMessage, opts.method))
     );
 
     const callEffect = saga.next().value;
@@ -129,13 +138,13 @@ describe(`apiCallWithRetry saga`, () => {
   });
 
   test('should finally fail with error effect after retries run out', () => {
-    const saga = apiCallWithRetry(path, opts);
+    const saga = apiCallWithRetry({ path, opts });
     const mockError = new Error('mock');
     const requestEffect = saga.next().value;
-    const showMessage = false;
+    const hideMessage = false;
 
     expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, showMessage))
+      put(actions.api.request(path, path, hideMessage, opts.method))
     );
     const callApiEffect = call(api, path, opts);
 
@@ -158,5 +167,43 @@ describe(`apiCallWithRetry saga`, () => {
     // there should be no more iterations...
     // the generator should throw an Error.
     expect(() => saga.next()).toThrowError();
+  });
+  // All apis have a root auth behavior that would listen
+  // to session or CSRF expiration
+  describe('auth behavior', () => {
+    test('should delete profile whenever an api call with session expiration error is encountered', () => {
+      const saga = apiCallWithRetry({ path, opts });
+      const requestEffect = saga.next().value;
+      const hideMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, hideMessage, opts.method))
+      );
+      const callApiEffect = call(api, path, opts);
+
+      // first iteration should be the api call
+      expect(saga.next().value).toEqual(callApiEffect);
+      expect(saga.throw(status403).value).toEqual(
+        put(actions.api.complete(path))
+      );
+      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+    });
+    test('should delete profile whenever an api call with CSRF expiration is encountered', () => {
+      const saga = apiCallWithRetry({ path, opts });
+      const requestEffect = saga.next().value;
+      const hideMessage = false;
+
+      expect(requestEffect).toEqual(
+        put(actions.api.request(path, path, hideMessage, opts.method))
+      );
+      const callApiEffect = call(api, path, opts);
+
+      expect(saga.next().value).toEqual(callApiEffect);
+      expect(saga.throw(status401).value).toEqual(
+        put(actions.api.complete(path))
+      );
+
+      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+    });
   });
 });

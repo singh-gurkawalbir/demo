@@ -5,7 +5,7 @@ export default (state = [], action) => {
 
   if (
     type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
-    resourceType === 'ashares'
+    (resourceType === 'ashares' || resourceType === 'shared/ashares')
   ) {
     return [...collection];
   }

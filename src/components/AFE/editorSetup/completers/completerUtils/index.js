@@ -1,11 +1,11 @@
-export const shouldAutoComplete = editor => {
+export const textAfterBracesMatchers = editor => {
   const { session } = editor;
   const pos = editor.getCursorPosition();
   const line = session.getLine(pos.row);
   const precedingText = line.slice(0, pos.column);
-  const prefixRegexp = /\{\{([a-zA-Z0-9]+)$/;
+  const prefixRegexp = /.*\{\{(.*)$/;
 
-  return !!precedingText.match(prefixRegexp);
+  return precedingText.match(prefixRegexp);
 };
 
 export const removePreceedingUncompletedText = editor => {

@@ -103,7 +103,7 @@ export function userProfile(state) {
 }
 
 export function userPreferences(state) {
-  return state && state.user && state.user.preferences;
+  return fromUser.userPreferences((state && state.user) || null);
 }
 
 export function userOrigPreferences(state) {
@@ -239,6 +239,10 @@ export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
 }
 
+export function hasPreferences(state) {
+  return !!userPreferences(state);
+}
+
 export function hasProfile(state) {
   return !!userProfile(state);
 }
@@ -264,6 +268,10 @@ export function processors(state) {
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
+
+export function hasAccounts(state) {
+  return !!(state && state.user && state.user.accounts);
+}
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS
@@ -286,17 +294,20 @@ export function isDataReady(state, resource) {
   );
 }
 
-export function resourceStatus(state, resourceType) {
+export function resourceStatus(state, origResourceType) {
+  const resourceType = `/${origResourceType}`;
+  const reqType = fromComms.commReqType(state.comms, resourceType);
   const hasData = fromData.hasData(state.data, resourceType);
   const isLoading = fromComms.isLoading(state.comms, resourceType);
   const retryCount = fromComms.retryCount(state.comms, resourceType);
-  const isReady = hasData && !isLoading;
+  const isReady = reqType !== 'GET' || (hasData && !isLoading);
 
   return {
-    resourceType,
+    resourceType: origResourceType,
     hasData,
     isLoading,
     retryCount,
+    reqType,
     isReady,
   };
 }

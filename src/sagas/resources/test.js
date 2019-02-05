@@ -35,7 +35,7 @@ describe('commitStagedChanges saga', () => {
       .value;
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, `/${resourceType}/${id}`)
+      call(apiCallWithRetry, { path: `/${resourceType}/${id}` })
     );
 
     const origin = { id, lastModified: 100 };
@@ -78,14 +78,17 @@ describe('commitStagedChanges saga', () => {
       patch: true,
     }).value;
 
-    expect(getCallEffect).toEqual(call(apiCallWithRetry, path));
+    expect(getCallEffect).toEqual(call(apiCallWithRetry, { path }));
 
     const putCallEffect = saga.next(merged, origin).value;
 
     expect(putCallEffect).toEqual(
-      call(apiCallWithRetry, path, {
-        method: 'put',
-        body: merged,
+      call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'put',
+          body: merged,
+        },
       })
     );
 
@@ -117,7 +120,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const effect = saga.next(mockResource).value;
 
@@ -138,7 +141,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path, undefined));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const final = saga.throw(status500);
 
@@ -158,7 +161,7 @@ availableResources.forEach(type => {
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const effect = saga.next(mockCollection).value;
 
@@ -179,7 +182,7 @@ availableResources.forEach(type => {
       const path = `/${type}`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, path));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const final = saga.throw(status500);
 

@@ -9,18 +9,18 @@ import {
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+// import { GLOBAL_PREFERENCES } from '../../reducers/user/preferences';
 
 export function* changePassword({ updatedPassword }) {
   try {
     const payload = { ...changePasswordParams.opts, body: updatedPassword };
 
-    yield call(
-      apiCallWithRetry,
-      changePasswordParams.path,
-      payload,
-      "Changing user's password",
-      true
-    );
+    yield call(apiCallWithRetry, {
+      path: changePasswordParams.path,
+      opts: payload,
+      message: "Changing user's password",
+      hidden: true,
+    });
     yield put(
       actions.api.complete(
         changePasswordParams.path,
@@ -37,23 +37,20 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences({ preferences }) {
-  if (!preferences) return;
+export function* updatePreferences() {
+  const updatedPayload = yield select(selectors.userPreferences);
 
   try {
-    yield put(actions.profile.updatePreferenceStore(preferences));
-    const updatedPayload = yield select(selectors.userPreferences);
     const payload = {
       ...updatePreferencesParams.opts,
       body: updatedPayload,
     };
 
-    yield call(
-      apiCallWithRetry,
-      updatePreferencesParams.path,
-      payload,
-      "Updating user's info"
-    );
+    yield call(apiCallWithRetry, {
+      path: updatePreferencesParams.path,
+      opts: payload,
+      message: "Updating user's info",
+    });
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -64,20 +61,20 @@ export function* updatePreferences({ preferences }) {
   }
 }
 
-export function* updateProfile(profile) {
+export function* updateProfile() {
+  const updatedPayload = yield select(selectors.userProfile);
+
   try {
     const payload = {
       ...updateProfileParams.opts,
-      body: profile,
+      body: updatedPayload,
     };
 
-    yield call(
-      apiCallWithRetry,
-      updateProfileParams.path,
-      payload,
-      "Updating user's info"
-    );
-    yield put(actions.resource.received('profile', profile));
+    yield call(apiCallWithRetry, {
+      path: updateProfileParams.path,
+      opts: payload,
+      message: "Updating user's info",
+    });
   } catch (e) {
     yield put(
       actions.api.failure(
@@ -88,32 +85,16 @@ export function* updateProfile(profile) {
   }
 }
 
-export function* updateUserProfileAndPreferences({
-  profilePreferencesPayload,
-}) {
-  const { _id, timeFormat, dateFormat } = profilePreferencesPayload;
-
-  yield updatePreferences({ preferences: { _id, timeFormat, dateFormat } });
-  const copy = { ...profilePreferencesPayload };
-
-  delete copy.dateFormat;
-  delete copy.timeFormat;
-  const profile = copy;
-
-  yield updateProfile(profile);
-}
-
 export function* changeEmail({ updatedEmail }) {
   try {
     const payload = { ...changeEmailParams.opts, body: updatedEmail };
 
-    yield call(
-      apiCallWithRetry,
-      changeEmailParams.path,
-      payload,
-      "Changing user's Email",
-      true
-    );
+    yield call(apiCallWithRetry, {
+      path: changeEmailParams.path,
+      opts: payload,
+      message: "Changing user's Email",
+      hidden: true,
+    });
     yield put(
       actions.api.complete(
         changeEmailParams.path,
@@ -139,11 +120,8 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
-export const modalsSagas = [
-  takeEvery(
-    actionTypes.UPDATE_PROFILE_PREFERENCES,
-    updateUserProfileAndPreferences
-  ),
+export const userSagas = [
+  takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),

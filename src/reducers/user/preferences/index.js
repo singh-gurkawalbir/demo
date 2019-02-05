@@ -1,6 +1,6 @@
 import actionTypes from '../../../actions/types';
 
-const GLOBAL_PREFERENCES = [
+export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
   'defaultAShareId',
   'environment',
@@ -9,37 +9,32 @@ const GLOBAL_PREFERENCES = [
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
 ];
-const LOCAL_PREFERENCES = ['themeName'];
 
 export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
 export default (state = {}, action) => {
-  const { type, resourceType, preferences } = action;
+  const { type, resourceType, resource, preferences } = action;
   let newState = Object.assign({}, state);
 
   switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
-      // we can't clear if there is no staged data
-      if (resourceType === 'preferences') return action.collection;
+    case actionTypes.RESOURCE.RECEIVED:
+      if (resourceType === 'preferences') return resource;
 
       return newState;
-    case actionTypes.UPDATE_PREFERENCES_STORE: {
+    case actionTypes.UPDATE_PREFERENCES: {
       const { defaultAShareId, accounts } = newState;
 
       if (!defaultAShareId || defaultAShareId === 'own') {
         newState = { ...newState, ...preferences };
       } else {
         Object.keys(preferences).forEach(key => {
-          const preference = { [key]: preferences[key] };
+          const preference = preferences[key];
 
           if (GLOBAL_PREFERENCES.includes(key)) {
-            newState = { ...newState, ...preference };
+            newState[key] = preference;
           } else {
-            accounts[defaultAShareId] = {
-              ...accounts[defaultAShareId],
-              ...preference,
-            };
+            accounts[defaultAShareId][key] = preference;
           }
         });
       }
@@ -51,17 +46,6 @@ export default (state = {}, action) => {
       return state;
   }
 };
-
-function pickOutRelevantPreferenceData(preferences) {
-  const allUsersPreferenceProps = [...GLOBAL_PREFERENCES, ...LOCAL_PREFERENCES];
-  const copyPreferences = Object.assign({}, preferences);
-
-  Object.keys(copyPreferences)
-    .filter(key => !allUsersPreferenceProps.includes(key))
-    .forEach(key => delete copyPreferences[key]);
-
-  return copyPreferences;
-}
 
 // #region PUBLIC SELECTORS
 export function userPreferences(state) {
@@ -76,7 +60,9 @@ export function userPreferences(state) {
     mergedPreferences = { ...state, ...accounts[defaultAShareId] };
   }
 
-  return pickOutRelevantPreferenceData(mergedPreferences);
+  delete mergedPreferences.accounts;
+
+  return mergedPreferences;
 }
 
 export function appTheme(state) {
