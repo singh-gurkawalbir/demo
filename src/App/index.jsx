@@ -10,7 +10,6 @@ import * as selectors from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
 import themeProvider from '../themeProvider';
-import AppDrawer from './AppDrawer';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import AuthDialog from '../components/AuthDialog';
 import actions from '../actions';
@@ -41,7 +40,6 @@ class App extends Component {
   // TODO: authenticated should be in our redux session store...
   // we need to create a new action creator and reducer for this.
   state = {
-    showDrawer: false,
     showSnackBar: false,
   };
 
@@ -80,12 +78,9 @@ class App extends Component {
     // start the timer
     clearInterval(timer);
   }
-  handleToggleDrawer = () => {
-    this.setState({ showDrawer: !this.state.showDrawer });
-  };
 
   render() {
-    const { showDrawer, showSnackBar } = this.state;
+    const { showSnackBar } = this.state;
     const { themeName, isAuthInitialized, isUserLoggedOut } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -96,15 +91,7 @@ class App extends Component {
         <BrowserRouter>
           <Fragment>
             {showSnackBar && <NetworkSnackbar />}
-            <AppBar
-              onToggleDrawer={this.handleToggleDrawer}
-              themeName={themeName}
-            />
-            <AppDrawer
-              open={showDrawer}
-              onToggleDrawer={this.handleToggleDrawer}
-            />
-            {/* is app initialized */}
+            <AppBar themeName={themeName} />
             <AuthDialog />
             {(isAuthInitialized || !isUserLoggedOut) && <AppRouting />}
           </Fragment>

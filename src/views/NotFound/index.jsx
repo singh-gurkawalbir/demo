@@ -9,7 +9,7 @@ export default class NotFound extends Component {
     return (
       <Fragment>
         <Typography variant="h4">404: Page not found</Typography>
-        <Link to="/">Home</Link>
+        <Link to="/pg">Home</Link>
       </Fragment>
     );
   }
