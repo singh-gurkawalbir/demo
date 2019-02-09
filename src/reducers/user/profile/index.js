@@ -1,24 +1,26 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = null, action) => {
-  if (
-    action.type === actionTypes.RESOURCE.RECEIVED &&
-    action.resourceType === 'profile'
-  ) {
-    const newState = { ...state, ...action.resource };
+  const { type, resourceType, resource, profile } = action;
+  const newState = Object.assign({}, state);
 
-    return newState;
+  switch (type) {
+    case actionTypes.RESOURCE.RECEIVED:
+      if (resourceType === 'profile') return resource;
+
+      return newState;
+
+    case actionTypes.UPDATE_PROFILE:
+      return { ...newState, ...profile };
+
+    case actionTypes.DELETE_PROFILE:
+      if (state && state.email) return { email: state.email };
+
+      return {};
+
+    default:
+      return state;
   }
-
-  if (action.type === actionTypes.DELETE_PROFILE) {
-    // Except for email delete everything
-
-    if (!state || !state.email) return {};
-
-    return { email: state.email };
-  }
-
-  return state;
 };
 
 // #region PUBLIC SELECTORS

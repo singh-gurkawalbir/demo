@@ -11,7 +11,7 @@ describe('user reducers', () => {
     test('when profile resource request is received should get resource message', () => {
       const state = reducer(
         undefined,
-        actions.profile.received(someTestProfile1)
+        actions.resource.received('profile', someTestProfile1)
       );
 
       expect(state).toEqual(someTestProfile1);
@@ -20,10 +20,16 @@ describe('user reducers', () => {
     test('should replace existing profile with a new one.', () => {
       let state;
 
-      state = reducer(state, actions.profile.received(someTestProfile1));
+      state = reducer(
+        state,
+        actions.resource.received('profile', someTestProfile1)
+      );
       expect(state).toEqual(someTestProfile1);
 
-      state = reducer(state, actions.profile.received(someTestProfile2));
+      state = reducer(
+        state,
+        actions.resource.received('profile', someTestProfile2)
+      );
       expect(state).toEqual(someTestProfile2);
     });
 
@@ -37,7 +43,7 @@ describe('user reducers', () => {
         },
       };
       const initialProfileState = reducer(undefined, action);
-      const state = reducer(initialProfileState, actions.profile.delete());
+      const state = reducer(initialProfileState, actions.user.profile.delete());
 
       expect(state).toEqual({ email: action.resource.email });
     });
@@ -51,7 +57,10 @@ describe('user reducers', () => {
 
     test('should return correct url if profile exists', () => {
       const mockProfile = { emailHash: '123' };
-      const state = reducer(undefined, actions.profile.received(mockProfile));
+      const state = reducer(
+        undefined,
+        actions.resource.received('profile', mockProfile)
+      );
 
       expect(selectors.avatarUrl(state)).toEqual(
         'https://secure.gravatar.com/avatar/123?d=mm&s=55'

@@ -1,16 +1,81 @@
 /* global describe, test, expect */
-import { call, put } from 'redux-saga/effects';
+import { call, put, all, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../';
 import actions from '../../actions';
-import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
+import { authParams, logoutParams } from '../api/apiPaths';
 import { getResource } from '../resources';
 import { status422 } from '../test';
-import { auth, initializeApp, invalidateSession } from './';
+import * as selectors from '../../reducers';
+import {
+  auth,
+  initializeApp,
+  retrieveAppInitializationResources,
+  retrievingUserDetails,
+  getCSRFTokenBackend,
+  invalidateSession,
+} from './';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 
+describe('initialze all app relevant resources sagas', () => {
+  describe('retrievingUserDetails sagas', () => {
+    test('should retrieve user profile & preferences', () => {
+      const saga = retrievingUserDetails();
+      const getPreferencesEffect = put(
+        actions.user.preferences.request("Retrieving user's preferences")
+      );
+      const getProfileEffect = put(
+        actions.user.profile.request("Retrieving user's profile")
+      );
+
+      expect(saga.next().value).toEqual(
+        all([getProfileEffect, getPreferencesEffect])
+      );
+    });
+  });
+
+  test('should intialize the app retrieving first the user details and then subsequently users ashares', () => {
+    const saga = retrieveAppInitializationResources();
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+
+    const retrievingUserAsharesEffect = put(
+      actions.user.accounts.requestAshares(`Retrieving user's accounts`)
+    );
+
+    expect(saga.next().value).toEqual(retrievingUserAsharesEffect);
+    const checkForAccountsEffect = select(selectors.hasAccounts);
+
+    expect(saga.next().value).toEqual(checkForAccountsEffect);
+    expect(saga.next('some asharedValue received').done).toEqual(true);
+  });
+  test('should intialize the app retrieving first the user details and then subsequently users shares/ashares if ashares isnt there', () => {
+    const saga = retrieveAppInitializationResources();
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+
+    const retrievingUserAsharesEffect = put(
+      actions.user.accounts.requestAshares(`Retrieving user's accounts`)
+    );
+
+    expect(saga.next().value).toEqual(retrievingUserAsharesEffect);
+
+    const checkForAccountsEffect = select(selectors.hasAccounts);
+
+    expect(saga.next().value).toEqual(checkForAccountsEffect);
+    const retrievingUserSharedAsharesEffect = put(
+      actions.user.accounts.requestSharedAshares(
+        `Retrieving Account Membership`
+      )
+    );
+
+    expect(saga.next().value).toEqual(retrievingUserSharedAsharesEffect);
+    expect(saga.next().done).toEqual(true);
+  });
+});
 describe('auth saga flow', () => {
   const authMessage = 'Authenticating User';
-  const requestingCSRFTokenMessage = 'Requesting CSRF token';
 
   test('action to set authentication to true when auth is successful', () => {
     const email = 'someUserEmail';
@@ -22,23 +87,19 @@ describe('auth saga flow', () => {
       ...authParams.opts,
       body: { email, password, _csrf },
     };
-    const getCSRFEffect = saga.next().value;
+    const getCSRFBackend = saga.next().value;
 
-    expect(getCSRFEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        getCSRFParams.path,
-        null,
-        requestingCSRFTokenMessage
-      )
-    );
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
-    const callEffect = saga.next({ _csrf }).value;
+    const callEffect = saga.next(_csrf).value;
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload, authMessage)
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+      })
     );
-
     const setCSRFEffect = saga.next({ _csrf: _csrfAfterSignIn }).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
@@ -53,32 +114,29 @@ describe('auth saga flow', () => {
     const password = 'someUserPassword';
     const _csrf = 'someCSRF';
     const saga = auth({ email, password });
-    const getCSRFEffect = saga.next().value;
+    const getCSRFBackend = saga.next().value;
 
-    expect(getCSRFEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        getCSRFParams.path,
-        null,
-        requestingCSRFTokenMessage
-      )
-    );
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
-    const callEffect = saga.next({ _csrf }).value;
+    const callEffect = saga.next(_csrf).value;
     const payload = {
       ...authParams.opts,
       body: { email, password, _csrf },
     };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, authParams.path, payload, authMessage)
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+      })
     );
     expect(saga.throw(status422).value).toEqual(
       put(actions.auth.failure('Authentication Failure'))
     );
     const effect = saga.next().value;
 
-    expect(effect).toEqual(put(actions.profile.delete()));
+    expect(effect).toEqual(put(actions.user.profile.delete()));
   });
 });
 
@@ -88,12 +146,15 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request('Initializing application')
+      )
     );
     const mockResp = 'some response';
-    const getCSRFEffect = saga.next(mockResp).value;
+    const getCSRFBackend = saga.next(mockResp).value;
 
-    expect(getCSRFEffect).toEqual(call(apiCallWithRetry, getCSRFParams.path));
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
     const setCSRFEffect = saga.next({ _csrf: 'someCSRF' }).value;
 
@@ -109,7 +170,10 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request('Initializing application')
+      )
     );
     const authLogoutEffect = saga.next().value;
 
@@ -121,7 +185,10 @@ describe('initialize app saga', () => {
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
-      call(getResource, actions.profile.request(), 'Initializing application')
+      call(
+        getResource,
+        actions.user.profile.request('Initializing application')
+      )
     );
     expect(saga.throw(new Error('Some error')).value).toEqual(
       put(actions.auth.logout())
@@ -139,12 +206,11 @@ describe('invalidate session app', () => {
     const logOutUserEffect = saga.next('someCSRF1').value;
 
     expect(logOutUserEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        logoutParams.path,
-        logoutParams.opts,
-        'Logging out user'
-      )
+      call(apiCallWithRetry, {
+        path: logoutParams.path,
+        opts: logoutParams.opts,
+        message: 'Logging out user',
+      })
     );
 
     const removeCSRFTokenEffect = saga.next().value;
@@ -165,12 +231,11 @@ describe('invalidate session app', () => {
     const logOutUserEffect = saga.next().value;
 
     expect(logOutUserEffect).toEqual(
-      call(
-        apiCallWithRetry,
-        logoutParams.path,
-        logoutParams.opts,
-        'Logging out user'
-      )
+      call(apiCallWithRetry, {
+        path: logoutParams.path,
+        opts: logoutParams.opts,
+        message: 'Logging out user',
+      })
     );
     const removeCSRFTokenEffect = saga.throw(new Error('Some error')).value;
 

@@ -19,7 +19,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onAccountChange: (id, environment) => {
     dispatch(
-      actions.profile.updatePreferences({ defaultAShareId: id, environment })
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment,
+      })
     );
   },
 });

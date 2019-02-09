@@ -16,7 +16,7 @@ export function* commitStagedChanges({ resourceType, id }) {
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const origin = yield call(apiCallWithRetry, path);
+  const origin = yield call(apiCallWithRetry, { path });
 
   if (origin.lastModified !== master.lastModified) {
     let conflict = jsonPatch.compare(master, origin);
@@ -30,9 +30,12 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 
   try {
-    const updated = yield call(apiCallWithRetry, path, {
-      method: 'put',
-      body: merged,
+    const updated = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'put',
+        body: merged,
+      },
     });
 
     yield put(actions.resource.received(resourceType, updated));
@@ -46,7 +49,7 @@ export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, path, message);
+    const resource = yield call(apiCallWithRetry, { path, message });
 
     yield put(actions.resource.received(resourceType, resource));
 
@@ -60,7 +63,7 @@ export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
 
   try {
-    const collection = yield call(apiCallWithRetry, path);
+    const collection = yield call(apiCallWithRetry, { path });
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
 

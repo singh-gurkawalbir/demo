@@ -14,7 +14,7 @@ describe('global selectors', () => {
     test('should return true when profile exists.', () => {
       const state = reducer(
         undefined,
-        actions.profile.received('mock profile')
+        actions.resource.received('mock profile')
       );
 
       expect(selectors.isProfileDataReady(state)).toBe(true);

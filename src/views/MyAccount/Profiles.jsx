@@ -20,7 +20,17 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   clearComms: () => dispatch(actions.clearComms()),
-  persistProfilesData: message => dispatch(actions.profile.update(message)),
+  persistProfilesPreferencesData: profilePreferencePayload => {
+    const completePayloadCopy = { ...profilePreferencePayload };
+    const { timeFormat, dateFormat } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat };
+
+    dispatch(actions.user.preferences.update(preferencesPayload));
+    // deleting preferenecs from completePayloadCopy
+    delete completePayloadCopy.timeFormat;
+    delete completePayloadCopy.dateFormat;
+    dispatch(actions.user.profile.update(completePayloadCopy));
+  },
 });
 
 @withStyles(theme => ({
@@ -89,7 +99,7 @@ class ProfilesComponent extends Component {
     delete copyState.openPasswordModal;
     delete copyState.openEmailModal;
 
-    this.props.persistProfilesData(copyState);
+    this.props.persistProfilesPreferencesData(copyState);
   };
   handleOnChangeData = e => {
     this.setState({ [e.target.id]: e.target.value });
