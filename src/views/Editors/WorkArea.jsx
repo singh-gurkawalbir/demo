@@ -62,7 +62,7 @@ export default class WorkArea extends Component {
     return (
       <Fragment>
         <Typography className={classes.title} variant="h5">
-          Editor Playground
+          Editor Playground!!!
         </Typography>
 
         <Paper className={classes.paper}>

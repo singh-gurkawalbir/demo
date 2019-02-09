@@ -50,15 +50,10 @@ export default class WaffleBox extends Component {
     const { classes } = this.props;
     const open = !!anchorEl;
     const buttons = [
+      { title: 'Home', path: '/pg' },
       { title: 'Editors', path: '/pg/editors' },
       { title: 'Resources', path: '/pg/resources' },
-      { title: 'Home', path: '/pg' },
-      { title: 'Home 2', path: '/pg' },
-      { title: 'Home 3', path: '/pg' },
-      { title: 'Home 4', path: '/pg' },
-      { title: 'Home 5', path: '/pg' },
-      { title: 'Home 6', path: '/pg' },
-      { title: 'Home 7', path: '/pg' },
+      { title: 'Forms', path: '/pg/forms' },
     ];
 
     return (

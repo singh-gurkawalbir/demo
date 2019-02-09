@@ -97,6 +97,7 @@ const themes = {
     },
   },
 };
+const unit = 8;
 const defaultTheme = {
   typography: {
     useNextVariants: true,
@@ -114,10 +115,10 @@ const defaultTheme = {
     button: Roboto500,
   },
   spacing: {
-    unit: 8,
-    double: 16,
-    triple: 24,
-    quad: 32,
+    unit,
+    double: unit * 2,
+    triple: unit * 3,
+    quad: unit * 4,
   },
   drawerWidth: 320,
 };

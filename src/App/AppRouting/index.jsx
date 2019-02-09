@@ -17,6 +17,9 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
+const CustomForms = loadable(() =>
+  import(/* webpackChunkName: 'CustomForms' */ '../../views/CustomForms')
+);
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
@@ -36,6 +39,7 @@ export default class AppRouting extends Component {
 
         <PrivateRoute path="/pg/resources" component={Resources} />
         <PrivateRoute path="/pg/editors" component={Editors} />
+        <PrivateRoute path="/pg/forms" component={CustomForms} />
 
         <PrivateRoute path="/pg/exports" component={Exports} />
         <PrivateRoute path="/pg/imports" component={Imports} />
