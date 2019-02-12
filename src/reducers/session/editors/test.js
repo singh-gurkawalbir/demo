@@ -231,7 +231,7 @@ describe('editor selectors', () => {
             data: '{"a: 123}',
           },
           violations: {
-            dataError: 'Unexpected token a in JSON at position 2',
+            dataError: 'Unexpected end of JSON input',
           },
         },
       },

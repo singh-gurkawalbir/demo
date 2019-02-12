@@ -60,6 +60,52 @@ describe('global selectors', () => {
       });
     });
   });
+  describe('resourceStatus ', () => {
+    describe('GET resource calls ', () => {
+      test('should correctly indicate the resource is not Ready for a loading resource call', () => {
+        const state = reducer(
+          undefined,
+          actions.api.request('/exports', 'some message')
+        );
+
+        expect(selectors.resourceStatus(state, 'exports').isReady).toBe(false);
+      });
+      test('should correctly indicate the resource is not Ready for a failed resource call', () => {
+        let state = reducer(
+          undefined,
+          actions.api.request('/exports', 'some message')
+        );
+
+        state = reducer(state, actions.api.failure('/exports'));
+
+        expect(selectors.resourceStatus(state, 'exports').isReady).toBe(false);
+      });
+      test('should correctly indicate the resource is Ready for a success resource call and has data', () => {
+        let state = reducer(
+          undefined,
+          actions.resource.receivedCollection('exports', { data: 'something' })
+        );
+
+        state = reducer(state, actions.api.request('/exports', 'some message'));
+        state = reducer(state, actions.api.complete('/exports'));
+
+        expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
+      });
+    });
+    test('should correctly indicate the resource is ready for a non-GET resource call', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', { data: 'something' })
+      );
+
+      state = reducer(
+        state,
+        actions.api.request('/exports', 'some message', true, 'POST')
+      );
+      state = reducer(state, actions.api.complete('/exports'));
+      expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
+    });
+  });
 });
 
 describe('Reducers in the root reducer', () => {
