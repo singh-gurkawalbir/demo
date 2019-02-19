@@ -1,12 +1,18 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HelpIcon from 'mdi-react/HelpIcon';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 
 @withStyles(theme => ({
+  iconButton: {
+    '& > *': {
+      pointerEvents: 'none',
+    },
+  },
   helpPopper: {
     maxWidth: '350px',
     maxHeight: '300px',
@@ -27,18 +33,23 @@ export default class Help extends Component {
     }
   };
 
-  handleClose = () => {
+  handleClose = event => {
+    // Icon button calling itself
+    if (event && event.target.id === 'iconButton') return;
     this.setState({ anchorEl: null });
   };
 
   render() {
     const { anchorEl } = this.state;
-    const { classes, className, helpKey } = this.props;
+    const { classes, helpKey } = this.props;
     const open = !!anchorEl;
 
     return (
-      <Fragment>
-        <IconButton className={className} onClick={this.handleMenu}>
+      <ClickAwayListener onClickAway={() => this.handleClose(null)}>
+        <IconButton
+          id="iconButton"
+          className={classes.iconButton}
+          onClick={this.handleMenu}>
           <HelpIcon fontSize="small" />
         </IconButton>
         <ArrowPopper
@@ -50,7 +61,7 @@ export default class Help extends Component {
           anchorEl={anchorEl}>
           <Typography variant="caption">{helpTextMap[helpKey]}</Typography>
         </ArrowPopper>
-      </Fragment>
+      </ClickAwayListener>
     );
   }
 }
