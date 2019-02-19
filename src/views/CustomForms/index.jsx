@@ -2,9 +2,46 @@ import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import { Options } from 'integrator-ui-forms/packages/core/dist';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../../components/Help';
 import DynaForm from '../../components/DynaForm';
+import { createAppropriatePathAndOptions } from '../../sagas/api';
+
+function optionsHandler(options) {
+  const fields = options;
+  const recordType = fields.find(f => f.id === 'type').value;
+
+  if (recordType === '') return [];
+  const allData = [
+    {
+      items: [`${recordType}.id`, `${recordType}.name`, `${recordType}.date`],
+    },
+  ];
+
+  return allData;
+}
+
+export const getOptions: () => Promise<Options> = (fieldId, fields) => {
+  const path = '/processors/javascript';
+  const opts = {
+    method: 'POST',
+    body: {
+      data: fields,
+      rules: {
+        code: optionsHandler.toString(),
+        function: 'optionsHandler',
+      },
+    },
+  };
+  const { options, req } = createAppropriatePathAndOptions(path, opts);
+
+  options.body = JSON.stringify(options.body);
+
+  return fetch(req, options)
+    .then(response => response.json())
+    .then(resp => resp.data);
+};
 
 @hot(module)
 @withStyles(theme => ({
@@ -129,23 +166,6 @@ export default class CustomForms extends Component {
       },
     ];
     const { classes } = this.props;
-    const optionsHandler = (fieldId, fields /* , parentContext */) => {
-      // console.log(fieldId, fields, parentContext);
-      const recordType = fields.find(f => f.id === 'type').value;
-
-      if (recordType === '') return [];
-      const options = [
-        {
-          items: [
-            `${recordType}.id`,
-            `${recordType}.name`,
-            `${recordType}.date`,
-          ],
-        },
-      ];
-
-      return options;
-    };
 
     return (
       <Paper className={classes.paper}>
@@ -155,7 +175,7 @@ export default class CustomForms extends Component {
 
         <DynaForm
           defaultFields={fields}
-          optionsHandler={optionsHandler}
+          optionsHandler={getOptions}
           // onChange={(a, b, c, d) => console.log(a, b, c, d)}
         />
       </Paper>

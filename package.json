@@ -46,7 +46,6 @@
     "dexie": "2.0.4",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
-    "fsevents": "^1.2.7",
     "lodash": "4.17.11",
     "mdi-react": "5.2.0",
     "prop-types": "15.6.2",
