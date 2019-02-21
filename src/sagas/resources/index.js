@@ -13,6 +13,8 @@ export function* commitStagedChanges({ resourceType, id }) {
     id
   );
 
+  // console.log(merged, master);
+
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;

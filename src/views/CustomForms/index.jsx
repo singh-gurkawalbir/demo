@@ -54,6 +54,39 @@ export default class CustomForms extends Component {
   render() {
     const fields = [
       {
+        id: 'relativeUri',
+        name: '/http/relativeURI',
+        defaultValue: 'override me!',
+        type: 'relativeUri',
+        label: 'Relative URI',
+        visible: true,
+        required: true,
+        validWhen: {
+          lengthIsGreaterThan: {
+            length: 3,
+            message: 'The value must have more than 3 characterrs',
+          },
+          lengthIsLessThan: {
+            length: 6,
+            message: 'The value must less than 6 characters',
+          },
+          fallsWithinNumericalRange: {
+            min: 150,
+            max: 80000,
+            message: 'The value must be more than 150 and less than 80000',
+          },
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Only numbers allowed',
+          },
+          isNot: {
+            values: ['2500', '4001'],
+            message: 'The value cannot be 2500 nor 4001',
+          },
+        },
+      },
+
+      {
         id: 'conn',
         name: 'conn',
         type: 'select',
@@ -174,6 +207,7 @@ export default class CustomForms extends Component {
         <Help helpKey="connection.type" />
 
         <DynaForm
+          defaultValues={{ '/http/relativeURI': 'path/to/nowhere' }}
           defaultFields={fields}
           optionsHandler={getOptions}
           // onChange={(a, b, c, d) => console.log(a, b, c, d)}
