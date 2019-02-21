@@ -6,13 +6,12 @@ const Roboto400 = { fontFamily: 'Roboto400, sans-serif' };
 const Roboto500 = { fontFamily: 'Roboto500, sans-serif' };
 const celigo = {
   blue: '#0E7DC1',
-  lightBlue: '#12C7FF',
+  lightBlue: '#37B5ED',
   orange: '#FFA424',
-  grey: '#95ABBC',
-  darkGrey: '#6A7B89', // - TEXT
   charcoalGrey: '#424E59',
-  darkDarkGrey: '#323E49',
-  lightGrey: '#D9D8DC', // was D6E4ED?'
+  darkGrey: '#677A89', // - TEXT
+  grey: '#95ABBC',
+  lightGrey: '#D6E4ED',
   superLightGrey: '#F0F5F9',
   superDuperLightGrey: '#F8FAFC',
   white: '#FFFFFF',
@@ -35,12 +34,12 @@ const themes = {
       palette: {
         type: 'light',
         background: {
-          paper: celigo.superDuperLightGrey,
-          default: celigo.white,
+          paper: celigo.white,
+          default: celigo.superDuperLightGrey,
         },
         // action: {[object]},
         primary: {
-          main: celigo.orange,
+          main: celigo.lightBlue,
         },
         secondary: {
           light: celigo.lightBlue,
@@ -59,14 +58,14 @@ const themes = {
     name: 'Celigo Dark Theme',
     overrides: {
       appBar: {
-        background: celigo.darkDarkGrey,
+        background: celigo.charcoalGrey,
         contrast: celigo.grey,
         hover: celigo.white,
         iconBackground: celigo.grey,
       },
       editor: {
-        panelBackground: celigo.darkDarkGrey,
-        panelBorder: celigo.darkDarkGrey,
+        panelBackground: celigo.charcoalGrey,
+        panelBorder: celigo.charcoalGrey,
       },
       palette: {
         type: 'dark',
