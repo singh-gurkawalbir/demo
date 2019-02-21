@@ -1,7 +1,7 @@
 export default [
   {
     id: 'Name',
-    name: 'name',
+    name: '/name',
     type: 'text',
     label: 'Name',
     description: '',
@@ -10,7 +10,7 @@ export default [
   },
   {
     id: 'description',
-    name: 'description',
+    name: '/description',
     type: 'textarea',
     label: 'Description',
     description: '',
