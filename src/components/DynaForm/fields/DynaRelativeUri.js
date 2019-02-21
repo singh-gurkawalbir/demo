@@ -7,28 +7,24 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 
 @withStyles(() => ({
   textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    // minWidth: 120,
+    minWidth: 200,
   },
 }))
 class MaterialUiTextField extends React.Component {
   render() {
     const { classes } = this.props;
     const {
-      description,
       disabled,
       errorMessages,
       id,
       isValid,
       name,
+      description,
       onFieldChange,
       placeholder,
       required,
       value,
       label,
-      multiline,
-      rowsMax,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
@@ -36,9 +32,18 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value);
     };
 
+    // let description = 'The description!';
+    // const { type } = connection;
+
+    // console.log(connection);
+
+    // if (type === 'http' || type === 'rest') {
+    //   description = `Relative to: ${connection[type].baseURI}`;
+    // }
+
     return (
       <TextField
-        autoComplete="off"
+        // autoComplete="off"
         key={id}
         name={name}
         label={label}
@@ -46,8 +51,6 @@ class MaterialUiTextField extends React.Component {
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
         disabled={disabled}
-        multiline={multiline}
-        rowsMax={rowsMax}
         required={required}
         error={!isValid}
         value={value}
@@ -57,10 +60,10 @@ class MaterialUiTextField extends React.Component {
   }
 }
 
-const DynaText = props => (
+const DynaRelativeUri = props => (
   <FieldWrapper {...props}>
-    <MaterialUiTextField />
+    <MaterialUiTextField {...props.fieldOpts} />
   </FieldWrapper>
 );
 
-export default DynaText;
+export default DynaRelativeUri;

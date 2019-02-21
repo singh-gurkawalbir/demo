@@ -88,7 +88,8 @@ class EditorDialog extends Component {
     } = this.props;
     const { layout, fullScreen } = this.state;
     const size = fullScreen ? { height } : { height, width };
-    const showPreviewAction = !editor.violations && !editor.autoEvaluate;
+    const showPreviewAction =
+      editor && !editor.violations && !editor.autoEvaluate;
 
     return (
       <Dialog
