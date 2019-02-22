@@ -38,7 +38,12 @@ export const getOptions = async (fieldId, fields) => {
   options.body = JSON.stringify(options.body);
 
   return fetch(req, options)
-    .then(response => response.json())
+    .then(response => {
+      if (response.status >= 400 && response.status < 600)
+        throw new Error('Error in fetching our opts');
+
+      return response.json();
+    })
     .then(resp => resp.data);
 };
 
