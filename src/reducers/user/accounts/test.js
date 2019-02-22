@@ -22,11 +22,11 @@ describe('account (ashares) reducers', () => {
       { account1: 'something 1' },
       { account2: 'something 2' },
     ];
-    const asharesResourceCollectionsAction = actions.resource.receivedCollection(
+    const action = actions.resource.receivedCollection(
       'ashares',
       someCollection
     );
-    const newState = reducer(someState, asharesResourceCollectionsAction);
+    const newState = reducer(someState, action);
 
     expect(newState).toEqual(someCollection);
   });
@@ -37,11 +37,11 @@ describe('account (ashares) reducers', () => {
       { account1: 'something 1' },
       { account2: 'something 2' },
     ];
-    const asharesResourceCollectionsAction = actions.resource.receivedCollection(
+    const action = actions.resource.receivedCollection(
       'shared/ashares',
       someCollection
     );
-    const newState = reducer(someState, asharesResourceCollectionsAction);
+    const newState = reducer(someState, action);
 
     expect(newState).toEqual(someCollection);
   });

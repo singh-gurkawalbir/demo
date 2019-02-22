@@ -6,7 +6,7 @@ class FormButton extends Component {
   render() {
     const { isValid, onClick, children, value = {}, ...rest } = this.props;
 
-    console.log('DynaSubmit valid? ', isValid);
+    // console.log('DynaSubmit valid? ', isValid);
 
     return (
       <Button {...rest} disabled={!isValid} onClick={() => onClick(value)}>
