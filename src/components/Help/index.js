@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -8,11 +8,6 @@ import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 
 @withStyles(theme => ({
-  iconButton: {
-    '& > *': {
-      pointerEvents: 'none',
-    },
-  },
   helpPopper: {
     maxWidth: '350px',
     maxHeight: '300px',
@@ -33,9 +28,7 @@ export default class Help extends Component {
     }
   };
 
-  handleClose = event => {
-    // Icon button calling itself
-    if (event && event.target.id === 'iconButton') return;
+  handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
@@ -45,23 +38,22 @@ export default class Help extends Component {
     const open = !!anchorEl;
 
     return (
-      <ClickAwayListener onClickAway={() => this.handleClose(null)}>
-        <IconButton
-          id="iconButton"
-          className={classes.iconButton}
-          onClick={this.handleMenu}>
-          <HelpIcon fontSize="small" />
-        </IconButton>
+      <Fragment>
+        <ClickAwayListener onClickAway={this.handleClose}>
+          <IconButton onClick={this.handleMenu}>
+            <HelpIcon fontSize="small" />
+          </IconButton>
+        </ClickAwayListener>
         <ArrowPopper
           placement="left"
           className={classes.helpPopper}
           id="waffleBox"
-          onClose={this.handleClose}
+          onClose={() => {}}
           open={open}
           anchorEl={anchorEl}>
           <Typography variant="caption">{helpTextMap[helpKey]}</Typography>
         </ArrowPopper>
-      </ClickAwayListener>
+      </Fragment>
     );
   }
 }

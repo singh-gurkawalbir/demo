@@ -2,7 +2,6 @@ import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { Options } from 'integrator-ui-forms/packages/core/dist';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../../components/Help';
 import DynaForm from '../../components/DynaForm';
@@ -22,7 +21,7 @@ function optionsHandler(options) {
   return allData;
 }
 
-export const getOptions: () => Promise<Options> = (fieldId, fields) => {
+export const getOptions = async (fieldId, fields) => {
   const path = '/processors/javascript';
   const opts = {
     method: 'POST',
@@ -212,6 +211,7 @@ export default class CustomForms extends Component {
           optionsHandler={getOptions}
           // onChange={(a, b, c, d) => console.log(a, b, c, d)}
         />
+        <Help helpKey="connection.type" />
       </Paper>
     );
   }
