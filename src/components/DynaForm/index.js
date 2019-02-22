@@ -15,29 +15,24 @@ import getRenderer from './renderer';
   },
 }))
 export default class CustomForms extends Component {
-  // state = {
-  //   values: {},
-  // };
+  state = {
+    formKey: 1,
+  };
 
   handleCancel = () => {
-    console.log('Cancel Clicked. Dont know how to revert form...');
+    // TODO: We need to re-mount the react-forms-processor Form component...
+    // is there a better way than uing the "key" prop trick?
+    const formKey = this.state.formKey + 1;
+
+    console.log('bumping form key to force remount: ', formKey);
+    this.setState({
+      formKey,
+    });
   };
 
-  handleFormChange = (values, isValid) => {
-    console.log('DynaForm Changed:', values, isValid);
-    // this.setState({
-    //   values,
-    // });
-  };
-
-  // componentDidMount() {
-  //   const { defaultValues } = this.props;
-  //
-  //   console.log('DynaForm componentDidMount default values:', defaultValues);
-  //   this.setState({
-  //     values: defaultValues,
-  //   });
-  // }
+  // handleFormChange = (values, isValid) => {
+  //   console.log('DynaForm Changed:', values, isValid);
+  // };
 
   setDefaults = (fields, values) => {
     if (!values || !fields) return fields;
@@ -60,16 +55,18 @@ export default class CustomForms extends Component {
       handleSubmit,
       ...rest
     } = this.props;
-    // const { values } = this.state;
+    const { formKey } = this.state;
     const renderer = getRenderer();
     const fields = this.setDefaults(defaultFields, defaultValues);
 
     return (
       <Form
+        key={formKey}
         {...rest}
         defaultFields={fields}
         renderer={renderer}
-        onChange={this.handleFormChange}>
+        // onChange={this.handleFormChange}
+      >
         {children}
         {true && (
           <div className={classes.actions}>
