@@ -24,7 +24,7 @@ export default class CustomForms extends Component {
     // is there a better way than uing the "key" prop trick?
     const formKey = this.state.formKey + 1;
 
-    console.log('bumping form key to force remount: ', formKey);
+    // console.log('bumping form key to force remount: ', formKey);
     this.setState({
       formKey,
     });
