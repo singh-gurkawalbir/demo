@@ -11,7 +11,7 @@ import LoadResources from '../../components/LoadResources';
 import DynaForm from '../../components/DynaForm';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
-import fieldFactory from './fieldFactory';
+import formFactory from '../../formsMetadata/formFactory';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -116,7 +116,7 @@ class Edit extends Component {
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
     const hasPatch = patch && patch.length > 0;
     // console.log(patch, merged);
-    const { fields, values, convertToPatchSet } = fieldFactory({
+    const { fields, formValueToPatchSetConverter } = formFactory({
       connection,
       resourceType,
       resource: merged,
@@ -155,9 +155,8 @@ class Edit extends Component {
           <DynaForm
             key={id}
             defaultFields={fields}
-            defaultValues={values}
             handleSubmit={value => {
-              handlePatchResource(convertToPatchSet(value));
+              handlePatchResource(formValueToPatchSetConverter(value));
             }}
           />
 
