@@ -1,39 +1,34 @@
 import formMeta from './definitions';
+import { defaultValueInitializer, defaultPatchSetConverter } from './utils';
 
-const defaultValueInitializer = values => {
-  const results = {};
-  const recurse = (values, path) => {
-    if (typeof values !== 'object') {
-      results[path] = values;
-
-      return;
-    }
-
-    Object.keys(values).forEach(key => recurse(values[key], `${path}/${key}`));
-  };
-
-  recurse(values, '');
-
-  return results;
-};
-
-const defaultPatchSetConverter = values =>
-  Object.keys(values).map(key => ({
-    op: 'replace',
-    path: key,
-    value: values[key],
-  }));
 const getResourceFormAssets = (connection, resourceType, resource) => {
   let fields = formMeta.common;
-  const converter = defaultPatchSetConverter;
-  const initializer = defaultValueInitializer;
+  let converter = defaultPatchSetConverter;
+  let initializer = defaultValueInitializer;
   let meta;
 
   switch (resourceType) {
     case 'connections':
-      meta = formMeta.connections[resource.type];
+      if (resource.assistant) {
+        meta = formMeta.connections.custom[resource.type];
 
-      if (meta) fields = meta;
+        if (customElements) {
+          meta = meta[resource.assistant];
+        }
+      } else {
+        meta = formMeta.connections[resourceType];
+      }
+
+      if (meta) {
+        if (Array.isArray(meta)) {
+          fields = meta;
+        } else {
+          fields = meta.fields || [];
+          converter = meta.converter || defaultPatchSetConverter;
+          initializer = meta.initializer || defaultValueInitializer;
+        }
+      }
+
       break;
 
     case 'imports':

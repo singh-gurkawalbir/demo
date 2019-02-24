@@ -31,6 +31,7 @@ export default class ResourceForm extends Component {
   };
 
   render() {
+    const { formKey } = this.state;
     const {
       classes,
       connection,
@@ -45,7 +46,6 @@ export default class ResourceForm extends Component {
       resourceType,
       resource,
     });
-    const { formKey } = this.state;
 
     return (
       <DynaForm key={formKey} {...rest} defaultFields={fields}>
