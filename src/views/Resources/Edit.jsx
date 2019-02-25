@@ -8,10 +8,9 @@ import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
-import DynaForm from '../../components/DynaForm';
+import ResourceForm from '../../components/ResourceForm';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
-import fieldFactory from './fieldFactory';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -34,7 +33,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
   return {
     handlePatchResource: patchSet => {
-      console.log('patchSet Handled', patchSet);
+      // console.log('patchSet Handled', patchSet);
       // TODO: Optionally we let the patchStaged action also take a
       // boolean flag to auto-commit?
       dispatch(actions.resource.patchStaged(id, patchSet));
@@ -92,13 +91,6 @@ const prettyDate = dateString => {
   dates: {
     color: theme.palette.text.secondary,
   },
-  actions: {
-    textAlign: 'right',
-  },
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
 }))
 class Edit extends Component {
   render() {
@@ -116,11 +108,6 @@ class Edit extends Component {
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
     const hasPatch = patch && patch.length > 0;
     // console.log(patch, merged);
-    const { fields, values, convertToPatchSet } = fieldFactory({
-      connection,
-      resourceType,
-      resource: merged,
-    });
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
@@ -152,12 +139,13 @@ class Edit extends Component {
         )}
 
         <div className={classes.editableFields}>
-          <DynaForm
+          <ResourceForm
             key={id}
-            defaultFields={fields}
-            defaultValues={values}
-            handleSubmit={value => {
-              handlePatchResource(convertToPatchSet(value));
+            connection={connection}
+            resourceType={resourceType}
+            resource={merged}
+            handleSubmit={patchSet => {
+              handlePatchResource(patchSet);
             }}
           />
 
