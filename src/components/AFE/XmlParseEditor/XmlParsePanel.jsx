@@ -3,10 +3,14 @@ import { connect } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import helpTextMap from '../../../components/Help/helpTextMap';
 
 const mapStateToProps = (state, { editorId }) => ({
   editor: selectors.editor(state, editorId),
@@ -18,6 +22,9 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
 });
 
 @withStyles(theme => ({
+  helpText: {
+    whiteSpace: 'pre-line',
+  },
   container: {
     padding: '10px',
     backgroundColor: theme.palette.background.default,
@@ -36,7 +43,7 @@ class XmlParsePanel extends Component {
   render() {
     const { editor, patchEditor, classes } = this.props;
     const {
-      leanJson = false,
+      advanced = false,
       trimSpaces = false,
       stripNewLineChars = false,
       textNodeName,
@@ -49,18 +56,43 @@ class XmlParsePanel extends Component {
 
     return (
       <div className={classes.container}>
-        <FormGroup column="true">
-          <FormControlLabel
-            control={
-              <Checkbox
-                onChange={() => {
-                  patchEditor('leanJson', !leanJson);
-                }}
-              />
-            }
-            label="Lean JSON"
+        <FormGroup>
+          <TextField
+            label="Resource path"
+            placeholder="none"
+            multiline
+            rowsMax={4}
+            className={classes.textField}
+            defaultValue={resourcePath || ''}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={e => patchEditor('resourcePath', e.target.value)}
           />
-          {leanJson && (
+          <RadioGroup
+            row
+            onChange={() => {
+              patchEditor('advanced', !advanced);
+            }}>
+            {['Advanced', 'Simple'].map(label => (
+              <FormControlLabel
+                key={label}
+                control={
+                  <Radio
+                    checked={label === 'Advanced' ? advanced : !advanced}
+                  />
+                }
+                label={label}
+              />
+            ))}
+          </RadioGroup>
+
+          {!advanced && (
+            <Typography variant="caption" className={classes.helpText}>
+              {helpTextMap['editor.xml.simple']}
+            </Typography>
+          )}
+          {advanced && (
             <Fragment>
               <FormControlLabel
                 control={
@@ -143,18 +175,6 @@ class XmlParsePanel extends Component {
                   shrink: true,
                 }}
                 onChange={e => patchEditor('excludeNodes', e.target.value)}
-              />
-              <TextField
-                label="Resource path"
-                placeholder="none"
-                multiline
-                rowsMax={4}
-                className={classes.textField}
-                defaultValue={resourcePath || ''}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={e => patchEditor('resourcePath', e.target.value)}
               />
             </Fragment>
           )}

@@ -239,7 +239,7 @@ describe('editor selectors', () => {
         processor: 'xmlParser',
         valid: {
           initOpts: {
-            leanJson: true,
+            advanced: true,
             trimSpaces: true,
             stripNewLineChars: true,
             attributePrefix: '@',
@@ -275,7 +275,7 @@ describe('editor selectors', () => {
         },
         invalid: {
           initOpts: {
-            leanJson: true,
+            advanced: true,
             data: '',
           },
           violations: {

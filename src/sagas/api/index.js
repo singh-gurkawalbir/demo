@@ -28,7 +28,7 @@ export function APIException(response) {
   }
 }
 
-export function createAppropriatePathAndOptions(path, opts) {
+function createAppropriatePathAndOptions(path, opts) {
   let options;
   let req;
 
