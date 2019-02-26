@@ -47,10 +47,13 @@ function createAppropriatePathAndOptions(path, opts) {
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
 
       headers: {
-        ...(opts.headers || {
-          'Content-Type': 'application/json; charset=utf-8',
-          'x-csrf-token': getCSRFToken(),
-        }),
+        ...Object.assign(
+          {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-csrf-token': getCSRFToken(),
+          },
+          opts.headers
+        ),
       },
     };
   }
@@ -115,7 +118,7 @@ export const api = async (path, opts = {}) => {
 
     // For 204 content-length header does not show up
     // So using response status to prevent performing .json()
-    if (response.status === 204) return null;
+    if (response.status === 204) return [];
     const body = await response.json();
 
     return body;

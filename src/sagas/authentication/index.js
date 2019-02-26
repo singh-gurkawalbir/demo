@@ -3,7 +3,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
-import { getResource } from '../resources';
+import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
   removeCSRFToken,
@@ -12,28 +12,79 @@ import {
 import * as selectors from '../../reducers';
 import { intializationResources } from '../../reducers/data';
 
+export function* retrievingOrgDetails() {
+  yield all([
+    call(
+      getResourceCollection,
+      actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+    ),
+    call(
+      getResourceCollection,
+      actions.user.org.users.requestCollection(`Retrieving org users`)
+    ),
+    call(
+      getResourceCollection,
+      actions.user.org.accounts.requestCollection(`Retrieving user's accounts`)
+    ),
+  ]);
+}
+
 export function* retrievingUserDetails() {
   yield all(
     intializationResources.map(resource =>
-      put(actions.user[resource].request(`Retrieving user's ${resource}`))
+      // put(actions.user[resource].request(`Retrieving user's ${resource}`))
+      call(
+        getResource,
+        actions.user[resource].request(`Retrieving user's ${resource}`)
+      )
     )
   );
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(retrievingOrgDetails);
   yield call(retrievingUserDetails);
+  const { defaultAShareId } = yield select(selectors.userPreferences);
+  let calculatedDefaultAShareId = defaultAShareId;
+  const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
+
+  if (hasAcceptedAccounts) {
+    const isValidSharedAccountId = yield select(
+      selectors.isValidSharedAccountId,
+      defaultAShareId
+    );
+
+    if (!isValidSharedAccountId) {
+      calculatedDefaultAShareId = yield select(
+        selectors.getOneValidSharedAccountId
+      );
+    }
+  } else {
+    calculatedDefaultAShareId = 'own';
+  }
+
+  if (defaultAShareId !== calculatedDefaultAShareId) {
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: calculatedDefaultAShareId,
+      })
+    );
+  }
+
   // retrieve user's accounts details
+  /*
   yield put(actions.user.accounts.requestAshares(`Retrieving user's accounts`));
 
   const ashares = yield select(selectors.hasAccounts);
 
-  if (!ashares) {
+  if (!ashares || !ashares.length) {
     yield put(
       actions.user.accounts.requestSharedAshares(
         'Retrieving Account Membership'
       )
     );
   }
+  */
 }
 
 export function* getCSRFTokenBackend() {
@@ -75,7 +126,7 @@ export function* initializeApp() {
     );
 
     if (resp) {
-      const { _csrf } = yield call(getCSRFTokenBackend);
+      const _csrf = yield call(getCSRFTokenBackend);
 
       yield call(setCSRFToken, _csrf);
 

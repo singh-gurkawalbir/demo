@@ -1,9 +1,15 @@
 import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowPopper from '../../components/ArrowPopper';
 import WaffleButton from './WaffleButton';
 import WaffleIcon from './WaffleIcon';
+import * as selectors from '../../reducers';
+
+const mapStateToProps = state => ({
+  accessLevel: selectors.userAccessLevel(state),
+});
 
 @withStyles(theme => ({
   waffleIcon: {
@@ -28,7 +34,7 @@ import WaffleIcon from './WaffleIcon';
     padding: theme.spacing.unit,
   },
 }))
-export default class WaffleBox extends Component {
+export class WaffleBox extends Component {
   state = {
     anchorEl: null,
   };
@@ -47,7 +53,12 @@ export default class WaffleBox extends Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes } = this.props;
+    const { classes, accessLevel } = this.props;
+
+    if (['owner', 'manage'].indexOf(accessLevel) === -1) {
+      return null;
+    }
+
     const open = !!anchorEl;
     const buttons = [
       { title: 'Home', path: '/pg' },
@@ -85,3 +96,8 @@ export default class WaffleBox extends Component {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  null
+)(WaffleBox);

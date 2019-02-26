@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
-import actions from '../../../actions';
+import actions from '../../../../actions';
 
 describe('account (ashares) reducers', () => {
   test('any other action return default state', () => {

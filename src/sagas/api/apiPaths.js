@@ -64,6 +64,20 @@ export const updatePreferencesParams = {
   path: '/preferences',
 };
 
+export const requestTrialLicenseParams = {
+  opts: {
+    method: 'POST',
+  },
+  path: '/licenses/startTrial',
+};
+
+export const requestLicenseUpgradeParams = {
+  opts: {
+    method: 'POST',
+  },
+  path: '/licenses/upgradeRequest',
+};
+
 export function getHostAndProtocol() {
   return { protocol: window.location.protocol, host: window.location.host };
 }

@@ -6,6 +6,25 @@ import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
 
+function* getRequestOptions(path) {
+  const opts = {
+    headers: {},
+  };
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (
+    userPreferences &&
+    userPreferences.defaultAShareId &&
+    userPreferences.defaultAShareId !== 'own'
+  ) {
+    opts.headers['integrator-ashareid'] = userPreferences.defaultAShareId;
+
+    return opts;
+  }
+
+  return opts;
+}
+
 export function* commitStagedChanges({ resourceType, id }) {
   const { patch, merged, master } = yield select(
     selectors.resourceData,
@@ -16,7 +35,8 @@ export function* commitStagedChanges({ resourceType, id }) {
   if (!patch) return; // nothing to do.
 
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const origin = yield call(apiCallWithRetry, { path });
+  const opts = yield call(getRequestOptions, path);
+  const origin = yield call(apiCallWithRetry, { path, opts });
 
   if (origin.lastModified !== master.lastModified) {
     let conflict = jsonPatch.compare(master, origin);
@@ -33,6 +53,7 @@ export function* commitStagedChanges({ resourceType, id }) {
     const updated = yield call(apiCallWithRetry, {
       path,
       opts: {
+        headers: opts.headers,
         method: 'put',
         body: merged,
       },
@@ -47,9 +68,10 @@ export function* commitStagedChanges({ resourceType, id }) {
 
 export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+  const opts = yield call(getRequestOptions, path);
 
   try {
-    const resource = yield call(apiCallWithRetry, { path, message });
+    const resource = yield call(apiCallWithRetry, { path, message, opts });
 
     yield put(actions.resource.received(resourceType, resource));
 
@@ -61,9 +83,10 @@ export function* getResource({ resourceType, id, message }) {
 
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
+  const opts = yield call(getRequestOptions, path);
 
   try {
-    const collection = yield call(apiCallWithRetry, { path });
+    const collection = yield call(apiCallWithRetry, { path, opts });
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
 

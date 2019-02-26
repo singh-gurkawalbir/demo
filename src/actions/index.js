@@ -74,11 +74,25 @@ const user = {
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
   },
-  accounts: {
-    requestAshares: message =>
-      resource.requestCollection('ashares', undefined, message),
-    requestSharedAshares: message =>
-      resource.requestCollection('shared/ashares', undefined, message),
+  org: {
+    users: {
+      requestCollection: message =>
+        resource.requestCollection('ashares', undefined, message),
+    },
+    accounts: {
+      requestCollection: message =>
+        resource.requestCollection('shared/ashares', undefined, message),
+      requestLicenses: message =>
+        resource.requestCollection('licenses', undefined, message),
+      requestTrialLicense: message =>
+        action(actionTypes.REQUEST_TRIAL_LICENSE, {}),
+      trialLicenseIssued: message =>
+        action(actionTypes.TRIAL_LICENSE_ISSUED, message),
+      requestLicenseUpgrade: message =>
+        action(actionTypes.REQUEST_LICENSE_UPGRADE, {}),
+      licenseUpgradeRequestSubmitted: message =>
+        action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
+    },
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),

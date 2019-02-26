@@ -6,9 +6,12 @@ import {
   changeEmailParams,
   changePasswordParams,
   updatePreferencesParams,
+  requestTrialLicenseParams,
+  requestLicenseUpgradeParams,
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+import { func } from 'prop-types';
 // import { GLOBAL_PREFERENCES } from '../../reducers/user/preferences';
 
 export function* changePassword({ updatedPassword }) {
@@ -56,6 +59,54 @@ export function* updatePreferences() {
       actions.api.failure(
         updatePreferencesParams.path,
         'Could not update user Preferences'
+      )
+    );
+  }
+}
+
+export function* requestTrialLicense() {
+  try {
+    const payload = {
+      ...requestTrialLicenseParams.opts,
+      body: {},
+    };
+    const response = yield call(apiCallWithRetry, {
+      path: requestTrialLicenseParams.path,
+      opts: payload,
+      message: 'Requesting trial license',
+    });
+
+    yield put(actions.user.org.accounts.trialLicenseIssued(response));
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        requestTrialLicenseParams.path,
+        'Could not start trial'
+      )
+    );
+  }
+}
+
+export function* requestLicenseUpgrade() {
+  try {
+    const payload = {
+      ...requestTrialLicenseParams.opts,
+      body: {},
+    };
+    const response = yield call(apiCallWithRetry, {
+      path: requestLicenseUpgradeParams.path,
+      opts: payload,
+      message: 'Requesting license upgrade',
+    });
+
+    yield put(
+      actions.user.org.accounts.licenseUpgradeRequestSubmitted(response)
+    );
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        requestLicenseUpgradeParams.path,
+        'Could not request license upgrade'
       )
     );
   }
@@ -123,6 +174,8 @@ export function* changeEmail({ updatedEmail }) {
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
+  takeEvery(actionTypes.REQUEST_TRIAL_LICENSE, requestTrialLicense),
+  takeEvery(actionTypes.REQUEST_LICENSE_UPGRADE, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
 ];

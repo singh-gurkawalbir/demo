@@ -6,12 +6,16 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
-import { isAuthenticated } from '../../reducers';
+// import { isAuthenticated } from '../../reducers';
+import * as selectors from '../../reducers';
 import WaffleBox from './WaffleBox';
 import AccountList from './AccountList';
+import Notifications from './Notifications';
+import LicenseAction from './LicenseAction';
 
 const mapStateToProps = state => ({
-  authenticated: isAuthenticated(state),
+  authenticated: selectors.isAuthenticated(state),
+  accessLevel: selectors.userAccessLevel(state),
 });
 
 @withStyles(theme => ({
@@ -65,7 +69,7 @@ const mapStateToProps = state => ({
 }))
 export class Appbar extends Component {
   render() {
-    const { classes, authenticated } = this.props;
+    const { classes, authenticated, accessLevel } = this.props;
 
     return (
       <div className={classes.root}>
@@ -85,8 +89,10 @@ export class Appbar extends Component {
                 Resources
               </Link>
             </div>
+            <LicenseAction />
             <div className={classes.iconContainer}>
               <AccountList />
+              <Notifications />
               <WaffleBox />
               {authenticated && <ProfileMenu />}
             </div>
