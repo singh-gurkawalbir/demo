@@ -39,7 +39,7 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
-      return { ...state, [resourceType]: collection };
+      return { ...state, [resourceType]: collection || [] };
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);

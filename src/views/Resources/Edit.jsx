@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
+import ResourceForm from '../../components/ResourceForm';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
 
@@ -32,26 +32,23 @@ const mapDispatchToProps = (dispatch, { match }) => {
   const { id, resourceType } = match.params;
 
   return {
-    handlePatchResource: (path, value) => {
-      const patch = [
-        {
-          op: 'replace',
-          path,
-          value,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(id, patch));
-    },
-    handleCommitChanges: () => {
+    handlePatchResource: patchSet => {
+      // console.log('patchSet Handled', patchSet);
+      // TODO: Optionally we let the patchStaged action also take a
+      // boolean flag to auto-commit?
+      dispatch(actions.resource.patchStaged(id, patchSet));
       dispatch(actions.resource.commitStaged(resourceType, id));
     },
-    handleUndoChange: () => {
-      dispatch(actions.resource.undoStaged(id));
-    },
-    handleRevertChanges: () => {
-      dispatch(actions.resource.clearStaged(id));
-    },
+    // handleCommitChanges: (a, b, c) => {
+    //   console.log(a, b, c);
+    //   dispatch(actions.resource.commitStaged(resourceType, id));
+    // },
+    // handleUndoChange: () => {
+    //   dispatch(actions.resource.undoStaged(id));
+    // },
+    // handleRevertChanges: () => {
+    //   dispatch(actions.resource.clearStaged(id));
+    // },
     handleConflict: skipCommit => {
       if (!skipCommit) {
         dispatch(actions.resource.commitStaged(resourceType, id));
@@ -94,23 +91,8 @@ const prettyDate = dateString => {
   dates: {
     color: theme.palette.text.secondary,
   },
-  actions: {
-    textAlign: 'right',
-  },
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
 }))
 class Edit extends Component {
-  handleInputChange = event => {
-    const { handlePatchResource } = this.props;
-    const { value } = event.target;
-    const path = `/${event.target.id}`;
-
-    handlePatchResource(path, value);
-  };
-
   render() {
     const {
       id,
@@ -118,14 +100,14 @@ class Edit extends Component {
       connection,
       resourceType,
       classes,
-      handleUndoChange,
-      handleCommitChanges,
-      handleRevertChanges,
+      handlePatchResource,
+      // handleCommitChanges,
       handleConflict,
     } = this.props;
-    const { merged, patch, conflict } = resourceData;
+    const { /* master , */ merged, patch, conflict } = resourceData;
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
     const hasPatch = patch && patch.length > 0;
+    // console.log(patch, merged);
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
@@ -141,7 +123,7 @@ class Edit extends Component {
 
         {hasPatch && (
           <Typography variant="caption" className={classes.dates}>
-            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} /> ago.
+            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} />.
           </Typography>
         )}
 
@@ -157,64 +139,23 @@ class Edit extends Component {
         )}
 
         <div className={classes.editableFields}>
-          <form>
-            <TextField
-              id="name"
-              label="Name"
-              rowsMax="4"
-              value={merged.name || ''}
-              onChange={this.handleInputChange}
-              className={classes.textField}
-              margin="normal"
+          <ResourceForm
+            key={id}
+            connection={connection}
+            resourceType={resourceType}
+            resource={merged}
+            handleSubmit={patchSet => {
+              handlePatchResource(patchSet);
+            }}
+          />
+
+          {conflict && (
+            <ConflictAlertDialog
+              conflict={conflict}
+              handleCommit={() => handleConflict(false)}
+              handleCancel={() => handleConflict(true)}
             />
-            <TextField
-              id="description"
-              label="Description"
-              multiline
-              rowsMax="4"
-              value={merged.description || ''}
-              onChange={this.handleInputChange}
-              className={classes.textField}
-              margin="normal"
-            />
-
-            {conflict && (
-              <ConflictAlertDialog
-                conflict={conflict}
-                handleCommit={() => handleConflict(false)}
-                handleCancel={() => handleConflict(true)}
-              />
-            )}
-
-            {hasPatch && (
-              <div className={classes.actions}>
-                <Button
-                  onClick={handleRevertChanges}
-                  className={classes.actionButton}
-                  size="small"
-                  variant="contained">
-                  Revert All
-                </Button>
-
-                <Button
-                  onClick={handleUndoChange}
-                  className={classes.actionButton}
-                  size="small"
-                  variant="contained">
-                  Undo Last Change
-                </Button>
-
-                <Button
-                  onClick={handleCommitChanges}
-                  className={classes.actionButton}
-                  size="small"
-                  variant="contained"
-                  color="secondary">
-                  Commit Changes
-                </Button>
-              </div>
-            )}
-          </form>
+          )}
         </div>
       </LoadResources>
     ) : (

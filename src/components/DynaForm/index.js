@@ -1,13 +1,14 @@
 import { Component } from 'react';
 import { Form } from 'integrator-ui-forms/packages/core/dist';
-import renderer from './renderer';
+import getRenderer from './renderer';
 
-export default class CustomForms extends Component {
+export default class DynaForm extends Component {
   render() {
     const { children, ...rest } = this.props;
+    const renderer = getRenderer();
 
     return (
-      <Form renderer={renderer} {...rest}>
+      <Form {...rest} renderer={renderer}>
         {children}
       </Form>
     );

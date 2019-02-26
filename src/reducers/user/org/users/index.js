@@ -7,7 +7,7 @@ export default (state = [], action) => {
     type === actionTypes.RESOURCE.RECEIVED_COLLECTION &&
     resourceType === 'ashares'
   ) {
-    return [...collection];
+    return collection ? [...collection] : [];
   }
 
   return state;
@@ -45,7 +45,7 @@ export function sharedAccounts(state) {
 export function accountSummary(state) {
   const shared = sharedAccounts(state);
 
-  if (!shared || shared.length === 0) {
+  if (!shared || !shared.length) {
     return [];
   }
 

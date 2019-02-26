@@ -9,17 +9,10 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 
-@withStyles(theme => ({
+@withStyles(() => ({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing.unit * 2,
   },
 }))
 class MaterialUiSelect extends React.Component {
