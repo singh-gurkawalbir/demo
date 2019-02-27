@@ -84,11 +84,10 @@ const user = {
         resource.requestCollection('shared/ashares', undefined, message),
       requestLicenses: message =>
         resource.requestCollection('licenses', undefined, message),
-      requestTrialLicense: message =>
-        action(actionTypes.REQUEST_TRIAL_LICENSE, {}),
+      requestTrialLicense: () => action(actionTypes.REQUEST_TRIAL_LICENSE, {}),
       trialLicenseIssued: message =>
         action(actionTypes.TRIAL_LICENSE_ISSUED, message),
-      requestLicenseUpgrade: message =>
+      requestLicenseUpgrade: () =>
         action(actionTypes.REQUEST_LICENSE_UPGRADE, {}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),

@@ -2,8 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import RootRef from '@material-ui/core/RootRef';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -16,7 +14,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownArrow from '../../../icons/DownArrow';
 
 const mapStateToProps = state => ({
   notifications: selectors.notifications(state),
@@ -103,8 +100,6 @@ class Notifications extends Component {
     const { classes, notifications, onAccountChange } = this.props;
 
     if (!notifications || notifications.length === 0) {
-      console.log('No notifications');
-
       return null;
     }
 

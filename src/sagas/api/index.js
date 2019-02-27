@@ -118,7 +118,7 @@ export const api = async (path, opts = {}) => {
 
     // For 204 content-length header does not show up
     // So using response status to prevent performing .json()
-    if (response.status === 204) return [];
+    if (response.status === 204) return undefined;
     const body = await response.json();
 
     return body;

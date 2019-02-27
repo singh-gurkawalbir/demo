@@ -17,7 +17,7 @@ export default (state = [], action) => {
       } else if (resourceType === 'shared/ashares') {
         const ownAccounts = state.filter(a => a._id === 'own');
 
-        if (!ownAccounts) {
+        if (!ownAccounts.length) {
           return [...collection];
         }
 
@@ -113,93 +113,6 @@ export default (state = [], action) => {
 
 // #region PUBLIC SELECTORS
 
-export function sharedAccounts(state) {
-  if (!state) {
-    return null;
-  }
-
-  const accepted = state.filter(
-    a => a._id !== 'own' && a.accepted && !a.disabled
-  );
-  const shared = [];
-
-  accepted.forEach(a => {
-    if (!a.ownerUser) return;
-
-    const ioLicenses = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox = ioLicenses && ioLicenses.sandbox;
-    const accessLevel = a.accessLevel || 'monitor';
-
-    shared.push({
-      id: a._id,
-      company: a.ownerUser.company,
-      email: a.ownerUser.email,
-      sandbox,
-      accessLevel,
-    });
-  });
-
-  return shared;
-}
-
-export function accountSummary(state) {
-  const shared = sharedAccounts(state);
-
-  if (!shared || shared.length === 0) {
-    return [];
-  }
-
-  const accounts = [];
-
-  shared.forEach(a => {
-    if (a.sandbox) {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        label: `${a.company} - Production`,
-        accessLevel: a.accessLevel,
-      });
-      accounts.push({
-        id: a.id,
-        environment: 'sandbox',
-        label: `${a.company} - Sandbox`,
-        accessLevel: a.accessLevel,
-      });
-    } else {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        label: a.company,
-        accessLevel: a.accessLevel,
-      });
-    }
-  });
-
-  return accounts;
-}
-
-export function notifications(state) {
-  const accounts = [];
-
-  if (!state || !state.length) {
-    return accounts;
-  }
-
-  const pending = state.filter(
-    a => !a.accepted && !a.dismissed && !a.disabled && a._id !== 'own'
-  );
-
-  pending.forEach(a => {
-    accounts.push({
-      id: a._id,
-      label: a.ownerUser ? a.ownerUser.company || a.ownerUser.name : a._id,
-      accessLevel: a.accessLevel,
-    });
-  });
-
-  return accounts;
-}
-
 // #region INTEGRATOR LICENSE
 export function integratorLicense(state, accountId) {
   if (!state) {
@@ -227,4 +140,106 @@ export function integratorLicense(state, accountId) {
   return ioLicenses[0];
 }
 // #endregion INTEGRATOR LICENSE
+
+export function sharedAccounts(state) {
+  if (!state) {
+    return [];
+  }
+
+  const accepted = state.filter(
+    a => a._id !== 'own' && a.accepted && !a.disabled
+  );
+  const shared = [];
+
+  accepted.forEach(a => {
+    if (!a.ownerUser) return;
+
+    const ioLicenses = a.ownerUser.licenses.find(l => l.type === 'integrator');
+    const sandbox = ioLicenses && ioLicenses.sandbox;
+
+    shared.push({
+      id: a._id,
+      company: a.ownerUser.company,
+      email: a.ownerUser.email,
+      sandbox,
+    });
+  });
+
+  return shared;
+}
+
+export function accountSummary(state) {
+  const shared = sharedAccounts(state);
+  const accounts = [];
+
+  if (!shared || shared.length === 0) {
+    const ownLicense = this.integratorLicense(state, 'own');
+
+    if (ownLicense) {
+      accounts.push({
+        id: 'own',
+        environment: 'production',
+        label: 'Production',
+      });
+
+      if (ownLicense.sandbox) {
+        accounts.push({
+          id: 'own',
+          environment: 'sandbox',
+          label: 'Sandbox',
+        });
+      }
+    }
+
+    return accounts;
+  }
+
+  shared.forEach(a => {
+    if (a.sandbox) {
+      accounts.push({
+        id: a.id,
+        environment: 'production',
+        label: `${a.company} - Production`,
+      });
+      accounts.push({
+        id: a.id,
+        environment: 'sandbox',
+        label: `${a.company} - Sandbox`,
+      });
+    } else {
+      accounts.push({
+        id: a.id,
+        environment: 'production',
+        label: a.company,
+      });
+    }
+  });
+
+  return accounts;
+}
+
+export function notifications(state) {
+  const accounts = [];
+
+  if (!state || !state.length) {
+    return accounts;
+  }
+
+  const pending = state.filter(
+    a => !a.accepted && !a.dismissed && !a.disabled && a._id !== 'own'
+  );
+  const ownerUser = {};
+
+  pending.forEach(a => {
+    ({ name: ownerUser.name, email: ownerUser.email } = a.ownerUser);
+    accounts.push({
+      id: a._id,
+      accessLevel: a.accessLevel,
+      ownerUser,
+    });
+  });
+
+  return accounts;
+}
+
 // #endregion

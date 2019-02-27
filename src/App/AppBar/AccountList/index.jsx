@@ -97,7 +97,8 @@ class AccountList extends Component {
     const { open, anchorEl } = this.state;
     const { classes, accounts, onAccountChange } = this.props;
 
-    if (!accounts || accounts.length === 0) {
+    if (!accounts || accounts.length < 2) {
+      // when user is part of only one org, no need to show the accounts
       return null;
     }
 

@@ -11,8 +11,6 @@ import {
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
-import { func } from 'prop-types';
-// import { GLOBAL_PREFERENCES } from '../../reducers/user/preferences';
 
 export function* changePassword({ updatedPassword }) {
   try {

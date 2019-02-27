@@ -15,7 +15,6 @@ import LicenseAction from './LicenseAction';
 
 const mapStateToProps = state => ({
   authenticated: selectors.isAuthenticated(state),
-  accessLevel: selectors.userAccessLevel(state),
 });
 
 @withStyles(theme => ({
@@ -69,7 +68,7 @@ const mapStateToProps = state => ({
 }))
 export class Appbar extends Component {
   render() {
-    const { classes, authenticated, accessLevel } = this.props;
+    const { classes, authenticated } = this.props;
 
     return (
       <div className={classes.root}>

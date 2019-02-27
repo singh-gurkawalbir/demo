@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import users, * as fromUsers from './org/users';
+import users from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
 import profile, * as fromProfile from './profile';
@@ -87,45 +87,14 @@ export function accessLevel(state) {
 export function accountSummary(state) {
   const userAccessLevel = accessLevel(state);
 
-  console.log(`userAccessLevel : ${userAccessLevel}`);
-
   if (!userAccessLevel) {
     return [];
   }
 
-  let summary;
+  const summary = fromAccounts.accountSummary(
+    state && state.org && state.org.accounts
+  );
   const prefs = fromPreferences.userPreferences(state && state.preferences);
-
-  if (userAccessLevel === 'owner') {
-    prefs.defaultAShareId = 'own';
-    const ioLicense = fromAccounts.integratorLicense(
-      state && state.org && state.org.accounts,
-      prefs.defaultAShareId
-    );
-
-    if (ioLicense && ioLicense.sandbox) {
-      summary = [
-        {
-          id: 'own',
-          environment: 'production',
-          label: 'Production',
-          accessLevel: 'owner',
-        },
-        {
-          id: 'own',
-          environment: 'sandbox',
-          label: 'Sandbox',
-          accessLevel: 'owner',
-        },
-      ];
-    } else {
-      prefs.environment = 'production';
-    }
-  } else {
-    summary = fromAccounts.accountSummary(
-      state && state.org && state.org.accounts
-    );
-  }
 
   if (!summary || summary.length === 0) {
     return summary;

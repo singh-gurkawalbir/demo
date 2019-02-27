@@ -6,10 +6,23 @@ import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
 
-function* getRequestOptions(path) {
+export function* getRequestOptions(path) {
   const opts = {
     headers: {},
   };
+  const pathsDontNeedASharedIdHeader = [
+    '/ashares',
+    '/licenses',
+    '/preferences',
+    '/profile',
+    '/published',
+    '/shared/ashares',
+  ];
+
+  if (pathsDontNeedASharedIdHeader.indexOf(path) > -1) {
+    return opts;
+  }
+
   const userPreferences = yield select(selectors.userPreferences);
 
   if (

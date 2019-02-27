@@ -34,7 +34,7 @@ const mapStateToProps = state => ({
     padding: theme.spacing.unit,
   },
 }))
-export class WaffleBox extends Component {
+class WaffleBox extends Component {
   state = {
     anchorEl: null,
   };

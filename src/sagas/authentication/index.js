@@ -41,6 +41,22 @@ export function* retrievingUserDetails() {
   );
 }
 
+export function* validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+  defaultAShareId
+) {
+  let toReturn = defaultAShareId;
+  const isValidSharedAccountId = yield select(
+    selectors.isValidSharedAccountId,
+    defaultAShareId
+  );
+
+  if (!isValidSharedAccountId) {
+    toReturn = yield select(selectors.getOneValidSharedAccountId);
+  }
+
+  return toReturn;
+}
+
 export function* retrieveAppInitializationResources() {
   yield call(retrievingOrgDetails);
   yield call(retrievingUserDetails);
@@ -49,7 +65,7 @@ export function* retrieveAppInitializationResources() {
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
 
   if (hasAcceptedAccounts) {
-    const isValidSharedAccountId = yield select(
+    /* const isValidSharedAccountId = yield select(
       selectors.isValidSharedAccountId,
       defaultAShareId
     );
@@ -58,7 +74,11 @@ export function* retrieveAppInitializationResources() {
       calculatedDefaultAShareId = yield select(
         selectors.getOneValidSharedAccountId
       );
-    }
+    } */
+    calculatedDefaultAShareId = yield call(
+      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      defaultAShareId
+    );
   } else {
     calculatedDefaultAShareId = 'own';
   }
