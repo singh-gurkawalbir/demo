@@ -60,10 +60,7 @@ export default class ResourceForm extends Component {
           </Button>
           <DynaSubmit
             onClick={value => handleSubmit(formValueToPatchSetConverter(value))}
-            className={classes.actionButton}
-            size="small"
-            variant="contained"
-            color="secondary">
+            className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>

@@ -71,31 +71,24 @@ const mapDispatchToProps = dispatch => ({
 class AccountList extends Component {
   state = {
     anchorEl: null,
-    open: false,
   };
 
   accountArrowRef = React.createRef();
 
-  handleClick = () => {
-    // console.log('handleClick');
-    this.setState(state => ({
-      open: !state.open,
-    }));
+  handleClick = event => {
+    this.setState({
+      anchorEl: !this.state.anchorEl ? event.currentTarget : null,
+    });
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ anchorEl: null });
   };
 
-  componentDidMount() {
-    this.setState({
-      anchorEl: this.accountArrowRef.current,
-    });
-  }
-
   render() {
-    const { open, anchorEl } = this.state;
+    const { anchorEl } = this.state;
     const { classes, accounts, onAccountChange } = this.props;
+    const open = !!anchorEl;
 
     if (!accounts || accounts.length === 0) {
       return null;

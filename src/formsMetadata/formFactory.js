@@ -16,7 +16,7 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
           meta = meta[resource.assistant];
         }
       } else {
-        meta = formMeta.connections[resourceType];
+        meta = formMeta.connections[resource.type];
       }
 
       if (meta) {

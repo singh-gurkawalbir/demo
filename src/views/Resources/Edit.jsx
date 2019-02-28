@@ -79,6 +79,8 @@ const prettyDate = dateString => {
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing.unit,
+    height: `calc(100vh - ${theme.spacing.unit * 27}px)`,
+    overflowY: 'auto',
   },
   relatedContent: {
     textDecoration: 'none',
