@@ -3,28 +3,55 @@ import { call, put, all, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../';
 import actions from '../../actions';
 import { authParams, logoutParams } from '../api/apiPaths';
-import { getResource } from '../resources';
+import { getResource, getResourceCollection } from '../resources';
 import { status422 } from '../test';
 import * as selectors from '../../reducers';
 import {
   auth,
   initializeApp,
   retrieveAppInitializationResources,
+  retrievingOrgDetails,
   retrievingUserDetails,
+  validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
   getCSRFTokenBackend,
   invalidateSession,
 } from './';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 
 describe('initialze all app relevant resources sagas', () => {
+  describe('retrievingOrgDetails sagas', () => {
+    test('should retrieve licenses, org users and accounts', () => {
+      const saga = retrievingOrgDetails();
+      const getLicensesEffect = call(
+        getResourceCollection,
+        actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+      );
+      const getOrgUsersEffect = call(
+        getResourceCollection,
+        actions.user.org.users.requestCollection(`Retrieving org users`)
+      );
+      const getOrgAccountsEffect = call(
+        getResourceCollection,
+        actions.user.org.accounts.requestCollection(
+          `Retrieving user's accounts`
+        )
+      );
+
+      expect(saga.next().value).toEqual(
+        all([getLicensesEffect, getOrgUsersEffect, getOrgAccountsEffect])
+      );
+    });
+  });
   describe('retrievingUserDetails sagas', () => {
     test('should retrieve user profile & preferences', () => {
       const saga = retrievingUserDetails();
-      const getPreferencesEffect = put(
-        actions.user.preferences.request("Retrieving user's preferences")
-      );
-      const getProfileEffect = put(
+      const getProfileEffect = call(
+        getResource,
         actions.user.profile.request("Retrieving user's profile")
+      );
+      const getPreferencesEffect = call(
+        getResource,
+        actions.user.preferences.request("Retrieving user's preferences")
       );
 
       expect(saga.next().value).toEqual(
@@ -32,45 +59,134 @@ describe('initialze all app relevant resources sagas', () => {
       );
     });
   });
+  describe('validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid sagas', () => {
+    test('should return the same AShareId for valid AShareId', () => {
+      const aShareId = 'ashare1';
+      const saga = validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+        aShareId
+      );
+      const callValidateAShareIdEffect = select(
+        selectors.isValidSharedAccountId,
+        aShareId
+      );
 
-  test('should intialize the app retrieving first the user details and then subsequently users ashares', () => {
-    const saga = retrieveAppInitializationResources();
-    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+      expect(saga.next().value).toEqual(callValidateAShareIdEffect);
+      expect(saga.next(true).value).toEqual(aShareId);
+      expect(saga.next(true).done).toEqual(true);
+    });
+    test('should return a new AShareId for invalid AShareId', () => {
+      const aShareId = 'ashare1';
+      const saga = validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+        aShareId
+      );
+      const callValidateAShareIdEffect = select(
+        selectors.isValidSharedAccountId,
+        aShareId
+      );
 
-    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+      expect(saga.next().value).toEqual(callValidateAShareIdEffect);
+      const callGetOneValidSharedAccountIdEffect = select(
+        selectors.getOneValidSharedAccountId
+      );
 
-    const retrievingUserAsharesEffect = put(
-      actions.user.accounts.requestAshares(`Retrieving user's accounts`)
-    );
-
-    expect(saga.next().value).toEqual(retrievingUserAsharesEffect);
-    const checkForAccountsEffect = select(selectors.hasAccounts);
-
-    expect(saga.next().value).toEqual(checkForAccountsEffect);
-    expect(saga.next('some asharedValue received').done).toEqual(true);
+      expect(saga.next(false).value).toEqual(
+        callGetOneValidSharedAccountIdEffect
+      );
+      expect(saga.next('ashare2').value).toEqual('ashare2');
+      expect(saga.next(true).done).toEqual(true);
+    });
   });
-  test('should intialize the app retrieving first the user details and then subsequently users shares/ashares if ashares isnt there', () => {
+  test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
     const saga = retrieveAppInitializationResources();
+    const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
+
+    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
 
     expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
 
-    const retrievingUserAsharesEffect = put(
-      actions.user.accounts.requestAshares(`Retrieving user's accounts`)
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
     );
 
-    expect(saga.next().value).toEqual(retrievingUserAsharesEffect);
+    expect(saga.next({ defaultAShareId: 'own' }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
 
-    const checkForAccountsEffect = select(selectors.hasAccounts);
+    expect(saga.next(false).done).toEqual(true);
+  });
+  test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
+    const saga = retrieveAppInitializationResources();
+    const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
 
-    expect(saga.next().value).toEqual(checkForAccountsEffect);
-    const retrievingUserSharedAsharesEffect = put(
-      actions.user.accounts.requestSharedAshares(
-        `Retrieving Account Membership`
+    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
+    );
+
+    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
+
+    const callValidateAndGetDefaultAShareIdEffect = call(
+      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      'ashare1'
+    );
+
+    expect(saga.next(true).value).toEqual(
+      callValidateAndGetDefaultAShareIdEffect
+    );
+    expect(saga.next('ashare1').done).toEqual(true);
+  });
+  test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
+    const saga = retrieveAppInitializationResources();
+    const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
+
+    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
+    );
+
+    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
+
+    const callValidateAndGetDefaultAShareIdEffect = call(
+      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      'ashare1'
+    );
+
+    expect(saga.next(true).value).toEqual(
+      callValidateAndGetDefaultAShareIdEffect
+    );
+
+    expect(saga.next('ashare2').value).toEqual(
+      put(
+        actions.user.preferences.update({
+          defaultAShareId: 'ashare2',
+        })
       )
     );
-
-    expect(saga.next().value).toEqual(retrievingUserSharedAsharesEffect);
     expect(saga.next().done).toEqual(true);
   });
 });
@@ -156,7 +272,7 @@ describe('initialize app saga', () => {
 
     expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
 
-    const setCSRFEffect = saga.next({ _csrf: 'someCSRF' }).value;
+    const setCSRFEffect = saga.next('someCSRF').value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, 'someCSRF'));
 

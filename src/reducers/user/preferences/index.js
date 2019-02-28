@@ -13,7 +13,7 @@ export const GLOBAL_PREFERENCES = [
 export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
-export default (state = {}, action) => {
+export default (state = { environment: 'production' }, action) => {
   const { type, resourceType, resource, preferences } = action;
   let newState = Object.assign({}, state);
 
@@ -56,8 +56,10 @@ export function userPreferences(state) {
 
   if (!defaultAShareId || defaultAShareId === 'own') {
     mergedPreferences = { ...state };
-  } else {
+  } else if (accounts) {
     mergedPreferences = { ...state, ...accounts[defaultAShareId] };
+  } else {
+    mergedPreferences = { ...state };
   }
 
   delete mergedPreferences.accounts;

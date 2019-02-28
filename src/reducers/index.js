@@ -265,12 +265,80 @@ export function processors(state) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
+export function integratorLicense(state) {
+  const preferences = userPreferences(state);
+
+  console.log(
+    `integratorLicense#1 preferences.defaultAShareId : ${
+      preferences.defaultAShareId
+    }`
+  );
+
+  return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
+export function notifications(state) {
+  return fromUser.notifications(state.user);
+}
+
 export function hasAccounts(state) {
   return !!(state && state.user && state.user.accounts);
+}
+
+export function hasAcceptedUsers(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.org &&
+    state.user.org.users &&
+    state.user.org.users.filter(a => a.accepted && !a.disabled).length > 0
+  );
+}
+
+export function hasAcceptedAccounts(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.org.accounts &&
+    state.user.org.accounts.filter(
+      a => a._id !== 'own' && a.accepted && !a.disabled
+    ).length > 0
+  );
+}
+
+export function isValidSharedAccountId(state, _id) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.org.accounts &&
+    state.user.org.accounts.filter(
+      a => a.accepted && !a.disabled && a._id === _id && a._id !== 'own'
+    ).length > 0
+  );
+}
+
+export function getOneValidSharedAccountId(state) {
+  let _id;
+
+  if (state && state.user && state.user.org && state.user.org.accounts) {
+    const accepted = state.user.org.accounts.filter(
+      a => a.accepted && !a.disabled && a._id !== 'own'
+    );
+
+    if (accepted && accepted.length > 0) {
+      [{ _id }] = accepted;
+    }
+  }
+
+  return _id;
+}
+
+export function userAccessLevel(state) {
+  return fromUser.accessLevel(state.user);
 }
 // #endregion
 

@@ -119,7 +119,7 @@ describe('user reducers', () => {
         );
         const state = reducer(undefined, receivedPreferences);
 
-        expect(state).toEqual({});
+        expect(state).toEqual({ environment: 'production' });
       });
     });
   });
@@ -132,7 +132,9 @@ describe('user reducers', () => {
       );
       const state = reducer(undefined, receivedPreferencesAction);
 
-      expect(selectors.userPreferences(state)).toEqual({});
+      expect(selectors.userPreferences(state)).toEqual({
+        environment: 'production',
+      });
     });
 
     test('should generate the correct set of preferences when the user is a regular account holder without invited users and not an owner', () => {
