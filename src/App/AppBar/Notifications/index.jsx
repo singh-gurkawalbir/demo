@@ -2,19 +2,21 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import RootRef from '@material-ui/core/RootRef';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import AcceptIcon from '@material-ui/icons/Check';
+import DismissIcon from '@material-ui/icons/Clear';
+import Badge from '@material-ui/core/Badge';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownArrow from '../../../icons/DownArrow';
 
 const mapStateToProps = state => ({
-  accounts: selectors.accountSummary(state),
+  notifications: selectors.notifications(state),
 });
 const mapDispatchToProps = dispatch => ({
   onAccountChange: (id, environment) => {
@@ -33,7 +35,7 @@ const mapDispatchToProps = dispatch => ({
     color: theme.appBar.contrast,
   },
   currentContainer: {
-    display: 'inline-flex',
+    // display: 'inline-flex',
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
@@ -68,7 +70,7 @@ const mapDispatchToProps = dispatch => ({
     fill: theme.appBar.contrast,
   },
 }))
-class AccountList extends Component {
+class Notifications extends Component {
   state = {
     anchorEl: null,
     open: false,
@@ -95,36 +97,33 @@ class AccountList extends Component {
 
   render() {
     const { open, anchorEl } = this.state;
-    const { classes, accounts, onAccountChange } = this.props;
+    const { classes, notifications, onAccountChange } = this.props;
 
-    if (!accounts || accounts.length < 2) {
-      // when user is part of only one org, no need to show the accounts
+    if (!notifications || notifications.length === 0) {
       return null;
     }
 
     return (
       <Fragment>
         <span onClick={this.handleClick} className={classes.currentContainer}>
-          <Typography
-            className={classes.currentAccount}
-            aria-owns={open ? 'accountList' : null}
-            aria-haspopup="true">
-            {accounts.find(a => a.selected).label}
-          </Typography>
           <RootRef rootRef={this.accountArrowRef}>
-            <DownArrow className={classes.arrow} />
+            <IconButton color="inherit">
+              <Badge badgeContent={notifications.length} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
           </RootRef>
         </span>
 
         <ArrowPopper
-          id="accountList"
+          id="notifications"
           className={classes.popper}
           open={open}
           anchorEl={anchorEl}
           placement="bottom-end"
           onClose={this.handleClose}>
           <List dense>
-            {accounts.map(a => (
+            {notifications.map(a => (
               <ListItem
                 button
                 onClick={() => {
@@ -134,18 +133,19 @@ class AccountList extends Component {
                   root: classes.itemRoot,
                   container: classes.itemContainer,
                 }}
-                key={`${a.id}-${a.environment}`}>
+                key={`${a.id}`}>
                 <ListItemText
                   classes={{ root: a.selected && classes.selected }}
                   primary={a.label}
                 />
-                {a.environment === 'production' && (
-                  <ListItemSecondaryAction>
-                    <Button className={classes.leave} variant="text">
-                      Leave
-                    </Button>
-                  </ListItemSecondaryAction>
-                )}
+                <ListItemSecondaryAction>
+                  <IconButton className={classes.button} aria-label="Accept">
+                    <AcceptIcon />
+                  </IconButton>
+                  <IconButton className={classes.button} aria-label="Dismiss">
+                    <DismissIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
               </ListItem>
             ))}
           </List>
@@ -156,4 +156,4 @@ class AccountList extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(AccountList);
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);

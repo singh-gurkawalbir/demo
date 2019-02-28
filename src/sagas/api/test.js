@@ -106,6 +106,6 @@ describe('async api tests ', () => {
 
     const resp = await api('/someapi');
 
-    expect(resp).toEqual(null);
+    expect(resp).toEqual(undefined);
   });
 });

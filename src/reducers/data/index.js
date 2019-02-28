@@ -1,7 +1,7 @@
 import actionTypes from '../../actions/types';
 
 export const intializationResources = ['profile', 'preferences'];
-const accountResources = ['ashares', 'shared/ashares'];
+const accountResources = ['ashares', 'shared/ashares', 'licenses'];
 const resourceTypesToIgnore = [...intializationResources, ...accountResources];
 
 function replaceOrInsertResource(state, type, resource) {
