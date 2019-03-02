@@ -8,6 +8,7 @@ import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 @withStyles(theme => ({
   actions: {
     textAlign: 'right',
+    padding: theme.spacing.unit / 2,
   },
   actionButton: {
     marginTop: theme.spacing.double,
@@ -41,14 +42,14 @@ export default class ResourceForm extends Component {
       children,
       ...rest
     } = this.props;
-    const { fields, formValueToPatchSetConverter } = formFactory({
+    const { fields, fieldSets, formValueToPatchSetConverter } = formFactory({
       connection,
       resourceType,
       resource,
     });
 
     return (
-      <DynaForm key={formKey} {...rest} defaultFields={fields}>
+      <DynaForm key={formKey} {...rest} fields={fields} fieldSets={fieldSets}>
         {children}
         <div className={classes.actions}>
           <Button

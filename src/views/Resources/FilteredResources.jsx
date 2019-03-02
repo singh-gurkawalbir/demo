@@ -11,7 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import ImageIcon from '@material-ui/icons/Image';
 import Button from '@material-ui/core/Button';
-import shortid from 'shortid';
+// import shortid from 'shortid';
 import actions from '../../actions';
 
 const mapDispatchToProps = (dispatch, { list }) => ({
@@ -46,7 +46,7 @@ class FilteredResources extends Component {
     const resourceType = list.type;
     const daysOld = lastModified => (
       <span>
-        Modified <TimeAgo date={lastModified} /> ago.
+        Modified <TimeAgo date={lastModified} />.
       </span>
     );
 
@@ -59,7 +59,7 @@ class FilteredResources extends Component {
               path="/pg/resources/:resourceType/add/:id"
               render={() => null}
             />
-
+            {/*  Hide the "Add" until we have a good implementation for it.
             <Route
               render={() => (
                 <Button
@@ -73,6 +73,7 @@ class FilteredResources extends Component {
                 </Button>
               )}
             />
+          */}
           </Switch>
         </Typography>
 

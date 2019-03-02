@@ -4,7 +4,6 @@ import {
 } from '../../../../utils';
 
 export default {
-  // Initializers get the
   initializer: dataModel => {
     const formValues = defaultValueInitializer(dataModel);
 
@@ -28,13 +27,13 @@ export default {
 
     return patchSet;
   },
+
   fields: [
     {
       id: 'Name',
       name: '/name',
       type: 'text',
       label: 'Name',
-      description: 'this is the description',
       placeholder: '',
       defaultValue: '',
       visible: true,
