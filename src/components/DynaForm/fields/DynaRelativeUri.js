@@ -27,7 +27,6 @@ class DynaRelativeUri extends React.Component {
       id,
       isValid,
       name,
-      // description,
       onFieldChange,
       placeholder,
       required,
@@ -40,10 +39,8 @@ class DynaRelativeUri extends React.Component {
       onFieldChange(id, value);
     };
 
-    let description = 'The description!';
+    let description = '';
     const { type } = connection;
-
-    // console.log(this.props);
 
     if (type === 'http' || type === 'rest') {
       description = `Relative to: ${connection[type].baseURI}`;
@@ -51,7 +48,6 @@ class DynaRelativeUri extends React.Component {
 
     return (
       <TextField
-        // autoComplete="off"
         key={id}
         name={name}
         label={label}

@@ -1,4 +1,9 @@
-import { defaultValueInitializer, defaultPatchSetConverter } from '../../utils';
+import {
+  getFieldById,
+  replaceField,
+  defaultValueInitializer,
+  defaultPatchSetConverter,
+} from '../../utils';
 
 const valueInitializer = resource => {
   const formValues = defaultValueInitializer(resource);
@@ -9,16 +14,18 @@ const valueInitializer = resource => {
 };
 
 const fieldInitializer = (meta, resource) => {
-  if (meta && meta.fieldSets && meta.fieldSets[1]) {
-    const newMeta = { ...meta };
+  const newMeta = { ...meta };
+  const id = 'PingRelativeURI';
+  const relativeUriField = getFieldById({ meta: newMeta, id });
 
-    newMeta.fieldSets[1].fields[0].connectionId = resource._id;
-    // console.log('initializer', newMeta);
+  // console.log(relativeUriField);
 
-    return newMeta;
-  }
+  if (!relativeUriField) return meta;
 
-  return meta;
+  relativeUriField.connectionId = resource._id;
+  replaceField({ meta: newMeta, field: relativeUriField });
+
+  return newMeta;
 };
 
 export default {
