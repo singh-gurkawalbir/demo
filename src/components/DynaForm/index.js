@@ -26,8 +26,9 @@ export default class DynaForm extends Component {
   };
 
   render() {
-    const { classes, children, fields, fieldSets, ...rest } = this.props;
+    const { classes, children, fieldMeta, ...rest } = this.props;
     const { expanded } = this.state;
+    const { fields, fieldSets } = fieldMeta;
     const renderer = getRenderer();
 
     if (!fields || !fieldSets) {

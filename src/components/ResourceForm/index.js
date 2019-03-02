@@ -42,14 +42,14 @@ export default class ResourceForm extends Component {
       children,
       ...rest
     } = this.props;
-    const { fields, fieldSets, formValueToPatchSetConverter } = formFactory({
+    const { fieldMeta, formValueToPatchSetConverter } = formFactory({
       connection,
       resourceType,
       resource,
     });
 
     return (
-      <DynaForm key={formKey} {...rest} fields={fields} fieldSets={fieldSets}>
+      <DynaForm key={formKey} {...rest} fieldMeta={fieldMeta}>
         {children}
         <div className={classes.actions}>
           <Button

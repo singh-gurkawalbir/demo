@@ -1,13 +1,31 @@
 import { defaultValueInitializer, defaultPatchSetConverter } from '../../utils';
 
+const valueInitializer = resource => {
+  const formValues = defaultValueInitializer(resource);
+
+  // console.log('custom value initializer', formValues);
+
+  return formValues;
+};
+
+const fieldInitializer = (meta, resource) => {
+  if (meta && meta.fieldSets && meta.fieldSets[1]) {
+    const newMeta = { ...meta };
+
+    newMeta.fieldSets[1].fields[0].connectionId = resource._id;
+    // console.log('initializer', newMeta);
+
+    return newMeta;
+  }
+
+  return meta;
+};
+
 export default {
-  initializer: dataModel => {
-    const formValues = defaultValueInitializer(dataModel);
-
-    // console.log('custom initializer', formValues);
-
-    return formValues;
-  },
+  initializer: ({ resource, fieldMeta }) => ({
+    formValues: valueInitializer(resource),
+    fieldMeta: fieldInitializer(fieldMeta, resource),
+  }),
 
   converter: formValues => {
     const patchSet = defaultPatchSetConverter(formValues);
@@ -195,7 +213,7 @@ export default {
         {
           id: 'PingRelativeURI',
           name: '/http/ping/relativeURI',
-          type: 'text',
+          type: 'relativeUri',
           label: 'Relative URI',
           description: '',
           placeholder: 'optional',

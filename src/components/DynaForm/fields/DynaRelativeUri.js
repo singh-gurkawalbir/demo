@@ -1,25 +1,33 @@
-// @flow
 import React from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-// import FormHelperText from '@material-ui/core/FormHelperText';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import * as selectors from '../../../reducers';
+
+const mapStateToProps = (state, ownProps) => {
+  const { connectionId } = ownProps;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  return { connection };
+};
 
 @withStyles(() => ({
   textField: {
     minWidth: 200,
   },
 }))
-class MaterialUiTextField extends React.Component {
+class DynaRelativeUri extends React.Component {
   render() {
     const { classes } = this.props;
     const {
+      connection,
       disabled,
       errorMessages,
       id,
       isValid,
       name,
-      description,
+      // description,
       onFieldChange,
       placeholder,
       required,
@@ -32,14 +40,14 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value);
     };
 
-    // let description = 'The description!';
-    // const { type } = connection;
+    let description = 'The description!';
+    const { type } = connection;
 
-    // console.log(connection);
+    // console.log(this.props);
 
-    // if (type === 'http' || type === 'rest') {
-    //   description = `Relative to: ${connection[type].baseURI}`;
-    // }
+    if (type === 'http' || type === 'rest') {
+      description = `Relative to: ${connection[type].baseURI}`;
+    }
 
     return (
       <TextField
@@ -60,10 +68,14 @@ class MaterialUiTextField extends React.Component {
   }
 }
 
-const DynaRelativeUri = props => (
+const ConnectedDynaRelativeUri = connect(
+  mapStateToProps,
+  null
+)(DynaRelativeUri);
+const FieldWrappedDynaRelativeUri = props => (
   <FieldWrapper {...props}>
-    <MaterialUiTextField {...props.fieldOpts} />
+    <ConnectedDynaRelativeUri {...props.fieldOpts} />
   </FieldWrapper>
 );
 
-export default DynaRelativeUri;
+export default FieldWrappedDynaRelativeUri;

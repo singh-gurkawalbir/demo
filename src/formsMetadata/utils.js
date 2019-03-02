@@ -15,6 +15,11 @@ export const defaultValueInitializer = values => {
   return results;
 };
 
+export const defaultInitializer = ({ resource, fieldMeta }) => ({
+  formValues: defaultValueInitializer(resource),
+  fieldMeta,
+});
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -23,6 +28,7 @@ export const defaultPatchSetConverter = values =>
   }));
 
 export default {
+  defaultInitializer,
   defaultValueInitializer,
   defaultPatchSetConverter,
 };
