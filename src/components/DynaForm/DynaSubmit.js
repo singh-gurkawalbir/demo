@@ -4,12 +4,16 @@ import Button from '@material-ui/core/Button';
 
 class FormButton extends Component {
   render() {
-    const { isValid, onClick, children, value = {}, ...rest } = this.props;
-
-    // console.log('DynaSubmit valid? ', isValid);
+    const { isValid, onClick, children, className, value = {} } = this.props;
 
     return (
-      <Button {...rest} disabled={!isValid} onClick={() => onClick(value)}>
+      <Button
+        size="small"
+        variant="contained"
+        color="secondary"
+        className={className}
+        disabled={!isValid}
+        onClick={() => onClick(value)}>
         {children}
       </Button>
     );

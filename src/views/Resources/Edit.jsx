@@ -79,15 +79,15 @@ const prettyDate = dateString => {
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing.unit,
+    minHeight: '50%',
+    maxHeight: `calc(100vh - ${theme.spacing.unit * 27}px)`,
+    overflowY: 'hidden',
   },
-  relatedContent: {
-    textDecoration: 'none',
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: `calc(100% - ${theme.spacing.double}px)`,
-  },
+  // textField: {
+  //   marginLeft: theme.spacing.unit,
+  //   marginRight: theme.spacing.unit,
+  //   width: `calc(100% - ${theme.spacing.double}px)`,
+  // },
   dates: {
     color: theme.palette.text.secondary,
   },

@@ -1,18 +1,6 @@
-import {
-  defaultValueInitializer,
-  defaultPatchSetConverter,
-} from '../../../../utils';
+import { defaultPatchSetConverter } from '../../../../utils';
 
 export default {
-  // Initializers get the
-  initializer: dataModel => {
-    const formValues = defaultValueInitializer(dataModel);
-
-    // console.log('custom initializer', formValues);
-
-    return formValues;
-  },
-
   converter: formValues => {
     const fixedValues = {
       '/rest/authType': 'basic',
@@ -28,13 +16,13 @@ export default {
 
     return patchSet;
   },
+
   fields: [
     {
       id: 'Name',
       name: '/name',
       type: 'text',
       label: 'Name',
-      description: 'this is the description',
       placeholder: '',
       defaultValue: '',
       visible: true,

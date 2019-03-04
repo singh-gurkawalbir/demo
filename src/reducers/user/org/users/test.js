@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer from './';
 import actions from '../../../../actions';
 
 describe('users (ashares) reducers', () => {
