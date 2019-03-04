@@ -15,15 +15,16 @@ const valueInitializer = resource => {
 
 const fieldInitializer = (meta, resource) => {
   const newMeta = { ...meta };
-  const id = 'PingRelativeURI';
-  const relativeUriField = getFieldById({ meta: newMeta, id });
+  const uriFieldIds = ['PingRelativeURI', 'RefreshRelativeURI'];
 
-  // console.log(relativeUriField);
+  uriFieldIds.forEach(id => {
+    const relativeUriField = getFieldById({ meta: newMeta, id });
 
-  if (!relativeUriField) return meta;
-
-  relativeUriField.connectionId = resource._id;
-  replaceField({ meta: newMeta, field: relativeUriField });
+    if (relativeUriField) {
+      relativeUriField.connectionId = resource._id;
+      replaceField({ meta: newMeta, field: relativeUriField });
+    }
+  });
 
   return newMeta;
 };
@@ -50,8 +51,6 @@ export default {
       name: '/name',
       type: 'text',
       label: 'Name',
-      placeholder: '',
-      defaultValue: '',
     },
 
     // description
@@ -103,6 +102,15 @@ export default {
       visible: true,
       required: true,
     },
+
+    // header
+    {
+      id: 'HttpHeader',
+      name: '/http/headers',
+      type: 'keyvalue',
+      label: 'HTTP Headers',
+    },
+
     // #endregion
   ],
   fieldSets: [
@@ -220,7 +228,7 @@ export default {
         {
           id: 'PingRelativeURI',
           name: '/http/ping/relativeURI',
-          type: 'relativeUri',
+          type: 'relativeuri',
           label: 'Relative URI',
           description: '',
           placeholder: 'optional',
@@ -358,7 +366,7 @@ export default {
           id: 'RefreshRelativeURI',
           name: '/http/auth/token/refreshRelativeURI',
           helpKey: 'connection.http.auth.token.refreshRelativeURI',
-          type: 'text',
+          type: 'relativeuri',
           label: 'Relative URI',
         },
 

@@ -4,6 +4,7 @@ import DynaSelect from './fields/DynaSelect';
 import DynaText from './fields/DynaText';
 import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
+import DynaKeyValue from './fields/DynaKeyValue';
 
 function getRenderer() {
   return function renderer(field) {
@@ -29,8 +30,11 @@ function getRenderer() {
       case 'radiogroup':
         return <DynaRadioGroup key={id} {...field} />;
 
-      case 'relativeUri':
+      case 'relativeuri':
         return <DynaRelativeUri key={id} {...field} />;
+
+      case 'keyvalue':
+        return <DynaKeyValue key={id} {...field} />;
 
       default:
         return <div>No mapped field</div>;
