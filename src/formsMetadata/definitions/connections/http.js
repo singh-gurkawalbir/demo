@@ -5,8 +5,23 @@ import {
   defaultPatchSetConverter,
 } from '../../utils';
 
+const delimitedValueFields = [
+  '/http/auth/failValues',
+  '/http/rateLimit/failValues',
+  '/http/ping/successValues',
+];
 const valueInitializer = resource => {
   const formValues = defaultValueInitializer(resource);
+
+  delimitedValueFields.forEach(field => {
+    const value = formValues[field];
+
+    // console.log(formValues, 'values=', value);
+
+    if (value) {
+      formValues[field] = value.join(',');
+    }
+  });
 
   // console.log('custom value initializer', formValues);
 
@@ -36,9 +51,19 @@ export default {
   }),
 
   converter: formValues => {
-    const patchSet = defaultPatchSetConverter(formValues);
+    const normalizedFormValues = { ...formValues };
 
-    // console.log('custom converter', v);
+    delimitedValueFields.forEach(field => {
+      const value = formValues[field];
+
+      // console.log('values=', value);
+
+      if (value) {
+        normalizedFormValues[field] = value.split(',');
+      }
+    });
+
+    const patchSet = defaultPatchSetConverter(normalizedFormValues);
 
     return patchSet;
   },
@@ -49,7 +74,7 @@ export default {
     {
       id: 'Name',
       name: '/name',
-      type: 'text',
+      type: 'key',
       label: 'Name',
     },
 
@@ -107,8 +132,12 @@ export default {
     {
       id: 'HttpHeader',
       name: '/http/headers',
-      type: 'keyvalue',
       label: 'HTTP Headers',
+      type: 'keyvalue',
+      keyName: 'name',
+      valueName: 'value',
+      description:
+        'If needed, add any custom headers this application requires.',
     },
 
     // #endregion
@@ -122,7 +151,7 @@ export default {
         // auth type
         {
           id: 'AuthenticationType',
-          name: 'http/auth/type',
+          name: '/http/auth/type',
           type: 'select',
           label: 'Authentication Type',
           description: '',
@@ -198,7 +227,7 @@ export default {
         // unencrypted
         {
           id: 'Unencrypted',
-          name: 'http/unencrypted',
+          name: '/http/unencrypted',
           type: 'textarea',
           label: 'Unencrypted',
           description: 'Place any non sesitive connetion information here.',
@@ -209,7 +238,7 @@ export default {
         // encrypted
         {
           id: 'Encrypted',
-          name: 'http/encrypted',
+          name: '/http/encrypted',
           type: 'textarea',
           label: 'Unencrypted',
           description: 'Place your sesitive connetion information here.',
@@ -326,7 +355,7 @@ export default {
         // Fail Values:
         {
           id: 'RateLimitFailValues',
-          name: 'http/rateLimit/failValues',
+          name: '/http/rateLimit/failValues',
           type: 'text',
           label: 'Fail Values',
           description: '',
@@ -337,7 +366,7 @@ export default {
         // Retry Header:
         {
           id: 'LimitRetryHeader',
-          name: 'http/rateLimit/retryHeader',
+          name: '/http/rateLimit/retryHeader',
           type: 'text',
           label: 'Retry Header',
           description: '',
@@ -388,7 +417,7 @@ export default {
         // RefreshMethod:
         {
           id: 'RefreshMethod',
-          name: 'http/auth/token/refreshMethod',
+          name: '/http/auth/token/refreshMethod',
           helpKey: 'connection.http.auth.token.refreshMethod',
           type: 'select',
           options: [
@@ -411,7 +440,7 @@ export default {
         // RefreshTokenPath:
         {
           id: 'RefreshTokenPath',
-          name: 'http/auth/token/refreshTokenPath',
+          name: '/http/auth/token/refreshTokenPath',
           helpKey: 'connection.http.auth.token.refreshTokenPath',
           type: 'text',
           label: 'Token Path',

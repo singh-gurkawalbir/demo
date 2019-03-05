@@ -1,7 +1,7 @@
 export const defaultValueInitializer = values => {
   const results = {};
   const recurse = (values, path) => {
-    if (typeof values !== 'object') {
+    if (Array.isArray(values) || typeof values !== 'object') {
       results[path] = values;
 
       return;
