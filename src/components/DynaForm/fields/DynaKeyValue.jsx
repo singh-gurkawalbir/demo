@@ -1,10 +1,9 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
-import Help from '../../Help';
 
 @withStyles(theme => ({
   container: {
@@ -23,9 +22,6 @@ import Help from '../../Help';
   },
   label: {
     fontSize: '12px',
-  },
-  helpIcon: {
-    float: 'right',
   },
 }))
 class KeyValueTable extends Component {
@@ -63,7 +59,6 @@ class KeyValueTable extends Component {
       keyName = 'key',
       valueName = 'value',
       description,
-      helpKey,
       errorMessages,
       isValid,
     } = this.props;
@@ -76,46 +71,43 @@ class KeyValueTable extends Component {
       this.handleUpdate(row, event, valueName);
 
     return (
-      <Fragment>
-        {helpKey && <Help className={classes.helpIcon} helpKey={helpKey} />}
-        <div className={classes.container}>
-          <FormLabel className={classes.label}>{label}</FormLabel>
-          {tableData.map(r => (
-            <div className={classes.rowContainer} key={r.row}>
-              <Input
-                autoFocus
-                defaultValue={r[keyName]}
-                placeholder={keyName}
-                className={classes.input}
-                onChange={handleKeyUpdate(r.row)}
-              />
-              <Input
-                defaultValue={r[valueName]}
-                placeholder={valueName}
-                className={classes.input}
-                onChange={handleValueUpdate(r.row)}
-              />
-            </div>
-          ))}
-          <div key="new" className={classes.rowContainer}>
+      <div className={classes.container}>
+        <FormLabel className={classes.label}>{label}</FormLabel>
+        {tableData.map(r => (
+          <div className={classes.rowContainer} key={r.row}>
             <Input
-              value=""
+              autoFocus
+              defaultValue={r[keyName]}
               placeholder={keyName}
               className={classes.input}
-              onChange={handleKeyUpdate()}
+              onChange={handleKeyUpdate(r.row)}
             />
             <Input
-              value=""
+              defaultValue={r[valueName]}
               placeholder={valueName}
               className={classes.input}
-              onChange={handleValueUpdate()}
+              onChange={handleValueUpdate(r.row)}
             />
           </div>
-          <FormHelperText className={classes.helpText}>
-            {isValid ? description : errorMessages}
-          </FormHelperText>
+        ))}
+        <div key="new" className={classes.rowContainer}>
+          <Input
+            value=""
+            placeholder={keyName}
+            className={classes.input}
+            onChange={handleKeyUpdate()}
+          />
+          <Input
+            value=""
+            placeholder={valueName}
+            className={classes.input}
+            onChange={handleValueUpdate()}
+          />
         </div>
-      </Fragment>
+        <FormHelperText className={classes.helpText}>
+          {isValid ? description : errorMessages}
+        </FormHelperText>
+      </div>
     );
   }
 }

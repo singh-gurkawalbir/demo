@@ -74,22 +74,25 @@ export default {
     {
       id: 'Name',
       name: '/name',
+      helpKey: 'connection.name',
       type: 'text',
       label: 'Name',
     },
 
-    // description
-    {
-      id: 'description',
-      name: '/description',
-      type: 'textarea',
-      label: 'Description',
-    },
+    // description (connections dont have descriptions it seems)
+    // {
+    //   id: 'description',
+    //   name: '/description',
+    //   helpKey: 'connection.description',
+    //   type: 'textarea',
+    //   label: 'Description',
+    // },
 
     // baseURI
     {
       id: 'baseURI',
       name: '/http/baseURI',
+      helpKey: 'connection.http.baseURI',
       type: 'text',
       label: 'Base URI',
       required: true,
@@ -99,6 +102,8 @@ export default {
     {
       id: 'mediaType',
       name: '/http/mediaType',
+      helpKey: 'connection.http.mediaType',
+
       type: 'select',
       label: 'Media Type',
       options: [
@@ -144,6 +149,7 @@ export default {
         {
           id: 'AuthenticationType',
           name: '/http/auth/type',
+          helpKey: 'connection.http.auth.type',
           type: 'select',
           label: 'Authentication Type',
           description: '',
@@ -187,6 +193,7 @@ export default {
         {
           id: 'AuthFailStatusCode',
           name: '/http/auth/failStatusCode',
+          helpKey: 'connection.http.auth.failStatusCode',
           type: 'text',
           label: 'Authentication Fail Status Code',
           description: '',
@@ -209,6 +216,7 @@ export default {
         {
           id: 'AuthenticationFailValues',
           name: '/http/auth/failValues',
+          helpKey: 'connection.http.auth.failValues',
           type: 'text',
           label: 'Authentication Fail Values',
           description: 'Separate multiple values with commas.',
@@ -220,6 +228,7 @@ export default {
         {
           id: 'Unencrypted',
           name: '/http/unencrypted',
+          helpKey: 'connection.http.unencrypted',
           type: 'textarea',
           label: 'Unencrypted',
           description: 'Place any non sesitive connetion information here.',
@@ -231,6 +240,7 @@ export default {
         {
           id: 'Encrypted',
           name: '/http/encrypted',
+          helpKey: 'connection.http.encrypted',
           type: 'textarea',
           label: 'Unencrypted',
           description: 'Place your sesitive connetion information here.',
@@ -249,6 +259,7 @@ export default {
         {
           id: 'PingRelativeURI',
           name: '/http/ping/relativeURI',
+          helpKey: 'connection.http.ping.relativeURI',
           type: 'relativeuri',
           label: 'Relative URI',
           description: '',
@@ -260,6 +271,7 @@ export default {
         {
           id: 'PingMethod',
           name: '/http/ping/method',
+          helpKey: 'connection.http.ping.method',
           type: 'select',
           label: 'Ping Method',
           description: '',
@@ -275,6 +287,7 @@ export default {
         {
           id: 'PingSuccessPath',
           name: '/http/ping/successPath',
+          helpKey: 'connection.http.ping.successPath',
           type: 'text',
           label: 'Success Path',
           description: '',
@@ -286,6 +299,7 @@ export default {
         {
           id: 'PingSuccessValues',
           name: '/http/ping/successValues',
+          helpKey: 'connection.http.ping.successValues',
           type: 'text',
           label: 'Success Values',
           description: '',
@@ -297,6 +311,7 @@ export default {
         {
           id: 'PingErrorPath',
           name: '/http/ping/errorPath',
+          helpKey: 'connection.http.ping.errorPath',
           type: 'text',
           label: 'Error Path',
           description: '',
@@ -315,55 +330,50 @@ export default {
         {
           id: 'Limit',
           name: '/http/rateLimit/limit',
+          helpKey: 'connection.http.rateLimit.limit',
           type: 'text',
           label: 'Limit',
-          description: '',
           placeholder: 'optional',
-          defaultValue: '',
         },
 
         // Fail Status Code:
         {
           id: 'LimitStatusCode',
           name: '/http/rateLimit/failStatusCode',
+          helpKey: 'connection.http.rateLimit.failStatusCode',
           type: 'text',
           label: 'Fail Status Code',
-          description: '',
           placeholder: 'optional',
-          defaultValue: '',
         },
 
         // Fail Path:
         {
           id: 'RateLimitFailPath',
           name: '/http/rateLimit/failPath',
+          helpKey: 'connection.http.rateLimit.failPath',
           type: 'text',
           label: 'Fail Path',
-          description: '',
           placeholder: 'optional',
-          defaultValue: '',
         },
 
         // Fail Values:
         {
           id: 'RateLimitFailValues',
           name: '/http/rateLimit/failValues',
+          helpKey: 'connection.http.rateLimit.failValues',
           type: 'text',
           label: 'Fail Values',
-          description: '',
           placeholder: 'optional',
-          defaultValue: '',
         },
 
         // Retry Header:
         {
           id: 'LimitRetryHeader',
           name: '/http/rateLimit/retryHeader',
+          helpKey: 'connection.http.rateLimit.retryHeader',
           type: 'text',
           label: 'Retry Header',
-          description: '',
           placeholder: 'optional',
-          defaultValue: '',
         },
         // #endregion
       ],

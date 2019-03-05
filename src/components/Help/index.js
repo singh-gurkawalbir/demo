@@ -34,13 +34,13 @@ export default class Help extends Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes, helpKey } = this.props;
+    const { classes, className, helpKey } = this.props;
     const open = !!anchorEl;
 
     return (
       <Fragment>
         <ClickAwayListener onClickAway={this.handleClose}>
-          <IconButton onClick={this.handleMenu}>
+          <IconButton className={className} onClick={this.handleMenu}>
             <HelpIcon fontSize="small" />
           </IconButton>
         </ClickAwayListener>
