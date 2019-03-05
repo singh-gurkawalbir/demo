@@ -19,6 +19,20 @@ const inputs = {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
 };
+const HelpWrapper = withStyles({
+  helpIcon: { float: 'right' },
+})(props => {
+  const { helpKey, classes } = props;
+
+  // console.log('helpwrapper initialized');
+
+  return (
+    <Fragment>
+      {helpKey && <Help className={classes.helpIcon} helpKey={helpKey} />}
+      {props.children}
+    </Fragment>
+  );
+});
 
 function getRenderer() {
   return function renderer(field) {
@@ -31,20 +45,9 @@ function getRenderer() {
       return <div>No mapped field for type: [{type}]</div>;
     }
 
-    const HelpWrapper = withStyles({
-      helpIcon: { float: 'right' },
-    })(props => (
-      <Fragment>
-        {helpKey && (
-          <Help className={props.classes.helpIcon} helpKey={helpKey} />
-        )}
-        {props.children}
-      </Fragment>
-    ));
-
     return (
-      <HelpWrapper>
-        <DynaInput key={id} {...field} />
+      <HelpWrapper key={id} helpKey={helpKey}>
+        <DynaInput {...field} />
       </HelpWrapper>
     );
   };
