@@ -20,6 +20,9 @@ import FormLabel from '@material-ui/core/FormLabel';
   rowContainer: {
     display: 'flex',
   },
+  label: {
+    fontSize: '12px',
+  },
 }))
 class KeyValueTable extends Component {
   state = {
@@ -69,9 +72,9 @@ class KeyValueTable extends Component {
 
     return (
       <div className={classes.container}>
-        <FormLabel>{label}</FormLabel>
+        <FormLabel className={classes.label}>{label}</FormLabel>
         {tableData.map(r => (
-          <div className={classes.rowContainer} key={r.row || 'new'}>
+          <div className={classes.rowContainer} key={r.row}>
             <Input
               autoFocus
               defaultValue={r[keyName]}
