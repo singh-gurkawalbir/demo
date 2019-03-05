@@ -48,7 +48,6 @@ export default class Help extends Component {
           placement="left"
           className={classes.helpPopper}
           id="waffleBox"
-          onClose={() => {}}
           open={open}
           anchorEl={anchorEl}>
           <Typography variant="caption">{helpTextMap[helpKey]}</Typography>

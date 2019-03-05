@@ -74,7 +74,7 @@ export default {
     {
       id: 'Name',
       name: '/name',
-      type: 'key',
+      type: 'text',
       label: 'Name',
     },
 
@@ -84,9 +84,6 @@ export default {
       name: '/description',
       type: 'textarea',
       label: 'Description',
-      description: '',
-      placeholder: '',
-      defaultValue: '',
     },
 
     // baseURI
@@ -95,9 +92,6 @@ export default {
       name: '/http/baseURI',
       type: 'text',
       label: 'Base URI',
-      description: '',
-      placeholder: '',
-      defaultValue: '',
       required: true,
     },
 
@@ -107,9 +101,6 @@ export default {
       name: '/http/mediaType',
       type: 'select',
       label: 'Media Type',
-      description: '',
-      placeholder: '',
-      defaultValue: '',
       options: [
         {
           items: [

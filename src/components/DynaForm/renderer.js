@@ -37,7 +37,7 @@ function getRenderer() {
         return <DynaKeyValue key={id} {...field} />;
 
       default:
-        return <div>No mapped field</div>;
+        return <div>No mapped field for type: [{type}]</div>;
     }
   };
 }

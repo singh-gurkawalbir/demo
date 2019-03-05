@@ -31,7 +31,7 @@ export default class DynaForm extends Component {
     const { fields, fieldSets } = fieldMeta;
     const renderer = getRenderer();
 
-    if (!fields || !fieldSets) {
+    if (!fields && !fieldSets) {
       return null;
     }
 
