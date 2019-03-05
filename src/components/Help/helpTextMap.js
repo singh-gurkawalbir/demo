@@ -358,6 +358,8 @@ export default {
   'connector.repository.name': '.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
+  'editor.xml.simple':
+    'Simple parsing means the code is converted to JSON without any user configurations.This typically generates a more complex and difficult to read JSON.\nIf you would like to have more control over what the JSON output looks like, use the Advanced options.',
   'export.name':
     "Name your export so that you can easily reference it from other parts of the application.  For example: 'Salesforce - Query All Accounts'",
   'export._connectionId':

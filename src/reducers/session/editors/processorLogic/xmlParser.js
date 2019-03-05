@@ -17,7 +17,7 @@ const requestBody = editor => {
           type: 'xml',
           version: 1,
           rules: {
-            V0_json: !editor.leanJson,
+            V0_json: !editor.advanced,
             trimSpaces: editor.trimSpaces,
             stripNewLineChars: editor.stripNewLineChars,
             attributePrefix: editor.attributePrefix,

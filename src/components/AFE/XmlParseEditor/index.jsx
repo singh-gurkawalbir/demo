@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
       actions.editor.init(editorId, 'xmlParser', {
         data,
         autoEvaluate: true,
-        leanJson: true,
+        advanced: true,
         trimSpaces: false,
         ...rule,
       })
