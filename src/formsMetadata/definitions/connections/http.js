@@ -132,6 +132,7 @@ export default {
     {
       id: 'HttpHeader',
       name: '/http/headers',
+      helpKey: 'connection.http.headers',
       label: 'HTTP Headers',
       type: 'keyvalue',
       keyName: 'name',

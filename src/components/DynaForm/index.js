@@ -76,9 +76,10 @@ const ExpansionPanel = withStyles({
     margin: 'auto',
   },
 })(MuiExpansionPanel);
-const ExpansionPanelSummary = withStyles({
+const ExpansionPanelSummary = withStyles(theme => ({
   root: {
-    backgroundColor: 'rgba(0,0,0,.03)',
+    paddingLeft: theme.spacing.double,
+    backgroundColor: 'rgba(0,0,0,.06)',
     borderBottom: '1px solid rgba(0,0,0,.125)',
     marginBottom: -1,
     minHeight: 56,
@@ -92,7 +93,7 @@ const ExpansionPanelSummary = withStyles({
     },
   },
   expanded: {},
-})(props => <MuiExpansionPanelSummary {...props} />);
+}))(props => <MuiExpansionPanelSummary {...props} />);
 
 ExpansionPanelSummary.muiName = 'ExpansionPanelSummary';
 
