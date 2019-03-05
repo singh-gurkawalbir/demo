@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HelpIcon from 'mdi-react/HelpIcon';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 
@@ -33,19 +34,21 @@ export default class Help extends Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes, className, helpKey } = this.props;
+    const { classes, helpKey } = this.props;
     const open = !!anchorEl;
 
     return (
       <Fragment>
-        <IconButton className={className} onClick={this.handleMenu}>
-          <HelpIcon fontSize="small" />
-        </IconButton>
+        <ClickAwayListener onClickAway={this.handleClose}>
+          <IconButton onClick={this.handleMenu}>
+            <HelpIcon fontSize="small" />
+          </IconButton>
+        </ClickAwayListener>
         <ArrowPopper
           placement="left"
           className={classes.helpPopper}
           id="waffleBox"
-          onClose={this.handleClose}
+          onClose={() => {}}
           open={open}
           anchorEl={anchorEl}>
           <Typography variant="caption">{helpTextMap[helpKey]}</Typography>

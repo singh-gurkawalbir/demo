@@ -5,6 +5,47 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../../components/Help';
 import DynaForm from '../../components/DynaForm';
+import { createAppropriatePathAndOptions } from '../../sagas/api';
+
+function optionsHandler(options) {
+  const fields = options;
+  const recordType = fields.find(f => f.id === 'type').value;
+
+  if (recordType === '') return [];
+  const allData = [
+    {
+      items: [`${recordType}.id`, `${recordType}.name`, `${recordType}.date`],
+    },
+  ];
+
+  return allData;
+}
+
+export const getOptions = async (fieldId, fields) => {
+  const path = '/processors/javascript';
+  const opts = {
+    method: 'POST',
+    body: {
+      data: fields,
+      rules: {
+        code: optionsHandler.toString(),
+        function: 'optionsHandler',
+      },
+    },
+  };
+  const { options, req } = createAppropriatePathAndOptions(path, opts);
+
+  options.body = JSON.stringify(options.body);
+
+  return fetch(req, options)
+    .then(response => {
+      if (response.status >= 400 && response.status < 600)
+        throw new Error('Error in fetching our opts');
+
+      return response.json();
+    })
+    .then(resp => resp.data);
+};
 
 @hot(module)
 @withStyles(theme => ({
@@ -162,23 +203,6 @@ export default class CustomForms extends Component {
       },
     ];
     const { classes } = this.props;
-    const optionsHandler = (fieldId, fields /* , parentContext */) => {
-      // console.log(fieldId, fields, parentContext);
-      const recordType = fields.find(f => f.id === 'type').value;
-
-      if (recordType === '') return [];
-      const options = [
-        {
-          items: [
-            `${recordType}.id`,
-            `${recordType}.name`,
-            `${recordType}.date`,
-          ],
-        },
-      ];
-
-      return options;
-    };
 
     return (
       <Paper className={classes.paper}>
@@ -189,9 +213,10 @@ export default class CustomForms extends Component {
         <DynaForm
           defaultValues={{ '/http/relativeURI': 'path/to/nowhere' }}
           defaultFields={fields}
-          optionsHandler={optionsHandler}
+          optionsHandler={getOptions}
           // onChange={(a, b, c, d) => console.log(a, b, c, d)}
         />
+        <Help helpKey="connection.type" />
       </Paper>
     );
   }
