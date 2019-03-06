@@ -7,10 +7,12 @@ import DynaText from './fields/DynaText';
 import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
 import DynaKeyValue from './fields/DynaKeyValue';
+import DynaEditor from './fields/DynaEditor';
 import Help from '../Help';
 
 const inputs = {
   text: DynaText,
+  editor: DynaEditor,
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
