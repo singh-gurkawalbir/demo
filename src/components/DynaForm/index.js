@@ -1,33 +1,30 @@
 import { Component } from 'react';
 import { Form, FormFragment } from 'integrator-ui-forms/packages/core/dist';
 import { withStyles } from '@material-ui/core/styles';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import getRenderer from './renderer';
 
 @withStyles(theme => ({
   fieldContainer: {
+    border: 'solid 1px',
+    backgroundColor: theme.palette.background.default,
+    borderColor: 'rgb(0,0,0,0.1)',
     maxHeight: `60vh`,
     overflowY: 'auto',
+    padding: theme.spacing.unit,
+  },
+  details: {
+    display: 'block',
     paddingRight: theme.spacing.unit,
   },
 }))
 export default class DynaForm extends Component {
-  state = {
-    expanded: null,
-  };
-
-  handleChange = panel => (event, expanded) => {
-    this.setState({
-      expanded: expanded ? panel : false,
-    });
-  };
-
   render() {
     const { classes, children, fieldMeta, ...rest } = this.props;
-    const { expanded } = this.state;
     const { fields, fieldSets } = fieldMeta;
     const renderer = getRenderer();
 
@@ -40,16 +37,14 @@ export default class DynaForm extends Component {
         <div className={classes.fieldContainer}>
           {fields && <FormFragment defaultFields={fields} />}
           {fieldSets &&
-            fieldSets.map((set, i) => (
-              <ExpansionPanel
-                key={set.header}
-                square
-                expanded={expanded === i}
-                onChange={this.handleChange(i)}>
-                <ExpansionPanelSummary>
-                  <Typography>{set.header}</Typography>
+            fieldSets.map(set => (
+              <ExpansionPanel key={set.header}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>
+                    {set.header}
+                  </Typography>
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                <ExpansionPanelDetails className={classes.details}>
                   <FormFragment defaultFields={set.fields} />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
@@ -60,46 +55,3 @@ export default class DynaForm extends Component {
     );
   }
 }
-
-const ExpansionPanel = withStyles({
-  root: {
-    border: '1px solid rgba(0,0,0,.125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-  },
-  expanded: {
-    margin: 'auto',
-  },
-})(MuiExpansionPanel);
-const ExpansionPanelSummary = withStyles(theme => ({
-  root: {
-    paddingLeft: theme.spacing.double,
-    backgroundColor: 'rgba(0,0,0,.06)',
-    borderBottom: '1px solid rgba(0,0,0,.125)',
-    marginBottom: -1,
-    minHeight: 56,
-    '&$expanded': {
-      minHeight: 56,
-    },
-  },
-  content: {
-    '&$expanded': {
-      margin: '12px 0',
-    },
-  },
-  expanded: {},
-}))(props => <MuiExpansionPanelSummary {...props} />);
-
-ExpansionPanelSummary.muiName = 'ExpansionPanelSummary';
-
-const ExpansionPanelDetails = withStyles(theme => ({
-  root: {
-    display: 'block',
-    padding: theme.spacing.unit * 2,
-  },
-}))(MuiExpansionPanelDetails);
