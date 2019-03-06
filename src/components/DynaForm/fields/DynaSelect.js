@@ -35,17 +35,20 @@ class MaterialUiSelect extends React.Component {
       (itemsSoFar, option) =>
         itemsSoFar.concat(
           option.items.map(item => {
+            let key;
+            let value;
+
             if (typeof item === 'string') {
-              return (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              );
+              key = item;
+              value = item;
+            } else {
+              key = item.value;
+              value = item.label || item.value;
             }
 
             return (
-              <MenuItem key={item.value} value={item.value}>
-                {item.label || item.value}
+              <MenuItem key={key} value={value}>
+                {value}
               </MenuItem>
             );
           })
@@ -55,7 +58,9 @@ class MaterialUiSelect extends React.Component {
 
     return (
       <FormControl key={id} disabled={disabled} className={classes.root}>
-        <InputLabel htmlFor={id}>{label}</InputLabel>
+        <InputLabel shrink={!!value} htmlFor={id}>
+          {label}
+        </InputLabel>
         <Select
           value={value}
           onChange={evt => {

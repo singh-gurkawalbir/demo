@@ -8,10 +8,10 @@ class MaterialCheckbox extends React.Component {
     const {
       disabled,
       id,
-      isValid,
+      // isValid,
       name,
       onFieldChange,
-      value,
+      value = '',
       label,
     } = this.props;
 
@@ -22,8 +22,8 @@ class MaterialCheckbox extends React.Component {
             key={id}
             name={name}
             disabled={disabled}
-            isInvalid={!isValid}
-            value={value}
+            // isInvalid={!isValid}
+            value={typeof value === 'string' ? value : value.toString()}
             checked={value}
             onChange={evt => onFieldChange(id, evt.target.checked)}
           />

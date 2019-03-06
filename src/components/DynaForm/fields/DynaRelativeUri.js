@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from 'mdi-react/EditIcon';
+// import EditIcon from 'mdi-react/EditIcon';
+import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
@@ -104,7 +105,7 @@ class DynaRelativeUri extends React.Component {
         <IconButton
           onClick={this.handleEditorClick}
           className={classes.editorButton}>
-          <EditIcon />
+          <OpenInNewIcon />
         </IconButton>
         <TextField
           key={id}
