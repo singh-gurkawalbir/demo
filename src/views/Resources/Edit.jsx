@@ -33,7 +33,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
   return {
     handlePatchResource: patchSet => {
-      // console.log('patchSet Handled', patchSet);
+      // return console.log('patchSet Handled', patchSet);
       // TODO: Optionally we let the patchStaged action also take a
       // boolean flag to auto-commit?
       dispatch(actions.resource.patchStaged(id, patchSet));
@@ -79,15 +79,15 @@ const prettyDate = dateString => {
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing.unit,
+    minHeight: '50%',
+    maxHeight: `calc(100vh - ${theme.spacing.unit * 27}px)`,
+    overflowY: 'hidden',
   },
-  relatedContent: {
-    textDecoration: 'none',
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: `calc(100% - ${theme.spacing.double}px)`,
-  },
+  // textField: {
+  //   marginLeft: theme.spacing.unit,
+  //   marginRight: theme.spacing.unit,
+  //   width: `calc(100% - ${theme.spacing.double}px)`,
+  // },
   dates: {
     color: theme.palette.text.secondary,
   },

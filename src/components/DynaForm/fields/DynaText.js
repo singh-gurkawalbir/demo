@@ -2,7 +2,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-// import FormHelperText from '@material-ui/core/FormHelperText';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 
 @withStyles(() => ({

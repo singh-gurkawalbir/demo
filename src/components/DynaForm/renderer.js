@@ -1,40 +1,57 @@
+import { Fragment } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import DynaMultiSelect from './fields/DynaMultiSelect';
 import DynaRadioGroup from './fields/DynaRadioGroup';
 import DynaSelect from './fields/DynaSelect';
 import DynaText from './fields/DynaText';
 import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
+import DynaKeyValue from './fields/DynaKeyValue';
+import DynaEditor from './fields/DynaEditor';
+import Help from '../Help';
+
+const inputs = {
+  text: DynaText,
+  editor: DynaEditor,
+  textarea: DynaText,
+  checkbox: DynaCheckbox,
+  select: DynaSelect,
+  multiselect: DynaMultiSelect,
+  radiogroup: DynaRadioGroup,
+  relativeuri: DynaRelativeUri,
+  keyvalue: DynaKeyValue,
+};
+const HelpWrapper = withStyles({
+  helpIcon: { float: 'right' },
+})(props => {
+  const { helpKey, classes } = props;
+
+  // console.log('helpwrapper initialized');
+
+  return (
+    <Fragment>
+      {helpKey && <Help className={classes.helpIcon} helpKey={helpKey} />}
+      {props.children}
+    </Fragment>
+  );
+});
 
 function getRenderer() {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
-    const { id, type /* , label, misc = {} */ } = field;
 
-    switch (type) {
-      case 'text':
-        return <DynaText key={id} {...field} />;
+    const { id, type, helpKey } = field;
+    const DynaInput = inputs[type];
 
-      case 'textarea':
-        return <DynaText key={id} {...field} />;
-
-      case 'checkbox':
-        return <DynaCheckbox key={id} {...field} />;
-
-      case 'select':
-        return <DynaSelect key={id} {...field} />;
-
-      case 'multiselect':
-        return <DynaMultiSelect key={id} {...field} />;
-
-      case 'radiogroup':
-        return <DynaRadioGroup key={id} {...field} />;
-
-      case 'relativeUri':
-        return <DynaRelativeUri key={id} {...field} />;
-
-      default:
-        return <div>No mapped field</div>;
+    if (!DynaInput) {
+      return <div>No mapped field for type: [{type}]</div>;
     }
+
+    return (
+      <HelpWrapper key={id} helpKey={helpKey}>
+        <DynaInput {...field} />
+      </HelpWrapper>
+    );
   };
 }
 

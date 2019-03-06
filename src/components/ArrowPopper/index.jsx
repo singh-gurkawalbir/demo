@@ -90,40 +90,40 @@ export default class ArrowPopper extends Component {
       placement = 'bottom-end',
       classes,
       children,
-      onClose,
+      onClose = () => {}, // default to noop.
       className,
     } = this.props;
     const { arrowEl } = this.state;
 
     return (
-      <ClickAwayListener onClickAway={onClose}>
-        <Popper
-          id={id}
-          anchorEl={anchorEl}
-          placement={placement}
-          disablePortal={false}
-          open={open}
-          className={classes.popper}
-          onClose={onClose}
-          modifiers={{
-            flip: {
-              enabled: true,
-            },
-            preventOverflow: {
-              enabled: true,
-              boundariesElement: 'scrollParent',
-            },
-            arrow: {
-              enabled: true,
-              element: arrowEl,
-            },
-          }}>
-          <span className={classes.arrow} ref={this.handleArrowEl} />
+      <Popper
+        id={id}
+        anchorEl={anchorEl}
+        placement={placement}
+        disablePortal={false}
+        open={open}
+        className={classes.popper}
+        onClose={onClose}
+        modifiers={{
+          flip: {
+            enabled: true,
+          },
+          preventOverflow: {
+            enabled: true,
+            boundariesElement: 'scrollParent',
+          },
+          arrow: {
+            enabled: true,
+            element: arrowEl,
+          },
+        }}>
+        <span className={classes.arrow} ref={this.handleArrowEl} />
+        <ClickAwayListener onClickAway={onClose}>
           <Paper className={classNames(classes.paper, className)}>
             {children}
           </Paper>
-        </Popper>
-      </ClickAwayListener>
+        </ClickAwayListener>
+      </Popper>
     );
   }
 }

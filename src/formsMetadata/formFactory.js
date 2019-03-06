@@ -1,10 +1,11 @@
 import formMeta from './definitions';
-import { defaultValueInitializer, defaultPatchSetConverter } from './utils';
+import { defaultInitializer, defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = (connection, resourceType, resource) => {
   let fields = formMeta.common;
+  let fieldSets = [];
   let converter = defaultPatchSetConverter;
-  let initializer = defaultValueInitializer;
+  let initializer = defaultInitializer;
   let meta;
 
   switch (resourceType) {
@@ -16,17 +17,13 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
           meta = meta[resource.assistant];
         }
       } else {
-        meta = formMeta.connections[resourceType];
+        meta = formMeta.connections[resource.type];
       }
 
       if (meta) {
-        if (Array.isArray(meta)) {
-          fields = meta;
-        } else {
-          fields = meta.fields || [];
-          converter = meta.converter || defaultPatchSetConverter;
-          initializer = meta.initializer || defaultValueInitializer;
-        }
+        ({ fields, fieldSets } = meta);
+        converter = meta.converter || defaultPatchSetConverter;
+        initializer = meta.initializer || defaultInitializer;
       }
 
       break;
@@ -39,7 +36,11 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
         if (meta) {
           meta = meta[connection.type];
 
-          if (meta) fields = meta;
+          if (meta) {
+            ({ fields, fieldSets } = meta);
+            converter = meta.converter || defaultPatchSetConverter;
+            initializer = meta.initializer || defaultInitializer;
+          }
         }
       }
 
@@ -49,11 +50,15 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
       break;
   }
 
-  return { fields, converter, initializer };
+  return {
+    fieldMeta: { fields, fieldSets },
+    converter,
+    initializer,
+  };
 };
 
 const setDefaults = (fields, values) => {
-  if (!values || !fields) return fields;
+  if (!values || !fields || fields.length === 0) return fields;
 
   return fields.map(f => {
     if (f && values[f.name]) {
@@ -65,15 +70,34 @@ const setDefaults = (fields, values) => {
 };
 
 export default ({ resourceType, connection, resource = {} }) => {
-  const { fields, converter, initializer } = getResourceFormAssets(
+  const { fieldMeta, converter, initializer } = getResourceFormAssets(
     connection,
     resourceType,
     resource
   );
-  const fieldsWithDefaults = setDefaults(fields, initializer(resource));
+  const { formValues, fieldMeta: initializedFieldMeta } = initializer({
+    resource,
+    fieldMeta,
+  });
+  const filled = [];
+  const { fields, fieldSets } = initializedFieldMeta;
+
+  if (fieldSets) {
+    fieldSets.forEach(set => {
+      const { fields, ...rest } = set;
+
+      filled.push({
+        ...rest,
+        fields: setDefaults(fields),
+      });
+    });
+  }
 
   return {
-    fields: fieldsWithDefaults,
+    fieldMeta: {
+      fields: setDefaults(fields, formValues),
+      fieldSets: filled,
+    },
     formValueToPatchSetConverter: converter,
   };
 };
