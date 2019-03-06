@@ -47,7 +47,7 @@ export default class Help extends Component {
         <ArrowPopper
           placement="left"
           className={classes.helpPopper}
-          id="waffleBox"
+          id="helpBubble"
           open={open}
           anchorEl={anchorEl}>
           <Typography variant="caption">{helpTextMap[helpKey]}</Typography>
