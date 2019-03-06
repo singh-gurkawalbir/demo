@@ -54,9 +54,7 @@ export function userPreferences(state) {
   const { defaultAShareId, accounts } = state;
   let mergedPreferences;
 
-  if (!defaultAShareId || defaultAShareId === 'own') {
-    mergedPreferences = { ...state };
-  } else if (accounts) {
+  if (accounts && defaultAShareId && defaultAShareId !== 'own') {
     mergedPreferences = { ...state, ...accounts[defaultAShareId] };
   } else {
     mergedPreferences = { ...state };

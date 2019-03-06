@@ -12,7 +12,7 @@ import {
   retrieveAppInitializationResources,
   retrievingOrgDetails,
   retrievingUserDetails,
-  validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+  validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
   invalidateSession,
 } from './';
@@ -59,10 +59,10 @@ describe('initialze all app relevant resources sagas', () => {
       );
     });
   });
-  describe('validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid sagas', () => {
+  describe('validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid sagas', () => {
     test('should return the same AShareId for valid AShareId', () => {
       const aShareId = 'ashare1';
-      const saga = validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+      const saga = validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
         aShareId
       );
       const callValidateAShareIdEffect = select(
@@ -76,7 +76,7 @@ describe('initialze all app relevant resources sagas', () => {
     });
     test('should return a new AShareId for invalid AShareId', () => {
       const aShareId = 'ashare1';
-      const saga = validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+      const saga = validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
         aShareId
       );
       const callValidateAShareIdEffect = select(
@@ -141,7 +141,7 @@ describe('initialze all app relevant resources sagas', () => {
     );
 
     const callValidateAndGetDefaultAShareIdEffect = call(
-      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
       'ashare1'
     );
 
@@ -172,7 +172,7 @@ describe('initialze all app relevant resources sagas', () => {
     );
 
     const callValidateAndGetDefaultAShareIdEffect = call(
-      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
       'ashare1'
     );
 

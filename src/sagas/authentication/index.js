@@ -41,20 +41,19 @@ export function* retrievingUserDetails() {
   );
 }
 
-export function* validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   defaultAShareId
 ) {
-  let toReturn = defaultAShareId;
   const isValidSharedAccountId = yield select(
     selectors.isValidSharedAccountId,
     defaultAShareId
   );
 
-  if (!isValidSharedAccountId) {
-    toReturn = yield select(selectors.getOneValidSharedAccountId);
+  if (isValidSharedAccountId) {
+    return defaultAShareId;
   }
 
-  return toReturn;
+  return yield select(selectors.getOneValidSharedAccountId);
 }
 
 export function* retrieveAppInitializationResources() {
@@ -76,7 +75,7 @@ export function* retrieveAppInitializationResources() {
       );
     } */
     calculatedDefaultAShareId = yield call(
-      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
       defaultAShareId
     );
   } else {

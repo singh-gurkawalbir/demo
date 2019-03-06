@@ -47,13 +47,9 @@ function createAppropriatePathAndOptions(path, opts) {
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
 
       headers: {
-        ...Object.assign(
-          {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-csrf-token': getCSRFToken(),
-          },
-          opts.headers
-        ),
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-csrf-token': getCSRFToken(),
+        ...opts.headers,
       },
     };
   }

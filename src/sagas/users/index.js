@@ -172,8 +172,8 @@ export function* changeEmail({ updatedEmail }) {
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
-  takeEvery(actionTypes.REQUEST_TRIAL_LICENSE, requestTrialLicense),
-  takeEvery(actionTypes.REQUEST_LICENSE_UPGRADE, requestLicenseUpgrade),
+  takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
+  takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
 ];

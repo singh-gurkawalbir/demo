@@ -65,17 +65,10 @@ export function accessLevel(state) {
     if (!defaultAShareId || defaultAShareId === 'own') {
       accessLevel = 'owner';
     } else {
-      const { accounts } = state.org && state.org;
+      const { accounts } = state.org;
+      const account = accounts.find(a => a._id === defaultAShareId);
 
-      accounts.some(a => {
-        if (a._id === defaultAShareId) {
-          ({ accessLevel } = a);
-
-          return true;
-        }
-
-        return false;
-      });
+      ({ accessLevel } = account);
     }
   }
 

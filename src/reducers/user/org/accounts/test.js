@@ -1,15 +1,16 @@
 /* global describe, test, expect */
+import moment from 'moment';
 import reducer, * as selectors from './';
 import actions from '../../../../actions';
 
 describe('account (ashares) reducers', () => {
-  test('any other action return default state', () => {
+  test('any other action should return default state', () => {
     const newState = reducer(undefined, 'someaction');
 
     expect(newState).toEqual([]);
   });
 
-  test('any other action return original state', () => {
+  test('any other action should return original state', () => {
     const someState = [{ something: 'something' }];
     const newState = reducer(someState, 'someaction');
 
@@ -248,6 +249,174 @@ describe('account (ashares) reducers', () => {
           type: 'integrator',
           sandbox: true,
         });
+      });
+      test('should return correct status, expiresInDays of integrator license', () => {
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            { _id: 'license1', type: 'integrator', tier: 'none' },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state, 'own')).toEqual({
+          _id: 'license1',
+          type: 'integrator',
+          tier: 'none',
+          sandbox: false,
+        });
+
+        const state2 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'free',
+              trialEndDate: moment()
+                .add(10, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state2, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'free',
+            sandbox: false,
+            trialEndDate: expect.any(String),
+            status: 'IN_TRIAL',
+            expiresInDays: 10,
+          })
+        );
+
+        const state3 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'free',
+              trialEndDate: moment()
+                .subtract(2, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state3, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'free',
+            sandbox: false,
+            trialEndDate: expect.any(String),
+            status: 'TRIAL_EXPIRED',
+          })
+        );
+
+        const state4 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'free',
+              trialEndDate: moment()
+                .subtract(1, 'hours')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state4, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'free',
+            sandbox: false,
+            trialEndDate: expect.any(String),
+            status: 'TRIAL_EXPIRED',
+          })
+        );
+
+        const state5 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'standard',
+              expires: moment()
+                .add(60, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state5, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'standard',
+            sandbox: false,
+            expires: expect.any(String),
+            status: 'ACTIVE',
+            expiresInDays: 60,
+          })
+        );
+
+        const state6 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'standard',
+              expires: moment()
+                .add(1, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state6, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'standard',
+            sandbox: false,
+            expires: expect.any(String),
+            status: 'ACTIVE',
+            expiresInDays: 1,
+          })
+        );
+
+        const state7 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'standard',
+              expires: moment()
+                .subtract(1, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.integratorLicense(state7, 'own')).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'standard',
+            sandbox: false,
+            expires: expect.any(String),
+            status: 'EXPIRED',
+          })
+        );
       });
     });
     describe('accountSummary', () => {

@@ -19,7 +19,7 @@ export function* getRequestOptions(path) {
     '/shared/ashares',
   ];
 
-  if (pathsDontNeedASharedIdHeader.indexOf(path) > -1) {
+  if (pathsDontNeedASharedIdHeader.includes(path)) {
     return opts;
   }
 
