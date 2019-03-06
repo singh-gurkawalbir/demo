@@ -111,11 +111,7 @@ class Edit extends Component {
 
     return merged ? (
       <LoadResources required resources={[resourceType]}>
-        <Typography variant="h5">
-          {`${toName(resourceType)}: ${merged.name || ''}`}
-        </Typography>
-
-        <Typography variant="subtitle1">ID: {merged._id}</Typography>
+        <Typography variant="h5">{toName(resourceType)}</Typography>
 
         <Typography variant="caption" className={classes.dates}>
           Last Modified: {prettyDate(merged.lastModified)}
