@@ -32,8 +32,8 @@ import CodeEditor from '../../../components/CodeEditor';
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    height: '40vh',
-    width: '60vh',
+    height: '50vh',
+    width: '65vh',
   },
 }))
 class EditorField extends Component {
@@ -83,6 +83,7 @@ class EditorField extends Component {
           <Button
             onClick={this.handleEditorClick}
             variant="contained"
+            size="small"
             color="secondary">
             Close
           </Button>

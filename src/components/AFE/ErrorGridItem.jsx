@@ -9,7 +9,7 @@ import CodePanel from './GenericEditor/CodePanel';
     border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
     minWidth: '150px',
-    minHeight: '120px',
+    minHeight: '100px',
     gridArea: 'error',
     marginBottom: theme.spacing.double,
   },

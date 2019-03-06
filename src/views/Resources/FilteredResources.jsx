@@ -50,10 +50,12 @@ class FilteredResources extends Component {
       </span>
     );
 
+    if (!list.count) return null;
+
     return (
       <div className={classes.root}>
         <Typography variant="h5">
-          {resourceType.toUpperCase()}
+          {resourceType.charAt(0).toUpperCase() + resourceType.slice(1)}
           <Switch>
             <Route
               path="/pg/resources/:resourceType/add/:id"
@@ -77,38 +79,34 @@ class FilteredResources extends Component {
           </Switch>
         </Typography>
 
-        {!list.count ? (
-          <Typography variant="h6">None.</Typography>
-        ) : (
-          <List>
-            {list.resources.map(r => (
-              <ListItem
-                className={classes.listItem}
-                button
-                key={r._id}
-                component={Link}
-                to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-                <Avatar>
-                  <ImageIcon />
-                </Avatar>
-                <ListItemText
-                  primary={r.name || r._id}
-                  secondary={daysOld(r.lastModified)}
-                  secondaryTypographyProps={{ variant: 'caption' }}
-                />
-              </ListItem>
-            ))}
+        <List>
+          {list.resources.map(r => (
+            <ListItem
+              className={classes.listItem}
+              button
+              key={r._id}
+              component={Link}
+              to={`/pg/resources/${resourceType}/edit/${r._id}`}>
+              <Avatar>
+                <ImageIcon />
+              </Avatar>
+              <ListItemText
+                primary={r.name || r._id}
+                secondary={daysOld(r.lastModified)}
+                secondaryTypographyProps={{ variant: 'caption' }}
+              />
+            </ListItem>
+          ))}
 
-            {list.filtered > list.count && (
-              <Button
-                onClick={handleMore(list.count + 2)}
-                size="small"
-                variant="outlined">
-                Show more results ({list.filtered - list.count} left)
-              </Button>
-            )}
-          </List>
-        )}
+          {list.filtered > list.count && (
+            <Button
+              onClick={handleMore(list.count + 2)}
+              size="small"
+              variant="outlined">
+              Show more results ({list.filtered - list.count} left)
+            </Button>
+          )}
+        </List>
       </div>
     );
   }
