@@ -11,6 +11,9 @@ import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 
 const mapStateToProps = (state, ownProps) => {
   const { connectionId } = ownProps;
+
+  if (!connectionId) return {};
+
   const connection = selectors.resource(state, 'connections', connectionId);
 
   return { connection };
@@ -48,13 +51,13 @@ class DynaRelativeUri extends React.Component {
   getSampleData = () => {
     const { connection } = this.props;
 
+    if (!connection) return '{}';
+
     return JSON.stringify(
       {
         connection: {
+          _id: connection._id,
           name: connection.name,
-          http: {
-            unencrypted: connection.http.unencrypted,
-          },
         },
       },
       null,
@@ -66,7 +69,7 @@ class DynaRelativeUri extends React.Component {
     const { showEditor } = this.state;
     const {
       classes,
-      connection,
+      connection = {},
       disabled,
       errorMessages,
       id,

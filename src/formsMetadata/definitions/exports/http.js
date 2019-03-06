@@ -32,7 +32,7 @@ export default {
       id: 'relativeUri',
       name: '/http/relativeURI',
       helpKey: 'export.http.relativeURI',
-      type: 'relativeUri',
+      type: 'relativeuri',
       label: 'Relative URI',
       required: true,
     },
