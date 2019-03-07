@@ -281,4 +281,20 @@ describe('refreshHelperFunctions saga', () => {
     );
     clear();
   });
+  test(`should exit gracefully when the getResource api call fails and should not alter localStorage Helperfunctions as well`, () => {
+    localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
+    localStorage.setItem = jest.fn();
+
+    const saga = refreshHelperFunctions();
+    const getResourceEffect = saga.next(undefined).value;
+
+    expect(getResourceEffect).toEqual(
+      call(getResource, {
+        resourceType: 'processors',
+        message: 'Getting Helper functions',
+      })
+    );
+
+    expect(saga.next().done).toEqual(true);
+  });
 });
