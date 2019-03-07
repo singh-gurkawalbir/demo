@@ -41,6 +41,15 @@ const fieldInitializer = (meta, resource) => {
     }
   });
 
+  const sharedConcurrenty = getFieldById({
+    meta: newMeta,
+    id: 'BorrowConcurrencyFrom',
+  });
+
+  sharedConcurrenty.connectionId = resource._id;
+  sharedConcurrenty.connectionType = resource.type;
+  replaceField({ meta: newMeta, field: sharedConcurrenty });
+
   return newMeta;
 };
 
@@ -473,7 +482,7 @@ export default {
           id: 'BorrowConcurrencyFrom',
           name: '/_borrowConcurrencyFromConnectionId',
           helpKey: 'connection._borrowConcurrencyFromConnectionId',
-          type: 'text',
+          type: 'selectconnection',
           label: 'Borrow Concurrency From',
         },
 

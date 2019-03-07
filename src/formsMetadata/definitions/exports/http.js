@@ -1,4 +1,31 @@
+import {
+  getFieldById,
+  replaceField,
+  defaultValueInitializer,
+} from '../../utils';
+
+const fieldInitializer = (meta, resource) => {
+  const newMeta = { ...meta };
+  const uriFieldIds = ['relativeUri'];
+
+  uriFieldIds.forEach(id => {
+    const relativeUriField = getFieldById({ meta: newMeta, id });
+
+    if (relativeUriField) {
+      relativeUriField.connectionId = resource._connectionId;
+      replaceField({ meta: newMeta, field: relativeUriField });
+    }
+  });
+
+  return newMeta;
+};
+
 export default {
+  initializer: ({ resource, fieldMeta }) => ({
+    formValues: defaultValueInitializer(resource),
+    fieldMeta: fieldInitializer(fieldMeta, resource),
+  }),
+
   fields: [
     {
       id: 'Name',

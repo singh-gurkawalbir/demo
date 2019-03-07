@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import DynaMultiSelect from './fields/DynaMultiSelect';
 import DynaRadioGroup from './fields/DynaRadioGroup';
 import DynaSelect from './fields/DynaSelect';
+import DynaSelectConnection from './fields/DynaSelectConnection';
 import DynaText from './fields/DynaText';
 import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
@@ -16,6 +17,7 @@ const inputs = {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  selectconnection: DynaSelectConnection,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
