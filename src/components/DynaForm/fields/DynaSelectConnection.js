@@ -1,5 +1,5 @@
-// @flow
 import React from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -8,56 +8,54 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import * as selectors from '../../../reducers';
+
+const mapStateToProps = (state, ownProps) => {
+  const { connectionId, connectionType } = ownProps;
+
+  if (!connectionType) return {};
+
+  const { resources } = selectors.resourceList(state, { type: 'connections' });
+
+  // console.log('from dyna select', resources);
+
+  return {
+    connections: resources.filter(
+      c => c.type === connectionType && c._id !== connectionId
+    ),
+  };
+};
 
 @withStyles(() => ({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
+  textField: {
+    minWidth: 200,
   },
 }))
-class MaterialUiSelect extends React.Component {
+class DynaSelectConnection extends React.Component {
   render() {
-    const { classes } = this.props;
     const {
       description,
       disabled,
       id,
-      // isValid,
       name,
-      options = [],
-      // placeholder,
-      // required,
+      connections = [],
       value,
       label,
       onFieldChange,
     } = this.props;
-    const items = options.reduce(
-      (itemsSoFar, option) =>
-        itemsSoFar.concat(
-          option.items.map(item => {
-            let label;
-            let value;
+    const items = connections.map(conn => {
+      const label = conn.name;
+      const value = conn._id;
 
-            if (typeof item === 'string') {
-              label = item;
-              value = item;
-            } else {
-              ({ value } = item);
-              label = item.label || item.value;
-            }
-
-            return (
-              <MenuItem key={value} value={value}>
-                {label}
-              </MenuItem>
-            );
-          })
-        ),
-      []
-    );
+      return (
+        <MenuItem key={value} value={value}>
+          {label}
+        </MenuItem>
+      );
+    });
 
     return (
-      <FormControl key={id} disabled={disabled} className={classes.root}>
+      <FormControl key={id} disabled={disabled}>
         <InputLabel shrink={!!value} htmlFor={id}>
           {label}
         </InputLabel>
@@ -75,10 +73,14 @@ class MaterialUiSelect extends React.Component {
   }
 }
 
-const DynaSelect = props => (
+const ConnectedDynaRelativeUri = connect(
+  mapStateToProps,
+  null
+)(DynaSelectConnection);
+const FieldWrappedDynaRelativeUri = props => (
   <FieldWrapper {...props}>
-    <MaterialUiSelect />
+    <ConnectedDynaRelativeUri {...props.fieldOpts} />
   </FieldWrapper>
 );
 
-export default DynaSelect;
+export default FieldWrappedDynaRelativeUri;

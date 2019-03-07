@@ -4,11 +4,10 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from 'mdi-react/EditIcon';
+import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CodeEditor from '../../../components/CodeEditor';
@@ -32,8 +31,8 @@ import CodeEditor from '../../../components/CodeEditor';
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    height: '40vh',
-    width: '60vh',
+    height: '50vh',
+    width: '65vh',
   },
 }))
 class EditorField extends Component {
@@ -83,8 +82,9 @@ class EditorField extends Component {
           <Button
             onClick={this.handleEditorClick}
             variant="contained"
+            size="small"
             color="secondary">
-            Close
+            Done
           </Button>
         </DialogActions>
       </Dialog>
@@ -95,7 +95,7 @@ class EditorField extends Component {
         <IconButton
           onClick={this.handleEditorClick}
           className={classes.editorButton}>
-          <EditIcon />
+          <OpenInNewIcon />
         </IconButton>
         <div className={classes.container}>
           {showEditor && editorDialog}

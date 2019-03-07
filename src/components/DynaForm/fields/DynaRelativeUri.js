@@ -3,13 +3,17 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from 'mdi-react/EditIcon';
+// import EditIcon from 'mdi-react/EditIcon';
+import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 
 const mapStateToProps = (state, ownProps) => {
   const { connectionId } = ownProps;
+
+  if (!connectionId) return {};
+
   const connection = selectors.resource(state, 'connections', connectionId);
 
   return { connection };
@@ -47,13 +51,13 @@ class DynaRelativeUri extends React.Component {
   getSampleData = () => {
     const { connection } = this.props;
 
+    if (!connection) return '{}';
+
     return JSON.stringify(
       {
         connection: {
+          _id: connection._id,
           name: connection.name,
-          http: {
-            unencrypted: connection.http.unencrypted,
-          },
         },
       },
       null,
@@ -65,7 +69,7 @@ class DynaRelativeUri extends React.Component {
     const { showEditor } = this.state;
     const {
       classes,
-      connection,
+      connection = {},
       disabled,
       errorMessages,
       id,
@@ -104,7 +108,7 @@ class DynaRelativeUri extends React.Component {
         <IconButton
           onClick={this.handleEditorClick}
           className={classes.editorButton}>
-          <EditIcon />
+          <OpenInNewIcon />
         </IconButton>
         <TextField
           key={id}

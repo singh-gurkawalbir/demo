@@ -4,9 +4,9 @@ import Editor from '../HandlebarsEditor';
 
 @withStyles(() => ({
   gridTemplate: {
-    gridTemplateColumns: '2fr 1fr',
-    gridTemplateRows: '2fr 1fr 0fr',
-    gridTemplateAreas: '"rule data" "result data" "error error"',
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr 1fr 2fr 0fr',
+    gridTemplateAreas: '"rule" "result" "data" "error"',
   },
 }))
 export default class UrlEditor extends Component {

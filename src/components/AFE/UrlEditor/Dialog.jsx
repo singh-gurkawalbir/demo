@@ -7,7 +7,7 @@ export default class UrlEditorDialog extends Component {
     const defaults = {
       open: true,
       width: '70vw',
-      height: '50vh',
+      height: '55vh',
     };
     const { id, rule, data, ...other } = this.props;
     const props = Object.assign({}, defaults, other);

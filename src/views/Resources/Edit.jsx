@@ -15,7 +15,7 @@ import ConflictAlertDialog from './ConflictAlertDialog';
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const resourceData = selectors.resourceData(state, resourceType, id);
-  const { _connectionId } = resourceData.merged;
+  const { _connectionId } = resourceData.merged ? resourceData.merged : {};
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
@@ -59,8 +59,10 @@ const mapDispatchToProps = (dispatch, { match }) => {
   };
 };
 
-const toName = resourceType =>
-  resourceType.charAt(0).toUpperCase() + resourceType.slice(1, -1);
+const toName = (token, upper, trim) =>
+  upper
+    ? token.charAt(0).toUpperCase() + token.slice(1, trim)
+    : token.slice(0, trim);
 const prettyDate = dateString => {
   const options = {
     weekday: 'long',
@@ -105,17 +107,31 @@ class Edit extends Component {
       handleConflict,
     } = this.props;
     const { /* master , */ merged, patch, conflict } = resourceData;
+
+    if (!merged) {
+      return (
+        <Typography variant="h5">
+          No {toName(resourceType, true, -1)} found with id {id}.
+        </Typography>
+      );
+    }
+
+    let type = connection ? connection.type : merged.type;
+    const assistant = connection ? connection.assistant : merged.assistant;
+
+    if (assistant) {
+      type = assistant;
+    }
+
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
     const hasPatch = patch && patch.length > 0;
     // console.log(patch, merged);
 
-    return merged ? (
+    return (
       <LoadResources required resources={[resourceType]}>
         <Typography variant="h5">
-          {`${toName(resourceType)}: ${merged.name || ''}`}
+          {`${toName(type, true)} ${toName(resourceType, false, -1)}`}
         </Typography>
-
-        <Typography variant="subtitle1">ID: {merged._id}</Typography>
 
         <Typography variant="caption" className={classes.dates}>
           Last Modified: {prettyDate(merged.lastModified)}
@@ -158,10 +174,6 @@ class Edit extends Component {
           )}
         </div>
       </LoadResources>
-    ) : (
-      <Typography variant="h5">
-        No {toName(resourceType)} found with id {id}.
-      </Typography>
     );
   }
 }

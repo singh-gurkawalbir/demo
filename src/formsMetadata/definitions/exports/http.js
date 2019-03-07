@@ -1,70 +1,80 @@
+import {
+  getFieldById,
+  replaceField,
+  defaultValueInitializer,
+} from '../../utils';
+
+const fieldInitializer = (meta, resource) => {
+  const newMeta = { ...meta };
+  const uriFieldIds = ['relativeUri'];
+
+  uriFieldIds.forEach(id => {
+    const relativeUriField = getFieldById({ meta: newMeta, id });
+
+    if (relativeUriField) {
+      relativeUriField.connectionId = resource._connectionId;
+      replaceField({ meta: newMeta, field: relativeUriField });
+    }
+  });
+
+  return newMeta;
+};
+
 export default {
-  fieldSets: [
+  initializer: ({ resource, fieldMeta }) => ({
+    formValues: defaultValueInitializer(resource),
+    fieldMeta: fieldInitializer(fieldMeta, resource),
+  }),
+
+  fields: [
     {
-      fields: [
+      id: 'Name',
+      name: '/name',
+      helpKey: 'export.name',
+      type: 'text',
+      label: 'Name',
+    },
+    {
+      id: 'description',
+      name: '/description',
+      helpKey: 'export.description',
+      type: 'text',
+      multiline: true,
+      rowsMax: 4,
+      label: 'Description',
+    },
+    {
+      id: 'method',
+      name: '/http/method',
+      helpKey: 'export.http.method',
+      type: 'select',
+      label: 'HTTP method',
+      options: [
         {
-          id: 'Name',
-          name: '/name',
-          type: 'text',
-          label: 'Name',
-          description: '',
-          placeholder: '',
-          defaultValue: '',
+          items: ['GET', 'POST'],
         },
+      ],
+    },
+    {
+      id: 'relativeUri',
+      name: '/http/relativeURI',
+      helpKey: 'export.http.relativeURI',
+      type: 'relativeuri',
+      label: 'Relative URI',
+      required: true,
+    },
+    {
+      id: 'body',
+      name: '/http/body',
+      helpKey: 'export.http.body',
+      type: 'editor',
+      mode: 'json',
+      label: 'HTTP Body',
+      visibleWhen: [
         {
-          id: 'description',
-          name: '/description',
-          type: 'textarea',
-          label: 'Description',
-          description: '',
-          placeholder: '',
-          defaultValue: '',
-        },
-        {
-          id: 'method',
-          name: '/http/method',
-          type: 'select',
-          label: 'HTTP method',
-          description: '',
-          placeholder: '',
-          defaultValue: '',
-          options: [
-            {
-              items: ['GET', 'POST'],
-            },
-          ],
-          visible: true,
-          required: true,
-          disabled: false,
-          visibleWhen: [],
-          requiredWhen: [],
-          disabledWhen: [],
-        },
-        {
-          id: 'relativeUri',
-          name: '/http/relativeURI',
-          type: 'relativeUri',
-          label: 'Relative URI',
-          visible: true,
-          required: true,
-        },
-        {
-          id: 'body',
-          name: '/http/body',
-          type: 'text',
-          multiline: true,
-          rowsMax: 5,
-          label: 'HTTP Body',
-          visibleWhen: [
-            {
-              id: 'isPost',
-              field: 'method',
-              is: ['POST'],
-            },
-          ],
-          description: '',
-          placeholder: '',
-          defaultValue: '',
+          id: 'isPost',
+          field: 'method',
+          is: ['POST'],
         },
       ],
     },
