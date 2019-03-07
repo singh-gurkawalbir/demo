@@ -43,7 +43,7 @@ class DynaSelectConnection extends React.Component {
       label,
       onFieldChange,
     } = this.props;
-    const items = connections.map(conn => {
+    const availableConnectionOptions = connections.map(conn => {
       const label = conn.name;
       const value = conn._id;
 
@@ -65,7 +65,7 @@ class DynaSelectConnection extends React.Component {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}>
-          {items}
+          {availableConnectionOptions}
         </Select>
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
