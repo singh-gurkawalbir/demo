@@ -26,13 +26,19 @@ const inputs = {
 const HelpWrapper = withStyles({
   helpIcon: { float: 'right' },
 })(props => {
-  const { helpKey, classes } = props;
+  const { helpKey, helpText, classes } = props;
 
   // console.log('helpwrapper initialized');
 
   return (
     <Fragment>
-      {helpKey && <Help className={classes.helpIcon} helpKey={helpKey} />}
+      {(helpKey || helpText) && (
+        <Help
+          className={classes.helpIcon}
+          helpKey={helpKey}
+          helpText={helpText}
+        />
+      )}
       {props.children}
     </Fragment>
   );
@@ -42,7 +48,7 @@ function getRenderer() {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
-    const { id, type, helpKey } = field;
+    const { id, type, helpKey, helpText } = field;
     const DynaInput = inputs[type];
 
     if (!DynaInput) {
@@ -50,7 +56,7 @@ function getRenderer() {
     }
 
     return (
-      <HelpWrapper key={id} helpKey={helpKey}>
+      <HelpWrapper key={id} helpKey={helpKey} helpText={helpText}>
         <DynaInput {...field} />
       </HelpWrapper>
     );

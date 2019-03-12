@@ -1,14 +1,16 @@
 export default {
   fields: [
     {
-      id: 'Name',
+      id: 'CommonName',
       name: '/name',
+      defaultValue: '{{name}}',
       type: 'text',
       label: 'Name',
     },
     {
-      id: 'description',
+      id: 'CommonDescription',
       name: '/description',
+      defaultValue: '{{description}}',
       type: 'text',
       multiline: true,
       maxRows: 5,
