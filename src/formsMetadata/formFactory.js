@@ -1,11 +1,13 @@
+import Handlebars from 'handlebars';
+import masterFieldHash from './masterFieldHash';
 import formMeta from './definitions';
-import { defaultInitializer, defaultPatchSetConverter } from './utils';
+import { defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = (connection, resourceType, resource) => {
   let fields = formMeta.common;
   let fieldSets = [];
-  let converter = defaultPatchSetConverter;
-  let initializer = defaultInitializer;
+  let converter;
+  let initializer;
   let meta;
 
   switch (resourceType) {
@@ -21,9 +23,7 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets } = meta);
-        converter = meta.converter || defaultPatchSetConverter;
-        initializer = meta.initializer || defaultInitializer;
+        ({ fields, fieldSets, converter, initializer } = meta);
       }
 
       break;
@@ -37,9 +37,7 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
           meta = meta[connection.type];
 
           if (meta) {
-            ({ fields, fieldSets } = meta);
-            converter = meta.converter || defaultPatchSetConverter;
-            initializer = meta.initializer || defaultInitializer;
+            ({ fields, fieldSets, converter, initializer } = meta);
           }
         }
       }
@@ -52,35 +50,26 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
 
   return {
     fieldMeta: { fields, fieldSets },
-    converter,
+    converter: converter || defaultPatchSetConverter,
     initializer,
   };
 };
 
-const setDefaults = (fields, values) => {
-  if (!values || !fields || fields.length === 0) return fields;
+const setDefaults = fields => {
+  if (!fields || fields.length === 0) return fields;
 
   return fields.map(f => {
-    if (f && values[f.name]) {
-      return { ...f, defaultValue: values[f.name] };
+    if (f && masterFieldHash[f.id]) {
+      return { ...masterFieldHash[f.id], ...f };
     }
 
     return f;
   });
 };
 
-export default ({ resourceType, connection, resource = {} }) => {
-  const { fieldMeta, converter, initializer } = getResourceFormAssets(
-    connection,
-    resourceType,
-    resource
-  );
-  const { formValues, fieldMeta: initializedFieldMeta } = initializer({
-    resource,
-    fieldMeta,
-  });
+const getFieldsWithDefaiults = fieldMeta => {
   const filled = [];
-  const { fields, fieldSets } = initializedFieldMeta;
+  const { fields, fieldSets } = fieldMeta;
 
   if (fieldSets) {
     fieldSets.forEach(set => {
@@ -94,10 +83,33 @@ export default ({ resourceType, connection, resource = {} }) => {
   }
 
   return {
-    fieldMeta: {
-      fields: setDefaults(fields, formValues),
-      fieldSets: filled,
-    },
+    fields: setDefaults(fields),
+    fieldSets: filled,
+  };
+};
+
+export default ({ resourceType, connection, resource = {} }) => {
+  const { fieldMeta, converter, initializer } = getResourceFormAssets(
+    connection,
+    resourceType,
+    resource
+  );
+  const metaWithDefaults = getFieldsWithDefaiults(fieldMeta);
+  const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
+  let metaWithValues;
+
+  try {
+    metaWithValues = JSON.parse(template(resource));
+  } catch (e) {
+    metaWithValues = [];
+  }
+
+  if (initializer) {
+    metaWithValues = initializer({ resource, fieldMeta: metaWithValues });
+  }
+
+  return {
+    fieldMeta: metaWithValues,
     formValueToPatchSetConverter: converter,
   };
 };

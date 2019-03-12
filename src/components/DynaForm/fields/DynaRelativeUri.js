@@ -88,7 +88,7 @@ class DynaRelativeUri extends React.Component {
     };
 
     let description = '';
-    const { type } = connection;
+    const { type } = connection || {};
 
     if (type === 'http' || type === 'rest') {
       description = `Relative to: ${connection[type].baseURI}`;
