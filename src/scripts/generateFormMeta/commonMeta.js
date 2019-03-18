@@ -1,3 +1,4 @@
+const elementsToBeStrippedFromPath = ['[*]', '_crypt', '[*].name'];
 const helpKeyPath = (path, resource) => `${resource}.${path}`;
 const idGeneration = (pathWithoutResource, resource) => {
   const path = helpKeyPath(pathWithoutResource, resource);
@@ -22,11 +23,13 @@ const namePath = path => {
 };
 
 const labelGeneration = path => {
-  const modifiedPath = path.replace(/\./g, ' ');
+  const seperatedDots = path.replace(/\./g, ' ');
+  const seperatedCamelCases = seperatedDots.replace(/([A-Z])/g, ' $1');
 
   // adding the first slash
   return (
-    modifiedPath[0].toUpperCase() + modifiedPath.slice(1, modifiedPath.length)
+    seperatedCamelCases[0].toUpperCase() +
+    seperatedCamelCases.slice(1, seperatedCamelCases.length)
   );
 };
 
@@ -35,7 +38,6 @@ export const generateCorrectPath = fieldDefs => {
 
   const path = fieldDefs.path || fieldDefs.pathGeneratedFromObj;
   // if generatedValue path is of type array strip [*]
-  const elementsToBeStrippedFromPath = ['[*]', '_crypt', '[*].name'];
   const res = elementsToBeStrippedFromPath
     .map(element => {
       if (path.endsWith(element))

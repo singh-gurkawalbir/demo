@@ -8,7 +8,7 @@ const options = fieldDefsOptions =>
     }))
     .reduce((acc, currValue) => [...acc, currValue], []);
 const selectType = fieldDefsOptions =>
-  fieldDefsOptions.options.length >= 3 ? 'select' : 'radiogroup';
+  fieldDefsOptions.enumValues.length >= 3 ? 'select' : 'radiogroup';
 
 export default (fieldsDefs, resourceType) => {
   const optionsFromEnums = {
