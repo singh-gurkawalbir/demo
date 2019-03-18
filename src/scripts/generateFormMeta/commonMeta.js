@@ -24,7 +24,7 @@ const namePath = path => {
 
 const labelGeneration = path => {
   const seperatedDots = path.replace(/\./g, ' ');
-  const seperatedCamelCases = seperatedDots.replace(/([A-Z])/g, ' $1');
+  const seperatedCamelCases = seperatedDots.replace(/([a-z])([A-Z])/g, '$1 $2');
 
   // adding the first slash
   return (

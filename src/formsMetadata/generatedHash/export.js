@@ -29,11 +29,11 @@ export default {
     helpKey: 'export.apiIdentifier',
     name: '/apiIdentifier',
     id: 'exportApiIdentifier',
-    label: 'ApiIdentifier',
+    label: 'Api Identifier',
     defaultValue: '{{apiIdentifier}}',
   },
   exportType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.type',
     name: '/type',
     id: 'exportType',
@@ -59,7 +59,7 @@ export default {
     helpKey: 'export.pageSize',
     name: '/pageSize',
     id: 'exportPageSize',
-    label: 'PageSize',
+    label: 'Page Size',
     defaultValue: '{{pageSize}}',
     validWhen: [
       {
@@ -72,7 +72,7 @@ export default {
     helpKey: 'export.dataURITemplate',
     name: '/dataURITemplate',
     id: 'exportDataURITemplate',
-    label: 'DataURITemplate',
+    label: 'Data URITemplate',
     defaultValue: '{{dataURITemplate}}',
   },
   exportOneToMany: {
@@ -80,7 +80,7 @@ export default {
     helpKey: 'export.oneToMany',
     name: '/oneToMany',
     id: 'exportOneToMany',
-    label: 'OneToMany',
+    label: 'One To Many',
     defaultValue: false,
   },
   exportPathToMany: {
@@ -88,7 +88,7 @@ export default {
     helpKey: 'export.pathToMany',
     name: '/pathToMany',
     id: 'exportPathToMany',
-    label: 'PathToMany',
+    label: 'Path To Many',
     defaultValue: '{{pathToMany}}',
   },
   exportSampleData: {
@@ -96,7 +96,7 @@ export default {
     helpKey: 'export.sampleData',
     name: '/sampleData',
     id: 'exportSampleData',
-    label: 'SampleData',
+    label: 'Sample Data',
     defaultValue: '{{sampleData}}',
   },
   exportOriginSampleData: {
@@ -104,11 +104,11 @@ export default {
     helpKey: 'export.originSampleData',
     name: '/originSampleData',
     id: 'exportOriginSampleData',
-    label: 'OriginSampleData',
+    label: 'Origin Sample Data',
     defaultValue: '{{originSampleData}}',
   },
   exportAssistant: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.assistant',
     name: '/assistant',
     id: 'exportAssistant',
@@ -321,7 +321,7 @@ export default {
     helpKey: 'export.assistantMetadata',
     name: '/assistantMetadata',
     id: 'exportAssistantMetadata',
-    label: 'AssistantMetadata',
+    label: 'Assistant Metadata',
     defaultValue: '{{assistantMetadata}}',
   },
   exportIsLookup: {
@@ -329,7 +329,7 @@ export default {
     helpKey: 'export.isLookup',
     name: '/isLookup',
     id: 'exportIsLookup',
-    label: 'IsLookup',
+    label: 'Is Lookup',
     defaultValue: false,
   },
   exportUseTechAdaptorForm: {
@@ -337,7 +337,7 @@ export default {
     helpKey: 'export.useTechAdaptorForm',
     name: '/useTechAdaptorForm',
     id: 'exportUseTechAdaptorForm',
-    label: 'UseTechAdaptorForm',
+    label: 'Use Tech Adaptor Form',
     defaultValue: false,
   },
   exportAdaptorType: {
@@ -345,7 +345,7 @@ export default {
     helpKey: 'export.adaptorType',
     name: '/adaptorType',
     id: 'exportAdaptorType',
-    label: 'AdaptorType',
+    label: 'Adaptor Type',
     defaultValue: '{{adaptorType}}',
   },
   // #endregion common
@@ -355,7 +355,7 @@ export default {
     helpKey: 'export.inputFilter.type',
     name: '/inputFilter/type',
     id: 'exportInputFilterType',
-    label: 'InputFilter type',
+    label: 'Input Filter type',
     defaultValue: '{{inputFilter.type}}',
     options: [
       {
@@ -371,7 +371,7 @@ export default {
     helpKey: 'export.inputFilter.expression.version',
     name: '/inputFilter/expression/version',
     id: 'exportInputFilterExpressionVersion',
-    label: 'InputFilter expression version',
+    label: 'Input Filter expression version',
     defaultValue: '{{inputFilter.expression.version}}',
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
@@ -380,7 +380,7 @@ export default {
     helpKey: 'export.inputFilter.expression.rules',
     name: '/inputFilter/expression/rules',
     id: 'exportInputFilterExpressionRules',
-    label: 'InputFilter expression rules',
+    label: 'Input Filter expression rules',
     defaultValue: '{{inputFilter.expression.rules}}',
   },
   exportInputFilterScript_scriptId: {
@@ -388,7 +388,7 @@ export default {
     helpKey: 'export.inputFilter.script._scriptId',
     name: '/inputFilter/script/_scriptId',
     id: 'exportInputFilterScript_scriptId',
-    label: 'InputFilter script _scriptId',
+    label: 'Input Filter script _script Id',
     defaultValue: '{{inputFilter.script._scriptId}}',
   },
   exportInputFilterScriptFunction: {
@@ -396,7 +396,7 @@ export default {
     helpKey: 'export.inputFilter.script.function',
     name: '/inputFilter/script/function',
     id: 'exportInputFilterScriptFunction',
-    label: 'InputFilter script function',
+    label: 'Input Filter script function',
     defaultValue: '{{inputFilter.script.function}}',
   },
   // #endregion inputFilter
@@ -421,7 +421,7 @@ export default {
     helpKey: 'export.delta.dateField',
     name: '/delta/dateField',
     id: 'exportDeltaDateField',
-    label: 'Delta dateField',
+    label: 'Delta date Field',
     defaultValue: '{{delta.dateField}}',
   },
   exportDeltaDateFormat: {
@@ -429,7 +429,7 @@ export default {
     helpKey: 'export.delta.dateFormat',
     name: '/delta/dateFormat',
     id: 'exportDeltaDateFormat',
-    label: 'Delta dateFormat',
+    label: 'Delta date Format',
     defaultValue: '{{delta.dateFormat}}',
   },
   exportDeltaStartDate: {
@@ -437,7 +437,7 @@ export default {
     helpKey: 'export.delta.startDate',
     name: '/delta/startDate',
     id: 'exportDeltaStartDate',
-    label: 'Delta startDate',
+    label: 'Delta start Date',
     defaultValue: '{{delta.startDate}}',
   },
   exportDeltaLagOffset: {
@@ -445,7 +445,7 @@ export default {
     helpKey: 'export.delta.lagOffset',
     name: '/delta/lagOffset',
     id: 'exportDeltaLagOffset',
-    label: 'Delta lagOffset',
+    label: 'Delta lag Offset',
     defaultValue: '{{delta.lagOffset}}',
     validWhen: [
       {
@@ -458,7 +458,7 @@ export default {
     helpKey: 'export.delta.endDateField',
     name: '/delta/endDateField',
     id: 'exportDeltaEndDateField',
-    label: 'Delta endDateField',
+    label: 'Delta end Date Field',
     defaultValue: '{{delta.endDateField}}',
   },
   // #endregion delta
@@ -468,7 +468,7 @@ export default {
     helpKey: 'export.once.booleanField',
     name: '/once/booleanField',
     id: 'exportOnceBooleanField',
-    label: 'Once booleanField',
+    label: 'Once boolean Field',
     defaultValue: '{{once.booleanField}}',
   },
   // #endregion once
@@ -478,7 +478,7 @@ export default {
     helpKey: 'export.valueDelta.exportedField',
     name: '/valueDelta/exportedField',
     id: 'exportValueDeltaExportedField',
-    label: 'ValueDelta exportedField',
+    label: 'Value Delta exported Field',
     defaultValue: '{{valueDelta.exportedField}}',
   },
   exportValueDeltaPendingField: {
@@ -486,13 +486,13 @@ export default {
     helpKey: 'export.valueDelta.pendingField',
     name: '/valueDelta/pendingField',
     id: 'exportValueDeltaPendingField',
-    label: 'ValueDelta pendingField',
+    label: 'Value Delta pending Field',
     defaultValue: '{{valueDelta.pendingField}}',
   },
   // #endregion valueDelta
   // #region webhook
   exportWebhookProvider: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.webhook.provider',
     name: '/webhook/provider',
     id: 'exportWebhookProvider',
@@ -531,7 +531,7 @@ export default {
     ],
   },
   exportWebhookVerify: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.webhook.verify',
     name: '/webhook/verify',
     id: 'exportWebhookVerify',
@@ -636,7 +636,7 @@ export default {
     helpKey: 'export.distributed.bearerToken',
     name: '/distributed/bearerToken',
     id: 'exportDistributedBearerToken',
-    label: 'Distributed bearerToken',
+    label: 'Distributed bearer Token',
     defaultValue: '{{distributed.bearerToken}}',
   },
   // #endregion distributed
@@ -646,7 +646,7 @@ export default {
     helpKey: 'export.hooks.preSavePage.function',
     name: '/hooks/preSavePage/function',
     id: 'exportHooksPreSavePageFunction',
-    label: 'Hooks preSavePage function',
+    label: 'Hooks pre Save Page function',
     defaultValue: '{{hooks.preSavePage.function}}',
   },
   exportHooksPreSavePage_scriptId: {
@@ -654,7 +654,7 @@ export default {
     helpKey: 'export.hooks.preSavePage._scriptId',
     name: '/hooks/preSavePage/_scriptId',
     id: 'exportHooksPreSavePage_scriptId',
-    label: 'Hooks preSavePage _scriptId',
+    label: 'Hooks pre Save Page _script Id',
     defaultValue: '{{hooks.preSavePage._scriptId}}',
   },
   exportHooksPreSavePage_stackId: {
@@ -662,7 +662,7 @@ export default {
     helpKey: 'export.hooks.preSavePage._stackId',
     name: '/hooks/preSavePage/_stackId',
     id: 'exportHooksPreSavePage_stackId',
-    label: 'Hooks preSavePage _stackId',
+    label: 'Hooks pre Save Page _stack Id',
     defaultValue: '{{hooks.preSavePage._stackId}}',
   },
   exportHooksPreSavePageConfiguration: {
@@ -670,7 +670,7 @@ export default {
     helpKey: 'export.hooks.preSavePage.configuration',
     name: '/hooks/preSavePage/configuration',
     id: 'exportHooksPreSavePageConfiguration',
-    label: 'Hooks preSavePage configuration',
+    label: 'Hooks pre Save Page configuration',
     defaultValue: '{{hooks.preSavePage.configuration}}',
   },
   // #endregion hooks
@@ -713,7 +713,7 @@ export default {
     helpKey: 'export.transform.script._scriptId',
     name: '/transform/script/_scriptId',
     id: 'exportTransformScript_scriptId',
-    label: 'Transform script _scriptId',
+    label: 'Transform script _script Id',
     defaultValue: '{{transform.script._scriptId}}',
   },
   exportTransformScriptFunction: {
@@ -790,7 +790,7 @@ export default {
     helpKey: 'export.filter.script._scriptId',
     name: '/filter/script/_scriptId',
     id: 'exportFilterScript_scriptId',
-    label: 'Filter script _scriptId',
+    label: 'Filter script _script Id',
     defaultValue: '{{filter.script._scriptId}}',
   },
   exportFilterScriptFunction: {
@@ -804,7 +804,7 @@ export default {
   // #endregion filter
   // #region file
   exportFileEncoding: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.file.encoding',
     name: '/file/encoding',
     id: 'exportFileEncoding',
@@ -821,7 +821,7 @@ export default {
     ],
   },
   exportFileType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.file.type',
     name: '/file/type',
     id: 'exportFileType',
@@ -840,7 +840,7 @@ export default {
     ],
   },
   exportFileOutput: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.file.output',
     name: '/file/output',
     id: 'exportFileOutput',
@@ -861,7 +861,7 @@ export default {
     helpKey: 'export.file.skipDelete',
     name: '/file/skipDelete',
     id: 'exportFileSkipDelete',
-    label: 'File skipDelete',
+    label: 'File skip Delete',
     defaultValue: false,
   },
   exportFileCompressionFormat: {
@@ -869,7 +869,7 @@ export default {
     helpKey: 'export.file.compressionFormat',
     name: '/file/compressionFormat',
     id: 'exportFileCompressionFormat',
-    label: 'File compressionFormat',
+    label: 'File compression Format',
     defaultValue: '{{file.compressionFormat}}',
     options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
   },
@@ -878,7 +878,7 @@ export default {
     helpKey: 'export.file.csv.columnDelimiter',
     name: '/file/csv/columnDelimiter',
     id: 'exportFileCsvColumnDelimiter',
-    label: 'File csv columnDelimiter',
+    label: 'File csv column Delimiter',
     defaultValue: '{{file.csv.columnDelimiter}}',
   },
   exportFileCsvRowDelimiter: {
@@ -886,7 +886,7 @@ export default {
     helpKey: 'export.file.csv.rowDelimiter',
     name: '/file/csv/rowDelimiter',
     id: 'exportFileCsvRowDelimiter',
-    label: 'File csv rowDelimiter',
+    label: 'File csv row Delimiter',
     defaultValue: '{{file.csv.rowDelimiter}}',
   },
   exportFileCsvKeyColumnss: {
@@ -897,7 +897,7 @@ export default {
     helpKey: 'export.file.csv.keyColumnss',
     name: '/file/csv/keyColumnss',
     id: 'exportFileCsvKeyColumnss',
-    label: 'File csv keyColumns',
+    label: 'File csv key Columns',
     defaultValue: '{{file.csv.keyColumns}}',
     validWhen: [],
   },
@@ -906,7 +906,7 @@ export default {
     helpKey: 'export.file.csv.hasHeaderRow',
     name: '/file/csv/hasHeaderRow',
     id: 'exportFileCsvHasHeaderRow',
-    label: 'File csv hasHeaderRow',
+    label: 'File csv has Header Row',
     defaultValue: false,
   },
   exportFileCsvTrimSpaces: {
@@ -914,7 +914,7 @@ export default {
     helpKey: 'export.file.csv.trimSpaces',
     name: '/file/csv/trimSpaces',
     id: 'exportFileCsvTrimSpaces',
-    label: 'File csv trimSpaces',
+    label: 'File csv trim Spaces',
     defaultValue: false,
   },
   exportFileCsvRowsToSkip: {
@@ -922,7 +922,7 @@ export default {
     helpKey: 'export.file.csv.rowsToSkip',
     name: '/file/csv/rowsToSkip',
     id: 'exportFileCsvRowsToSkip',
-    label: 'File csv rowsToSkip',
+    label: 'File csv rows To Skip',
     defaultValue: '{{file.csv.rowsToSkip}}',
     validWhen: [
       {
@@ -935,7 +935,7 @@ export default {
     helpKey: 'export.file.json.resourcePath',
     name: '/file/json/resourcePath',
     id: 'exportFileJsonResourcePath',
-    label: 'File json resourcePath',
+    label: 'File json resource Path',
     defaultValue: '{{file.json.resourcePath}}',
   },
   exportFileXlsxHasHeaderRow: {
@@ -943,7 +943,7 @@ export default {
     helpKey: 'export.file.xlsx.hasHeaderRow',
     name: '/file/xlsx/hasHeaderRow',
     id: 'exportFileXlsxHasHeaderRow',
-    label: 'File xlsx hasHeaderRow',
+    label: 'File xlsx has Header Row',
     defaultValue: false,
   },
   exportFileXlsxKeyColumnss: {
@@ -954,7 +954,7 @@ export default {
     helpKey: 'export.file.xlsx.keyColumnss',
     name: '/file/xlsx/keyColumnss',
     id: 'exportFileXlsxKeyColumnss',
-    label: 'File xlsx keyColumns',
+    label: 'File xlsx key Columns',
     defaultValue: '{{file.xlsx.keyColumns}}',
     validWhen: [],
   },
@@ -963,7 +963,7 @@ export default {
     helpKey: 'export.file.xml.resourcePath',
     name: '/file/xml/resourcePath',
     id: 'exportFileXmlResourcePath',
-    label: 'File xml resourcePath',
+    label: 'File xml resource Path',
     defaultValue: '{{file.xml.resourcePath}}',
   },
   exportFileFileDefinitionResourcePath: {
@@ -971,7 +971,7 @@ export default {
     helpKey: 'export.file.fileDefinition.resourcePath',
     name: '/file/fileDefinition/resourcePath',
     id: 'exportFileFileDefinitionResourcePath',
-    label: 'File fileDefinition resourcePath',
+    label: 'File file Definition resource Path',
     defaultValue: '{{file.fileDefinition.resourcePath}}',
   },
   exportFileFileDefinition_fileDefinitionId: {
@@ -979,7 +979,7 @@ export default {
     helpKey: 'export.file.fileDefinition._fileDefinitionId',
     name: '/file/fileDefinition/_fileDefinitionId',
     id: 'exportFileFileDefinition_fileDefinitionId',
-    label: 'File fileDefinition _fileDefinitionId',
+    label: 'File file Definition _file Definition Id',
     defaultValue: '{{file.fileDefinition._fileDefinitionId}}',
   },
   exportFilePurgeInternalBackup: {
@@ -987,7 +987,7 @@ export default {
     helpKey: 'export.file.purgeInternalBackup',
     name: '/file/purgeInternalBackup',
     id: 'exportFilePurgeInternalBackup',
-    label: 'File purgeInternalBackup',
+    label: 'File purge Internal Backup',
     defaultValue: false,
   },
   // #endregion file
@@ -997,11 +997,11 @@ export default {
     helpKey: 'export.rest.relativeURI',
     name: '/rest/relativeURI',
     id: 'exportRestRelativeURI',
-    label: 'Rest relativeURI',
+    label: 'Rest relative URI',
     defaultValue: '{{rest.relativeURI}}',
   },
   exportRestMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.rest.method',
     name: '/rest/method',
     id: 'exportRestMethod',
@@ -1022,7 +1022,7 @@ export default {
     helpKey: 'export.rest.postBody',
     name: '/rest/postBody',
     id: 'exportRestPostBody',
-    label: 'Rest postBody',
+    label: 'Rest post Body',
     defaultValue: '{{rest.postBody}}',
   },
   exportRestResourcePath: {
@@ -1030,7 +1030,7 @@ export default {
     helpKey: 'export.rest.resourcePath',
     name: '/rest/resourcePath',
     id: 'exportRestResourcePath',
-    label: 'Rest resourcePath',
+    label: 'Rest resource Path',
     defaultValue: '{{rest.resourcePath}}',
   },
   exportRestHeaders: {
@@ -1049,15 +1049,15 @@ export default {
     helpKey: 'export.rest.allowUndefinedResource',
     name: '/rest/allowUndefinedResource',
     id: 'exportRestAllowUndefinedResource',
-    label: 'Rest allowUndefinedResource',
+    label: 'Rest allow Undefined Resource',
     defaultValue: false,
   },
   exportRestPagingMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.rest.pagingMethod',
     name: '/rest/pagingMethod',
     id: 'exportRestPagingMethod',
-    label: 'Rest pagingMethod',
+    label: 'Rest paging Method',
     defaultValue: '{{rest.pagingMethod}}',
     options: [
       {
@@ -1078,7 +1078,7 @@ export default {
     helpKey: 'export.rest.nextPagePath',
     name: '/rest/nextPagePath',
     id: 'exportRestNextPagePath',
-    label: 'Rest nextPagePath',
+    label: 'Rest next Page Path',
     defaultValue: '{{rest.nextPagePath}}',
   },
   exportRestLinkHeaderRelation: {
@@ -1086,7 +1086,7 @@ export default {
     helpKey: 'export.rest.linkHeaderRelation',
     name: '/rest/linkHeaderRelation',
     id: 'exportRestLinkHeaderRelation',
-    label: 'Rest linkHeaderRelation',
+    label: 'Rest link Header Relation',
     defaultValue: '{{rest.linkHeaderRelation}}',
   },
   exportRestNextPageRelativeURI: {
@@ -1094,7 +1094,7 @@ export default {
     helpKey: 'export.rest.nextPageRelativeURI',
     name: '/rest/nextPageRelativeURI',
     id: 'exportRestNextPageRelativeURI',
-    label: 'Rest nextPageRelativeURI',
+    label: 'Rest next Page Relative URI',
     defaultValue: '{{rest.nextPageRelativeURI}}',
   },
   exportRestPageArgument: {
@@ -1102,7 +1102,7 @@ export default {
     helpKey: 'export.rest.pageArgument',
     name: '/rest/pageArgument',
     id: 'exportRestPageArgument',
-    label: 'Rest pageArgument',
+    label: 'Rest page Argument',
     defaultValue: '{{rest.pageArgument}}',
   },
   exportRestPagingPostBody: {
@@ -1110,7 +1110,7 @@ export default {
     helpKey: 'export.rest.pagingPostBody',
     name: '/rest/pagingPostBody',
     id: 'exportRestPagingPostBody',
-    label: 'Rest pagingPostBody',
+    label: 'Rest paging Post Body',
     defaultValue: '{{rest.pagingPostBody}}',
   },
   exportRestMaxPagePath: {
@@ -1118,7 +1118,7 @@ export default {
     helpKey: 'export.rest.maxPagePath',
     name: '/rest/maxPagePath',
     id: 'exportRestMaxPagePath',
-    label: 'Rest maxPagePath',
+    label: 'Rest max Page Path',
     defaultValue: '{{rest.maxPagePath}}',
   },
   exportRestMaxCountPath: {
@@ -1126,7 +1126,7 @@ export default {
     helpKey: 'export.rest.maxCountPath',
     name: '/rest/maxCountPath',
     id: 'exportRestMaxCountPath',
-    label: 'Rest maxCountPath',
+    label: 'Rest max Count Path',
     defaultValue: '{{rest.maxCountPath}}',
   },
   exportRestSkipArgument: {
@@ -1134,7 +1134,7 @@ export default {
     helpKey: 'export.rest.skipArgument',
     name: '/rest/skipArgument',
     id: 'exportRestSkipArgument',
-    label: 'Rest skipArgument',
+    label: 'Rest skip Argument',
     defaultValue: '{{rest.skipArgument}}',
   },
   exportRestBlobFormat: {
@@ -1142,7 +1142,7 @@ export default {
     helpKey: 'export.rest.blobFormat',
     name: '/rest/blobFormat',
     id: 'exportRestBlobFormat',
-    label: 'Rest blobFormat',
+    label: 'Rest blob Format',
     defaultValue: '{{rest.blobFormat}}',
   },
   exportRestSuccessPath: {
@@ -1150,7 +1150,7 @@ export default {
     helpKey: 'export.rest.successPath',
     name: '/rest/successPath',
     id: 'exportRestSuccessPath',
-    label: 'Rest successPath',
+    label: 'Rest success Path',
     defaultValue: '{{rest.successPath}}',
   },
   exportRestSuccessValuess: {
@@ -1161,7 +1161,7 @@ export default {
     helpKey: 'export.rest.successValuess',
     name: '/rest/successValuess',
     id: 'exportRestSuccessValuess',
-    label: 'Rest successValues',
+    label: 'Rest success Values',
     defaultValue: '{{rest.successValues}}',
     validWhen: [],
   },
@@ -1170,7 +1170,7 @@ export default {
     helpKey: 'export.rest.lastPageStatusCode',
     name: '/rest/lastPageStatusCode',
     id: 'exportRestLastPageStatusCode',
-    label: 'Rest lastPageStatusCode',
+    label: 'Rest last Page Status Code',
     defaultValue: '{{rest.lastPageStatusCode}}',
     validWhen: [
       {
@@ -1183,7 +1183,7 @@ export default {
     helpKey: 'export.rest.lastPagePath',
     name: '/rest/lastPagePath',
     id: 'exportRestLastPagePath',
-    label: 'Rest lastPagePath',
+    label: 'Rest last Page Path',
     defaultValue: '{{rest.lastPagePath}}',
   },
   exportRestLastPageValue: {
@@ -1191,7 +1191,7 @@ export default {
     helpKey: 'export.rest.lastPageValue',
     name: '/rest/lastPageValue',
     id: 'exportRestLastPageValue',
-    label: 'Rest lastPageValue',
+    label: 'Rest last Page Value',
     defaultValue: '{{rest.lastPageValue}}',
   },
   exportRestOnceRelativeURI: {
@@ -1199,7 +1199,7 @@ export default {
     helpKey: 'export.rest.once.relativeURI',
     name: '/rest/once/relativeURI',
     id: 'exportRestOnceRelativeURI',
-    label: 'Rest once relativeURI',
+    label: 'Rest once relative URI',
     defaultValue: '{{rest.once.relativeURI}}',
   },
   exportRestOnceMethod: {
@@ -1223,7 +1223,7 @@ export default {
     helpKey: 'export.rest.once.postBody',
     name: '/rest/once/postBody',
     id: 'exportRestOncePostBody',
-    label: 'Rest once postBody',
+    label: 'Rest once post Body',
     defaultValue: '{{rest.once.postBody}}',
   },
   // #endregion rest
@@ -1233,7 +1233,7 @@ export default {
     helpKey: 'export.ftp.directoryPath',
     name: '/ftp/directoryPath',
     id: 'exportFtpDirectoryPath',
-    label: 'Ftp directoryPath',
+    label: 'Ftp directory Path',
     defaultValue: '{{ftp.directoryPath}}',
   },
   exportFtpFileNameStartsWith: {
@@ -1241,7 +1241,7 @@ export default {
     helpKey: 'export.ftp.fileNameStartsWith',
     name: '/ftp/fileNameStartsWith',
     id: 'exportFtpFileNameStartsWith',
-    label: 'Ftp fileNameStartsWith',
+    label: 'Ftp file Name Starts With',
     defaultValue: '{{ftp.fileNameStartsWith}}',
   },
   exportFtpFileNameEndsWith: {
@@ -1249,7 +1249,7 @@ export default {
     helpKey: 'export.ftp.fileNameEndsWith',
     name: '/ftp/fileNameEndsWith',
     id: 'exportFtpFileNameEndsWith',
-    label: 'Ftp fileNameEndsWith',
+    label: 'Ftp file Name Ends With',
     defaultValue: '{{ftp.fileNameEndsWith}}',
   },
   exportFtpBackupDirectoryPath: {
@@ -1257,17 +1257,17 @@ export default {
     helpKey: 'export.ftp.backupDirectoryPath',
     name: '/ftp/backupDirectoryPath',
     id: 'exportFtpBackupDirectoryPath',
-    label: 'Ftp backupDirectoryPath',
+    label: 'Ftp backup Directory Path',
     defaultValue: '{{ftp.backupDirectoryPath}}',
   },
   // #endregion ftp
   // #region http
   exportHttpSuccessMediaType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.http.successMediaType',
     name: '/http/successMediaType',
     id: 'exportHttpSuccessMediaType',
-    label: 'Http successMediaType',
+    label: 'Http success Media Type',
     defaultValue: '{{http.successMediaType}}',
     options: [
       {
@@ -1284,7 +1284,7 @@ export default {
     helpKey: 'export.http.errorMediaType',
     name: '/http/errorMediaType',
     id: 'exportHttpErrorMediaType',
-    label: 'Http errorMediaType',
+    label: 'Http error Media Type',
     defaultValue: '{{http.errorMediaType}}',
     options: [
       {
@@ -1300,11 +1300,11 @@ export default {
     helpKey: 'export.http.relativeURI',
     name: '/http/relativeURI',
     id: 'exportHttpRelativeURI',
-    label: 'Http relativeURI',
+    label: 'Http relative URI',
     defaultValue: '{{http.relativeURI}}',
   },
   exportHttpMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.http.method',
     name: '/http/method',
     id: 'exportHttpMethod',
@@ -1342,7 +1342,7 @@ export default {
     defaultValue: '{{http.headers}}',
   },
   exportHttpPagingMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.http.paging.method',
     name: '/http/paging/method',
     id: 'exportHttpPagingMethod',
@@ -1408,7 +1408,7 @@ export default {
     helpKey: 'export.http.paging.relativeURI',
     name: '/http/paging/relativeURI',
     id: 'exportHttpPagingRelativeURI',
-    label: 'Http paging relativeURI',
+    label: 'Http paging relative URI',
     defaultValue: '{{http.paging.relativeURI}}',
   },
   exportHttpPagingPathAfterFirstRequest: {
@@ -1416,7 +1416,7 @@ export default {
     helpKey: 'export.http.paging.pathAfterFirstRequest',
     name: '/http/paging/pathAfterFirstRequest',
     id: 'exportHttpPagingPathAfterFirstRequest',
-    label: 'Http paging pathAfterFirstRequest',
+    label: 'Http paging path After First Request',
     defaultValue: '{{http.paging.pathAfterFirstRequest}}',
   },
   exportHttpPagingResourcePath: {
@@ -1424,7 +1424,7 @@ export default {
     helpKey: 'export.http.paging.resourcePath',
     name: '/http/paging/resourcePath',
     id: 'exportHttpPagingResourcePath',
-    label: 'Http paging resourcePath',
+    label: 'Http paging resource Path',
     defaultValue: '{{http.paging.resourcePath}}',
   },
   exportHttpPagingMaxPagePath: {
@@ -1432,7 +1432,7 @@ export default {
     helpKey: 'export.http.paging.maxPagePath',
     name: '/http/paging/maxPagePath',
     id: 'exportHttpPagingMaxPagePath',
-    label: 'Http paging maxPagePath',
+    label: 'Http paging max Page Path',
     defaultValue: '{{http.paging.maxPagePath}}',
   },
   exportHttpPagingMaxCountPath: {
@@ -1440,7 +1440,7 @@ export default {
     helpKey: 'export.http.paging.maxCountPath',
     name: '/http/paging/maxCountPath',
     id: 'exportHttpPagingMaxCountPath',
-    label: 'Http paging maxCountPath',
+    label: 'Http paging max Count Path',
     defaultValue: '{{http.paging.maxCountPath}}',
   },
   exportHttpPagingLastPageStatusCode: {
@@ -1448,7 +1448,7 @@ export default {
     helpKey: 'export.http.paging.lastPageStatusCode',
     name: '/http/paging/lastPageStatusCode',
     id: 'exportHttpPagingLastPageStatusCode',
-    label: 'Http paging lastPageStatusCode',
+    label: 'Http paging last Page Status Code',
     defaultValue: '{{http.paging.lastPageStatusCode}}',
     validWhen: [
       {
@@ -1461,7 +1461,7 @@ export default {
     helpKey: 'export.http.paging.lastPagePath',
     name: '/http/paging/lastPagePath',
     id: 'exportHttpPagingLastPagePath',
-    label: 'Http paging lastPagePath',
+    label: 'Http paging last Page Path',
     defaultValue: '{{http.paging.lastPagePath}}',
   },
   exportHttpPagingLastPageValuess: {
@@ -1472,7 +1472,7 @@ export default {
     helpKey: 'export.http.paging.lastPageValuess',
     name: '/http/paging/lastPageValuess',
     id: 'exportHttpPagingLastPageValuess',
-    label: 'Http paging lastPageValues',
+    label: 'Http paging last Page Values',
     defaultValue: '{{http.paging.lastPageValues}}',
     validWhen: [],
   },
@@ -1481,7 +1481,7 @@ export default {
     helpKey: 'export.http.paging.linkHeaderRelation',
     name: '/http/paging/linkHeaderRelation',
     id: 'exportHttpPagingLinkHeaderRelation',
-    label: 'Http paging linkHeaderRelation',
+    label: 'Http paging link Header Relation',
     defaultValue: '{{http.paging.linkHeaderRelation}}',
   },
   exportHttp_asyncHelperId: {
@@ -1489,7 +1489,7 @@ export default {
     helpKey: 'export.http._asyncHelperId',
     name: '/http/_asyncHelperId',
     id: 'exportHttp_asyncHelperId',
-    label: 'Http _asyncHelperId',
+    label: 'Http _async Helper Id',
     defaultValue: '{{http._asyncHelperId}}',
   },
   exportHttpOnceRelativeURI: {
@@ -1497,11 +1497,11 @@ export default {
     helpKey: 'export.http.once.relativeURI',
     name: '/http/once/relativeURI',
     id: 'exportHttpOnceRelativeURI',
-    label: 'Http once relativeURI',
+    label: 'Http once relative URI',
     defaultValue: '{{http.once.relativeURI}}',
   },
   exportHttpOnceMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.http.once.method',
     name: '/http/once/method',
     id: 'exportHttpOnceMethod',
@@ -1532,7 +1532,7 @@ export default {
     helpKey: 'export.http.response.resourcePath',
     name: '/http/response/resourcePath',
     id: 'exportHttpResponseResourcePath',
-    label: 'Http response resourcePath',
+    label: 'Http response resource Path',
     defaultValue: '{{http.response.resourcePath}}',
   },
   exportHttpResponseResourceIdPath: {
@@ -1540,7 +1540,7 @@ export default {
     helpKey: 'export.http.response.resourceIdPath',
     name: '/http/response/resourceIdPath',
     id: 'exportHttpResponseResourceIdPath',
-    label: 'Http response resourceIdPath',
+    label: 'Http response resource Id Path',
     defaultValue: '{{http.response.resourceIdPath}}',
   },
   exportHttpResponseSuccessPath: {
@@ -1548,7 +1548,7 @@ export default {
     helpKey: 'export.http.response.successPath',
     name: '/http/response/successPath',
     id: 'exportHttpResponseSuccessPath',
-    label: 'Http response successPath',
+    label: 'Http response success Path',
     defaultValue: '{{http.response.successPath}}',
   },
   exportHttpResponseSuccessValuess: {
@@ -1559,7 +1559,7 @@ export default {
     helpKey: 'export.http.response.successValuess',
     name: '/http/response/successValuess',
     id: 'exportHttpResponseSuccessValuess',
-    label: 'Http response successValues',
+    label: 'Http response success Values',
     defaultValue: '{{http.response.successValues}}',
     validWhen: [],
   },
@@ -1568,7 +1568,7 @@ export default {
     helpKey: 'export.http.response.errorPath',
     name: '/http/response/errorPath',
     id: 'exportHttpResponseErrorPath',
-    label: 'Http response errorPath',
+    label: 'Http response error Path',
     defaultValue: '{{http.response.errorPath}}',
   },
   exportHttpResponseBlobFormat: {
@@ -1576,13 +1576,13 @@ export default {
     helpKey: 'export.http.response.blobFormat',
     name: '/http/response/blobFormat',
     id: 'exportHttpResponseBlobFormat',
-    label: 'Http response blobFormat',
+    label: 'Http response blob Format',
     defaultValue: '{{http.response.blobFormat}}',
   },
   // #endregion http
   // #region netsuite
   exportNetsuiteType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.netsuite.type',
     name: '/netsuite/type',
     id: 'exportNetsuiteType',
@@ -1636,7 +1636,7 @@ export default {
     helpKey: 'export.netsuite.customFieldMetadata',
     name: '/netsuite/customFieldMetadata',
     id: 'exportNetsuiteCustomFieldMetadata',
-    label: 'Netsuite customFieldMetadata',
+    label: 'Netsuite custom Field Metadata',
     defaultValue: '{{netsuite.customFieldMetadata}}',
   },
   exportNetsuiteSkipGrouping: {
@@ -1644,7 +1644,7 @@ export default {
     helpKey: 'export.netsuite.skipGrouping',
     name: '/netsuite/skipGrouping',
     id: 'exportNetsuiteSkipGrouping',
-    label: 'Netsuite skipGrouping',
+    label: 'Netsuite skip Grouping',
     defaultValue: false,
   },
   exportNetsuiteStatsOnly: {
@@ -1652,7 +1652,7 @@ export default {
     helpKey: 'export.netsuite.statsOnly',
     name: '/netsuite/statsOnly',
     id: 'exportNetsuiteStatsOnly',
-    label: 'Netsuite statsOnly',
+    label: 'Netsuite stats Only',
     defaultValue: false,
   },
   exportNetsuiteInternalId: {
@@ -1660,7 +1660,7 @@ export default {
     helpKey: 'export.netsuite.internalId',
     name: '/netsuite/internalId',
     id: 'exportNetsuiteInternalId',
-    label: 'Netsuite internalId',
+    label: 'Netsuite internal Id',
     defaultValue: '{{netsuite.internalId}}',
   },
   exportNetsuiteRestletRecordType: {
@@ -1668,7 +1668,7 @@ export default {
     helpKey: 'export.netsuite.restlet.recordType',
     name: '/netsuite/restlet/recordType',
     id: 'exportNetsuiteRestletRecordType',
-    label: 'Netsuite restlet recordType',
+    label: 'Netsuite restlet record Type',
     defaultValue: '{{netsuite.restlet.recordType}}',
   },
   exportNetsuiteRestletSearchId: {
@@ -1676,7 +1676,7 @@ export default {
     helpKey: 'export.netsuite.restlet.searchId',
     name: '/netsuite/restlet/searchId',
     id: 'exportNetsuiteRestletSearchId',
-    label: 'Netsuite restlet searchId',
+    label: 'Netsuite restlet search Id',
     defaultValue: '{{netsuite.restlet.searchId}}',
   },
   'exportNetsuiteRestletCriteria[*]Field': {
@@ -1708,7 +1708,7 @@ export default {
     helpKey: 'export.netsuite.restlet.criteria[*].searchValue',
     name: '/netsuite/restlet/criteria[*]/searchValue',
     id: 'exportNetsuiteRestletCriteria[*]SearchValue',
-    label: 'Netsuite restlet criteria[*] searchValue',
+    label: 'Netsuite restlet criteria[*] search Value',
     defaultValue: '{{netsuite.restlet.criteria[*].searchValue}}',
   },
   'exportNetsuiteRestletCriteria[*]SearchValue2': {
@@ -1716,7 +1716,7 @@ export default {
     helpKey: 'export.netsuite.restlet.criteria[*].searchValue2',
     name: '/netsuite/restlet/criteria[*]/searchValue2',
     id: 'exportNetsuiteRestletCriteria[*]SearchValue2',
-    label: 'Netsuite restlet criteria[*] searchValue2',
+    label: 'Netsuite restlet criteria[*] search Value2',
     defaultValue: '{{netsuite.restlet.criteria[*].searchValue2}}',
   },
   exportNetsuiteRestletBatchSize: {
@@ -1724,7 +1724,7 @@ export default {
     helpKey: 'export.netsuite.restlet.batchSize',
     name: '/netsuite/restlet/batchSize',
     id: 'exportNetsuiteRestletBatchSize',
-    label: 'Netsuite restlet batchSize',
+    label: 'Netsuite restlet batch Size',
     defaultValue: '{{netsuite.restlet.batchSize}}',
     validWhen: [
       {
@@ -1737,7 +1737,7 @@ export default {
     helpKey: 'export.netsuite.restlet.hooks.batchSize',
     name: '/netsuite/restlet/hooks/batchSize',
     id: 'exportNetsuiteRestletHooksBatchSize',
-    label: 'Netsuite restlet hooks batchSize',
+    label: 'Netsuite restlet hooks batch Size',
     defaultValue: '{{netsuite.restlet.hooks.batchSize}}',
     validWhen: [
       {
@@ -1750,7 +1750,7 @@ export default {
     helpKey: 'export.netsuite.restlet.hooks.preSend.fileInternalId',
     name: '/netsuite/restlet/hooks/preSend/fileInternalId',
     id: 'exportNetsuiteRestletHooksPreSendFileInternalId',
-    label: 'Netsuite restlet hooks preSend fileInternalId',
+    label: 'Netsuite restlet hooks pre Send file Internal Id',
     defaultValue: '{{netsuite.restlet.hooks.preSend.fileInternalId}}',
   },
   exportNetsuiteRestletHooksPreSendFunction: {
@@ -1758,7 +1758,7 @@ export default {
     helpKey: 'export.netsuite.restlet.hooks.preSend.function',
     name: '/netsuite/restlet/hooks/preSend/function',
     id: 'exportNetsuiteRestletHooksPreSendFunction',
-    label: 'Netsuite restlet hooks preSend function',
+    label: 'Netsuite restlet hooks pre Send function',
     defaultValue: '{{netsuite.restlet.hooks.preSend.function}}',
   },
   exportNetsuiteRestletHooksPreSendConfiguration: {
@@ -1766,7 +1766,7 @@ export default {
     helpKey: 'export.netsuite.restlet.hooks.preSend.configuration',
     name: '/netsuite/restlet/hooks/preSend/configuration',
     id: 'exportNetsuiteRestletHooksPreSendConfiguration',
-    label: 'Netsuite restlet hooks preSend configuration',
+    label: 'Netsuite restlet hooks pre Send configuration',
     defaultValue: '{{netsuite.restlet.hooks.preSend.configuration}}',
   },
   exportNetsuiteDistributedRecordType: {
@@ -1774,7 +1774,7 @@ export default {
     helpKey: 'export.netsuite.distributed.recordType',
     name: '/netsuite/distributed/recordType',
     id: 'exportNetsuiteDistributedRecordType',
-    label: 'Netsuite distributed recordType',
+    label: 'Netsuite distributed record Type',
     defaultValue: '{{netsuite.distributed.recordType}}',
   },
   exportNetsuiteDistributedExecutionContexts: {
@@ -1785,7 +1785,7 @@ export default {
     helpKey: 'export.netsuite.distributed.executionContexts',
     name: '/netsuite/distributed/executionContexts',
     id: 'exportNetsuiteDistributedExecutionContexts',
-    label: 'Netsuite distributed executionContext',
+    label: 'Netsuite distributed execution Context',
     defaultValue: '{{netsuite.distributed.executionContext}}',
     validWhen: [],
   },
@@ -1805,7 +1805,7 @@ export default {
     helpKey: 'export.netsuite.distributed.executionTypes',
     name: '/netsuite/distributed/executionTypes',
     id: 'exportNetsuiteDistributedExecutionTypes',
-    label: 'Netsuite distributed executionType',
+    label: 'Netsuite distributed execution Type',
     defaultValue: '{{netsuite.distributed.executionType}}',
     validWhen: [],
   },
@@ -1822,7 +1822,7 @@ export default {
     helpKey: 'export.netsuite.distributed.hooks.preSend.fileInternalId',
     name: '/netsuite/distributed/hooks/preSend/fileInternalId',
     id: 'exportNetsuiteDistributedHooksPreSendFileInternalId',
-    label: 'Netsuite distributed hooks preSend fileInternalId',
+    label: 'Netsuite distributed hooks pre Send file Internal Id',
     defaultValue: '{{netsuite.distributed.hooks.preSend.fileInternalId}}',
   },
   exportNetsuiteDistributedHooksPreSendFunction: {
@@ -1830,7 +1830,7 @@ export default {
     helpKey: 'export.netsuite.distributed.hooks.preSend.function',
     name: '/netsuite/distributed/hooks/preSend/function',
     id: 'exportNetsuiteDistributedHooksPreSendFunction',
-    label: 'Netsuite distributed hooks preSend function',
+    label: 'Netsuite distributed hooks pre Send function',
     defaultValue: '{{netsuite.distributed.hooks.preSend.function}}',
   },
   exportNetsuiteDistributedHooksPreSendConfiguration: {
@@ -1838,7 +1838,7 @@ export default {
     helpKey: 'export.netsuite.distributed.hooks.preSend.configuration',
     name: '/netsuite/distributed/hooks/preSend/configuration',
     id: 'exportNetsuiteDistributedHooksPreSendConfiguration',
-    label: 'Netsuite distributed hooks preSend configuration',
+    label: 'Netsuite distributed hooks pre Send configuration',
     defaultValue: '{{netsuite.distributed.hooks.preSend.configuration}}',
   },
   exportNetsuiteDistributedSublists: {
@@ -1854,7 +1854,7 @@ export default {
     helpKey: 'export.netsuite.distributed.forceReload',
     name: '/netsuite/distributed/forceReload',
     id: 'exportNetsuiteDistributedForceReload',
-    label: 'Netsuite distributed forceReload',
+    label: 'Netsuite distributed force Reload',
     defaultValue: false,
   },
   exportNetsuiteDistributedIoEnvironment: {
@@ -1862,7 +1862,7 @@ export default {
     helpKey: 'export.netsuite.distributed.ioEnvironment',
     name: '/netsuite/distributed/ioEnvironment',
     id: 'exportNetsuiteDistributedIoEnvironment',
-    label: 'Netsuite distributed ioEnvironment',
+    label: 'Netsuite distributed io Environment',
     defaultValue: '{{netsuite.distributed.ioEnvironment}}',
   },
   exportNetsuiteDistributedLastSyncedDate: {
@@ -1870,7 +1870,7 @@ export default {
     helpKey: 'export.netsuite.distributed.lastSyncedDate',
     name: '/netsuite/distributed/lastSyncedDate',
     id: 'exportNetsuiteDistributedLastSyncedDate',
-    label: 'Netsuite distributed lastSyncedDate',
+    label: 'Netsuite distributed last Synced Date',
     defaultValue: '{{netsuite.distributed.lastSyncedDate}}',
   },
   exportNetsuiteDistributedSettings: {
@@ -1886,7 +1886,7 @@ export default {
     helpKey: 'export.netsuite.getList[*].type',
     name: '/netsuite/getList[*]/type',
     id: 'exportNetsuiteGetList[*]Type',
-    label: 'Netsuite getList[*] type',
+    label: 'Netsuite get List[*] type',
     defaultValue: '{{netsuite.getList[*].type}}',
   },
   'exportNetsuiteGetList[*]TypeId': {
@@ -1894,7 +1894,7 @@ export default {
     helpKey: 'export.netsuite.getList[*].typeId',
     name: '/netsuite/getList[*]/typeId',
     id: 'exportNetsuiteGetList[*]TypeId',
-    label: 'Netsuite getList[*] typeId',
+    label: 'Netsuite get List[*] type Id',
     defaultValue: '{{netsuite.getList[*].typeId}}',
   },
   'exportNetsuiteGetList[*]InternalId': {
@@ -1902,7 +1902,7 @@ export default {
     helpKey: 'export.netsuite.getList[*].internalId',
     name: '/netsuite/getList[*]/internalId',
     id: 'exportNetsuiteGetList[*]InternalId',
-    label: 'Netsuite getList[*] internalId',
+    label: 'Netsuite get List[*] internal Id',
     defaultValue: '{{netsuite.getList[*].internalId}}',
   },
   'exportNetsuiteGetList[*]ExternalId': {
@@ -1910,7 +1910,7 @@ export default {
     helpKey: 'export.netsuite.getList[*].externalId',
     name: '/netsuite/getList[*]/externalId',
     id: 'exportNetsuiteGetList[*]ExternalId',
-    label: 'Netsuite getList[*] externalId',
+    label: 'Netsuite get List[*] external Id',
     defaultValue: '{{netsuite.getList[*].externalId}}',
   },
   exportNetsuiteSearchPreferencesBodyFieldsOnly: {
@@ -1918,7 +1918,7 @@ export default {
     helpKey: 'export.netsuite.searchPreferences.bodyFieldsOnly',
     name: '/netsuite/searchPreferences/bodyFieldsOnly',
     id: 'exportNetsuiteSearchPreferencesBodyFieldsOnly',
-    label: 'Netsuite searchPreferences bodyFieldsOnly',
+    label: 'Netsuite search Preferences body Fields Only',
     defaultValue: false,
   },
   exportNetsuiteSearchPreferencesPageSize: {
@@ -1926,7 +1926,7 @@ export default {
     helpKey: 'export.netsuite.searchPreferences.pageSize',
     name: '/netsuite/searchPreferences/pageSize',
     id: 'exportNetsuiteSearchPreferencesPageSize',
-    label: 'Netsuite searchPreferences pageSize',
+    label: 'Netsuite search Preferences page Size',
     defaultValue: '{{netsuite.searchPreferences.pageSize}}',
     validWhen: [
       {
@@ -1939,7 +1939,7 @@ export default {
     helpKey: 'export.netsuite.searchPreferences.returnSearchColumns',
     name: '/netsuite/searchPreferences/returnSearchColumns',
     id: 'exportNetsuiteSearchPreferencesReturnSearchColumns',
-    label: 'Netsuite searchPreferences returnSearchColumns',
+    label: 'Netsuite search Preferences return Search Columns',
     defaultValue: false,
   },
   // #endregion netsuite
@@ -1963,7 +1963,7 @@ export default {
   // #endregion rdbms
   // #region s3
   exportS3Region: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'export.s3.region',
     name: '/s3/region',
     id: 'exportS3Region',
@@ -2004,7 +2004,7 @@ export default {
     helpKey: 'export.s3.keyStartsWith',
     name: '/s3/keyStartsWith',
     id: 'exportS3KeyStartsWith',
-    label: 'S3 keyStartsWith',
+    label: 'S3 key Starts With',
     defaultValue: '{{s3.keyStartsWith}}',
   },
   exportS3KeyEndsWith: {
@@ -2012,7 +2012,7 @@ export default {
     helpKey: 'export.s3.keyEndsWith',
     name: '/s3/keyEndsWith',
     id: 'exportS3KeyEndsWith',
-    label: 'S3 keyEndsWith',
+    label: 'S3 key Ends With',
     defaultValue: '{{s3.keyEndsWith}}',
   },
   exportS3BackupBucket: {
@@ -2020,7 +2020,7 @@ export default {
     helpKey: 'export.s3.backupBucket',
     name: '/s3/backupBucket',
     id: 'exportS3BackupBucket',
-    label: 'S3 backupBucket',
+    label: 'S3 backup Bucket',
     defaultValue: '{{s3.backupBucket}}',
   },
   // #endregion s3
@@ -2039,7 +2039,7 @@ export default {
     helpKey: 'export.salesforce.sObjectType',
     name: '/salesforce/sObjectType',
     id: 'exportSalesforceSObjectType',
-    label: 'Salesforce sObjectType',
+    label: 'Salesforce s Object Type',
     defaultValue: '{{salesforce.sObjectType}}',
   },
   exportSalesforceId: {
@@ -2082,7 +2082,7 @@ export default {
     helpKey: 'export.salesforce.distributed.referencedFieldss',
     name: '/salesforce/distributed/referencedFieldss',
     id: 'exportSalesforceDistributedReferencedFieldss',
-    label: 'Salesforce distributed referencedFields',
+    label: 'Salesforce distributed referenced Fields',
     defaultValue: '{{salesforce.distributed.referencedFields}}',
     validWhen: [],
   },
@@ -2099,7 +2099,7 @@ export default {
     helpKey: 'export.salesforce.distributed.connectorId',
     name: '/salesforce/distributed/connectorId',
     id: 'exportSalesforceDistributedConnectorId',
-    label: 'Salesforce distributed connectorId',
+    label: 'Salesforce distributed connector Id',
     defaultValue: '{{salesforce.distributed.connectorId}}',
   },
   exportSalesforceDistributedUserDefinedReferencedFieldss: {
@@ -2110,7 +2110,7 @@ export default {
     helpKey: 'export.salesforce.distributed.userDefinedReferencedFieldss',
     name: '/salesforce/distributed/userDefinedReferencedFieldss',
     id: 'exportSalesforceDistributedUserDefinedReferencedFieldss',
-    label: 'Salesforce distributed userDefinedReferencedFields',
+    label: 'Salesforce distributed user Defined Referenced Fields',
     defaultValue: '{{salesforce.distributed.userDefinedReferencedFields}}',
     validWhen: [],
   },
@@ -2130,7 +2130,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].referencedFieldss',
     name: '/salesforce/distributed/relatedLists[*]/referencedFieldss',
     id: 'exportSalesforceDistributedRelatedLists[*]ReferencedFieldss',
-    label: 'Salesforce distributed relatedLists[*] referencedFields',
+    label: 'Salesforce distributed related Lists[*] referenced Fields',
     defaultValue: '{{salesforce.distributed.relatedLists[*].referencedFields}}',
     validWhen: [],
   },
@@ -2139,7 +2139,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].parentField',
     name: '/salesforce/distributed/relatedLists[*]/parentField',
     id: 'exportSalesforceDistributedRelatedLists[*]ParentField',
-    label: 'Salesforce distributed relatedLists[*] parentField',
+    label: 'Salesforce distributed related Lists[*] parent Field',
     defaultValue: '{{salesforce.distributed.relatedLists[*].parentField}}',
   },
   'exportSalesforceDistributedRelatedLists[*]SObjectType': {
@@ -2147,7 +2147,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].sObjectType',
     name: '/salesforce/distributed/relatedLists[*]/sObjectType',
     id: 'exportSalesforceDistributedRelatedLists[*]SObjectType',
-    label: 'Salesforce distributed relatedLists[*] sObjectType',
+    label: 'Salesforce distributed related Lists[*] s Object Type',
     defaultValue: '{{salesforce.distributed.relatedLists[*].sObjectType}}',
   },
   'exportSalesforceDistributedRelatedLists[*]Filter': {
@@ -2155,7 +2155,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].filter',
     name: '/salesforce/distributed/relatedLists[*]/filter',
     id: 'exportSalesforceDistributedRelatedLists[*]Filter',
-    label: 'Salesforce distributed relatedLists[*] filter',
+    label: 'Salesforce distributed related Lists[*] filter',
     defaultValue: '{{salesforce.distributed.relatedLists[*].filter}}',
   },
   'exportSalesforceDistributedRelatedLists[*]OrderBy': {
@@ -2163,7 +2163,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].orderBy',
     name: '/salesforce/distributed/relatedLists[*]/orderBy',
     id: 'exportSalesforceDistributedRelatedLists[*]OrderBy',
-    label: 'Salesforce distributed relatedLists[*] orderBy',
+    label: 'Salesforce distributed related Lists[*] order By',
     defaultValue: '{{salesforce.distributed.relatedLists[*].orderBy}}',
   },
   'exportSalesforceDistributedRelatedLists[*]UserDefined': {
@@ -2171,7 +2171,7 @@ export default {
     helpKey: 'export.salesforce.distributed.relatedLists[*].userDefined',
     name: '/salesforce/distributed/relatedLists[*]/userDefined',
     id: 'exportSalesforceDistributedRelatedLists[*]UserDefined',
-    label: 'Salesforce distributed relatedLists[*] userDefined',
+    label: 'Salesforce distributed related Lists[*] user Defined',
     defaultValue: '{{salesforce.distributed.relatedLists[*].userDefined}}',
   },
   // #endregion salesforce
@@ -2234,7 +2234,7 @@ export default {
     helpKey: 'export.as2.fileKey',
     name: '/as2/fileKey',
     id: 'exportAs2FileKey',
-    label: 'As2 fileKey',
+    label: 'As2 file Key',
     defaultValue: '{{as2.fileKey}}',
   },
   // #endregion as2
