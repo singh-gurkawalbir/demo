@@ -1,1 +1,0 @@
-export default {"fields":[{"id":"connection0"},{"id":"connection1"},{"id":"connection2"},{"id":"connection3"},{"id":"connection4"},{"id":"connection5"},{"id":"connection6"},{"id":"connection7"},{"id":"connection8"},{"id":"connection9"}],"fieldSets":[]};

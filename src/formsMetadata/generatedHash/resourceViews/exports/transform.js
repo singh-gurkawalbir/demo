@@ -16,10 +16,24 @@ export default {
     { id: 'exportIsLookup' },
     { id: 'exportUseTechAdaptorForm' },
     { id: 'exportAdaptorType' },
-    { id: 'exportFtpDirectoryPath' },
-    { id: 'exportFtpFileNameStartsWith' },
-    { id: 'exportFtpFileNameEndsWith' },
-    { id: 'exportFtpBackupDirectoryPath' },
+    { id: 'exportTransformType' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'expression',
+      collapsed: false,
+      fields: [
+        { id: 'exportTransformExpressionVersion' },
+        { id: 'exportTransformExpressionRules' },
+      ],
+    },
+    {
+      header: 'script',
+      collapsed: false,
+      fields: [
+        { id: 'exportTransformScript_scriptId' },
+        { id: 'exportTransformScriptFunction' },
+      ],
+    },
+  ],
 };

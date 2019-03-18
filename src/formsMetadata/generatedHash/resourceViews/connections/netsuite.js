@@ -1,1 +1,24 @@
-export default {"fields":[{"id":"connectionType"},{"id":"connectionName"},{"id":"connectionAssistant"},{"id":"connectionNetsuiteAccount"},{"id":"connectionNetsuiteTokenId"},{"id":"connectionNetsuiteTokenSecret"},{"id":"connectionNetsuiteEnvironment"},{"id":"connectionNetsuiteRoleId"},{"id":"connectionNetsuiteEmail"},{"id":"connectionNetsuitePassword"},{"id":"connectionNetsuiteRequestLevelCredentials"},{"id":"connectionNetsuiteDataCenterURLs"},{"id":"connectionNetsuiteAccountName"},{"id":"connectionNetsuiteRoleName"},{"id":"connectionNetsuiteConcurrencyLevelRESTlet"},{"id":"connectionNetsuiteConcurrencyLevelWebServices"},{"id":"connectionNetsuiteConcurrencyLevel"},{"id":"connectionNetsuiteWsdlVersion"},{"id":"connectionNetsuiteApplicationId"}],"fieldSets":[]};
+export default {
+  fields: [
+    { id: 'connectionType' },
+    { id: 'connectionName' },
+    { id: 'connectionAssistant' },
+    { id: 'connectionNetsuiteAccount' },
+    { id: 'connectionNetsuiteTokenId' },
+    { id: 'connectionNetsuiteTokenSecret' },
+    { id: 'connectionNetsuiteEnvironment' },
+    { id: 'connectionNetsuiteRoleId' },
+    { id: 'connectionNetsuiteEmail' },
+    { id: 'connectionNetsuitePassword' },
+    { id: 'connectionNetsuiteRequestLevelCredentials' },
+    { id: 'connectionNetsuiteDataCenterURLs' },
+    { id: 'connectionNetsuiteAccountName' },
+    { id: 'connectionNetsuiteRoleName' },
+    { id: 'connectionNetsuiteConcurrencyLevelRESTlet' },
+    { id: 'connectionNetsuiteConcurrencyLevelWebServices' },
+    { id: 'connectionNetsuiteConcurrencyLevel' },
+    { id: 'connectionNetsuiteWsdlVersion' },
+    { id: 'connectionNetsuiteApplicationId' },
+  ],
+  fieldSets: [],
+};

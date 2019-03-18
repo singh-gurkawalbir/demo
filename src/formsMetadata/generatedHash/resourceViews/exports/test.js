@@ -16,10 +16,7 @@ export default {
     { id: 'exportIsLookup' },
     { id: 'exportUseTechAdaptorForm' },
     { id: 'exportAdaptorType' },
-    { id: 'exportFtpDirectoryPath' },
-    { id: 'exportFtpFileNameStartsWith' },
-    { id: 'exportFtpFileNameEndsWith' },
-    { id: 'exportFtpBackupDirectoryPath' },
+    { id: 'exportTestLimit' },
   ],
   fieldSets: [],
 };
