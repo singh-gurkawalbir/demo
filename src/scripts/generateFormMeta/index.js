@@ -27,6 +27,7 @@ const ignoreFieldsOfEndingSubpaths = [
   'position',
   'required',
   'label',
+  'type',
   '_id', // Moongoose generated id
   '_iClientId', // Rest Connection
 ];
@@ -189,7 +190,7 @@ const generateFieldSetsHeader = formMeta =>
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'export';
+const resourceType = 'connection';
 const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
 // writing to "view" files...be extremely carefull of this part of the script
 // changes will be overwritten
@@ -214,7 +215,7 @@ const gererateMatchingComponents = (data, resourceType) => {
   });
 };
 
-const schemaFile = 'exportSchema.txt';
+const schemaFile = `${resourceType}Schema.txt`;
 const data = fileread(join(__dirname, '..', schemaFile));
 
 gererateMatchingComponentsWithCollapsableComments(data, resourceType);

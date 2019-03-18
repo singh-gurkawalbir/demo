@@ -1,7 +1,7 @@
 export default {
   // #region common
   connectionType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.type',
     name: '/type',
     id: 'connectionType',
@@ -33,7 +33,7 @@ export default {
     defaultValue: '{{name}}',
   },
   connectionAssistant: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.assistant',
     name: '/assistant',
     id: 'connectionAssistant',
@@ -277,7 +277,7 @@ export default {
     helpKey: 'connection.rdbms.instanceName',
     name: '/rdbms/instanceName',
     id: 'connectionRdbmsInstanceName',
-    label: 'Rdbms instanceName',
+    label: 'Rdbms instance Name',
     defaultValue: '{{rdbms.instanceName}}',
   },
   connectionRdbmsUser: {
@@ -333,7 +333,7 @@ export default {
     helpKey: 'connection.rdbms.concurrencyLevel',
     name: '/rdbms/concurrencyLevel',
     id: 'connectionRdbmsConcurrencyLevel',
-    label: 'Rdbms concurrencyLevel',
+    label: 'Rdbms concurrency Level',
     defaultValue: '{{rdbms.concurrencyLevel}}',
     validWhen: [
       {
@@ -344,11 +344,11 @@ export default {
   // #endregion rdbms
   // #region rest
   connectionRestMediaType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.rest.mediaType',
     name: '/rest/mediaType',
     id: 'connectionRestMediaType',
-    label: 'Rest mediaType',
+    label: 'Rest media Type',
     defaultValue: '{{rest.mediaType}}',
     options: [
       {
@@ -366,7 +366,7 @@ export default {
     helpKey: 'connection.rest.baseURI',
     name: '/rest/baseURI',
     id: 'connectionRestBaseURI',
-    label: 'Rest baseURI',
+    label: 'Rest base URI',
     defaultValue: '{{rest.baseURI}}',
   },
   connectionRestBearerToken: {
@@ -374,7 +374,7 @@ export default {
     helpKey: 'connection.rest.bearerToken',
     name: '/rest/bearerToken',
     id: 'connectionRestBearerToken',
-    label: 'Rest bearerToken',
+    label: 'Rest bearer Token',
     defaultValue: '{{rest.bearerToken}}',
   },
   connectionRestTokenLocation: {
@@ -382,7 +382,7 @@ export default {
     helpKey: 'connection.rest.tokenLocation',
     name: '/rest/tokenLocation',
     id: 'connectionRestTokenLocation',
-    label: 'Rest tokenLocation',
+    label: 'Rest token Location',
     defaultValue: '{{rest.tokenLocation}}',
     options: [
       {
@@ -398,7 +398,7 @@ export default {
     helpKey: 'connection.rest.tokenParam',
     name: '/rest/tokenParam',
     id: 'connectionRestTokenParam',
-    label: 'Rest tokenParam',
+    label: 'Rest token Param',
     defaultValue: '{{rest.tokenParam}}',
   },
   connectionRestScopes: {
@@ -418,7 +418,7 @@ export default {
     helpKey: 'connection.rest.scopeDelimiter',
     name: '/rest/scopeDelimiter',
     id: 'connectionRestScopeDelimiter',
-    label: 'Rest scopeDelimiter',
+    label: 'Rest scope Delimiter',
     defaultValue: '{{rest.scopeDelimiter}}',
   },
   connectionRestRefreshToken: {
@@ -426,7 +426,7 @@ export default {
     helpKey: 'connection.rest.refreshToken',
     name: '/rest/refreshToken',
     id: 'connectionRestRefreshToken',
-    label: 'Rest refreshToken',
+    label: 'Rest refresh Token',
     defaultValue: '{{rest.refreshToken}}',
   },
   connectionRestOauthTokenURI: {
@@ -434,7 +434,7 @@ export default {
     helpKey: 'connection.rest.oauthTokenURI',
     name: '/rest/oauthTokenURI',
     id: 'connectionRestOauthTokenURI',
-    label: 'Rest oauthTokenURI',
+    label: 'Rest oauth Token URI',
     defaultValue: '{{rest.oauthTokenURI}}',
   },
   connectionRestDisableStrictSSL: {
@@ -442,15 +442,15 @@ export default {
     helpKey: 'connection.rest.disableStrictSSL',
     name: '/rest/disableStrictSSL',
     id: 'connectionRestDisableStrictSSL',
-    label: 'Rest disableStrictSSL',
+    label: 'Rest disable Strict SSL',
     defaultValue: false,
   },
   connectionRestAuthType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.rest.authType',
     name: '/rest/authType',
     id: 'connectionRestAuthType',
-    label: 'Rest authType',
+    label: 'Rest auth Type',
     defaultValue: '{{rest.authType}}',
     options: [
       {
@@ -472,7 +472,7 @@ export default {
     helpKey: 'connection.rest.authURI',
     name: '/rest/authURI',
     id: 'connectionRestAuthURI',
-    label: 'Rest authURI',
+    label: 'Rest auth URI',
     defaultValue: '{{rest.authURI}}',
   },
   connectionRestAuthHeader: {
@@ -480,7 +480,7 @@ export default {
     helpKey: 'connection.rest.authHeader',
     name: '/rest/authHeader',
     id: 'connectionRestAuthHeader',
-    label: 'Rest authHeader',
+    label: 'Rest auth Header',
     defaultValue: '{{rest.authHeader}}',
   },
   connectionRestRetryHeader: {
@@ -488,15 +488,15 @@ export default {
     helpKey: 'connection.rest.retryHeader',
     name: '/rest/retryHeader',
     id: 'connectionRestRetryHeader',
-    label: 'Rest retryHeader',
+    label: 'Rest retry Header',
     defaultValue: '{{rest.retryHeader}}',
   },
   connectionRestAuthScheme: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.rest.authScheme',
     name: '/rest/authScheme',
     id: 'connectionRestAuthScheme',
-    label: 'Rest authScheme',
+    label: 'Rest auth Scheme',
     defaultValue: '{{rest.authScheme}}',
     options: [
       {
@@ -515,7 +515,7 @@ export default {
     helpKey: 'connection.rest.basicAuth.username',
     name: '/rest/basicAuth/username',
     id: 'connectionRestBasicAuthUsername',
-    label: 'Rest basicAuth username',
+    label: 'Rest basic Auth username',
     defaultValue: '{{rest.basicAuth.username}}',
   },
   connectionRestBasicAuthPassword: {
@@ -523,7 +523,7 @@ export default {
     helpKey: 'connection.rest.basicAuth.password',
     name: '/rest/basicAuth/password',
     id: 'connectionRestBasicAuthPassword',
-    label: 'Rest basicAuth password',
+    label: 'Rest basic Auth password',
     defaultValue: '{{rest.basicAuth.password}}',
   },
   connectionRestCookieAuthUri: {
@@ -531,7 +531,7 @@ export default {
     helpKey: 'connection.rest.cookieAuth.uri',
     name: '/rest/cookieAuth/uri',
     id: 'connectionRestCookieAuthUri',
-    label: 'Rest cookieAuth uri',
+    label: 'Rest cookie Auth uri',
     defaultValue: '{{rest.cookieAuth.uri}}',
   },
   connectionRestCookieAuthBody: {
@@ -539,7 +539,7 @@ export default {
     helpKey: 'connection.rest.cookieAuth.body',
     name: '/rest/cookieAuth/body',
     id: 'connectionRestCookieAuthBody',
-    label: 'Rest cookieAuth body',
+    label: 'Rest cookie Auth body',
     defaultValue: '{{rest.cookieAuth.body}}',
   },
   connectionRestCookieAuthMethod: {
@@ -547,7 +547,7 @@ export default {
     helpKey: 'connection.rest.cookieAuth.method',
     name: '/rest/cookieAuth/method',
     id: 'connectionRestCookieAuthMethod',
-    label: 'Rest cookieAuth method',
+    label: 'Rest cookie Auth method',
     defaultValue: '{{rest.cookieAuth.method}}',
   },
   connectionRestCookieAuthSuccessStatusCode: {
@@ -555,7 +555,7 @@ export default {
     helpKey: 'connection.rest.cookieAuth.successStatusCode',
     name: '/rest/cookieAuth/successStatusCode',
     id: 'connectionRestCookieAuthSuccessStatusCode',
-    label: 'Rest cookieAuth successStatusCode',
+    label: 'Rest cookie Auth success Status Code',
     defaultValue: '{{rest.cookieAuth.successStatusCode}}',
     validWhen: [
       {
@@ -613,7 +613,7 @@ export default {
     helpKey: 'connection.rest.oauth.accessTokenPath',
     name: '/rest/oauth/accessTokenPath',
     id: 'connectionRestOauthAccessTokenPath',
-    label: 'Rest oauth accessTokenPath',
+    label: 'Rest oauth access Token Path',
     defaultValue: '{{rest.oauth.accessTokenPath}}',
   },
   connectionRestOauthGrantType: {
@@ -621,7 +621,7 @@ export default {
     helpKey: 'connection.rest.oauth.grantType',
     name: '/rest/oauth/grantType',
     id: 'connectionRestOauthGrantType',
-    label: 'Rest oauth grantType',
+    label: 'Rest oauth grant Type',
     defaultValue: '{{rest.oauth.grantType}}',
     options: [
       {
@@ -653,7 +653,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenMethod',
     name: '/rest/refreshTokenMethod',
     id: 'connectionRestRefreshTokenMethod',
-    label: 'Rest refreshTokenMethod',
+    label: 'Rest refresh Token Method',
     defaultValue: '{{rest.refreshTokenMethod}}',
   },
   connectionRestRefreshTokenBody: {
@@ -661,7 +661,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenBody',
     name: '/rest/refreshTokenBody',
     id: 'connectionRestRefreshTokenBody',
-    label: 'Rest refreshTokenBody',
+    label: 'Rest refresh Token Body',
     defaultValue: '{{rest.refreshTokenBody}}',
   },
   connectionRestRefreshTokenURI: {
@@ -669,7 +669,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenURI',
     name: '/rest/refreshTokenURI',
     id: 'connectionRestRefreshTokenURI',
-    label: 'Rest refreshTokenURI',
+    label: 'Rest refresh Token URI',
     defaultValue: '{{rest.refreshTokenURI}}',
   },
   connectionRestRefreshTokenPath: {
@@ -677,7 +677,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenPath',
     name: '/rest/refreshTokenPath',
     id: 'connectionRestRefreshTokenPath',
-    label: 'Rest refreshTokenPath',
+    label: 'Rest refresh Token Path',
     defaultValue: '{{rest.refreshTokenPath}}',
   },
   connectionRestRefreshTokenMediaType: {
@@ -685,7 +685,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenMediaType',
     name: '/rest/refreshTokenMediaType',
     id: 'connectionRestRefreshTokenMediaType',
-    label: 'Rest refreshTokenMediaType',
+    label: 'Rest refresh Token Media Type',
     defaultValue: '{{rest.refreshTokenMediaType}}',
     options: [
       {
@@ -704,7 +704,7 @@ export default {
     helpKey: 'connection.rest.refreshTokenHeaders',
     name: '/rest/refreshTokenHeaders',
     id: 'connectionRestRefreshTokenHeaders',
-    label: 'Rest refreshTokenHeaders',
+    label: 'Rest refresh Token Headers',
     defaultValue: '{{rest.refreshTokenHeaders}}',
   },
   connectionRestInfo: {
@@ -720,7 +720,7 @@ export default {
     helpKey: 'connection.rest.pingRelativeURI',
     name: '/rest/pingRelativeURI',
     id: 'connectionRestPingRelativeURI',
-    label: 'Rest pingRelativeURI',
+    label: 'Rest ping Relative URI',
     defaultValue: '{{rest.pingRelativeURI}}',
   },
   connectionRestPingSuccessPath: {
@@ -728,7 +728,7 @@ export default {
     helpKey: 'connection.rest.pingSuccessPath',
     name: '/rest/pingSuccessPath',
     id: 'connectionRestPingSuccessPath',
-    label: 'Rest pingSuccessPath',
+    label: 'Rest ping Success Path',
     defaultValue: '{{rest.pingSuccessPath}}',
   },
   connectionRestPingSuccessValuess: {
@@ -739,7 +739,7 @@ export default {
     helpKey: 'connection.rest.pingSuccessValuess',
     name: '/rest/pingSuccessValuess',
     id: 'connectionRestPingSuccessValuess',
-    label: 'Rest pingSuccessValues',
+    label: 'Rest ping Success Values',
     defaultValue: '{{rest.pingSuccessValues}}',
     validWhen: [],
   },
@@ -748,7 +748,7 @@ export default {
     helpKey: 'connection.rest.pingFailurePath',
     name: '/rest/pingFailurePath',
     id: 'connectionRestPingFailurePath',
-    label: 'Rest pingFailurePath',
+    label: 'Rest ping Failure Path',
     defaultValue: '{{rest.pingFailurePath}}',
   },
   connectionRestPingFailureValuess: {
@@ -759,7 +759,7 @@ export default {
     helpKey: 'connection.rest.pingFailureValuess',
     name: '/rest/pingFailureValuess',
     id: 'connectionRestPingFailureValuess',
-    label: 'Rest pingFailureValues',
+    label: 'Rest ping Failure Values',
     defaultValue: '{{rest.pingFailureValues}}',
     validWhen: [],
   },
@@ -768,7 +768,7 @@ export default {
     helpKey: 'connection.rest.concurrencyLevel',
     name: '/rest/concurrencyLevel',
     id: 'connectionRestConcurrencyLevel',
-    label: 'Rest concurrencyLevel',
+    label: 'Rest concurrency Level',
     defaultValue: '{{rest.concurrencyLevel}}',
     validWhen: [
       {
@@ -781,7 +781,7 @@ export default {
     helpKey: 'connection.rest.pingMethod',
     name: '/rest/pingMethod',
     id: 'connectionRestPingMethod',
-    label: 'Rest pingMethod',
+    label: 'Rest ping Method',
     defaultValue: '{{rest.pingMethod}}',
     options: [
       {
@@ -797,7 +797,7 @@ export default {
     helpKey: 'connection.rest.pingBody',
     name: '/rest/pingBody',
     id: 'connectionRestPingBody',
-    label: 'Rest pingBody',
+    label: 'Rest ping Body',
     defaultValue: '{{rest.pingBody}}',
   },
   // #endregion rest
@@ -807,7 +807,7 @@ export default {
     helpKey: 'connection.http.mediaType',
     name: '/http/mediaType',
     id: 'connectionHttpMediaType',
-    label: 'Http mediaType',
+    label: 'Http media Type',
     defaultValue: '{{http.mediaType}}',
     options: [
       {
@@ -823,7 +823,7 @@ export default {
     helpKey: 'connection.http.baseURI',
     name: '/http/baseURI',
     id: 'connectionHttpBaseURI',
-    label: 'Http baseURI',
+    label: 'Http base URI',
     defaultValue: '{{http.baseURI}}',
   },
   connectionHttpDisableStrictSSL: {
@@ -831,7 +831,7 @@ export default {
     helpKey: 'connection.http.disableStrictSSL',
     name: '/http/disableStrictSSL',
     id: 'connectionHttpDisableStrictSSL',
-    label: 'Http disableStrictSSL',
+    label: 'Http disable Strict SSL',
     defaultValue: false,
   },
   connectionHttpConcurrencyLevel: {
@@ -839,7 +839,7 @@ export default {
     helpKey: 'connection.http.concurrencyLevel',
     name: '/http/concurrencyLevel',
     id: 'connectionHttpConcurrencyLevel',
-    label: 'Http concurrencyLevel',
+    label: 'Http concurrency Level',
     defaultValue: '{{http.concurrencyLevel}}',
     validWhen: [
       {
@@ -852,7 +852,7 @@ export default {
     helpKey: 'connection.http.retryHeader',
     name: '/http/retryHeader',
     id: 'connectionHttpRetryHeader',
-    label: 'Http retryHeader',
+    label: 'Http retry Header',
     defaultValue: '{{http.retryHeader}}',
   },
   connectionHttpPingRelativeURI: {
@@ -860,11 +860,11 @@ export default {
     helpKey: 'connection.http.ping.relativeURI',
     name: '/http/ping/relativeURI',
     id: 'connectionHttpPingRelativeURI',
-    label: 'Http ping relativeURI',
+    label: 'Http ping relative URI',
     defaultValue: '{{http.ping.relativeURI}}',
   },
   connectionHttpPingMethod: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.http.ping.method',
     name: '/http/ping/method',
     id: 'connectionHttpPingMethod',
@@ -894,7 +894,7 @@ export default {
     helpKey: 'connection.http.ping.successPath',
     name: '/http/ping/successPath',
     id: 'connectionHttpPingSuccessPath',
-    label: 'Http ping successPath',
+    label: 'Http ping success Path',
     defaultValue: '{{http.ping.successPath}}',
   },
   connectionHttpPingSuccessValuess: {
@@ -905,7 +905,7 @@ export default {
     helpKey: 'connection.http.ping.successValuess',
     name: '/http/ping/successValuess',
     id: 'connectionHttpPingSuccessValuess',
-    label: 'Http ping successValues',
+    label: 'Http ping success Values',
     defaultValue: '{{http.ping.successValues}}',
     validWhen: [],
   },
@@ -914,7 +914,7 @@ export default {
     helpKey: 'connection.http.ping.errorPath',
     name: '/http/ping/errorPath',
     id: 'connectionHttpPingErrorPath',
-    label: 'Http ping errorPath',
+    label: 'Http ping error Path',
     defaultValue: '{{http.ping.errorPath}}',
   },
   connectionHttpAuthFailStatusCode: {
@@ -922,7 +922,7 @@ export default {
     helpKey: 'connection.http.auth.failStatusCode',
     name: '/http/auth/failStatusCode',
     id: 'connectionHttpAuthFailStatusCode',
-    label: 'Http auth failStatusCode',
+    label: 'Http auth fail Status Code',
     defaultValue: '{{http.auth.failStatusCode}}',
     validWhen: [
       {
@@ -935,7 +935,7 @@ export default {
     helpKey: 'connection.http.auth.failPath',
     name: '/http/auth/failPath',
     id: 'connectionHttpAuthFailPath',
-    label: 'Http auth failPath',
+    label: 'Http auth fail Path',
     defaultValue: '{{http.auth.failPath}}',
   },
   connectionHttpAuthFailValuess: {
@@ -946,7 +946,7 @@ export default {
     helpKey: 'connection.http.auth.failValuess',
     name: '/http/auth/failValuess',
     id: 'connectionHttpAuthFailValuess',
-    label: 'Http auth failValues',
+    label: 'Http auth fail Values',
     defaultValue: '{{http.auth.failValues}}',
     validWhen: [],
   },
@@ -971,7 +971,7 @@ export default {
     helpKey: 'connection.http.auth.oauth.authURI',
     name: '/http/auth/oauth/authURI',
     id: 'connectionHttpAuthOauthAuthURI',
-    label: 'Http auth oauth authURI',
+    label: 'Http auth oauth auth URI',
     defaultValue: '{{http.auth.oauth.authURI}}',
   },
   connectionHttpAuthOauthTokenURI: {
@@ -979,7 +979,7 @@ export default {
     helpKey: 'connection.http.auth.oauth.tokenURI',
     name: '/http/auth/oauth/tokenURI',
     id: 'connectionHttpAuthOauthTokenURI',
-    label: 'Http auth oauth tokenURI',
+    label: 'Http auth oauth token URI',
     defaultValue: '{{http.auth.oauth.tokenURI}}',
   },
   connectionHttpAuthOauthScopes: {
@@ -999,7 +999,7 @@ export default {
     helpKey: 'connection.http.auth.oauth.scopeDelimiter',
     name: '/http/auth/oauth/scopeDelimiter',
     id: 'connectionHttpAuthOauthScopeDelimiter',
-    label: 'Http auth oauth scopeDelimiter',
+    label: 'Http auth oauth scope Delimiter',
     defaultValue: '{{http.auth.oauth.scopeDelimiter}}',
   },
   connectionHttpAuthOauthAccessTokenPath: {
@@ -1007,7 +1007,7 @@ export default {
     helpKey: 'connection.http.auth.oauth.accessTokenPath',
     name: '/http/auth/oauth/accessTokenPath',
     id: 'connectionHttpAuthOauthAccessTokenPath',
-    label: 'Http auth oauth accessTokenPath',
+    label: 'Http auth oauth access Token Path',
     defaultValue: '{{http.auth.oauth.accessTokenPath}}',
   },
   connectionHttpAuthOauthGrantType: {
@@ -1015,7 +1015,7 @@ export default {
     helpKey: 'connection.http.auth.oauth.grantType',
     name: '/http/auth/oauth/grantType',
     id: 'connectionHttpAuthOauthGrantType',
-    label: 'Http auth oauth grantType',
+    label: 'Http auth oauth grant Type',
     defaultValue: '{{http.auth.oauth.grantType}}',
     options: [
       {
@@ -1051,7 +1051,7 @@ export default {
     defaultValue: '{{http.auth.token.token}}',
   },
   connectionHttpAuthTokenLocation: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.http.auth.token.location',
     name: '/http/auth/token/location',
     id: 'connectionHttpAuthTokenLocation',
@@ -1072,7 +1072,7 @@ export default {
     helpKey: 'connection.http.auth.token.headerName',
     name: '/http/auth/token/headerName',
     id: 'connectionHttpAuthTokenHeaderName',
-    label: 'Http auth token headerName',
+    label: 'Http auth token header Name',
     defaultValue: '{{http.auth.token.headerName}}',
   },
   connectionHttpAuthTokenScheme: {
@@ -1088,7 +1088,7 @@ export default {
     helpKey: 'connection.http.auth.token.paramName',
     name: '/http/auth/token/paramName',
     id: 'connectionHttpAuthTokenParamName',
-    label: 'Http auth token paramName',
+    label: 'Http auth token param Name',
     defaultValue: '{{http.auth.token.paramName}}',
   },
   connectionHttpAuthTokenRefreshMethod: {
@@ -1096,7 +1096,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshMethod',
     name: '/http/auth/token/refreshMethod',
     id: 'connectionHttpAuthTokenRefreshMethod',
-    label: 'Http auth token refreshMethod',
+    label: 'Http auth token refresh Method',
     defaultValue: '{{http.auth.token.refreshMethod}}',
     options: [
       {
@@ -1112,7 +1112,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshRelativeURI',
     name: '/http/auth/token/refreshRelativeURI',
     id: 'connectionHttpAuthTokenRefreshRelativeURI',
-    label: 'Http auth token refreshRelativeURI',
+    label: 'Http auth token refresh Relative URI',
     defaultValue: '{{http.auth.token.refreshRelativeURI}}',
   },
   connectionHttpAuthTokenRefreshBody: {
@@ -1120,7 +1120,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshBody',
     name: '/http/auth/token/refreshBody',
     id: 'connectionHttpAuthTokenRefreshBody',
-    label: 'Http auth token refreshBody',
+    label: 'Http auth token refresh Body',
     defaultValue: '{{http.auth.token.refreshBody}}',
   },
   connectionHttpAuthTokenRefreshTokenPath: {
@@ -1128,15 +1128,15 @@ export default {
     helpKey: 'connection.http.auth.token.refreshTokenPath',
     name: '/http/auth/token/refreshTokenPath',
     id: 'connectionHttpAuthTokenRefreshTokenPath',
-    label: 'Http auth token refreshTokenPath',
+    label: 'Http auth token refresh Token Path',
     defaultValue: '{{http.auth.token.refreshTokenPath}}',
   },
   connectionHttpAuthTokenRefreshMediaType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.http.auth.token.refreshMediaType',
     name: '/http/auth/token/refreshMediaType',
     id: 'connectionHttpAuthTokenRefreshMediaType',
-    label: 'Http auth token refreshMediaType',
+    label: 'Http auth token refresh Media Type',
     defaultValue: '{{http.auth.token.refreshMediaType}}',
     options: [
       {
@@ -1156,7 +1156,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshHeaders',
     name: '/http/auth/token/refreshHeaders',
     id: 'connectionHttpAuthTokenRefreshHeaders',
-    label: 'Http auth token refreshHeaders',
+    label: 'Http auth token refresh Headers',
     defaultValue: '{{http.auth.token.refreshHeaders}}',
   },
   connectionHttpAuthTokenRefreshToken: {
@@ -1164,7 +1164,7 @@ export default {
     helpKey: 'connection.http.auth.token.refreshToken',
     name: '/http/auth/token/refreshToken',
     id: 'connectionHttpAuthTokenRefreshToken',
-    label: 'Http auth token refreshToken',
+    label: 'Http auth token refresh Token',
     defaultValue: '{{http.auth.token.refreshToken}}',
   },
   connectionHttpRateLimitFailStatusCode: {
@@ -1172,7 +1172,7 @@ export default {
     helpKey: 'connection.http.rateLimit.failStatusCode',
     name: '/http/rateLimit/failStatusCode',
     id: 'connectionHttpRateLimitFailStatusCode',
-    label: 'Http rateLimit failStatusCode',
+    label: 'Http rate Limit fail Status Code',
     defaultValue: '{{http.rateLimit.failStatusCode}}',
     validWhen: [
       {
@@ -1185,7 +1185,7 @@ export default {
     helpKey: 'connection.http.rateLimit.failPath',
     name: '/http/rateLimit/failPath',
     id: 'connectionHttpRateLimitFailPath',
-    label: 'Http rateLimit failPath',
+    label: 'Http rate Limit fail Path',
     defaultValue: '{{http.rateLimit.failPath}}',
   },
   connectionHttpRateLimitFailValuess: {
@@ -1196,7 +1196,7 @@ export default {
     helpKey: 'connection.http.rateLimit.failValuess',
     name: '/http/rateLimit/failValuess',
     id: 'connectionHttpRateLimitFailValuess',
-    label: 'Http rateLimit failValues',
+    label: 'Http rate Limit fail Values',
     defaultValue: '{{http.rateLimit.failValues}}',
     validWhen: [],
   },
@@ -1205,7 +1205,7 @@ export default {
     helpKey: 'connection.http.rateLimit.limit',
     name: '/http/rateLimit/limit',
     id: 'connectionHttpRateLimitLimit',
-    label: 'Http rateLimit limit',
+    label: 'Http rate Limit limit',
     defaultValue: '{{http.rateLimit.limit}}',
     validWhen: [
       {
@@ -1262,7 +1262,7 @@ export default {
     helpKey: 'connection.ftp.hostURI',
     name: '/ftp/hostURI',
     id: 'connectionFtpHostURI',
-    label: 'Ftp hostURI',
+    label: 'Ftp host URI',
     defaultValue: '{{ftp.hostURI}}',
   },
   connectionFtpUsername: {
@@ -1286,7 +1286,7 @@ export default {
     helpKey: 'connection.ftp.authKey',
     name: '/ftp/authKey',
     id: 'connectionFtpAuthKey',
-    label: 'Ftp authKey',
+    label: 'Ftp auth Key',
     defaultValue: '{{ftp.authKey}}',
   },
   connectionFtpPort: {
@@ -1307,15 +1307,15 @@ export default {
     helpKey: 'connection.ftp.usePassiveMode',
     name: '/ftp/usePassiveMode',
     id: 'connectionFtpUsePassiveMode',
-    label: 'Ftp usePassiveMode',
+    label: 'Ftp use Passive Mode',
     defaultValue: false,
   },
   connectionFtpEntryParser: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.ftp.entryParser',
     name: '/ftp/entryParser',
     id: 'connectionFtpEntryParser',
-    label: 'Ftp entryParser',
+    label: 'Ftp entry Parser',
     defaultValue: '{{ftp.entryParser}}',
     options: [
       {
@@ -1340,7 +1340,7 @@ export default {
     helpKey: 'connection.ftp.userDirectoryIsRoot',
     name: '/ftp/userDirectoryIsRoot',
     id: 'connectionFtpUserDirectoryIsRoot',
-    label: 'Ftp userDirectoryIsRoot',
+    label: 'Ftp user Directory Is Root',
     defaultValue: false,
   },
   connectionFtpUseImplicitFtps: {
@@ -1348,7 +1348,7 @@ export default {
     helpKey: 'connection.ftp.useImplicitFtps',
     name: '/ftp/useImplicitFtps',
     id: 'connectionFtpUseImplicitFtps',
-    label: 'Ftp useImplicitFtps',
+    label: 'Ftp use Implicit Ftps',
     defaultValue: false,
   },
   connectionFtpRequireSocketReUse: {
@@ -1356,7 +1356,7 @@ export default {
     helpKey: 'connection.ftp.requireSocketReUse',
     name: '/ftp/requireSocketReUse',
     id: 'connectionFtpRequireSocketReUse',
-    label: 'Ftp requireSocketReUse',
+    label: 'Ftp require Socket Re Use',
     defaultValue: false,
   },
   connectionFtpPgpEncryptKey: {
@@ -1364,7 +1364,7 @@ export default {
     helpKey: 'connection.ftp.pgpEncryptKey',
     name: '/ftp/pgpEncryptKey',
     id: 'connectionFtpPgpEncryptKey',
-    label: 'Ftp pgpEncryptKey',
+    label: 'Ftp pgp Encrypt Key',
     defaultValue: '{{ftp.pgpEncryptKey}}',
   },
   connectionFtpPgpDecryptKey: {
@@ -1372,7 +1372,7 @@ export default {
     helpKey: 'connection.ftp.pgpDecryptKey',
     name: '/ftp/pgpDecryptKey',
     id: 'connectionFtpPgpDecryptKey',
-    label: 'Ftp pgpDecryptKey',
+    label: 'Ftp pgp Decrypt Key',
     defaultValue: '{{ftp.pgpDecryptKey}}',
   },
   connectionFtpPgpPassphrase: {
@@ -1380,7 +1380,7 @@ export default {
     helpKey: 'connection.ftp.pgpPassphrase',
     name: '/ftp/pgpPassphrase',
     id: 'connectionFtpPgpPassphrase',
-    label: 'Ftp pgpPassphrase',
+    label: 'Ftp pgp Passphrase',
     defaultValue: '{{ftp.pgpPassphrase}}',
   },
   // #endregion ftp
@@ -1390,7 +1390,7 @@ export default {
     helpKey: 'connection.s3.accessKeyId',
     name: '/s3/accessKeyId',
     id: 'connectionS3AccessKeyId',
-    label: 'S3 accessKeyId',
+    label: 'S3 access Key Id',
     defaultValue: '{{s3.accessKeyId}}',
   },
   connectionS3SecretAccessKey: {
@@ -1398,7 +1398,7 @@ export default {
     helpKey: 'connection.s3.secretAccessKey',
     name: '/s3/secretAccessKey',
     id: 'connectionS3SecretAccessKey',
-    label: 'S3 secretAccessKey',
+    label: 'S3 secret Access Key',
     defaultValue: '{{s3.secretAccessKey}}',
   },
   connectionS3PingBucket: {
@@ -1406,7 +1406,7 @@ export default {
     helpKey: 'connection.s3.pingBucket',
     name: '/s3/pingBucket',
     id: 'connectionS3PingBucket',
-    label: 'S3 pingBucket',
+    label: 'S3 ping Bucket',
     defaultValue: '{{s3.pingBucket}}',
   },
   // #endregion s3
@@ -1424,7 +1424,7 @@ export default {
     helpKey: 'connection.as2.partnerId',
     name: '/as2/partnerId',
     id: 'connectionAs2PartnerId',
-    label: 'As2 partnerId',
+    label: 'As2 partner Id',
     defaultValue: '{{as2.partnerId}}',
   },
   connectionAs2ContentBasedFlowRouterFunction: {
@@ -1432,7 +1432,7 @@ export default {
     helpKey: 'connection.as2.contentBasedFlowRouter.function',
     name: '/as2/contentBasedFlowRouter/function',
     id: 'connectionAs2ContentBasedFlowRouterFunction',
-    label: 'As2 contentBasedFlowRouter function',
+    label: 'As2 content Based Flow Router function',
     defaultValue: '{{as2.contentBasedFlowRouter.function}}',
   },
   connectionAs2ContentBasedFlowRouter_scriptId: {
@@ -1440,7 +1440,7 @@ export default {
     helpKey: 'connection.as2.contentBasedFlowRouter._scriptId',
     name: '/as2/contentBasedFlowRouter/_scriptId',
     id: 'connectionAs2ContentBasedFlowRouter_scriptId',
-    label: 'As2 contentBasedFlowRouter _scriptId',
+    label: 'As2 content Based Flow Router _script Id',
     defaultValue: '{{as2.contentBasedFlowRouter._scriptId}}',
   },
   connectionAs2PartnerStationInfoAs2URI: {
@@ -1448,7 +1448,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.as2URI',
     name: '/as2/partnerStationInfo/as2URI',
     id: 'connectionAs2PartnerStationInfoAs2URI',
-    label: 'As2 partnerStationInfo as2URI',
+    label: 'As2 partner Station Info as2URI',
     defaultValue: '{{as2.partnerStationInfo.as2URI}}',
   },
   connectionAs2PartnerStationInfoMdnMdnURL: {
@@ -1456,7 +1456,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.mdn.mdnURL',
     name: '/as2/partnerStationInfo/mdn/mdnURL',
     id: 'connectionAs2PartnerStationInfoMdnMdnURL',
-    label: 'As2 partnerStationInfo mdn mdnURL',
+    label: 'As2 partner Station Info mdn mdn URL',
     defaultValue: '{{as2.partnerStationInfo.mdn.mdnURL}}',
   },
   connectionAs2PartnerStationInfoMdnSignatureProtocol: {
@@ -1464,18 +1464,18 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.mdn.signatureProtocol',
     name: '/as2/partnerStationInfo/mdn/signatureProtocol',
     id: 'connectionAs2PartnerStationInfoMdnSignatureProtocol',
-    label: 'As2 partnerStationInfo mdn signatureProtocol',
+    label: 'As2 partner Station Info mdn signature Protocol',
     defaultValue: '{{as2.partnerStationInfo.mdn.signatureProtocol}}',
     options: [
       { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
     ],
   },
   connectionAs2PartnerStationInfoMdnMdnSigning: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.mdn.mdnSigning',
     name: '/as2/partnerStationInfo/mdn/mdnSigning',
     id: 'connectionAs2PartnerStationInfoMdnMdnSigning',
-    label: 'As2 partnerStationInfo mdn mdnSigning',
+    label: 'As2 partner Station Info mdn mdn Signing',
     defaultValue: '{{as2.partnerStationInfo.mdn.mdnSigning}}',
     options: [
       {
@@ -1493,7 +1493,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.failStatusCode',
     name: '/as2/partnerStationInfo/auth/failStatusCode',
     id: 'connectionAs2PartnerStationInfoAuthFailStatusCode',
-    label: 'As2 partnerStationInfo auth failStatusCode',
+    label: 'As2 partner Station Info auth fail Status Code',
     defaultValue: '{{as2.partnerStationInfo.auth.failStatusCode}}',
     validWhen: [
       {
@@ -1506,7 +1506,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.failPath',
     name: '/as2/partnerStationInfo/auth/failPath',
     id: 'connectionAs2PartnerStationInfoAuthFailPath',
-    label: 'As2 partnerStationInfo auth failPath',
+    label: 'As2 partner Station Info auth fail Path',
     defaultValue: '{{as2.partnerStationInfo.auth.failPath}}',
   },
   connectionAs2PartnerStationInfoAuthFailValuess: {
@@ -1517,7 +1517,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.failValuess',
     name: '/as2/partnerStationInfo/auth/failValuess',
     id: 'connectionAs2PartnerStationInfoAuthFailValuess',
-    label: 'As2 partnerStationInfo auth failValues',
+    label: 'As2 partner Station Info auth fail Values',
     defaultValue: '{{as2.partnerStationInfo.auth.failValues}}',
     validWhen: [],
   },
@@ -1526,7 +1526,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.basic.username',
     name: '/as2/partnerStationInfo/auth/basic/username',
     id: 'connectionAs2PartnerStationInfoAuthBasicUsername',
-    label: 'As2 partnerStationInfo auth basic username',
+    label: 'As2 partner Station Info auth basic username',
     defaultValue: '{{as2.partnerStationInfo.auth.basic.username}}',
   },
   connectionAs2PartnerStationInfoAuthBasicPassword: {
@@ -1534,7 +1534,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.basic.password',
     name: '/as2/partnerStationInfo/auth/basic/password',
     id: 'connectionAs2PartnerStationInfoAuthBasicPassword',
-    label: 'As2 partnerStationInfo auth basic password',
+    label: 'As2 partner Station Info auth basic password',
     defaultValue: '{{as2.partnerStationInfo.auth.basic.password}}',
   },
   connectionAs2PartnerStationInfoAuthTokenToken: {
@@ -1542,15 +1542,15 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.token',
     name: '/as2/partnerStationInfo/auth/token/token',
     id: 'connectionAs2PartnerStationInfoAuthTokenToken',
-    label: 'As2 partnerStationInfo auth token token',
+    label: 'As2 partner Station Info auth token token',
     defaultValue: '{{as2.partnerStationInfo.auth.token.token}}',
   },
   connectionAs2PartnerStationInfoAuthTokenLocation: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.location',
     name: '/as2/partnerStationInfo/auth/token/location',
     id: 'connectionAs2PartnerStationInfoAuthTokenLocation',
-    label: 'As2 partnerStationInfo auth token location',
+    label: 'As2 partner Station Info auth token location',
     defaultValue: '{{as2.partnerStationInfo.auth.token.location}}',
     options: [
       {
@@ -1567,7 +1567,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.headerName',
     name: '/as2/partnerStationInfo/auth/token/headerName',
     id: 'connectionAs2PartnerStationInfoAuthTokenHeaderName',
-    label: 'As2 partnerStationInfo auth token headerName',
+    label: 'As2 partner Station Info auth token header Name',
     defaultValue: '{{as2.partnerStationInfo.auth.token.headerName}}',
   },
   connectionAs2PartnerStationInfoAuthTokenScheme: {
@@ -1575,7 +1575,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.scheme',
     name: '/as2/partnerStationInfo/auth/token/scheme',
     id: 'connectionAs2PartnerStationInfoAuthTokenScheme',
-    label: 'As2 partnerStationInfo auth token scheme',
+    label: 'As2 partner Station Info auth token scheme',
     defaultValue: '{{as2.partnerStationInfo.auth.token.scheme}}',
   },
   connectionAs2PartnerStationInfoAuthTokenParamName: {
@@ -1583,7 +1583,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.paramName',
     name: '/as2/partnerStationInfo/auth/token/paramName',
     id: 'connectionAs2PartnerStationInfoAuthTokenParamName',
-    label: 'As2 partnerStationInfo auth token paramName',
+    label: 'As2 partner Station Info auth token param Name',
     defaultValue: '{{as2.partnerStationInfo.auth.token.paramName}}',
   },
   connectionAs2PartnerStationInfoAuthTokenRefreshMethod: {
@@ -1591,7 +1591,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshMethod',
     name: '/as2/partnerStationInfo/auth/token/refreshMethod',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshMethod',
-    label: 'As2 partnerStationInfo auth token refreshMethod',
+    label: 'As2 partner Station Info auth token refresh Method',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMethod}}',
     options: [
       {
@@ -1607,7 +1607,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshRelativeURI',
     name: '/as2/partnerStationInfo/auth/token/refreshRelativeURI',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshRelativeURI',
-    label: 'As2 partnerStationInfo auth token refreshRelativeURI',
+    label: 'As2 partner Station Info auth token refresh Relative URI',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshRelativeURI}}',
   },
   connectionAs2PartnerStationInfoAuthTokenRefreshBody: {
@@ -1615,7 +1615,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshBody',
     name: '/as2/partnerStationInfo/auth/token/refreshBody',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshBody',
-    label: 'As2 partnerStationInfo auth token refreshBody',
+    label: 'As2 partner Station Info auth token refresh Body',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshBody}}',
   },
   connectionAs2PartnerStationInfoAuthTokenRefreshTokenPath: {
@@ -1623,15 +1623,15 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshTokenPath',
     name: '/as2/partnerStationInfo/auth/token/refreshTokenPath',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshTokenPath',
-    label: 'As2 partnerStationInfo auth token refreshTokenPath',
+    label: 'As2 partner Station Info auth token refresh Token Path',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshTokenPath}}',
   },
   connectionAs2PartnerStationInfoAuthTokenRefreshMediaType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshMediaType',
     name: '/as2/partnerStationInfo/auth/token/refreshMediaType',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshMediaType',
-    label: 'As2 partnerStationInfo auth token refreshMediaType',
+    label: 'As2 partner Station Info auth token refresh Media Type',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMediaType}}',
     options: [
       {
@@ -1651,7 +1651,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshHeaders',
     name: '/as2/partnerStationInfo/auth/token/refreshHeaders',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshHeaders',
-    label: 'As2 partnerStationInfo auth token refreshHeaders',
+    label: 'As2 partner Station Info auth token refresh Headers',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshHeaders}}',
   },
   connectionAs2PartnerStationInfoAuthTokenRefreshToken: {
@@ -1659,7 +1659,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshToken',
     name: '/as2/partnerStationInfo/auth/token/refreshToken',
     id: 'connectionAs2PartnerStationInfoAuthTokenRefreshToken',
-    label: 'As2 partnerStationInfo auth token refreshToken',
+    label: 'As2 partner Station Info auth token refresh Token',
     defaultValue: '{{as2.partnerStationInfo.auth.token.refreshToken}}',
   },
   connectionAs2PartnerStationInfoRateLimitFailStatusCode: {
@@ -1667,7 +1667,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failStatusCode',
     name: '/as2/partnerStationInfo/rateLimit/failStatusCode',
     id: 'connectionAs2PartnerStationInfoRateLimitFailStatusCode',
-    label: 'As2 partnerStationInfo rateLimit failStatusCode',
+    label: 'As2 partner Station Info rate Limit fail Status Code',
     defaultValue: '{{as2.partnerStationInfo.rateLimit.failStatusCode}}',
     validWhen: [
       {
@@ -1680,7 +1680,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failPath',
     name: '/as2/partnerStationInfo/rateLimit/failPath',
     id: 'connectionAs2PartnerStationInfoRateLimitFailPath',
-    label: 'As2 partnerStationInfo rateLimit failPath',
+    label: 'As2 partner Station Info rate Limit fail Path',
     defaultValue: '{{as2.partnerStationInfo.rateLimit.failPath}}',
   },
   connectionAs2PartnerStationInfoRateLimitFailValuess: {
@@ -1691,7 +1691,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failValuess',
     name: '/as2/partnerStationInfo/rateLimit/failValuess',
     id: 'connectionAs2PartnerStationInfoRateLimitFailValuess',
-    label: 'As2 partnerStationInfo rateLimit failValues',
+    label: 'As2 partner Station Info rate Limit fail Values',
     defaultValue: '{{as2.partnerStationInfo.rateLimit.failValues}}',
     validWhen: [],
   },
@@ -1700,7 +1700,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.limit',
     name: '/as2/partnerStationInfo/rateLimit/limit',
     id: 'connectionAs2PartnerStationInfoRateLimitLimit',
-    label: 'As2 partnerStationInfo rateLimit limit',
+    label: 'As2 partner Station Info rate Limit limit',
     defaultValue: '{{as2.partnerStationInfo.rateLimit.limit}}',
     validWhen: [
       {
@@ -1719,18 +1719,18 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.SMIMEVersion',
     name: '/as2/partnerStationInfo/SMIMEVersion',
     id: 'connectionAs2PartnerStationInfoSMIMEVersion',
-    label: 'As2 partnerStationInfo SMIMEVersion',
+    label: 'As2 partner Station Info SMIMEVersion',
     defaultValue: '{{as2.partnerStationInfo.SMIMEVersion}}',
     options: [
       { items: [{ label: 'V2', value: 'v2' }, { label: 'V3', value: 'v3' }] },
     ],
   },
   connectionAs2PartnerStationInfoEncryptionType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.encryptionType',
     name: '/as2/partnerStationInfo/encryptionType',
     id: 'connectionAs2PartnerStationInfoEncryptionType',
-    label: 'As2 partnerStationInfo encryptionType',
+    label: 'As2 partner Station Info encryption Type',
     defaultValue: '{{as2.partnerStationInfo.encryptionType}}',
     options: [
       {
@@ -1746,11 +1746,11 @@ export default {
     ],
   },
   connectionAs2PartnerStationInfoSigning: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.signing',
     name: '/as2/partnerStationInfo/signing',
     id: 'connectionAs2PartnerStationInfoSigning',
-    label: 'As2 partnerStationInfo signing',
+    label: 'As2 partner Station Info signing',
     defaultValue: '{{as2.partnerStationInfo.signing}}',
     options: [
       {
@@ -1768,7 +1768,7 @@ export default {
     helpKey: 'connection.as2.partnerStationInfo.encoding',
     name: '/as2/partnerStationInfo/encoding',
     id: 'connectionAs2PartnerStationInfoEncoding',
-    label: 'As2 partnerStationInfo encoding',
+    label: 'As2 partner Station Info encoding',
     defaultValue: '{{as2.partnerStationInfo.encoding}}',
     options: [
       {
@@ -1784,7 +1784,7 @@ export default {
     helpKey: 'connection.as2.userStationInfo.mdn.mdnURL',
     name: '/as2/userStationInfo/mdn/mdnURL',
     id: 'connectionAs2UserStationInfoMdnMdnURL',
-    label: 'As2 userStationInfo mdn mdnURL',
+    label: 'As2 user Station Info mdn mdn URL',
     defaultValue: '{{as2.userStationInfo.mdn.mdnURL}}',
   },
   connectionAs2UserStationInfoMdnSignatureProtocol: {
@@ -1792,18 +1792,18 @@ export default {
     helpKey: 'connection.as2.userStationInfo.mdn.signatureProtocol',
     name: '/as2/userStationInfo/mdn/signatureProtocol',
     id: 'connectionAs2UserStationInfoMdnSignatureProtocol',
-    label: 'As2 userStationInfo mdn signatureProtocol',
+    label: 'As2 user Station Info mdn signature Protocol',
     defaultValue: '{{as2.userStationInfo.mdn.signatureProtocol}}',
     options: [
       { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
     ],
   },
   connectionAs2UserStationInfoMdnMdnSigning: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.userStationInfo.mdn.mdnSigning',
     name: '/as2/userStationInfo/mdn/mdnSigning',
     id: 'connectionAs2UserStationInfoMdnMdnSigning',
-    label: 'As2 userStationInfo mdn mdnSigning',
+    label: 'As2 user Station Info mdn mdn Signing',
     defaultValue: '{{as2.userStationInfo.mdn.mdnSigning}}',
     options: [
       {
@@ -1817,11 +1817,11 @@ export default {
     ],
   },
   connectionAs2UserStationInfoEncryptionType: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.userStationInfo.encryptionType',
     name: '/as2/userStationInfo/encryptionType',
     id: 'connectionAs2UserStationInfoEncryptionType',
-    label: 'As2 userStationInfo encryptionType',
+    label: 'As2 user Station Info encryption Type',
     defaultValue: '{{as2.userStationInfo.encryptionType}}',
     options: [
       {
@@ -1837,11 +1837,11 @@ export default {
     ],
   },
   connectionAs2UserStationInfoSigning: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.as2.userStationInfo.signing',
     name: '/as2/userStationInfo/signing',
     id: 'connectionAs2UserStationInfoSigning',
-    label: 'As2 userStationInfo signing',
+    label: 'As2 user Station Info signing',
     defaultValue: '{{as2.userStationInfo.signing}}',
     options: [
       {
@@ -1859,7 +1859,7 @@ export default {
     helpKey: 'connection.as2.userStationInfo.encoding',
     name: '/as2/userStationInfo/encoding',
     id: 'connectionAs2UserStationInfoEncoding',
-    label: 'As2 userStationInfo encoding',
+    label: 'As2 user Station Info encoding',
     defaultValue: '{{as2.userStationInfo.encoding}}',
     options: [
       {
@@ -1883,7 +1883,7 @@ export default {
     helpKey: 'connection.as2.concurrencyLevel',
     name: '/as2/concurrencyLevel',
     id: 'connectionAs2ConcurrencyLevel',
-    label: 'As2 concurrencyLevel',
+    label: 'As2 concurrency Level',
     defaultValue: '{{as2.concurrencyLevel}}',
     validWhen: [
       {
@@ -1923,7 +1923,7 @@ export default {
     helpKey: 'connection.netsuite.tokenId',
     name: '/netsuite/tokenId',
     id: 'connectionNetsuiteTokenId',
-    label: 'Netsuite tokenId',
+    label: 'Netsuite token Id',
     defaultValue: '{{netsuite.tokenId}}',
   },
   connectionNetsuiteTokenSecret: {
@@ -1931,11 +1931,11 @@ export default {
     helpKey: 'connection.netsuite.tokenSecret',
     name: '/netsuite/tokenSecret',
     id: 'connectionNetsuiteTokenSecret',
-    label: 'Netsuite tokenSecret',
+    label: 'Netsuite token Secret',
     defaultValue: '{{netsuite.tokenSecret}}',
   },
   connectionNetsuiteEnvironment: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.netsuite.environment',
     name: '/netsuite/environment',
     id: 'connectionNetsuiteEnvironment',
@@ -1957,7 +1957,7 @@ export default {
     helpKey: 'connection.netsuite.roleId',
     name: '/netsuite/roleId',
     id: 'connectionNetsuiteRoleId',
-    label: 'Netsuite roleId',
+    label: 'Netsuite role Id',
     defaultValue: '{{netsuite.roleId}}',
   },
   connectionNetsuiteEmail: {
@@ -1981,7 +1981,7 @@ export default {
     helpKey: 'connection.netsuite.requestLevelCredentials',
     name: '/netsuite/requestLevelCredentials',
     id: 'connectionNetsuiteRequestLevelCredentials',
-    label: 'Netsuite requestLevelCredentials',
+    label: 'Netsuite request Level Credentials',
     defaultValue: false,
   },
   connectionNetsuiteDataCenterURLs: {
@@ -1989,7 +1989,7 @@ export default {
     helpKey: 'connection.netsuite.dataCenterURLs',
     name: '/netsuite/dataCenterURLs',
     id: 'connectionNetsuiteDataCenterURLs',
-    label: 'Netsuite dataCenterURLs',
+    label: 'Netsuite data Center URLs',
     defaultValue: '{{netsuite.dataCenterURLs}}',
   },
   connectionNetsuiteAccountName: {
@@ -1997,7 +1997,7 @@ export default {
     helpKey: 'connection.netsuite.accountName',
     name: '/netsuite/accountName',
     id: 'connectionNetsuiteAccountName',
-    label: 'Netsuite accountName',
+    label: 'Netsuite account Name',
     defaultValue: '{{netsuite.accountName}}',
   },
   connectionNetsuiteRoleName: {
@@ -2005,7 +2005,7 @@ export default {
     helpKey: 'connection.netsuite.roleName',
     name: '/netsuite/roleName',
     id: 'connectionNetsuiteRoleName',
-    label: 'Netsuite roleName',
+    label: 'Netsuite role Name',
     defaultValue: '{{netsuite.roleName}}',
   },
   connectionNetsuiteConcurrencyLevelRESTlet: {
@@ -2013,7 +2013,7 @@ export default {
     helpKey: 'connection.netsuite.concurrencyLevelRESTlet',
     name: '/netsuite/concurrencyLevelRESTlet',
     id: 'connectionNetsuiteConcurrencyLevelRESTlet',
-    label: 'Netsuite concurrencyLevelRESTlet',
+    label: 'Netsuite concurrency Level RESTlet',
     defaultValue: '{{netsuite.concurrencyLevelRESTlet}}',
     validWhen: [
       {
@@ -2026,7 +2026,7 @@ export default {
     helpKey: 'connection.netsuite.concurrencyLevelWebServices',
     name: '/netsuite/concurrencyLevelWebServices',
     id: 'connectionNetsuiteConcurrencyLevelWebServices',
-    label: 'Netsuite concurrencyLevelWebServices',
+    label: 'Netsuite concurrency Level Web Services',
     defaultValue: '{{netsuite.concurrencyLevelWebServices}}',
     validWhen: [
       {
@@ -2039,7 +2039,7 @@ export default {
     helpKey: 'connection.netsuite.concurrencyLevel',
     name: '/netsuite/concurrencyLevel',
     id: 'connectionNetsuiteConcurrencyLevel',
-    label: 'Netsuite concurrencyLevel',
+    label: 'Netsuite concurrency Level',
     defaultValue: '{{netsuite.concurrencyLevel}}',
     validWhen: [
       {
@@ -2052,7 +2052,7 @@ export default {
     helpKey: 'connection.netsuite.wsdlVersion',
     name: '/netsuite/wsdlVersion',
     id: 'connectionNetsuiteWsdlVersion',
-    label: 'Netsuite wsdlVersion',
+    label: 'Netsuite wsdl Version',
     defaultValue: '{{netsuite.wsdlVersion}}',
     options: [
       {
@@ -2068,7 +2068,7 @@ export default {
     helpKey: 'connection.netsuite.applicationId',
     name: '/netsuite/applicationId',
     id: 'connectionNetsuiteApplicationId',
-    label: 'Netsuite applicationId',
+    label: 'Netsuite application Id',
     defaultValue: '{{netsuite.applicationId}}',
   },
   // #endregion netsuite
@@ -2078,15 +2078,15 @@ export default {
     helpKey: 'connection.netSuiteDistributedAdaptor.accountId',
     name: '/netSuiteDistributedAdaptor/accountId',
     id: 'connectionNetSuiteDistributedAdaptorAccountId',
-    label: 'NetSuiteDistributedAdaptor accountId',
+    label: 'Net Suite Distributed Adaptor account Id',
     defaultValue: '{{netSuiteDistributedAdaptor.accountId}}',
   },
   connectionNetSuiteDistributedAdaptorEnvironment: {
-    type: 'radiogroup',
+    type: 'select',
     helpKey: 'connection.netSuiteDistributedAdaptor.environment',
     name: '/netSuiteDistributedAdaptor/environment',
     id: 'connectionNetSuiteDistributedAdaptorEnvironment',
-    label: 'NetSuiteDistributedAdaptor environment',
+    label: 'Net Suite Distributed Adaptor environment',
     defaultValue: '{{netSuiteDistributedAdaptor.environment}}',
     options: [
       {
@@ -2104,7 +2104,7 @@ export default {
     helpKey: 'connection.netSuiteDistributedAdaptor.connectionId',
     name: '/netSuiteDistributedAdaptor/connectionId',
     id: 'connectionNetSuiteDistributedAdaptorConnectionId',
-    label: 'NetSuiteDistributedAdaptor connectionId',
+    label: 'Net Suite Distributed Adaptor connection Id',
     defaultValue: '{{netSuiteDistributedAdaptor.connectionId}}',
   },
   connectionNetSuiteDistributedAdaptorUsername: {
@@ -2112,7 +2112,7 @@ export default {
     helpKey: 'connection.netSuiteDistributedAdaptor.username',
     name: '/netSuiteDistributedAdaptor/username',
     id: 'connectionNetSuiteDistributedAdaptorUsername',
-    label: 'NetSuiteDistributedAdaptor username',
+    label: 'Net Suite Distributed Adaptor username',
     defaultValue: '{{netSuiteDistributedAdaptor.username}}',
   },
   connectionNetSuiteDistributedAdaptorUri: {
@@ -2120,7 +2120,7 @@ export default {
     helpKey: 'connection.netSuiteDistributedAdaptor.uri',
     name: '/netSuiteDistributedAdaptor/uri',
     id: 'connectionNetSuiteDistributedAdaptorUri',
-    label: 'NetSuiteDistributedAdaptor uri',
+    label: 'Net Suite Distributed Adaptor uri',
     defaultValue: '{{netSuiteDistributedAdaptor.uri}}',
   },
   // #endregion netSuiteDistributedAdaptor
@@ -2138,7 +2138,7 @@ export default {
     helpKey: 'connection.salesforce.baseURI',
     name: '/salesforce/baseURI',
     id: 'connectionSalesforceBaseURI',
-    label: 'Salesforce baseURI',
+    label: 'Salesforce base URI',
     defaultValue: '{{salesforce.baseURI}}',
   },
   connectionSalesforceOauth2FlowType: {
@@ -2146,7 +2146,7 @@ export default {
     helpKey: 'connection.salesforce.oauth2FlowType',
     name: '/salesforce/oauth2FlowType',
     id: 'connectionSalesforceOauth2FlowType',
-    label: 'Salesforce oauth2FlowType',
+    label: 'Salesforce oauth2Flow Type',
     defaultValue: '{{salesforce.oauth2FlowType}}',
     options: [
       {
@@ -2170,7 +2170,7 @@ export default {
     helpKey: 'connection.salesforce.bearerToken',
     name: '/salesforce/bearerToken',
     id: 'connectionSalesforceBearerToken',
-    label: 'Salesforce bearerToken',
+    label: 'Salesforce bearer Token',
     defaultValue: '{{salesforce.bearerToken}}',
   },
   connectionSalesforceRefreshToken: {
@@ -2178,7 +2178,7 @@ export default {
     helpKey: 'connection.salesforce.refreshToken',
     name: '/salesforce/refreshToken',
     id: 'connectionSalesforceRefreshToken',
-    label: 'Salesforce refreshToken',
+    label: 'Salesforce refresh Token',
     defaultValue: '{{salesforce.refreshToken}}',
   },
   connectionSalesforcePackagedOAuth: {
@@ -2186,7 +2186,7 @@ export default {
     helpKey: 'connection.salesforce.packagedOAuth',
     name: '/salesforce/packagedOAuth',
     id: 'connectionSalesforcePackagedOAuth',
-    label: 'Salesforce packagedOAuth',
+    label: 'Salesforce packaged OAuth',
     defaultValue: false,
   },
   connectionSalesforceScopes: {
@@ -2214,7 +2214,7 @@ export default {
     helpKey: 'connection.salesforce.concurrencyLevel',
     name: '/salesforce/concurrencyLevel',
     id: 'connectionSalesforceConcurrencyLevel',
-    label: 'Salesforce concurrencyLevel',
+    label: 'Salesforce concurrency Level',
     defaultValue: '{{salesforce.concurrencyLevel}}',
     validWhen: [
       {
@@ -2263,7 +2263,7 @@ export default {
     helpKey: 'connection.wrapper.pingFunction',
     name: '/wrapper/pingFunction',
     id: 'connectionWrapperPingFunction',
-    label: 'Wrapper pingFunction',
+    label: 'Wrapper ping Function',
     defaultValue: '{{wrapper.pingFunction}}',
   },
   connectionWrapper_stackId: {
@@ -2271,7 +2271,7 @@ export default {
     helpKey: 'connection.wrapper._stackId',
     name: '/wrapper/_stackId',
     id: 'connectionWrapper_stackId',
-    label: 'Wrapper _stackId',
+    label: 'Wrapper _stack Id',
     defaultValue: '{{wrapper._stackId}}',
   },
   connectionWrapperConcurrencyLevel: {
@@ -2279,7 +2279,7 @@ export default {
     helpKey: 'connection.wrapper.concurrencyLevel',
     name: '/wrapper/concurrencyLevel',
     id: 'connectionWrapperConcurrencyLevel',
-    label: 'Wrapper concurrencyLevel',
+    label: 'Wrapper concurrency Level',
     defaultValue: '{{wrapper.concurrencyLevel}}',
     validWhen: [
       {
@@ -2330,7 +2330,7 @@ export default {
     helpKey: 'connection.mongodb.replicaSet',
     name: '/mongodb/replicaSet',
     id: 'connectionMongodbReplicaSet',
-    label: 'Mongodb replicaSet',
+    label: 'Mongodb replica Set',
     defaultValue: '{{mongodb.replicaSet}}',
   },
   // #endregion mongodb
