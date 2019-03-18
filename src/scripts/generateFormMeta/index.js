@@ -189,7 +189,7 @@ const generateFieldSetsHeader = formMeta =>
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'import';
+const resourceType = 'export';
 const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
 // writing to "view" files...be extremely carefull of this part of the script
 // changes will be overwritten
@@ -214,7 +214,7 @@ const gererateMatchingComponents = (data, resourceType) => {
   });
 };
 
-const schemaFile = 'importSchema.txt';
+const schemaFile = 'exportSchema.txt';
 const data = fileread(join(__dirname, '..', schemaFile));
 
 gererateMatchingComponentsWithCollapsableComments(data, resourceType);

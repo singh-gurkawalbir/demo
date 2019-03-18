@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import masterFieldHash from './masterFieldHash';
+import masterFieldHash from '../formsMetadata/generatedHash/connection';
 import formMeta from './definitions';
 import { defaultPatchSetConverter } from './utils';
 
