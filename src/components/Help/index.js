@@ -32,12 +32,15 @@ export default class Help extends Component {
     this.setState({ anchorEl: null });
   };
 
+  helpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
+
   render() {
     const { anchorEl } = this.state;
     const { classes, className, helpKey, helpText } = this.props;
     const open = !!anchorEl;
+    const helpTextValue = this.helpText(helpText, helpKey);
 
-    return (
+    return helpTextValue ? (
       <Fragment>
         <ClickAwayListener onClickAway={this.handleClose}>
           <IconButton className={className} onClick={this.handleMenu}>
@@ -50,11 +53,9 @@ export default class Help extends Component {
           id="helpBubble"
           open={open}
           anchorEl={anchorEl}>
-          <Typography variant="caption">
-            {helpText || helpTextMap[helpKey]}
-          </Typography>
+          <Typography variant="caption">{helpTextValue}</Typography>
         </ArrowPopper>
       </Fragment>
-    );
+    ) : null;
   }
 }
