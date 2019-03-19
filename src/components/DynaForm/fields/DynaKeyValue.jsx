@@ -28,6 +28,10 @@ class KeyValueTable extends Component {
   state = {
     rule: [],
   };
+  componentDidMount = () => {
+    // initialize the default value
+    this.setState({ rule: this.props.value });
+  };
 
   handleUpdate(row, event, field) {
     const { value } = event.target;

@@ -60,7 +60,16 @@ const setDefaults = fields => {
 
   return fields.map(f => {
     if (f && masterFieldHash[f.id]) {
-      return { ...masterFieldHash[f.id], ...f };
+      // shouldnt it be the object within the id
+      const mergedFields = { ...masterFieldHash[f.id], ...f };
+
+      if (mergedFields.valueType === 'keyvalue')
+        mergedFields.defaultValue = mergedFields.defaultValue.replace(
+          /{{(.*)}}/,
+          '{{{json $1}}}'
+        );
+
+      return mergedFields;
     }
 
     return f;
@@ -95,11 +104,25 @@ export default ({ resourceType, connection, resource = {} }) => {
     resource
   );
   const metaWithDefaults = getFieldsWithDefaiults(fieldMeta);
+
+  Handlebars.registerHelper('json', context => JSON.stringify(context));
+
   const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
   let metaWithValues;
+  // TODO: very hacky implementation...im using a helper function
+  // to evaluate an array
+  // ...but during the deserialzation process it cannot parse the object
+  // using the following regex to strip of the string
+  // double quotes so that it evaluates it as an array
+  const removingThoseArrayIssues = template(resource).replace(
+    /defaultValue":"\[(.*)\]"/g,
+    'defaultValue":[ $1 ]'
+  );
+
+  console.log(`remove ${removingThoseArrayIssues}`);
 
   try {
-    metaWithValues = JSON.parse(template(resource));
+    metaWithValues = JSON.parse(removingThoseArrayIssues);
   } catch (e) {
     metaWithValues = [];
   }
