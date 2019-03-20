@@ -1,6 +1,6 @@
 import Handlebars from 'handlebars';
 import masterFieldHash from '../formsMetadata/generatedHash/connection';
-import formMeta from './definitions';
+import formMeta from '../formsMetadata/generatedHash/resourceViews';
 import { defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = (connection, resourceType, resource) => {
@@ -109,20 +109,9 @@ export default ({ resourceType, connection, resource = {} }) => {
 
   const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
   let metaWithValues;
-  // TODO: very hacky implementation...im using a helper function
-  // to evaluate an array
-  // ...but during the deserialzation process it cannot parse the object
-  // using the following regex to strip of the string
-  // double quotes so that it evaluates it as an array
-  const removingThoseArrayIssues = template(resource).replace(
-    /defaultValue":"\[(.*)\]"/g,
-    'defaultValue":[ $1 ]'
-  );
-
-  console.log(`remove ${removingThoseArrayIssues}`);
 
   try {
-    metaWithValues = JSON.parse(removingThoseArrayIssues);
+    metaWithValues = JSON.parse(template(resource));
   } catch (e) {
     metaWithValues = [];
   }

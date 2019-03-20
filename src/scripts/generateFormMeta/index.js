@@ -161,13 +161,13 @@ const generateFieldSetsHeader = formMeta =>
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'export';
+const resourceType = 'connection';
 const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
 const generateIndexFiles = data => {
   let str = '';
 
   getAllFormSpecificResources(data).forEach(form => {
-    str += `import from "./${form}";\n`;
+    str += `import ${form} from "./${form}";\n`;
   });
 
   str += '\n';
