@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import masterFieldHash from '../formsMetadata/generatedHash/connection';
+import masterFieldHash from '../formsMetadata/generatedHash/index';
 import formMeta from '../formsMetadata/generatedHash/resourceViews';
 import { defaultPatchSetConverter } from './utils';
 
@@ -60,14 +60,7 @@ const setDefaults = fields => {
 
   return fields.map(f => {
     if (f && masterFieldHash[f.id]) {
-      // shouldnt it be the object within the id
       const mergedFields = { ...masterFieldHash[f.id], ...f };
-
-      if (mergedFields.valueType === 'keyvalue')
-        mergedFields.defaultValue = mergedFields.defaultValue.replace(
-          /{{(.*)}}/,
-          '{{{json $1}}}'
-        );
 
       return mergedFields;
     }
@@ -104,9 +97,6 @@ export default ({ resourceType, connection, resource = {} }) => {
     resource
   );
   const metaWithDefaults = getFieldsWithDefaiults(fieldMeta);
-
-  Handlebars.registerHelper('json', context => JSON.stringify(context));
-
   const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
   let metaWithValues;
 

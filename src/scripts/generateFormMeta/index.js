@@ -240,3 +240,5 @@ const data = fileread(join(__dirname, '..', schemaFile));
 
 gererateMatchingComponentsWithCollapsableComments(data, resourceType);
 gererateMatchingComponents(data, resourceType);
+
+// get a particular component

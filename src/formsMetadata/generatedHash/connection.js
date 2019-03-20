@@ -1262,15 +1262,33 @@ export default {
     helpKey: 'connection.ftp.hostURI',
     name: '/ftp/hostURI',
     id: 'connectionFtpHostURI',
-    label: 'Ftp host URI',
+    label: 'Host',
     defaultValue: '{{ftp.hostURI}}',
+  },
+
+  connectionFtpType: {
+    type: 'radiogroup',
+    helpKey: 'connection.ftp.type',
+    name: '/ftp/type',
+    id: 'connectionFtpType',
+    label: 'Protocol',
+    defaultValue: '{{ftp.type}}',
+    options: [
+      {
+        items: [
+          { label: 'FTP', value: 'ftp' },
+          { label: 'SFTP', value: 'sftp' },
+          { label: 'FTPS', value: 'ftps' },
+        ],
+      },
+    ],
   },
   connectionFtpUsername: {
     type: 'text',
     helpKey: 'connection.ftp.username',
     name: '/ftp/username',
     id: 'connectionFtpUsername',
-    label: 'Ftp username',
+    label: 'Username',
     defaultValue: '{{ftp.username}}',
   },
   connectionFtpPassword: {
@@ -1278,7 +1296,7 @@ export default {
     helpKey: 'connection.ftp.password',
     name: '/ftp/password',
     id: 'connectionFtpPassword',
-    label: 'Ftp password',
+    label: 'Password',
     defaultValue: '{{ftp.password}}',
   },
   connectionFtpAuthKey: {
@@ -1286,7 +1304,7 @@ export default {
     helpKey: 'connection.ftp.authKey',
     name: '/ftp/authKey',
     id: 'connectionFtpAuthKey',
-    label: 'Ftp auth Key',
+    label: 'Authentication Key (PEM format)',
     defaultValue: '{{ftp.authKey}}',
   },
   connectionFtpPort: {
@@ -1294,7 +1312,7 @@ export default {
     helpKey: 'connection.ftp.port',
     name: '/ftp/port',
     id: 'connectionFtpPort',
-    label: 'Ftp port',
+    label: 'Port',
     defaultValue: '{{ftp.port}}',
     validWhen: [
       {
@@ -1307,7 +1325,7 @@ export default {
     helpKey: 'connection.ftp.usePassiveMode',
     name: '/ftp/usePassiveMode',
     id: 'connectionFtpUsePassiveMode',
-    label: 'Ftp use Passive Mode',
+    label: 'Use Passive Mode',
     defaultValue: false,
   },
   connectionFtpEntryParser: {
@@ -1315,7 +1333,7 @@ export default {
     helpKey: 'connection.ftp.entryParser',
     name: '/ftp/entryParser',
     id: 'connectionFtpEntryParser',
-    label: 'Ftp entry Parser',
+    label: 'Entry Parser',
     defaultValue: '{{ftp.entryParser}}',
     options: [
       {
@@ -1340,7 +1358,7 @@ export default {
     helpKey: 'connection.ftp.userDirectoryIsRoot',
     name: '/ftp/userDirectoryIsRoot',
     id: 'connectionFtpUserDirectoryIsRoot',
-    label: 'Ftp user Directory Is Root',
+    label: 'User Directory is Root',
     defaultValue: false,
   },
   connectionFtpUseImplicitFtps: {
@@ -1359,12 +1377,21 @@ export default {
     label: 'Ftp require Socket Re Use',
     defaultValue: false,
   },
+  // doesnt map to the db a custom field in our UI
+  connectionFtpUsePgp: {
+    type: 'checkbox',
+    helpKey: 'connection.ftp.usePgp',
+    name: '/ftp/usePgp',
+    id: 'connectionFtpUsePgp',
+    label: 'Use PGP Encryption',
+    defaultValue: false,
+  },
   connectionFtpPgpEncryptKey: {
     type: 'text',
     helpKey: 'connection.ftp.pgpEncryptKey',
     name: '/ftp/pgpEncryptKey',
     id: 'connectionFtpPgpEncryptKey',
-    label: 'Ftp pgp Encrypt Key',
+    label: 'PGP Public Key',
     defaultValue: '{{ftp.pgpEncryptKey}}',
   },
   connectionFtpPgpDecryptKey: {
@@ -1372,7 +1399,7 @@ export default {
     helpKey: 'connection.ftp.pgpDecryptKey',
     name: '/ftp/pgpDecryptKey',
     id: 'connectionFtpPgpDecryptKey',
-    label: 'Ftp pgp Decrypt Key',
+    label: 'PGP Private Key',
     defaultValue: '{{ftp.pgpDecryptKey}}',
   },
   connectionFtpPgpPassphrase: {
@@ -1380,7 +1407,7 @@ export default {
     helpKey: 'connection.ftp.pgpPassphrase',
     name: '/ftp/pgpPassphrase',
     id: 'connectionFtpPgpPassphrase',
-    label: 'Ftp pgp Passphrase',
+    label: 'PGP Passphrase',
     defaultValue: '{{ftp.pgpPassphrase}}',
   },
   // #endregion ftp
