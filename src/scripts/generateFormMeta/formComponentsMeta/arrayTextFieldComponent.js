@@ -3,7 +3,7 @@ import commonFormMetaData from '../commonMeta';
 export default (fieldsDefs, resourceType) => {
   const commonMeta = commonFormMetaData(fieldsDefs, resourceType);
   // Making all checkboxes default to false
-  const arr = ['id', 'name', 'helpKey'];
+  const arr = ['id', 'name'];
 
   // make them plural
   arr.forEach(prop => (commonMeta[prop] += 's'));

@@ -350,22 +350,6 @@ export default {
   },
   // #endregion common
   // #region inputFilter
-  exportInputFilterType: {
-    type: 'radiogroup',
-    helpKey: 'export.inputFilter.type',
-    name: '/inputFilter/type',
-    id: 'exportInputFilterType',
-    label: 'Input Filter type',
-    defaultValue: '{{inputFilter.type}}',
-    options: [
-      {
-        items: [
-          { label: 'Expression', value: 'expression' },
-          { label: 'Script', value: 'script' },
-        ],
-      },
-    ],
-  },
   exportInputFilterExpressionVersion: {
     type: 'radiogroup',
     helpKey: 'export.inputFilter.expression.version',
@@ -675,22 +659,6 @@ export default {
   },
   // #endregion hooks
   // #region transform
-  exportTransformType: {
-    type: 'radiogroup',
-    helpKey: 'export.transform.type',
-    name: '/transform/type',
-    id: 'exportTransformType',
-    label: 'Transform type',
-    defaultValue: '{{transform.type}}',
-    options: [
-      {
-        items: [
-          { label: 'Expression', value: 'expression' },
-          { label: 'Script', value: 'script' },
-        ],
-      },
-    ],
-  },
   exportTransformExpressionVersion: {
     type: 'radiogroup',
     helpKey: 'export.transform.expression.version',
@@ -734,14 +702,6 @@ export default {
     label: 'Parsers[*] version',
     defaultValue: '{{parsers[*].version}}',
   },
-  'exportParsers[*]Type': {
-    type: 'text',
-    helpKey: 'export.parsers[*].type',
-    name: '/parsers[*]/type',
-    id: 'exportParsers[*]Type',
-    label: 'Parsers[*] type',
-    defaultValue: '{{parsers[*].type}}',
-  },
   'exportParsers[*]Rules': {
     type: 'text',
     helpKey: 'export.parsers[*].rules',
@@ -752,22 +712,6 @@ export default {
   },
   // #endregion parsers[*]
   // #region filter
-  exportFilterType: {
-    type: 'radiogroup',
-    helpKey: 'export.filter.type',
-    name: '/filter/type',
-    id: 'exportFilterType',
-    label: 'Filter type',
-    defaultValue: '{{filter.type}}',
-    options: [
-      {
-        items: [
-          { label: 'Expression', value: 'expression' },
-          { label: 'Script', value: 'script' },
-        ],
-      },
-    ],
-  },
   exportFilterExpressionVersion: {
     type: 'radiogroup',
     helpKey: 'export.filter.expression.version',
@@ -816,25 +760,6 @@ export default {
           { label: 'Utf8', value: 'utf8' },
           { label: 'Win1252', value: 'win1252' },
           { label: 'Utf-16le', value: 'utf-16le' },
-        ],
-      },
-    ],
-  },
-  exportFileType: {
-    type: 'select',
-    helpKey: 'export.file.type',
-    name: '/file/type',
-    id: 'exportFileType',
-    label: 'File type',
-    defaultValue: '{{file.type}}',
-    options: [
-      {
-        items: [
-          { label: 'Csv', value: 'csv' },
-          { label: 'Json', value: 'json' },
-          { label: 'Xlsx', value: 'xlsx' },
-          { label: 'Xml', value: 'xml' },
-          { label: 'Filedefinition', value: 'filedefinition' },
         ],
       },
     ],
@@ -894,7 +819,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.file.csv.keyColumnss',
+    helpKey: 'export.file.csv.keyColumns',
     name: '/file/csv/keyColumnss',
     id: 'exportFileCsvKeyColumnss',
     label: 'File csv key Columns',
@@ -951,7 +876,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.file.xlsx.keyColumnss',
+    helpKey: 'export.file.xlsx.keyColumns',
     name: '/file/xlsx/keyColumnss',
     id: 'exportFileXlsxKeyColumnss',
     label: 'File xlsx key Columns',
@@ -1158,7 +1083,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.rest.successValuess',
+    helpKey: 'export.rest.successValues',
     name: '/rest/successValuess',
     id: 'exportRestSuccessValuess',
     label: 'Rest success Values',
@@ -1469,7 +1394,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.http.paging.lastPageValuess',
+    helpKey: 'export.http.paging.lastPageValues',
     name: '/http/paging/lastPageValuess',
     id: 'exportHttpPagingLastPageValuess',
     label: 'Http paging last Page Values',
@@ -1556,7 +1481,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.http.response.successValuess',
+    helpKey: 'export.http.response.successValues',
     name: '/http/response/successValuess',
     id: 'exportHttpResponseSuccessValuess',
     label: 'Http response success Values',
@@ -1581,34 +1506,12 @@ export default {
   },
   // #endregion http
   // #region netsuite
-  exportNetsuiteType: {
-    type: 'select',
-    helpKey: 'export.netsuite.type',
-    name: '/netsuite/type',
-    id: 'exportNetsuiteType',
-    label: 'Netsuite type',
-    defaultValue: '{{netsuite.type}}',
-    options: [
-      {
-        items: [
-          { label: 'Search', value: 'search' },
-          { label: 'BasicSearch', value: 'basicSearch' },
-          { label: 'Metadata', value: 'metadata' },
-          { label: 'Selectoption', value: 'selectoption' },
-          { label: 'Restlet', value: 'restlet' },
-          { label: 'GetList', value: 'getList' },
-          { label: 'GetServerTime', value: 'getServerTime' },
-          { label: 'Distributed', value: 'distributed' },
-        ],
-      },
-    ],
-  },
   exportNetsuiteSearchess: {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.netsuite.searchess',
+    helpKey: 'export.netsuite.searches',
     name: '/netsuite/searchess',
     id: 'exportNetsuiteSearchess',
     label: 'Netsuite searches',
@@ -1782,7 +1685,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.netsuite.distributed.executionContexts',
+    helpKey: 'export.netsuite.distributed.executionContext',
     name: '/netsuite/distributed/executionContexts',
     id: 'exportNetsuiteDistributedExecutionContexts',
     label: 'Netsuite distributed execution Context',
@@ -1802,7 +1705,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.netsuite.distributed.executionTypes',
+    helpKey: 'export.netsuite.distributed.executionType',
     name: '/netsuite/distributed/executionTypes',
     id: 'exportNetsuiteDistributedExecutionTypes',
     label: 'Netsuite distributed execution Type',
@@ -1880,14 +1783,6 @@ export default {
     id: 'exportNetsuiteDistributedSettings',
     label: 'Netsuite distributed settings',
     defaultValue: '{{netsuite.distributed.settings}}',
-  },
-  'exportNetsuiteGetList[*]Type': {
-    type: 'text',
-    helpKey: 'export.netsuite.getList[*].type',
-    name: '/netsuite/getList[*]/type',
-    id: 'exportNetsuiteGetList[*]Type',
-    label: 'Netsuite get List[*] type',
-    defaultValue: '{{netsuite.getList[*].type}}',
   },
   'exportNetsuiteGetList[*]TypeId': {
     type: 'text',
@@ -2025,15 +1920,6 @@ export default {
   },
   // #endregion s3
   // #region salesforce
-  exportSalesforceType: {
-    type: 'radiogroup',
-    helpKey: 'export.salesforce.type',
-    name: '/salesforce/type',
-    id: 'exportSalesforceType',
-    label: 'Salesforce type',
-    defaultValue: '{{salesforce.type}}',
-    options: [{ items: [{ label: 'Soql', value: 'soql' }] }],
-  },
   exportSalesforceSObjectType: {
     type: 'text',
     helpKey: 'export.salesforce.sObjectType',
@@ -2079,7 +1965,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.salesforce.distributed.referencedFieldss',
+    helpKey: 'export.salesforce.distributed.referencedFields',
     name: '/salesforce/distributed/referencedFieldss',
     id: 'exportSalesforceDistributedReferencedFieldss',
     label: 'Salesforce distributed referenced Fields',
@@ -2107,7 +1993,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.salesforce.distributed.userDefinedReferencedFieldss',
+    helpKey: 'export.salesforce.distributed.userDefinedReferencedFields',
     name: '/salesforce/distributed/userDefinedReferencedFieldss',
     id: 'exportSalesforceDistributedUserDefinedReferencedFieldss',
     label: 'Salesforce distributed user Defined Referenced Fields',
@@ -2127,7 +2013,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].referencedFieldss',
+    helpKey: 'export.salesforce.distributed.relatedLists[*].referencedFields',
     name: '/salesforce/distributed/relatedLists[*]/referencedFieldss',
     id: 'exportSalesforceDistributedRelatedLists[*]ReferencedFieldss',
     label: 'Salesforce distributed related Lists[*] referenced Fields',

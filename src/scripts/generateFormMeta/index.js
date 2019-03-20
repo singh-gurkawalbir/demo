@@ -124,35 +124,6 @@ const commonFieldsComponents = (data, resourceType) => {
     });
 };
 
-const gererateMatchingComponentsWithCollapsableComments = (
-  data,
-  resourceType
-) => {
-  console.log(`export default {`);
-
-  console.log(`//#region common`);
-  commonFieldsComponents(data, resourceType);
-  console.log(`//#endregion common`);
-  getAllFormSpecificResources(data).forEach(resource => {
-    console.log(`//#region ${resource}`);
-
-    const formFields = applyOurSpecificFilterRules(
-      formSpecificFields(resource, data)
-    ).map(key => ({ pathGeneratedFromObj: key, ...data[key] }));
-
-    formFields
-      .map(field => transformFieldsToMatchingComponent(field, resourceType))
-      .forEach(transformedField => {
-        const str = JSON.stringify(transformedField);
-        const finalStr = str.slice(1, str.length - 1);
-
-        console.log(`${finalStr},`);
-      });
-    console.log(`//#endregion ${resource}`);
-  });
-  console.log(`}; `);
-};
-
 const generateFieldSetsHeader = formMeta =>
   formMeta.reduce(
     (acc, obj) => {
@@ -190,8 +161,57 @@ const generateFieldSetsHeader = formMeta =>
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'connection';
+const resourceType = 'export';
 const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
+const generateIndexFiles = data => {
+  let str = '';
+
+  getAllFormSpecificResources(data).forEach(form => {
+    str += `import from "./${form}";\n`;
+  });
+
+  str += '\n';
+  str += 'export default {\n';
+  getAllFormSpecificResources(data).forEach(form => {
+    str += `${form},\n`;
+  });
+
+  str += '};';
+
+  fs.writeFileSync(`${folderToDumpGeneratedViewFiles}index.js`, str);
+};
+
+const gererateMatchingComponentsWithCollapsableComments = (
+  data,
+  resourceType
+) => {
+  console.log(`export default {`);
+
+  console.log(`//#region common`);
+  commonFieldsComponents(data, resourceType);
+  console.log(`//#endregion common`);
+  getAllFormSpecificResources(data).forEach(resource => {
+    console.log(`//#region ${resource}`);
+
+    const formFields = applyOurSpecificFilterRules(
+      formSpecificFields(resource, data)
+    ).map(key => ({ pathGeneratedFromObj: key, ...data[key] }));
+
+    formFields
+      .map(field => transformFieldsToMatchingComponent(field, resourceType))
+      .forEach(transformedField => {
+        const str = JSON.stringify(transformedField);
+        const finalStr = str.slice(1, str.length - 1);
+
+        console.log(`${finalStr},`);
+      });
+    console.log(`//#endregion ${resource}`);
+  });
+
+  generateIndexFiles(data);
+  console.log(`}; `);
+};
+
 // writing to "view" files...be extremely carefull of this part of the script
 // changes will be overwritten
 const gererateMatchingComponents = (data, resourceType) => {
