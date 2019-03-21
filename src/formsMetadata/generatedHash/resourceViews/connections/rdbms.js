@@ -1,7 +1,7 @@
 export default {
   fields: [
-    { id: 'connectionType' },
     { id: 'connectionName' },
+    { id: 'connectionType' },
     { id: 'connectionAssistant' },
     { id: 'connectionRdbmsHost' },
     { id: 'connectionRdbmsPort' },
@@ -10,11 +10,15 @@ export default {
     { id: 'connectionRdbmsUser' },
     { id: 'connectionRdbmsPassword' },
     { id: 'connectionRdbmsConcurrencyLevel' },
+    { id: 'connectionRdbmsSslCa' },
+    { id: 'connectionRdbmsSslKey' },
+    { id: 'connectionRdbmsSslPassphrase' },
+    { id: 'connectionRdbmsSslCert' },
   ],
   fieldSets: [
     {
-      header: 'ssl',
-      collapsed: false,
+      header: 'Advanced Settings',
+      collapsed: true,
       fields: [
         { id: 'connectionRdbmsSslCa' },
         { id: 'connectionRdbmsSslKey' },

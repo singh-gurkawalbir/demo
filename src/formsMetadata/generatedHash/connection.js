@@ -1,5 +1,19 @@
 export default {
   // #region common
+  // TODO: develop code for this two components
+  // agent list handleBars evaluated its a dynamicList
+  connection_borrowConcurrencyFromConnectionId: {
+    type: 'select',
+    helpKey: 'connection._borrowConcurrencyFromConnectionId',
+    name: '/borrowConcurrencyFromConnectionId',
+    id: 'connectionBorrowConcurrencyFromConnectionId',
+  },
+  connectionAgent: {
+    type: 'select',
+    helpKey: 'connection.connectionAgentId',
+    name: '/connectionAgentId',
+    id: 'connectionAgentId',
+  },
   connectionType: {
     type: 'select',
     helpKey: 'connection.type',
@@ -248,7 +262,7 @@ export default {
     helpKey: 'connection.rdbms.host',
     name: '/rdbms/host',
     id: 'connectionRdbmsHost',
-    label: 'Rdbms host',
+    label: 'Host',
     defaultValue: '{{rdbms.host}}',
   },
   connectionRdbmsPort: {
@@ -256,7 +270,7 @@ export default {
     helpKey: 'connection.rdbms.port',
     name: '/rdbms/port',
     id: 'connectionRdbmsPort',
-    label: 'Rdbms port',
+    label: 'Port',
     defaultValue: '{{rdbms.port}}',
     validWhen: [
       {
@@ -269,7 +283,7 @@ export default {
     helpKey: 'connection.rdbms.database',
     name: '/rdbms/database',
     id: 'connectionRdbmsDatabase',
-    label: 'Rdbms database',
+    label: 'Database Name',
     defaultValue: '{{rdbms.database}}',
   },
   connectionRdbmsInstanceName: {
@@ -277,7 +291,7 @@ export default {
     helpKey: 'connection.rdbms.instanceName',
     name: '/rdbms/instanceName',
     id: 'connectionRdbmsInstanceName',
-    label: 'Rdbms instance Name',
+    label: 'Instance Name',
     defaultValue: '{{rdbms.instanceName}}',
   },
   connectionRdbmsUser: {
@@ -285,7 +299,7 @@ export default {
     helpKey: 'connection.rdbms.user',
     name: '/rdbms/user',
     id: 'connectionRdbmsUser',
-    label: 'Rdbms user',
+    label: 'Username',
     defaultValue: '{{rdbms.user}}',
   },
   connectionRdbmsPassword: {
@@ -293,7 +307,7 @@ export default {
     helpKey: 'connection.rdbms.password',
     name: '/rdbms/password',
     id: 'connectionRdbmsPassword',
-    label: 'Rdbms password',
+    label: 'Password',
     defaultValue: '{{rdbms.password}}',
   },
   connectionRdbmsSslCa: {
@@ -301,7 +315,7 @@ export default {
     helpKey: 'connection.rdbms.ssl.ca',
     name: '/rdbms/ssl/ca',
     id: 'connectionRdbmsSslCa',
-    label: 'Rdbms ssl ca',
+    label: 'Certificate Authority',
     defaultValue: '{{rdbms.ssl.ca}}',
   },
   connectionRdbmsSslKey: {
@@ -309,7 +323,7 @@ export default {
     helpKey: 'connection.rdbms.ssl.key',
     name: '/rdbms/ssl/key',
     id: 'connectionRdbmsSslKey',
-    label: 'Rdbms ssl key',
+    label: 'Key',
     defaultValue: '{{rdbms.ssl.key}}',
   },
   connectionRdbmsSslPassphrase: {
@@ -317,7 +331,7 @@ export default {
     helpKey: 'connection.rdbms.ssl.passphrase',
     name: '/rdbms/ssl/passphrase',
     id: 'connectionRdbmsSslPassphrase',
-    label: 'Rdbms ssl passphrase',
+    label: 'Passphrase',
     defaultValue: '{{rdbms.ssl.passphrase}}',
   },
   connectionRdbmsSslCert: {
@@ -325,16 +339,48 @@ export default {
     helpKey: 'connection.rdbms.ssl.cert',
     name: '/rdbms/ssl/cert',
     id: 'connectionRdbmsSslCert',
-    label: 'Rdbms ssl cert',
+    label: 'Certificate',
     defaultValue: '{{rdbms.ssl.cert}}',
   },
   connectionRdbmsConcurrencyLevel: {
-    type: 'text',
+    type: 'select',
     helpKey: 'connection.rdbms.concurrencyLevel',
     name: '/rdbms/concurrencyLevel',
     id: 'connectionRdbmsConcurrencyLevel',
-    label: 'Rdbms concurrency Level',
+    label: 'Concurrency Level',
     defaultValue: '{{rdbms.concurrencyLevel}}',
+    options: [
+      {
+        items: [
+          { label: 1, value: 1 },
+          { label: 2, value: 2 },
+          { label: 3, value: 3 },
+          { label: 4, value: 4 },
+          { label: 5, value: 5 },
+          { label: 6, value: 6 },
+          { label: 7, value: 7 },
+          { label: 8, value: 8 },
+          { label: 9, value: 9 },
+          { label: 10, value: 10 },
+          { label: 11, value: 11 },
+          { label: 12, value: 12 },
+          { label: 13, value: 13 },
+          { label: 14, value: 14 },
+          { label: 15, value: 15 },
+          { label: 16, value: 16 },
+          { label: 17, value: 17 },
+          { label: 18, value: 18 },
+          { label: 19, value: 19 },
+          { label: 20, value: 20 },
+          { label: 21, value: 21 },
+          { label: 22, value: 22 },
+          { label: 23, value: 23 },
+          { label: 24, value: 24 },
+          { label: 25, value: 25 },
+        ],
+      },
+    ],
+
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

@@ -45,13 +45,6 @@ export default {
       fields: [
         {
           id: 'connectionFtpPort',
-
-          visibleWhen: [
-            {
-              field: 'connectionFtpType',
-              is: ['ftp', 'ftps'],
-            },
-          ],
         },
         {
           id: 'connectionFtpUsePassiveMode',

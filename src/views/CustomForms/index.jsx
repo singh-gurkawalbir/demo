@@ -22,6 +22,12 @@ function optionsHandler(options) {
 }
 
 export const getOptions = async (fieldId, fields) => {
+  if(fieldId === "ftpPort" ){
+    if(protocol === sftp){
+      return {}
+    }
+
+  }
   const path = '/processors/javascript';
   const opts = {
     method: 'POST',
