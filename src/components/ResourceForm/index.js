@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import formFactory from '../../formsMetadata/formFactory';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import { sanitizePatchSet } from '../../formsMetadata/utils';
 
 @withStyles(theme => ({
   actions: {
@@ -60,7 +61,14 @@ export default class ResourceForm extends Component {
             Cancel
           </Button>
           <DynaSubmit
-            onClick={value => handleSubmit(formValueToPatchSetConverter(value))}
+            onClick={value =>
+              handleSubmit(
+                sanitizePatchSet({
+                  patchSet: formValueToPatchSetConverter(value),
+                  fieldMeta,
+                })
+              )
+            }
             className={classes.actionButton}>
             Save
           </DynaSubmit>
