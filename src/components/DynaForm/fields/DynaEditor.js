@@ -45,9 +45,18 @@ class EditorField extends Component {
   };
 
   handleUpdate(value) {
-    const { id, onFieldChange } = this.props;
+    const { id, mode, onFieldChange } = this.props;
+    let sanitizedVal = value;
 
-    onFieldChange(id, value);
+    if (mode === 'json') {
+      try {
+        sanitizedVal = JSON.parse(value);
+      } catch (e) {
+        return;
+      }
+    }
+
+    onFieldChange(id, sanitizedVal);
   }
 
   render() {

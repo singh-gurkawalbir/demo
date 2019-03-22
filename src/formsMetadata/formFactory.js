@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import masterFieldHash from './masterFieldHash';
 import formMeta from './definitions';
 import { defaultPatchSetConverter } from './utils';
@@ -55,19 +54,23 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
   };
 };
 
-const setDefaults = fields => {
+const setDefaults = (fields, resource) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields.map(f => {
-    if (f && masterFieldHash[f.id]) {
-      return { ...masterFieldHash[f.id], ...f };
-    }
+    const merged = { ...masterFieldHash[f.id], ...f };
 
-    return f;
+    Object.keys(merged).forEach(key => {
+      if (typeof merged[key] === 'function') {
+        merged[key] = merged[key](resource);
+      }
+    });
+
+    return merged;
   });
 };
 
-const getFieldsWithDefaiults = fieldMeta => {
+const getFieldsWithDefaults = (fieldMeta, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
@@ -77,13 +80,13 @@ const getFieldsWithDefaiults = fieldMeta => {
 
       filled.push({
         ...rest,
-        fields: setDefaults(fields),
+        fields: setDefaults(fields, resource),
       });
     });
   }
 
   return {
-    fields: setDefaults(fields),
+    fields: setDefaults(fields, resource),
     fieldSets: filled,
   };
 };
@@ -94,22 +97,14 @@ export default ({ resourceType, connection, resource = {} }) => {
     resourceType,
     resource
   );
-  const metaWithDefaults = getFieldsWithDefaiults(fieldMeta);
-  const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
-  let metaWithValues;
-
-  try {
-    metaWithValues = JSON.parse(template(resource));
-  } catch (e) {
-    metaWithValues = [];
-  }
+  let metaWithDefaults = getFieldsWithDefaults(fieldMeta, resource);
 
   if (initializer) {
-    metaWithValues = initializer({ resource, fieldMeta: metaWithValues });
+    metaWithDefaults = initializer({ resource, fieldMeta: metaWithDefaults });
   }
 
   return {
-    fieldMeta: metaWithValues,
+    fieldMeta: metaWithDefaults,
     formValueToPatchSetConverter: converter,
   };
 };

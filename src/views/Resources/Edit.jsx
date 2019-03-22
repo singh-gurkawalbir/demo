@@ -33,7 +33,9 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
   return {
     handlePatchResource: patchSet => {
-      // return console.log('patchSet Handled', patchSet);
+      // console.log('patchSet Handled', patchSet);
+
+      // return null;
       // TODO: Optionally we let the patchStaged action also take a
       // boolean flag to auto-commit?
       dispatch(actions.resource.patchStaged(id, patchSet));

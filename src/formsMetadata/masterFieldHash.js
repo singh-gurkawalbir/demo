@@ -7,7 +7,7 @@ export default {
     id: 'ConnectionName',
     name: '/name',
     helpKey: 'connection.name',
-    defaultValue: '{{name}}',
+    defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
   },
@@ -15,7 +15,7 @@ export default {
     id: 'ConnectionDescription',
     name: '/description',
     helpKey: 'connection.description',
-    defaultValue: '{{description}}',
+    defaultValue: r => r.description,
     type: 'text',
     multiline: true,
     rowsMax: 5,
@@ -25,7 +25,7 @@ export default {
     id: 'ConnectionBaseURI',
     name: '/http/baseURI',
     helpKey: 'connection.http.baseURI',
-    defaultValue: '{{http.baseURI}}',
+    defaultValue: r => r.http.baseURI,
     type: 'text',
     label: 'Base URI',
     required: true,
@@ -34,7 +34,7 @@ export default {
     id: 'ConnectionMediaType',
     name: '/http/mediaType',
     helpKey: 'connection.http.mediaType',
-    defaultValue: '{{http.mediaType}}',
+    defaultValue: r => r.http.mediaType,
 
     type: 'select',
     label: 'Media Type',
@@ -59,7 +59,7 @@ export default {
     id: 'ConnectionHttpHeader',
     name: '/http/headers',
     helpKey: 'connection.http.headers',
-    defaultValue: '{{http.headers}}',
+    defaultValue: r => r.http.headers,
     label: 'HTTP Headers',
     type: 'keyvalue',
     keyName: 'name',
@@ -71,7 +71,7 @@ export default {
     id: 'ConnectionAuthenticationType',
     name: '/http/auth/type',
     helpKey: 'connection.http.auth.type',
-    defaultValue: '{{http.auth.type}}',
+    defaultValue: r => r.http.auth.type,
     type: 'select',
     label: 'Authentication Type',
     description: '',
@@ -101,7 +101,7 @@ export default {
     id: 'ConnectionAuthFailStatusCode',
     name: '/http/auth/failStatusCode',
     helpKey: 'connection.http.auth.failStatusCode',
-    defaultValue: '{{http.auth.failStatusCode}}',
+    defaultValue: r => r.http.auth.failStatusCode,
     type: 'text',
     label: 'Authentication Fail Status Code',
     description: '',
@@ -111,7 +111,7 @@ export default {
     id: 'ConnectionAuthenticationFailPath ',
     name: '/http/auth/failPath',
     helpKey: 'connection.http.auth.failPath',
-    defaultValue: '{{http.auth.failPath}}',
+    defaultValue: r => r.http.auth.failPath,
     type: 'text',
     label: 'Authentication Fail Path',
     description: '',
@@ -121,7 +121,7 @@ export default {
     id: 'ConnectionAuthenticationFailValues',
     name: '/http/auth/failValues',
     helpKey: 'connection.http.auth.failValues',
-    defaultValue: '{{http.auth.failValues}}',
+    defaultValue: r => r.http.auth.failValues,
     valueDelimiter: ',',
     type: 'text',
     label: 'Authentication Fail Values',
@@ -132,7 +132,7 @@ export default {
     id: 'ConnectionUnencrypted',
     name: '/http/unencrypted',
     helpKey: 'connection.http.unencrypted',
-    defaultValue: '{{http.unencrypted}}',
+    defaultValue: r => r.http.unencrypted,
     type: 'editor',
     mode: 'json',
     label: 'Unencrypted',
@@ -143,7 +143,7 @@ export default {
     id: 'ConnectionEncrypted',
     name: '/http/encrypted',
     helpKey: 'connection.http.encrypted',
-    defaultValue: '{{http.encrypted}}',
+    defaultValue: r => r.http.encrypted,
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
@@ -155,8 +155,8 @@ export default {
     id: 'ConnectionPingRelativeURI',
     name: '/http/ping/relativeURI',
     helpKey: 'connection.http.ping.relativeURI',
-    defaultValue: '{{http.ping.relativeURI}}',
-    connectionId: '{{_id}}',
+    defaultValue: r => r.http.ping.relativeURI,
+    connectionId: r => r._id,
     type: 'relativeuri',
     label: 'Relative URI',
     description: '',
@@ -166,7 +166,7 @@ export default {
     id: 'ConnectionPingMethod',
     name: '/http/ping/method',
     helpKey: 'connection.http.ping.method',
-    defaultValue: '{{http.ping.method}}',
+    defaultValue: r => r.http.ping.method,
     type: 'select',
     label: 'Ping Method',
     description: '',
@@ -180,7 +180,7 @@ export default {
     id: 'ConnectionPingSuccessPath',
     name: '/http/ping/successPath',
     helpKey: 'connection.http.ping.successPath',
-    defaultValue: '{{http.ping.successPath}}',
+    defaultValue: r => r.http.ping.successPath,
     type: 'text',
     label: 'Success Path',
     description: '',
@@ -190,7 +190,7 @@ export default {
     id: 'ConnectionPingSuccessValues',
     name: '/http/ping/successValues',
     helpKey: 'connection.http.ping.successValues',
-    defaultValue: '{{http.ping.successValues}}',
+    defaultValue: r => r.http.ping.successValues,
     valueDelimiter: ',',
     type: 'text',
     label: 'Success Values',
@@ -201,7 +201,7 @@ export default {
     id: 'ConnectionPingErrorPath',
     name: '/http/ping/errorPath',
     helpKey: 'connection.http.ping.errorPath',
-    defaultValue: '{{http.ping.errorPath}}',
+    defaultValue: r => r.http.ping.errorPath,
     type: 'text',
     label: 'Error Path',
     description: '',
@@ -211,7 +211,7 @@ export default {
     id: 'ConnectionLimit',
     name: '/http/rateLimit/limit',
     helpKey: 'connection.http.rateLimit.limit',
-    defaultValue: '{{http.rateLimit.limit}}',
+    defaultValue: r => r.http && r.http.rateLimit && r.http.rateLimit.limit,
     type: 'text',
     label: 'Limit',
     placeholder: 'optional',
@@ -220,7 +220,8 @@ export default {
     id: 'ConnectionLimitStatusCode',
     name: '/http/rateLimit/failStatusCode',
     helpKey: 'connection.http.rateLimit.failStatusCode',
-    defaultValue: '{{http.rateLimit.failStatusCode}}',
+    defaultValue: r =>
+      r.http && r.http.rateLimit && r.http.rateLimit.failStatusCode,
     type: 'text',
     label: 'Fail Status Code',
     placeholder: 'optional',
@@ -229,7 +230,7 @@ export default {
     id: 'ConnectionRateLimitFailPath',
     name: '/http/rateLimit/failPath',
     helpKey: 'connection.http.rateLimit.failPath',
-    defaultValue: '{{http.rateLimit.failPath}}',
+    defaultValue: r => r.http && r.http.rateLimit && r.http.rateLimit.failPath,
     type: 'text',
     label: 'Fail Path',
     placeholder: 'optional',
@@ -238,7 +239,8 @@ export default {
     id: 'ConnectionRateLimitFailValues',
     name: '/http/rateLimit/failValues',
     helpKey: 'connection.http.rateLimit.failValues',
-    defaultValue: '{{http.rateLimit.failValues}}',
+    defaultValue: r =>
+      r.http && r.http.rateLimit && r.http.rateLimit.failValues,
     valueDelimiter: ',',
     type: 'text',
     label: 'Fail Values',
@@ -248,7 +250,8 @@ export default {
     id: 'ConnectionLimitRetryHeader',
     name: '/http/rateLimit/retryHeader',
     helpKey: 'connection.http.rateLimit.retryHeader',
-    defaultValue: '{{http.rateLimit.retryHeader}}',
+    defaultValue: r =>
+      r.http && r.http.rateLimit && r.http.rateLimit.retryHeader,
     type: 'text',
     label: 'Retry Header',
     placeholder: 'optional',
@@ -257,7 +260,11 @@ export default {
     id: 'ConnectionRefreshToken',
     name: '/http/auth/token/refreshToken',
     helpKey: 'connection.http.auth.token.refreshToken',
-    defaultValue: '{{http.auth.token.refreshToken}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshToken,
     type: 'text',
     label: 'Refresh Token',
   },
@@ -265,8 +272,12 @@ export default {
     id: 'ConnectionRefreshRelativeURI',
     name: '/http/auth/token/refreshRelativeURI',
     helpKey: 'connection.http.auth.token.refreshRelativeURI',
-    defaultValue: '{{http.auth.token.refreshRelativeURI}}',
-    connectionId: '{{_id}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshRelativeURI,
+    connectionId: r => r._id,
     type: 'relativeuri',
     label: 'Relative URI',
   },
@@ -274,7 +285,11 @@ export default {
     id: 'ConnectionRefreshMediaType',
     name: '/http/auth/token/refreshMediaType',
     helpKey: 'connection.http.auth.token.refreshMediaType',
-    defaultValue: '{{http.auth.token.refreshMediaType}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMediaType,
     type: 'select',
     options: [
       {
@@ -287,7 +302,11 @@ export default {
     id: 'ConnectionRefreshMethod',
     name: '/http/auth/token/refreshMethod',
     helpKey: 'connection.http.auth.token.refreshMethod',
-    defaultValue: '{{http.auth.token.refreshMethod}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMethod,
     type: 'select',
     options: [
       {
@@ -300,7 +319,11 @@ export default {
     id: 'ConnectionRefreshBody',
     name: '/http/auth/token/refreshBody',
     helpKey: 'connection.http.auth.token.refreshBody',
-    defaultValue: '{{http.auth.token.refreshBody}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshBody,
     type: 'editor',
     mode: '{{http.auth.token.refreshMethod}}',
     label: 'HTTP body',
@@ -309,7 +332,11 @@ export default {
     id: 'ConnectionRefreshTokenPath',
     name: '/http/auth/token/refreshTokenPath',
     helpKey: 'connection.http.auth.token.refreshTokenPath',
-    defaultValue: '{{http.auth.token.refreshTokenPath}}',
+    defaultValue: r =>
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshTokenPath,
     type: 'text',
     label: 'Token Path',
   },
@@ -317,7 +344,7 @@ export default {
     id: 'ConnectionDisableStrictSSL',
     name: '/http/disableStrictSSL',
     helpKey: 'connection.http.disableStrictSSL',
-    defaultValue: '{{http.disableStrictSSL}}',
+    defaultValue: r => r.http.disableStrictSSL,
     type: 'checkbox',
     label: 'Disable Strict SSL',
   },
@@ -325,17 +352,18 @@ export default {
     id: 'ConnectionBorrowConcurrencyFrom',
     name: '/_borrowConcurrencyFromConnectionId',
     helpKey: 'connection._borrowConcurrencyFromConnectionId',
-    defaultValue: '{{_borrowConcurrencyFromConnectionId}}',
-    connectionId: '{{_id}}',
-    connectionType: '{{type}}',
-    type: 'selectconnection',
+    resourceType: 'connections',
+    defaultValue: r => r._borrowConcurrencyFromConnectionId,
+    filter: r => ({ type: r.type }),
+    excludeFilter: r => ({ _id: r._id }),
+    type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
   ConcurrencyLevel: {
     id: 'ConnectionConcurrencyLevel',
     name: '/http/concurrencyLevel',
     helpKey: 'connection.http.concurrencyLevel',
-    defaultValue: '{{http.concurrencyLevel}}',
+    defaultValue: r => r.http.concurrencyLevel,
     type: 'select',
     options: [
       {
@@ -374,11 +402,21 @@ export default {
   // #endregion Connection
 
   // #region Export
+  'export.file.csv': {
+    id: 'export.file.csv',
+    name: '/file/csv',
+    type: 'csvparse',
+    helpText: 'Use this editor to preview how your parse options affect your ',
+    label: 'Configure CSV parse options',
+    defaultValue: r => r.file && r.file.csv,
+    sampleData: r => r.sampleData,
+  },
+
   ExportName: {
     id: 'ExportName',
     name: '/name',
     helpKey: 'export.name',
-    defaultValue: '{{name}}',
+    defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
   },
@@ -386,7 +424,7 @@ export default {
     id: 'ExportDescription',
     name: '/description',
     helpKey: 'export.description',
-    defaultValue: '{{description}}',
+    defaultValue: r => r.description,
     type: 'text',
     multiline: true,
     rowsMax: 4,
@@ -396,7 +434,7 @@ export default {
     id: 'ExportHttpMethod',
     name: '/http/method',
     helpKey: 'export.http.method',
-    defaultValue: '{{http.method}}',
+    defaultValue: r => r.http.method,
     type: 'select',
     label: 'HTTP method',
     options: [
@@ -409,8 +447,8 @@ export default {
     id: 'ExportHttpRelativeURI',
     name: '/http/relativeURI',
     helpKey: 'export.http.relativeURI',
-    defaultValue: '{{http.relativeURI}}',
-    connectionId: '{{_connectionId}}',
+    defaultValue: r => r.http.relativeURI,
+    connectionId: r => r._connectionId,
     type: 'relativeuri',
     label: 'Relative URI',
     required: true,
@@ -419,10 +457,31 @@ export default {
     id: 'ExportHttpBody',
     name: '/http/body',
     helpKey: 'export.http.body',
-    defaultValue: '{{http.body}}',
+    defaultValue: r => r.http.body,
     type: 'editor',
     mode: 'json',
     label: 'HTTP Body',
   },
   // #endregion Export
+
+  // #region Import
+  'import.name': {
+    id: 'import.name',
+    name: '/name',
+    helpKey: 'import.name',
+    defaultValue: r => r.name,
+    type: 'text',
+    label: 'Name',
+  },
+  'import.description': {
+    id: 'import.description',
+    name: '/description',
+    helpKey: 'import.description',
+    defaultValue: r => r.description,
+    type: 'text',
+    multiline: true,
+    rowsMax: 4,
+    label: 'Description',
+  },
+  // #endregion Import
 };
