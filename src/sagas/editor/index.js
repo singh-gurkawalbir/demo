@@ -67,6 +67,13 @@ export function* refreshHelperFunctions() {
       resourceType: 'processors',
       message: 'Getting Helper functions',
     });
+
+    // if the response is undefined
+    // the call must have failed for some collection call failure
+    // it could be because of an authentication issue
+    // In that case don't update helperfunctions in localStorage
+    // and its timestamp
+    if (!allHelperFunctions) return;
     // destructuring for handlebars helperFunctions
     const {
       handlebars: { helperFunctions: tmpHelperFunctions },
