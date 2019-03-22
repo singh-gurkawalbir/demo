@@ -9,6 +9,7 @@ import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
 import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
+import DynaCsvParse from './fields/DynaCsvParse';
 import Help from '../Help';
 
 const inputs = {
@@ -22,6 +23,7 @@ const inputs = {
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
+  csvparse: DynaCsvParse,
 };
 const HelpWrapper = withStyles({
   helpIcon: { float: 'right' },

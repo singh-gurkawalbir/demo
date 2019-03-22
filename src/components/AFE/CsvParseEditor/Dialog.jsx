@@ -10,7 +10,7 @@ export default class CsvParseEditorDialog extends Component {
       height: '50vh',
       open: true,
     };
-    const dialogProps = Object.assign({}, defaults, other);
+    const dialogProps = { ...defaults, ...other };
 
     return (
       <EditorDialog

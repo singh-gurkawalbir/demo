@@ -402,6 +402,16 @@ export default {
   // #endregion Connection
 
   // #region Export
+  'export.file.csv': {
+    id: 'export.file.csv',
+    name: '/file/csv',
+    type: 'csvparse',
+    helpText: 'Use this editor to preview how your parse options affect your ',
+    label: 'Configure CSV parse options',
+    defaultValue: r => r.file && r.file.csv,
+    sampleData: r => r.sampleData,
+  },
+
   ExportName: {
     id: 'ExportName',
     name: '/name',
@@ -453,4 +463,25 @@ export default {
     label: 'HTTP Body',
   },
   // #endregion Export
+
+  // #region Import
+  'import.name': {
+    id: 'import.name',
+    name: '/name',
+    helpKey: 'import.name',
+    defaultValue: r => r.name,
+    type: 'text',
+    label: 'Name',
+  },
+  'import.description': {
+    id: 'import.description',
+    name: '/description',
+    helpKey: 'import.description',
+    defaultValue: r => r.description,
+    type: 'text',
+    multiline: true,
+    rowsMax: 4,
+    label: 'Description',
+  },
+  // #endregion Import
 };
