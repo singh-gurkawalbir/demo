@@ -72,17 +72,15 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 export const sanitizePatchSet = ({ patchSet, fieldMeta }) => {
   if (!fieldMeta || !patchSet) return patchSet;
 
-  const newSet = [];
-
-  patchSet.forEach(patch => {
+  return patchSet.reduce((sanitizedSet, patch) => {
     const field = getFieldByName({ name: patch.path, fieldMeta });
 
     if (patch.op === 'replace' && field.defaultValue !== patch.value) {
-      newSet.push(patch);
+      sanitizedSet.push(patch);
     }
-  });
 
-  return newSet;
+    return sanitizedSet;
+  }, []);
 };
 
 export const replaceField = ({ meta, field }) => {

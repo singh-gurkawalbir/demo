@@ -3,7 +3,7 @@ import formMeta from './definitions';
 import { defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = (connection, resourceType, resource) => {
-  let fields = formMeta.common;
+  let { fields } = formMeta.common;
   let fieldSets = [];
   let converter;
   let initializer;
