@@ -48,10 +48,13 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
       break;
   }
 
+  const { optionsHandler } = meta;
+
   return {
     fieldMeta: { fields, fieldSets },
     converter: converter || defaultPatchSetConverter,
     initializer,
+    optionsHandler,
   };
 };
 
@@ -69,7 +72,7 @@ const setDefaults = fields => {
   });
 };
 
-const getFieldsWithDefaiults = fieldMeta => {
+const getFieldsWithDefaults = fieldMeta => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
@@ -91,12 +94,13 @@ const getFieldsWithDefaiults = fieldMeta => {
 };
 
 export default ({ resourceType, connection, resource = {} }) => {
-  const { fieldMeta, converter, initializer } = getResourceFormAssets(
-    connection,
-    resourceType,
-    resource
-  );
-  const metaWithDefaults = getFieldsWithDefaiults(fieldMeta);
+  const {
+    fieldMeta,
+    converter,
+    initializer,
+    optionsHandler,
+  } = getResourceFormAssets(connection, resourceType, resource);
+  const metaWithDefaults = getFieldsWithDefaults(fieldMeta);
   const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
   let metaWithValues;
 
@@ -111,6 +115,7 @@ export default ({ resourceType, connection, resource = {} }) => {
   }
 
   return {
+    optionsHandler,
     fieldMeta: metaWithValues,
     formValueToPatchSetConverter: converter,
   };

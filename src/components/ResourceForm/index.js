@@ -42,14 +42,24 @@ export default class ResourceForm extends Component {
       children,
       ...rest
     } = this.props;
-    const { fieldMeta, formValueToPatchSetConverter } = formFactory({
+    const {
+      optionsHandler,
+      fieldMeta,
+      formValueToPatchSetConverter,
+    } = formFactory({
       connection,
       resourceType,
       resource,
     });
 
+    console.log(`check options ${optionsHandler}`);
+
     return (
-      <DynaForm key={formKey} {...rest} fieldMeta={fieldMeta}>
+      <DynaForm
+        key={formKey}
+        {...rest}
+        fieldMeta={fieldMeta}
+        optionsHandler={optionsHandler}>
         {children}
         <div className={classes.actions}>
           <Button

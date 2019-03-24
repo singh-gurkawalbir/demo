@@ -1,4 +1,28 @@
 export default {
+  // The optionsHandler handler runs for every field
+  optionsHandler(fieldId, fields) {
+    if (fieldId === 'connectionFtpPort') {
+      const ftpPortField = fields.find(
+        field => field.id === 'connectionFtpPort'
+      );
+
+      if (!ftpPortField.value) {
+        const ftpTypeField = fields.find(
+          field => field.id === 'connectionFtpType'
+        );
+
+        console.log(`check ftp ${JSON.stringify(ftpTypeField)}`);
+
+        if (ftpTypeField.value === 'sftp') {
+          console.log('In sftp');
+
+          return [22];
+        }
+
+        return [21];
+      }
+    }
+  },
   fields: [
     { id: 'connectionName' },
     { id: 'connectionType', disabled: true },
@@ -45,6 +69,7 @@ export default {
       fields: [
         {
           id: 'connectionFtpPort',
+          refreshOptionsOnChangesTo: 'connectionFtpType',
         },
         {
           id: 'connectionFtpUsePassiveMode',

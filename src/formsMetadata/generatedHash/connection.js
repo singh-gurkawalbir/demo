@@ -7,12 +7,16 @@ export default {
     helpKey: 'connection._borrowConcurrencyFromConnectionId',
     name: '/borrowConcurrencyFromConnectionId',
     id: 'connectionBorrowConcurrencyFromConnectionId',
+    defaultValue: '{{_borrowConcurrencyFromConnectionId}}',
+    label: 'Borrow Concurrency From',
   },
-  connectionAgent: {
+  connection_agentId: {
     type: 'select',
-    helpKey: 'connection.connectionAgentId',
-    name: '/connectionAgentId',
-    id: 'connectionAgentId',
+    helpKey: 'connection._agentId',
+    name: '/_agentId',
+    label: 'Agent',
+    id: 'connection_agentId',
+    defaultValue: '{{_agentId}}',
   },
   connectionType: {
     type: 'select',
@@ -257,6 +261,32 @@ export default {
   },
   // #endregion common
   // #region rdbms
+
+  connectionConnMode: {
+    type: 'radiogroup',
+    helpKey: 'connection.connMode',
+    name: 'connMode',
+    id: 'connectionConnMode',
+    label: 'Mode',
+    defaultValue: 'cloud',
+    options: [
+      {
+        items: [
+          { label: 'Cloud', value: 'cloud' },
+          { label: 'On-Premise', value: 'onPremise' },
+        ],
+      },
+    ],
+  },
+
+  connectionRdbmsUseSSL: {
+    type: 'checkbox',
+    helpKey: 'connection.rdbms.useSSL',
+    name: '/rdbms/useSSL',
+    id: 'connectionRdbmsUseSSL',
+    label: 'Use SSL',
+    defaultValue: false,
+  },
   connectionRdbmsHost: {
     type: 'text',
     helpKey: 'connection.rdbms.host',
@@ -291,7 +321,7 @@ export default {
     helpKey: 'connection.rdbms.instanceName',
     name: '/rdbms/instanceName',
     id: 'connectionRdbmsInstanceName',
-    label: 'Instance Name',
+    label: 'Database Name',
     defaultValue: '{{rdbms.instanceName}}',
   },
   connectionRdbmsUser: {
@@ -1354,17 +1384,22 @@ export default {
     defaultValue: '{{ftp.authKey}}',
   },
   connectionFtpPort: {
-    type: 'text',
+    type: 'ftpport',
     helpKey: 'connection.ftp.port',
     name: '/ftp/port',
     id: 'connectionFtpPort',
     label: 'Port',
     defaultValue: '{{ftp.port}}',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    // valueType: 'number',
+    required: true,
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
+        message: 'The value must be more than 0 and less than 65535',
       },
-    ],
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   connectionFtpUsePassiveMode: {
     type: 'checkbox',

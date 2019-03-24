@@ -42,6 +42,9 @@ class MaterialUiMultiSelect extends React.Component {
       onFieldChange,
       valueDelimiter,
     } = this.props;
+
+    console.log(`check options ${JSON.stringify(this.props)}`);
+
     const items = options.reduce(
       (itemsSoFar, option) =>
         itemsSoFar.concat(

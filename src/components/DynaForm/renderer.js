@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import DyanTextFtpPort from './fields/CustomComponents/DynaTextFtpPort';
 import DynaMultiSelect from './fields/DynaMultiSelect';
 import DynaRadioGroup from './fields/DynaRadioGroup';
 import DynaSelect from './fields/DynaSelect';
@@ -12,6 +13,7 @@ import DynaEditor from './fields/DynaEditor';
 import Help from '../Help';
 
 const inputs = {
+  ftpport: DyanTextFtpPort,
   text: DynaText,
   editor: DynaEditor,
   textarea: DynaText,
