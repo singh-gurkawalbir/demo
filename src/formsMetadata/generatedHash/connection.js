@@ -2,29 +2,29 @@ export default {
   // #region common
   // TODO: develop code for this two components
   // agent list handleBars evaluated its a dynamicList
-  connection_borrowConcurrencyFromConnectionId: {
+  'connection._borrowConcurrencyFromConnectionId': {
     type: 'select',
     helpKey: 'connection._borrowConcurrencyFromConnectionId',
-    name: '/borrowConcurrencyFromConnectionId',
-    id: 'connectionBorrowConcurrencyFromConnectionId',
-    defaultValue: '{{_borrowConcurrencyFromConnectionId}}',
+    name: '/_borrowConcurrencyFromConnectionId',
+    id: 'connection._borrowConcurrencyFromConnectionId',
+    defaultValue: r => r._borrowConcurrencyFromConnectionId,
     label: 'Borrow Concurrency From',
   },
-  connection_agentId: {
+  'connection._agentId': {
     type: 'select',
     helpKey: 'connection._agentId',
     name: '/_agentId',
     label: 'Agent',
-    id: 'connection_agentId',
-    defaultValue: '{{_agentId}}',
+    id: 'connection._agentId',
+    defaultValue: r => r._agentId,
   },
-  connectionType: {
+  'connection.type': {
     type: 'select',
     helpKey: 'connection.type',
     name: '/type',
-    id: 'connectionType',
+    id: 'connection.type',
     label: 'Type',
-    defaultValue: '{{type}}',
+    defaultValue: r => r && r.type,
     options: [
       {
         items: [
@@ -42,21 +42,21 @@ export default {
       },
     ],
   },
-  connectionName: {
+  'connection.name': {
     type: 'text',
     helpKey: 'connection.name',
     name: '/name',
-    id: 'connectionName',
+    id: 'connection.name',
     label: 'Name',
-    defaultValue: '{{name}}',
+    defaultValue: r => r && r.name,
   },
-  connectionAssistant: {
+  'connection.assistant': {
     type: 'select',
     helpKey: 'connection.assistant',
     name: '/assistant',
-    id: 'connectionAssistant',
+    id: 'connection.assistant',
     label: 'Assistant',
-    defaultValue: '{{assistant}}',
+    defaultValue: r => r && r.assistant,
     options: [
       {
         items: [
@@ -261,156 +261,98 @@ export default {
   },
   // #endregion common
   // #region rdbms
-
-  connectionConnMode: {
-    type: 'radiogroup',
-    helpKey: 'connection.connMode',
-    name: 'connMode',
-    id: 'connectionConnMode',
-    label: 'Mode',
-    defaultValue: 'cloud',
-    options: [
-      {
-        items: [
-          { label: 'Cloud', value: 'cloud' },
-          { label: 'On-Premise', value: 'onPremise' },
-        ],
-      },
-    ],
-  },
-
-  connectionRdbmsUseSSL: {
-    type: 'checkbox',
-    helpKey: 'connection.rdbms.useSSL',
-    name: '/rdbms/useSSL',
-    id: 'connectionRdbmsUseSSL',
-    label: 'Use SSL',
-    defaultValue: false,
-  },
-  connectionRdbmsHost: {
+  'connection.rdbms.host': {
     type: 'text',
     helpKey: 'connection.rdbms.host',
     name: '/rdbms/host',
-    id: 'connectionRdbmsHost',
-    label: 'Host',
-    defaultValue: '{{rdbms.host}}',
+    id: 'connection.rdbms.host',
+    label: 'Rdbms host',
+    defaultValue: r => r && r.rdbms && r.rdbms.host,
   },
-  connectionRdbmsPort: {
+  'connection.rdbms.port': {
     type: 'text',
     helpKey: 'connection.rdbms.port',
     name: '/rdbms/port',
-    id: 'connectionRdbmsPort',
-    label: 'Port',
-    defaultValue: '{{rdbms.port}}',
+    id: 'connection.rdbms.port',
+    label: 'Rdbms port',
+    defaultValue: r => r && r.rdbms && r.rdbms.port,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionRdbmsDatabase: {
+  'connection.rdbms.database': {
     type: 'text',
     helpKey: 'connection.rdbms.database',
     name: '/rdbms/database',
-    id: 'connectionRdbmsDatabase',
-    label: 'Database Name',
-    defaultValue: '{{rdbms.database}}',
+    id: 'connection.rdbms.database',
+    label: 'Rdbms database',
+    defaultValue: r => r && r.rdbms && r.rdbms.database,
   },
-  connectionRdbmsInstanceName: {
+  'connection.rdbms.instanceName': {
     type: 'text',
     helpKey: 'connection.rdbms.instanceName',
     name: '/rdbms/instanceName',
-    id: 'connectionRdbmsInstanceName',
-    label: 'Database Name',
-    defaultValue: '{{rdbms.instanceName}}',
+    id: 'connection.rdbms.instanceName',
+    label: 'Rdbms instance Name',
+    defaultValue: r => r && r.rdbms && r.rdbms.instanceName,
   },
-  connectionRdbmsUser: {
+  'connection.rdbms.user': {
     type: 'text',
     helpKey: 'connection.rdbms.user',
     name: '/rdbms/user',
-    id: 'connectionRdbmsUser',
-    label: 'Username',
-    defaultValue: '{{rdbms.user}}',
+    id: 'connection.rdbms.user',
+    label: 'Rdbms user',
+    defaultValue: r => r && r.rdbms && r.rdbms.user,
   },
-  connectionRdbmsPassword: {
+  'connection.rdbms.password': {
     type: 'text',
     helpKey: 'connection.rdbms.password',
     name: '/rdbms/password',
-    id: 'connectionRdbmsPassword',
-    label: 'Password',
-    defaultValue: '{{rdbms.password}}',
+    id: 'connection.rdbms.password',
+    label: 'Rdbms password',
+    defaultValue: r => r && r.rdbms && r.rdbms.password,
   },
-  connectionRdbmsSslCa: {
+  'connection.rdbms.ssl.ca': {
     type: 'text',
     helpKey: 'connection.rdbms.ssl.ca',
     name: '/rdbms/ssl/ca',
-    id: 'connectionRdbmsSslCa',
-    label: 'Certificate Authority',
-    defaultValue: '{{rdbms.ssl.ca}}',
+    id: 'connection.rdbms.ssl.ca',
+    label: 'Rdbms ssl ca',
+    defaultValue: r => r && r.rdbms && r.rdbms.ssl && r.rdbms.ssl.ca,
   },
-  connectionRdbmsSslKey: {
+  'connection.rdbms.ssl.key': {
     type: 'text',
     helpKey: 'connection.rdbms.ssl.key',
     name: '/rdbms/ssl/key',
-    id: 'connectionRdbmsSslKey',
-    label: 'Key',
-    defaultValue: '{{rdbms.ssl.key}}',
+    id: 'connection.rdbms.ssl.key',
+    label: 'Rdbms ssl key',
+    defaultValue: r => r && r.rdbms && r.rdbms.ssl && r.rdbms.ssl.key,
   },
-  connectionRdbmsSslPassphrase: {
+  'connection.rdbms.ssl.passphrase': {
     type: 'text',
     helpKey: 'connection.rdbms.ssl.passphrase',
     name: '/rdbms/ssl/passphrase',
-    id: 'connectionRdbmsSslPassphrase',
-    label: 'Passphrase',
-    defaultValue: '{{rdbms.ssl.passphrase}}',
+    id: 'connection.rdbms.ssl.passphrase',
+    label: 'Rdbms ssl passphrase',
+    defaultValue: r => r && r.rdbms && r.rdbms.ssl && r.rdbms.ssl.passphrase,
   },
-  connectionRdbmsSslCert: {
+  'connection.rdbms.ssl.cert': {
     type: 'text',
     helpKey: 'connection.rdbms.ssl.cert',
     name: '/rdbms/ssl/cert',
-    id: 'connectionRdbmsSslCert',
-    label: 'Certificate',
-    defaultValue: '{{rdbms.ssl.cert}}',
+    id: 'connection.rdbms.ssl.cert',
+    label: 'Rdbms ssl cert',
+    defaultValue: r => r && r.rdbms && r.rdbms.ssl && r.rdbms.ssl.cert,
   },
-  connectionRdbmsConcurrencyLevel: {
-    type: 'select',
+  'connection.rdbms.concurrencyLevel': {
+    type: 'text',
     helpKey: 'connection.rdbms.concurrencyLevel',
     name: '/rdbms/concurrencyLevel',
-    id: 'connectionRdbmsConcurrencyLevel',
-    label: 'Concurrency Level',
-    defaultValue: '{{rdbms.concurrencyLevel}}',
-    options: [
-      {
-        items: [
-          { label: 1, value: 1 },
-          { label: 2, value: 2 },
-          { label: 3, value: 3 },
-          { label: 4, value: 4 },
-          { label: 5, value: 5 },
-          { label: 6, value: 6 },
-          { label: 7, value: 7 },
-          { label: 8, value: 8 },
-          { label: 9, value: 9 },
-          { label: 10, value: 10 },
-          { label: 11, value: 11 },
-          { label: 12, value: 12 },
-          { label: 13, value: 13 },
-          { label: 14, value: 14 },
-          { label: 15, value: 15 },
-          { label: 16, value: 16 },
-          { label: 17, value: 17 },
-          { label: 18, value: 18 },
-          { label: 19, value: 19 },
-          { label: 20, value: 20 },
-          { label: 21, value: 21 },
-          { label: 22, value: 22 },
-          { label: 23, value: 23 },
-          { label: 24, value: 24 },
-          { label: 25, value: 25 },
-        ],
-      },
-    ],
-
+    id: 'connection.rdbms.concurrencyLevel',
+    label: 'Rdbms concurrency Level',
+    defaultValue: r => r && r.rdbms && r.rdbms.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -419,13 +361,13 @@ export default {
   },
   // #endregion rdbms
   // #region rest
-  connectionRestMediaType: {
+  'connection.rest.mediaType': {
     type: 'select',
     helpKey: 'connection.rest.mediaType',
     name: '/rest/mediaType',
-    id: 'connectionRestMediaType',
+    id: 'connection.rest.mediaType',
     label: 'Rest media Type',
-    defaultValue: '{{rest.mediaType}}',
+    defaultValue: r => r && r.rest && r.rest.mediaType,
     options: [
       {
         items: [
@@ -437,29 +379,29 @@ export default {
       },
     ],
   },
-  connectionRestBaseURI: {
+  'connection.rest.baseURI': {
     type: 'text',
     helpKey: 'connection.rest.baseURI',
     name: '/rest/baseURI',
-    id: 'connectionRestBaseURI',
+    id: 'connection.rest.baseURI',
     label: 'Rest base URI',
-    defaultValue: '{{rest.baseURI}}',
+    defaultValue: r => r && r.rest && r.rest.baseURI,
   },
-  connectionRestBearerToken: {
+  'connection.rest.bearerToken': {
     type: 'text',
     helpKey: 'connection.rest.bearerToken',
     name: '/rest/bearerToken',
-    id: 'connectionRestBearerToken',
+    id: 'connection.rest.bearerToken',
     label: 'Rest bearer Token',
-    defaultValue: '{{rest.bearerToken}}',
+    defaultValue: r => r && r.rest && r.rest.bearerToken,
   },
-  connectionRestTokenLocation: {
+  'connection.rest.tokenLocation': {
     type: 'radiogroup',
     helpKey: 'connection.rest.tokenLocation',
     name: '/rest/tokenLocation',
-    id: 'connectionRestTokenLocation',
+    id: 'connection.rest.tokenLocation',
     label: 'Rest token Location',
-    defaultValue: '{{rest.tokenLocation}}',
+    defaultValue: r => r && r.rest && r.rest.tokenLocation,
     options: [
       {
         items: [
@@ -469,65 +411,65 @@ export default {
       },
     ],
   },
-  connectionRestTokenParam: {
+  'connection.rest.tokenParam': {
     type: 'text',
     helpKey: 'connection.rest.tokenParam',
     name: '/rest/tokenParam',
-    id: 'connectionRestTokenParam',
+    id: 'connection.rest.tokenParam',
     label: 'Rest token Param',
-    defaultValue: '{{rest.tokenParam}}',
+    defaultValue: r => r && r.rest && r.rest.tokenParam,
   },
-  connectionRestScopes: {
+  'connection.rest.scopes': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.rest.scope',
     name: '/rest/scopes',
-    id: 'connectionRestScopes',
+    id: 'connection.rest.scopes',
     label: 'Rest scope',
-    defaultValue: '{{rest.scope}}',
+    defaultValue: r => r && r.rest && r.rest.scope,
     validWhen: [],
   },
-  connectionRestScopeDelimiter: {
+  'connection.rest.scopeDelimiter': {
     type: 'text',
     helpKey: 'connection.rest.scopeDelimiter',
     name: '/rest/scopeDelimiter',
-    id: 'connectionRestScopeDelimiter',
+    id: 'connection.rest.scopeDelimiter',
     label: 'Rest scope Delimiter',
-    defaultValue: '{{rest.scopeDelimiter}}',
+    defaultValue: r => r && r.rest && r.rest.scopeDelimiter,
   },
-  connectionRestRefreshToken: {
+  'connection.rest.refreshToken': {
     type: 'text',
     helpKey: 'connection.rest.refreshToken',
     name: '/rest/refreshToken',
-    id: 'connectionRestRefreshToken',
+    id: 'connection.rest.refreshToken',
     label: 'Rest refresh Token',
-    defaultValue: '{{rest.refreshToken}}',
+    defaultValue: r => r && r.rest && r.rest.refreshToken,
   },
-  connectionRestOauthTokenURI: {
+  'connection.rest.oauthTokenURI': {
     type: 'text',
     helpKey: 'connection.rest.oauthTokenURI',
     name: '/rest/oauthTokenURI',
-    id: 'connectionRestOauthTokenURI',
+    id: 'connection.rest.oauthTokenURI',
     label: 'Rest oauth Token URI',
-    defaultValue: '{{rest.oauthTokenURI}}',
+    defaultValue: r => r && r.rest && r.rest.oauthTokenURI,
   },
-  connectionRestDisableStrictSSL: {
+  'connection.rest.disableStrictSSL': {
     type: 'checkbox',
     helpKey: 'connection.rest.disableStrictSSL',
     name: '/rest/disableStrictSSL',
-    id: 'connectionRestDisableStrictSSL',
+    id: 'connection.rest.disableStrictSSL',
     label: 'Rest disable Strict SSL',
     defaultValue: false,
   },
-  connectionRestAuthType: {
+  'connection.rest.authType': {
     type: 'select',
     helpKey: 'connection.rest.authType',
     name: '/rest/authType',
-    id: 'connectionRestAuthType',
+    id: 'connection.rest.authType',
     label: 'Rest auth Type',
-    defaultValue: '{{rest.authType}}',
+    defaultValue: r => r && r.rest && r.rest.authType,
     options: [
       {
         items: [
@@ -543,37 +485,37 @@ export default {
       },
     ],
   },
-  connectionRestAuthURI: {
+  'connection.rest.authURI': {
     type: 'text',
     helpKey: 'connection.rest.authURI',
     name: '/rest/authURI',
-    id: 'connectionRestAuthURI',
+    id: 'connection.rest.authURI',
     label: 'Rest auth URI',
-    defaultValue: '{{rest.authURI}}',
+    defaultValue: r => r && r.rest && r.rest.authURI,
   },
-  connectionRestAuthHeader: {
+  'connection.rest.authHeader': {
     type: 'text',
     helpKey: 'connection.rest.authHeader',
     name: '/rest/authHeader',
-    id: 'connectionRestAuthHeader',
+    id: 'connection.rest.authHeader',
     label: 'Rest auth Header',
-    defaultValue: '{{rest.authHeader}}',
+    defaultValue: r => r && r.rest && r.rest.authHeader,
   },
-  connectionRestRetryHeader: {
+  'connection.rest.retryHeader': {
     type: 'text',
     helpKey: 'connection.rest.retryHeader',
     name: '/rest/retryHeader',
-    id: 'connectionRestRetryHeader',
+    id: 'connection.rest.retryHeader',
     label: 'Rest retry Header',
-    defaultValue: '{{rest.retryHeader}}',
+    defaultValue: r => r && r.rest && r.rest.retryHeader,
   },
-  connectionRestAuthScheme: {
+  'connection.rest.authScheme': {
     type: 'select',
     helpKey: 'connection.rest.authScheme',
     name: '/rest/authScheme',
-    id: 'connectionRestAuthScheme',
+    id: 'connection.rest.authScheme',
     label: 'Rest auth Scheme',
-    defaultValue: '{{rest.authScheme}}',
+    defaultValue: r => r && r.rest && r.rest.authScheme,
     options: [
       {
         items: [
@@ -586,119 +528,126 @@ export default {
       },
     ],
   },
-  connectionRestBasicAuthUsername: {
+  'connection.rest.basicAuth.username': {
     type: 'text',
     helpKey: 'connection.rest.basicAuth.username',
     name: '/rest/basicAuth/username',
-    id: 'connectionRestBasicAuthUsername',
+    id: 'connection.rest.basicAuth.username',
     label: 'Rest basic Auth username',
-    defaultValue: '{{rest.basicAuth.username}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.basicAuth && r.rest.basicAuth.username,
   },
-  connectionRestBasicAuthPassword: {
+  'connection.rest.basicAuth.password': {
     type: 'text',
     helpKey: 'connection.rest.basicAuth.password',
     name: '/rest/basicAuth/password',
-    id: 'connectionRestBasicAuthPassword',
+    id: 'connection.rest.basicAuth.password',
     label: 'Rest basic Auth password',
-    defaultValue: '{{rest.basicAuth.password}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.basicAuth && r.rest.basicAuth.password,
   },
-  connectionRestCookieAuthUri: {
+  'connection.rest.cookieAuth.uri': {
     type: 'text',
     helpKey: 'connection.rest.cookieAuth.uri',
     name: '/rest/cookieAuth/uri',
-    id: 'connectionRestCookieAuthUri',
+    id: 'connection.rest.cookieAuth.uri',
     label: 'Rest cookie Auth uri',
-    defaultValue: '{{rest.cookieAuth.uri}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.uri,
   },
-  connectionRestCookieAuthBody: {
+  'connection.rest.cookieAuth.body': {
     type: 'text',
     helpKey: 'connection.rest.cookieAuth.body',
     name: '/rest/cookieAuth/body',
-    id: 'connectionRestCookieAuthBody',
+    id: 'connection.rest.cookieAuth.body',
     label: 'Rest cookie Auth body',
-    defaultValue: '{{rest.cookieAuth.body}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.body,
   },
-  connectionRestCookieAuthMethod: {
+  'connection.rest.cookieAuth.method': {
     type: 'text',
     helpKey: 'connection.rest.cookieAuth.method',
     name: '/rest/cookieAuth/method',
-    id: 'connectionRestCookieAuthMethod',
+    id: 'connection.rest.cookieAuth.method',
     label: 'Rest cookie Auth method',
-    defaultValue: '{{rest.cookieAuth.method}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.method,
   },
-  connectionRestCookieAuthSuccessStatusCode: {
+  'connection.rest.cookieAuth.successStatusCode': {
     type: 'text',
     helpKey: 'connection.rest.cookieAuth.successStatusCode',
     name: '/rest/cookieAuth/successStatusCode',
-    id: 'connectionRestCookieAuthSuccessStatusCode',
+    id: 'connection.rest.cookieAuth.successStatusCode',
     label: 'Rest cookie Auth success Status Code',
-    defaultValue: '{{rest.cookieAuth.successStatusCode}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.successStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionRestHeaders: {
+  'connection.rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'connection.rest.headers',
     name: '/rest/headers',
-    id: 'connectionRestHeaders',
+    id: 'connection.rest.headers',
     label: 'Rest headers',
-    defaultValue: '{{rest.headers}}',
+    defaultValue: r => r && r.rest && r.rest.headers,
   },
-  connectionRestEncrypted: {
+  'connection.rest.encrypted': {
     type: 'text',
     helpKey: 'connection.rest.encrypted',
     name: '/rest/encrypted',
-    id: 'connectionRestEncrypted',
+    id: 'connection.rest.encrypted',
     label: 'Rest encrypted',
-    defaultValue: '{{rest.encrypted}}',
+    defaultValue: r => r && r.rest && r.rest.encrypted,
   },
-  connectionRestEncrypteds: {
+  'connection.rest.encrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.rest.encrypteds',
     name: '/rest/encrypteds',
-    id: 'connectionRestEncrypteds',
+    id: 'connection.rest.encrypteds',
     label: 'Rest encrypted',
-    defaultValue: '{{rest.encrypted}}',
+    defaultValue: r => r && r.rest && r.rest.encrypted,
   },
-  connectionRestUnencrypted: {
+  'connection.rest.unencrypted': {
     type: 'text',
     helpKey: 'connection.rest.unencrypted',
     name: '/rest/unencrypted',
-    id: 'connectionRestUnencrypted',
+    id: 'connection.rest.unencrypted',
     label: 'Rest unencrypted',
-    defaultValue: '{{rest.unencrypted}}',
+    defaultValue: r => r && r.rest && r.rest.unencrypted,
   },
-  connectionRestUnencrypteds: {
+  'connection.rest.unencrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.rest.unencrypteds',
     name: '/rest/unencrypteds',
-    id: 'connectionRestUnencrypteds',
+    id: 'connection.rest.unencrypteds',
     label: 'Rest unencrypted',
-    defaultValue: '{{rest.unencrypted}}',
+    defaultValue: r => r && r.rest && r.rest.unencrypted,
   },
-  connectionRestOauthAccessTokenPath: {
+  'connection.rest.oauth.accessTokenPath': {
     type: 'text',
     helpKey: 'connection.rest.oauth.accessTokenPath',
     name: '/rest/oauth/accessTokenPath',
-    id: 'connectionRestOauthAccessTokenPath',
+    id: 'connection.rest.oauth.accessTokenPath',
     label: 'Rest oauth access Token Path',
-    defaultValue: '{{rest.oauth.accessTokenPath}}',
+    defaultValue: r =>
+      r && r.rest && r.rest.oauth && r.rest.oauth.accessTokenPath,
   },
-  connectionRestOauthGrantType: {
+  'connection.rest.oauth.grantType': {
     type: 'radiogroup',
     helpKey: 'connection.rest.oauth.grantType',
     name: '/rest/oauth/grantType',
-    id: 'connectionRestOauthGrantType',
+    id: 'connection.rest.oauth.grantType',
     label: 'Rest oauth grant Type',
-    defaultValue: '{{rest.oauth.grantType}}',
+    defaultValue: r => r && r.rest && r.rest.oauth && r.rest.oauth.grantType,
     options: [
       {
         items: [
@@ -708,61 +657,61 @@ export default {
       },
     ],
   },
-  connectionRestOauthUsername: {
+  'connection.rest.oauth.username': {
     type: 'text',
     helpKey: 'connection.rest.oauth.username',
     name: '/rest/oauth/username',
-    id: 'connectionRestOauthUsername',
+    id: 'connection.rest.oauth.username',
     label: 'Rest oauth username',
-    defaultValue: '{{rest.oauth.username}}',
+    defaultValue: r => r && r.rest && r.rest.oauth && r.rest.oauth.username,
   },
-  connectionRestOauthPassword: {
+  'connection.rest.oauth.password': {
     type: 'text',
     helpKey: 'connection.rest.oauth.password',
     name: '/rest/oauth/password',
-    id: 'connectionRestOauthPassword',
+    id: 'connection.rest.oauth.password',
     label: 'Rest oauth password',
-    defaultValue: '{{rest.oauth.password}}',
+    defaultValue: r => r && r.rest && r.rest.oauth && r.rest.oauth.password,
   },
-  connectionRestRefreshTokenMethod: {
+  'connection.rest.refreshTokenMethod': {
     type: 'text',
     helpKey: 'connection.rest.refreshTokenMethod',
     name: '/rest/refreshTokenMethod',
-    id: 'connectionRestRefreshTokenMethod',
+    id: 'connection.rest.refreshTokenMethod',
     label: 'Rest refresh Token Method',
-    defaultValue: '{{rest.refreshTokenMethod}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenMethod,
   },
-  connectionRestRefreshTokenBody: {
+  'connection.rest.refreshTokenBody': {
     type: 'text',
     helpKey: 'connection.rest.refreshTokenBody',
     name: '/rest/refreshTokenBody',
-    id: 'connectionRestRefreshTokenBody',
+    id: 'connection.rest.refreshTokenBody',
     label: 'Rest refresh Token Body',
-    defaultValue: '{{rest.refreshTokenBody}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenBody,
   },
-  connectionRestRefreshTokenURI: {
+  'connection.rest.refreshTokenURI': {
     type: 'text',
     helpKey: 'connection.rest.refreshTokenURI',
     name: '/rest/refreshTokenURI',
-    id: 'connectionRestRefreshTokenURI',
+    id: 'connection.rest.refreshTokenURI',
     label: 'Rest refresh Token URI',
-    defaultValue: '{{rest.refreshTokenURI}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenURI,
   },
-  connectionRestRefreshTokenPath: {
+  'connection.rest.refreshTokenPath': {
     type: 'text',
     helpKey: 'connection.rest.refreshTokenPath',
     name: '/rest/refreshTokenPath',
-    id: 'connectionRestRefreshTokenPath',
+    id: 'connection.rest.refreshTokenPath',
     label: 'Rest refresh Token Path',
-    defaultValue: '{{rest.refreshTokenPath}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenPath,
   },
-  connectionRestRefreshTokenMediaType: {
+  'connection.rest.refreshTokenMediaType': {
     type: 'radiogroup',
     helpKey: 'connection.rest.refreshTokenMediaType',
     name: '/rest/refreshTokenMediaType',
-    id: 'connectionRestRefreshTokenMediaType',
+    id: 'connection.rest.refreshTokenMediaType',
     label: 'Rest refresh Token Media Type',
-    defaultValue: '{{rest.refreshTokenMediaType}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenMediaType,
     options: [
       {
         items: [
@@ -772,93 +721,93 @@ export default {
       },
     ],
   },
-  connectionRestRefreshTokenHeaders: {
+  'connection.rest.refreshTokenHeaders': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'connection.rest.refreshTokenHeaders',
     name: '/rest/refreshTokenHeaders',
-    id: 'connectionRestRefreshTokenHeaders',
+    id: 'connection.rest.refreshTokenHeaders',
     label: 'Rest refresh Token Headers',
-    defaultValue: '{{rest.refreshTokenHeaders}}',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenHeaders,
   },
-  connectionRestInfo: {
+  'connection.rest.info': {
     type: 'text',
     helpKey: 'connection.rest.info',
     name: '/rest/info',
-    id: 'connectionRestInfo',
+    id: 'connection.rest.info',
     label: 'Rest info',
-    defaultValue: '{{rest.info}}',
+    defaultValue: r => r && r.rest && r.rest.info,
   },
-  connectionRestPingRelativeURI: {
+  'connection.rest.pingRelativeURI': {
     type: 'text',
     helpKey: 'connection.rest.pingRelativeURI',
     name: '/rest/pingRelativeURI',
-    id: 'connectionRestPingRelativeURI',
+    id: 'connection.rest.pingRelativeURI',
     label: 'Rest ping Relative URI',
-    defaultValue: '{{rest.pingRelativeURI}}',
+    defaultValue: r => r && r.rest && r.rest.pingRelativeURI,
   },
-  connectionRestPingSuccessPath: {
+  'connection.rest.pingSuccessPath': {
     type: 'text',
     helpKey: 'connection.rest.pingSuccessPath',
     name: '/rest/pingSuccessPath',
-    id: 'connectionRestPingSuccessPath',
+    id: 'connection.rest.pingSuccessPath',
     label: 'Rest ping Success Path',
-    defaultValue: '{{rest.pingSuccessPath}}',
+    defaultValue: r => r && r.rest && r.rest.pingSuccessPath,
   },
-  connectionRestPingSuccessValuess: {
+  'connection.rest.pingSuccessValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.rest.pingSuccessValues',
     name: '/rest/pingSuccessValuess',
-    id: 'connectionRestPingSuccessValuess',
+    id: 'connection.rest.pingSuccessValuess',
     label: 'Rest ping Success Values',
-    defaultValue: '{{rest.pingSuccessValues}}',
+    defaultValue: r => r && r.rest && r.rest.pingSuccessValues,
     validWhen: [],
   },
-  connectionRestPingFailurePath: {
+  'connection.rest.pingFailurePath': {
     type: 'text',
     helpKey: 'connection.rest.pingFailurePath',
     name: '/rest/pingFailurePath',
-    id: 'connectionRestPingFailurePath',
+    id: 'connection.rest.pingFailurePath',
     label: 'Rest ping Failure Path',
-    defaultValue: '{{rest.pingFailurePath}}',
+    defaultValue: r => r && r.rest && r.rest.pingFailurePath,
   },
-  connectionRestPingFailureValuess: {
+  'connection.rest.pingFailureValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.rest.pingFailureValues',
     name: '/rest/pingFailureValuess',
-    id: 'connectionRestPingFailureValuess',
+    id: 'connection.rest.pingFailureValuess',
     label: 'Rest ping Failure Values',
-    defaultValue: '{{rest.pingFailureValues}}',
+    defaultValue: r => r && r.rest && r.rest.pingFailureValues,
     validWhen: [],
   },
-  connectionRestConcurrencyLevel: {
+  'connection.rest.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.rest.concurrencyLevel',
     name: '/rest/concurrencyLevel',
-    id: 'connectionRestConcurrencyLevel',
+    id: 'connection.rest.concurrencyLevel',
     label: 'Rest concurrency Level',
-    defaultValue: '{{rest.concurrencyLevel}}',
+    defaultValue: r => r && r.rest && r.rest.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionRestPingMethod: {
+  'connection.rest.pingMethod': {
     type: 'radiogroup',
     helpKey: 'connection.rest.pingMethod',
     name: '/rest/pingMethod',
-    id: 'connectionRestPingMethod',
+    id: 'connection.rest.pingMethod',
     label: 'Rest ping Method',
-    defaultValue: '{{rest.pingMethod}}',
+    defaultValue: r => r && r.rest && r.rest.pingMethod,
     options: [
       {
         items: [
@@ -868,23 +817,23 @@ export default {
       },
     ],
   },
-  connectionRestPingBody: {
+  'connection.rest.pingBody': {
     type: 'text',
     helpKey: 'connection.rest.pingBody',
     name: '/rest/pingBody',
-    id: 'connectionRestPingBody',
+    id: 'connection.rest.pingBody',
     label: 'Rest ping Body',
-    defaultValue: '{{rest.pingBody}}',
+    defaultValue: r => r && r.rest && r.rest.pingBody,
   },
   // #endregion rest
   // #region http
-  connectionHttpMediaType: {
+  'connection.http.mediaType': {
     type: 'radiogroup',
     helpKey: 'connection.http.mediaType',
     name: '/http/mediaType',
-    id: 'connectionHttpMediaType',
+    id: 'connection.http.mediaType',
     label: 'Http media Type',
-    defaultValue: '{{http.mediaType}}',
+    defaultValue: r => r && r.http && r.http.mediaType,
     options: [
       {
         items: [
@@ -894,58 +843,58 @@ export default {
       },
     ],
   },
-  connectionHttpBaseURI: {
+  'connection.http.baseURI': {
     type: 'text',
     helpKey: 'connection.http.baseURI',
     name: '/http/baseURI',
-    id: 'connectionHttpBaseURI',
+    id: 'connection.http.baseURI',
     label: 'Http base URI',
-    defaultValue: '{{http.baseURI}}',
+    defaultValue: r => r && r.http && r.http.baseURI,
   },
-  connectionHttpDisableStrictSSL: {
+  'connection.http.disableStrictSSL': {
     type: 'checkbox',
     helpKey: 'connection.http.disableStrictSSL',
     name: '/http/disableStrictSSL',
-    id: 'connectionHttpDisableStrictSSL',
+    id: 'connection.http.disableStrictSSL',
     label: 'Http disable Strict SSL',
     defaultValue: false,
   },
-  connectionHttpConcurrencyLevel: {
+  'connection.http.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.http.concurrencyLevel',
     name: '/http/concurrencyLevel',
-    id: 'connectionHttpConcurrencyLevel',
+    id: 'connection.http.concurrencyLevel',
     label: 'Http concurrency Level',
-    defaultValue: '{{http.concurrencyLevel}}',
+    defaultValue: r => r && r.http && r.http.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionHttpRetryHeader: {
+  'connection.http.retryHeader': {
     type: 'text',
     helpKey: 'connection.http.retryHeader',
     name: '/http/retryHeader',
-    id: 'connectionHttpRetryHeader',
+    id: 'connection.http.retryHeader',
     label: 'Http retry Header',
-    defaultValue: '{{http.retryHeader}}',
+    defaultValue: r => r && r.http && r.http.retryHeader,
   },
-  connectionHttpPingRelativeURI: {
+  'connection.http.ping.relativeURI': {
     type: 'text',
     helpKey: 'connection.http.ping.relativeURI',
     name: '/http/ping/relativeURI',
-    id: 'connectionHttpPingRelativeURI',
+    id: 'connection.http.ping.relativeURI',
     label: 'Http ping relative URI',
-    defaultValue: '{{http.ping.relativeURI}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.relativeURI,
   },
-  connectionHttpPingMethod: {
+  'connection.http.ping.method': {
     type: 'select',
     helpKey: 'connection.http.ping.method',
     name: '/http/ping/method',
-    id: 'connectionHttpPingMethod',
+    id: 'connection.http.ping.method',
     label: 'Http ping method',
-    defaultValue: '{{http.ping.method}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.method,
     options: [
       {
         items: [
@@ -957,142 +906,182 @@ export default {
       },
     ],
   },
-  connectionHttpPingBody: {
+  'connection.http.ping.body': {
     type: 'text',
     helpKey: 'connection.http.ping.body',
     name: '/http/ping/body',
-    id: 'connectionHttpPingBody',
+    id: 'connection.http.ping.body',
     label: 'Http ping body',
-    defaultValue: '{{http.ping.body}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.body,
   },
-  connectionHttpPingSuccessPath: {
+  'connection.http.ping.successPath': {
     type: 'text',
     helpKey: 'connection.http.ping.successPath',
     name: '/http/ping/successPath',
-    id: 'connectionHttpPingSuccessPath',
+    id: 'connection.http.ping.successPath',
     label: 'Http ping success Path',
-    defaultValue: '{{http.ping.successPath}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.successPath,
   },
-  connectionHttpPingSuccessValuess: {
+  'connection.http.ping.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.http.ping.successValues',
     name: '/http/ping/successValuess',
-    id: 'connectionHttpPingSuccessValuess',
+    id: 'connection.http.ping.successValuess',
     label: 'Http ping success Values',
-    defaultValue: '{{http.ping.successValues}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.successValues,
     validWhen: [],
   },
-  connectionHttpPingErrorPath: {
+  'connection.http.ping.errorPath': {
     type: 'text',
     helpKey: 'connection.http.ping.errorPath',
     name: '/http/ping/errorPath',
-    id: 'connectionHttpPingErrorPath',
+    id: 'connection.http.ping.errorPath',
     label: 'Http ping error Path',
-    defaultValue: '{{http.ping.errorPath}}',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.errorPath,
   },
-  connectionHttpAuthFailStatusCode: {
+  'connection.http.auth.failStatusCode': {
     type: 'text',
     helpKey: 'connection.http.auth.failStatusCode',
     name: '/http/auth/failStatusCode',
-    id: 'connectionHttpAuthFailStatusCode',
+    id: 'connection.http.auth.failStatusCode',
     label: 'Http auth fail Status Code',
-    defaultValue: '{{http.auth.failStatusCode}}',
+    defaultValue: r => r && r.http && r.http.auth && r.http.auth.failStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionHttpAuthFailPath: {
+  'connection.http.auth.failPath': {
     type: 'text',
     helpKey: 'connection.http.auth.failPath',
     name: '/http/auth/failPath',
-    id: 'connectionHttpAuthFailPath',
+    id: 'connection.http.auth.failPath',
     label: 'Http auth fail Path',
-    defaultValue: '{{http.auth.failPath}}',
+    defaultValue: r => r && r.http && r.http.auth && r.http.auth.failPath,
   },
-  connectionHttpAuthFailValuess: {
+  'connection.http.auth.failValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.http.auth.failValues',
     name: '/http/auth/failValuess',
-    id: 'connectionHttpAuthFailValuess',
+    id: 'connection.http.auth.failValuess',
     label: 'Http auth fail Values',
-    defaultValue: '{{http.auth.failValues}}',
+    defaultValue: r => r && r.http && r.http.auth && r.http.auth.failValues,
     validWhen: [],
   },
-  connectionHttpAuthBasicUsername: {
+  'connection.http.auth.basic.username': {
     type: 'text',
     helpKey: 'connection.http.auth.basic.username',
     name: '/http/auth/basic/username',
-    id: 'connectionHttpAuthBasicUsername',
+    id: 'connection.http.auth.basic.username',
     label: 'Http auth basic username',
-    defaultValue: '{{http.auth.basic.username}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.basic &&
+      r.http.auth.basic.username,
   },
-  connectionHttpAuthBasicPassword: {
+  'connection.http.auth.basic.password': {
     type: 'text',
     helpKey: 'connection.http.auth.basic.password',
     name: '/http/auth/basic/password',
-    id: 'connectionHttpAuthBasicPassword',
+    id: 'connection.http.auth.basic.password',
     label: 'Http auth basic password',
-    defaultValue: '{{http.auth.basic.password}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.basic &&
+      r.http.auth.basic.password,
   },
-  connectionHttpAuthOauthAuthURI: {
+  'connection.http.auth.oauth.authURI': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.authURI',
     name: '/http/auth/oauth/authURI',
-    id: 'connectionHttpAuthOauthAuthURI',
+    id: 'connection.http.auth.oauth.authURI',
     label: 'Http auth oauth auth URI',
-    defaultValue: '{{http.auth.oauth.authURI}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.authURI,
   },
-  connectionHttpAuthOauthTokenURI: {
+  'connection.http.auth.oauth.tokenURI': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.tokenURI',
     name: '/http/auth/oauth/tokenURI',
-    id: 'connectionHttpAuthOauthTokenURI',
+    id: 'connection.http.auth.oauth.tokenURI',
     label: 'Http auth oauth token URI',
-    defaultValue: '{{http.auth.oauth.tokenURI}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.tokenURI,
   },
-  connectionHttpAuthOauthScopes: {
+  'connection.http.auth.oauth.scopes': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.http.auth.oauth.scope',
     name: '/http/auth/oauth/scopes',
-    id: 'connectionHttpAuthOauthScopes',
+    id: 'connection.http.auth.oauth.scopes',
     label: 'Http auth oauth scope',
-    defaultValue: '{{http.auth.oauth.scope}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.scope,
     validWhen: [],
   },
-  connectionHttpAuthOauthScopeDelimiter: {
+  'connection.http.auth.oauth.scopeDelimiter': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.scopeDelimiter',
     name: '/http/auth/oauth/scopeDelimiter',
-    id: 'connectionHttpAuthOauthScopeDelimiter',
+    id: 'connection.http.auth.oauth.scopeDelimiter',
     label: 'Http auth oauth scope Delimiter',
-    defaultValue: '{{http.auth.oauth.scopeDelimiter}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.scopeDelimiter,
   },
-  connectionHttpAuthOauthAccessTokenPath: {
+  'connection.http.auth.oauth.accessTokenPath': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.accessTokenPath',
     name: '/http/auth/oauth/accessTokenPath',
-    id: 'connectionHttpAuthOauthAccessTokenPath',
+    id: 'connection.http.auth.oauth.accessTokenPath',
     label: 'Http auth oauth access Token Path',
-    defaultValue: '{{http.auth.oauth.accessTokenPath}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.accessTokenPath,
   },
-  connectionHttpAuthOauthGrantType: {
+  'connection.http.auth.oauth.grantType': {
     type: 'radiogroup',
     helpKey: 'connection.http.auth.oauth.grantType',
     name: '/http/auth/oauth/grantType',
-    id: 'connectionHttpAuthOauthGrantType',
+    id: 'connection.http.auth.oauth.grantType',
     label: 'Http auth oauth grant Type',
-    defaultValue: '{{http.auth.oauth.grantType}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.grantType,
     options: [
       {
         items: [
@@ -1102,37 +1091,57 @@ export default {
       },
     ],
   },
-  connectionHttpAuthOauthUsername: {
+  'connection.http.auth.oauth.username': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.username',
     name: '/http/auth/oauth/username',
-    id: 'connectionHttpAuthOauthUsername',
+    id: 'connection.http.auth.oauth.username',
     label: 'Http auth oauth username',
-    defaultValue: '{{http.auth.oauth.username}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.username,
   },
-  connectionHttpAuthOauthPassword: {
+  'connection.http.auth.oauth.password': {
     type: 'text',
     helpKey: 'connection.http.auth.oauth.password',
     name: '/http/auth/oauth/password',
-    id: 'connectionHttpAuthOauthPassword',
+    id: 'connection.http.auth.oauth.password',
     label: 'Http auth oauth password',
-    defaultValue: '{{http.auth.oauth.password}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.password,
   },
-  connectionHttpAuthTokenToken: {
+  'connection.http.auth.token.token': {
     type: 'text',
     helpKey: 'connection.http.auth.token.token',
     name: '/http/auth/token/token',
-    id: 'connectionHttpAuthTokenToken',
+    id: 'connection.http.auth.token.token',
     label: 'Http auth token token',
-    defaultValue: '{{http.auth.token.token}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.token,
   },
-  connectionHttpAuthTokenLocation: {
+  'connection.http.auth.token.location': {
     type: 'select',
     helpKey: 'connection.http.auth.token.location',
     name: '/http/auth/token/location',
-    id: 'connectionHttpAuthTokenLocation',
+    id: 'connection.http.auth.token.location',
     label: 'Http auth token location',
-    defaultValue: '{{http.auth.token.location}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.location,
     options: [
       {
         items: [
@@ -1143,37 +1152,57 @@ export default {
       },
     ],
   },
-  connectionHttpAuthTokenHeaderName: {
+  'connection.http.auth.token.headerName': {
     type: 'text',
     helpKey: 'connection.http.auth.token.headerName',
     name: '/http/auth/token/headerName',
-    id: 'connectionHttpAuthTokenHeaderName',
+    id: 'connection.http.auth.token.headerName',
     label: 'Http auth token header Name',
-    defaultValue: '{{http.auth.token.headerName}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.headerName,
   },
-  connectionHttpAuthTokenScheme: {
+  'connection.http.auth.token.scheme': {
     type: 'text',
     helpKey: 'connection.http.auth.token.scheme',
     name: '/http/auth/token/scheme',
-    id: 'connectionHttpAuthTokenScheme',
+    id: 'connection.http.auth.token.scheme',
     label: 'Http auth token scheme',
-    defaultValue: '{{http.auth.token.scheme}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.scheme,
   },
-  connectionHttpAuthTokenParamName: {
+  'connection.http.auth.token.paramName': {
     type: 'text',
     helpKey: 'connection.http.auth.token.paramName',
     name: '/http/auth/token/paramName',
-    id: 'connectionHttpAuthTokenParamName',
+    id: 'connection.http.auth.token.paramName',
     label: 'Http auth token param Name',
-    defaultValue: '{{http.auth.token.paramName}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.paramName,
   },
-  connectionHttpAuthTokenRefreshMethod: {
+  'connection.http.auth.token.refreshMethod': {
     type: 'radiogroup',
     helpKey: 'connection.http.auth.token.refreshMethod',
     name: '/http/auth/token/refreshMethod',
-    id: 'connectionHttpAuthTokenRefreshMethod',
+    id: 'connection.http.auth.token.refreshMethod',
     label: 'Http auth token refresh Method',
-    defaultValue: '{{http.auth.token.refreshMethod}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMethod,
     options: [
       {
         items: [
@@ -1183,37 +1212,57 @@ export default {
       },
     ],
   },
-  connectionHttpAuthTokenRefreshRelativeURI: {
+  'connection.http.auth.token.refreshRelativeURI': {
     type: 'text',
     helpKey: 'connection.http.auth.token.refreshRelativeURI',
     name: '/http/auth/token/refreshRelativeURI',
-    id: 'connectionHttpAuthTokenRefreshRelativeURI',
+    id: 'connection.http.auth.token.refreshRelativeURI',
     label: 'Http auth token refresh Relative URI',
-    defaultValue: '{{http.auth.token.refreshRelativeURI}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshRelativeURI,
   },
-  connectionHttpAuthTokenRefreshBody: {
+  'connection.http.auth.token.refreshBody': {
     type: 'text',
     helpKey: 'connection.http.auth.token.refreshBody',
     name: '/http/auth/token/refreshBody',
-    id: 'connectionHttpAuthTokenRefreshBody',
+    id: 'connection.http.auth.token.refreshBody',
     label: 'Http auth token refresh Body',
-    defaultValue: '{{http.auth.token.refreshBody}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshBody,
   },
-  connectionHttpAuthTokenRefreshTokenPath: {
+  'connection.http.auth.token.refreshTokenPath': {
     type: 'text',
     helpKey: 'connection.http.auth.token.refreshTokenPath',
     name: '/http/auth/token/refreshTokenPath',
-    id: 'connectionHttpAuthTokenRefreshTokenPath',
+    id: 'connection.http.auth.token.refreshTokenPath',
     label: 'Http auth token refresh Token Path',
-    defaultValue: '{{http.auth.token.refreshTokenPath}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshTokenPath,
   },
-  connectionHttpAuthTokenRefreshMediaType: {
+  'connection.http.auth.token.refreshMediaType': {
     type: 'select',
     helpKey: 'connection.http.auth.token.refreshMediaType',
     name: '/http/auth/token/refreshMediaType',
-    id: 'connectionHttpAuthTokenRefreshMediaType',
+    id: 'connection.http.auth.token.refreshMediaType',
     label: 'Http auth token refresh Media Type',
-    defaultValue: '{{http.auth.token.refreshMediaType}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMediaType,
     options: [
       {
         items: [
@@ -1224,65 +1273,79 @@ export default {
       },
     ],
   },
-  connectionHttpAuthTokenRefreshHeaders: {
+  'connection.http.auth.token.refreshHeaders': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'connection.http.auth.token.refreshHeaders',
     name: '/http/auth/token/refreshHeaders',
-    id: 'connectionHttpAuthTokenRefreshHeaders',
+    id: 'connection.http.auth.token.refreshHeaders',
     label: 'Http auth token refresh Headers',
-    defaultValue: '{{http.auth.token.refreshHeaders}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshHeaders,
   },
-  connectionHttpAuthTokenRefreshToken: {
+  'connection.http.auth.token.refreshToken': {
     type: 'text',
     helpKey: 'connection.http.auth.token.refreshToken',
     name: '/http/auth/token/refreshToken',
-    id: 'connectionHttpAuthTokenRefreshToken',
+    id: 'connection.http.auth.token.refreshToken',
     label: 'Http auth token refresh Token',
-    defaultValue: '{{http.auth.token.refreshToken}}',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshToken,
   },
-  connectionHttpRateLimitFailStatusCode: {
+  'connection.http.rateLimit.failStatusCode': {
     type: 'text',
     helpKey: 'connection.http.rateLimit.failStatusCode',
     name: '/http/rateLimit/failStatusCode',
-    id: 'connectionHttpRateLimitFailStatusCode',
+    id: 'connection.http.rateLimit.failStatusCode',
     label: 'Http rate Limit fail Status Code',
-    defaultValue: '{{http.rateLimit.failStatusCode}}',
+    defaultValue: r =>
+      r && r.http && r.http.rateLimit && r.http.rateLimit.failStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionHttpRateLimitFailPath: {
+  'connection.http.rateLimit.failPath': {
     type: 'text',
     helpKey: 'connection.http.rateLimit.failPath',
     name: '/http/rateLimit/failPath',
-    id: 'connectionHttpRateLimitFailPath',
+    id: 'connection.http.rateLimit.failPath',
     label: 'Http rate Limit fail Path',
-    defaultValue: '{{http.rateLimit.failPath}}',
+    defaultValue: r =>
+      r && r.http && r.http.rateLimit && r.http.rateLimit.failPath,
   },
-  connectionHttpRateLimitFailValuess: {
+  'connection.http.rateLimit.failValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.http.rateLimit.failValues',
     name: '/http/rateLimit/failValuess',
-    id: 'connectionHttpRateLimitFailValuess',
+    id: 'connection.http.rateLimit.failValuess',
     label: 'Http rate Limit fail Values',
-    defaultValue: '{{http.rateLimit.failValues}}',
+    defaultValue: r =>
+      r && r.http && r.http.rateLimit && r.http.rateLimit.failValues,
     validWhen: [],
   },
-  connectionHttpRateLimitLimit: {
+  'connection.http.rateLimit.limit': {
     type: 'text',
     helpKey: 'connection.http.rateLimit.limit',
     name: '/http/rateLimit/limit',
-    id: 'connectionHttpRateLimitLimit',
+    id: 'connection.http.rateLimit.limit',
     label: 'Http rate Limit limit',
-    defaultValue: '{{http.rateLimit.limit}}',
+    defaultValue: r =>
+      r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1295,58 +1358,57 @@ export default {
       },
     ],
   },
-  connectionHttpHeaders: {
+  'connection.http.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'connection.http.headers',
     name: '/http/headers',
-    id: 'connectionHttpHeaders',
+    id: 'connection.http.headers',
     label: 'Http headers',
-    defaultValue: '{{http.headers}}',
+    defaultValue: r => r && r.http && r.http.headers,
   },
-  connectionHttpUnencrypted: {
+  'connection.http.unencrypted': {
     type: 'text',
     helpKey: 'connection.http.unencrypted',
     name: '/http/unencrypted',
-    id: 'connectionHttpUnencrypted',
+    id: 'connection.http.unencrypted',
     label: 'Http unencrypted',
-    defaultValue: '{{http.unencrypted}}',
+    defaultValue: r => r && r.http && r.http.unencrypted,
   },
-  connectionHttpEncrypted: {
+  'connection.http.encrypted': {
     type: 'text',
     helpKey: 'connection.http.encrypted',
     name: '/http/encrypted',
-    id: 'connectionHttpEncrypted',
+    id: 'connection.http.encrypted',
     label: 'Http encrypted',
-    defaultValue: '{{http.encrypted}}',
+    defaultValue: r => r && r.http && r.http.encrypted,
   },
-  connectionHttpEncrypteds: {
+  'connection.http.encrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.http.encrypteds',
     name: '/http/encrypteds',
-    id: 'connectionHttpEncrypteds',
+    id: 'connection.http.encrypteds',
     label: 'Http encrypted',
-    defaultValue: '{{http.encrypted}}',
+    defaultValue: r => r && r.http && r.http.encrypted,
   },
   // #endregion http
   // #region ftp
-  connectionFtpHostURI: {
+  'connection.ftp.hostURI': {
     type: 'text',
     helpKey: 'connection.ftp.hostURI',
     name: '/ftp/hostURI',
-    id: 'connectionFtpHostURI',
+    id: 'connection.ftp.hostURI',
     label: 'Host',
-    defaultValue: '{{ftp.hostURI}}',
+    defaultValue: r => r && r.ftp && r.ftp.hostURI,
   },
-
-  connectionFtpType: {
+  'connection.ftp.type': {
     type: 'radiogroup',
     helpKey: 'connection.ftp.type',
     name: '/ftp/type',
-    id: 'connectionFtpType',
+    id: 'connection.ftp.type',
     label: 'Protocol',
     defaultValue: '{{ftp.type}}',
     options: [
@@ -1359,63 +1421,63 @@ export default {
       },
     ],
   },
-  connectionFtpUsername: {
+  'connection.ftp.username': {
     type: 'text',
     helpKey: 'connection.ftp.username',
     name: '/ftp/username',
-    id: 'connectionFtpUsername',
+    id: 'connection.ftp.username',
     label: 'Username',
-    defaultValue: '{{ftp.username}}',
+    defaultValue: r => r && r.ftp && r.ftp.username,
   },
-  connectionFtpPassword: {
+  'connection.ftp.password': {
     type: 'text',
     helpKey: 'connection.ftp.password',
     name: '/ftp/password',
-    id: 'connectionFtpPassword',
+    id: 'connection.ftp.password',
     label: 'Password',
-    defaultValue: '{{ftp.password}}',
+    defaultValue: r => r && r.ftp && r.ftp.password,
   },
-  connectionFtpAuthKey: {
+  'connection.ftp.authKey': {
     type: 'text',
     helpKey: 'connection.ftp.authKey',
     name: '/ftp/authKey',
-    id: 'connectionFtpAuthKey',
+    id: 'connection.ftp.authKey',
     label: 'Authentication Key (PEM format)',
-    defaultValue: '{{ftp.authKey}}',
+    defaultValue: r => r && r.ftp && r.ftp.authKey,
   },
-  connectionFtpPort: {
-    type: 'ftpport',
+  'connection.ftp.port': {
+    type: 'text',
     helpKey: 'connection.ftp.port',
     name: '/ftp/port',
-    id: 'connectionFtpPort',
-    label: 'Port',
-    defaultValue: '{{ftp.port}}',
-    // valueType: 'number',
-    required: true,
-    validWhen: {
-      fallsWithinNumericalRange: {
-        min: 0,
-        max: 65535,
-        message: 'The value must be more than 0 and less than 65535',
+    id: 'connection.ftp.port',
+    label: 'Ftp port',
+    defaultValue: r => r && r.ftp && r.ftp.port,
+    validWhen: [
+      {
+        fallsWithinNumericalRange: {
+          min: 0,
+          max: 65535,
+          message: 'The value must be more than 0 and less than 65535',
+        },
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
-      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-    },
+    ],
   },
-  connectionFtpUsePassiveMode: {
+  'connection.ftp.usePassiveMode': {
     type: 'checkbox',
     helpKey: 'connection.ftp.usePassiveMode',
     name: '/ftp/usePassiveMode',
-    id: 'connectionFtpUsePassiveMode',
+    id: 'connection.ftp.usePassiveMode',
     label: 'Use Passive Mode',
     defaultValue: false,
   },
-  connectionFtpEntryParser: {
+  'connection.ftp.entryParser': {
     type: 'select',
     helpKey: 'connection.ftp.entryParser',
     name: '/ftp/entryParser',
-    id: 'connectionFtpEntryParser',
+    id: 'connection.ftp.entryParser',
     label: 'Entry Parser',
-    defaultValue: '{{ftp.entryParser}}',
+    defaultValue: r => r && r.ftp && r.ftp.entryParser,
     options: [
       {
         items: [
@@ -1434,157 +1496,180 @@ export default {
       },
     ],
   },
-  connectionFtpUserDirectoryIsRoot: {
+  'connection.ftp.userDirectoryIsRoot': {
     type: 'checkbox',
     helpKey: 'connection.ftp.userDirectoryIsRoot',
     name: '/ftp/userDirectoryIsRoot',
-    id: 'connectionFtpUserDirectoryIsRoot',
+    id: 'connection.ftp.userDirectoryIsRoot',
     label: 'User Directory is Root',
     defaultValue: false,
   },
-  connectionFtpUseImplicitFtps: {
+  'connection.ftp.useImplicitFtps': {
     type: 'checkbox',
     helpKey: 'connection.ftp.useImplicitFtps',
     name: '/ftp/useImplicitFtps',
-    id: 'connectionFtpUseImplicitFtps',
+    id: 'connection.ftp.useImplicitFtps',
     label: 'Ftp use Implicit Ftps',
     defaultValue: false,
   },
-  connectionFtpRequireSocketReUse: {
+  'connection.ftp.requireSocketReUse': {
     type: 'checkbox',
     helpKey: 'connection.ftp.requireSocketReUse',
     name: '/ftp/requireSocketReUse',
-    id: 'connectionFtpRequireSocketReUse',
+    id: 'connection.ftp.requireSocketReUse',
     label: 'Ftp require Socket Re Use',
     defaultValue: false,
   },
-  // doesnt map to the db a custom field in our UI
-  connectionFtpUsePgp: {
+  'connection.ftp.usePgp': {
     type: 'checkbox',
     helpKey: 'connection.ftp.usePgp',
     name: '/ftp/usePgp',
-    id: 'connectionFtpUsePgp',
+    id: 'connection.ftp.usePgp',
     label: 'Use PGP Encryption',
     defaultValue: false,
   },
-  connectionFtpPgpEncryptKey: {
+  'connection.ftp.pgpEncryptKey': {
     type: 'text',
     helpKey: 'connection.ftp.pgpEncryptKey',
     name: '/ftp/pgpEncryptKey',
-    id: 'connectionFtpPgpEncryptKey',
+    id: 'connection.ftp.pgpEncryptKey',
     label: 'PGP Public Key',
-    defaultValue: '{{ftp.pgpEncryptKey}}',
+    defaultValue: r => r && r.ftp && r.ftp.pgpEncryptKey,
   },
-  connectionFtpPgpDecryptKey: {
+  'connection.ftp.pgpDecryptKey': {
     type: 'text',
     helpKey: 'connection.ftp.pgpDecryptKey',
     name: '/ftp/pgpDecryptKey',
-    id: 'connectionFtpPgpDecryptKey',
+    id: 'connection.ftp.pgpDecryptKey',
     label: 'PGP Private Key',
-    defaultValue: '{{ftp.pgpDecryptKey}}',
+    defaultValue: r => r && r.ftp && r.ftp.pgpDecryptKey,
   },
-  connectionFtpPgpPassphrase: {
+  'connection.ftp.pgpPassphrase': {
     type: 'text',
     helpKey: 'connection.ftp.pgpPassphrase',
     name: '/ftp/pgpPassphrase',
-    id: 'connectionFtpPgpPassphrase',
+    id: 'connection.ftp.pgpPassphrase',
     label: 'PGP Passphrase',
-    defaultValue: '{{ftp.pgpPassphrase}}',
+    defaultValue: r => r && r.ftp && r.ftp.pgpPassphrase,
   },
   // #endregion ftp
   // #region s3
-  connectionS3AccessKeyId: {
+  'connection.s3.accessKeyId': {
     type: 'text',
     helpKey: 'connection.s3.accessKeyId',
     name: '/s3/accessKeyId',
-    id: 'connectionS3AccessKeyId',
+    id: 'connection.s3.accessKeyId',
     label: 'S3 access Key Id',
-    defaultValue: '{{s3.accessKeyId}}',
+    defaultValue: r => r && r.s3 && r.s3.accessKeyId,
   },
-  connectionS3SecretAccessKey: {
+  'connection.s3.secretAccessKey': {
     type: 'text',
     helpKey: 'connection.s3.secretAccessKey',
     name: '/s3/secretAccessKey',
-    id: 'connectionS3SecretAccessKey',
+    id: 'connection.s3.secretAccessKey',
     label: 'S3 secret Access Key',
-    defaultValue: '{{s3.secretAccessKey}}',
+    defaultValue: r => r && r.s3 && r.s3.secretAccessKey,
   },
-  connectionS3PingBucket: {
+  'connection.s3.pingBucket': {
     type: 'text',
     helpKey: 'connection.s3.pingBucket',
     name: '/s3/pingBucket',
-    id: 'connectionS3PingBucket',
+    id: 'connection.s3.pingBucket',
     label: 'S3 ping Bucket',
-    defaultValue: '{{s3.pingBucket}}',
+    defaultValue: r => r && r.s3 && r.s3.pingBucket,
   },
   // #endregion s3
   // #region as2
-  connectionAs2As2Id: {
+  'connection.as2.as2Id': {
     type: 'text',
     helpKey: 'connection.as2.as2Id',
     name: '/as2/as2Id',
-    id: 'connectionAs2As2Id',
+    id: 'connection.as2.as2Id',
     label: 'As2 as2Id',
-    defaultValue: '{{as2.as2Id}}',
+    defaultValue: r => r && r.as2 && r.as2.as2Id,
   },
-  connectionAs2PartnerId: {
+  'connection.as2.partnerId': {
     type: 'text',
     helpKey: 'connection.as2.partnerId',
     name: '/as2/partnerId',
-    id: 'connectionAs2PartnerId',
+    id: 'connection.as2.partnerId',
     label: 'As2 partner Id',
-    defaultValue: '{{as2.partnerId}}',
+    defaultValue: r => r && r.as2 && r.as2.partnerId,
   },
-  connectionAs2ContentBasedFlowRouterFunction: {
+  'connection.as2.contentBasedFlowRouter.function': {
     type: 'text',
     helpKey: 'connection.as2.contentBasedFlowRouter.function',
     name: '/as2/contentBasedFlowRouter/function',
-    id: 'connectionAs2ContentBasedFlowRouterFunction',
+    id: 'connection.as2.contentBasedFlowRouter.function',
     label: 'As2 content Based Flow Router function',
-    defaultValue: '{{as2.contentBasedFlowRouter.function}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.contentBasedFlowRouter &&
+      r.as2.contentBasedFlowRouter.function,
   },
-  connectionAs2ContentBasedFlowRouter_scriptId: {
+  'connection.as2.contentBasedFlowRouter._scriptId': {
     type: 'text',
     helpKey: 'connection.as2.contentBasedFlowRouter._scriptId',
     name: '/as2/contentBasedFlowRouter/_scriptId',
-    id: 'connectionAs2ContentBasedFlowRouter_scriptId',
+    id: 'connection.as2.contentBasedFlowRouter._scriptId',
     label: 'As2 content Based Flow Router _script Id',
-    defaultValue: '{{as2.contentBasedFlowRouter._scriptId}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.contentBasedFlowRouter &&
+      r.as2.contentBasedFlowRouter._scriptId,
   },
-  connectionAs2PartnerStationInfoAs2URI: {
+  'connection.as2.partnerStationInfo.as2URI': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.as2URI',
     name: '/as2/partnerStationInfo/as2URI',
-    id: 'connectionAs2PartnerStationInfoAs2URI',
+    id: 'connection.as2.partnerStationInfo.as2URI',
     label: 'As2 partner Station Info as2URI',
-    defaultValue: '{{as2.partnerStationInfo.as2URI}}',
+    defaultValue: r =>
+      r && r.as2 && r.as2.partnerStationInfo && r.as2.partnerStationInfo.as2URI,
   },
-  connectionAs2PartnerStationInfoMdnMdnURL: {
+  'connection.as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.mdn.mdnURL',
     name: '/as2/partnerStationInfo/mdn/mdnURL',
-    id: 'connectionAs2PartnerStationInfoMdnMdnURL',
+    id: 'connection.as2.partnerStationInfo.mdn.mdnURL',
     label: 'As2 partner Station Info mdn mdn URL',
-    defaultValue: '{{as2.partnerStationInfo.mdn.mdnURL}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.mdn &&
+      r.as2.partnerStationInfo.mdn.mdnURL,
   },
-  connectionAs2PartnerStationInfoMdnSignatureProtocol: {
+  'connection.as2.partnerStationInfo.mdn.signatureProtocol': {
     type: 'radiogroup',
     helpKey: 'connection.as2.partnerStationInfo.mdn.signatureProtocol',
     name: '/as2/partnerStationInfo/mdn/signatureProtocol',
-    id: 'connectionAs2PartnerStationInfoMdnSignatureProtocol',
+    id: 'connection.as2.partnerStationInfo.mdn.signatureProtocol',
     label: 'As2 partner Station Info mdn signature Protocol',
-    defaultValue: '{{as2.partnerStationInfo.mdn.signatureProtocol}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.mdn &&
+      r.as2.partnerStationInfo.mdn.signatureProtocol,
     options: [
       { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
     ],
   },
-  connectionAs2PartnerStationInfoMdnMdnSigning: {
+  'connection.as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.mdn.mdnSigning',
     name: '/as2/partnerStationInfo/mdn/mdnSigning',
-    id: 'connectionAs2PartnerStationInfoMdnMdnSigning',
+    id: 'connection.as2.partnerStationInfo.mdn.mdnSigning',
     label: 'As2 partner Station Info mdn mdn Signing',
-    defaultValue: '{{as2.partnerStationInfo.mdn.mdnSigning}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.mdn &&
+      r.as2.partnerStationInfo.mdn.mdnSigning,
     options: [
       {
         items: [
@@ -1596,70 +1681,109 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoAuthFailStatusCode: {
+  'connection.as2.partnerStationInfo.auth.failStatusCode': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.failStatusCode',
     name: '/as2/partnerStationInfo/auth/failStatusCode',
-    id: 'connectionAs2PartnerStationInfoAuthFailStatusCode',
+    id: 'connection.as2.partnerStationInfo.auth.failStatusCode',
     label: 'As2 partner Station Info auth fail Status Code',
-    defaultValue: '{{as2.partnerStationInfo.auth.failStatusCode}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.failStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionAs2PartnerStationInfoAuthFailPath: {
+  'connection.as2.partnerStationInfo.auth.failPath': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.failPath',
     name: '/as2/partnerStationInfo/auth/failPath',
-    id: 'connectionAs2PartnerStationInfoAuthFailPath',
+    id: 'connection.as2.partnerStationInfo.auth.failPath',
     label: 'As2 partner Station Info auth fail Path',
-    defaultValue: '{{as2.partnerStationInfo.auth.failPath}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.failPath,
   },
-  connectionAs2PartnerStationInfoAuthFailValuess: {
+  'connection.as2.partnerStationInfo.auth.failValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.as2.partnerStationInfo.auth.failValues',
     name: '/as2/partnerStationInfo/auth/failValuess',
-    id: 'connectionAs2PartnerStationInfoAuthFailValuess',
+    id: 'connection.as2.partnerStationInfo.auth.failValuess',
     label: 'As2 partner Station Info auth fail Values',
-    defaultValue: '{{as2.partnerStationInfo.auth.failValues}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.failValues,
     validWhen: [],
   },
-  connectionAs2PartnerStationInfoAuthBasicUsername: {
+  'connection.as2.partnerStationInfo.auth.basic.username': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.basic.username',
     name: '/as2/partnerStationInfo/auth/basic/username',
-    id: 'connectionAs2PartnerStationInfoAuthBasicUsername',
+    id: 'connection.as2.partnerStationInfo.auth.basic.username',
     label: 'As2 partner Station Info auth basic username',
-    defaultValue: '{{as2.partnerStationInfo.auth.basic.username}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.basic &&
+      r.as2.partnerStationInfo.auth.basic.username,
   },
-  connectionAs2PartnerStationInfoAuthBasicPassword: {
+  'connection.as2.partnerStationInfo.auth.basic.password': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.basic.password',
     name: '/as2/partnerStationInfo/auth/basic/password',
-    id: 'connectionAs2PartnerStationInfoAuthBasicPassword',
+    id: 'connection.as2.partnerStationInfo.auth.basic.password',
     label: 'As2 partner Station Info auth basic password',
-    defaultValue: '{{as2.partnerStationInfo.auth.basic.password}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.basic &&
+      r.as2.partnerStationInfo.auth.basic.password,
   },
-  connectionAs2PartnerStationInfoAuthTokenToken: {
+  'connection.as2.partnerStationInfo.auth.token.token': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.token',
     name: '/as2/partnerStationInfo/auth/token/token',
-    id: 'connectionAs2PartnerStationInfoAuthTokenToken',
+    id: 'connection.as2.partnerStationInfo.auth.token.token',
     label: 'As2 partner Station Info auth token token',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.token}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.token,
   },
-  connectionAs2PartnerStationInfoAuthTokenLocation: {
+  'connection.as2.partnerStationInfo.auth.token.location': {
     type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.location',
     name: '/as2/partnerStationInfo/auth/token/location',
-    id: 'connectionAs2PartnerStationInfoAuthTokenLocation',
+    id: 'connection.as2.partnerStationInfo.auth.token.location',
     label: 'As2 partner Station Info auth token location',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.location}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.location,
     options: [
       {
         items: [
@@ -1670,37 +1794,61 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoAuthTokenHeaderName: {
+  'connection.as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.headerName',
     name: '/as2/partnerStationInfo/auth/token/headerName',
-    id: 'connectionAs2PartnerStationInfoAuthTokenHeaderName',
+    id: 'connection.as2.partnerStationInfo.auth.token.headerName',
     label: 'As2 partner Station Info auth token header Name',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.headerName}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.headerName,
   },
-  connectionAs2PartnerStationInfoAuthTokenScheme: {
+  'connection.as2.partnerStationInfo.auth.token.scheme': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.scheme',
     name: '/as2/partnerStationInfo/auth/token/scheme',
-    id: 'connectionAs2PartnerStationInfoAuthTokenScheme',
+    id: 'connection.as2.partnerStationInfo.auth.token.scheme',
     label: 'As2 partner Station Info auth token scheme',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.scheme}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.scheme,
   },
-  connectionAs2PartnerStationInfoAuthTokenParamName: {
+  'connection.as2.partnerStationInfo.auth.token.paramName': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.paramName',
     name: '/as2/partnerStationInfo/auth/token/paramName',
-    id: 'connectionAs2PartnerStationInfoAuthTokenParamName',
+    id: 'connection.as2.partnerStationInfo.auth.token.paramName',
     label: 'As2 partner Station Info auth token param Name',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.paramName}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.paramName,
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshMethod: {
+  'connection.as2.partnerStationInfo.auth.token.refreshMethod': {
     type: 'radiogroup',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshMethod',
     name: '/as2/partnerStationInfo/auth/token/refreshMethod',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshMethod',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshMethod',
     label: 'As2 partner Station Info auth token refresh Method',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMethod}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshMethod,
     options: [
       {
         items: [
@@ -1710,37 +1858,61 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshRelativeURI: {
+  'connection.as2.partnerStationInfo.auth.token.refreshRelativeURI': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshRelativeURI',
     name: '/as2/partnerStationInfo/auth/token/refreshRelativeURI',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshRelativeURI',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshRelativeURI',
     label: 'As2 partner Station Info auth token refresh Relative URI',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshRelativeURI}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshRelativeURI,
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshBody: {
+  'connection.as2.partnerStationInfo.auth.token.refreshBody': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshBody',
     name: '/as2/partnerStationInfo/auth/token/refreshBody',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshBody',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshBody',
     label: 'As2 partner Station Info auth token refresh Body',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshBody}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshBody,
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshTokenPath: {
+  'connection.as2.partnerStationInfo.auth.token.refreshTokenPath': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshTokenPath',
     name: '/as2/partnerStationInfo/auth/token/refreshTokenPath',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshTokenPath',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshTokenPath',
     label: 'As2 partner Station Info auth token refresh Token Path',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshTokenPath}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshTokenPath,
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshMediaType: {
+  'connection.as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshMediaType',
     name: '/as2/partnerStationInfo/auth/token/refreshMediaType',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshMediaType',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshMediaType',
     label: 'As2 partner Station Info auth token refresh Media Type',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMediaType}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshMediaType,
     options: [
       {
         items: [
@@ -1751,65 +1923,97 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshHeaders: {
+  'connection.as2.partnerStationInfo.auth.token.refreshHeaders': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshHeaders',
     name: '/as2/partnerStationInfo/auth/token/refreshHeaders',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshHeaders',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshHeaders',
     label: 'As2 partner Station Info auth token refresh Headers',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshHeaders}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshHeaders,
   },
-  connectionAs2PartnerStationInfoAuthTokenRefreshToken: {
+  'connection.as2.partnerStationInfo.auth.token.refreshToken': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.auth.token.refreshToken',
     name: '/as2/partnerStationInfo/auth/token/refreshToken',
-    id: 'connectionAs2PartnerStationInfoAuthTokenRefreshToken',
+    id: 'connection.as2.partnerStationInfo.auth.token.refreshToken',
     label: 'As2 partner Station Info auth token refresh Token',
-    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshToken}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshToken,
   },
-  connectionAs2PartnerStationInfoRateLimitFailStatusCode: {
+  'connection.as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failStatusCode',
     name: '/as2/partnerStationInfo/rateLimit/failStatusCode',
-    id: 'connectionAs2PartnerStationInfoRateLimitFailStatusCode',
+    id: 'connection.as2.partnerStationInfo.rateLimit.failStatusCode',
     label: 'As2 partner Station Info rate Limit fail Status Code',
-    defaultValue: '{{as2.partnerStationInfo.rateLimit.failStatusCode}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.rateLimit &&
+      r.as2.partnerStationInfo.rateLimit.failStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionAs2PartnerStationInfoRateLimitFailPath: {
+  'connection.as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failPath',
     name: '/as2/partnerStationInfo/rateLimit/failPath',
-    id: 'connectionAs2PartnerStationInfoRateLimitFailPath',
+    id: 'connection.as2.partnerStationInfo.rateLimit.failPath',
     label: 'As2 partner Station Info rate Limit fail Path',
-    defaultValue: '{{as2.partnerStationInfo.rateLimit.failPath}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.rateLimit &&
+      r.as2.partnerStationInfo.rateLimit.failPath,
   },
-  connectionAs2PartnerStationInfoRateLimitFailValuess: {
+  'connection.as2.partnerStationInfo.rateLimit.failValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.failValues',
     name: '/as2/partnerStationInfo/rateLimit/failValuess',
-    id: 'connectionAs2PartnerStationInfoRateLimitFailValuess',
+    id: 'connection.as2.partnerStationInfo.rateLimit.failValuess',
     label: 'As2 partner Station Info rate Limit fail Values',
-    defaultValue: '{{as2.partnerStationInfo.rateLimit.failValues}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.rateLimit &&
+      r.as2.partnerStationInfo.rateLimit.failValues,
     validWhen: [],
   },
-  connectionAs2PartnerStationInfoRateLimitLimit: {
+  'connection.as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
     helpKey: 'connection.as2.partnerStationInfo.rateLimit.limit',
     name: '/as2/partnerStationInfo/rateLimit/limit',
-    id: 'connectionAs2PartnerStationInfoRateLimitLimit',
+    id: 'connection.as2.partnerStationInfo.rateLimit.limit',
     label: 'As2 partner Station Info rate Limit limit',
-    defaultValue: '{{as2.partnerStationInfo.rateLimit.limit}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.rateLimit &&
+      r.as2.partnerStationInfo.rateLimit.limit,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1822,24 +2026,32 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoSMIMEVersion: {
+  'connection.as2.partnerStationInfo.SMIMEVersion': {
     type: 'radiogroup',
     helpKey: 'connection.as2.partnerStationInfo.SMIMEVersion',
     name: '/as2/partnerStationInfo/SMIMEVersion',
-    id: 'connectionAs2PartnerStationInfoSMIMEVersion',
+    id: 'connection.as2.partnerStationInfo.SMIMEVersion',
     label: 'As2 partner Station Info SMIMEVersion',
-    defaultValue: '{{as2.partnerStationInfo.SMIMEVersion}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.SMIMEVersion,
     options: [
       { items: [{ label: 'V2', value: 'v2' }, { label: 'V3', value: 'v3' }] },
     ],
   },
-  connectionAs2PartnerStationInfoEncryptionType: {
+  'connection.as2.partnerStationInfo.encryptionType': {
     type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.encryptionType',
     name: '/as2/partnerStationInfo/encryptionType',
-    id: 'connectionAs2PartnerStationInfoEncryptionType',
+    id: 'connection.as2.partnerStationInfo.encryptionType',
     label: 'As2 partner Station Info encryption Type',
-    defaultValue: '{{as2.partnerStationInfo.encryptionType}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.encryptionType,
     options: [
       {
         items: [
@@ -1853,13 +2065,17 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoSigning: {
+  'connection.as2.partnerStationInfo.signing': {
     type: 'select',
     helpKey: 'connection.as2.partnerStationInfo.signing',
     name: '/as2/partnerStationInfo/signing',
-    id: 'connectionAs2PartnerStationInfoSigning',
+    id: 'connection.as2.partnerStationInfo.signing',
     label: 'As2 partner Station Info signing',
-    defaultValue: '{{as2.partnerStationInfo.signing}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.signing,
     options: [
       {
         items: [
@@ -1871,13 +2087,17 @@ export default {
       },
     ],
   },
-  connectionAs2PartnerStationInfoEncoding: {
+  'connection.as2.partnerStationInfo.encoding': {
     type: 'radiogroup',
     helpKey: 'connection.as2.partnerStationInfo.encoding',
     name: '/as2/partnerStationInfo/encoding',
-    id: 'connectionAs2PartnerStationInfoEncoding',
+    id: 'connection.as2.partnerStationInfo.encoding',
     label: 'As2 partner Station Info encoding',
-    defaultValue: '{{as2.partnerStationInfo.encoding}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.encoding,
     options: [
       {
         items: [
@@ -1887,32 +2107,47 @@ export default {
       },
     ],
   },
-  connectionAs2UserStationInfoMdnMdnURL: {
+  'connection.as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
     helpKey: 'connection.as2.userStationInfo.mdn.mdnURL',
     name: '/as2/userStationInfo/mdn/mdnURL',
-    id: 'connectionAs2UserStationInfoMdnMdnURL',
+    id: 'connection.as2.userStationInfo.mdn.mdnURL',
     label: 'As2 user Station Info mdn mdn URL',
-    defaultValue: '{{as2.userStationInfo.mdn.mdnURL}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.mdn &&
+      r.as2.userStationInfo.mdn.mdnURL,
   },
-  connectionAs2UserStationInfoMdnSignatureProtocol: {
+  'connection.as2.userStationInfo.mdn.signatureProtocol': {
     type: 'radiogroup',
     helpKey: 'connection.as2.userStationInfo.mdn.signatureProtocol',
     name: '/as2/userStationInfo/mdn/signatureProtocol',
-    id: 'connectionAs2UserStationInfoMdnSignatureProtocol',
+    id: 'connection.as2.userStationInfo.mdn.signatureProtocol',
     label: 'As2 user Station Info mdn signature Protocol',
-    defaultValue: '{{as2.userStationInfo.mdn.signatureProtocol}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.mdn &&
+      r.as2.userStationInfo.mdn.signatureProtocol,
     options: [
       { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
     ],
   },
-  connectionAs2UserStationInfoMdnMdnSigning: {
+  'connection.as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
     helpKey: 'connection.as2.userStationInfo.mdn.mdnSigning',
     name: '/as2/userStationInfo/mdn/mdnSigning',
-    id: 'connectionAs2UserStationInfoMdnMdnSigning',
+    id: 'connection.as2.userStationInfo.mdn.mdnSigning',
     label: 'As2 user Station Info mdn mdn Signing',
-    defaultValue: '{{as2.userStationInfo.mdn.mdnSigning}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.mdn &&
+      r.as2.userStationInfo.mdn.mdnSigning,
     options: [
       {
         items: [
@@ -1924,13 +2159,17 @@ export default {
       },
     ],
   },
-  connectionAs2UserStationInfoEncryptionType: {
+  'connection.as2.userStationInfo.encryptionType': {
     type: 'select',
     helpKey: 'connection.as2.userStationInfo.encryptionType',
     name: '/as2/userStationInfo/encryptionType',
-    id: 'connectionAs2UserStationInfoEncryptionType',
+    id: 'connection.as2.userStationInfo.encryptionType',
     label: 'As2 user Station Info encryption Type',
-    defaultValue: '{{as2.userStationInfo.encryptionType}}',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.encryptionType,
     options: [
       {
         items: [
@@ -1944,13 +2183,14 @@ export default {
       },
     ],
   },
-  connectionAs2UserStationInfoSigning: {
+  'connection.as2.userStationInfo.signing': {
     type: 'select',
     helpKey: 'connection.as2.userStationInfo.signing',
     name: '/as2/userStationInfo/signing',
-    id: 'connectionAs2UserStationInfoSigning',
+    id: 'connection.as2.userStationInfo.signing',
     label: 'As2 user Station Info signing',
-    defaultValue: '{{as2.userStationInfo.signing}}',
+    defaultValue: r =>
+      r && r.as2 && r.as2.userStationInfo && r.as2.userStationInfo.signing,
     options: [
       {
         items: [
@@ -1962,13 +2202,14 @@ export default {
       },
     ],
   },
-  connectionAs2UserStationInfoEncoding: {
+  'connection.as2.userStationInfo.encoding': {
     type: 'radiogroup',
     helpKey: 'connection.as2.userStationInfo.encoding',
     name: '/as2/userStationInfo/encoding',
-    id: 'connectionAs2UserStationInfoEncoding',
+    id: 'connection.as2.userStationInfo.encoding',
     label: 'As2 user Station Info encoding',
-    defaultValue: '{{as2.userStationInfo.encoding}}',
+    defaultValue: r =>
+      r && r.as2 && r.as2.userStationInfo && r.as2.userStationInfo.encoding,
     options: [
       {
         items: [
@@ -1978,77 +2219,77 @@ export default {
       },
     ],
   },
-  connectionAs2Encrypted: {
+  'connection.as2.encrypted': {
     type: 'text',
     helpKey: 'connection.as2.encrypted',
     name: '/as2/encrypted',
-    id: 'connectionAs2Encrypted',
+    id: 'connection.as2.encrypted',
     label: 'As2 encrypted',
-    defaultValue: '{{as2.encrypted}}',
+    defaultValue: r => r && r.as2 && r.as2.encrypted,
   },
-  connectionAs2ConcurrencyLevel: {
+  'connection.as2.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.as2.concurrencyLevel',
     name: '/as2/concurrencyLevel',
-    id: 'connectionAs2ConcurrencyLevel',
+    id: 'connection.as2.concurrencyLevel',
     label: 'As2 concurrency Level',
-    defaultValue: '{{as2.concurrencyLevel}}',
+    defaultValue: r => r && r.as2 && r.as2.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionAs2Unencrypted: {
+  'connection.as2.unencrypted': {
     type: 'text',
     helpKey: 'connection.as2.unencrypted',
     name: '/as2/unencrypted',
-    id: 'connectionAs2Unencrypted',
+    id: 'connection.as2.unencrypted',
     label: 'As2 unencrypted',
-    defaultValue: '{{as2.unencrypted}}',
+    defaultValue: r => r && r.as2 && r.as2.unencrypted,
   },
-  connectionAs2Encrypteds: {
+  'connection.as2.encrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.as2.encrypteds',
     name: '/as2/encrypteds',
-    id: 'connectionAs2Encrypteds',
+    id: 'connection.as2.encrypteds',
     label: 'As2 encrypted',
-    defaultValue: '{{as2.encrypted}}',
+    defaultValue: r => r && r.as2 && r.as2.encrypted,
   },
   // #endregion as2
   // #region netsuite
-  connectionNetsuiteAccount: {
+  'connection.netsuite.account': {
     type: 'text',
     helpKey: 'connection.netsuite.account',
     name: '/netsuite/account',
-    id: 'connectionNetsuiteAccount',
+    id: 'connection.netsuite.account',
     label: 'Netsuite account',
-    defaultValue: '{{netsuite.account}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.account,
   },
-  connectionNetsuiteTokenId: {
+  'connection.netsuite.tokenId': {
     type: 'text',
     helpKey: 'connection.netsuite.tokenId',
     name: '/netsuite/tokenId',
-    id: 'connectionNetsuiteTokenId',
+    id: 'connection.netsuite.tokenId',
     label: 'Netsuite token Id',
-    defaultValue: '{{netsuite.tokenId}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.tokenId,
   },
-  connectionNetsuiteTokenSecret: {
+  'connection.netsuite.tokenSecret': {
     type: 'text',
     helpKey: 'connection.netsuite.tokenSecret',
     name: '/netsuite/tokenSecret',
-    id: 'connectionNetsuiteTokenSecret',
+    id: 'connection.netsuite.tokenSecret',
     label: 'Netsuite token Secret',
-    defaultValue: '{{netsuite.tokenSecret}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.tokenSecret,
   },
-  connectionNetsuiteEnvironment: {
+  'connection.netsuite.environment': {
     type: 'select',
     helpKey: 'connection.netsuite.environment',
     name: '/netsuite/environment',
-    id: 'connectionNetsuiteEnvironment',
+    id: 'connection.netsuite.environment',
     label: 'Netsuite environment',
-    defaultValue: '{{netsuite.environment}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.environment,
     options: [
       {
         items: [
@@ -2060,108 +2301,109 @@ export default {
       },
     ],
   },
-  connectionNetsuiteRoleId: {
+  'connection.netsuite.roleId': {
     type: 'text',
     helpKey: 'connection.netsuite.roleId',
     name: '/netsuite/roleId',
-    id: 'connectionNetsuiteRoleId',
+    id: 'connection.netsuite.roleId',
     label: 'Netsuite role Id',
-    defaultValue: '{{netsuite.roleId}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.roleId,
   },
-  connectionNetsuiteEmail: {
+  'connection.netsuite.email': {
     type: 'text',
     helpKey: 'connection.netsuite.email',
     name: '/netsuite/email',
-    id: 'connectionNetsuiteEmail',
+    id: 'connection.netsuite.email',
     label: 'Netsuite email',
-    defaultValue: '{{netsuite.email}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.email,
   },
-  connectionNetsuitePassword: {
+  'connection.netsuite.password': {
     type: 'text',
     helpKey: 'connection.netsuite.password',
     name: '/netsuite/password',
-    id: 'connectionNetsuitePassword',
+    id: 'connection.netsuite.password',
     label: 'Netsuite password',
-    defaultValue: '{{netsuite.password}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.password,
   },
-  connectionNetsuiteRequestLevelCredentials: {
+  'connection.netsuite.requestLevelCredentials': {
     type: 'checkbox',
     helpKey: 'connection.netsuite.requestLevelCredentials',
     name: '/netsuite/requestLevelCredentials',
-    id: 'connectionNetsuiteRequestLevelCredentials',
+    id: 'connection.netsuite.requestLevelCredentials',
     label: 'Netsuite request Level Credentials',
     defaultValue: false,
   },
-  connectionNetsuiteDataCenterURLs: {
+  'connection.netsuite.dataCenterURLs': {
     type: 'text',
     helpKey: 'connection.netsuite.dataCenterURLs',
     name: '/netsuite/dataCenterURLs',
-    id: 'connectionNetsuiteDataCenterURLs',
+    id: 'connection.netsuite.dataCenterURLs',
     label: 'Netsuite data Center URLs',
-    defaultValue: '{{netsuite.dataCenterURLs}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.dataCenterURLs,
   },
-  connectionNetsuiteAccountName: {
+  'connection.netsuite.accountName': {
     type: 'text',
     helpKey: 'connection.netsuite.accountName',
     name: '/netsuite/accountName',
-    id: 'connectionNetsuiteAccountName',
+    id: 'connection.netsuite.accountName',
     label: 'Netsuite account Name',
-    defaultValue: '{{netsuite.accountName}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.accountName,
   },
-  connectionNetsuiteRoleName: {
+  'connection.netsuite.roleName': {
     type: 'text',
     helpKey: 'connection.netsuite.roleName',
     name: '/netsuite/roleName',
-    id: 'connectionNetsuiteRoleName',
+    id: 'connection.netsuite.roleName',
     label: 'Netsuite role Name',
-    defaultValue: '{{netsuite.roleName}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.roleName,
   },
-  connectionNetsuiteConcurrencyLevelRESTlet: {
+  'connection.netsuite.concurrencyLevelRESTlet': {
     type: 'text',
     helpKey: 'connection.netsuite.concurrencyLevelRESTlet',
     name: '/netsuite/concurrencyLevelRESTlet',
-    id: 'connectionNetsuiteConcurrencyLevelRESTlet',
+    id: 'connection.netsuite.concurrencyLevelRESTlet',
     label: 'Netsuite concurrency Level RESTlet',
-    defaultValue: '{{netsuite.concurrencyLevelRESTlet}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevelRESTlet,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionNetsuiteConcurrencyLevelWebServices: {
+  'connection.netsuite.concurrencyLevelWebServices': {
     type: 'text',
     helpKey: 'connection.netsuite.concurrencyLevelWebServices',
     name: '/netsuite/concurrencyLevelWebServices',
-    id: 'connectionNetsuiteConcurrencyLevelWebServices',
+    id: 'connection.netsuite.concurrencyLevelWebServices',
     label: 'Netsuite concurrency Level Web Services',
-    defaultValue: '{{netsuite.concurrencyLevelWebServices}}',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.concurrencyLevelWebServices,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionNetsuiteConcurrencyLevel: {
+  'connection.netsuite.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.netsuite.concurrencyLevel',
     name: '/netsuite/concurrencyLevel',
-    id: 'connectionNetsuiteConcurrencyLevel',
+    id: 'connection.netsuite.concurrencyLevel',
     label: 'Netsuite concurrency Level',
-    defaultValue: '{{netsuite.concurrencyLevel}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  connectionNetsuiteWsdlVersion: {
+  'connection.netsuite.wsdlVersion': {
     type: 'radiogroup',
     helpKey: 'connection.netsuite.wsdlVersion',
     name: '/netsuite/wsdlVersion',
-    id: 'connectionNetsuiteWsdlVersion',
+    id: 'connection.netsuite.wsdlVersion',
     label: 'Netsuite wsdl Version',
-    defaultValue: '{{netsuite.wsdlVersion}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.wsdlVersion,
     options: [
       {
         items: [
@@ -2171,31 +2413,37 @@ export default {
       },
     ],
   },
-  connectionNetsuiteApplicationId: {
+  'connection.netsuite.applicationId': {
     type: 'text',
     helpKey: 'connection.netsuite.applicationId',
     name: '/netsuite/applicationId',
-    id: 'connectionNetsuiteApplicationId',
+    id: 'connection.netsuite.applicationId',
     label: 'Netsuite application Id',
-    defaultValue: '{{netsuite.applicationId}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.applicationId,
   },
   // #endregion netsuite
   // #region netSuiteDistributedAdaptor
-  connectionNetSuiteDistributedAdaptorAccountId: {
+  'connection.netSuiteDistributedAdaptor.accountId': {
     type: 'text',
     helpKey: 'connection.netSuiteDistributedAdaptor.accountId',
     name: '/netSuiteDistributedAdaptor/accountId',
-    id: 'connectionNetSuiteDistributedAdaptorAccountId',
+    id: 'connection.netSuiteDistributedAdaptor.accountId',
     label: 'Net Suite Distributed Adaptor account Id',
-    defaultValue: '{{netSuiteDistributedAdaptor.accountId}}',
+    defaultValue: r =>
+      r &&
+      r.netSuiteDistributedAdaptor &&
+      r.netSuiteDistributedAdaptor.accountId,
   },
-  connectionNetSuiteDistributedAdaptorEnvironment: {
+  'connection.netSuiteDistributedAdaptor.environment': {
     type: 'select',
     helpKey: 'connection.netSuiteDistributedAdaptor.environment',
     name: '/netSuiteDistributedAdaptor/environment',
-    id: 'connectionNetSuiteDistributedAdaptorEnvironment',
+    id: 'connection.netSuiteDistributedAdaptor.environment',
     label: 'Net Suite Distributed Adaptor environment',
-    defaultValue: '{{netSuiteDistributedAdaptor.environment}}',
+    defaultValue: r =>
+      r &&
+      r.netSuiteDistributedAdaptor &&
+      r.netSuiteDistributedAdaptor.environment,
     options: [
       {
         items: [
@@ -2207,55 +2455,62 @@ export default {
       },
     ],
   },
-  connectionNetSuiteDistributedAdaptorConnectionId: {
+  'connection.netSuiteDistributedAdaptor.connectionId': {
     type: 'text',
     helpKey: 'connection.netSuiteDistributedAdaptor.connectionId',
     name: '/netSuiteDistributedAdaptor/connectionId',
-    id: 'connectionNetSuiteDistributedAdaptorConnectionId',
+    id: 'connection.netSuiteDistributedAdaptor.connectionId',
     label: 'Net Suite Distributed Adaptor connection Id',
-    defaultValue: '{{netSuiteDistributedAdaptor.connectionId}}',
+    defaultValue: r =>
+      r &&
+      r.netSuiteDistributedAdaptor &&
+      r.netSuiteDistributedAdaptor.connectionId,
   },
-  connectionNetSuiteDistributedAdaptorUsername: {
+  'connection.netSuiteDistributedAdaptor.username': {
     type: 'text',
     helpKey: 'connection.netSuiteDistributedAdaptor.username',
     name: '/netSuiteDistributedAdaptor/username',
-    id: 'connectionNetSuiteDistributedAdaptorUsername',
+    id: 'connection.netSuiteDistributedAdaptor.username',
     label: 'Net Suite Distributed Adaptor username',
-    defaultValue: '{{netSuiteDistributedAdaptor.username}}',
+    defaultValue: r =>
+      r &&
+      r.netSuiteDistributedAdaptor &&
+      r.netSuiteDistributedAdaptor.username,
   },
-  connectionNetSuiteDistributedAdaptorUri: {
+  'connection.netSuiteDistributedAdaptor.uri': {
     type: 'text',
     helpKey: 'connection.netSuiteDistributedAdaptor.uri',
     name: '/netSuiteDistributedAdaptor/uri',
-    id: 'connectionNetSuiteDistributedAdaptorUri',
+    id: 'connection.netSuiteDistributedAdaptor.uri',
     label: 'Net Suite Distributed Adaptor uri',
-    defaultValue: '{{netSuiteDistributedAdaptor.uri}}',
+    defaultValue: r =>
+      r && r.netSuiteDistributedAdaptor && r.netSuiteDistributedAdaptor.uri,
   },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
-  connectionSalesforceSandbox: {
+  'connection.salesforce.sandbox': {
     type: 'checkbox',
     helpKey: 'connection.salesforce.sandbox',
     name: '/salesforce/sandbox',
-    id: 'connectionSalesforceSandbox',
+    id: 'connection.salesforce.sandbox',
     label: 'Salesforce sandbox',
     defaultValue: false,
   },
-  connectionSalesforceBaseURI: {
+  'connection.salesforce.baseURI': {
     type: 'text',
     helpKey: 'connection.salesforce.baseURI',
     name: '/salesforce/baseURI',
-    id: 'connectionSalesforceBaseURI',
+    id: 'connection.salesforce.baseURI',
     label: 'Salesforce base URI',
-    defaultValue: '{{salesforce.baseURI}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.baseURI,
   },
-  connectionSalesforceOauth2FlowType: {
+  'connection.salesforce.oauth2FlowType': {
     type: 'radiogroup',
     helpKey: 'connection.salesforce.oauth2FlowType',
     name: '/salesforce/oauth2FlowType',
-    id: 'connectionSalesforceOauth2FlowType',
+    id: 'connection.salesforce.oauth2FlowType',
     label: 'Salesforce oauth2Flow Type',
-    defaultValue: '{{salesforce.oauth2FlowType}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.oauth2FlowType,
     options: [
       {
         items: [
@@ -2265,65 +2520,65 @@ export default {
       },
     ],
   },
-  connectionSalesforceUsername: {
+  'connection.salesforce.username': {
     type: 'text',
     helpKey: 'connection.salesforce.username',
     name: '/salesforce/username',
-    id: 'connectionSalesforceUsername',
+    id: 'connection.salesforce.username',
     label: 'Salesforce username',
-    defaultValue: '{{salesforce.username}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.username,
   },
-  connectionSalesforceBearerToken: {
+  'connection.salesforce.bearerToken': {
     type: 'text',
     helpKey: 'connection.salesforce.bearerToken',
     name: '/salesforce/bearerToken',
-    id: 'connectionSalesforceBearerToken',
+    id: 'connection.salesforce.bearerToken',
     label: 'Salesforce bearer Token',
-    defaultValue: '{{salesforce.bearerToken}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.bearerToken,
   },
-  connectionSalesforceRefreshToken: {
+  'connection.salesforce.refreshToken': {
     type: 'text',
     helpKey: 'connection.salesforce.refreshToken',
     name: '/salesforce/refreshToken',
-    id: 'connectionSalesforceRefreshToken',
+    id: 'connection.salesforce.refreshToken',
     label: 'Salesforce refresh Token',
-    defaultValue: '{{salesforce.refreshToken}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.refreshToken,
   },
-  connectionSalesforcePackagedOAuth: {
+  'connection.salesforce.packagedOAuth': {
     type: 'checkbox',
     helpKey: 'connection.salesforce.packagedOAuth',
     name: '/salesforce/packagedOAuth',
-    id: 'connectionSalesforcePackagedOAuth',
+    id: 'connection.salesforce.packagedOAuth',
     label: 'Salesforce packaged OAuth',
     defaultValue: false,
   },
-  connectionSalesforceScopes: {
+  'connection.salesforce.scopes': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.salesforce.scope',
     name: '/salesforce/scopes',
-    id: 'connectionSalesforceScopes',
+    id: 'connection.salesforce.scopes',
     label: 'Salesforce scope',
-    defaultValue: '{{salesforce.scope}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.scope,
     validWhen: [],
   },
-  connectionSalesforceInfo: {
+  'connection.salesforce.info': {
     type: 'text',
     helpKey: 'connection.salesforce.info',
     name: '/salesforce/info',
-    id: 'connectionSalesforceInfo',
+    id: 'connection.salesforce.info',
     label: 'Salesforce info',
-    defaultValue: '{{salesforce.info}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.info,
   },
-  connectionSalesforceConcurrencyLevel: {
+  'connection.salesforce.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.salesforce.concurrencyLevel',
     name: '/salesforce/concurrencyLevel',
-    id: 'connectionSalesforceConcurrencyLevel',
+    id: 'connection.salesforce.concurrencyLevel',
     label: 'Salesforce concurrency Level',
-    defaultValue: '{{salesforce.concurrencyLevel}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2332,63 +2587,63 @@ export default {
   },
   // #endregion salesforce
   // #region wrapper
-  connectionWrapperUnencrypted: {
+  'connection.wrapper.unencrypted': {
     type: 'text',
     helpKey: 'connection.wrapper.unencrypted',
     name: '/wrapper/unencrypted',
-    id: 'connectionWrapperUnencrypted',
+    id: 'connection.wrapper.unencrypted',
     label: 'Wrapper unencrypted',
-    defaultValue: '{{wrapper.unencrypted}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.unencrypted,
   },
-  connectionWrapperUnencrypteds: {
+  'connection.wrapper.unencrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.wrapper.unencrypteds',
     name: '/wrapper/unencrypteds',
-    id: 'connectionWrapperUnencrypteds',
+    id: 'connection.wrapper.unencrypteds',
     label: 'Wrapper unencrypted',
-    defaultValue: '{{wrapper.unencrypted}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.unencrypted,
   },
-  connectionWrapperEncrypted: {
+  'connection.wrapper.encrypted': {
     type: 'text',
     helpKey: 'connection.wrapper.encrypted',
     name: '/wrapper/encrypted',
-    id: 'connectionWrapperEncrypted',
+    id: 'connection.wrapper.encrypted',
     label: 'Wrapper encrypted',
-    defaultValue: '{{wrapper.encrypted}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.encrypted,
   },
-  connectionWrapperEncrypteds: {
+  'connection.wrapper.encrypteds': {
     type: 'editor',
     valueType: 'editorExpression',
     helpKey: 'connection.wrapper.encrypteds',
     name: '/wrapper/encrypteds',
-    id: 'connectionWrapperEncrypteds',
+    id: 'connection.wrapper.encrypteds',
     label: 'Wrapper encrypted',
-    defaultValue: '{{wrapper.encrypted}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.encrypted,
   },
-  connectionWrapperPingFunction: {
+  'connection.wrapper.pingFunction': {
     type: 'text',
     helpKey: 'connection.wrapper.pingFunction',
     name: '/wrapper/pingFunction',
-    id: 'connectionWrapperPingFunction',
+    id: 'connection.wrapper.pingFunction',
     label: 'Wrapper ping Function',
-    defaultValue: '{{wrapper.pingFunction}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.pingFunction,
   },
-  connectionWrapper_stackId: {
+  'connection.wrapper._stackId': {
     type: 'text',
     helpKey: 'connection.wrapper._stackId',
     name: '/wrapper/_stackId',
-    id: 'connectionWrapper_stackId',
+    id: 'connection.wrapper._stackId',
     label: 'Wrapper _stack Id',
-    defaultValue: '{{wrapper._stackId}}',
+    defaultValue: r => r && r.wrapper && r.wrapper._stackId,
   },
-  connectionWrapperConcurrencyLevel: {
+  'connection.wrapper.concurrencyLevel': {
     type: 'text',
     helpKey: 'connection.wrapper.concurrencyLevel',
     name: '/wrapper/concurrencyLevel',
-    id: 'connectionWrapperConcurrencyLevel',
+    id: 'connection.wrapper.concurrencyLevel',
     label: 'Wrapper concurrency Level',
-    defaultValue: '{{wrapper.concurrencyLevel}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2397,49 +2652,49 @@ export default {
   },
   // #endregion wrapper
   // #region mongodb
-  connectionMongodbHosts: {
+  'connection.mongodb.hosts': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'connection.mongodb.host',
     name: '/mongodb/hosts',
-    id: 'connectionMongodbHosts',
+    id: 'connection.mongodb.hosts',
     label: 'Mongodb host',
-    defaultValue: '{{mongodb.host}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.host,
     validWhen: [],
   },
-  connectionMongodbDatabase: {
+  'connection.mongodb.database': {
     type: 'text',
     helpKey: 'connection.mongodb.database',
     name: '/mongodb/database',
-    id: 'connectionMongodbDatabase',
+    id: 'connection.mongodb.database',
     label: 'Mongodb database',
-    defaultValue: '{{mongodb.database}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.database,
   },
-  connectionMongodbUsername: {
+  'connection.mongodb.username': {
     type: 'text',
     helpKey: 'connection.mongodb.username',
     name: '/mongodb/username',
-    id: 'connectionMongodbUsername',
+    id: 'connection.mongodb.username',
     label: 'Mongodb username',
-    defaultValue: '{{mongodb.username}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.username,
   },
-  connectionMongodbPassword: {
+  'connection.mongodb.password': {
     type: 'text',
     helpKey: 'connection.mongodb.password',
     name: '/mongodb/password',
-    id: 'connectionMongodbPassword',
+    id: 'connection.mongodb.password',
     label: 'Mongodb password',
-    defaultValue: '{{mongodb.password}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.password,
   },
-  connectionMongodbReplicaSet: {
+  'connection.mongodb.replicaSet': {
     type: 'text',
     helpKey: 'connection.mongodb.replicaSet',
     name: '/mongodb/replicaSet',
-    id: 'connectionMongodbReplicaSet',
+    id: 'connection.mongodb.replicaSet',
     label: 'Mongodb replica Set',
-    defaultValue: '{{mongodb.replicaSet}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.replicaSet,
   },
   // #endregion mongodb
 };

@@ -1,44 +1,44 @@
 export default {
   // #region common
-  exportName: {
+  'export.name': {
     type: 'text',
     helpKey: 'export.name',
     name: '/name',
-    id: 'exportName',
+    id: 'export.name',
     label: 'Name',
-    defaultValue: '{{name}}',
+    defaultValue: r => r && r.name,
   },
-  exportDescription: {
+  'export.description': {
     type: 'text',
     helpKey: 'export.description',
     name: '/description',
-    id: 'exportDescription',
+    id: 'export.description',
     label: 'Description',
-    defaultValue: '{{description}}',
+    defaultValue: r => r && r.description,
   },
-  exportAsynchronous: {
+  'export.asynchronous': {
     type: 'checkbox',
     helpKey: 'export.asynchronous',
     name: '/asynchronous',
-    id: 'exportAsynchronous',
+    id: 'export.asynchronous',
     label: 'Asynchronous',
     defaultValue: false,
   },
-  exportApiIdentifier: {
+  'export.apiIdentifier': {
     type: 'text',
     helpKey: 'export.apiIdentifier',
     name: '/apiIdentifier',
-    id: 'exportApiIdentifier',
+    id: 'export.apiIdentifier',
     label: 'Api Identifier',
-    defaultValue: '{{apiIdentifier}}',
+    defaultValue: r => r && r.apiIdentifier,
   },
-  exportType: {
+  'export.type': {
     type: 'select',
     helpKey: 'export.type',
     name: '/type',
-    id: 'exportType',
+    id: 'export.type',
     label: 'Type',
-    defaultValue: '{{type}}',
+    defaultValue: r => r && r.type,
     options: [
       {
         items: [
@@ -54,66 +54,66 @@ export default {
       },
     ],
   },
-  exportPageSize: {
+  'export.pageSize': {
     type: 'text',
     helpKey: 'export.pageSize',
     name: '/pageSize',
-    id: 'exportPageSize',
+    id: 'export.pageSize',
     label: 'Page Size',
-    defaultValue: '{{pageSize}}',
+    defaultValue: r => r && r.pageSize,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportDataURITemplate: {
+  'export.dataURITemplate': {
     type: 'text',
     helpKey: 'export.dataURITemplate',
     name: '/dataURITemplate',
-    id: 'exportDataURITemplate',
+    id: 'export.dataURITemplate',
     label: 'Data URITemplate',
-    defaultValue: '{{dataURITemplate}}',
+    defaultValue: r => r && r.dataURITemplate,
   },
-  exportOneToMany: {
+  'export.oneToMany': {
     type: 'checkbox',
     helpKey: 'export.oneToMany',
     name: '/oneToMany',
-    id: 'exportOneToMany',
+    id: 'export.oneToMany',
     label: 'One To Many',
     defaultValue: false,
   },
-  exportPathToMany: {
+  'export.pathToMany': {
     type: 'text',
     helpKey: 'export.pathToMany',
     name: '/pathToMany',
-    id: 'exportPathToMany',
+    id: 'export.pathToMany',
     label: 'Path To Many',
-    defaultValue: '{{pathToMany}}',
+    defaultValue: r => r && r.pathToMany,
   },
-  exportSampleData: {
+  'export.sampleData': {
     type: 'text',
     helpKey: 'export.sampleData',
     name: '/sampleData',
-    id: 'exportSampleData',
+    id: 'export.sampleData',
     label: 'Sample Data',
-    defaultValue: '{{sampleData}}',
+    defaultValue: r => r && r.sampleData,
   },
-  exportOriginSampleData: {
+  'export.originSampleData': {
     type: 'text',
     helpKey: 'export.originSampleData',
     name: '/originSampleData',
-    id: 'exportOriginSampleData',
+    id: 'export.originSampleData',
     label: 'Origin Sample Data',
-    defaultValue: '{{originSampleData}}',
+    defaultValue: r => r && r.originSampleData,
   },
-  exportAssistant: {
+  'export.assistant': {
     type: 'select',
     helpKey: 'export.assistant',
     name: '/assistant',
-    id: 'exportAssistant',
+    id: 'export.assistant',
     label: 'Assistant',
-    defaultValue: '{{assistant}}',
+    defaultValue: r => r && r.assistant,
     options: [
       {
         items: [
@@ -316,82 +316,98 @@ export default {
       },
     ],
   },
-  exportAssistantMetadata: {
+  'export.assistantMetadata': {
     type: 'text',
     helpKey: 'export.assistantMetadata',
     name: '/assistantMetadata',
-    id: 'exportAssistantMetadata',
+    id: 'export.assistantMetadata',
     label: 'Assistant Metadata',
-    defaultValue: '{{assistantMetadata}}',
+    defaultValue: r => r && r.assistantMetadata,
   },
-  exportIsLookup: {
+  'export.isLookup': {
     type: 'checkbox',
     helpKey: 'export.isLookup',
     name: '/isLookup',
-    id: 'exportIsLookup',
+    id: 'export.isLookup',
     label: 'Is Lookup',
     defaultValue: false,
   },
-  exportUseTechAdaptorForm: {
+  'export.useTechAdaptorForm': {
     type: 'checkbox',
     helpKey: 'export.useTechAdaptorForm',
     name: '/useTechAdaptorForm',
-    id: 'exportUseTechAdaptorForm',
+    id: 'export.useTechAdaptorForm',
     label: 'Use Tech Adaptor Form',
     defaultValue: false,
   },
-  exportAdaptorType: {
+  'export.adaptorType': {
     type: 'text',
     helpKey: 'export.adaptorType',
     name: '/adaptorType',
-    id: 'exportAdaptorType',
+    id: 'export.adaptorType',
     label: 'Adaptor Type',
-    defaultValue: '{{adaptorType}}',
+    defaultValue: r => r && r.adaptorType,
   },
   // #endregion common
   // #region inputFilter
-  exportInputFilterExpressionVersion: {
+  'export.inputFilter.expression.version': {
     type: 'radiogroup',
     helpKey: 'export.inputFilter.expression.version',
     name: '/inputFilter/expression/version',
-    id: 'exportInputFilterExpressionVersion',
+    id: 'export.inputFilter.expression.version',
     label: 'Input Filter expression version',
-    defaultValue: '{{inputFilter.expression.version}}',
+    defaultValue: r =>
+      r &&
+      r.inputFilter &&
+      r.inputFilter.expression &&
+      r.inputFilter.expression.version,
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
-  exportInputFilterExpressionRules: {
+  'export.inputFilter.expression.rules': {
     type: 'text',
     helpKey: 'export.inputFilter.expression.rules',
     name: '/inputFilter/expression/rules',
-    id: 'exportInputFilterExpressionRules',
+    id: 'export.inputFilter.expression.rules',
     label: 'Input Filter expression rules',
-    defaultValue: '{{inputFilter.expression.rules}}',
+    defaultValue: r =>
+      r &&
+      r.inputFilter &&
+      r.inputFilter.expression &&
+      r.inputFilter.expression.rules,
   },
-  exportInputFilterScript_scriptId: {
+  'export.inputFilter.script._scriptId': {
     type: 'text',
     helpKey: 'export.inputFilter.script._scriptId',
     name: '/inputFilter/script/_scriptId',
-    id: 'exportInputFilterScript_scriptId',
+    id: 'export.inputFilter.script._scriptId',
     label: 'Input Filter script _script Id',
-    defaultValue: '{{inputFilter.script._scriptId}}',
+    defaultValue: r =>
+      r &&
+      r.inputFilter &&
+      r.inputFilter.script &&
+      r.inputFilter.script._scriptId,
   },
-  exportInputFilterScriptFunction: {
+  'export.inputFilter.script.function': {
     type: 'text',
     helpKey: 'export.inputFilter.script.function',
     name: '/inputFilter/script/function',
-    id: 'exportInputFilterScriptFunction',
+    id: 'export.inputFilter.script.function',
     label: 'Input Filter script function',
-    defaultValue: '{{inputFilter.script.function}}',
+    defaultValue: r =>
+      r &&
+      r.inputFilter &&
+      r.inputFilter.script &&
+      r.inputFilter.script.function,
   },
   // #endregion inputFilter
   // #region test
-  exportTestLimit: {
+  'export.test.limit': {
     type: 'text',
     helpKey: 'export.test.limit',
     name: '/test/limit',
-    id: 'exportTestLimit',
+    id: 'export.test.limit',
     label: 'Test limit',
-    defaultValue: '{{test.limit}}',
+    defaultValue: r => r && r.test && r.test.limit,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -400,88 +416,88 @@ export default {
   },
   // #endregion test
   // #region delta
-  exportDeltaDateField: {
+  'export.delta.dateField': {
     type: 'text',
     helpKey: 'export.delta.dateField',
     name: '/delta/dateField',
-    id: 'exportDeltaDateField',
+    id: 'export.delta.dateField',
     label: 'Delta date Field',
-    defaultValue: '{{delta.dateField}}',
+    defaultValue: r => r && r.delta && r.delta.dateField,
   },
-  exportDeltaDateFormat: {
+  'export.delta.dateFormat': {
     type: 'text',
     helpKey: 'export.delta.dateFormat',
     name: '/delta/dateFormat',
-    id: 'exportDeltaDateFormat',
+    id: 'export.delta.dateFormat',
     label: 'Delta date Format',
-    defaultValue: '{{delta.dateFormat}}',
+    defaultValue: r => r && r.delta && r.delta.dateFormat,
   },
-  exportDeltaStartDate: {
+  'export.delta.startDate': {
     type: 'text',
     helpKey: 'export.delta.startDate',
     name: '/delta/startDate',
-    id: 'exportDeltaStartDate',
+    id: 'export.delta.startDate',
     label: 'Delta start Date',
-    defaultValue: '{{delta.startDate}}',
+    defaultValue: r => r && r.delta && r.delta.startDate,
   },
-  exportDeltaLagOffset: {
+  'export.delta.lagOffset': {
     type: 'text',
     helpKey: 'export.delta.lagOffset',
     name: '/delta/lagOffset',
-    id: 'exportDeltaLagOffset',
+    id: 'export.delta.lagOffset',
     label: 'Delta lag Offset',
-    defaultValue: '{{delta.lagOffset}}',
+    defaultValue: r => r && r.delta && r.delta.lagOffset,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportDeltaEndDateField: {
+  'export.delta.endDateField': {
     type: 'text',
     helpKey: 'export.delta.endDateField',
     name: '/delta/endDateField',
-    id: 'exportDeltaEndDateField',
+    id: 'export.delta.endDateField',
     label: 'Delta end Date Field',
-    defaultValue: '{{delta.endDateField}}',
+    defaultValue: r => r && r.delta && r.delta.endDateField,
   },
   // #endregion delta
   // #region once
-  exportOnceBooleanField: {
+  'export.once.booleanField': {
     type: 'text',
     helpKey: 'export.once.booleanField',
     name: '/once/booleanField',
-    id: 'exportOnceBooleanField',
+    id: 'export.once.booleanField',
     label: 'Once boolean Field',
-    defaultValue: '{{once.booleanField}}',
+    defaultValue: r => r && r.once && r.once.booleanField,
   },
   // #endregion once
   // #region valueDelta
-  exportValueDeltaExportedField: {
+  'export.valueDelta.exportedField': {
     type: 'text',
     helpKey: 'export.valueDelta.exportedField',
     name: '/valueDelta/exportedField',
-    id: 'exportValueDeltaExportedField',
+    id: 'export.valueDelta.exportedField',
     label: 'Value Delta exported Field',
-    defaultValue: '{{valueDelta.exportedField}}',
+    defaultValue: r => r && r.valueDelta && r.valueDelta.exportedField,
   },
-  exportValueDeltaPendingField: {
+  'export.valueDelta.pendingField': {
     type: 'text',
     helpKey: 'export.valueDelta.pendingField',
     name: '/valueDelta/pendingField',
-    id: 'exportValueDeltaPendingField',
+    id: 'export.valueDelta.pendingField',
     label: 'Value Delta pending Field',
-    defaultValue: '{{valueDelta.pendingField}}',
+    defaultValue: r => r && r.valueDelta && r.valueDelta.pendingField,
   },
   // #endregion valueDelta
   // #region webhook
-  exportWebhookProvider: {
+  'export.webhook.provider': {
     type: 'select',
     helpKey: 'export.webhook.provider',
     name: '/webhook/provider',
-    id: 'exportWebhookProvider',
+    id: 'export.webhook.provider',
     label: 'Webhook provider',
-    defaultValue: '{{webhook.provider}}',
+    defaultValue: r => r && r.webhook && r.webhook.provider,
     options: [
       {
         items: [
@@ -514,13 +530,13 @@ export default {
       },
     ],
   },
-  exportWebhookVerify: {
+  'export.webhook.verify': {
     type: 'select',
     helpKey: 'export.webhook.verify',
     name: '/webhook/verify',
-    id: 'exportWebhookVerify',
+    id: 'export.webhook.verify',
     label: 'Webhook verify',
-    defaultValue: '{{webhook.verify}}',
+    defaultValue: r => r && r.webhook && r.webhook.verify,
     options: [
       {
         items: [
@@ -533,29 +549,29 @@ export default {
       },
     ],
   },
-  exportWebhookToken: {
+  'export.webhook.token': {
     type: 'text',
     helpKey: 'export.webhook.token',
     name: '/webhook/token',
-    id: 'exportWebhookToken',
+    id: 'export.webhook.token',
     label: 'Webhook token',
-    defaultValue: '{{webhook.token}}',
+    defaultValue: r => r && r.webhook && r.webhook.token,
   },
-  exportWebhookPath: {
+  'export.webhook.path': {
     type: 'text',
     helpKey: 'export.webhook.path',
     name: '/webhook/path',
-    id: 'exportWebhookPath',
+    id: 'export.webhook.path',
     label: 'Webhook path',
-    defaultValue: '{{webhook.path}}',
+    defaultValue: r => r && r.webhook && r.webhook.path,
   },
-  exportWebhookAlgorithm: {
+  'export.webhook.algorithm': {
     type: 'radiogroup',
     helpKey: 'export.webhook.algorithm',
     name: '/webhook/algorithm',
-    id: 'exportWebhookAlgorithm',
+    id: 'export.webhook.algorithm',
     label: 'Webhook algorithm',
-    defaultValue: '{{webhook.algorithm}}',
+    defaultValue: r => r && r.webhook && r.webhook.algorithm,
     options: [
       {
         items: [
@@ -565,13 +581,13 @@ export default {
       },
     ],
   },
-  exportWebhookEncoding: {
+  'export.webhook.encoding': {
     type: 'radiogroup',
     helpKey: 'export.webhook.encoding',
     name: '/webhook/encoding',
-    id: 'exportWebhookEncoding',
+    id: 'export.webhook.encoding',
     label: 'Webhook encoding',
-    defaultValue: '{{webhook.encoding}}',
+    defaultValue: r => r && r.webhook && r.webhook.encoding,
     options: [
       {
         items: [
@@ -581,179 +597,198 @@ export default {
       },
     ],
   },
-  exportWebhookKey: {
+  'export.webhook.key': {
     type: 'text',
     helpKey: 'export.webhook.key',
     name: '/webhook/key',
-    id: 'exportWebhookKey',
+    id: 'export.webhook.key',
     label: 'Webhook key',
-    defaultValue: '{{webhook.key}}',
+    defaultValue: r => r && r.webhook && r.webhook.key,
   },
-  exportWebhookHeader: {
+  'export.webhook.header': {
     type: 'text',
     helpKey: 'export.webhook.header',
     name: '/webhook/header',
-    id: 'exportWebhookHeader',
+    id: 'export.webhook.header',
     label: 'Webhook header',
-    defaultValue: '{{webhook.header}}',
+    defaultValue: r => r && r.webhook && r.webhook.header,
   },
-  exportWebhookUsername: {
+  'export.webhook.username': {
     type: 'text',
     helpKey: 'export.webhook.username',
     name: '/webhook/username',
-    id: 'exportWebhookUsername',
+    id: 'export.webhook.username',
     label: 'Webhook username',
-    defaultValue: '{{webhook.username}}',
+    defaultValue: r => r && r.webhook && r.webhook.username,
   },
-  exportWebhookPassword: {
+  'export.webhook.password': {
     type: 'text',
     helpKey: 'export.webhook.password',
     name: '/webhook/password',
-    id: 'exportWebhookPassword',
+    id: 'export.webhook.password',
     label: 'Webhook password',
-    defaultValue: '{{webhook.password}}',
+    defaultValue: r => r && r.webhook && r.webhook.password,
   },
   // #endregion webhook
   // #region distributed
-  exportDistributedBearerToken: {
+  'export.distributed.bearerToken': {
     type: 'text',
     helpKey: 'export.distributed.bearerToken',
     name: '/distributed/bearerToken',
-    id: 'exportDistributedBearerToken',
+    id: 'export.distributed.bearerToken',
     label: 'Distributed bearer Token',
-    defaultValue: '{{distributed.bearerToken}}',
+    defaultValue: r => r && r.distributed && r.distributed.bearerToken,
   },
   // #endregion distributed
   // #region hooks
-  exportHooksPreSavePageFunction: {
+  'export.hooks.preSavePage.function': {
     type: 'text',
     helpKey: 'export.hooks.preSavePage.function',
     name: '/hooks/preSavePage/function',
-    id: 'exportHooksPreSavePageFunction',
+    id: 'export.hooks.preSavePage.function',
     label: 'Hooks pre Save Page function',
-    defaultValue: '{{hooks.preSavePage.function}}',
+    defaultValue: r =>
+      r && r.hooks && r.hooks.preSavePage && r.hooks.preSavePage.function,
   },
-  exportHooksPreSavePage_scriptId: {
+  'export.hooks.preSavePage._scriptId': {
     type: 'text',
     helpKey: 'export.hooks.preSavePage._scriptId',
     name: '/hooks/preSavePage/_scriptId',
-    id: 'exportHooksPreSavePage_scriptId',
+    id: 'export.hooks.preSavePage._scriptId',
     label: 'Hooks pre Save Page _script Id',
-    defaultValue: '{{hooks.preSavePage._scriptId}}',
+    defaultValue: r =>
+      r && r.hooks && r.hooks.preSavePage && r.hooks.preSavePage._scriptId,
   },
-  exportHooksPreSavePage_stackId: {
+  'export.hooks.preSavePage._stackId': {
     type: 'text',
     helpKey: 'export.hooks.preSavePage._stackId',
     name: '/hooks/preSavePage/_stackId',
-    id: 'exportHooksPreSavePage_stackId',
+    id: 'export.hooks.preSavePage._stackId',
     label: 'Hooks pre Save Page _stack Id',
-    defaultValue: '{{hooks.preSavePage._stackId}}',
+    defaultValue: r =>
+      r && r.hooks && r.hooks.preSavePage && r.hooks.preSavePage._stackId,
   },
-  exportHooksPreSavePageConfiguration: {
+  'export.hooks.preSavePage.configuration': {
     type: 'text',
     helpKey: 'export.hooks.preSavePage.configuration',
     name: '/hooks/preSavePage/configuration',
-    id: 'exportHooksPreSavePageConfiguration',
+    id: 'export.hooks.preSavePage.configuration',
     label: 'Hooks pre Save Page configuration',
-    defaultValue: '{{hooks.preSavePage.configuration}}',
+    defaultValue: r =>
+      r && r.hooks && r.hooks.preSavePage && r.hooks.preSavePage.configuration,
   },
   // #endregion hooks
   // #region transform
-  exportTransformExpressionVersion: {
+  'export.transform.expression.version': {
     type: 'radiogroup',
     helpKey: 'export.transform.expression.version',
     name: '/transform/expression/version',
-    id: 'exportTransformExpressionVersion',
+    id: 'export.transform.expression.version',
     label: 'Transform expression version',
-    defaultValue: '{{transform.expression.version}}',
+    defaultValue: r =>
+      r &&
+      r.transform &&
+      r.transform.expression &&
+      r.transform.expression.version,
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
-  exportTransformExpressionRules: {
+  'export.transform.expression.rules': {
     type: 'text',
     helpKey: 'export.transform.expression.rules',
     name: '/transform/expression/rules',
-    id: 'exportTransformExpressionRules',
+    id: 'export.transform.expression.rules',
     label: 'Transform expression rules',
-    defaultValue: '{{transform.expression.rules}}',
+    defaultValue: r =>
+      r &&
+      r.transform &&
+      r.transform.expression &&
+      r.transform.expression.rules,
   },
-  exportTransformScript_scriptId: {
+  'export.transform.script._scriptId': {
     type: 'text',
     helpKey: 'export.transform.script._scriptId',
     name: '/transform/script/_scriptId',
-    id: 'exportTransformScript_scriptId',
+    id: 'export.transform.script._scriptId',
     label: 'Transform script _script Id',
-    defaultValue: '{{transform.script._scriptId}}',
+    defaultValue: r =>
+      r && r.transform && r.transform.script && r.transform.script._scriptId,
   },
-  exportTransformScriptFunction: {
+  'export.transform.script.function': {
     type: 'text',
     helpKey: 'export.transform.script.function',
     name: '/transform/script/function',
-    id: 'exportTransformScriptFunction',
+    id: 'export.transform.script.function',
     label: 'Transform script function',
-    defaultValue: '{{transform.script.function}}',
+    defaultValue: r =>
+      r && r.transform && r.transform.script && r.transform.script.function,
   },
   // #endregion transform
-  // #region parsers[*]
-  'exportParsers[*]Version': {
+  // #region parsers
+  // parsers check
+  'export.parsers.version': {
     type: 'text',
-    helpKey: 'export.parsers[*].version',
-    name: '/parsers[*]/version',
-    id: 'exportParsers[*]Version',
-    label: 'Parsers[*] version',
-    defaultValue: '{{parsers[*].version}}',
+    helpKey: 'export.parsers.version',
+    name: '/parsers/version',
+    id: 'export.parsers.version',
+    label: 'Parsers version',
+    defaultValue: r => r && r.parsers && r.parsers.version,
   },
-  'exportParsers[*]Rules': {
+  'export.parsers.rules': {
     type: 'text',
-    helpKey: 'export.parsers[*].rules',
-    name: '/parsers[*]/rules',
-    id: 'exportParsers[*]Rules',
-    label: 'Parsers[*] rules',
-    defaultValue: '{{parsers[*].rules}}',
+    helpKey: 'export.parsers.rules',
+    name: '/parsers/rules',
+    id: 'export.parsers.rules',
+    label: 'Parsers rules',
+    defaultValue: r => r && r.parsers && r.parsers.rules,
   },
-  // #endregion parsers[*]
+  // #endregion parsers
   // #region filter
-  exportFilterExpressionVersion: {
+  'export.filter.expression.version': {
     type: 'radiogroup',
     helpKey: 'export.filter.expression.version',
     name: '/filter/expression/version',
-    id: 'exportFilterExpressionVersion',
+    id: 'export.filter.expression.version',
     label: 'Filter expression version',
-    defaultValue: '{{filter.expression.version}}',
+    defaultValue: r =>
+      r && r.filter && r.filter.expression && r.filter.expression.version,
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
-  exportFilterExpressionRules: {
+  'export.filter.expression.rules': {
     type: 'text',
     helpKey: 'export.filter.expression.rules',
     name: '/filter/expression/rules',
-    id: 'exportFilterExpressionRules',
+    id: 'export.filter.expression.rules',
     label: 'Filter expression rules',
-    defaultValue: '{{filter.expression.rules}}',
+    defaultValue: r =>
+      r && r.filter && r.filter.expression && r.filter.expression.rules,
   },
-  exportFilterScript_scriptId: {
+  'export.filter.script._scriptId': {
     type: 'text',
     helpKey: 'export.filter.script._scriptId',
     name: '/filter/script/_scriptId',
-    id: 'exportFilterScript_scriptId',
+    id: 'export.filter.script._scriptId',
     label: 'Filter script _script Id',
-    defaultValue: '{{filter.script._scriptId}}',
+    defaultValue: r =>
+      r && r.filter && r.filter.script && r.filter.script._scriptId,
   },
-  exportFilterScriptFunction: {
+  'export.filter.script.function': {
     type: 'text',
     helpKey: 'export.filter.script.function',
     name: '/filter/script/function',
-    id: 'exportFilterScriptFunction',
+    id: 'export.filter.script.function',
     label: 'Filter script function',
-    defaultValue: '{{filter.script.function}}',
+    defaultValue: r =>
+      r && r.filter && r.filter.script && r.filter.script.function,
   },
   // #endregion filter
   // #region file
-  exportFileEncoding: {
+  'export.file.encoding': {
     type: 'select',
     helpKey: 'export.file.encoding',
     name: '/file/encoding',
-    id: 'exportFileEncoding',
+    id: 'export.file.encoding',
     label: 'File encoding',
-    defaultValue: '{{file.encoding}}',
+    defaultValue: r => r && r.file && r.file.encoding,
     options: [
       {
         items: [
@@ -764,13 +799,13 @@ export default {
       },
     ],
   },
-  exportFileOutput: {
+  'export.file.output': {
     type: 'select',
     helpKey: 'export.file.output',
     name: '/file/output',
-    id: 'exportFileOutput',
+    id: 'export.file.output',
     label: 'File output',
-    defaultValue: '{{file.output}}',
+    defaultValue: r => r && r.file && r.file.output,
     options: [
       {
         items: [
@@ -781,157 +816,165 @@ export default {
       },
     ],
   },
-  exportFileSkipDelete: {
+  'export.file.skipDelete': {
     type: 'checkbox',
     helpKey: 'export.file.skipDelete',
     name: '/file/skipDelete',
-    id: 'exportFileSkipDelete',
+    id: 'export.file.skipDelete',
     label: 'File skip Delete',
     defaultValue: false,
   },
-  exportFileCompressionFormat: {
+  'export.file.compressionFormat': {
     type: 'radiogroup',
     helpKey: 'export.file.compressionFormat',
     name: '/file/compressionFormat',
-    id: 'exportFileCompressionFormat',
+    id: 'export.file.compressionFormat',
     label: 'File compression Format',
-    defaultValue: '{{file.compressionFormat}}',
+    defaultValue: r => r && r.file && r.file.compressionFormat,
     options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
   },
-  exportFileCsvColumnDelimiter: {
+  'export.file.csv.columnDelimiter': {
     type: 'text',
     helpKey: 'export.file.csv.columnDelimiter',
     name: '/file/csv/columnDelimiter',
-    id: 'exportFileCsvColumnDelimiter',
+    id: 'export.file.csv.columnDelimiter',
     label: 'File csv column Delimiter',
-    defaultValue: '{{file.csv.columnDelimiter}}',
+    defaultValue: r => r && r.file && r.file.csv && r.file.csv.columnDelimiter,
   },
-  exportFileCsvRowDelimiter: {
+  'export.file.csv.rowDelimiter': {
     type: 'text',
     helpKey: 'export.file.csv.rowDelimiter',
     name: '/file/csv/rowDelimiter',
-    id: 'exportFileCsvRowDelimiter',
+    id: 'export.file.csv.rowDelimiter',
     label: 'File csv row Delimiter',
-    defaultValue: '{{file.csv.rowDelimiter}}',
+    defaultValue: r => r && r.file && r.file.csv && r.file.csv.rowDelimiter,
   },
-  exportFileCsvKeyColumnss: {
+  'export.file.csv.keyColumnss': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.file.csv.keyColumns',
     name: '/file/csv/keyColumnss',
-    id: 'exportFileCsvKeyColumnss',
+    id: 'export.file.csv.keyColumnss',
     label: 'File csv key Columns',
-    defaultValue: '{{file.csv.keyColumns}}',
+    defaultValue: r => r && r.file && r.file.csv && r.file.csv.keyColumns,
     validWhen: [],
   },
-  exportFileCsvHasHeaderRow: {
+  'export.file.csv.hasHeaderRow': {
     type: 'checkbox',
     helpKey: 'export.file.csv.hasHeaderRow',
     name: '/file/csv/hasHeaderRow',
-    id: 'exportFileCsvHasHeaderRow',
+    id: 'export.file.csv.hasHeaderRow',
     label: 'File csv has Header Row',
     defaultValue: false,
   },
-  exportFileCsvTrimSpaces: {
+  'export.file.csv.trimSpaces': {
     type: 'checkbox',
     helpKey: 'export.file.csv.trimSpaces',
     name: '/file/csv/trimSpaces',
-    id: 'exportFileCsvTrimSpaces',
+    id: 'export.file.csv.trimSpaces',
     label: 'File csv trim Spaces',
     defaultValue: false,
   },
-  exportFileCsvRowsToSkip: {
+  'export.file.csv.rowsToSkip': {
     type: 'text',
     helpKey: 'export.file.csv.rowsToSkip',
     name: '/file/csv/rowsToSkip',
-    id: 'exportFileCsvRowsToSkip',
+    id: 'export.file.csv.rowsToSkip',
     label: 'File csv rows To Skip',
-    defaultValue: '{{file.csv.rowsToSkip}}',
+    defaultValue: r => r && r.file && r.file.csv && r.file.csv.rowsToSkip,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportFileJsonResourcePath: {
+  'export.file.json.resourcePath': {
     type: 'text',
     helpKey: 'export.file.json.resourcePath',
     name: '/file/json/resourcePath',
-    id: 'exportFileJsonResourcePath',
+    id: 'export.file.json.resourcePath',
     label: 'File json resource Path',
-    defaultValue: '{{file.json.resourcePath}}',
+    defaultValue: r => r && r.file && r.file.json && r.file.json.resourcePath,
   },
-  exportFileXlsxHasHeaderRow: {
+  'export.file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     helpKey: 'export.file.xlsx.hasHeaderRow',
     name: '/file/xlsx/hasHeaderRow',
-    id: 'exportFileXlsxHasHeaderRow',
+    id: 'export.file.xlsx.hasHeaderRow',
     label: 'File xlsx has Header Row',
     defaultValue: false,
   },
-  exportFileXlsxKeyColumnss: {
+  'export.file.xlsx.keyColumnss': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.file.xlsx.keyColumns',
     name: '/file/xlsx/keyColumnss',
-    id: 'exportFileXlsxKeyColumnss',
+    id: 'export.file.xlsx.keyColumnss',
     label: 'File xlsx key Columns',
-    defaultValue: '{{file.xlsx.keyColumns}}',
+    defaultValue: r => r && r.file && r.file.xlsx && r.file.xlsx.keyColumns,
     validWhen: [],
   },
-  exportFileXmlResourcePath: {
+  'export.file.xml.resourcePath': {
     type: 'text',
     helpKey: 'export.file.xml.resourcePath',
     name: '/file/xml/resourcePath',
-    id: 'exportFileXmlResourcePath',
+    id: 'export.file.xml.resourcePath',
     label: 'File xml resource Path',
-    defaultValue: '{{file.xml.resourcePath}}',
+    defaultValue: r => r && r.file && r.file.xml && r.file.xml.resourcePath,
   },
-  exportFileFileDefinitionResourcePath: {
+  'export.file.fileDefinition.resourcePath': {
     type: 'text',
     helpKey: 'export.file.fileDefinition.resourcePath',
     name: '/file/fileDefinition/resourcePath',
-    id: 'exportFileFileDefinitionResourcePath',
+    id: 'export.file.fileDefinition.resourcePath',
     label: 'File file Definition resource Path',
-    defaultValue: '{{file.fileDefinition.resourcePath}}',
+    defaultValue: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition.resourcePath,
   },
-  exportFileFileDefinition_fileDefinitionId: {
+  'export.file.fileDefinition._fileDefinitionId': {
     type: 'text',
     helpKey: 'export.file.fileDefinition._fileDefinitionId',
     name: '/file/fileDefinition/_fileDefinitionId',
-    id: 'exportFileFileDefinition_fileDefinitionId',
+    id: 'export.file.fileDefinition._fileDefinitionId',
     label: 'File file Definition _file Definition Id',
-    defaultValue: '{{file.fileDefinition._fileDefinitionId}}',
+    defaultValue: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
-  exportFilePurgeInternalBackup: {
+  'export.file.purgeInternalBackup': {
     type: 'checkbox',
     helpKey: 'export.file.purgeInternalBackup',
     name: '/file/purgeInternalBackup',
-    id: 'exportFilePurgeInternalBackup',
+    id: 'export.file.purgeInternalBackup',
     label: 'File purge Internal Backup',
     defaultValue: false,
   },
   // #endregion file
   // #region rest
-  exportRestRelativeURI: {
+  'export.rest.relativeURI': {
     type: 'text',
     helpKey: 'export.rest.relativeURI',
     name: '/rest/relativeURI',
-    id: 'exportRestRelativeURI',
+    id: 'export.rest.relativeURI',
     label: 'Rest relative URI',
-    defaultValue: '{{rest.relativeURI}}',
+    defaultValue: r => r && r.rest && r.rest.relativeURI,
   },
-  exportRestMethod: {
+  'export.rest.method': {
     type: 'select',
     helpKey: 'export.rest.method',
     name: '/rest/method',
-    id: 'exportRestMethod',
+    id: 'export.rest.method',
     label: 'Rest method',
-    defaultValue: '{{rest.method}}',
+    defaultValue: r => r && r.rest && r.rest.method,
     options: [
       {
         items: [
@@ -942,48 +985,48 @@ export default {
       },
     ],
   },
-  exportRestPostBody: {
+  'export.rest.postBody': {
     type: 'text',
     helpKey: 'export.rest.postBody',
     name: '/rest/postBody',
-    id: 'exportRestPostBody',
+    id: 'export.rest.postBody',
     label: 'Rest post Body',
-    defaultValue: '{{rest.postBody}}',
+    defaultValue: r => r && r.rest && r.rest.postBody,
   },
-  exportRestResourcePath: {
+  'export.rest.resourcePath': {
     type: 'text',
     helpKey: 'export.rest.resourcePath',
     name: '/rest/resourcePath',
-    id: 'exportRestResourcePath',
+    id: 'export.rest.resourcePath',
     label: 'Rest resource Path',
-    defaultValue: '{{rest.resourcePath}}',
+    defaultValue: r => r && r.rest && r.rest.resourcePath,
   },
-  exportRestHeaders: {
+  'export.rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'export.rest.headers',
     name: '/rest/headers',
-    id: 'exportRestHeaders',
+    id: 'export.rest.headers',
     label: 'Rest headers',
-    defaultValue: '{{rest.headers}}',
+    defaultValue: r => r && r.rest && r.rest.headers,
   },
-  exportRestAllowUndefinedResource: {
+  'export.rest.allowUndefinedResource': {
     type: 'checkbox',
     helpKey: 'export.rest.allowUndefinedResource',
     name: '/rest/allowUndefinedResource',
-    id: 'exportRestAllowUndefinedResource',
+    id: 'export.rest.allowUndefinedResource',
     label: 'Rest allow Undefined Resource',
     defaultValue: false,
   },
-  exportRestPagingMethod: {
+  'export.rest.pagingMethod': {
     type: 'select',
     helpKey: 'export.rest.pagingMethod',
     name: '/rest/pagingMethod',
-    id: 'exportRestPagingMethod',
+    id: 'export.rest.pagingMethod',
     label: 'Rest paging Method',
-    defaultValue: '{{rest.pagingMethod}}',
+    defaultValue: r => r && r.rest && r.rest.pagingMethod,
     options: [
       {
         items: [
@@ -998,142 +1041,142 @@ export default {
       },
     ],
   },
-  exportRestNextPagePath: {
+  'export.rest.nextPagePath': {
     type: 'text',
     helpKey: 'export.rest.nextPagePath',
     name: '/rest/nextPagePath',
-    id: 'exportRestNextPagePath',
+    id: 'export.rest.nextPagePath',
     label: 'Rest next Page Path',
-    defaultValue: '{{rest.nextPagePath}}',
+    defaultValue: r => r && r.rest && r.rest.nextPagePath,
   },
-  exportRestLinkHeaderRelation: {
+  'export.rest.linkHeaderRelation': {
     type: 'text',
     helpKey: 'export.rest.linkHeaderRelation',
     name: '/rest/linkHeaderRelation',
-    id: 'exportRestLinkHeaderRelation',
+    id: 'export.rest.linkHeaderRelation',
     label: 'Rest link Header Relation',
-    defaultValue: '{{rest.linkHeaderRelation}}',
+    defaultValue: r => r && r.rest && r.rest.linkHeaderRelation,
   },
-  exportRestNextPageRelativeURI: {
+  'export.rest.nextPageRelativeURI': {
     type: 'text',
     helpKey: 'export.rest.nextPageRelativeURI',
     name: '/rest/nextPageRelativeURI',
-    id: 'exportRestNextPageRelativeURI',
+    id: 'export.rest.nextPageRelativeURI',
     label: 'Rest next Page Relative URI',
-    defaultValue: '{{rest.nextPageRelativeURI}}',
+    defaultValue: r => r && r.rest && r.rest.nextPageRelativeURI,
   },
-  exportRestPageArgument: {
+  'export.rest.pageArgument': {
     type: 'text',
     helpKey: 'export.rest.pageArgument',
     name: '/rest/pageArgument',
-    id: 'exportRestPageArgument',
+    id: 'export.rest.pageArgument',
     label: 'Rest page Argument',
-    defaultValue: '{{rest.pageArgument}}',
+    defaultValue: r => r && r.rest && r.rest.pageArgument,
   },
-  exportRestPagingPostBody: {
+  'export.rest.pagingPostBody': {
     type: 'text',
     helpKey: 'export.rest.pagingPostBody',
     name: '/rest/pagingPostBody',
-    id: 'exportRestPagingPostBody',
+    id: 'export.rest.pagingPostBody',
     label: 'Rest paging Post Body',
-    defaultValue: '{{rest.pagingPostBody}}',
+    defaultValue: r => r && r.rest && r.rest.pagingPostBody,
   },
-  exportRestMaxPagePath: {
+  'export.rest.maxPagePath': {
     type: 'text',
     helpKey: 'export.rest.maxPagePath',
     name: '/rest/maxPagePath',
-    id: 'exportRestMaxPagePath',
+    id: 'export.rest.maxPagePath',
     label: 'Rest max Page Path',
-    defaultValue: '{{rest.maxPagePath}}',
+    defaultValue: r => r && r.rest && r.rest.maxPagePath,
   },
-  exportRestMaxCountPath: {
+  'export.rest.maxCountPath': {
     type: 'text',
     helpKey: 'export.rest.maxCountPath',
     name: '/rest/maxCountPath',
-    id: 'exportRestMaxCountPath',
+    id: 'export.rest.maxCountPath',
     label: 'Rest max Count Path',
-    defaultValue: '{{rest.maxCountPath}}',
+    defaultValue: r => r && r.rest && r.rest.maxCountPath,
   },
-  exportRestSkipArgument: {
+  'export.rest.skipArgument': {
     type: 'text',
     helpKey: 'export.rest.skipArgument',
     name: '/rest/skipArgument',
-    id: 'exportRestSkipArgument',
+    id: 'export.rest.skipArgument',
     label: 'Rest skip Argument',
-    defaultValue: '{{rest.skipArgument}}',
+    defaultValue: r => r && r.rest && r.rest.skipArgument,
   },
-  exportRestBlobFormat: {
+  'export.rest.blobFormat': {
     type: 'text',
     helpKey: 'export.rest.blobFormat',
     name: '/rest/blobFormat',
-    id: 'exportRestBlobFormat',
+    id: 'export.rest.blobFormat',
     label: 'Rest blob Format',
-    defaultValue: '{{rest.blobFormat}}',
+    defaultValue: r => r && r.rest && r.rest.blobFormat,
   },
-  exportRestSuccessPath: {
+  'export.rest.successPath': {
     type: 'text',
     helpKey: 'export.rest.successPath',
     name: '/rest/successPath',
-    id: 'exportRestSuccessPath',
+    id: 'export.rest.successPath',
     label: 'Rest success Path',
-    defaultValue: '{{rest.successPath}}',
+    defaultValue: r => r && r.rest && r.rest.successPath,
   },
-  exportRestSuccessValuess: {
+  'export.rest.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.rest.successValues',
     name: '/rest/successValuess',
-    id: 'exportRestSuccessValuess',
+    id: 'export.rest.successValuess',
     label: 'Rest success Values',
-    defaultValue: '{{rest.successValues}}',
+    defaultValue: r => r && r.rest && r.rest.successValues,
     validWhen: [],
   },
-  exportRestLastPageStatusCode: {
+  'export.rest.lastPageStatusCode': {
     type: 'text',
     helpKey: 'export.rest.lastPageStatusCode',
     name: '/rest/lastPageStatusCode',
-    id: 'exportRestLastPageStatusCode',
+    id: 'export.rest.lastPageStatusCode',
     label: 'Rest last Page Status Code',
-    defaultValue: '{{rest.lastPageStatusCode}}',
+    defaultValue: r => r && r.rest && r.rest.lastPageStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportRestLastPagePath: {
+  'export.rest.lastPagePath': {
     type: 'text',
     helpKey: 'export.rest.lastPagePath',
     name: '/rest/lastPagePath',
-    id: 'exportRestLastPagePath',
+    id: 'export.rest.lastPagePath',
     label: 'Rest last Page Path',
-    defaultValue: '{{rest.lastPagePath}}',
+    defaultValue: r => r && r.rest && r.rest.lastPagePath,
   },
-  exportRestLastPageValue: {
+  'export.rest.lastPageValue': {
     type: 'text',
     helpKey: 'export.rest.lastPageValue',
     name: '/rest/lastPageValue',
-    id: 'exportRestLastPageValue',
+    id: 'export.rest.lastPageValue',
     label: 'Rest last Page Value',
-    defaultValue: '{{rest.lastPageValue}}',
+    defaultValue: r => r && r.rest && r.rest.lastPageValue,
   },
-  exportRestOnceRelativeURI: {
+  'export.rest.once.relativeURI': {
     type: 'text',
     helpKey: 'export.rest.once.relativeURI',
     name: '/rest/once/relativeURI',
-    id: 'exportRestOnceRelativeURI',
+    id: 'export.rest.once.relativeURI',
     label: 'Rest once relative URI',
-    defaultValue: '{{rest.once.relativeURI}}',
+    defaultValue: r => r && r.rest && r.rest.once && r.rest.once.relativeURI,
   },
-  exportRestOnceMethod: {
+  'export.rest.once.method': {
     type: 'radiogroup',
     helpKey: 'export.rest.once.method',
     name: '/rest/once/method',
-    id: 'exportRestOnceMethod',
+    id: 'export.rest.once.method',
     label: 'Rest once method',
-    defaultValue: '{{rest.once.method}}',
+    defaultValue: r => r && r.rest && r.rest.once && r.rest.once.method,
     options: [
       {
         items: [
@@ -1143,57 +1186,57 @@ export default {
       },
     ],
   },
-  exportRestOncePostBody: {
+  'export.rest.once.postBody': {
     type: 'text',
     helpKey: 'export.rest.once.postBody',
     name: '/rest/once/postBody',
-    id: 'exportRestOncePostBody',
+    id: 'export.rest.once.postBody',
     label: 'Rest once post Body',
-    defaultValue: '{{rest.once.postBody}}',
+    defaultValue: r => r && r.rest && r.rest.once && r.rest.once.postBody,
   },
   // #endregion rest
   // #region ftp
-  exportFtpDirectoryPath: {
+  'export.ftp.directoryPath': {
     type: 'text',
     helpKey: 'export.ftp.directoryPath',
     name: '/ftp/directoryPath',
-    id: 'exportFtpDirectoryPath',
+    id: 'export.ftp.directoryPath',
     label: 'Ftp directory Path',
-    defaultValue: '{{ftp.directoryPath}}',
+    defaultValue: r => r && r.ftp && r.ftp.directoryPath,
   },
-  exportFtpFileNameStartsWith: {
+  'export.ftp.fileNameStartsWith': {
     type: 'text',
     helpKey: 'export.ftp.fileNameStartsWith',
     name: '/ftp/fileNameStartsWith',
-    id: 'exportFtpFileNameStartsWith',
+    id: 'export.ftp.fileNameStartsWith',
     label: 'Ftp file Name Starts With',
-    defaultValue: '{{ftp.fileNameStartsWith}}',
+    defaultValue: r => r && r.ftp && r.ftp.fileNameStartsWith,
   },
-  exportFtpFileNameEndsWith: {
+  'export.ftp.fileNameEndsWith': {
     type: 'text',
     helpKey: 'export.ftp.fileNameEndsWith',
     name: '/ftp/fileNameEndsWith',
-    id: 'exportFtpFileNameEndsWith',
+    id: 'export.ftp.fileNameEndsWith',
     label: 'Ftp file Name Ends With',
-    defaultValue: '{{ftp.fileNameEndsWith}}',
+    defaultValue: r => r && r.ftp && r.ftp.fileNameEndsWith,
   },
-  exportFtpBackupDirectoryPath: {
+  'export.ftp.backupDirectoryPath': {
     type: 'text',
     helpKey: 'export.ftp.backupDirectoryPath',
     name: '/ftp/backupDirectoryPath',
-    id: 'exportFtpBackupDirectoryPath',
+    id: 'export.ftp.backupDirectoryPath',
     label: 'Ftp backup Directory Path',
-    defaultValue: '{{ftp.backupDirectoryPath}}',
+    defaultValue: r => r && r.ftp && r.ftp.backupDirectoryPath,
   },
   // #endregion ftp
   // #region http
-  exportHttpSuccessMediaType: {
+  'export.http.successMediaType': {
     type: 'select',
     helpKey: 'export.http.successMediaType',
     name: '/http/successMediaType',
-    id: 'exportHttpSuccessMediaType',
+    id: 'export.http.successMediaType',
     label: 'Http success Media Type',
-    defaultValue: '{{http.successMediaType}}',
+    defaultValue: r => r && r.http && r.http.successMediaType,
     options: [
       {
         items: [
@@ -1204,13 +1247,13 @@ export default {
       },
     ],
   },
-  exportHttpErrorMediaType: {
+  'export.http.errorMediaType': {
     type: 'radiogroup',
     helpKey: 'export.http.errorMediaType',
     name: '/http/errorMediaType',
-    id: 'exportHttpErrorMediaType',
+    id: 'export.http.errorMediaType',
     label: 'Http error Media Type',
-    defaultValue: '{{http.errorMediaType}}',
+    defaultValue: r => r && r.http && r.http.errorMediaType,
     options: [
       {
         items: [
@@ -1220,21 +1263,21 @@ export default {
       },
     ],
   },
-  exportHttpRelativeURI: {
+  'export.http.relativeURI': {
     type: 'text',
     helpKey: 'export.http.relativeURI',
     name: '/http/relativeURI',
-    id: 'exportHttpRelativeURI',
+    id: 'export.http.relativeURI',
     label: 'Http relative URI',
-    defaultValue: '{{http.relativeURI}}',
+    defaultValue: r => r && r.http && r.http.relativeURI,
   },
-  exportHttpMethod: {
+  'export.http.method': {
     type: 'select',
     helpKey: 'export.http.method',
     name: '/http/method',
-    id: 'exportHttpMethod',
+    id: 'export.http.method',
     label: 'Http method',
-    defaultValue: '{{http.method}}',
+    defaultValue: r => r && r.http && r.http.method,
     options: [
       {
         items: [
@@ -1247,32 +1290,32 @@ export default {
       },
     ],
   },
-  exportHttpBody: {
+  'export.http.body': {
     type: 'text',
     helpKey: 'export.http.body',
     name: '/http/body',
-    id: 'exportHttpBody',
+    id: 'export.http.body',
     label: 'Http body',
-    defaultValue: '{{http.body}}',
+    defaultValue: r => r && r.http && r.http.body,
   },
-  exportHttpHeaders: {
+  'export.http.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
     helpKey: 'export.http.headers',
     name: '/http/headers',
-    id: 'exportHttpHeaders',
+    id: 'export.http.headers',
     label: 'Http headers',
-    defaultValue: '{{http.headers}}',
+    defaultValue: r => r && r.http && r.http.headers,
   },
-  exportHttpPagingMethod: {
+  'export.http.paging.method': {
     type: 'select',
     helpKey: 'export.http.paging.method',
     name: '/http/paging/method',
-    id: 'exportHttpPagingMethod',
+    id: 'export.http.paging.method',
     label: 'Http paging method',
-    defaultValue: '{{http.paging.method}}',
+    defaultValue: r => r && r.http && r.http.paging && r.http.paging.method,
     options: [
       {
         items: [
@@ -1286,152 +1329,161 @@ export default {
       },
     ],
   },
-  exportHttpPagingSkip: {
+  'export.http.paging.skip': {
     type: 'text',
     helpKey: 'export.http.paging.skip',
     name: '/http/paging/skip',
-    id: 'exportHttpPagingSkip',
+    id: 'export.http.paging.skip',
     label: 'Http paging skip',
-    defaultValue: '{{http.paging.skip}}',
+    defaultValue: r => r && r.http && r.http.paging && r.http.paging.skip,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportHttpPagingPage: {
+  'export.http.paging.page': {
     type: 'text',
     helpKey: 'export.http.paging.page',
     name: '/http/paging/page',
-    id: 'exportHttpPagingPage',
+    id: 'export.http.paging.page',
     label: 'Http paging page',
-    defaultValue: '{{http.paging.page}}',
+    defaultValue: r => r && r.http && r.http.paging && r.http.paging.page,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportHttpPagingToken: {
+  'export.http.paging.token': {
     type: 'text',
     helpKey: 'export.http.paging.token',
     name: '/http/paging/token',
-    id: 'exportHttpPagingToken',
+    id: 'export.http.paging.token',
     label: 'Http paging token',
-    defaultValue: '{{http.paging.token}}',
+    defaultValue: r => r && r.http && r.http.paging && r.http.paging.token,
   },
-  exportHttpPagingPath: {
+  'export.http.paging.path': {
     type: 'text',
     helpKey: 'export.http.paging.path',
     name: '/http/paging/path',
-    id: 'exportHttpPagingPath',
+    id: 'export.http.paging.path',
     label: 'Http paging path',
-    defaultValue: '{{http.paging.path}}',
+    defaultValue: r => r && r.http && r.http.paging && r.http.paging.path,
   },
-  exportHttpPagingRelativeURI: {
+  'export.http.paging.relativeURI': {
     type: 'text',
     helpKey: 'export.http.paging.relativeURI',
     name: '/http/paging/relativeURI',
-    id: 'exportHttpPagingRelativeURI',
+    id: 'export.http.paging.relativeURI',
     label: 'Http paging relative URI',
-    defaultValue: '{{http.paging.relativeURI}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.relativeURI,
   },
-  exportHttpPagingPathAfterFirstRequest: {
+  'export.http.paging.pathAfterFirstRequest': {
     type: 'text',
     helpKey: 'export.http.paging.pathAfterFirstRequest',
     name: '/http/paging/pathAfterFirstRequest',
-    id: 'exportHttpPagingPathAfterFirstRequest',
+    id: 'export.http.paging.pathAfterFirstRequest',
     label: 'Http paging path After First Request',
-    defaultValue: '{{http.paging.pathAfterFirstRequest}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.pathAfterFirstRequest,
   },
-  exportHttpPagingResourcePath: {
+  'export.http.paging.resourcePath': {
     type: 'text',
     helpKey: 'export.http.paging.resourcePath',
     name: '/http/paging/resourcePath',
-    id: 'exportHttpPagingResourcePath',
+    id: 'export.http.paging.resourcePath',
     label: 'Http paging resource Path',
-    defaultValue: '{{http.paging.resourcePath}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.resourcePath,
   },
-  exportHttpPagingMaxPagePath: {
+  'export.http.paging.maxPagePath': {
     type: 'text',
     helpKey: 'export.http.paging.maxPagePath',
     name: '/http/paging/maxPagePath',
-    id: 'exportHttpPagingMaxPagePath',
+    id: 'export.http.paging.maxPagePath',
     label: 'Http paging max Page Path',
-    defaultValue: '{{http.paging.maxPagePath}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.maxPagePath,
   },
-  exportHttpPagingMaxCountPath: {
+  'export.http.paging.maxCountPath': {
     type: 'text',
     helpKey: 'export.http.paging.maxCountPath',
     name: '/http/paging/maxCountPath',
-    id: 'exportHttpPagingMaxCountPath',
+    id: 'export.http.paging.maxCountPath',
     label: 'Http paging max Count Path',
-    defaultValue: '{{http.paging.maxCountPath}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.maxCountPath,
   },
-  exportHttpPagingLastPageStatusCode: {
+  'export.http.paging.lastPageStatusCode': {
     type: 'text',
     helpKey: 'export.http.paging.lastPageStatusCode',
     name: '/http/paging/lastPageStatusCode',
-    id: 'exportHttpPagingLastPageStatusCode',
+    id: 'export.http.paging.lastPageStatusCode',
     label: 'Http paging last Page Status Code',
-    defaultValue: '{{http.paging.lastPageStatusCode}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.lastPageStatusCode,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportHttpPagingLastPagePath: {
+  'export.http.paging.lastPagePath': {
     type: 'text',
     helpKey: 'export.http.paging.lastPagePath',
     name: '/http/paging/lastPagePath',
-    id: 'exportHttpPagingLastPagePath',
+    id: 'export.http.paging.lastPagePath',
     label: 'Http paging last Page Path',
-    defaultValue: '{{http.paging.lastPagePath}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.lastPagePath,
   },
-  exportHttpPagingLastPageValuess: {
+  'export.http.paging.lastPageValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.http.paging.lastPageValues',
     name: '/http/paging/lastPageValuess',
-    id: 'exportHttpPagingLastPageValuess',
+    id: 'export.http.paging.lastPageValuess',
     label: 'Http paging last Page Values',
-    defaultValue: '{{http.paging.lastPageValues}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.lastPageValues,
     validWhen: [],
   },
-  exportHttpPagingLinkHeaderRelation: {
+  'export.http.paging.linkHeaderRelation': {
     type: 'text',
     helpKey: 'export.http.paging.linkHeaderRelation',
     name: '/http/paging/linkHeaderRelation',
-    id: 'exportHttpPagingLinkHeaderRelation',
+    id: 'export.http.paging.linkHeaderRelation',
     label: 'Http paging link Header Relation',
-    defaultValue: '{{http.paging.linkHeaderRelation}}',
+    defaultValue: r =>
+      r && r.http && r.http.paging && r.http.paging.linkHeaderRelation,
   },
-  exportHttp_asyncHelperId: {
+  'export.http._asyncHelperId': {
     type: 'text',
     helpKey: 'export.http._asyncHelperId',
     name: '/http/_asyncHelperId',
-    id: 'exportHttp_asyncHelperId',
+    id: 'export.http._asyncHelperId',
     label: 'Http _async Helper Id',
-    defaultValue: '{{http._asyncHelperId}}',
+    defaultValue: r => r && r.http && r.http._asyncHelperId,
   },
-  exportHttpOnceRelativeURI: {
+  'export.http.once.relativeURI': {
     type: 'text',
     helpKey: 'export.http.once.relativeURI',
     name: '/http/once/relativeURI',
-    id: 'exportHttpOnceRelativeURI',
+    id: 'export.http.once.relativeURI',
     label: 'Http once relative URI',
-    defaultValue: '{{http.once.relativeURI}}',
+    defaultValue: r => r && r.http && r.http.once && r.http.once.relativeURI,
   },
-  exportHttpOnceMethod: {
+  'export.http.once.method': {
     type: 'select',
     helpKey: 'export.http.once.method',
     name: '/http/once/method',
-    id: 'exportHttpOnceMethod',
+    id: 'export.http.once.method',
     label: 'Http once method',
-    defaultValue: '{{http.once.method}}',
+    defaultValue: r => r && r.http && r.http.once && r.http.once.method,
     options: [
       {
         items: [
@@ -1444,426 +1496,540 @@ export default {
       },
     ],
   },
-  exportHttpOnceBody: {
+  'export.http.once.body': {
     type: 'text',
     helpKey: 'export.http.once.body',
     name: '/http/once/body',
-    id: 'exportHttpOnceBody',
+    id: 'export.http.once.body',
     label: 'Http once body',
-    defaultValue: '{{http.once.body}}',
+    defaultValue: r => r && r.http && r.http.once && r.http.once.body,
   },
-  exportHttpResponseResourcePath: {
+  'export.http.response.resourcePath': {
     type: 'text',
     helpKey: 'export.http.response.resourcePath',
     name: '/http/response/resourcePath',
-    id: 'exportHttpResponseResourcePath',
+    id: 'export.http.response.resourcePath',
     label: 'Http response resource Path',
-    defaultValue: '{{http.response.resourcePath}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.resourcePath,
   },
-  exportHttpResponseResourceIdPath: {
+  'export.http.response.resourceIdPath': {
     type: 'text',
     helpKey: 'export.http.response.resourceIdPath',
     name: '/http/response/resourceIdPath',
-    id: 'exportHttpResponseResourceIdPath',
+    id: 'export.http.response.resourceIdPath',
     label: 'Http response resource Id Path',
-    defaultValue: '{{http.response.resourceIdPath}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.resourceIdPath,
   },
-  exportHttpResponseSuccessPath: {
+  'export.http.response.successPath': {
     type: 'text',
     helpKey: 'export.http.response.successPath',
     name: '/http/response/successPath',
-    id: 'exportHttpResponseSuccessPath',
+    id: 'export.http.response.successPath',
     label: 'Http response success Path',
-    defaultValue: '{{http.response.successPath}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.successPath,
   },
-  exportHttpResponseSuccessValuess: {
+  'export.http.response.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.http.response.successValues',
     name: '/http/response/successValuess',
-    id: 'exportHttpResponseSuccessValuess',
+    id: 'export.http.response.successValuess',
     label: 'Http response success Values',
-    defaultValue: '{{http.response.successValues}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.successValues,
     validWhen: [],
   },
-  exportHttpResponseErrorPath: {
+  'export.http.response.errorPath': {
     type: 'text',
     helpKey: 'export.http.response.errorPath',
     name: '/http/response/errorPath',
-    id: 'exportHttpResponseErrorPath',
+    id: 'export.http.response.errorPath',
     label: 'Http response error Path',
-    defaultValue: '{{http.response.errorPath}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.errorPath,
   },
-  exportHttpResponseBlobFormat: {
+  'export.http.response.blobFormat': {
     type: 'text',
     helpKey: 'export.http.response.blobFormat',
     name: '/http/response/blobFormat',
-    id: 'exportHttpResponseBlobFormat',
+    id: 'export.http.response.blobFormat',
     label: 'Http response blob Format',
-    defaultValue: '{{http.response.blobFormat}}',
+    defaultValue: r =>
+      r && r.http && r.http.response && r.http.response.blobFormat,
   },
   // #endregion http
   // #region netsuite
-  exportNetsuiteSearchess: {
+  'export.netsuite.searchess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.netsuite.searches',
     name: '/netsuite/searchess',
-    id: 'exportNetsuiteSearchess',
+    id: 'export.netsuite.searchess',
     label: 'Netsuite searches',
-    defaultValue: '{{netsuite.searches}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.searches,
     validWhen: [],
   },
-  exportNetsuiteMetadata: {
+  'export.netsuite.metadata': {
     type: 'text',
     helpKey: 'export.netsuite.metadata',
     name: '/netsuite/metadata',
-    id: 'exportNetsuiteMetadata',
+    id: 'export.netsuite.metadata',
     label: 'Netsuite metadata',
-    defaultValue: '{{netsuite.metadata}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.metadata,
   },
-  exportNetsuiteSelectoption: {
+  'export.netsuite.selectoption': {
     type: 'text',
     helpKey: 'export.netsuite.selectoption',
     name: '/netsuite/selectoption',
-    id: 'exportNetsuiteSelectoption',
+    id: 'export.netsuite.selectoption',
     label: 'Netsuite selectoption',
-    defaultValue: '{{netsuite.selectoption}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.selectoption,
   },
-  exportNetsuiteCustomFieldMetadata: {
+  'export.netsuite.customFieldMetadata': {
     type: 'text',
     helpKey: 'export.netsuite.customFieldMetadata',
     name: '/netsuite/customFieldMetadata',
-    id: 'exportNetsuiteCustomFieldMetadata',
+    id: 'export.netsuite.customFieldMetadata',
     label: 'Netsuite custom Field Metadata',
-    defaultValue: '{{netsuite.customFieldMetadata}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.customFieldMetadata,
   },
-  exportNetsuiteSkipGrouping: {
+  'export.netsuite.skipGrouping': {
     type: 'checkbox',
     helpKey: 'export.netsuite.skipGrouping',
     name: '/netsuite/skipGrouping',
-    id: 'exportNetsuiteSkipGrouping',
+    id: 'export.netsuite.skipGrouping',
     label: 'Netsuite skip Grouping',
     defaultValue: false,
   },
-  exportNetsuiteStatsOnly: {
+  'export.netsuite.statsOnly': {
     type: 'checkbox',
     helpKey: 'export.netsuite.statsOnly',
     name: '/netsuite/statsOnly',
-    id: 'exportNetsuiteStatsOnly',
+    id: 'export.netsuite.statsOnly',
     label: 'Netsuite stats Only',
     defaultValue: false,
   },
-  exportNetsuiteInternalId: {
+  'export.netsuite.internalId': {
     type: 'text',
     helpKey: 'export.netsuite.internalId',
     name: '/netsuite/internalId',
-    id: 'exportNetsuiteInternalId',
+    id: 'export.netsuite.internalId',
     label: 'Netsuite internal Id',
-    defaultValue: '{{netsuite.internalId}}',
+    defaultValue: r => r && r.netsuite && r.netsuite.internalId,
   },
-  exportNetsuiteRestletRecordType: {
+  'export.netsuite.restlet.recordType': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.recordType',
     name: '/netsuite/restlet/recordType',
-    id: 'exportNetsuiteRestletRecordType',
+    id: 'export.netsuite.restlet.recordType',
     label: 'Netsuite restlet record Type',
-    defaultValue: '{{netsuite.restlet.recordType}}',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
   },
-  exportNetsuiteRestletSearchId: {
+  'export.netsuite.restlet.searchId': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.searchId',
     name: '/netsuite/restlet/searchId',
-    id: 'exportNetsuiteRestletSearchId',
+    id: 'export.netsuite.restlet.searchId',
     label: 'Netsuite restlet search Id',
-    defaultValue: '{{netsuite.restlet.searchId}}',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
   },
-  'exportNetsuiteRestletCriteria[*]Field': {
+  'export.netsuite.restlet.criteria.field': {
     type: 'text',
-    helpKey: 'export.netsuite.restlet.criteria[*].field',
-    name: '/netsuite/restlet/criteria[*]/field',
-    id: 'exportNetsuiteRestletCriteria[*]Field',
-    label: 'Netsuite restlet criteria[*] field',
-    defaultValue: '{{netsuite.restlet.criteria[*].field}}',
+    helpKey: 'export.netsuite.restlet.criteria.field',
+    name: '/netsuite/restlet/criteria/field',
+    id: 'export.netsuite.restlet.criteria.field',
+    label: 'Netsuite restlet criteria field',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.criteria &&
+      r.netsuite.restlet.criteria.field,
   },
-  'exportNetsuiteRestletCriteria[*]Join': {
+  'export.netsuite.restlet.criteria.join': {
     type: 'text',
-    helpKey: 'export.netsuite.restlet.criteria[*].join',
-    name: '/netsuite/restlet/criteria[*]/join',
-    id: 'exportNetsuiteRestletCriteria[*]Join',
-    label: 'Netsuite restlet criteria[*] join',
-    defaultValue: '{{netsuite.restlet.criteria[*].join}}',
+    helpKey: 'export.netsuite.restlet.criteria.join',
+    name: '/netsuite/restlet/criteria/join',
+    id: 'export.netsuite.restlet.criteria.join',
+    label: 'Netsuite restlet criteria join',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.criteria &&
+      r.netsuite.restlet.criteria.join,
   },
-  'exportNetsuiteRestletCriteria[*]Operator': {
+  'export.netsuite.restlet.criteria.operator': {
     type: 'text',
-    helpKey: 'export.netsuite.restlet.criteria[*].operator',
-    name: '/netsuite/restlet/criteria[*]/operator',
-    id: 'exportNetsuiteRestletCriteria[*]Operator',
-    label: 'Netsuite restlet criteria[*] operator',
-    defaultValue: '{{netsuite.restlet.criteria[*].operator}}',
+    helpKey: 'export.netsuite.restlet.criteria.operator',
+    name: '/netsuite/restlet/criteria/operator',
+    id: 'export.netsuite.restlet.criteria.operator',
+    label: 'Netsuite restlet criteria operator',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.criteria &&
+      r.netsuite.restlet.criteria.operator,
   },
-  'exportNetsuiteRestletCriteria[*]SearchValue': {
+  'export.netsuite.restlet.criteria.searchValue': {
     type: 'text',
-    helpKey: 'export.netsuite.restlet.criteria[*].searchValue',
-    name: '/netsuite/restlet/criteria[*]/searchValue',
-    id: 'exportNetsuiteRestletCriteria[*]SearchValue',
-    label: 'Netsuite restlet criteria[*] search Value',
-    defaultValue: '{{netsuite.restlet.criteria[*].searchValue}}',
+    helpKey: 'export.netsuite.restlet.criteria.searchValue',
+    name: '/netsuite/restlet/criteria/searchValue',
+    id: 'export.netsuite.restlet.criteria.searchValue',
+    label: 'Netsuite restlet criteria search Value',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.criteria &&
+      r.netsuite.restlet.criteria.searchValue,
   },
-  'exportNetsuiteRestletCriteria[*]SearchValue2': {
+  'export.netsuite.restlet.criteria.searchValue2': {
     type: 'text',
-    helpKey: 'export.netsuite.restlet.criteria[*].searchValue2',
-    name: '/netsuite/restlet/criteria[*]/searchValue2',
-    id: 'exportNetsuiteRestletCriteria[*]SearchValue2',
-    label: 'Netsuite restlet criteria[*] search Value2',
-    defaultValue: '{{netsuite.restlet.criteria[*].searchValue2}}',
+    helpKey: 'export.netsuite.restlet.criteria.searchValue2',
+    name: '/netsuite/restlet/criteria/searchValue2',
+    id: 'export.netsuite.restlet.criteria.searchValue2',
+    label: 'Netsuite restlet criteria search Value2',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.criteria &&
+      r.netsuite.restlet.criteria.searchValue2,
   },
-  exportNetsuiteRestletBatchSize: {
+  'export.netsuite.restlet.batchSize': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.batchSize',
     name: '/netsuite/restlet/batchSize',
-    id: 'exportNetsuiteRestletBatchSize',
+    id: 'export.netsuite.restlet.batchSize',
     label: 'Netsuite restlet batch Size',
-    defaultValue: '{{netsuite.restlet.batchSize}}',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.batchSize,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportNetsuiteRestletHooksBatchSize: {
+  'export.netsuite.restlet.hooks.batchSize': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.hooks.batchSize',
     name: '/netsuite/restlet/hooks/batchSize',
-    id: 'exportNetsuiteRestletHooksBatchSize',
+    id: 'export.netsuite.restlet.hooks.batchSize',
     label: 'Netsuite restlet hooks batch Size',
-    defaultValue: '{{netsuite.restlet.hooks.batchSize}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.hooks &&
+      r.netsuite.restlet.hooks.batchSize,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportNetsuiteRestletHooksPreSendFileInternalId: {
+  'export.netsuite.restlet.hooks.preSend.fileInternalId': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.hooks.preSend.fileInternalId',
     name: '/netsuite/restlet/hooks/preSend/fileInternalId',
-    id: 'exportNetsuiteRestletHooksPreSendFileInternalId',
+    id: 'export.netsuite.restlet.hooks.preSend.fileInternalId',
     label: 'Netsuite restlet hooks pre Send file Internal Id',
-    defaultValue: '{{netsuite.restlet.hooks.preSend.fileInternalId}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.hooks &&
+      r.netsuite.restlet.hooks.preSend &&
+      r.netsuite.restlet.hooks.preSend.fileInternalId,
   },
-  exportNetsuiteRestletHooksPreSendFunction: {
+  'export.netsuite.restlet.hooks.preSend.function': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.hooks.preSend.function',
     name: '/netsuite/restlet/hooks/preSend/function',
-    id: 'exportNetsuiteRestletHooksPreSendFunction',
+    id: 'export.netsuite.restlet.hooks.preSend.function',
     label: 'Netsuite restlet hooks pre Send function',
-    defaultValue: '{{netsuite.restlet.hooks.preSend.function}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.hooks &&
+      r.netsuite.restlet.hooks.preSend &&
+      r.netsuite.restlet.hooks.preSend.function,
   },
-  exportNetsuiteRestletHooksPreSendConfiguration: {
+  'export.netsuite.restlet.hooks.preSend.configuration': {
     type: 'text',
     helpKey: 'export.netsuite.restlet.hooks.preSend.configuration',
     name: '/netsuite/restlet/hooks/preSend/configuration',
-    id: 'exportNetsuiteRestletHooksPreSendConfiguration',
+    id: 'export.netsuite.restlet.hooks.preSend.configuration',
     label: 'Netsuite restlet hooks pre Send configuration',
-    defaultValue: '{{netsuite.restlet.hooks.preSend.configuration}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.restlet &&
+      r.netsuite.restlet.hooks &&
+      r.netsuite.restlet.hooks.preSend &&
+      r.netsuite.restlet.hooks.preSend.configuration,
   },
-  exportNetsuiteDistributedRecordType: {
+  'export.netsuite.distributed.recordType': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.recordType',
     name: '/netsuite/distributed/recordType',
-    id: 'exportNetsuiteDistributedRecordType',
+    id: 'export.netsuite.distributed.recordType',
     label: 'Netsuite distributed record Type',
-    defaultValue: '{{netsuite.distributed.recordType}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.recordType,
   },
-  exportNetsuiteDistributedExecutionContexts: {
+  'export.netsuite.distributed.executionContexts': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.netsuite.distributed.executionContext',
     name: '/netsuite/distributed/executionContexts',
-    id: 'exportNetsuiteDistributedExecutionContexts',
+    id: 'export.netsuite.distributed.executionContexts',
     label: 'Netsuite distributed execution Context',
-    defaultValue: '{{netsuite.distributed.executionContext}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionContext,
     validWhen: [],
   },
-  exportNetsuiteDistributedDisabled: {
+  'export.netsuite.distributed.disabled': {
     type: 'checkbox',
     helpKey: 'export.netsuite.distributed.disabled',
     name: '/netsuite/distributed/disabled',
-    id: 'exportNetsuiteDistributedDisabled',
+    id: 'export.netsuite.distributed.disabled',
     label: 'Netsuite distributed disabled',
     defaultValue: false,
   },
-  exportNetsuiteDistributedExecutionTypes: {
+  'export.netsuite.distributed.executionTypes': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.netsuite.distributed.executionType',
     name: '/netsuite/distributed/executionTypes',
-    id: 'exportNetsuiteDistributedExecutionTypes',
+    id: 'export.netsuite.distributed.executionTypes',
     label: 'Netsuite distributed execution Type',
-    defaultValue: '{{netsuite.distributed.executionType}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionType,
     validWhen: [],
   },
-  exportNetsuiteDistributedQualifier: {
+  'export.netsuite.distributed.qualifier': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.qualifier',
     name: '/netsuite/distributed/qualifier',
-    id: 'exportNetsuiteDistributedQualifier',
+    id: 'export.netsuite.distributed.qualifier',
     label: 'Netsuite distributed qualifier',
-    defaultValue: '{{netsuite.distributed.qualifier}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.qualifier,
   },
-  exportNetsuiteDistributedHooksPreSendFileInternalId: {
+  'export.netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.hooks.preSend.fileInternalId',
     name: '/netsuite/distributed/hooks/preSend/fileInternalId',
-    id: 'exportNetsuiteDistributedHooksPreSendFileInternalId',
+    id: 'export.netsuite.distributed.hooks.preSend.fileInternalId',
     label: 'Netsuite distributed hooks pre Send file Internal Id',
-    defaultValue: '{{netsuite.distributed.hooks.preSend.fileInternalId}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.hooks &&
+      r.netsuite.distributed.hooks.preSend &&
+      r.netsuite.distributed.hooks.preSend.fileInternalId,
   },
-  exportNetsuiteDistributedHooksPreSendFunction: {
+  'export.netsuite.distributed.hooks.preSend.function': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.hooks.preSend.function',
     name: '/netsuite/distributed/hooks/preSend/function',
-    id: 'exportNetsuiteDistributedHooksPreSendFunction',
+    id: 'export.netsuite.distributed.hooks.preSend.function',
     label: 'Netsuite distributed hooks pre Send function',
-    defaultValue: '{{netsuite.distributed.hooks.preSend.function}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.hooks &&
+      r.netsuite.distributed.hooks.preSend &&
+      r.netsuite.distributed.hooks.preSend.function,
   },
-  exportNetsuiteDistributedHooksPreSendConfiguration: {
+  'export.netsuite.distributed.hooks.preSend.configuration': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.hooks.preSend.configuration',
     name: '/netsuite/distributed/hooks/preSend/configuration',
-    id: 'exportNetsuiteDistributedHooksPreSendConfiguration',
+    id: 'export.netsuite.distributed.hooks.preSend.configuration',
     label: 'Netsuite distributed hooks pre Send configuration',
-    defaultValue: '{{netsuite.distributed.hooks.preSend.configuration}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.hooks &&
+      r.netsuite.distributed.hooks.preSend &&
+      r.netsuite.distributed.hooks.preSend.configuration,
   },
-  exportNetsuiteDistributedSublists: {
+  'export.netsuite.distributed.sublists': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.sublists',
     name: '/netsuite/distributed/sublists',
-    id: 'exportNetsuiteDistributedSublists',
+    id: 'export.netsuite.distributed.sublists',
     label: 'Netsuite distributed sublists',
-    defaultValue: '{{netsuite.distributed.sublists}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.sublists,
   },
-  exportNetsuiteDistributedForceReload: {
+  'export.netsuite.distributed.forceReload': {
     type: 'checkbox',
     helpKey: 'export.netsuite.distributed.forceReload',
     name: '/netsuite/distributed/forceReload',
-    id: 'exportNetsuiteDistributedForceReload',
+    id: 'export.netsuite.distributed.forceReload',
     label: 'Netsuite distributed force Reload',
     defaultValue: false,
   },
-  exportNetsuiteDistributedIoEnvironment: {
+  'export.netsuite.distributed.ioEnvironment': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.ioEnvironment',
     name: '/netsuite/distributed/ioEnvironment',
-    id: 'exportNetsuiteDistributedIoEnvironment',
+    id: 'export.netsuite.distributed.ioEnvironment',
     label: 'Netsuite distributed io Environment',
-    defaultValue: '{{netsuite.distributed.ioEnvironment}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.ioEnvironment,
   },
-  exportNetsuiteDistributedLastSyncedDate: {
+  'export.netsuite.distributed.lastSyncedDate': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.lastSyncedDate',
     name: '/netsuite/distributed/lastSyncedDate',
-    id: 'exportNetsuiteDistributedLastSyncedDate',
+    id: 'export.netsuite.distributed.lastSyncedDate',
     label: 'Netsuite distributed last Synced Date',
-    defaultValue: '{{netsuite.distributed.lastSyncedDate}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.lastSyncedDate,
   },
-  exportNetsuiteDistributedSettings: {
+  'export.netsuite.distributed.settings': {
     type: 'text',
     helpKey: 'export.netsuite.distributed.settings',
     name: '/netsuite/distributed/settings',
-    id: 'exportNetsuiteDistributedSettings',
+    id: 'export.netsuite.distributed.settings',
     label: 'Netsuite distributed settings',
-    defaultValue: '{{netsuite.distributed.settings}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.settings,
   },
-  'exportNetsuiteGetList[*]TypeId': {
+  'export.netsuite.getList[].typeId': {
     type: 'text',
-    helpKey: 'export.netsuite.getList[*].typeId',
-    name: '/netsuite/getList[*]/typeId',
-    id: 'exportNetsuiteGetList[*]TypeId',
-    label: 'Netsuite get List[*] type Id',
-    defaultValue: '{{netsuite.getList[*].typeId}}',
+    helpKey: 'export.netsuite.getList[].typeId',
+    name: '/netsuite/getList/typeId',
+    id: 'export.netsuite.getList.typeId',
+    label: 'Netsuite get List type Id',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.getList && r.netsuite.getList.typeId,
   },
-  'exportNetsuiteGetList[*]InternalId': {
+  'export.netsuite.getList.internalId': {
     type: 'text',
-    helpKey: 'export.netsuite.getList[*].internalId',
-    name: '/netsuite/getList[*]/internalId',
-    id: 'exportNetsuiteGetList[*]InternalId',
-    label: 'Netsuite get List[*] internal Id',
-    defaultValue: '{{netsuite.getList[*].internalId}}',
+    helpKey: 'export.netsuite.getList.internalId',
+    name: '/netsuite/getList/internalId',
+    id: 'export.netsuite.getList.internalId',
+    label: 'Netsuite get List internal Id',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.getList && r.netsuite.getList.internalId,
   },
-  'exportNetsuiteGetList[*]ExternalId': {
+  'export.netsuite.getList.externalId': {
     type: 'text',
-    helpKey: 'export.netsuite.getList[*].externalId',
-    name: '/netsuite/getList[*]/externalId',
-    id: 'exportNetsuiteGetList[*]ExternalId',
-    label: 'Netsuite get List[*] external Id',
-    defaultValue: '{{netsuite.getList[*].externalId}}',
+    helpKey: 'export.netsuite.getList.externalId',
+    name: '/netsuite/getList/externalId',
+    id: 'export.netsuite.getList.externalId',
+    label: 'Netsuite get List external Id',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.getList && r.netsuite.getList.externalId,
   },
-  exportNetsuiteSearchPreferencesBodyFieldsOnly: {
+  'export.netsuite.searchPreferences.bodyFieldsOnly': {
     type: 'checkbox',
     helpKey: 'export.netsuite.searchPreferences.bodyFieldsOnly',
     name: '/netsuite/searchPreferences/bodyFieldsOnly',
-    id: 'exportNetsuiteSearchPreferencesBodyFieldsOnly',
+    id: 'export.netsuite.searchPreferences.bodyFieldsOnly',
     label: 'Netsuite search Preferences body Fields Only',
     defaultValue: false,
   },
-  exportNetsuiteSearchPreferencesPageSize: {
+  'export.netsuite.searchPreferences.pageSize': {
     type: 'text',
     helpKey: 'export.netsuite.searchPreferences.pageSize',
     name: '/netsuite/searchPreferences/pageSize',
-    id: 'exportNetsuiteSearchPreferencesPageSize',
+    id: 'export.netsuite.searchPreferences.pageSize',
     label: 'Netsuite search Preferences page Size',
-    defaultValue: '{{netsuite.searchPreferences.pageSize}}',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.searchPreferences &&
+      r.netsuite.searchPreferences.pageSize,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
   },
-  exportNetsuiteSearchPreferencesReturnSearchColumns: {
+  'export.netsuite.searchPreferences.returnSearchColumns': {
     type: 'checkbox',
     helpKey: 'export.netsuite.searchPreferences.returnSearchColumns',
     name: '/netsuite/searchPreferences/returnSearchColumns',
-    id: 'exportNetsuiteSearchPreferencesReturnSearchColumns',
+    id: 'export.netsuite.searchPreferences.returnSearchColumns',
     label: 'Netsuite search Preferences return Search Columns',
     defaultValue: false,
   },
   // #endregion netsuite
   // #region rdbms
-  exportRdbmsQuery: {
+  'export.rdbms.query': {
     type: 'text',
     helpKey: 'export.rdbms.query',
     name: '/rdbms/query',
-    id: 'exportRdbmsQuery',
+    id: 'export.rdbms.query',
     label: 'Rdbms query',
-    defaultValue: '{{rdbms.query}}',
+    defaultValue: r => r && r.rdbms && r.rdbms.query,
   },
-  exportRdbmsOnceQuery: {
+  'export.rdbms.once.query': {
     type: 'text',
     helpKey: 'export.rdbms.once.query',
     name: '/rdbms/once/query',
-    id: 'exportRdbmsOnceQuery',
+    id: 'export.rdbms.once.query',
     label: 'Rdbms once query',
-    defaultValue: '{{rdbms.once.query}}',
+    defaultValue: r => r && r.rdbms && r.rdbms.once && r.rdbms.once.query,
   },
   // #endregion rdbms
   // #region s3
-  exportS3Region: {
+  'export.s3.region': {
     type: 'select',
     helpKey: 'export.s3.region',
     name: '/s3/region',
-    id: 'exportS3Region',
+    id: 'export.s3.region',
     label: 'S3 region',
-    defaultValue: '{{s3.region}}',
+    defaultValue: r => r && r.s3 && r.s3.region,
     options: [
       {
         items: [
@@ -1886,63 +2052,63 @@ export default {
       },
     ],
   },
-  exportS3Bucket: {
+  'export.s3.bucket': {
     type: 'text',
     helpKey: 'export.s3.bucket',
     name: '/s3/bucket',
-    id: 'exportS3Bucket',
+    id: 'export.s3.bucket',
     label: 'S3 bucket',
-    defaultValue: '{{s3.bucket}}',
+    defaultValue: r => r && r.s3 && r.s3.bucket,
   },
-  exportS3KeyStartsWith: {
+  'export.s3.keyStartsWith': {
     type: 'text',
     helpKey: 'export.s3.keyStartsWith',
     name: '/s3/keyStartsWith',
-    id: 'exportS3KeyStartsWith',
+    id: 'export.s3.keyStartsWith',
     label: 'S3 key Starts With',
-    defaultValue: '{{s3.keyStartsWith}}',
+    defaultValue: r => r && r.s3 && r.s3.keyStartsWith,
   },
-  exportS3KeyEndsWith: {
+  'export.s3.keyEndsWith': {
     type: 'text',
     helpKey: 'export.s3.keyEndsWith',
     name: '/s3/keyEndsWith',
-    id: 'exportS3KeyEndsWith',
+    id: 'export.s3.keyEndsWith',
     label: 'S3 key Ends With',
-    defaultValue: '{{s3.keyEndsWith}}',
+    defaultValue: r => r && r.s3 && r.s3.keyEndsWith,
   },
-  exportS3BackupBucket: {
+  'export.s3.backupBucket': {
     type: 'text',
     helpKey: 'export.s3.backupBucket',
     name: '/s3/backupBucket',
-    id: 'exportS3BackupBucket',
+    id: 'export.s3.backupBucket',
     label: 'S3 backup Bucket',
-    defaultValue: '{{s3.backupBucket}}',
+    defaultValue: r => r && r.s3 && r.s3.backupBucket,
   },
   // #endregion s3
   // #region salesforce
-  exportSalesforceSObjectType: {
+  'export.salesforce.sObjectType': {
     type: 'text',
     helpKey: 'export.salesforce.sObjectType',
     name: '/salesforce/sObjectType',
-    id: 'exportSalesforceSObjectType',
+    id: 'export.salesforce.sObjectType',
     label: 'Salesforce s Object Type',
-    defaultValue: '{{salesforce.sObjectType}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
   },
-  exportSalesforceId: {
+  'export.salesforce.id': {
     type: 'text',
     helpKey: 'export.salesforce.id',
     name: '/salesforce/id',
-    id: 'exportSalesforceId',
+    id: 'export.salesforce.id',
     label: 'Salesforce id',
-    defaultValue: '{{salesforce.id}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.id,
   },
-  exportSalesforceApi: {
+  'export.salesforce.api': {
     type: 'radiogroup',
     helpKey: 'export.salesforce.api',
     name: '/salesforce/api',
-    id: 'exportSalesforceApi',
+    id: 'export.salesforce.api',
     label: 'Salesforce api',
-    defaultValue: '{{salesforce.api}}',
+    defaultValue: r => r && r.salesforce && r.salesforce.api,
     options: [
       {
         items: [
@@ -1952,176 +2118,223 @@ export default {
       },
     ],
   },
-  exportSalesforceSoqlQuery: {
+  'export.salesforce.soql.query': {
     type: 'text',
     helpKey: 'export.salesforce.soql.query',
     name: '/salesforce/soql/query',
-    id: 'exportSalesforceSoqlQuery',
+    id: 'export.salesforce.soql.query',
     label: 'Salesforce soql query',
-    defaultValue: '{{salesforce.soql.query}}',
+    defaultValue: r =>
+      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query,
   },
-  exportSalesforceDistributedReferencedFieldss: {
+  'export.salesforce.distributed.referencedFieldss': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.salesforce.distributed.referencedFields',
     name: '/salesforce/distributed/referencedFieldss',
-    id: 'exportSalesforceDistributedReferencedFieldss',
+    id: 'export.salesforce.distributed.referencedFieldss',
     label: 'Salesforce distributed referenced Fields',
-    defaultValue: '{{salesforce.distributed.referencedFields}}',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.referencedFields,
     validWhen: [],
   },
-  exportSalesforceDistributedDisabled: {
+  'export.salesforce.distributed.disabled': {
     type: 'checkbox',
     helpKey: 'export.salesforce.distributed.disabled',
     name: '/salesforce/distributed/disabled',
-    id: 'exportSalesforceDistributedDisabled',
+    id: 'export.salesforce.distributed.disabled',
     label: 'Salesforce distributed disabled',
     defaultValue: false,
   },
-  exportSalesforceDistributedConnectorId: {
+  'export.salesforce.distributed.connectorId': {
     type: 'text',
     helpKey: 'export.salesforce.distributed.connectorId',
     name: '/salesforce/distributed/connectorId',
-    id: 'exportSalesforceDistributedConnectorId',
+    id: 'export.salesforce.distributed.connectorId',
     label: 'Salesforce distributed connector Id',
-    defaultValue: '{{salesforce.distributed.connectorId}}',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.connectorId,
   },
-  exportSalesforceDistributedUserDefinedReferencedFieldss: {
+  'export.salesforce.distributed.userDefinedReferencedFieldss': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     helpKey: 'export.salesforce.distributed.userDefinedReferencedFields',
     name: '/salesforce/distributed/userDefinedReferencedFieldss',
-    id: 'exportSalesforceDistributedUserDefinedReferencedFieldss',
+    id: 'export.salesforce.distributed.userDefinedReferencedFieldss',
     label: 'Salesforce distributed user Defined Referenced Fields',
-    defaultValue: '{{salesforce.distributed.userDefinedReferencedFields}}',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.userDefinedReferencedFields,
     validWhen: [],
   },
-  exportSalesforceDistributedQualifier: {
+  'export.salesforce.distributed.qualifier': {
     type: 'text',
     helpKey: 'export.salesforce.distributed.qualifier',
     name: '/salesforce/distributed/qualifier',
-    id: 'exportSalesforceDistributedQualifier',
+    id: 'export.salesforce.distributed.qualifier',
     label: 'Salesforce distributed qualifier',
-    defaultValue: '{{salesforce.distributed.qualifier}}',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.qualifier,
   },
-  'exportSalesforceDistributedRelatedLists[*]ReferencedFieldss': {
+  'export.salesforce.distributed.relatedLists.referencedFieldss': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].referencedFields',
-    name: '/salesforce/distributed/relatedLists[*]/referencedFieldss',
-    id: 'exportSalesforceDistributedRelatedLists[*]ReferencedFieldss',
-    label: 'Salesforce distributed related Lists[*] referenced Fields',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].referencedFields}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.referencedFields',
+    name: '/salesforce/distributed/relatedLists/referencedFieldss',
+    id: 'export.salesforce.distributed.relatedLists.referencedFieldss',
+    label: 'Salesforce distributed related Lists referenced Fields',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.referencedFields,
     validWhen: [],
   },
-  'exportSalesforceDistributedRelatedLists[*]ParentField': {
+  'export.salesforce.distributed.relatedLists.parentField': {
     type: 'text',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].parentField',
-    name: '/salesforce/distributed/relatedLists[*]/parentField',
-    id: 'exportSalesforceDistributedRelatedLists[*]ParentField',
-    label: 'Salesforce distributed related Lists[*] parent Field',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].parentField}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.parentField',
+    name: '/salesforce/distributed/relatedLists/parentField',
+    id: 'export.salesforce.distributed.relatedLists.parentField',
+    label: 'Salesforce distributed related Lists parent Field',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.parentField,
   },
-  'exportSalesforceDistributedRelatedLists[*]SObjectType': {
+  'export.salesforce.distributed.relatedLists.sObjectType': {
     type: 'text',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].sObjectType',
-    name: '/salesforce/distributed/relatedLists[*]/sObjectType',
-    id: 'exportSalesforceDistributedRelatedLists[*]SObjectType',
-    label: 'Salesforce distributed related Lists[*] s Object Type',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].sObjectType}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.sObjectType',
+    name: '/salesforce/distributed/relatedLists/sObjectType',
+    id: 'export.salesforce.distributed.relatedLists.sObjectType',
+    label: 'Salesforce distributed related Lists s Object Type',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.sObjectType,
   },
-  'exportSalesforceDistributedRelatedLists[*]Filter': {
+  'export.salesforce.distributed.relatedLists.filter': {
     type: 'text',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].filter',
-    name: '/salesforce/distributed/relatedLists[*]/filter',
-    id: 'exportSalesforceDistributedRelatedLists[*]Filter',
-    label: 'Salesforce distributed related Lists[*] filter',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].filter}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.filter',
+    name: '/salesforce/distributed/relatedLists/filter',
+    id: 'export.salesforce.distributed.relatedLists.filter',
+    label: 'Salesforce distributed related Lists filter',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.filter,
   },
-  'exportSalesforceDistributedRelatedLists[*]OrderBy': {
+  'export.salesforce.distributed.relatedLists.orderBy': {
     type: 'text',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].orderBy',
-    name: '/salesforce/distributed/relatedLists[*]/orderBy',
-    id: 'exportSalesforceDistributedRelatedLists[*]OrderBy',
-    label: 'Salesforce distributed related Lists[*] order By',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].orderBy}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.orderBy',
+    name: '/salesforce/distributed/relatedLists/orderBy',
+    id: 'export.salesforce.distributed.relatedLists.orderBy',
+    label: 'Salesforce distributed related Lists order By',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.orderBy,
   },
-  'exportSalesforceDistributedRelatedLists[*]UserDefined': {
+  'export.salesforce.distributed.relatedLists.userDefined': {
     type: 'text',
-    helpKey: 'export.salesforce.distributed.relatedLists[*].userDefined',
-    name: '/salesforce/distributed/relatedLists[*]/userDefined',
-    id: 'exportSalesforceDistributedRelatedLists[*]UserDefined',
-    label: 'Salesforce distributed related Lists[*] user Defined',
-    defaultValue: '{{salesforce.distributed.relatedLists[*].userDefined}}',
+    helpKey: 'export.salesforce.distributed.relatedLists.userDefined',
+    name: '/salesforce/distributed/relatedLists/userDefined',
+    id: 'export.salesforce.distributed.relatedLists.userDefined',
+    label: 'Salesforce distributed related Lists user Defined',
+    defaultValue: r =>
+      r &&
+      r.salesforce &&
+      r.salesforce.distributed &&
+      r.salesforce.distributed.relatedLists &&
+      r.salesforce.distributed.relatedLists.userDefined,
   },
   // #endregion salesforce
   // #region wrapper
-  exportWrapperFunction: {
+  'export.wrapper.function': {
     type: 'text',
     helpKey: 'export.wrapper.function',
     name: '/wrapper/function',
-    id: 'exportWrapperFunction',
+    id: 'export.wrapper.function',
     label: 'Wrapper function',
-    defaultValue: '{{wrapper.function}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.function,
   },
-  exportWrapperConfiguration: {
+  'export.wrapper.configuration': {
     type: 'text',
     helpKey: 'export.wrapper.configuration',
     name: '/wrapper/configuration',
-    id: 'exportWrapperConfiguration',
+    id: 'export.wrapper.configuration',
     label: 'Wrapper configuration',
-    defaultValue: '{{wrapper.configuration}}',
+    defaultValue: r => r && r.wrapper && r.wrapper.configuration,
   },
   // #endregion wrapper
   // #region mongodb
-  exportMongodbMethod: {
+  'export.mongodb.method': {
     type: 'radiogroup',
     helpKey: 'export.mongodb.method',
     name: '/mongodb/method',
-    id: 'exportMongodbMethod',
+    id: 'export.mongodb.method',
     label: 'Mongodb method',
-    defaultValue: '{{mongodb.method}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.method,
     options: [{ items: [{ label: 'Find', value: 'find' }] }],
   },
-  exportMongodbCollection: {
+  'export.mongodb.collection': {
     type: 'text',
     helpKey: 'export.mongodb.collection',
     name: '/mongodb/collection',
-    id: 'exportMongodbCollection',
+    id: 'export.mongodb.collection',
     label: 'Mongodb collection',
-    defaultValue: '{{mongodb.collection}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.collection,
   },
-  exportMongodbFilter: {
+  'export.mongodb.filter': {
     type: 'text',
     helpKey: 'export.mongodb.filter',
     name: '/mongodb/filter',
-    id: 'exportMongodbFilter',
+    id: 'export.mongodb.filter',
     label: 'Mongodb filter',
-    defaultValue: '{{mongodb.filter}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.filter,
   },
-  exportMongodbProjection: {
+  'export.mongodb.projection': {
     type: 'text',
     helpKey: 'export.mongodb.projection',
     name: '/mongodb/projection',
-    id: 'exportMongodbProjection',
+    id: 'export.mongodb.projection',
     label: 'Mongodb projection',
-    defaultValue: '{{mongodb.projection}}',
+    defaultValue: r => r && r.mongodb && r.mongodb.projection,
   },
   // #endregion mongodb
   // #region as2
-  exportAs2FileKey: {
+  'export.as2.fileKey': {
     type: 'text',
     helpKey: 'export.as2.fileKey',
     name: '/as2/fileKey',
-    id: 'exportAs2FileKey',
+    id: 'export.as2.fileKey',
     label: 'As2 file Key',
-    defaultValue: '{{as2.fileKey}}',
+    defaultValue: r => r && r.as2 && r.as2.fileKey,
   },
   // #endregion as2
 };

@@ -24,39 +24,39 @@ export default {
     }
   },
   fields: [
-    { id: 'connectionName' },
-    { id: 'connectionType', disabled: true },
+    { id: 'connection.name' },
+    { id: 'connection.type', disabled: true },
     {
-      id: 'connectionFtpHostURI',
+      id: 'connection.ftp.hostURI',
       description:
         'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
     },
-    { id: 'connectionFtpType' },
+    { id: 'connection.ftp.type' },
     {
-      id: 'connectionFtpUsername',
+      id: 'connection.ftp.username',
     },
     {
-      id: 'connectionFtpPassword',
+      id: 'connection.ftp.password',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     {
-      id: 'connectionFtpAuthKey',
+      id: 'connection.ftp.authKey',
       placeholder: 'Optional if password is entered',
       multiline: true,
       visibleWhen: [
         {
-          field: 'connectionFtpType',
+          field: 'connection.ftp.type',
           is: ['sftp'],
         },
       ],
     },
     {
-      id: 'connectionFtpUseImplicitFtps',
+      id: 'connection.ftp.use.implicit.ftps',
 
       visibleWhen: [
         {
-          field: 'connectionFtpType',
+          field: 'connection.ftp.type',
           is: ['ftps'],
         },
       ],
@@ -68,53 +68,53 @@ export default {
       collapsed: true,
       fields: [
         {
-          id: 'connectionFtpPort',
-          refreshOptionsOnChangesTo: 'connectionFtpType',
+          id: 'connection.ftp.port',
+          refreshOptionsOnChangesTo: 'connection.ftp.type',
         },
         {
-          id: 'connectionFtpUsePassiveMode',
+          id: 'connection.ftp.usePassiveMode',
 
           visibleWhen: [
             {
-              field: 'connectionFtpType',
+              field: 'connection.ftp.type',
               is: ['ftp', 'ftps'],
             },
           ],
         },
         {
-          id: 'connectionFtpUserDirectoryIsRoot',
+          id: 'connection.ftp.userDirectoryIsRoot',
         },
-        { id: 'connectionFtpEntryParser' },
+        { id: 'connection.ftp.entryParser' },
         {
-          id: 'connectionFtpRequireSocketReUse',
+          id: 'connection.ftp.requireSocketReUse',
           description:
             'Note: for security reasons this field must always be re-entered.',
 
           visibleWhen: [
             {
-              field: 'connectionFtpType',
+              field: 'connection.ftp.type',
               is: ['ftps'],
             },
           ],
         },
         {
-          id: 'connectionFtpUsePgp',
+          id: 'connection.ftp.usePgp',
         },
         {
-          id: 'connectionFtpPgpEncryptKey',
+          id: 'connection.ftp.pgpEncryptKey',
           description:
             'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connectionFtpUsePgp',
+              field: 'connection.ftp.usePgp',
               is: [true],
             },
           ],
         },
         {
-          id: 'connectionFtpPgpDecryptKey',
+          id: 'connection.ftp.pgpEncryptKey',
 
           description:
             'Note: for security reasons this field must always be re-entered.',
@@ -122,20 +122,20 @@ export default {
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connectionFtpUsePgp',
+              field: 'connection.ftp.usePgp',
               is: [true],
             },
           ],
         },
         {
-          id: 'connectionFtpPgpPassphrase',
+          id: 'connection.ftp.pgpPassphrase',
           description:
             'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connectionFtpUsePgp',
+              field: 'connection.ftp.usePgp',
               is: [true],
             },
           ],

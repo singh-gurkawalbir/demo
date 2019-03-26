@@ -161,7 +161,7 @@ const generateFieldSetsHeader = formMeta =>
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'connection';
+const resourceType = 'export';
 const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
 const generateIndexFiles = data => {
   let str = '';
@@ -239,6 +239,7 @@ const schemaFile = `${resourceType}Schema.txt`;
 const data = fileread(join(__dirname, '..', schemaFile));
 
 gererateMatchingComponentsWithCollapsableComments(data, resourceType);
-gererateMatchingComponents(data, resourceType);
+// be very careful of the function below...will overwrite your changes
+// gererateMatchingComponents(data, resourceType);
 
 // get a particular component

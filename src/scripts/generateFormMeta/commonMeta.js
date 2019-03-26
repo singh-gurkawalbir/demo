@@ -61,6 +61,25 @@ export const generateCorrectPath = fieldDefs => {
   return path;
 };
 
+const generateDefaultValuesFunctions = path => {
+  const nullCheckValue = path.split('.').reduce(
+    (acc, curr) => {
+      const splits = acc.split(' && ');
+      let nowVal;
+
+      if (splits.length > 1) nowVal = `${splits[splits.length - 1]}.${curr}`;
+      else nowVal = `r.${curr}`;
+
+      return `${acc} && ${nowVal}`;
+    },
+
+    'r'
+  );
+
+  /* jslint evil: true */
+  return `r => ${nullCheckValue}`;
+};
+
 export default (fieldDefs, resource) => {
   // if path isn't defined then lets use the path from the object root
   const path = generateCorrectPath(fieldDefs);
@@ -68,8 +87,8 @@ export default (fieldDefs, resource) => {
   return {
     helpKey: helpKeyPath(path, resource),
     name: namePath(path),
-    id: idGeneration(path, resource),
+    id: helpKeyPath(path, resource),
     label: labelGeneration(path),
-    defaultValue: `{{${path}}}`,
+    defaultValue: generateDefaultValuesFunctions(path),
   };
 };
