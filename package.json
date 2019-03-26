@@ -64,6 +64,8 @@
     "redux": "4.0.1",
     "redux-logger": "3.0.6",
     "redux-saga": "0.16.2",
+    "redux-saga-requests": "^0.23.0",
+    "redux-saga-requests-fetch": "^0.9.6",
     "shortid": "2.2.14",
     "typeface-roboto": "0.0.54"
   },

@@ -76,7 +76,7 @@ export async function throwExceptionUsingTheResponse(response) {
   });
 }
 
-function checkToThrowSessionValidationException(response) {
+export function checkToThrowSessionValidationException(response) {
   // when session is invalidated then we
   // expect to get a 200 response with the response url being the sign in page
 
@@ -91,7 +91,7 @@ function checkToThrowSessionValidationException(response) {
   }
 }
 
-async function introduceNetworkLatency() {
+export async function introduceNetworkLatency() {
   await delay(process.env.ADD_NETWORK_LATENCY || 0);
 }
 
