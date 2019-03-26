@@ -1,40 +1,40 @@
 export default {
   fields: [
-    { id: 'connectionName' },
-    { id: 'connectionType' },
-    { id: 'connectionConnMode' },
+    { id: 'connection.name' },
+    { id: 'connection.type' },
+    { id: 'connection.connMode' },
     {
-      id: 'connection_agentId',
-      visibleWhen: [{ field: 'connectionConnMode', is: ['onPremise'] }],
+      id: 'connection._agentId',
+      visibleWhen: [{ field: 'connection.connMode', is: ['onPremise'] }],
     },
-    { id: 'connectionRdbmsHost' },
-    { id: 'connectionRdbmsPort' },
+    { id: 'connection.rdbms.host' },
+    { id: 'connection.rdbms.port' },
 
     {
-      id: 'connectionRdbmsUseSSL',
+      id: 'connection.rdbms.useSSL',
 
-      visibleWhen: [{ field: 'connectionType', is: ['mysql'] }],
+      visibleWhen: [{ field: 'connection.type', is: ['mysql'] }],
     },
 
-    { id: 'connectionRdbmsDatabase' },
-    { id: 'connectionRdbmsInstanceName' },
-    { id: 'connectionRdbmsUser' },
-    { id: 'connectionRdbmsPassword' },
+    { id: 'connection.rdbms.database' },
+    { id: 'connection.rdbms.instanceName' },
+    { id: 'connection.rdbms.user' },
+    { id: 'connection.rdbms.password' },
     {
-      id: 'connectionRdbmsSslCa',
-      visibleWhen: [{ field: 'connectionType', is: ['mysql'] }],
+      id: 'connection.rdbms.ssl.ca',
+      visibleWhen: [{ field: 'connection.type', is: ['mysql'] }],
     },
     {
-      id: 'connectionRdbmsSslKey',
-      visibleWhen: [{ field: 'connectionType', is: ['mysql'] }],
+      id: 'connection.rdbms.ssl.key',
+      visibleWhen: [{ field: 'connection.Type', is: ['mysql'] }],
     },
     {
-      id: 'connectionRdbmsSslPassphrase',
-      visibleWhen: [{ field: 'connectionType', is: ['mysql'] }],
+      id: 'connection.rdbms.ssl.passphrase',
+      visibleWhen: [{ field: 'connection.type', is: ['mysql'] }],
     },
     {
-      id: 'connectionRdbmsSslCert',
-      visibleWhen: [{ field: 'connectionType', is: ['mysql'] }],
+      id: 'connection.rdbms.ssl.cert',
+      visibleWhen: [{ field: 'connection.type', is: ['mysql'] }],
     },
   ],
   fieldSets: [
@@ -42,8 +42,8 @@ export default {
       header: 'Advanced Settings',
       collapsed: true,
       fields: [
-        { id: ' connection_borrowConcurrencyFromConnectionId' },
-        { id: 'connectionRdbmsConcurrencyLevel' },
+        { id: 'connection._borrowConcurrencyFromConnectionId' },
+        { id: 'connection.rdbms.concurrencyLevel' },
       ],
     },
   ],

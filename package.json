@@ -47,7 +47,6 @@
     "dexie": "2.0.4",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
-    "handlebars": "4.1.0",
     "integrator-ui-forms": "git+ssh://git@github.com/celigo/integrator-ui-forms.git",
     "lodash": "4.17.11",
     "mdi-react": "5.2.0",

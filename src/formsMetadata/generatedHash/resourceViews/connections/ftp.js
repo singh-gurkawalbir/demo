@@ -52,7 +52,7 @@ export default {
       ],
     },
     {
-      id: 'connection.ftp.use.implicit.ftps',
+      id: 'connection.ftp.useImplicitFtps',
 
       visibleWhen: [
         {

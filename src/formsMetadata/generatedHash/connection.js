@@ -261,6 +261,14 @@ export default {
   },
   // #endregion common
   // #region rdbms
+  'connection.rdbms.useSSL': {
+    type: 'checkbox',
+    helpKey: 'connection.rdbms.useSSL',
+    name: '/rdbms/useSSL',
+    id: 'connection.rdbms.useSSL',
+    label: 'Use SSL',
+    defaultValue: false,
+  },
   'connection.rdbms.host': {
     type: 'text',
     helpKey: 'connection.rdbms.host',
@@ -289,6 +297,22 @@ export default {
     id: 'connection.rdbms.database',
     label: 'Rdbms database',
     defaultValue: r => r && r.rdbms && r.rdbms.database,
+  },
+  'connection.connMode': {
+    type: 'radiogroup',
+    helpKey: 'connection.connMode',
+    name: 'connection.connMode',
+    id: 'connection.connMode',
+    label: 'Mode',
+    defaultValue: 'cloud',
+    options: [
+      {
+        items: [
+          { label: 'Cloud', value: 'cloud' },
+          { label: 'On-Premise', value: 'onPremise' },
+        ],
+      },
+    ],
   },
   'connection.rdbms.instanceName': {
     type: 'text',

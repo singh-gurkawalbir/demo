@@ -4,12 +4,13 @@ import DyanTextFtpPort from './fields/CustomComponents/DynaTextFtpPort';
 import DynaMultiSelect from './fields/DynaMultiSelect';
 import DynaRadioGroup from './fields/DynaRadioGroup';
 import DynaSelect from './fields/DynaSelect';
-import DynaSelectConnection from './fields/DynaSelectConnection';
+import DynaSelectResource from './fields/DynaSelectResource';
 import DynaText from './fields/DynaText';
 import DynaCheckbox from './fields/DynaCheckbox';
 import DynaRelativeUri from './fields/DynaRelativeUri';
 import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
+import DynaCsvParse from './fields/DynaCsvParse';
 import Help from '../Help';
 
 const inputs = {
@@ -19,11 +20,12 @@ const inputs = {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
-  selectconnection: DynaSelectConnection,
+  selectresource: DynaSelectResource,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
+  csvparse: DynaCsvParse,
 };
 const HelpWrapper = withStyles({
   helpIcon: { float: 'right' },

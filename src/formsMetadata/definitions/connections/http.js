@@ -40,7 +40,7 @@ export default {
 
         // auth fail path
         {
-          id: 'AuthenticationFailPath ',
+          id: 'AuthenticationFailPath',
         },
 
         // auth fail values

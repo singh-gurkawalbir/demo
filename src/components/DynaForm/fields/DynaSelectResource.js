@@ -11,18 +11,38 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, ownProps) => {
-  const { connectionId, connectionType } = ownProps;
+  const { resourceType, filter, excludeFilter } = ownProps;
 
-  if (!connectionType) return {};
+  if (!resourceType) return {};
 
-  const { resources } = selectors.resourceList(state, { type: 'connections' });
+  const { resources } = selectors.resourceList(state, { type: resourceType });
 
   // console.log('from dyna select', resources);
 
   return {
-    connections: resources.filter(
-      c => c.type === connectionType && c._id !== connectionId
-    ),
+    resources: resources.filter(r => {
+      if (filter) {
+        const keys = Object.keys(filter);
+
+        for (let i = 0; i < keys.length; i += 1) {
+          const key = keys[i];
+
+          if (r[key] !== filter[key]) return false;
+        }
+      }
+
+      if (excludeFilter) {
+        const keys = Object.keys(excludeFilter);
+
+        for (let i = 0; i < keys.length; i += 1) {
+          const key = keys[i];
+
+          if (r[key] === excludeFilter[key]) return false;
+        }
+      }
+
+      return true;
+    }),
   };
 };
 
@@ -31,19 +51,19 @@ const mapStateToProps = (state, ownProps) => {
     minWidth: 200,
   },
 }))
-class DynaSelectConnection extends React.Component {
+class DynaSelectResource extends React.Component {
   render() {
     const {
       description,
       disabled,
       id,
       name,
-      connections = [],
+      resources = [],
       value,
       label,
       onFieldChange,
     } = this.props;
-    const availableConnectionOptions = connections.map(conn => {
+    const availableResourceOptions = resources.map(conn => {
       const label = conn.name;
       const value = conn._id;
 
@@ -65,7 +85,7 @@ class DynaSelectConnection extends React.Component {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}>
-          {availableConnectionOptions}
+          {availableResourceOptions}
         </Select>
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
@@ -73,14 +93,14 @@ class DynaSelectConnection extends React.Component {
   }
 }
 
-const ConnectedDynaRelativeUri = connect(
+const ConnectedDynaSelectResource = connect(
   mapStateToProps,
   null
-)(DynaSelectConnection);
-const FieldWrappedDynaRelativeUri = props => (
+)(DynaSelectResource);
+const FieldWrappedDynaSelectResource = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaRelativeUri {...props.fieldOpts} />
+    <ConnectedDynaSelectResource {...props.fieldOpts} />
   </FieldWrapper>
 );
 
-export default FieldWrappedDynaRelativeUri;
+export default FieldWrappedDynaSelectResource;

@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import masterFieldHash from '../formsMetadata/generatedHash/index';
 import formMeta from '../formsMetadata/generatedHash/resourceViews';
 import { defaultPatchSetConverter } from './utils';
@@ -58,21 +57,23 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
   };
 };
 
-const setDefaults = fields => {
+const setDefaults = (fields, resource) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields.map(f => {
-    if (f && masterFieldHash[f.id]) {
-      const mergedFields = { ...masterFieldHash[f.id], ...f };
+    const merged = { ...masterFieldHash[f.id], ...f };
 
-      return mergedFields;
-    }
+    Object.keys(merged).forEach(key => {
+      if (typeof merged[key] === 'function') {
+        merged[key] = merged[key](resource);
+      }
+    });
 
-    return f;
+    return merged;
   });
 };
 
-const getFieldsWithDefaults = fieldMeta => {
+const getFieldsWithDefaults = (fieldMeta, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
@@ -82,13 +83,13 @@ const getFieldsWithDefaults = fieldMeta => {
 
       filled.push({
         ...rest,
-        fields: setDefaults(fields),
+        fields: setDefaults(fields, resource),
       });
     });
   }
 
   return {
-    fields: setDefaults(fields),
+    fields: setDefaults(fields, resource),
     fieldSets: filled,
   };
 };
@@ -100,23 +101,15 @@ export default ({ resourceType, connection, resource = {} }) => {
     initializer,
     optionsHandler,
   } = getResourceFormAssets(connection, resourceType, resource);
-  const metaWithDefaults = getFieldsWithDefaults(fieldMeta);
-  const template = Handlebars.compile(JSON.stringify(metaWithDefaults));
-  let metaWithValues;
-
-  try {
-    metaWithValues = JSON.parse(template(resource));
-  } catch (e) {
-    metaWithValues = [];
-  }
+  let metaWithDefaults = getFieldsWithDefaults(fieldMeta, resource);
 
   if (initializer) {
-    metaWithValues = initializer({ resource, fieldMeta: metaWithValues });
+    metaWithDefaults = initializer({ resource, fieldMeta: metaWithDefaults });
   }
 
   return {
     optionsHandler,
-    fieldMeta: metaWithValues,
+    fieldMeta: metaWithDefaults,
     formValueToPatchSetConverter: converter,
   };
 };

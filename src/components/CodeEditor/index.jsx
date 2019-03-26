@@ -53,7 +53,7 @@ class CodeEditor extends Component {
     const {
       name,
       theme,
-      value,
+      value = '',
       mode,
       readOnly,
       width,
@@ -64,12 +64,14 @@ class CodeEditor extends Component {
       enableAutocomplete,
       classes,
     } = this.props;
+    const valueAsString =
+      typeof value === 'string' ? value : JSON.stringify(value);
 
     return (
       <AceEditor
         name={name}
         className={classes.root}
-        value={value}
+        value={valueAsString}
         mode={mode}
         readOnly={readOnly}
         width={width || '100%'}
