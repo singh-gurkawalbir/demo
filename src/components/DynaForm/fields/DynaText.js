@@ -13,8 +13,8 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 }))
 class MaterialUiTextField extends React.Component {
   render() {
-    const { classes } = this.props;
     const {
+      classes,
       description,
       disabled,
       errorMessages,
@@ -27,12 +27,17 @@ class MaterialUiTextField extends React.Component {
       value,
       label,
       multiline,
+      valueDelimiter,
       rowsMax,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
 
-      onFieldChange(id, value);
+      if (!valueDelimiter) {
+        return onFieldChange(id, value);
+      }
+
+      onFieldChange(id, value.split(valueDelimiter));
     };
 
     return (

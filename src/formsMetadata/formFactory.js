@@ -1,11 +1,12 @@
+import masterFieldHash from './masterFieldHash';
 import formMeta from './definitions';
-import { defaultInitializer, defaultPatchSetConverter } from './utils';
+import { defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = (connection, resourceType, resource) => {
   let fields = formMeta.common;
   let fieldSets = [];
-  let converter = defaultPatchSetConverter;
-  let initializer = defaultInitializer;
+  let converter;
+  let initializer;
   let meta;
 
   switch (resourceType) {
@@ -21,9 +22,7 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets } = meta);
-        converter = meta.converter || defaultPatchSetConverter;
-        initializer = meta.initializer || defaultInitializer;
+        ({ fields, fieldSets, converter, initializer } = meta);
       }
 
       break;
@@ -37,9 +36,7 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
           meta = meta[connection.type];
 
           if (meta) {
-            ({ fields, fieldSets } = meta);
-            converter = meta.converter || defaultPatchSetConverter;
-            initializer = meta.initializer || defaultInitializer;
+            ({ fields, fieldSets, converter, initializer } = meta);
           }
         }
       }
@@ -52,21 +49,46 @@ const getResourceFormAssets = (connection, resourceType, resource) => {
 
   return {
     fieldMeta: { fields, fieldSets },
-    converter,
+    converter: converter || defaultPatchSetConverter,
     initializer,
   };
 };
 
-const setDefaults = (fields, values) => {
-  if (!values || !fields || fields.length === 0) return fields;
+const setDefaults = (fields, resource) => {
+  if (!fields || fields.length === 0) return fields;
 
   return fields.map(f => {
-    if (f && values[f.name]) {
-      return { ...f, defaultValue: values[f.name] };
-    }
+    const merged = { ...masterFieldHash[f.id], ...f };
 
-    return f;
+    Object.keys(merged).forEach(key => {
+      if (typeof merged[key] === 'function') {
+        merged[key] = merged[key](resource);
+      }
+    });
+
+    return merged;
   });
+};
+
+const getFieldsWithDefaults = (fieldMeta, resource) => {
+  const filled = [];
+  const { fields, fieldSets } = fieldMeta;
+
+  if (fieldSets) {
+    fieldSets.forEach(set => {
+      const { fields, ...rest } = set;
+
+      filled.push({
+        ...rest,
+        fields: setDefaults(fields, resource),
+      });
+    });
+  }
+
+  return {
+    fields: setDefaults(fields, resource),
+    fieldSets: filled,
+  };
 };
 
 export default ({ resourceType, connection, resource = {} }) => {
@@ -75,29 +97,14 @@ export default ({ resourceType, connection, resource = {} }) => {
     resourceType,
     resource
   );
-  const { formValues, fieldMeta: initializedFieldMeta } = initializer({
-    resource,
-    fieldMeta,
-  });
-  const filled = [];
-  const { fields, fieldSets } = initializedFieldMeta;
+  let metaWithDefaults = getFieldsWithDefaults(fieldMeta, resource);
 
-  if (fieldSets) {
-    fieldSets.forEach(set => {
-      const { fields, ...rest } = set;
-
-      filled.push({
-        ...rest,
-        fields: setDefaults(fields),
-      });
-    });
+  if (initializer) {
+    metaWithDefaults = initializer({ resource, fieldMeta: metaWithDefaults });
   }
 
   return {
-    fieldMeta: {
-      fields: setDefaults(fields, formValues),
-      fieldSets: filled,
-    },
+    fieldMeta: metaWithDefaults,
     formValueToPatchSetConverter: converter,
   };
 };

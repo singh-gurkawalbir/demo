@@ -34,7 +34,7 @@ export default class Help extends Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes, className, helpKey } = this.props;
+    const { classes, className, helpKey, helpText } = this.props;
     const open = !!anchorEl;
 
     return (
@@ -50,7 +50,9 @@ export default class Help extends Component {
           id="helpBubble"
           open={open}
           anchorEl={anchorEl}>
-          <Typography variant="caption">{helpTextMap[helpKey]}</Typography>
+          <Typography variant="caption">
+            {helpText || helpTextMap[helpKey]}
+          </Typography>
         </ArrowPopper>
       </Fragment>
     );

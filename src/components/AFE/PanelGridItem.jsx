@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
     border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
     minWidth: '150px',
-    minHeight: '100px',
+    minHeight: '70px',
   },
   flexContainer: {
     display: 'flex',

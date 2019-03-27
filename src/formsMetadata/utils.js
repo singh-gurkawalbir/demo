@@ -48,6 +48,43 @@ export const getFieldById = ({ meta, id }) => {
   return field;
 };
 
+export const getFieldByName = ({ fieldMeta, name }) => {
+  let field;
+
+  if (fieldMeta.fields) {
+    field = fieldMeta.fields.find(f => f.name === name);
+
+    if (field) return field;
+  }
+
+  if (fieldMeta.fieldSets && fieldMeta.fieldSets.length > 0) {
+    fieldMeta.fieldSets.some(set => {
+      field = set.fields.find(f => f.name === name);
+
+      // break out of 'some' iterations as soon as any callback finds a field.
+      return !!field;
+    });
+  }
+
+  return field;
+};
+
+export const sanitizePatchSet = ({ patchSet, fieldMeta }) => {
+  if (!fieldMeta || !patchSet) return patchSet;
+
+  const newSet = [];
+
+  patchSet.forEach(patch => {
+    const field = getFieldByName({ name: patch.path, fieldMeta });
+
+    if (patch.op === 'replace' && field.defaultValue !== patch.value) {
+      newSet.push(patch);
+    }
+  });
+
+  return newSet;
+};
+
 export const replaceField = ({ meta, field }) => {
   if (meta.fields) {
     for (let i = 0; i < meta.fields.length; i += 1) {
