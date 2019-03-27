@@ -169,6 +169,68 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
+export function* acceptAccountInvite({ id }) {
+  const requestOptions = {
+    opts: {
+      method: 'PUT',
+    },
+    path: `/ashares/${id}/accept`,
+  };
+
+  try {
+    const payload = {
+      ...requestOptions.opts,
+      body: {},
+    };
+
+    yield call(apiCallWithRetry, {
+      path: requestOptions.path,
+      opts: payload,
+      message: 'Accepting account share invite',
+    });
+
+    yield put(actions.resource.requestCollection('shared/ashares'));
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        requestOptions.path,
+        'Could not accept account share invite'
+      )
+    );
+  }
+}
+
+export function* rejectAccountInvite({ id }) {
+  const requestOptions = {
+    opts: {
+      method: 'PUT',
+    },
+    path: `/ashares/${id}/dismiss`,
+  };
+
+  try {
+    const payload = {
+      ...requestOptions.opts,
+      body: {},
+    };
+
+    yield call(apiCallWithRetry, {
+      path: requestOptions.path,
+      opts: payload,
+      message: 'Rejecting account share invite',
+    });
+
+    yield put(actions.resource.requestCollection('shared/ashares'));
+  } catch (e) {
+    yield put(
+      actions.api.failure(
+        requestOptions.path,
+        'Could not reject account share invite'
+      )
+    );
+  }
+}
+
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -176,4 +238,6 @@ export const userSagas = [
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
+  takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
+  takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, rejectAccountInvite),
 ];

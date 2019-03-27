@@ -430,16 +430,19 @@ describe('account (ashares) reducers', () => {
             id: 'abc',
             environment: 'production',
             label: 'Celigo Inc',
+            canLeave: true,
           },
           {
             id: 'def',
             environment: 'production',
             label: 'Celigo Playground - Production',
+            canLeave: true,
           },
           {
             id: 'def',
             label: 'Celigo Playground - Sandbox',
             environment: 'sandbox',
+            canLeave: false,
           },
         ];
         const result = selectors.accountSummary(state);
@@ -480,6 +483,7 @@ describe('account (ashares) reducers', () => {
             id: 'htng',
             accessLevel: 'monitor',
             ownerUser: {
+              company: 'skip',
               email: 'ignoreme@celigo.com',
               name: 'Ignore Management',
             },

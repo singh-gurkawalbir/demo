@@ -2,10 +2,17 @@ import moment from 'moment';
 import actionTypes from '../../../../actions/types';
 
 export default (state = [], action) => {
-  const { type, resourceType, collection } = action;
+  const { type, resourceType } = action;
+  let { collection } = action;
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+      if (['licenses', 'shared/ashares'].includes(resourceType)) {
+        if (!collection) {
+          collection = [];
+        }
+      }
+
       if (resourceType === 'licenses') {
         const ownAccount = {
           _id: 'own',
@@ -178,10 +185,10 @@ export function sharedAccounts(state) {
   const shared = [];
 
   accepted.forEach(a => {
-    if (!a.ownerUser) return;
+    if (!a.ownerUser || !a.ownerUser.licenses) return;
 
-    const ioLicenses = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox = ioLicenses && ioLicenses.sandbox;
+    const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+    const sandbox = ioLicense && ioLicense.sandbox;
 
     shared.push({
       id: a._id,
@@ -226,17 +233,20 @@ export function accountSummary(state) {
         id: a.id,
         environment: 'production',
         label: `${a.company} - Production`,
+        canLeave: shared.length > 1,
       });
       accounts.push({
         id: a.id,
         environment: 'sandbox',
         label: `${a.company} - Sandbox`,
+        canLeave: false,
       });
     } else {
       accounts.push({
         id: a.id,
         environment: 'production',
         label: a.company,
+        canLeave: shared.length > 1,
       });
     }
   });
@@ -252,16 +262,21 @@ export function notifications(state) {
   }
 
   const pending = state.filter(
-    a => !a.accepted && !a.dismissed && !a.disabled && a._id !== 'own'
+    a =>
+      a.ownerUser &&
+      !a.accepted &&
+      !a.dismissed &&
+      !a.disabled &&
+      a._id !== 'own'
   );
 
   pending.forEach(a => {
-    const { name, email } = a.ownerUser;
+    const { name, email, company } = a.ownerUser;
 
     accounts.push({
       id: a._id,
       accessLevel: a.accessLevel,
-      ownerUser: { name, email },
+      ownerUser: { name, email, company },
     });
   });
 
