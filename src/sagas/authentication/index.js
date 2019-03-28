@@ -127,11 +127,17 @@ export function* auth({ email, password }) {
       opts: payload,
       message: 'Authenticating User',
     });
+    const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
     yield put(actions.auth.complete());
 
     yield call(retrieveAppInitializationResources);
+
+    if (isExpired) {
+      // remount the component
+      yield put(actions.reloadApp());
+    }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
     yield put(actions.user.profile.delete());

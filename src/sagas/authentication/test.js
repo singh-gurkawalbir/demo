@@ -216,7 +216,14 @@ describe('auth saga flow', () => {
         message: authMessage,
       })
     );
-    const setCSRFEffect = saga.next({ _csrf: _csrfAfterSignIn }).value;
+
+    expect(
+      saga.next({
+        _csrf: _csrfAfterSignIn,
+      }).value
+    ).toEqual(select(selectors.isSessionExpired));
+
+    const setCSRFEffect = saga.next().value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
@@ -253,6 +260,88 @@ describe('auth saga flow', () => {
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.user.profile.delete()));
+  });
+
+  test('should remount the app when the session has expired and the user has been successfully authenticated', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const _csrf = 'someCSRF';
+    const _csrfAfterSignIn = 'someOtherCSRF';
+    const saga = auth({ email, password });
+    const payload = {
+      ...authParams.opts,
+      body: { email, password, _csrf },
+    };
+    const getCSRFBackend = saga.next().value;
+
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
+
+    const callEffect = saga.next(_csrf).value;
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+      })
+    );
+
+    expect(
+      saga.next({
+        _csrf: _csrfAfterSignIn,
+      }).value
+    ).toEqual(select(selectors.isSessionExpired));
+    // pass in session expired returned value
+    const setCSRFEffect = saga.next(true).value;
+
+    expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
+
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(put(actions.auth.complete()));
+    expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
+    expect(saga.next().value).toEqual(put(actions.reloadApp()));
+  });
+  test('shouldnt remount the app when the user is authenticating for the very first time', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const _csrf = 'someCSRF';
+    const _csrfAfterSignIn = 'someOtherCSRF';
+    const saga = auth({ email, password });
+    const payload = {
+      ...authParams.opts,
+      body: { email, password, _csrf },
+    };
+    const getCSRFBackend = saga.next().value;
+
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
+
+    const callEffect = saga.next(_csrf).value;
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+      })
+    );
+
+    expect(
+      saga.next({
+        _csrf: _csrfAfterSignIn,
+      }).value
+    ).toEqual(select(selectors.isSessionExpired));
+    // pass in session expired returned value
+    const setCSRFEffect = saga.next(false).value;
+
+    expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
+
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(put(actions.auth.complete()));
+    expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
+
+    expect(saga.next().done).toEqual(true);
   });
 });
 
