@@ -8,6 +8,18 @@ export default {
     label: 'Name',
     defaultValue: r => r && r.name,
   },
+
+  'export._connectionId': {
+    type: 'selectresource',
+    helpKey: 'export._connectionId',
+    name: '/_connectionId',
+    label: 'Connection',
+    id: 'export._connectionId',
+    resourceType: 'connections',
+    // filter: r => ({ type: r.type }),
+    // excludeFilter: r => ({ _id: r._id }),
+    defaultValue: r => r._connectionId,
+  },
   'export.description': {
     type: 'text',
     helpKey: 'export.description',
@@ -92,7 +104,7 @@ export default {
     defaultValue: r => r && r.pathToMany,
   },
   'export.sampleData': {
-    type: 'text',
+    type: 'editor',
     helpKey: 'export.sampleData',
     name: '/sampleData',
     id: 'export.sampleData',
@@ -799,6 +811,26 @@ export default {
       },
     ],
   },
+
+  'export.file.type': {
+    type: 'select',
+    helpKey: 'export.file.type',
+    name: '/file/type',
+    id: 'export.file.type',
+    label: 'File type',
+    defaultValue: r => r && r.file && r.file.type,
+    options: [
+      {
+        items: [
+          { label: 'Csv', value: 'csv' },
+          { label: 'Json', value: 'json' },
+          { label: 'Xlsx', value: 'xlsx' },
+          { label: 'Xml', value: 'xml' },
+          { label: 'Filedefinition', value: 'filedefinition' },
+        ],
+      },
+    ],
+  },
   'export.file.output': {
     type: 'select',
     helpKey: 'export.file.output',
@@ -832,6 +864,15 @@ export default {
     label: 'File compression Format',
     defaultValue: r => r && r.file && r.file.compressionFormat,
     options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
+  },
+  'export.file.csv': {
+    id: 'export.file.csv',
+    name: '/file/csv',
+    type: 'csvparse',
+    helpText: 'Use this editor to preview how your parse options affect your ',
+    label: 'Configure CSV parse options',
+    defaultValue: r => r.file && r.file.csv,
+    sampleData: r => r.sampleData,
   },
   'export.file.csv.columnDelimiter': {
     type: 'text',

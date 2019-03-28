@@ -3,19 +3,28 @@ export default {
   // TODO: develop code for this two components
   // agent list handleBars evaluated its a dynamicList
   'connection._borrowConcurrencyFromConnectionId': {
-    type: 'select',
     helpKey: 'connection._borrowConcurrencyFromConnectionId',
     name: '/_borrowConcurrencyFromConnectionId',
     id: 'connection._borrowConcurrencyFromConnectionId',
+    resourceType: 'connections',
     defaultValue: r => r._borrowConcurrencyFromConnectionId,
+    filter: r => ({ type: r.type }),
+    excludeFilter: r => ({ _id: r._id }),
+    type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
+
+  // TODO test it if it actually works
+  // selecting all agents
   'connection._agentId': {
-    type: 'select',
+    type: 'selectresource',
     helpKey: 'connection._agentId',
     name: '/_agentId',
     label: 'Agent',
     id: 'connection._agentId',
+    resourceType: 'agents',
+    // filter: r => ({ type: r.type }),
+    // excludeFilter: r => ({ _id: r._id }),
     defaultValue: r => r._agentId,
   },
   'connection.type': {
@@ -286,6 +295,11 @@ export default {
     defaultValue: r => r && r.rdbms && r.rdbms.port,
     validWhen: [
       {
+        fallsWithinNumericalRange: {
+          min: 0,
+          max: 65535,
+          message: 'The value must be more than 0 and less than 65535',
+        },
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
@@ -371,15 +385,42 @@ export default {
     defaultValue: r => r && r.rdbms && r.rdbms.ssl && r.rdbms.ssl.cert,
   },
   'connection.rdbms.concurrencyLevel': {
-    type: 'text',
     helpKey: 'connection.rdbms.concurrencyLevel',
     name: '/rdbms/concurrencyLevel',
     id: 'connection.rdbms.concurrencyLevel',
-    label: 'Rdbms concurrency Level',
+    label: 'Concurrency Level',
     defaultValue: r => r && r.rdbms && r.rdbms.concurrencyLevel,
-    validWhen: [
+    type: 'select',
+    options: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        items: [
+          { label: ' ', value: 0 },
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
       },
     ],
   },
@@ -884,15 +925,42 @@ export default {
     defaultValue: false,
   },
   'connection.http.concurrencyLevel': {
-    type: 'text',
     helpKey: 'connection.http.concurrencyLevel',
     name: '/http/concurrencyLevel',
     id: 'connection.http.concurrencyLevel',
     label: 'Http concurrency Level',
-    defaultValue: r => r && r.http && r.http.concurrencyLevel,
-    validWhen: [
+    defaultValue: r => r.http.concurrencyLevel,
+    type: 'select',
+    options: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        items: [
+          { label: ' ', value: 0 },
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
       },
     ],
   },
@@ -1434,7 +1502,7 @@ export default {
     name: '/ftp/type',
     id: 'connection.ftp.type',
     label: 'Protocol',
-    defaultValue: '{{ftp.type}}',
+    defaultValue: r => r && r.ftp && r.ftp.type,
     options: [
       {
         items: [
@@ -1470,7 +1538,7 @@ export default {
     defaultValue: r => r && r.ftp && r.ftp.authKey,
   },
   'connection.ftp.port': {
-    type: 'text',
+    type: 'ftpport',
     helpKey: 'connection.ftp.port',
     name: '/ftp/port',
     id: 'connection.ftp.port',

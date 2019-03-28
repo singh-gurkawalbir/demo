@@ -1,21 +1,20 @@
 export default {
+  // TODO: options handler forces a values when text field is empty
+  // it should only do that when the user selects another protocol type
+  // as well
   // The optionsHandler handler runs for every field
   optionsHandler(fieldId, fields) {
-    if (fieldId === 'connectionFtpPort') {
+    if (fieldId === 'connection.ftp.port') {
       const ftpPortField = fields.find(
-        field => field.id === 'connectionFtpPort'
+        field => field.id === 'connection.ftp.port'
       );
 
       if (!ftpPortField.value) {
         const ftpTypeField = fields.find(
-          field => field.id === 'connectionFtpType'
+          field => field.id === 'connection.ftp.type'
         );
 
-        console.log(`check ftp ${JSON.stringify(ftpTypeField)}`);
-
         if (ftpTypeField.value === 'sftp') {
-          console.log('In sftp');
-
           return [22];
         }
 
@@ -114,7 +113,7 @@ export default {
           ],
         },
         {
-          id: 'connection.ftp.pgpEncryptKey',
+          id: 'connection.ftp.pgpDecryptKey',
 
           description:
             'Note: for security reasons this field must always be re-entered.',
