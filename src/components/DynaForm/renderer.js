@@ -11,6 +11,7 @@ import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
 import DynaCsvParse from './fields/DynaCsvParse';
 import Help from '../Help';
+import EditFieldButton from './EditFieldButton';
 
 const inputs = {
   text: DynaText,
@@ -25,15 +26,19 @@ const inputs = {
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
 };
-const HelpWrapper = withStyles({
+const InputWrapper = withStyles({
   helpIcon: { float: 'right' },
+  editIcon: { float: 'right' },
 })(props => {
-  const { helpKey, helpText, classes } = props;
+  const { field, editMode, helpKey, helpText, classes } = props;
 
   // console.log('helpwrapper initialized');
 
   return (
     <Fragment>
+      {editMode && (
+        <EditFieldButton field={field} className={classes.editIcon} />
+      )}
       {(helpKey || helpText) && (
         <Help
           className={classes.helpIcon}
@@ -46,7 +51,7 @@ const HelpWrapper = withStyles({
   );
 });
 
-function getRenderer() {
+function getRenderer(editMode = false) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
@@ -58,9 +63,14 @@ function getRenderer() {
     }
 
     return (
-      <HelpWrapper key={id} helpKey={helpKey} helpText={helpText}>
+      <InputWrapper
+        key={id}
+        editMode={editMode}
+        field={field}
+        helpKey={helpKey}
+        helpText={helpText}>
         <DynaInput {...field} />
-      </HelpWrapper>
+      </InputWrapper>
     );
   };
 }

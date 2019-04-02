@@ -1,31 +1,42 @@
-export const defaultValueInitializer = values => {
-  const results = {};
-  const recurse = (values, path) => {
-    if (Array.isArray(values) || typeof values !== 'object') {
-      results[path] = values;
-
-      return;
-    }
-
-    Object.keys(values).forEach(key => recurse(values[key], `${path}/${key}`));
-  };
-
-  recurse(values, '');
-
-  return results;
-};
-
-export const defaultInitializer = ({ resource, fieldMeta }) => ({
-  formValues: defaultValueInitializer(resource),
-  fieldMeta,
-});
-
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
     path: key,
     value: values[key],
   }));
+
+export const getFieldPosition = ({ meta, id }) => {
+  const pos = {};
+  let index;
+
+  if (meta.fields) {
+    index = meta.fields.findIndex(f => f.id === id);
+
+    if (index >= 0) {
+      pos.index = index;
+
+      return pos;
+    }
+  }
+
+  if (meta.fieldSets && meta.fieldSets.length > 0) {
+    meta.fieldSets.some((set, i) => {
+      index = set.fields.findIndex(f => f.id === id);
+
+      // break out of 'some' iterations as soon as any callback finds a field.
+      if (index >= 0) {
+        pos.index = index;
+        pos.fieldSetIndex = i;
+
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  return pos;
+};
 
 export const getFieldById = ({ meta, id }) => {
   let field;
@@ -117,7 +128,5 @@ export const replaceField = ({ meta, field }) => {
 export default {
   getFieldById,
   replaceField,
-  defaultInitializer,
-  defaultValueInitializer,
   defaultPatchSetConverter,
 };

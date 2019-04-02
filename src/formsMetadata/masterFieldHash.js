@@ -1,31 +1,12 @@
 export default {
-  // TODO: The current set of field ids for connections is hand coded and not
-  // the correct format. We should use a camel case version of the field's
-  // json path.
-  // #region Connection
-  ConnectionName: {
-    id: 'ConnectionName',
+  'connection.name': {
     name: '/name',
-    helpKey: 'connection.name',
-    defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
+    required: true,
   },
-  ConnectionDescription: {
-    id: 'ConnectionDescription',
-    name: '/description',
-    helpKey: 'connection.description',
-    defaultValue: r => r.description,
-    type: 'text',
-    multiline: true,
-    rowsMax: 5,
-    label: 'Description',
-  },
-  baseURI: {
-    id: 'ConnectionBaseURI',
+  'connection.http.baseURI': {
     name: '/http/baseURI',
-    helpKey: 'connection.http.baseURI',
-    defaultValue: r => r.http.baseURI,
     type: 'text',
     label: 'Base URI',
     required: true,

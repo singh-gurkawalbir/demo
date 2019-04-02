@@ -61,9 +61,11 @@ class DynaSelectResource extends React.Component {
       resources = [],
       value,
       label,
+      defaultItemValue,
+      defaultItemLabel,
       onFieldChange,
     } = this.props;
-    const availableResourceOptions = resources.map(conn => {
+    let availableResourceOptions = resources.map(conn => {
       const label = conn.name;
       const value = conn._id;
 
@@ -73,6 +75,16 @@ class DynaSelectResource extends React.Component {
         </MenuItem>
       );
     });
+
+    if (defaultItemValue) {
+      const defaultItem = (
+        <MenuItem key={defaultItemValue} value={defaultItemValue}>
+          {defaultItemLabel || defaultItemValue}
+        </MenuItem>
+      );
+
+      availableResourceOptions = [defaultItem, ...availableResourceOptions];
+    }
 
     return (
       <FormControl key={id} disabled={disabled}>

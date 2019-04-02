@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
+import { getFieldPosition } from '../../formsMetadata/utils';
 
 export function* getRequestOptions(path) {
   const opts = {
@@ -113,8 +114,37 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
+export function* patchFormField({ resourceType, resourceId, fieldId, value }) {
+  const { merged } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  if (!merged) return; // nothing to do.
+
+  const meta = merged.customForm && merged.customForm.form;
+
+  if (!meta) return; // nothing to do
+
+  const { index, fieldSetIndex } = getFieldPosition({ meta, id: fieldId });
+
+  if (index === undefined) return; // nothing to do.
+
+  const path =
+    fieldSetIndex === undefined
+      ? `/customForm/form/fields/${index}`
+      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index}`;
+  const patchSet = [{ op: 'replace', path, value }];
+
+  // console.log('dispatching patch with: ', patchSet);
+
+  yield put(actions.resource.patchStaged(resourceId, patchSet));
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
 ];

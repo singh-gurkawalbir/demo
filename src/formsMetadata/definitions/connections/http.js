@@ -3,12 +3,12 @@ export default {
     // #region Main
     // name
     {
-      id: 'ConnectionName',
+      id: 'connection.name',
     },
 
     // baseURI
     {
-      id: 'baseURI',
+      id: 'connection.http.baseURI',
     },
 
     // media type

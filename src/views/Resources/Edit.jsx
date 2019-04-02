@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
@@ -11,6 +11,7 @@ import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceForm';
 import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
+import factory from '../../formsMetadata/formFactory';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -95,8 +96,48 @@ const prettyDate = dateString => {
   dates: {
     color: theme.palette.text.secondary,
   },
+  editButton: {
+    float: 'right',
+  },
 }))
 class Edit extends Component {
+  state = {
+    editMode: false,
+  };
+
+  handleToggleEdit = () => {
+    const {
+      resourceData,
+      handlePatchResource,
+      resourceType,
+      connection,
+    } = this.props;
+    const { merged: resource } = resourceData;
+    const { editMode } = this.state;
+
+    if (!editMode) {
+      if (!resource.customForm || !resource.customForm.form) {
+        // init the custom form with a copy of current form
+        const { fieldMeta } = factory.getResourceFormAssets({
+          connection,
+          resource,
+          resourceType,
+        });
+        const patchSet = [
+          {
+            op: 'replace',
+            path: '/customForm',
+            value: { form: fieldMeta },
+          },
+        ];
+
+        handlePatchResource(patchSet);
+      }
+    }
+
+    this.setState({ editMode: !editMode });
+  };
+
   render() {
     const {
       id,
@@ -108,6 +149,7 @@ class Edit extends Component {
       // handleCommitChanges,
       handleConflict,
     } = this.props;
+    const { editMode } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
 
     if (!merged) {
@@ -131,6 +173,14 @@ class Edit extends Component {
 
     return (
       <LoadResources required resources={[resourceType]}>
+        <Button
+          className={classes.editButton}
+          size="small"
+          color="primary"
+          onClick={this.handleToggleEdit}>
+          {editMode ? 'Save form' : 'Edit form'}
+        </Button>
+
         <Typography variant="h5">
           {`${toName(type, true)} ${toName(resourceType, false, -1)}`}
         </Typography>
@@ -159,6 +209,7 @@ class Edit extends Component {
         <div className={classes.editableFields}>
           <ResourceForm
             key={id}
+            editMode={editMode}
             connection={connection}
             resourceType={resourceType}
             resource={merged}

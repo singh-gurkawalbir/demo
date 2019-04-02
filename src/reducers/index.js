@@ -8,6 +8,7 @@ import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
+import { getFieldById } from '../formsMetadata/utils';
 
 const combinedReducers = combineReducers({
   session,
@@ -410,6 +411,23 @@ export function resourceData(state, resourceType, id) {
   if (conflict) data.conflict = conflict;
 
   return data;
+}
+
+export function resourceFormField(state, resourceType, resourceId, fieldId) {
+  const data = resourceData(state, resourceType, resourceId);
+
+  if (!data || !data.merged) return;
+
+  const { merged } = data;
+  const meta = merged.customForm && merged.customForm.form;
+
+  if (!meta) return;
+
+  const field = getFieldById({ meta, id: fieldId });
+
+  if (!field) return;
+
+  return field;
 }
 
 export function newResourceData(state, resourceType, id) {
