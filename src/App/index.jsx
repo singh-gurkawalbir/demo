@@ -15,10 +15,12 @@ import AuthDialog from '../components/AuthDialog';
 import actions from '../actions';
 
 const mapStateToProps = state => ({
+  reloadCount: selectors.reloadCount(state),
   themeName: selectors.themeName(state),
   isAuthInitialized: selectors.isAuthInitialized(state),
   isAuthErrored: !!selectors.authenticationErrored(state),
   isUserLoggedOut: selectors.isUserLoggedOut(state),
+  isAuthLoading: selectors.isAuthLoading(state),
   allLoadingOrErrored: selectors.allLoadingOrErrored(state),
   isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
     state
@@ -81,11 +83,19 @@ class App extends Component {
 
   render() {
     const { showSnackBar } = this.state;
-    const { themeName, isAuthInitialized, isUserLoggedOut } = this.props;
+    const {
+      themeName,
+      isAuthInitialized,
+      isUserLoggedOut,
+      isAuthErrored,
+      isAuthLoading,
+      reloadCount,
+    } = this.props;
     const customTheme = themeProvider(themeName);
 
+    // increment key to remount the app
     return (
-      <MuiThemeProvider theme={customTheme}>
+      <MuiThemeProvider key={reloadCount} theme={customTheme}>
         <FontStager />
         <CssBaseline />
         <BrowserRouter>
@@ -93,7 +103,10 @@ class App extends Component {
             {showSnackBar && <NetworkSnackbar />}
             <AppBar themeName={themeName} />
             <AuthDialog />
-            {(isAuthInitialized || !isUserLoggedOut) && <AppRouting />}
+
+            {((!isAuthLoading && isAuthInitialized) ||
+              !isUserLoggedOut ||
+              isAuthErrored) && <AppRouting />}
           </Fragment>
         </BrowserRouter>
       </MuiThemeProvider>

@@ -101,6 +101,7 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
+const reloadApp = () => action(actionTypes.RELOAD_APP);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -127,6 +128,7 @@ const editor = {
 // #endregion
 
 export default {
+  reloadApp,
   clearComms,
   patchFilter,
   clearFilter,
