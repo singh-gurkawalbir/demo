@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import RootRef from '@material-ui/core/RootRef';
+import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -19,74 +20,50 @@ const mapStateToProps = state => ({
   notifications: selectors.notifications(state),
 });
 const mapDispatchToProps = dispatch => ({
-  onAccountChange: (id, environment) => {
-    dispatch(
-      actions.user.preferences.update({
-        defaultAShareId: id,
-        environment,
-      })
-    );
+  onClick: (action, id) => {
+    switch (action) {
+      case 'accept':
+        return dispatch(actions.user.org.accounts.acceptInvite(id));
+      case 'reject':
+        return dispatch(actions.user.org.accounts.rejectInvite(id));
+      default:
+        return null;
+    }
   },
 });
 
-@withStyles(theme => ({
-  currentAccount: {
-    padding: theme.spacing.unit,
-    color: theme.appBar.contrast,
-  },
+@withStyles(() => ({
   currentContainer: {
-    // display: 'inline-flex',
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
     },
   },
-  selected: {
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      width: 6,
-      height: 6,
-      borderRadius: '50%',
-      background: '#00ea00',
-      left: 8,
-      top: '50%',
-      marginTop: -3,
-    },
-  },
   itemContainer: {
     '& button': { display: 'none' },
     '&:hover button': {
-      display: 'block',
+      display: 'inline',
     },
   },
   itemRoot: {
-    paddingRight: 68,
-  },
-  leave: {
-    // display: 'none',
-  },
-  arrow: {
-    fill: theme.appBar.contrast,
+    paddingRight: 90,
   },
 }))
 class Notifications extends Component {
   state = {
     anchorEl: null,
-    open: false,
   };
 
   accountArrowRef = React.createRef();
 
-  handleClick = () => {
-    // console.log('handleClick');
-    this.setState(state => ({
-      open: !state.open,
-    }));
+  handleClick = event => {
+    this.setState({
+      anchorEl: !this.state.anchorEl ? event.currentTarget : null,
+    });
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ anchorEl: null });
   };
 
   componentDidMount() {
@@ -96,8 +73,11 @@ class Notifications extends Component {
   }
 
   render() {
-    const { open, anchorEl } = this.state;
-    const { classes, notifications, onAccountChange } = this.props;
+    const { anchorEl } = this.state;
+    const { classes, notifications, onClick } = this.props;
+    const open = !!anchorEl;
+
+    window.Notifications = notifications;
 
     if (!notifications || notifications.length === 0) {
       return null;
@@ -125,24 +105,48 @@ class Notifications extends Component {
           <List dense>
             {notifications.map(a => (
               <ListItem
-                button
-                onClick={() => {
-                  onAccountChange(a.id, a.environment);
-                }}
                 classes={{
                   root: classes.itemRoot,
                   container: classes.itemContainer,
                 }}
                 key={`${a.id}`}>
                 <ListItemText
-                  classes={{ root: a.selected && classes.selected }}
-                  primary={a.label}
+                  primary={
+                    <React.Fragment>
+                      <Typography component="span">
+                        {a.ownerUser.name || a.ownerUser.company}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography component="span">
+                        {a.ownerUser.email}
+                      </Typography>
+                      <Typography component="span">
+                        {'is inviting you to join their account.'}
+                      </Typography>
+                      <Typography component="span">
+                        {'Please accept or decline this invitation.'}
+                      </Typography>
+                    </React.Fragment>
+                  }
                 />
                 <ListItemSecondaryAction>
-                  <IconButton className={classes.button} aria-label="Accept">
+                  <IconButton
+                    className={classes.button}
+                    aria-label="Accept"
+                    onClick={() => {
+                      onClick('accept', a.id);
+                    }}>
                     <AcceptIcon />
                   </IconButton>
-                  <IconButton className={classes.button} aria-label="Dismiss">
+                  <IconButton
+                    className={classes.button}
+                    aria-label="Dismiss"
+                    onClick={() => {
+                      onClick('reject', a.id);
+                    }}>
                     <DismissIcon />
                   </IconButton>
                 </ListItemSecondaryAction>

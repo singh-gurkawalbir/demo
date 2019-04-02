@@ -55,7 +55,7 @@ class WaffleBox extends Component {
     const { anchorEl } = this.state;
     const { classes, accessLevel } = this.props;
 
-    if (['owner', 'manage'].indexOf(accessLevel) === -1) {
+    if (!['owner', 'manage'].includes(accessLevel)) {
       return null;
     }
 

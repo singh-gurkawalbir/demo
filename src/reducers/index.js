@@ -268,12 +268,6 @@ export function processors(state) {
 export function integratorLicense(state) {
   const preferences = userPreferences(state);
 
-  // console.log(
-  //   `integratorLicense#1 preferences.defaultAShareId : ${
-  //     preferences.defaultAShareId
-  //   }`
-  // );
-
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 

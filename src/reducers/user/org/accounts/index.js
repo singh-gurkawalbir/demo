@@ -1,10 +1,18 @@
+import moment from 'moment';
 import actionTypes from '../../../../actions/types';
 
 export default (state = [], action) => {
-  const { type, resourceType, collection } = action;
+  const { type, resourceType } = action;
+  let { collection } = action;
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+      if (['licenses', 'shared/ashares'].includes(resourceType)) {
+        if (!collection) {
+          collection = [];
+        }
+      }
+
       if (resourceType === 'licenses') {
         const ownAccount = {
           _id: 'own',
@@ -27,7 +35,7 @@ export default (state = [], action) => {
       return state;
     }
 
-    case actionTypes.TRIAL_LICENSE_ISSUED: {
+    case actionTypes.LICENSE_TRIAL_ISSUED: {
       const ownAccount = state.find(a => a._id === 'own');
 
       if (
@@ -125,19 +133,44 @@ export function integratorLicense(state, accountId) {
     return null;
   }
 
-  const ioLicenses = account.ownerUser.licenses.filter(
+  const ioLicense = account.ownerUser.licenses.find(
     l => l.type === 'integrator'
   );
 
-  if (!ioLicenses.length) {
+  if (!ioLicense) {
     return null;
   }
 
-  if (!ioLicenses[0].sandbox) {
-    ioLicenses[0].sandbox = ioLicenses[0].numSandboxAddOnFlows > 0;
+  if (!ioLicense.sandbox) {
+    ioLicense.sandbox = ioLicense.numSandboxAddOnFlows > 0;
   }
 
-  return ioLicenses[0];
+  if (ioLicense.expires) {
+    ioLicense.status =
+      moment(ioLicense.expires) > moment() ? 'ACTIVE' : 'EXPIRED';
+
+    if (ioLicense.status === 'ACTIVE') {
+      ioLicense.expiresInDays = Math.ceil(
+        (moment(ioLicense.expires) - moment()) / 1000 / 60 / 60 / 24
+      );
+    }
+  }
+
+  if (
+    ioLicense.trialEndDate &&
+    (!ioLicense.expires || moment(ioLicense.trialEndDate) > moment())
+  ) {
+    ioLicense.status =
+      moment(ioLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
+
+    if (ioLicense.status === 'IN_TRIAL') {
+      ioLicense.expiresInDays = Math.ceil(
+        (moment(ioLicense.trialEndDate) - moment()) / 1000 / 60 / 60 / 24
+      );
+    }
+  }
+
+  return ioLicense;
 }
 // #endregion INTEGRATOR LICENSE
 
@@ -152,10 +185,10 @@ export function sharedAccounts(state) {
   const shared = [];
 
   accepted.forEach(a => {
-    if (!a.ownerUser) return;
+    if (!a.ownerUser || !a.ownerUser.licenses) return;
 
-    const ioLicenses = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox = ioLicenses && ioLicenses.sandbox;
+    const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+    const sandbox = ioLicense && ioLicense.sandbox;
 
     shared.push({
       id: a._id,
@@ -200,17 +233,20 @@ export function accountSummary(state) {
         id: a.id,
         environment: 'production',
         label: `${a.company} - Production`,
+        canLeave: shared.length > 1,
       });
       accounts.push({
         id: a.id,
         environment: 'sandbox',
         label: `${a.company} - Sandbox`,
+        canLeave: false,
       });
     } else {
       accounts.push({
         id: a.id,
         environment: 'production',
         label: a.company,
+        canLeave: shared.length > 1,
       });
     }
   });
@@ -226,16 +262,21 @@ export function notifications(state) {
   }
 
   const pending = state.filter(
-    a => !a.accepted && !a.dismissed && !a.disabled && a._id !== 'own'
+    a =>
+      a.ownerUser &&
+      !a.accepted &&
+      !a.dismissed &&
+      !a.disabled &&
+      a._id !== 'own'
   );
-  const ownerUser = {};
 
   pending.forEach(a => {
-    ({ name: ownerUser.name, email: ownerUser.email } = a.ownerUser);
+    const { name, email, company } = a.ownerUser;
+
     accounts.push({
       id: a._id,
       accessLevel: a.accessLevel,
-      ownerUser,
+      ownerUser: { name, email, company },
     });
   });
 
