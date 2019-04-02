@@ -83,11 +83,16 @@ class EditFieldButton extends Component {
   }
 
   handleSave() {
-    const { patchFormField } = this.props;
+    const { patchFormField, onChange } = this.props;
     const { newMeta } = this.state;
 
     patchFormField(JSON.parse(newMeta));
+
     this.handleEditorClick();
+
+    if (typeof onChange === 'function') {
+      onChange();
+    }
   }
 
   componentDidMount() {
@@ -98,7 +103,7 @@ class EditFieldButton extends Component {
 
   render() {
     const { showEditor, newMeta, error } = this.state;
-    const { classes, className, fieldMeta } = this.props;
+    const { classes, className, fieldMeta = {} } = this.props;
     const editorDialog = (
       <Dialog
         open

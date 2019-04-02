@@ -21,7 +21,7 @@ export default class ResourceForm extends Component {
     formKey: 1,
   };
 
-  handleCancel = () => {
+  handleFormMetaChange = () => {
     // We need to re-mount the react-forms-processor component
     // to reset the values back to defaults....
     const formKey = this.state.formKey + 1;
@@ -81,11 +81,15 @@ export default class ResourceForm extends Component {
     // console.log(fieldMeta);
 
     return (
-      <DynaForm key={formKey} {...rest} fieldMeta={fieldMeta}>
+      <DynaForm
+        key={formKey}
+        onMetaChange={this.handleFormMetaChange}
+        {...rest}
+        fieldMeta={fieldMeta}>
         {children}
         <div className={classes.actions}>
           <Button
-            onClick={this.handleCancel}
+            onClick={this.handleFormMetaChange}
             className={classes.actionButton}
             size="small"
             variant="contained">

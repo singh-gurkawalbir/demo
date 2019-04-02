@@ -30,14 +30,18 @@ const InputWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 })(props => {
-  const { field, editMode, helpKey, helpText, classes } = props;
+  const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
 
   // console.log('helpwrapper initialized');
 
   return (
     <Fragment>
       {editMode && (
-        <EditFieldButton field={field} className={classes.editIcon} />
+        <EditFieldButton
+          onChange={onMetaChange}
+          field={field}
+          className={classes.editIcon}
+        />
       )}
       {(helpKey || helpText) && (
         <Help
@@ -51,7 +55,7 @@ const InputWrapper = withStyles({
   );
 });
 
-function getRenderer(editMode = false) {
+function getRenderer(editMode = false, onMetaChange) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
@@ -66,6 +70,7 @@ function getRenderer(editMode = false) {
       <InputWrapper
         key={id}
         editMode={editMode}
+        onMetaChange={onMetaChange}
         field={field}
         helpKey={helpKey}
         helpText={helpText}>

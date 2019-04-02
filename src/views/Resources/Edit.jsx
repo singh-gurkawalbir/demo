@@ -33,14 +33,15 @@ const mapDispatchToProps = (dispatch, { match }) => {
   const { id, resourceType } = match.params;
 
   return {
-    handlePatchResource: patchSet => {
+    handlePatchResource: (patchSet, skipCommit) => {
       // console.log('patchSet Handled', patchSet);
 
       // return null;
-      // TODO: Optionally we let the patchStaged action also take a
-      // boolean flag to auto-commit?
       dispatch(actions.resource.patchStaged(id, patchSet));
-      dispatch(actions.resource.commitStaged(resourceType, id));
+
+      if (!skipCommit) {
+        dispatch(actions.resource.commitStaged(resourceType, id));
+      }
     },
     // handleCommitChanges: (a, b, c) => {
     //   console.log(a, b, c);
@@ -131,7 +132,7 @@ class Edit extends Component {
           },
         ];
 
-        handlePatchResource(patchSet);
+        handlePatchResource(patchSet, true);
       }
     }
 
