@@ -1,4 +1,34 @@
+const fileTypeToFileMode = {
+  txt: 'text',
+  js: 'javascript',
+  csv: 'csv',
+  json: 'json',
+  xlsx: 'csv',
+};
+const getEditorMode = (allFields, fieldIdToMatch) => {
+  const fileType = allFields.find(field => field.id === fieldIdToMatch);
+
+  if (fileType) {
+    return [fileTypeToFileMode[fileType.value]];
+  }
+};
+
 export default {
+  optionsHandler(fieldId, fields) {
+    if (fieldId === 'export.uploadFile') {
+      const fileType = fields.find(field => field.id === 'export.file.type');
+
+      if (fileType) {
+        return [fileType.value];
+      }
+    }
+
+    if (fieldId === 'export.sampleData') {
+      return getEditorMode(fields, 'export.file.type');
+    }
+
+    return null;
+  },
   fields: [
     { id: 'export.name' },
     { id: 'export.description' },
@@ -43,7 +73,48 @@ export default {
         { id: 'export.ftp.fileNameStartsWith' },
         { id: 'export.ftp.fileNameEndsWith' },
         { id: 'export.file.type' },
-        { id: 'export.file.csv' },
+        {
+          id: 'export.uploadFile',
+          inputType: 'file',
+          refreshOptionsOnChangesTo: 'export.file.type',
+        },
+        {
+          id: 'export.file.csv',
+          mode: 'csv',
+          visibleWhen: [
+            {
+              field: 'export.file.type',
+              is: ['csv'],
+            },
+          ],
+        },
+        {
+          id: 'export.file.xml.resourcePath',
+          visibleWhen: [
+            {
+              field: 'export.file.type',
+              is: ['xml'],
+            },
+          ],
+        },
+        {
+          id: 'export.file.json.resourcePath',
+          visibleWhen: [
+            {
+              field: 'export.file.type',
+              is: ['json'],
+            },
+          ],
+        },
+        {
+          id: 'export.file.fileDefinition.resourcePath',
+          visibleWhen: [
+            {
+              field: 'export.file.type',
+              is: ['fileDefinition'],
+            },
+          ],
+        },
       ],
     },
 
@@ -51,7 +122,11 @@ export default {
       header: 'Sample Data',
       collapsed: true,
       fields: [
-        { id: 'export.sampleData', mode: 'javascript' },
+        {
+          id: 'export.sampleData',
+          mode: r => r && r.file && r.file.type,
+          refreshOptionsOnChangesTo: 'export.file.type',
+        },
         // load connection
       ],
     },
@@ -60,8 +135,10 @@ export default {
       header: 'Would you like to transform the records?',
       collapsed: true,
       fields: [
-        { id: 'export.sampleData' },
         // load connection
+        {
+          id: 'export.transform.expression.rules',
+        },
       ],
     },
   ],

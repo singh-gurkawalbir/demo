@@ -20,6 +20,19 @@ export default {
     // excludeFilter: r => ({ _id: r._id }),
     defaultValue: r => r._connectionId,
   },
+  // Todo why helpKey is it named csv file id like to change it to
+  // something meaningful
+  'export.uploadFile': {
+    type: 'text',
+    helpKey: 'export.csvFile',
+    name: '/uploadFile',
+    label: 'Sample File (that would be exported)',
+    id: 'export._connectionId',
+    resourceType: 'connections',
+    // filter: r => ({ type: r.type }),
+    // excludeFilter: r => ({ _id: r._id }),
+    // defaultValue: r => r._connectionId,
+  },
   'export.description': {
     type: 'text',
     helpKey: 'export.description',
@@ -691,26 +704,15 @@ export default {
   },
   // #endregion hooks
   // #region transform
-  'export.transform.expression.version': {
-    type: 'radiogroup',
-    helpKey: 'export.transform.expression.version',
-    name: '/transform/expression/version',
-    id: 'export.transform.expression.version',
-    label: 'Transform expression version',
-    defaultValue: r =>
-      r &&
-      r.transform &&
-      r.transform.expression &&
-      r.transform.expression.version,
-    options: [{ items: [{ label: '1', value: '1' }] }],
-  },
+
   'export.transform.expression.rules': {
-    type: 'text',
+    type: 'transformeditor',
     helpKey: 'export.transform.expression.rules',
     name: '/transform/expression/rules',
     id: 'export.transform.expression.rules',
     label: 'Transform expression rules',
-    defaultValue: r =>
+    sampleData: r => r.sampleData,
+    rule: r =>
       r &&
       r.transform &&
       r.transform.expression &&

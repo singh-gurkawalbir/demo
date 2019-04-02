@@ -1,7 +1,7 @@
 export default {
   fields: [
     { id: 'connection.name' },
-    { id: 'connection.type' },
+    { id: 'connection.type', someProp: true },
     { id: 'connection.connMode' },
     {
       id: 'connection._agentId',

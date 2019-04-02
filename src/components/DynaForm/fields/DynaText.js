@@ -14,6 +14,8 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 class MaterialUiTextField extends React.Component {
   render() {
     const {
+      options,
+      inputType,
       classes,
       description,
       disabled,
@@ -40,8 +42,16 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value.split(valueDelimiter));
     };
 
+    let acceptFileType = '.txt';
+
+    if (options) {
+      acceptFileType = `.${options[0]}`;
+    }
+
     return (
       <TextField
+        inputProps={{ accept: acceptFileType }}
+        type={inputType}
         autoComplete="off"
         key={id}
         name={name}

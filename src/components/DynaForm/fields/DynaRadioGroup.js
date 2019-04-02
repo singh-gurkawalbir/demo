@@ -29,11 +29,14 @@ class MaterialUiRadioGroup extends React.Component {
       name,
       options = [],
       // placeholder,
+      defaultValue,
       required,
       value,
       label,
       onFieldChange,
     } = this.props;
+
+    console.log('value ', value);
     const items = options.reduce(
       (itemsSoFar, option) =>
         itemsSoFar.concat(
@@ -68,8 +71,10 @@ class MaterialUiRadioGroup extends React.Component {
         <RadioGroup
           aria-label={label}
           name={name}
+          defaultValue={defaultValue}
           value={value}
           onChange={evt => {
+            console.log('evt id  ', evt.target.value, id);
             onFieldChange(id, evt.target.value);
           }}>
           {items}
@@ -79,10 +84,14 @@ class MaterialUiRadioGroup extends React.Component {
   }
 }
 
-const DynaRadio = props => (
-  <FieldWrapper {...props}>
-    <MaterialUiRadioGroup />
-  </FieldWrapper>
-);
+const DynaRadio = props => {
+  console.log('props ', props);
+
+  return (
+    <FieldWrapper {...props}>
+      <MaterialUiRadioGroup />
+    </FieldWrapper>
+  );
+};
 
 export default DynaRadio;

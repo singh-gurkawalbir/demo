@@ -59,18 +59,28 @@ class EditorField extends Component {
     onFieldChange(id, sanitizedVal);
   }
 
+  getFileType = props => {
+    const { options, mode } = props;
+
+    if (options) return options[0];
+
+    return mode;
+  };
+
   render() {
     const { showEditor } = this.state;
     const {
       classes,
       id,
-      mode,
       value,
       label,
       description,
       errorMessages,
       isValid,
     } = this.props;
+    const mode = this.getFileType(this.props);
+
+    console.log('mode ', mode);
     const editorDialog = (
       <Dialog
         open

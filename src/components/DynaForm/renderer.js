@@ -11,6 +11,7 @@ import DynaRelativeUri from './fields/DynaRelativeUri';
 import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
 import DynaCsvParse from './fields/DynaCsvParse';
+import DynaTransformEditor from './fields/DynaTransformEditor';
 import Help from '../Help';
 
 const inputs = {
@@ -26,6 +27,7 @@ const inputs = {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
+  transformeditor: DynaTransformEditor,
 };
 const HelpWrapper = withStyles({
   helpIcon: { float: 'right' },
