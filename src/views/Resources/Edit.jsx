@@ -139,6 +139,10 @@ class Edit extends Component {
     this.setState({ editMode: !editMode });
   };
 
+  componentDidMount() {
+    this.setState({ editMode: false });
+  }
+
   render() {
     const {
       id,
