@@ -23,11 +23,10 @@ export function* unauthenticateAndDeleteProfile() {
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
-  const { opts, path } = args;
-  const method = (opts && opts.method) || 'GET';
+  const { path } = args;
   const apiRequestAction = {
     type: 'API_WATCHER',
-    request: { url: path, method, args },
+    request: { url: path, args },
   };
 
   try {

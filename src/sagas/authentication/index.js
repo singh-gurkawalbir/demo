@@ -174,8 +174,8 @@ export function* initializeApp() {
 
 export function* invalidateSession() {
   try {
-    const csrfToken = yield call(getCSRFToken);
-    const logoutOpts = { ...logoutParams.opts, body: { csrfToken } };
+    const _csrf = yield call(getCSRFToken);
+    const logoutOpts = { ...logoutParams.opts, body: { _csrf } };
 
     yield call(apiCallWithRetry, {
       path: logoutParams.path,
