@@ -7,11 +7,12 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
+import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceForm';
-import * as selectors from '../../reducers';
 import ConflictAlertDialog from './ConflictAlertDialog';
 import factory from '../../formsMetadata/formFactory';
+import JsonEditorDialog from '../../components/JsonEditorDialog';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -33,6 +34,11 @@ const mapDispatchToProps = (dispatch, { match }) => {
   const { id, resourceType } = match.params;
 
   return {
+    handlePatchFormMeta: value => {
+      const patchSet = [{ op: 'replace', path: '/customForm/form', value }];
+
+      dispatch(actions.resource.patchStaged(id, patchSet));
+    },
     handlePatchResource: (patchSet, skipCommit) => {
       // console.log('patchSet Handled', patchSet);
 
@@ -104,6 +110,7 @@ const prettyDate = dateString => {
 class Edit extends Component {
   state = {
     editMode: false,
+    showEditor: false,
   };
 
   handleToggleEdit = () => {
@@ -139,8 +146,12 @@ class Edit extends Component {
     this.setState({ editMode: !editMode });
   };
 
+  handleToggleEditor = () => {
+    this.setState({ showEditor: !this.state.showEditor });
+  };
+
   componentDidMount() {
-    this.setState({ editMode: false });
+    this.setState({ editMode: false, showEditor: false });
   }
 
   render() {
@@ -151,10 +162,11 @@ class Edit extends Component {
       resourceType,
       classes,
       handlePatchResource,
+      handlePatchFormMeta,
       // handleCommitChanges,
       handleConflict,
     } = this.props;
-    const { editMode } = this.state;
+    const { editMode, showEditor } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
 
     if (!merged) {
@@ -167,6 +179,7 @@ class Edit extends Component {
 
     let type = connection ? connection.type : merged.type;
     const assistant = connection ? connection.assistant : merged.assistant;
+    const formMeta = merged.customForm ? merged.customForm.form : {};
 
     if (assistant) {
       type = assistant;
@@ -178,6 +191,18 @@ class Edit extends Component {
 
     return (
       <LoadResources required resources={[resourceType]}>
+        {showEditor && (
+          <JsonEditorDialog
+            value={formMeta}
+            title="Edit custom form metadata"
+            id={id}
+            onClose={this.handleToggleEditor}
+            onChange={value => {
+              // console.log(value);
+              handlePatchFormMeta(value);
+            }}
+          />
+        )}
         <Button
           className={classes.editButton}
           size="small"
@@ -185,7 +210,15 @@ class Edit extends Component {
           onClick={this.handleToggleEdit}>
           {editMode ? 'Save form' : 'Edit form'}
         </Button>
-
+        {editMode && (
+          <Button
+            className={classes.editButton}
+            size="small"
+            color="primary"
+            onClick={this.handleToggleEditor}>
+            JSON
+          </Button>
+        )}
         <Typography variant="h5">
           {`${toName(type, true)} ${toName(resourceType, false, -1)}`}
         </Typography>
@@ -215,7 +248,6 @@ class Edit extends Component {
           <ResourceForm
             key={id}
             editMode={editMode}
-            connection={connection}
             resourceType={resourceType}
             resource={merged}
             handleSubmit={patchSet => {

@@ -2,7 +2,7 @@ import masterFieldHash from './masterFieldHash';
 import formMeta from './definitions';
 import { defaultPatchSetConverter } from './utils';
 
-const getResourceFormAssets = ({ connection, resourceType, resource }) => {
+const getResourceFormAssets = ({ resourceType, resource }) => {
   let { fields } = formMeta.common;
   let fieldSets = [];
   let converter;
@@ -31,15 +31,13 @@ const getResourceFormAssets = ({ connection, resourceType, resource }) => {
 
     case 'imports':
     case 'exports':
-      if (connection) {
-        meta = formMeta[resourceType];
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        meta = meta[resourceType];
 
         if (meta) {
-          meta = meta[connection.type];
-
-          if (meta) {
-            ({ fields, fieldSets, converter, initializer } = meta);
-          }
+          ({ fields, fieldSets, converter, initializer } = meta);
         }
       }
 

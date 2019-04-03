@@ -59,7 +59,7 @@ class DynaSelectResource extends React.Component {
       id,
       name,
       resources = [],
-      value,
+      value = '',
       label,
       defaultItemValue,
       defaultItemLabel,
