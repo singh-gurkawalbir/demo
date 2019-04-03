@@ -35,7 +35,6 @@ export default class ResourceForm extends Component {
     const { formKey } = this.state;
     const {
       classes,
-      connection,
       resourceType,
       resource,
       handleSubmit,
@@ -59,7 +58,6 @@ export default class ResourceForm extends Component {
     } else {
       // this is a stock UI form...
       const assets = factory.getResourceFormAssets({
-        connection,
         resourceType,
         resource,
       });

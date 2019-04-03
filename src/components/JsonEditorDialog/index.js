@@ -16,7 +16,7 @@ import CodeEditor from '../../components/CodeEditor';
 }))
 export default class JsonEditorDialog extends Component {
   state = {
-    value: null,
+    value: {},
     error: false,
   };
 
@@ -45,8 +45,6 @@ export default class JsonEditorDialog extends Component {
 
     if (typeof onChange === 'function') {
       const json = JSON.parse(value);
-
-      // console.log('from editor', json);
 
       onChange(json);
     }
