@@ -5,12 +5,14 @@ export const defaultPatchSetConverter = values =>
     value: values[key],
   }));
 
+const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
+
 export const getFieldPosition = ({ meta, id }) => {
   const pos = {};
   let index;
 
   if (meta.fields) {
-    index = meta.fields.findIndex(f => f.id === id);
+    index = meta.fields.findIndex(f => byId(f, id));
 
     if (index >= 0) {
       pos.index = index;
@@ -21,7 +23,7 @@ export const getFieldPosition = ({ meta, id }) => {
 
   if (meta.fieldSets && meta.fieldSets.length > 0) {
     meta.fieldSets.some((set, i) => {
-      index = set.fields.findIndex(f => f.id === id);
+      index = set.fields.findIndex(f => byId(f, id));
 
       // break out of 'some' iterations as soon as any callback finds a field.
       if (index >= 0) {
@@ -42,14 +44,14 @@ export const getFieldById = ({ meta, id }) => {
   let field;
 
   if (meta.fields) {
-    field = meta.fields.find(f => f.id === id);
+    field = meta.fields.find(f => byId(f, id));
 
     if (field) return field;
   }
 
   if (meta.fieldSets && meta.fieldSets.length > 0) {
     meta.fieldSets.some(set => {
-      field = set.fields.find(f => f.id === id);
+      field = set.fields.find(f => byId(f, id));
 
       // break out of 'some' iterations as soon as any callback finds a field.
       return !!field;

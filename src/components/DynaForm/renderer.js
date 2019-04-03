@@ -32,8 +32,6 @@ const InputWrapper = withStyles({
 })(props => {
   const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
 
-  // console.log('helpwrapper initialized');
-
   return (
     <Fragment>
       {editMode && (
@@ -59,8 +57,9 @@ function getRenderer(editMode = false, onMetaChange) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
-    const { id, type, helpKey, helpText } = field;
+    const { id, fieldId, type, helpKey, helpText } = field;
     const DynaInput = inputs[type];
+    const fid = id || fieldId;
 
     if (!DynaInput) {
       return <div>No mapped field for type: [{type}]</div>;
@@ -68,7 +67,7 @@ function getRenderer(editMode = false, onMetaChange) {
 
     return (
       <InputWrapper
-        key={id}
+        key={fid}
         editMode={editMode}
         onMetaChange={onMetaChange}
         field={field}

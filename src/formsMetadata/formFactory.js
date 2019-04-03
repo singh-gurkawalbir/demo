@@ -93,7 +93,7 @@ const setDefaults = (fields, resourceType, resource) => {
     const merged = {
       resourceId: resource._id,
       resourceType,
-      ...masterFieldHash[f.id],
+      ...masterFieldHash[f.fieldId],
       ...f,
     };
 
@@ -105,12 +105,16 @@ const setDefaults = (fields, resourceType, resource) => {
 
     if (!merged.helpText && !merged.helpKey) {
       // console.log(`default helpKey for ${merged.id} used`);
-      merged.helpKey = merged.id;
+      merged.helpKey = merged.fieldId;
     }
 
     if (!Object.keys(merged).includes('defaultValue')) {
-      // console.log(`default value for ${merged.id} used`);
-      merged.defaultValue = extractValue(merged.id, resource);
+      // console.log(`default value for ${merged.fieldId} used`);
+      merged.defaultValue = extractValue(merged.fieldId, resource);
+    }
+
+    if (!merged.id) {
+      merged.id = merged.fieldId;
     }
 
     return merged;

@@ -14,9 +14,6 @@ import actions from '../../actions';
 
 const mapStateToProps = (state, { field }) => {
   const { id, resourceId, resourceType } = field;
-
-  if (!id) return {};
-
   const fieldMeta = selectors.resourceFormField(
     state,
     resourceType,
@@ -32,13 +29,10 @@ const mapDispatchToProps = (dispatch, { field }) => {
 
   return {
     patchFormField: value => {
-      // console.log(`patch ${id} with:`, value);
+      // console.log(`patch ${fid} with:`, value);
       dispatch(
         actions.resource.patchFormField(resourceType, resourceId, id, value)
       );
-    },
-    resetEditor: () => {
-      dispatch(actions.editor.reset(id));
     },
   };
 };
@@ -110,13 +104,13 @@ class EditFieldButton extends Component {
         onClose={this.handleEditorClick}
         aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">
-          Editing field: {fieldMeta.id}
+          Editing field: {fieldMeta.fieldId}
         </DialogTitle>
 
         <DialogContent>
           <div className={classes.editorContainer}>
             <CodeEditor
-              name={fieldMeta.id}
+              name={fieldMeta.fieldId}
               value={newMeta}
               mode="json"
               onChange={value => this.handleChange(value)}

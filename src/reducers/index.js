@@ -413,7 +413,7 @@ export function resourceData(state, resourceType, id) {
   return data;
 }
 
-export function resourceFormField(state, resourceType, resourceId, fieldId) {
+export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);
 
   if (!data || !data.merged) return;
@@ -423,7 +423,7 @@ export function resourceFormField(state, resourceType, resourceId, fieldId) {
 
   if (!meta) return;
 
-  const field = getFieldById({ meta, id: fieldId });
+  const field = getFieldById({ meta, id });
 
   if (!field) return;
 

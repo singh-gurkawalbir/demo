@@ -3,22 +3,22 @@ export default {
     // #region Main
     // name
     {
-      id: 'connection.name',
+      fieldId: 'connection.name',
     },
 
     // baseURI
     {
-      id: 'connection.http.baseURI',
+      fieldId: 'connection.http.baseURI',
     },
 
     // media type
     {
-      id: 'mediaType',
+      fieldId: 'mediaType',
     },
 
     // header
     {
-      id: 'HttpHeader',
+      fieldId: 'HttpHeader',
     },
     // #endregion
   ],
@@ -30,32 +30,32 @@ export default {
         // #region Auth
         // auth type
         {
-          id: 'AuthenticationType',
+          fieldId: 'AuthenticationType',
         },
 
         // auth fail code
         {
-          id: 'AuthFailStatusCode',
+          fieldId: 'AuthFailStatusCode',
         },
 
         // auth fail path
         {
-          id: 'AuthenticationFailPath',
+          fieldId: 'AuthenticationFailPath',
         },
 
         // auth fail values
         {
-          id: 'AuthenticationFailValues',
+          fieldId: 'AuthenticationFailValues',
         },
 
         // unencrypted
         {
-          id: 'Unencrypted',
+          fieldId: 'Unencrypted',
         },
 
         // encrypted
         {
-          id: 'Encrypted',
+          fieldId: 'Encrypted',
         },
         // #endregion
       ],
@@ -67,27 +67,27 @@ export default {
         // #region PING
         // Ping Relative URI:
         {
-          id: 'PingRelativeURI',
+          fieldId: 'PingRelativeURI',
         },
 
         // Ping Method:
         {
-          id: 'PingMethod',
+          fieldId: 'PingMethod',
         },
 
         // Ping Success Path:
         {
-          id: 'PingSuccessPath',
+          fieldId: 'PingSuccessPath',
         },
 
         // Ping Success Values:
         {
-          id: 'PingSuccessValues',
+          fieldId: 'PingSuccessValues',
         },
 
         // Ping Error Path
         {
-          id: 'PingErrorPath',
+          fieldId: 'PingErrorPath',
         },
         // #endregion
       ],
@@ -99,27 +99,27 @@ export default {
         // #region API Rate Limits
         // Limit
         {
-          id: 'Limit',
+          fieldId: 'Limit',
         },
 
         // Fail Status Code:
         {
-          id: 'LimitStatusCode',
+          fieldId: 'LimitStatusCode',
         },
 
         // Fail Path:
         {
-          id: 'RateLimitFailPath',
+          fieldId: 'RateLimitFailPath',
         },
 
         // Fail Values:
         {
-          id: 'RateLimitFailValues',
+          fieldId: 'RateLimitFailValues',
         },
 
         // Retry Header:
         {
-          id: 'LimitRetryHeader',
+          fieldId: 'LimitRetryHeader',
         },
         // #endregion
       ],
@@ -131,31 +131,31 @@ export default {
         // #region Refresh Token
         // RefreshToken
         {
-          id: 'RefreshToken',
+          fieldId: 'RefreshToken',
         },
 
         // RefreshRelativeURI:
         {
-          id: 'RefreshRelativeURI',
+          fieldId: 'RefreshRelativeURI',
         },
 
         // RefreshMediaType:
         {
-          id: 'RefreshMediaType',
+          fieldId: 'RefreshMediaType',
         },
 
         // RefreshMethod:
         {
-          id: 'RefreshMethod',
+          fieldId: 'RefreshMethod',
         },
 
         // RefreshBody
         {
-          id: 'RefreshBody',
+          fieldId: 'RefreshBody',
         },
         // RefreshTokenPath:
         {
-          id: 'RefreshTokenPath',
+          fieldId: 'RefreshTokenPath',
         },
         // #endregion
       ],
@@ -167,17 +167,17 @@ export default {
         // #region Advanced
         // Disable Strict SSL:
         {
-          id: 'DisableStrictSSL',
+          fieldId: 'DisableStrictSSL',
         },
 
         // Borrow Concurrency From:
         {
-          id: 'BorrowConcurrencyFrom',
+          fieldId: 'BorrowConcurrencyFrom',
         },
 
         // Concurrency Level:
         {
-          id: 'ConcurrencyLevel',
+          fieldId: 'ConcurrencyLevel',
         },
         // #endregion
       ],
