@@ -94,13 +94,15 @@ const user = {
         resource.requestCollection('shared/ashares', undefined, message),
       requestLicenses: message =>
         resource.requestCollection('licenses', undefined, message),
-      requestTrialLicense: () => action(actionTypes.REQUEST_TRIAL_LICENSE, {}),
+      requestTrialLicense: () => action(actionTypes.LICENSE_TRIAL_REQUEST, {}),
       trialLicenseIssued: message =>
-        action(actionTypes.TRIAL_LICENSE_ISSUED, message),
+        action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
-        action(actionTypes.REQUEST_LICENSE_UPGRADE, {}),
+        action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
+      acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
+      rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
     },
   },
   preferences: {
@@ -109,6 +111,7 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
+const reloadApp = () => action(actionTypes.RELOAD_APP);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -135,6 +138,7 @@ const editor = {
 // #endregion
 
 export default {
+  reloadApp,
   clearComms,
   patchFilter,
   clearFilter,

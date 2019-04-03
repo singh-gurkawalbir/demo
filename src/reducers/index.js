@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
+import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
@@ -11,6 +12,7 @@ import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
 
 const combinedReducers = combineReducers({
+  app,
   session,
   data,
   user,
@@ -19,7 +21,9 @@ const combinedReducers = combineReducers({
 });
 const rootReducer = (state, action) => {
   if (action.type === actionTypes.CLEAR_STORE) {
-    return {};
+    const { app } = state;
+
+    return { app };
   }
 
   return combinedReducers(state, action);
@@ -38,6 +42,12 @@ export default rootReducer;
 // -------------------
 // Following this pattern:
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
+
+// #region app selectors
+export function reloadCount(state) {
+  return fromApp.reloadCount((state && state.app) || null);
+}
+// #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
 export function allLoadingOrErrored(state) {
@@ -268,12 +278,6 @@ export function processors(state) {
 // #region PUBLIC ACCOUNTS SELECTORS
 export function integratorLicense(state) {
   const preferences = userPreferences(state);
-
-  // console.log(
-  //   `integratorLicense#1 preferences.defaultAShareId : ${
-  //     preferences.defaultAShareId
-  //   }`
-  // );
 
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }

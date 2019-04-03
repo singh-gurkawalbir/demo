@@ -8,6 +8,7 @@ import Notifier, { openSnackbar } from '../../../components/Notifier';
 
 const mapStateToProps = state => ({
   license: selectors.integratorLicense(state),
+  accessLevel: selectors.userAccessLevel(state),
 });
 const mapDispatchToProps = dispatch => ({
   onClick: action => {
@@ -56,13 +57,19 @@ class LicenseAction extends Component {
   }
 
   render() {
-    const { classes, license, onClick } = this.props;
+    const { classes, license, accessLevel, onClick } = this.props;
+
+    if (!['owner', 'manage'].includes(accessLevel)) {
+      return null;
+    }
 
     if (!license) {
       return null;
     }
 
-    const buttonProps = {};
+    const buttonProps = {
+      className: classes.inTrial,
+    };
 
     if (license.tier === 'none') {
       if (!license.trialEndDate) {
@@ -70,31 +77,18 @@ class LicenseAction extends Component {
         buttonProps.label = 'GO UNLIMITED FOR 30 DAYS';
       }
     } else if (license.tier === 'free') {
-      const dtNow = new Date();
-      const trialEndDate = new Date(license.trialEndDate);
-
-      if (trialEndDate <= dtNow) {
+      if (license.status === 'TRIAL_EXPIRED') {
         buttonProps.action = 'upgrade';
         buttonProps.label = 'UPGRADE NOW';
-      } else {
-        const remainingDays = Math.floor(
-          (Date.UTC(
-            trialEndDate.getFullYear(),
-            trialEndDate.getMonth(),
-            trialEndDate.getDate()
-          ) -
-            Date.UTC(dtNow.getFullYear(), dtNow.getMonth(), dtNow.getDate())) /
-            (1000 * 60 * 60 * 24)
-        );
-
-        if (remainingDays < 1) {
+      } else if (license.status === 'IN_TRIAL') {
+        if (license.expiresInDays < 1) {
           buttonProps.action = 'upgrade';
           buttonProps.label = 'UPGRADE NOW';
         } else {
           buttonProps.action = 'upgrade';
-          buttonProps.label = `${remainingDays} DAYS LEFT UPGRADE NOW`;
+          buttonProps.label = `${license.expiresInDays} DAYS LEFT UPGRADE NOW`;
 
-          if (remainingDays < 10) {
+          if (license.expiresInDays < 10) {
             buttonProps.className = classes.expiresSoon;
           }
         }
@@ -102,10 +96,6 @@ class LicenseAction extends Component {
     }
 
     if (buttonProps.action) {
-      if (!buttonProps.className) {
-        buttonProps.className = classes.inTrial;
-      }
-
       return (
         <Fragment>
           <Notifier />

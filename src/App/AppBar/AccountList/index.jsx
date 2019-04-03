@@ -25,6 +25,7 @@ const mapDispatchToProps = dispatch => ({
       })
     );
   },
+  onAccountLeave: () => {},
 });
 
 @withStyles(theme => ({
@@ -87,7 +88,7 @@ class AccountList extends Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes, accounts, onAccountChange } = this.props;
+    const { classes, accounts, onAccountChange, onAccountLeave } = this.props;
     const open = !!anchorEl;
 
     if (!accounts || accounts.length < 2) {
@@ -132,9 +133,14 @@ class AccountList extends Component {
                   classes={{ root: a.selected && classes.selected }}
                   primary={a.label}
                 />
-                {a.environment === 'production' && (
+                {a.canLeave && (
                   <ListItemSecondaryAction>
-                    <Button className={classes.leave} variant="text">
+                    <Button
+                      className={classes.leave}
+                      variant="text"
+                      onClick={() => {
+                        onAccountLeave(a.id);
+                      }}>
                       Leave
                     </Button>
                   </ListItemSecondaryAction>

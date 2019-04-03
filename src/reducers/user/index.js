@@ -65,17 +65,10 @@ export function accessLevel(state) {
     if (!defaultAShareId || defaultAShareId === 'own') {
       accessLevel = 'owner';
     } else {
-      const { accounts } = state.org && state.org;
+      const { accounts } = state.org;
+      const account = accounts.find(a => a._id === defaultAShareId);
 
-      accounts.some(a => {
-        if (a._id === defaultAShareId) {
-          ({ accessLevel } = a);
-
-          return true;
-        }
-
-        return false;
-      });
+      ({ accessLevel } = account);
     }
   }
 
@@ -102,12 +95,12 @@ export function accountSummary(state) {
 
   const id = prefs.defaultAShareId || summary[0].id;
   let environment = prefs.environment || summary[0].environment;
-  const filteredAccounts = summary.find(
+  const filteredAccount = summary.find(
     a => a.id === id && a.environment === environment
   );
 
-  if (filteredAccounts.length) {
-    filteredAccounts[0].selected = true;
+  if (filteredAccount) {
+    filteredAccount.selected = true;
   } else {
     [{ environment }] = summary;
     summary.find(
