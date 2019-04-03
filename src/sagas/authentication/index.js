@@ -48,20 +48,19 @@ export function* retrievingUserDetails() {
   );
 }
 
-export function* validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid(
+export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   defaultAShareId
 ) {
-  let toReturn = defaultAShareId;
   const isValidSharedAccountId = yield select(
     selectors.isValidSharedAccountId,
     defaultAShareId
   );
 
-  if (!isValidSharedAccountId) {
-    toReturn = yield select(selectors.getOneValidSharedAccountId);
+  if (isValidSharedAccountId) {
+    return defaultAShareId;
   }
 
-  return toReturn;
+  return yield select(selectors.getOneValidSharedAccountId);
 }
 
 export function* retrieveAppInitializationResources() {
@@ -83,7 +82,7 @@ export function* retrieveAppInitializationResources() {
       );
     } */
     calculatedDefaultAShareId = yield call(
-      validateDefaultASharedIdAndGetOneIfTheExisitningIsInvalid,
+      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
       defaultAShareId
     );
   } else {
@@ -134,11 +133,17 @@ export function* auth({ email, password }) {
       opts: payload,
       message: 'Authenticating User',
     });
+    const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
     yield put(actions.auth.complete());
 
     yield call(retrieveAppInitializationResources);
+
+    if (isExpired) {
+      // remount the component
+      yield put(actions.reloadApp());
+    }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
     yield put(actions.user.profile.delete());
