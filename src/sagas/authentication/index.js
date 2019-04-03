@@ -1,4 +1,11 @@
-import { call, put, takeEvery, all, select } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  takeLatest,
+  all,
+  select,
+} from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
@@ -177,7 +184,7 @@ export function* invalidateSession() {
 }
 
 export const authenticationSagas = [
-  takeEvery(actionTypes.USER_LOGOUT, invalidateSession),
+  takeLatest(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
 ];

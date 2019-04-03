@@ -79,6 +79,7 @@ export async function throwExceptionUsingTheResponse(response) {
 export function checkToThrowSessionValidationException(response) {
   // when session is invalidated then we
   // expect to get a 200 response with the response url being the sign in page
+  console.log('check to throw ', response);
 
   if (response.status === 200) {
     const { host, protocol } = getHostAndProtocol();

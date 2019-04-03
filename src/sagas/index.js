@@ -21,14 +21,8 @@ export function* unauthenticateAndDeleteProfile() {
   yield put(actions.user.profile.delete());
 }
 
-// all tasks can be cancelable except for the logout
-const cancelableTasksDuringLogouts = path => {
-  if (path !== logoutParams.path) return [take(actionsTypes.USER_LOGOUT)];
-
-  return [];
-};
-
 // TODO: decide if we this saga has to have takeLatest
+// api call
 export function* apiCallWithRetry(args) {
   const { opts, path } = args;
   const method = (opts && opts.method) || 'GET';
@@ -38,32 +32,28 @@ export function* apiCallWithRetry(args) {
   };
 
   try {
-    const [resp, ...remainingActions] = yield race([
-      call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: true,
-      }),
-      ...cancelableTasksDuringLogouts(path),
-    ]);
-    // a hack to schedule the logout later so that it cleans the store
-    // to logout gracefully
-    // this is how are middlwares are scheduled by design
-    const isLoggedOut = remainingActions.filter(
-      action => action.type === actionsTypes.USER_LOGOUT
-    );
+    // TODO: logout path make it call
+    let apiResp;
+    let logoutResp;
 
-    if (isLoggedOut.length > 0) {
-      yield put(actions.auth.logout());
-      // we have to throw this exception otherwise
-      // the parent saga would continue to run setting a null
-      // to the resource call
-      throw new APIException();
+    if (path !== logoutParams.path) {
+      [apiResp, logoutResp] = yield race([
+        call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        take(actionsTypes.USER_LOGOUT),
+      ]);
+    } else {
+      apiResp = call(sendRequest, apiRequestAction, {
+        dispatchRequestAction: true,
+      });
     }
 
-    if (resp && resp.response) {
-      const { response } = resp;
+    if (apiResp && apiResp.response) {
+      const { response } = apiResp;
 
       // do sth with response
-      return response.data;
+      return response;
     }
 
     return null;

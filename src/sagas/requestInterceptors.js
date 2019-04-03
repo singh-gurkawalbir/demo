@@ -7,6 +7,7 @@ import {
   introduceNetworkLatency,
   APIException,
   checkToThrowSessionValidationException,
+  throwExceptionUsingTheResponse,
 } from './api/index';
 import { unauthenticateAndDeleteProfile } from '.';
 import { resourceStatus } from '../reducers/index';
@@ -30,7 +31,7 @@ export function* onRequestSaga(request) {
   // lets built for a good UX that can deal with high latency calls...
 
   yield introduceNetworkLatency();
-  const finalRequest = {
+  const requestPayload = {
     url: req,
     method,
     ...options,
@@ -40,7 +41,7 @@ export function* onRequestSaga(request) {
     responseType: 'text',
   };
 
-  return finalRequest;
+  return requestPayload;
 }
 
 export function* onSuccessSaga(response, action) {
@@ -48,10 +49,13 @@ export function* onSuccessSaga(response, action) {
 
   yield put(actions.api.complete(path));
 
-  // Sort of a hack because this api does not support 204 well
-  // and is unable to serialize the object correctly
+  // if error in response
+  if (response.status >= 400 && response.status < 600) {
+    throwExceptionUsingTheResponse(response);
+  }
 
-  if (response.data === '') return null;
+  // This api does not support 204 very well so
+  // we expect all responses to be of type text
 
   try {
     checkToThrowSessionValidationException(response);
@@ -61,9 +65,12 @@ export function* onSuccessSaga(response, action) {
     return null;
   }
 
+  // if 204
+  if (response.data === '') return undefined;
+
   response.data = JSON.parse(response.data);
 
-  return response;
+  return response.data;
 }
 
 export function* onErrorSaga(error, action) {
@@ -87,7 +94,7 @@ export function* onErrorSaga(error, action) {
   if (retryCount < tryCount - 1) {
     yield call(delay, 2000);
     yield put(actions.api.retry(path));
-    yield call(sendRequest(), action, { silent: true });
+    yield call(sendRequest, action, { silent: true });
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...
@@ -101,6 +108,9 @@ export function* onErrorSaga(error, action) {
   return { error };
 }
 
-export function onAbortSaga(/* action */) {
+export function onAbortSaga(action) {
   // do sth, for example an action dispatch
+  //
+
+  console.log('check act ', action);
 }
