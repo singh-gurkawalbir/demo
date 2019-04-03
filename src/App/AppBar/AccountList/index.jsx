@@ -12,6 +12,7 @@ import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DownArrow from '../../../icons/DownArrow';
+import { confirmDialog } from '../../../components/ConfirmDialog';
 
 const mapStateToProps = state => ({
   accounts: selectors.accountSummary(state),
@@ -25,7 +26,29 @@ const mapDispatchToProps = dispatch => ({
       })
     );
   },
-  onAccountLeave: () => {},
+  onAccountLeave: account => {
+    confirmDialog({
+      title: 'Leave Account',
+      message: `By leaving the account "${
+        account.company
+      }", you will no longer have access to the account or any of the integrations within the account.`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+        },
+      ],
+      callback: buttonLabel => {
+        if (buttonLabel !== 'Yes') {
+          return false;
+        }
+
+        dispatch(actions.user.org.accounts.leave(account.id));
+      },
+    });
+  },
 });
 
 @withStyles(theme => ({
@@ -139,7 +162,7 @@ class AccountList extends Component {
                       className={classes.leave}
                       variant="text"
                       onClick={() => {
-                        onAccountLeave(a.id);
+                        onAccountLeave(a);
                       }}>
                       Leave
                     </Button>

@@ -231,6 +231,34 @@ export function* rejectAccountInvite({ id }) {
   }
 }
 
+export function* leaveAccount({ id }) {
+  const requestOptions = {
+    opts: {
+      method: 'DELETE',
+    },
+    path: `/shared/ashares/${id}`,
+  };
+
+  try {
+    const payload = {
+      ...requestOptions.opts,
+      body: {},
+    };
+
+    yield call(apiCallWithRetry, {
+      path: requestOptions.path,
+      opts: payload,
+      message: 'Leaving account',
+    });
+
+    yield put(actions.resource.requestCollection('shared/ashares'));
+  } catch (e) {
+    yield put(
+      actions.api.failure(requestOptions.path, 'Could not leave account')
+    );
+  }
+}
+
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -239,5 +267,6 @@ export const userSagas = [
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
   takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
-  takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, rejectAccountInvite),
+  takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
+  takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
 ];

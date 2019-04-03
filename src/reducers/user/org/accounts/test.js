@@ -430,12 +430,14 @@ describe('account (ashares) reducers', () => {
             id: 'abc',
             environment: 'production',
             label: 'Celigo Inc',
+            company: 'Celigo Inc',
             canLeave: true,
           },
           {
             id: 'def',
             environment: 'production',
             label: 'Celigo Playground - Production',
+            company: 'Celigo Playground',
             canLeave: true,
           },
           {

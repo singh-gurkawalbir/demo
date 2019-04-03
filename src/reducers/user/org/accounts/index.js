@@ -233,6 +233,7 @@ export function accountSummary(state) {
         id: a.id,
         environment: 'production',
         label: `${a.company} - Production`,
+        company: a.company,
         canLeave: shared.length > 1,
       });
       accounts.push({
@@ -246,6 +247,7 @@ export function accountSummary(state) {
         id: a.id,
         environment: 'production',
         label: a.company,
+        company: a.company,
         canLeave: shared.length > 1,
       });
     }
