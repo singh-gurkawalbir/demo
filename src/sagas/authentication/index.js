@@ -18,7 +18,6 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { intializationResources } from '../../reducers/data';
-import { createAppropriatePathAndOptions } from '../api';
 
 export function* retrievingOrgDetails() {
   yield all([

@@ -108,9 +108,6 @@ export function* onErrorSaga(error, action) {
   return { error };
 }
 
-export function onAbortSaga(action) {
-  // do sth, for example an action dispatch
-  //
-
-  console.log('check act ', action);
+export function* onAbortSaga(action) {
+  yield put(actions.api.complete(action.request.meta.path, 'Request aborted'));
 }
