@@ -13,7 +13,6 @@ import {
   onAbortSaga,
 } from './requestInterceptors';
 import { authenticationSagas } from './authentication';
-import { APIException } from './api/index';
 import { logoutParams } from './api/apiPaths';
 
 export function* unauthenticateAndDeleteProfile() {
@@ -32,31 +31,24 @@ export function* apiCallWithRetry(args) {
   };
 
   try {
-    // TODO: logout path make it call
     let apiResp;
-    let logoutResp;
 
     if (path !== logoutParams.path) {
-      [apiResp, logoutResp] = yield race([
+      [apiResp] = yield race([
         call(sendRequest, apiRequestAction, {
           dispatchRequestAction: true,
         }),
         take(actionsTypes.USER_LOGOUT),
       ]);
     } else {
-      apiResp = call(sendRequest, apiRequestAction, {
+      apiResp = yield call(sendRequest, apiRequestAction, {
         dispatchRequestAction: true,
       });
     }
 
-    if (apiResp && apiResp.response) {
-      const { response } = apiResp;
+    const { response } = apiResp;
 
-      // do sth with response
-      return response;
-    }
-
-    return null;
+    return response;
   } catch (error) {
     throw error;
   }

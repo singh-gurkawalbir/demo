@@ -18,6 +18,7 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { intializationResources } from '../../reducers/data';
+import { createAppropriatePathAndOptions } from '../api';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -169,10 +170,12 @@ export function* initializeApp() {
 
 export function* invalidateSession() {
   try {
-    logoutParams.opts.body._csrf = yield call(getCSRFToken);
+    const csrfToken = yield call(getCSRFToken);
+    const logoutOpts = { ...logoutParams.opts, body: { csrfToken } };
+
     yield call(apiCallWithRetry, {
       path: logoutParams.path,
-      opts: logoutParams.opts,
+      opts: logoutOpts,
       message: 'Logging out user',
     });
     yield call(removeCSRFToken);
