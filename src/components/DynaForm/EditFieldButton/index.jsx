@@ -11,6 +11,7 @@ import EditIcon from 'mdi-react/EditIcon';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
+import NewFieldDialog from '../NewFieldDialog';
 
 const mapStateToProps = (state, { field }) => {
   const { id, resourceId, resourceType } = field;
@@ -40,6 +41,7 @@ const mapDispatchToProps = (dispatch, { field }) => {
 class EditFieldButton extends Component {
   state = {
     showEditor: false,
+    insertField: false,
   };
 
   handleEditorChange = newMeta => {
@@ -62,6 +64,10 @@ class EditFieldButton extends Component {
     }
   };
 
+  handleInsertFieldToggle = (mode = false) => {
+    this.setState({ insertField: mode });
+  };
+
   handleEditorToggle = () => {
     const { showEditor } = this.state;
 
@@ -69,14 +75,14 @@ class EditFieldButton extends Component {
   };
 
   render() {
-    const { showEditor } = this.state;
+    const { showEditor, insertField } = this.state;
     const { className, fieldMeta = {} } = this.props;
     const fieldId = fieldMeta.fieldId || 'new';
 
     /* eslint-disable react/jsx-handler-names */
     return (
       <Fragment>
-        <PopupState variant="popover" popupId="demo-popup-menu">
+        <PopupState variant="popover" popupId="edit-field-menu">
           {popupState => (
             <Fragment>
               <IconButton className={className} {...bindTrigger(popupState)}>
@@ -90,10 +96,18 @@ class EditFieldButton extends Component {
                   }}>
                   Edit field
                 </MenuItem>
-                <MenuItem onClick={popupState.close}>
+                <MenuItem
+                  onClick={() => {
+                    popupState.close();
+                    this.handleInsertFieldToggle('before');
+                  }}>
                   Insert new field before
                 </MenuItem>
-                <MenuItem onClick={popupState.close}>
+                <MenuItem
+                  onClick={() => {
+                    popupState.close();
+                    this.handleInsertFieldToggle('after');
+                  }}>
                   Insert new field after
                 </MenuItem>
                 <MenuItem
@@ -107,6 +121,13 @@ class EditFieldButton extends Component {
             </Fragment>
           )}
         </PopupState>
+        {insertField && (
+          <NewFieldDialog
+            title={`Insert this new field ${insertField} ${fieldId}`}
+            onClose={() => this.handleInsertFieldToggle()}
+            onSave={() => this.handleInsertFieldToggle()}
+          />
+        )}
         {showEditor && (
           <JsonEditorDialog
             onChange={this.handleEditorChange}

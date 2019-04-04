@@ -408,7 +408,7 @@ export function resourceData(state, resourceType, id) {
     merged = patchResult.newDocument;
   }
 
-  const hashCode = (str = '') => {
+  const hashCode = str => {
     let hash = 0;
     let i;
     let chr;

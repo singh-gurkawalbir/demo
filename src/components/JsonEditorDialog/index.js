@@ -1,19 +1,7 @@
 import { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import FormDialog from '../FormDialog';
 import CodeEditor from '../../components/CodeEditor';
 
-@withStyles(() => ({
-  editorContainer: {
-    border: '1px solid rgb(0,0,0,0.1)',
-    height: '50vh',
-    width: '75vh',
-  },
-}))
 export default class JsonEditorDialog extends Component {
   state = {
     value: {},
@@ -29,14 +17,6 @@ export default class JsonEditorDialog extends Component {
     } catch (e) {
       this.setState({ error: true });
     }
-  }
-
-  handleCancel() {
-    const { value, onClose } = this.props;
-
-    this.setState({ value });
-
-    onClose();
   }
 
   handleSave() {
@@ -59,42 +39,23 @@ export default class JsonEditorDialog extends Component {
   }
 
   render() {
-    const { classes, id, title, onClose } = this.props;
+    const { id, title, onClose } = this.props;
     const { value, error } = this.state;
 
     return (
-      <Dialog open onClose={onClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">{title}</DialogTitle>
-
-        <DialogContent>
-          <div className={classes.editorContainer}>
-            <CodeEditor
-              name={id}
-              value={value}
-              mode="json"
-              onChange={v => this.handleChange(v)}
-            />
-          </div>
-        </DialogContent>
-
-        <DialogActions>
-          <Button
-            onClick={() => this.handleCancel()}
-            disabled={error}
-            variant="contained"
-            size="small">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => this.handleSave()}
-            disabled={error}
-            variant="contained"
-            size="small"
-            color="secondary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <FormDialog
+        isValid={!error}
+        onClose={onClose}
+        onSubmit={() => this.handleSave()}
+        title={title}
+        aria-labelledby="form-dialog-title">
+        <CodeEditor
+          name={id}
+          value={value}
+          mode="json"
+          onChange={v => this.handleChange(v)}
+        />
+      </FormDialog>
     );
   }
 }

@@ -195,7 +195,7 @@ class Edit extends Component {
         {showEditor && (
           <JsonEditorDialog
             value={formMeta}
-            title="Edit custom form metadata"
+            title="Custom form metadata"
             id={id}
             onClose={this.handleToggleEditor}
             onChange={value => {
