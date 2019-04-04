@@ -151,6 +151,7 @@ describe('request interceptors...testing the various stages of an api request on
           checkToThrowSessionValidationException(sessionError200Response);
           expect(true).toBe(false);
         } catch (e) {
+          // TODO: I wanted to do this but its behaving erratically
           expect(e).toEqual(status401);
         }
       });
