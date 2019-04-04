@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
+import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
@@ -8,8 +9,10 @@ import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
+import { getFieldById } from '../formsMetadata/utils';
 
 const combinedReducers = combineReducers({
+  app,
   session,
   data,
   user,
@@ -18,7 +21,9 @@ const combinedReducers = combineReducers({
 });
 const rootReducer = (state, action) => {
   if (action.type === actionTypes.CLEAR_STORE) {
-    return {};
+    const { app } = state;
+
+    return { app };
   }
 
   return combinedReducers(state, action);
@@ -37,6 +42,12 @@ export default rootReducer;
 // -------------------
 // Following this pattern:
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
+
+// #region app selectors
+export function reloadCount(state) {
+  return fromApp.reloadCount((state && state.app) || null);
+}
+// #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
 export function allLoadingOrErrored(state) {
@@ -383,22 +394,44 @@ export function resourceData(state, resourceType, id) {
 
   const { patch, conflict } = fromSession.stagedResource(state.session, id);
   // console.log('patch:', patch);
-  let merged = master;
+  let merged;
 
   if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
     const patchResult = jsonPatch.applyPatch(
       jsonPatch.deepClone(master),
-      patch
+      jsonPatch.deepClone(patch)
     );
 
     // console.log('patchResult', patchResult);
     merged = patchResult.newDocument;
   }
 
+  const hashCode = str => {
+    let hash = 0;
+    let i;
+    let chr;
+
+    if (!str || str.length === 0) return hash;
+
+    for (i = 0; i < str.length; i += 1) {
+      chr = str.charCodeAt(i);
+      /* eslint-disable no-bitwise */
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+      /* eslint */
+    }
+
+    return hash;
+  };
+
+  const hash = hashCode(JSON.stringify(merged || master));
   const data = {
     master,
     patch,
-    merged,
+    merged: merged || master,
+    hash,
   };
 
   if (conflict) data.conflict = conflict;
@@ -406,16 +439,33 @@ export function resourceData(state, resourceType, id) {
   return data;
 }
 
+export function resourceFormField(state, resourceType, resourceId, id) {
+  const data = resourceData(state, resourceType, resourceId);
+
+  if (!data || !data.merged) return;
+
+  const { merged } = data;
+  const meta = merged.customForm && merged.customForm.form;
+
+  if (!meta) return;
+
+  const field = getFieldById({ meta, id });
+
+  if (!field) return;
+
+  return field;
+}
+
 export function newResourceData(state, resourceType, id) {
   const master = resourceDefaults[resourceType];
   const { patch } = fromSession.stagedResource(state.session, id);
   // console.log('patch:', patch);
-  let merged = master;
+  let merged;
 
   if (patch) {
     const patchResult = jsonPatch.applyPatch(
       jsonPatch.deepClone(master),
-      patch
+      jsonPatch.deepClone(patch)
     );
 
     // console.log('patchResult', patchResult);
@@ -425,7 +475,7 @@ export function newResourceData(state, resourceType, id) {
   const data = {
     master,
     patch,
-    merged,
+    merged: merged || master,
   };
 
   return data;

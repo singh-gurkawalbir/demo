@@ -3,14 +3,14 @@ export default {
     {
       id: 'CommonName',
       name: '/name',
-      defaultValue: '{{name}}',
+      defaultValue: r => r.name,
       type: 'text',
       label: 'Name',
     },
     {
       id: 'CommonDescription',
       name: '/description',
-      defaultValue: '{{description}}',
+      defaultValue: r => r.description,
       type: 'text',
       multiline: true,
       maxRows: 5,

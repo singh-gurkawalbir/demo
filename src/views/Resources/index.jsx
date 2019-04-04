@@ -103,7 +103,9 @@ class Resources extends Component {
               <Switch>
                 <Route
                   path="/pg/resources/:resourceType/edit/:id"
-                  component={Edit}
+                  render={props => (
+                    <Edit key={props.match.params.id} {...props} />
+                  )}
                 />
                 <Route
                   path="/pg/resources/:resourceType/add/:id"

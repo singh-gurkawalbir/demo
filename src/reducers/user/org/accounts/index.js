@@ -119,6 +119,9 @@ export default (state = [], action) => {
   }
 };
 
+const remainingDays = date =>
+  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+
 // #region PUBLIC SELECTORS
 
 // #region INTEGRATOR LICENSE
@@ -150,9 +153,7 @@ export function integratorLicense(state, accountId) {
       moment(ioLicense.expires) > moment() ? 'ACTIVE' : 'EXPIRED';
 
     if (ioLicense.status === 'ACTIVE') {
-      ioLicense.expiresInDays = Math.ceil(
-        (moment(ioLicense.expires) - moment()) / 1000 / 60 / 60 / 24
-      );
+      ioLicense.expiresInDays = remainingDays(ioLicense.expires);
     }
   }
 
@@ -164,9 +165,7 @@ export function integratorLicense(state, accountId) {
       moment(ioLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
 
     if (ioLicense.status === 'IN_TRIAL') {
-      ioLicense.expiresInDays = Math.ceil(
-        (moment(ioLicense.trialEndDate) - moment()) / 1000 / 60 / 60 / 24
-      );
+      ioLicense.expiresInDays = remainingDays(ioLicense.trialEndDate);
     }
   }
 

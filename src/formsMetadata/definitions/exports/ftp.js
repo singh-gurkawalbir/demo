@@ -3,16 +3,16 @@ export default {
     // #region Main
     // name
     {
-      id: 'ExportName',
+      fieldId: 'ExportName',
     },
     // description
     {
-      id: 'ExportDescription',
+      fieldId: 'ExportDescription',
     },
 
     // csv parse options
     {
-      id: 'export.file.csv',
+      fieldId: 'export.file.csv',
     },
     // #endregion
   ],
