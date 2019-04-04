@@ -494,6 +494,18 @@
     webpack-sources "1.0.1"
     worker-loader "^1.1.1"
 
+"@redux-saga/delay-p@1.0.0-rc.0":
+  version "1.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@redux-saga/delay-p/-/delay-p-1.0.0-rc.0.tgz#ce44f7426e8ad9497c8e87a5877ee4f8a62252a6"
+  integrity sha512-bKFhVKiBC2BgnEpRMNO63D6iKydtQli0m/85CV/3kKeiCchJuBaQfVuGHJO/KsXjvMKDgLeYRvWBhLZdRXmyfw==
+  dependencies:
+    "@redux-saga/symbols" "^1.0.0-rc.0"
+
+"@redux-saga/symbols@^1.0.0-rc.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@redux-saga/symbols/-/symbols-1.0.1.tgz#46512ae1275f88df061c42168d0f600ddb170c1e"
+  integrity sha512-akKkzcVnb1RzJaZV2LQFbi51abvdICMuAKwwLoCjjxLbLAGIw9EJxk5ucNnWSSCEsoEQMeol5tkAcK+Xzuv1Bg==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
@@ -969,6 +981,14 @@ aws4@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
   integrity sha512-ReZxvNHIOv88FlT7rxcXIIC0fPt4KZqZbOlivyWtXLt8ESx84zd3kMC6iK5jVeS2qt+g7ftS7ye4fi06X5rtRQ==
+
+axios@>=0.16.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
+  integrity sha1-MtU+SFHv3AoRmTts0AB4nXDAUQI=
+  dependencies:
+    follow-redirects "^1.3.0"
+    is-buffer "^1.1.5"
 
 axobject-query@^2.0.2:
   version "2.0.2"
@@ -4939,7 +4959,7 @@ fluture@^8.0.2:
     sanctuary-type-classes "^8.0.0"
     sanctuary-type-identifiers "^2.0.0"
 
-follow-redirects@^1.0.0:
+follow-redirects@^1.0.0, follow-redirects@^1.3.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
   integrity sha512-m/pZQy4Gj287eNy94nivy5wchN3Kp+Q5WgUPNy5lJSZ3sgkVKSYV/ZChMAQVIgx1SqfZ2zBZtPA2YlXIWxxJOQ==
@@ -7885,6 +7905,11 @@ mkdirp@0.5.1, mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@
   dependencies:
     minimist "0.0.8"
 
+moment@^2.24.0:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -9952,6 +9977,22 @@ redux-logger@3.0.6:
   integrity sha1-91VZZvMJjzyIYExEnPC69XeCdL8=
   dependencies:
     deep-diff "^0.3.5"
+
+redux-saga-requests-fetch@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/redux-saga-requests-fetch/-/redux-saga-requests-fetch-0.9.6.tgz#5e5857382c6d9199c9e6a6b132cf13e7da17e19a"
+  integrity sha512-rlPoTs1XlV99OQ+lhDvL8A4ZBIyJYDAgtrCkLMzlfTeZh5mke1g28+aPq87mZtG5OsXnU+SPnXJuDf9Gc1SwIg==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+    axios ">=0.16.0"
+
+redux-saga-requests@^0.23.0:
+  version "0.23.1"
+  resolved "https://registry.yarnpkg.com/redux-saga-requests/-/redux-saga-requests-0.23.1.tgz#3880c8b73dc0059c102e0ee7969426bd9521b055"
+  integrity sha512-PWwFCnM1Kjh/IKc3O44NKPOxHIOePTzeGh3GPVhMzcOSnhmpBxEKaX7+I00Q4RY7hrPQ82Rd4dA5rPN78tPl7A==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+    "@redux-saga/delay-p" "1.0.0-rc.0"
 
 redux-saga@0.16.2:
   version "0.16.2"

@@ -11,7 +11,7 @@ import {
   onSuccessSaga,
   onErrorSaga,
   onAbortSaga,
-} from './requestInterceptors';
+} from './api/requestInterceptors';
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 
@@ -31,19 +31,23 @@ export function* apiCallWithRetry(args) {
 
   try {
     let apiResp;
+    let logout;
 
     if (path !== logoutParams.path) {
-      [apiResp] = yield race([
-        call(sendRequest, apiRequestAction, {
+      ({ apiResp, logout } = yield race({
+        apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: true,
         }),
-        take(actionsTypes.USER_LOGOUT),
-      ]);
+        logout: take(actionsTypes.USER_LOGOUT),
+      }));
     } else {
       apiResp = yield call(sendRequest, apiRequestAction, {
         dispatchRequestAction: true,
       });
     }
+
+    // logout effect succeeded in then apiResp would be null
+    if (logout) return null;
 
     const { response } = apiResp;
 

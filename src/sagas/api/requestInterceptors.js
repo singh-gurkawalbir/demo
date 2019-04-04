@@ -1,16 +1,15 @@
 import { delay } from 'redux-saga';
 import { call, put, select } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
-import actions from '../actions';
+import actions from '../../actions';
 import {
   createAppropriatePathAndOptions,
   introduceNetworkLatency,
-  APIException,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
-} from './api/index';
-import { unauthenticateAndDeleteProfile } from '.';
-import { resourceStatus } from '../reducers/index';
+} from './index';
+import { unauthenticateAndDeleteProfile } from '..';
+import { resourceStatus } from '../../reducers/index';
 
 const tryCount = 3;
 
@@ -30,8 +29,8 @@ export function* onRequestSaga(request) {
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
 
-  yield introduceNetworkLatency();
-  const requestPayload = {
+  yield call(introduceNetworkLatency);
+  const requestPayload = yield {
     url: req,
     method,
     ...options,
@@ -45,24 +44,22 @@ export function* onRequestSaga(request) {
 }
 
 export function* onSuccessSaga(response, action) {
+  // the path is an additional attribute proxied in the request action
+  // we could use the uri but some of them have api prefixed some dont
   const { path } = action.request.meta;
 
   yield put(actions.api.complete(path));
 
   // if error in response
-  if (response.status >= 400 && response.status < 600) {
-    throwExceptionUsingTheResponse(response);
-  }
 
   // This api does not support 204 very well so
   // we expect all responses to be of type text
 
   try {
-    checkToThrowSessionValidationException(response);
+    yield call(checkToThrowSessionValidationException, response);
   } catch (e) {
     yield call(unauthenticateAndDeleteProfile);
-
-    return null;
+    throw e;
   }
 
   // if 204
@@ -75,7 +72,6 @@ export function* onSuccessSaga(response, action) {
 
 export function* onErrorSaga(error, action) {
   const { path } = action.request.meta;
-  const { retryCount } = select(resourceStatus, path);
 
   if (error.status >= 400 && error.status < 500) {
     // give up and let the parent saga try.
@@ -87,21 +83,24 @@ export function* onErrorSaga(error, action) {
       yield call(unauthenticateAndDeleteProfile);
     }
 
-    throw new APIException(error);
-  }
-  // TODO: Use select effect to get the retry count
+    yield call(throwExceptionUsingTheResponse, error);
 
-  if (retryCount < tryCount - 1) {
+    return { error };
+  }
+
+  const { retryCount = 0 } = yield select(resourceStatus, path);
+
+  if (retryCount < tryCount) {
     yield call(delay, 2000);
     yield put(actions.api.retry(path));
-    yield call(sendRequest, action, { silent: true });
+    yield call(sendRequest, action, { silent: false });
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...
-    yield put(actions.api.failure(path, error.message));
+    yield put(actions.api.failure(path, error.data));
     // the parent saga may need to know if there was an error for
     // its own "Data story"...
-    throw new APIException(error);
+    yield call(throwExceptionUsingTheResponse, error);
   }
 
   // not related token error, we pass it like nothing happened
