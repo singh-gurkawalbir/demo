@@ -65,7 +65,7 @@ class CodeEditor extends Component {
       classes,
     } = this.props;
     const valueAsString =
-      typeof value === 'string' ? value : JSON.stringify(value);
+      typeof value === 'string' ? value : JSON.stringify(value, null, 2);
 
     return (
       <AceEditor

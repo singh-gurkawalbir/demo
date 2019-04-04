@@ -19,6 +19,7 @@ const STAGE_UNDO = 'STAGE_UNDO';
 const STAGE_COMMIT = 'STAGE_COMMIT';
 const STAGE_CONFLICT = 'STAGE_CONFLICT';
 const CLEAR_CONFLICT = 'CLEAR_CONFLICT';
+const PATCH_FORM_FIELD = 'PATCH_FORM_FIELD';
 // The API_* action types below are used for managing network activity.
 // Typically this set of actions are only dispatched in Redux Sagas.
 const API_REQUEST = 'API_REQUEST';
@@ -53,6 +54,7 @@ const stageResourceActions = [
   STAGE_COMMIT,
   STAGE_CONFLICT,
   CLEAR_CONFLICT,
+  PATCH_FORM_FIELD,
 ];
 
 function createResourceActionTypes(base, includeStagedActions) {
