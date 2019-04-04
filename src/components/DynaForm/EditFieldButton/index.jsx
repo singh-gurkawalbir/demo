@@ -125,7 +125,7 @@ class EditFieldButton extends Component {
           <NewFieldDialog
             title={`Insert this new field ${insertField} ${fieldId}`}
             onClose={() => this.handleInsertFieldToggle()}
-            onSave={() => this.handleInsertFieldToggle()}
+            onSubmit={() => this.handleInsertFieldToggle()}
           />
         )}
         {showEditor && (

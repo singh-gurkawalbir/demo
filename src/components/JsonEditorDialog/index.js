@@ -47,8 +47,7 @@ export default class JsonEditorDialog extends Component {
         isValid={!error}
         onClose={onClose}
         onSubmit={() => this.handleSave()}
-        title={title}
-        aria-labelledby="form-dialog-title">
+        title={title}>
         <CodeEditor
           name={id}
           value={value}

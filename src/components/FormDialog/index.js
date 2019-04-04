@@ -23,7 +23,7 @@ export default class FormDialog extends Component {
       onSubmit,
       cancelLabel = 'Cancel',
       submitLabel = 'Save',
-      isValid,
+      isValid = true,
     } = this.props;
 
     return (
