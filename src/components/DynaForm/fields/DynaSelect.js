@@ -27,7 +27,7 @@ class MaterialUiSelect extends React.Component {
       options = [],
       // placeholder,
       // required,
-      value,
+      value = '',
       label,
       onFieldChange,
     } = this.props;

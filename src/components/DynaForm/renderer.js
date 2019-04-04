@@ -11,6 +11,7 @@ import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
 import DynaCsvParse from './fields/DynaCsvParse';
 import Help from '../Help';
+import EditFieldButton from './EditFieldButton';
 
 const inputs = {
   text: DynaText,
@@ -25,15 +26,21 @@ const inputs = {
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
 };
-const HelpWrapper = withStyles({
+const InputWrapper = withStyles({
   helpIcon: { float: 'right' },
+  editIcon: { float: 'right' },
 })(props => {
-  const { helpKey, helpText, classes } = props;
-
-  // console.log('helpwrapper initialized');
+  const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
 
   return (
     <Fragment>
+      {editMode && (
+        <EditFieldButton
+          onChange={onMetaChange}
+          field={field}
+          className={classes.editIcon}
+        />
+      )}
       {(helpKey || helpText) && (
         <Help
           className={classes.helpIcon}
@@ -46,21 +53,28 @@ const HelpWrapper = withStyles({
   );
 });
 
-function getRenderer() {
+function getRenderer(editMode = false, onMetaChange) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
-    const { id, type, helpKey, helpText } = field;
+    const { id, fieldId, type, helpKey, helpText } = field;
     const DynaInput = inputs[type];
+    const fid = id || fieldId;
 
     if (!DynaInput) {
       return <div>No mapped field for type: [{type}]</div>;
     }
 
     return (
-      <HelpWrapper key={id} helpKey={helpKey} helpText={helpText}>
+      <InputWrapper
+        key={fid}
+        editMode={editMode}
+        onMetaChange={onMetaChange}
+        field={field}
+        helpKey={helpKey}
+        helpText={helpText}>
         <DynaInput {...field} />
-      </HelpWrapper>
+      </InputWrapper>
     );
   };
 }

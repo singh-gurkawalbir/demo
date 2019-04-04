@@ -170,63 +170,45 @@ export function* changeEmail({ updatedEmail }) {
 }
 
 export function* acceptAccountInvite({ id }) {
-  const requestOptions = {
-    opts: {
-      method: 'PUT',
-    },
-    path: `/ashares/${id}/accept`,
+  const path = `/ashares/${id}/accept`;
+  const opts = {
+    method: 'PUT',
+    body: {},
   };
 
   try {
-    const payload = {
-      ...requestOptions.opts,
-      body: {},
-    };
-
     yield call(apiCallWithRetry, {
-      path: requestOptions.path,
-      opts: payload,
+      path,
+      opts,
       message: 'Accepting account share invite',
     });
 
     yield put(actions.resource.requestCollection('shared/ashares'));
   } catch (e) {
     yield put(
-      actions.api.failure(
-        requestOptions.path,
-        'Could not accept account share invite'
-      )
+      actions.api.failure(path, 'Could not accept account share invite')
     );
   }
 }
 
 export function* rejectAccountInvite({ id }) {
-  const requestOptions = {
-    opts: {
-      method: 'PUT',
-    },
-    path: `/ashares/${id}/dismiss`,
+  const path = `/ashares/${id}/dismiss`;
+  const opts = {
+    method: 'PUT',
+    body: {},
   };
 
   try {
-    const payload = {
-      ...requestOptions.opts,
-      body: {},
-    };
-
     yield call(apiCallWithRetry, {
-      path: requestOptions.path,
-      opts: payload,
+      path,
+      opts,
       message: 'Rejecting account share invite',
     });
 
     yield put(actions.resource.requestCollection('shared/ashares'));
   } catch (e) {
     yield put(
-      actions.api.failure(
-        requestOptions.path,
-        'Could not reject account share invite'
-      )
+      actions.api.failure(path, 'Could not reject account share invite')
     );
   }
 }
@@ -239,5 +221,5 @@ export const userSagas = [
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
   takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
-  takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, rejectAccountInvite),
+  takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
 ];

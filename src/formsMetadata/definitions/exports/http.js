@@ -1,19 +1,19 @@
 export default {
   fields: [
     {
-      id: 'ExportName',
+      fieldId: 'ExportName',
     },
     {
-      id: 'ExportDescription',
+      fieldId: 'ExportDescription',
     },
     {
-      id: 'ExportHttpMethod',
+      fieldId: 'ExportHttpMethod',
     },
     {
-      id: 'ExportHttpRelativeURI',
+      fieldId: 'ExportHttpRelativeURI',
     },
     {
-      id: 'ExportHttpBody',
+      fieldId: 'ExportHttpBody',
       visibleWhen: [
         {
           id: 'isPost',
