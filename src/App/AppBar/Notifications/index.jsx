@@ -77,8 +77,6 @@ class Notifications extends Component {
     const { classes, notifications, onClick } = this.props;
     const open = !!anchorEl;
 
-    window.Notifications = notifications;
-
     if (!notifications || notifications.length === 0) {
       return null;
     }
@@ -112,14 +110,14 @@ class Notifications extends Component {
                 key={`${a.id}`}>
                 <ListItemText
                   primary={
-                    <React.Fragment>
+                    <Fragment>
                       <Typography component="span">
                         {a.ownerUser.name || a.ownerUser.company}
                       </Typography>
-                    </React.Fragment>
+                    </Fragment>
                   }
                   secondary={
-                    <React.Fragment>
+                    <Fragment>
                       <Typography component="span">
                         {a.ownerUser.email}
                       </Typography>
@@ -129,7 +127,7 @@ class Notifications extends Component {
                       <Typography component="span">
                         {'Please accept or decline this invitation.'}
                       </Typography>
-                    </React.Fragment>
+                    </Fragment>
                   }
                 />
                 <ListItemSecondaryAction>
