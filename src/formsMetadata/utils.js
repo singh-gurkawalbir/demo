@@ -1,25 +1,3 @@
-export const defaultValueInitializer = values => {
-  const results = {};
-  const recurse = (values, path) => {
-    if (Array.isArray(values) || typeof values !== 'object') {
-      results[path] = values;
-
-      return;
-    }
-
-    Object.keys(values).forEach(key => recurse(values[key], `${path}/${key}`));
-  };
-
-  recurse(values, '');
-
-  return results;
-};
-
-export const defaultInitializer = ({ resource, fieldMeta }) => ({
-  formValues: defaultValueInitializer(resource),
-  fieldMeta,
-});
-
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -27,18 +5,53 @@ export const defaultPatchSetConverter = values =>
     value: values[key],
   }));
 
+const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
+
+export const getFieldPosition = ({ meta, id }) => {
+  const pos = {};
+  let index;
+
+  if (meta.fields) {
+    index = meta.fields.findIndex(f => byId(f, id));
+
+    if (index >= 0) {
+      pos.index = index;
+
+      return pos;
+    }
+  }
+
+  if (meta.fieldSets && meta.fieldSets.length > 0) {
+    meta.fieldSets.some((set, i) => {
+      index = set.fields.findIndex(f => byId(f, id));
+
+      // break out of 'some' iterations as soon as any callback finds a field.
+      if (index >= 0) {
+        pos.index = index;
+        pos.fieldSetIndex = i;
+
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  return pos;
+};
+
 export const getFieldById = ({ meta, id }) => {
   let field;
 
   if (meta.fields) {
-    field = meta.fields.find(f => f.id === id);
+    field = meta.fields.find(f => byId(f, id));
 
     if (field) return field;
   }
 
   if (meta.fieldSets && meta.fieldSets.length > 0) {
     meta.fieldSets.some(set => {
-      field = set.fields.find(f => f.id === id);
+      field = set.fields.find(f => byId(f, id));
 
       // break out of 'some' iterations as soon as any callback finds a field.
       return !!field;
@@ -72,17 +85,15 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 export const sanitizePatchSet = ({ patchSet, fieldMeta }) => {
   if (!fieldMeta || !patchSet) return patchSet;
 
-  const newSet = [];
-
-  patchSet.forEach(patch => {
+  return patchSet.reduce((sanitizedSet, patch) => {
     const field = getFieldByName({ name: patch.path, fieldMeta });
 
     if (patch.op === 'replace' && field.defaultValue !== patch.value) {
-      newSet.push(patch);
+      sanitizedSet.push(patch);
     }
-  });
 
-  return newSet;
+    return sanitizedSet;
+  }, []);
 };
 
 export const replaceField = ({ meta, field }) => {
@@ -119,7 +130,5 @@ export const replaceField = ({ meta, field }) => {
 export default {
   getFieldById,
   replaceField,
-  defaultInitializer,
-  defaultValueInitializer,
   defaultPatchSetConverter,
 };

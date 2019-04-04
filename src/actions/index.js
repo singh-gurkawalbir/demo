@@ -33,6 +33,7 @@ const api = {
   failure: (path, message) =>
     action(actionTypes.API_FAILURE, { path, message }),
 };
+// #region Resource Actions
 const resource = {
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
@@ -63,7 +64,17 @@ const resource = {
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
+
+  patchFormField: (resourceType, resourceId, fieldId, value, op) =>
+    action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
+      resourceType,
+      resourceId,
+      fieldId,
+      value,
+      op,
+    }),
 };
+// #endregion
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),

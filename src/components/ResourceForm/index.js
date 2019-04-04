@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import formFactory from '../../formsMetadata/formFactory';
+import factory from '../../formsMetadata/formFactory';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import { sanitizePatchSet } from '../../formsMetadata/utils';
@@ -21,12 +21,11 @@ export default class ResourceForm extends Component {
     formKey: 1,
   };
 
-  handleCancel = () => {
-    // TODO: We need to re-mount the react-forms-processor Form component...
-    // is there a better way than uing the "key" prop trick?
+  handleFormMetaChange = () => {
+    // We need to re-mount the react-forms-processor component
+    // to reset the values back to defaults....
     const formKey = this.state.formKey + 1;
 
-    // console.log('bumping form key to force remount: ', formKey);
     this.setState({
       formKey,
     });
@@ -36,40 +35,65 @@ export default class ResourceForm extends Component {
     const { formKey } = this.state;
     const {
       classes,
-      connection,
       resourceType,
       resource,
       handleSubmit,
       children,
       ...rest
     } = this.props;
-    const { fieldMeta, formValueToPatchSetConverter } = formFactory({
-      connection,
-      resourceType,
-      resource,
-    });
+    let fieldMeta;
+    let handleClick;
+
+    if (resource.customForm && resource.customForm.form) {
+      // this resource has an embedded custom form.
+      fieldMeta = factory.getFieldsWithDefaults(
+        resource.customForm.form,
+        resourceType,
+        resource
+      );
+      handleClick = value => {
+        // eslint-disable-next-line no-console
+        console.log('values passed to custom form submit handler: ', value);
+      };
+    } else {
+      // this is a stock UI form...
+      const assets = factory.getResourceFormAssets({
+        resourceType,
+        resource,
+      });
+
+      fieldMeta = factory.getFieldsWithDefaults(
+        assets.fieldMeta,
+        resourceType,
+        resource
+      );
+      handleClick = value =>
+        handleSubmit(
+          sanitizePatchSet({
+            patchSet: assets.converter(value),
+            fieldMeta,
+          })
+        );
+    }
+
+    // console.log(fieldMeta);
 
     return (
-      <DynaForm key={formKey} {...rest} fieldMeta={fieldMeta}>
+      <DynaForm
+        key={formKey}
+        onMetaChange={this.handleFormMetaChange}
+        {...rest}
+        fieldMeta={fieldMeta}>
         {children}
         <div className={classes.actions}>
           <Button
-            onClick={this.handleCancel}
+            onClick={this.handleFormMetaChange}
             className={classes.actionButton}
             size="small"
             variant="contained">
             Cancel
           </Button>
-          <DynaSubmit
-            onClick={value =>
-              handleSubmit(
-                sanitizePatchSet({
-                  patchSet: formValueToPatchSetConverter(value),
-                  fieldMeta,
-                })
-              )
-            }
-            className={classes.actionButton}>
+          <DynaSubmit onClick={handleClick} className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>
