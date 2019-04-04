@@ -168,7 +168,7 @@ class Edit extends Component {
       handleConflict,
     } = this.props;
     const { editMode, showEditor } = this.state;
-    const { /* master , */ merged, patch, conflict } = resourceData;
+    const { /* master , */ merged, patch, conflict, hash } = resourceData;
 
     if (!merged) {
       return (
@@ -258,7 +258,7 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceForm
-            key={id}
+            key={hash}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
