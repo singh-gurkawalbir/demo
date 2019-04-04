@@ -65,12 +65,13 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
-  patchFormField: (resourceType, resourceId, fieldId, value) =>
+  patchFormField: (resourceType, resourceId, fieldId, value, op) =>
     action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
       resourceType,
       resourceId,
       fieldId,
       value,
+      op,
     }),
 };
 // #endregion

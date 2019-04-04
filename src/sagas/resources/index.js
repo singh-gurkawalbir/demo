@@ -114,7 +114,13 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* patchFormField({ resourceType, resourceId, fieldId, value }) {
+export function* patchFormField({
+  resourceType,
+  resourceId,
+  fieldId,
+  value,
+  op = 'replace',
+}) {
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
@@ -135,7 +141,7 @@ export function* patchFormField({ resourceType, resourceId, fieldId, value }) {
     fieldSetIndex === undefined
       ? `/customForm/form/fields/${index}`
       : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index}`;
-  const patchSet = [{ op: 'replace', path, value }];
+  const patchSet = [{ op, path, value }];
 
   // console.log('dispatching patch with: ', patchSet);
 

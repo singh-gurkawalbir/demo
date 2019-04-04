@@ -394,12 +394,14 @@ export function resourceData(state, resourceType, id) {
 
   const { patch, conflict } = fromSession.stagedResource(state.session, id);
   // console.log('patch:', patch);
-  let merged = master;
+  let merged;
 
   if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
     const patchResult = jsonPatch.applyPatch(
       jsonPatch.deepClone(master),
-      patch
+      jsonPatch.deepClone(patch)
     );
 
     // console.log('patchResult', patchResult);
@@ -409,7 +411,7 @@ export function resourceData(state, resourceType, id) {
   const data = {
     master,
     patch,
-    merged,
+    merged: merged || master,
   };
 
   if (conflict) data.conflict = conflict;
@@ -438,12 +440,12 @@ export function newResourceData(state, resourceType, id) {
   const master = resourceDefaults[resourceType];
   const { patch } = fromSession.stagedResource(state.session, id);
   // console.log('patch:', patch);
-  let merged = master;
+  let merged;
 
   if (patch) {
     const patchResult = jsonPatch.applyPatch(
       jsonPatch.deepClone(master),
-      patch
+      jsonPatch.deepClone(patch)
     );
 
     // console.log('patchResult', patchResult);
@@ -453,7 +455,7 @@ export function newResourceData(state, resourceType, id) {
   const data = {
     master,
     patch,
-    merged,
+    merged: merged || master,
   };
 
   return data;

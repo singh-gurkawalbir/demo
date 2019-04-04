@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -53,9 +53,9 @@ const mapDispatchToProps = (dispatch, { match }) => {
     //   console.log(a, b, c);
     //   dispatch(actions.resource.commitStaged(resourceType, id));
     // },
-    // handleUndoChange: () => {
-    //   dispatch(actions.resource.undoStaged(id));
-    // },
+    handleUndoChange: () => {
+      dispatch(actions.resource.undoStaged(id));
+    },
     // handleRevertChanges: () => {
     //   dispatch(actions.resource.clearStaged(id));
     // },
@@ -163,6 +163,7 @@ class Edit extends Component {
       classes,
       handlePatchResource,
       handlePatchFormMeta,
+      handleUndoChange,
       // handleCommitChanges,
       handleConflict,
     } = this.props;
@@ -186,7 +187,7 @@ class Edit extends Component {
     }
 
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
-    const hasPatch = patch && patch.length > 0;
+    const patchLength = (patch && patch.length) || 0;
     // console.log(patch, merged);
 
     return (
@@ -211,13 +212,24 @@ class Edit extends Component {
           {editMode ? 'Save form' : 'Edit form'}
         </Button>
         {editMode && (
-          <Button
-            className={classes.editButton}
-            size="small"
-            color="primary"
-            onClick={this.handleToggleEditor}>
-            JSON
-          </Button>
+          <Fragment>
+            <Button
+              className={classes.editButton}
+              size="small"
+              color="primary"
+              onClick={this.handleToggleEditor}>
+              JSON
+            </Button>
+            {patchLength > 1 && (
+              <Button
+                className={classes.editButton}
+                size="small"
+                color="primary"
+                onClick={handleUndoChange}>
+                Undo({patchLength - 1})
+              </Button>
+            )}
+          </Fragment>
         )}
         <Typography variant="h5">
           {`${toName(type, true)} ${toName(resourceType, false, -1)}`}
@@ -227,7 +239,7 @@ class Edit extends Component {
           Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
 
-        {hasPatch && (
+        {patchLength && (
           <Typography variant="caption" className={classes.dates}>
             Unsaved changes made <TimeAgo date={Date(patch.lastChange)} />.
           </Typography>
