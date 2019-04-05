@@ -2,7 +2,7 @@ import {
   call,
   put,
   takeEvery,
-  takeLatest,
+  takeLeading,
   all,
   select,
 } from 'redux-saga/effects';
@@ -191,7 +191,7 @@ export function* invalidateSession() {
 }
 
 export const authenticationSagas = [
-  takeLatest(actionTypes.USER_LOGOUT, invalidateSession),
+  takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
 ];

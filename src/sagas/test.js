@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, fail */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 
@@ -57,7 +57,7 @@ describe(`apiCallWithRetry saga`, () => {
           raceBetweenApiCallAndLogoutEffect
         );
         // should not reach statement
-        expect(false).toBe(true);
+        fail('It should throw an exception');
       } catch (e) {
         expect(e).toEqual(_400Exception);
       }

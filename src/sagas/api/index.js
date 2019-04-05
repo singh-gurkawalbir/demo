@@ -24,20 +24,20 @@ export function APIException(response) {
   }
 }
 
-export function createAppropriatePathAndOptions(path, opts) {
+export function normalizeUrlAndOptions(path, opts) {
   let options;
-  let req;
+  let url;
 
   if (
     path === authParams.path ||
     path === logoutParams.path ||
     path === getCSRFParams.path
   ) {
-    req = path;
+    url = path;
     options = opts;
   } else {
     // all regular api requests go in here
-    req = `/api${path}`;
+    url = `/api${path}`;
     options = {
       ...opts,
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies
@@ -50,7 +50,7 @@ export function createAppropriatePathAndOptions(path, opts) {
     };
   }
 
-  return { req, options };
+  return { url, options };
 }
 
 export function throwExceptionUsingTheResponse(response) {

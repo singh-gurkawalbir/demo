@@ -1,9 +1,8 @@
-import { delay } from 'redux-saga';
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, delay } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actions from '../../actions';
 import {
-  createAppropriatePathAndOptions,
+  normalizeUrlAndOptions,
   introduceNetworkLatency,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
@@ -19,7 +18,7 @@ export function* onRequestSaga(request) {
 
   yield put(actions.api.request(path, message, hidden, method));
 
-  const { options, req } = createAppropriatePathAndOptions(path, opts);
+  const { options, url } = normalizeUrlAndOptions(path, opts);
 
   // all request bodies we stringify
   if (options && options.body) {
@@ -31,7 +30,7 @@ export function* onRequestSaga(request) {
 
   yield call(introduceNetworkLatency);
   const requestPayload = yield {
-    url: req,
+    url,
     method,
     ...options,
     meta: {
@@ -91,7 +90,7 @@ export function* onErrorSaga(error, action) {
   const { retryCount = 0 } = yield select(resourceStatus, path);
 
   if (retryCount < tryCount) {
-    yield call(delay, 2000);
+    yield delay(2000);
     yield put(actions.api.retry(path));
     yield call(sendRequest, action, { silent: false });
   } else {

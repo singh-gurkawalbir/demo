@@ -1,3 +1,4 @@
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
 import { all, call, put, take, race } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
 import { createDriver } from 'redux-saga-requests-fetch';
@@ -60,7 +61,10 @@ export function* apiCallWithRetry(args) {
 export default function* rootSaga() {
   yield createRequestInstance({
     driver: createDriver(window.fetch, {
-      AbortController: window.AbortController, // optional, if your browser supports AbortController or you use a polyfill like https://github.com/mo/abortcontroller-polyfill
+      // AbortController Not supported in IE installed this pollyfill package
+      // that it would resort to
+      // TODO: Have to check if it works in an IE explorer
+      AbortController: window.AbortController,
     }),
     onRequest: onRequestSaga,
     onSuccess: onSuccessSaga,
