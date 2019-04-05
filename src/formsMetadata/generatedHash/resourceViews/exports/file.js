@@ -1,0 +1,65 @@
+export default {
+  fields: [
+    { id: 'exportName' },
+    { id: 'exportDescription' },
+    { id: 'exportAsynchronous' },
+    { id: 'exportApiIdentifier' },
+    { id: 'exportType' },
+    { id: 'exportPageSize' },
+    { id: 'exportDataURITemplate' },
+    { id: 'exportOneToMany' },
+    { id: 'exportPathToMany' },
+    { id: 'exportSampleData' },
+    { id: 'exportOriginSampleData' },
+    { id: 'exportAssistant' },
+    { id: 'exportAssistantMetadata' },
+    { id: 'exportIsLookup' },
+    { id: 'exportUseTechAdaptorForm' },
+    { id: 'exportAdaptorType' },
+    { id: 'exportFileEncoding' },
+    { id: 'exportFileOutput' },
+    { id: 'exportFileSkipDelete' },
+    { id: 'exportFileCompressionFormat' },
+    { id: 'exportFilePurgeInternalBackup' },
+  ],
+  fieldSets: [
+    {
+      header: 'csv',
+      collapsed: false,
+      fields: [
+        { id: 'exportFileCsvColumnDelimiter' },
+        { id: 'exportFileCsvRowDelimiter' },
+        { id: 'exportFileCsvKeyColumnss' },
+        { id: 'exportFileCsvHasHeaderRow' },
+        { id: 'exportFileCsvTrimSpaces' },
+        { id: 'exportFileCsvRowsToSkip' },
+      ],
+    },
+    {
+      header: 'json',
+      collapsed: false,
+      fields: [{ id: 'exportFileJsonResourcePath' }],
+    },
+    {
+      header: 'xlsx',
+      collapsed: false,
+      fields: [
+        { id: 'exportFileXlsxHasHeaderRow' },
+        { id: 'exportFileXlsxKeyColumnss' },
+      ],
+    },
+    {
+      header: 'xml',
+      collapsed: false,
+      fields: [{ id: 'exportFileXmlResourcePath' }],
+    },
+    {
+      header: 'fileDefinition',
+      collapsed: false,
+      fields: [
+        { id: 'exportFileFileDefinitionResourcePath' },
+        { id: 'exportFileFileDefinition_fileDefinitionId' },
+      ],
+    },
+  ],
+};

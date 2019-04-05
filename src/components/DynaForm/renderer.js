@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import DyanTextFtpPort from './fields/CustomComponents/DynaTextFtpPort';
 import DynaMultiSelect from './fields/DynaMultiSelect';
 import DynaRadioGroup from './fields/DynaRadioGroup';
 import DynaSelect from './fields/DynaSelect';
@@ -10,10 +11,12 @@ import DynaRelativeUri from './fields/DynaRelativeUri';
 import DynaKeyValue from './fields/DynaKeyValue';
 import DynaEditor from './fields/DynaEditor';
 import DynaCsvParse from './fields/DynaCsvParse';
+import DynaTransformEditor from './fields/DynaTransformEditor';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 
 const inputs = {
+  ftpport: DyanTextFtpPort,
   text: DynaText,
   editor: DynaEditor,
   textarea: DynaText,
@@ -25,6 +28,7 @@ const inputs = {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
+  transformeditor: DynaTransformEditor,
 };
 const InputWrapper = withStyles({
   helpIcon: { float: 'right' },

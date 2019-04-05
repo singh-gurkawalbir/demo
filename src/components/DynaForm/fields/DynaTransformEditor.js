@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
-import CsvParseEditorDialog from '../../../components/AFE/CsvParseEditor/Dialog';
+import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialog';
 
 @withStyles(() => ({
   textField: {
@@ -47,15 +47,14 @@ class DynaCsvParse extends React.Component {
 
   render() {
     const { showEditor } = this.state;
-    const { classes, id, mode = 'csv', value, label, sampleData } = this.props;
+    const { classes, id, value, label, sampleData } = this.props;
 
     return (
       <Fragment>
         {showEditor && (
-          <CsvParseEditorDialog
+          <TransformEditorDialog
             title="CSV parse options"
             id={id}
-            mode={mode}
             data={sampleData}
             rule={value}
             onClose={this.handleClose}

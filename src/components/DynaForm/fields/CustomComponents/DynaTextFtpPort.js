@@ -14,8 +14,6 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 class MaterialUiTextField extends React.Component {
   render() {
     const {
-      options,
-      inputType,
       classes,
       description,
       disabled,
@@ -31,9 +29,20 @@ class MaterialUiTextField extends React.Component {
       multiline,
       valueDelimiter,
       rowsMax,
+      options,
+      valueType,
+      //   touched,
     } = this.props;
+    let finalValue = value;
+
+    if (!finalValue && options) {
+      finalValue = options[0];
+    }
+
     const handleFieldChange = event => {
-      const { value } = event.target;
+      const { value, name } = event.target;
+
+      if (!name || name !== this.props.name) return;
 
       if (!valueDelimiter) {
         return onFieldChange(id, value);
@@ -42,18 +51,11 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value.split(valueDelimiter));
     };
 
-    let acceptFileType = '.txt';
-
-    if (options) {
-      acceptFileType = `.${options[0]}`;
-    }
-
     return (
       <TextField
-        inputProps={{ accept: acceptFileType }}
-        type={inputType}
         autoComplete="off"
         key={id}
+        type={valueType}
         name={name}
         label={label}
         className={classes.textField}
@@ -64,17 +66,17 @@ class MaterialUiTextField extends React.Component {
         rowsMax={rowsMax}
         required={required}
         error={!isValid}
-        value={value}
+        value={finalValue}
         onChange={handleFieldChange}
       />
     );
   }
 }
 
-const DynaText = props => (
+const DynaTextFtpPort = props => (
   <FieldWrapper {...props}>
     <MaterialUiTextField />
   </FieldWrapper>
 );
 
-export default DynaText;
+export default DynaTextFtpPort;

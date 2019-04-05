@@ -8,17 +8,23 @@ import DynaForm from '../../components/DynaForm';
 import { createAppropriatePathAndOptions } from '../../sagas/api';
 
 function optionsHandler(options) {
-  const fields = options;
-  const recordType = fields.find(f => f.id === 'type').value;
+  console.log('ran get options');
 
-  if (recordType === '') return [];
-  const allData = [
-    {
-      items: [`${recordType}.id`, `${recordType}.name`, `${recordType}.date`],
-    },
-  ];
+  console.log(`check ${JSON.stringify(options)}`);
 
-  return allData;
+  // const { fields } = options;
+
+  // if (!fields) return [];
+  // const recordType = fields.find(f => f.id === 'type').value;
+
+  // if (recordType === '') return [];
+  // const allData = [
+  //   {
+  //     items: [`${recordType}.id`, `${recordType}.name`, `${recordType}.date`],
+  //   },
+  // ];
+
+  return ['something1', 'something2'];
 }
 
 export const getOptions = async (fieldId, fields) => {
@@ -140,7 +146,7 @@ export default class CustomForms extends Component {
         {
           id: 'fields',
           name: 'fields',
-          type: 'multiselect',
+          type: 'text',
           label: 'Fields',
           description: 'Choose which fields to include in your export record.',
           placeholder: '',
@@ -213,7 +219,7 @@ export default class CustomForms extends Component {
 
         <DynaForm
           fieldMeta={fieldMeta}
-          optionsHandler={getOptions}
+          optionsHandler={optionsHandler}
           // onChange={(a, b, c, d) => console.log(a, b, c, d)}
         />
         <Help helpKey="connection.type" />

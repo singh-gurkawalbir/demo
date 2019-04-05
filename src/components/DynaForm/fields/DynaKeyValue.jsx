@@ -28,6 +28,12 @@ class KeyValueTable extends Component {
   state = {
     rule: [],
   };
+  // TODO: uncomment this section later on right now breaking
+  // because handlebar array expression arent being evaluated correctly
+  // componentDidMount = () => {
+  //   // initialize the default value
+  //   this.setState({ rule: this.props.value });
+  // };
 
   handleUpdate(row, event, field) {
     const { value } = event.target;
