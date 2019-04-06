@@ -117,9 +117,18 @@ export default class NewFieldDialog extends Component {
   }
 
   handleFieldTypeChange(fieldType) {
-    const value = JSON.stringify(getFieldProps(fieldType), null, 2);
+    const meta = getFieldProps(fieldType);
+    const value = JSON.stringify(meta, null, 2);
 
-    this.setState({ value, fieldType });
+    this.setState({ meta, value, fieldType });
+  }
+
+  handleSubmit() {
+    const { value } = this.state;
+    const { onSubmit } = this.props;
+    const meta = JSON.parse(value);
+
+    onSubmit(meta);
   }
 
   componentDidMount() {
@@ -140,7 +149,7 @@ export default class NewFieldDialog extends Component {
         submitLabel="Insert Field"
         isValid={!error}
         {...rest}
-        onSubmit={() => onSubmit(this.state.meta)}>
+        onSubmit={() => this.handleSubmit()}>
         <div className={classes.content}>
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="age-helper">
