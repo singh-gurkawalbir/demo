@@ -10,6 +10,7 @@ import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
+import stringUtil from '../utils/string';
 
 const combinedReducers = combineReducers({
   app,
@@ -408,25 +409,7 @@ export function resourceData(state, resourceType, id) {
     merged = patchResult.newDocument;
   }
 
-  const hashCode = str => {
-    let hash = 0;
-    let i;
-    let chr;
-
-    if (!str || str.length === 0) return hash;
-
-    for (i = 0; i < str.length; i += 1) {
-      chr = str.charCodeAt(i);
-      /* eslint-disable no-bitwise */
-      hash = (hash << 5) - hash + chr;
-      hash |= 0; // Convert to 32bit integer
-      /* eslint */
-    }
-
-    return hash;
-  };
-
-  const hash = hashCode(JSON.stringify(merged || master));
+  const hash = stringUtil.hashCode(JSON.stringify(merged || master));
   const data = {
     master,
     patch,

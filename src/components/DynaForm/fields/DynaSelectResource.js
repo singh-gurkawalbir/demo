@@ -17,8 +17,6 @@ const mapStateToProps = (state, ownProps) => {
 
   const { resources } = selectors.resourceList(state, { type: resourceType });
 
-  // console.log('from dyna select', resources);
-
   return {
     resources: resources.filter(r => {
       if (filter) {
