@@ -120,6 +120,7 @@ export function* patchFormField({
   fieldId,
   value,
   op = 'replace',
+  offset = 0,
 }) {
   const { merged } = yield select(
     selectors.resourceData,
@@ -139,8 +140,8 @@ export function* patchFormField({
 
   const path =
     fieldSetIndex === undefined
-      ? `/customForm/form/fields/${index}`
-      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index}`;
+      ? `/customForm/form/fields/${index + offset}`
+      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
   const patchSet = [{ op, path, value }];
 
   // console.log('dispatching patch with: ', patchSet);
