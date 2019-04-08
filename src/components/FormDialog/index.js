@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 @withStyles(() => ({
-  editorContainer: {
+  contentContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '50vh',
     width: '75vh',
@@ -31,7 +31,7 @@ export default class FormDialog extends Component {
         <DialogTitle id="form-dialog-title">{title}</DialogTitle>
 
         <DialogContent>
-          <div className={classes.editorContainer}>{children}</div>
+          <div className={classes.contentContainer}>{children}</div>
         </DialogContent>
 
         <DialogActions>
