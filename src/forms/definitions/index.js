@@ -1,9 +1,9 @@
-import connection from './connections';
-import allExports from './exports';
-// import imports from './imports';
+import connections from './connections';
+import exports from './exports';
 
+// import imports from './imports';
 export default {
-  connection,
-  export: allExports,
+  connections,
+  exports,
   //   imports,
 };

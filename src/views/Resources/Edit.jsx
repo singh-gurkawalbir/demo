@@ -11,7 +11,7 @@ import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceForm';
 import ConflictAlertDialog from './ConflictAlertDialog';
-import factory from '../../formsMetadata/formFactory';
+import factory from '../../forms/formFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 
 const mapStateToProps = (state, { match }) => {

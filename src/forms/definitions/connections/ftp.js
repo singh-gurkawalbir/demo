@@ -4,58 +4,60 @@ export default {
   // as well
   // The optionsHandler handler runs for every field
   optionsHandler(fieldId, fields) {
-    if (fieldId === 'connection.ftp.port') {
-      const ftpPortField = fields.find(
-        field => field.id === 'connection.ftp.port'
-      );
+    console.log('check port', fieldId, fields);
+
+    if (fieldId === 'ftp.port') {
+      const ftpPortField = fields.find(field => field.fieldId === 'ftp.port');
+
+      console.log('check port', ftpPortField);
 
       if (!ftpPortField.value) {
-        const ftpTypeField = fields.find(
-          field => field.id === 'connection.ftp.type'
-        );
+        const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
 
         if (ftpTypeField.value === 'sftp') {
           return [22];
         }
+
+        console.log('Returning value');
 
         return [21];
       }
     }
   },
   fields: [
-    { id: 'connection.name' },
-    { id: 'connection.type', disabled: true },
+    { fieldId: 'name' },
+    { fieldId: 'type', disabled: true },
     {
-      id: 'connection.ftp.hostURI',
+      fieldId: 'ftp.hostURI',
       description:
         'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
     },
-    { id: 'connection.ftp.type' },
+    { fieldId: 'ftp.type' },
     {
-      id: 'connection.ftp.username',
+      fieldId: 'ftp.username',
     },
     {
-      id: 'connection.ftp.password',
+      fieldId: 'ftp.password',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     {
-      id: 'connection.ftp.authKey',
+      fieldId: 'ftp.authKey',
       placeholder: 'Optional if password is entered',
       multiline: true,
       visibleWhen: [
         {
-          field: 'connection.ftp.type',
+          field: 'ftp.type',
           is: ['sftp'],
         },
       ],
     },
     {
-      id: 'connection.ftp.useImplicitFtps',
+      fieldId: 'ftp.useImplicitFtps',
 
       visibleWhen: [
         {
-          field: 'connection.ftp.type',
+          field: 'ftp.type',
           is: ['ftps'],
         },
       ],
@@ -67,53 +69,53 @@ export default {
       collapsed: true,
       fields: [
         {
-          id: 'connection.ftp.port',
-          refreshOptionsOnChangesTo: 'connection.ftp.type',
+          fieldId: 'ftp.port',
+          refreshOptionsOnChangesTo: 'ftp.type',
         },
         {
-          id: 'connection.ftp.usePassiveMode',
+          fieldId: 'ftp.usePassiveMode',
 
           visibleWhen: [
             {
-              field: 'connection.ftp.type',
+              field: 'ftp.type',
               is: ['ftp', 'ftps'],
             },
           ],
         },
         {
-          id: 'connection.ftp.userDirectoryIsRoot',
+          fieldId: 'ftp.userDirectoryIsRoot',
         },
-        { id: 'connection.ftp.entryParser' },
+        { fieldId: 'ftp.entryParser' },
         {
-          id: 'connection.ftp.requireSocketReUse',
+          fieldId: 'ftp.requireSocketReUse',
           description:
             'Note: for security reasons this field must always be re-entered.',
 
           visibleWhen: [
             {
-              field: 'connection.ftp.type',
+              field: 'ftp.type',
               is: ['ftps'],
             },
           ],
         },
         {
-          id: 'connection.ftp.usePgp',
+          fieldId: 'ftp.usePgp',
         },
         {
-          id: 'connection.ftp.pgpEncryptKey',
+          fieldId: 'ftp.pgpEncryptKey',
           description:
             'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connection.ftp.usePgp',
+              field: 'ftp.usePgp',
               is: [true],
             },
           ],
         },
         {
-          id: 'connection.ftp.pgpDecryptKey',
+          fieldId: 'ftp.pgpDecryptKey',
 
           description:
             'Note: for security reasons this field must always be re-entered.',
@@ -121,20 +123,20 @@ export default {
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connection.ftp.usePgp',
+              field: 'ftp.usePgp',
               is: [true],
             },
           ],
         },
         {
-          id: 'connection.ftp.pgpPassphrase',
+          fieldId: 'ftp.pgpPassphrase',
           description:
             'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
             {
-              field: 'connection.ftp.usePgp',
+              field: 'ftp.usePgp',
               is: [true],
             },
           ],

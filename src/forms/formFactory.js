@@ -1,11 +1,13 @@
 // import masterFieldHash from '../formsMetadata/generatedHash/index';
 // import formMeta from '../formsMetadata/generatedHash/resourceViews';
-import masterFieldHash from '../formsMetadata/masterFieldHash';
-import formMeta from '../formsMetadata/definitions';
+// import masterFieldHash from '../formsMetadata/masterFieldHash';
+// import formMeta from '../formsMetadata/definitions';
+import masterFieldHash from '../forms/fieldDefinitions';
+import formMeta from '../forms/definitions';
 import { defaultPatchSetConverter } from '../formsMetadata/utils';
 
 const getResourceFormAssets = ({ resourceType, resource }) => {
-  let { fields } = formMeta.common;
+  let fields;
   let fieldSets = [];
   let converter;
   let initializer;
@@ -39,7 +41,7 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
       meta = formMeta[resourceType];
 
       if (meta) {
-        meta = meta[resourceType];
+        meta = meta[resource.type];
 
         if (meta) {
           ({ fields, fieldSets, converter, initializer } = meta);
@@ -77,8 +79,8 @@ const extractValue = (path, resource) => {
   let value = resource;
 
   // skip the first node since it is the resourceType and is not part of the
-  // resource field path.
-  for (let i = 1; i < segments.length; i += 1) {
+  // resource field path. earlier resourceType used to be there but its excluded
+  for (let i = 0; i < segments.length; i += 1) {
     // logger.info('segment: ' + segments[i])
     // logger.info(value[segments[i]])
     // if the last iteration resulted in no value, and yet the path indicates
@@ -99,7 +101,7 @@ const setDefaults = (fields, resourceType, resource) => {
     const merged = {
       resourceId: resource._id,
       resourceType,
-      ...masterFieldHash[f[resourceType].fieldId],
+      ...masterFieldHash[resourceType][f.fieldId],
       ...f,
     };
 
@@ -125,6 +127,8 @@ const setDefaults = (fields, resourceType, resource) => {
     if (!merged.id) {
       merged.id = merged.fieldId;
     }
+
+    console.log('check ', merged);
 
     return merged;
   });

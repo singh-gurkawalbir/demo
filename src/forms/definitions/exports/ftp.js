@@ -15,51 +15,51 @@ const getEditorMode = (allFields, fieldIdToMatch) => {
 
 export default {
   optionsHandler(fieldId, fields) {
-    if (fieldId === 'export.uploadFile') {
-      const fileType = fields.find(field => field.id === 'export.file.type');
+    if (fieldId === 'uploadFile') {
+      const fileType = fields.find(field => field.id === 'file.type');
 
       if (fileType) {
         return [fileType.value];
       }
     }
 
-    if (fieldId === 'export.sampleData') {
-      return getEditorMode(fields, 'export.file.type');
+    if (fieldId === 'sampleData') {
+      return getEditorMode(fields, 'file.type');
     }
 
     return null;
   },
   fields: [
-    { id: 'export.name' },
-    { id: 'export.description' },
-    { id: 'export.asynchronous' },
-    // { id: 'export.api.identifier' },
-    // { id: 'export.type' },
-    // { id: 'export.page.size' },
-    // { id: 'export.dataURITemplate' },
-    // { id: 'export.one.to.many' },
-    // { id: 'export.path.to.many' },
-    // { id: 'export.sample.data' },
-    // { id: 'export.origin.sample.data' },
-    // { id: 'export.assistant' },
-    // { id: 'export.assistant.metadata' },
-    // { id: 'export.is.lookup' },
-    // { id: 'export.use.tech.adaptor.form' },
-    // { id: 'export.adaptor.type' },
-    // { id: 'export.file.csv' },
-    // { id: 'export.ftp.directoryPath' },
-    // { id: 'export.ftp.fileNameStartsWith' },
-    // { id: 'export.ftp.fileNameEndsWith' },
-    // { id: 'export.ftp.backupDirectoryPath' },
+    { fieldId: 'name' },
+    { fieldId: 'description' },
+    { fieldId: 'asynchronous' },
+    // { fieldId: 'api.identifier' },
+    // { fieldId: 'type' },
+    // { fieldId: 'page.size' },
+    // { fieldId: 'dataURITemplate' },
+    // { fieldId: 'one.to.many' },
+    // { fieldId: 'path.to.many' },
+    // { fieldId: 'sample.data' },
+    // { fieldId: 'origin.sample.data' },
+    // { fieldId: 'assistant' },
+    // { fieldId: 'assistant.metadata' },
+    // { fieldId: 'is.lookup' },
+    // { fieldId: 'use.tech.adaptor.form' },
+    // { fieldId: 'adaptor.type' },
+    // { fieldId: 'file.csv' },
+    // { fieldId: 'ftp.directoryPath' },
+    // { fieldId: 'ftp.fileNameStartsWith' },
+    // { fieldId: 'ftp.fileNameEndsWith' },
+    // { fieldId: 'ftp.backupDirectoryPath' },
   ],
   fieldSets: [
     {
       header: 'Where would you like to export data from?      ',
       collapsed: true,
       fields: [
-        { id: 'export.assistant' },
+        { fieldId: 'assistant' },
         // load connection
-        { id: 'connection.rdbms.concurrencyLevel' },
+        { fieldId: 'connection.rdbms.concurrencyLevel' },
       ],
     },
 
@@ -67,50 +67,50 @@ export default {
       header: 'What would you like to export?',
       collapsed: true,
       fields: [
-        { id: 'export.ftp.directoryPath' },
+        { fieldId: 'ftp.directoryPath' },
         // load connection
-        { id: 'export.file.output' },
-        { id: 'export.ftp.fileNameStartsWith' },
-        { id: 'export.ftp.fileNameEndsWith' },
-        { id: 'export.file.type' },
+        { fieldId: 'file.output' },
+        { fieldId: 'ftp.fileNameStartsWith' },
+        { fieldId: 'ftp.fileNameEndsWith' },
+        { fieldId: 'file.type' },
         {
-          id: 'export.uploadFile',
+          fieldId: 'uploadFile',
           inputType: 'file',
-          refreshOptionsOnChangesTo: 'export.file.type',
+          refreshOptionsOnChangesTo: 'file.type',
         },
         {
-          id: 'export.file.csv',
+          fieldId: 'file.csv',
           mode: 'csv',
           visibleWhen: [
             {
-              field: 'export.file.type',
+              field: 'file.type',
               is: ['csv'],
             },
           ],
         },
         {
-          id: 'export.file.xml.resourcePath',
+          fieldId: 'file.xml.resourcePath',
           visibleWhen: [
             {
-              field: 'export.file.type',
+              field: 'file.type',
               is: ['xml'],
             },
           ],
         },
         {
-          id: 'export.file.json.resourcePath',
+          fieldId: 'file.json.resourcePath',
           visibleWhen: [
             {
-              field: 'export.file.type',
+              field: 'file.type',
               is: ['json'],
             },
           ],
         },
         {
-          id: 'export.file.fileDefinition.resourcePath',
+          fieldId: 'file.fileDefinition.resourcePath',
           visibleWhen: [
             {
-              field: 'export.file.type',
+              field: 'file.type',
               is: ['fileDefinition'],
             },
           ],
@@ -123,9 +123,9 @@ export default {
       collapsed: true,
       fields: [
         {
-          id: 'export.sampleData',
+          fieldId: 'sampleData',
           mode: r => r && r.file && r.file.type,
-          refreshOptionsOnChangesTo: 'export.file.type',
+          refreshOptionsOnChangesTo: 'file.type',
         },
         // load connection
       ],
@@ -137,7 +137,7 @@ export default {
       fields: [
         // load connection
         {
-          id: 'export.transform.expression.rules',
+          fieldId: 'transform.expression.rules',
         },
       ],
     },

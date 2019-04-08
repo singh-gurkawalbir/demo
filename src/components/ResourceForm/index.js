@@ -47,7 +47,7 @@ export default class ResourceForm extends Component {
 
     if (resource.customForm && resource.customForm.form) {
       // this resource has an embedded custom form.
-      ({ optionsHandler, fieldMeta } = factory.getFieldsWithDefaults(
+      ({ fieldMeta } = factory.getFieldsWithDefaults(
         resource.customForm.form,
         resourceType,
         resource
@@ -62,6 +62,8 @@ export default class ResourceForm extends Component {
         resourceType,
         resource,
       });
+
+      ({ optionsHandler } = assets);
 
       fieldMeta = factory.getFieldsWithDefaults(
         assets.fieldMeta,
