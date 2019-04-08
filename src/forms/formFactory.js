@@ -41,7 +41,7 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
       meta = formMeta[resourceType];
 
       if (meta) {
-        meta = meta[resource.type];
+        meta = meta[resourceType];
 
         if (meta) {
           ({ fields, fieldSets, converter, initializer } = meta);

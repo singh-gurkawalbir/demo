@@ -18,6 +18,7 @@ const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const resourceData = selectors.resourceData(state, resourceType, id);
   const { _connectionId } = resourceData.merged ? resourceData.merged : {};
+  // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
