@@ -1,209 +1,142 @@
-/* global describe, test, expect */
+/* global describe, test, expect, fail */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 
-import { delay } from 'redux-saga';
-import { call, put } from 'redux-saga/effects';
-import actions from '../actions';
-import rootSaga, { apiCallWithRetry, unauthenticateAndDeleteProfile } from './';
-import { api, APIException } from './api';
-
-export const status500 = new APIException({
-  status: 500,
-  message: 'error',
-});
-export const status422 = new APIException({
-  status: 422,
-  message: 'authentication failure',
-});
-export const status403 = new APIException({
-  status: 403,
-  message: 'User Forbidden action',
-});
-
-export const status401 = new APIException({
-  status: 401,
-  message: 'User unauthorized action',
-});
-describe(`root saga`, () => {
-  // NOTE, this test has little value... I added it to
-  // increase code coverage. I'm not really sure what business rules
-  // to test for the root saga... If something is not configured correctly
-  // with the root saga then a simply sanity check of the UI would show
-  // that something serious was broken... Possilby as out application
-  // gets more complex, testable business rules will become more obvious...
-  test('should return a set of effects that match available resources.', () => {
-    const sagaIterator = rootSaga();
-    const effects = sagaIterator.next();
-
-    expect(effects.value.ALL.length).toBeGreaterThan(1);
-  });
-});
+import { call, take, race } from 'redux-saga/effects';
+import { sendRequest } from 'redux-saga-requests';
+import actionsTypes from '../actions/types';
+import { apiCallWithRetry } from './';
+import { APIException } from './api';
+import * as apiConsts from './api/apiPaths';
 
 describe(`apiCallWithRetry saga`, () => {
-  const path = '/test/me';
-  const opts = { method: 'patch' };
+  const path = '/somePath';
+  const opts = {};
+  const _400Exception = new APIException({
+    status: 400,
+    message: 'Session Expired',
+  });
 
-  describe('should hide comms message ', () => {
-    test('should hide all comms message when apiCallWithRetry is made by default', () => {
-      const saga = apiCallWithRetry({ path, opts });
-      const requestEffect = saga.next().value;
-      const hideMessage = false;
-
-      expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, hideMessage, opts.method))
-      );
-    });
-
-    test('should show all comms message when apiCallWithRetry is made', () => {
-      const hideMessage = true;
-      const someMessage = 'something';
-      const saga = apiCallWithRetry({
-        path,
-        opts,
-        message: someMessage,
-        hidden: hideMessage,
+  describe('non signout requests', () => {
+    test('Any successful non signout request return the response back to the parent saga ', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race({
+        apiResp: call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        logout: take(actionsTypes.USER_LOGOUT),
       });
-      const requestEffect = saga.next().value;
+      const resp = { apiResp: { response: 'some response' }, logout: null };
 
-      expect(requestEffect).toEqual(
-        put(actions.api.request(path, someMessage, hideMessage, opts.method))
-      );
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      expect(saga.next(resp).value).toEqual('some response');
+      expect(saga.next().done).toBe(true);
     });
-  });
-  test('should succeed on successfull api call', () => {
-    const saga = apiCallWithRetry({ path, opts });
-    // next() of generator functions always return:
-    // { done: [true|false], value: {[right side of yield]} }
-    const requestEffect = saga.next().value;
-    const hideMessage = false;
 
-    expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, hideMessage, opts.method))
-    );
+    test('Any failed non signout request return should bubble the exception to parent ', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race([
+        call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        take(actionsTypes.USER_LOGOUT),
+      ]);
 
-    const callEffect = saga.next('some Response').value;
-
-    expect(callEffect).toEqual(call(api, path, opts));
-
-    const mockData = { id: 1 };
-    const putEffect = saga.next(mockData).value;
-
-    expect(putEffect).toEqual(put(actions.api.complete(path)));
-
-    const final = saga.next();
-
-    // there should be no more inerations...
-    // the generator should return done and return the response from the api.
-    expect(final.done).toBe(true);
-    expect(final.value).toEqual(mockData);
-  });
-
-  test('should finally succeed after initial failed api call', () => {
-    const saga = apiCallWithRetry({ path, opts });
-    // next() of generator functions always return:
-    // { done: [true|false], value: {[right side of yield]} }
-    const requestEffect = saga.next().value;
-    const hideMessage = false;
-
-    expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, hideMessage, opts.method))
-    );
-
-    const callEffect = saga.next().value;
-    const callApiEffect = call(api, path, opts);
-
-    expect(callEffect).toEqual(callApiEffect);
-
-    // lets throw an exception to simulate a failed API call
-    // this should result in a delay, then retry action, then api call
-    // lets throw a 500 status code exception and expect the retry
-
-    expect(saga.throw(status500).value).toEqual(call(delay, 2000));
-    expect(saga.next().value).toEqual(put(actions.api.retry(path)));
-    expect(saga.next().value).toEqual(callApiEffect);
-
-    const mockData = { id: 1 };
-    const putEffect = saga.next(mockData).value;
-
-    // finally the resource received action should be dispatched
-    expect(putEffect).toEqual(put(actions.api.complete(path)));
-
-    const final = saga.next();
-
-    // there should be no more inerations...
-    // the generator should return done and the response from the api.
-    expect(final.done).toBe(true);
-    expect(final.value).toEqual(mockData);
-  });
-
-  test('should finally fail with error effect after retries run out', () => {
-    const saga = apiCallWithRetry({ path, opts });
-    const mockError = new Error('mock');
-    const requestEffect = saga.next().value;
-    const hideMessage = false;
-
-    expect(requestEffect).toEqual(
-      put(actions.api.request(path, path, hideMessage, opts.method))
-    );
-    const callApiEffect = call(api, path, opts);
-
-    for (let i = 0; i < 3; i += 1) {
-      // first iteration should be the api call
-      expect(saga.next().value).toEqual(callApiEffect);
-
-      if (i < 2) {
-        expect(saga.throw(mockError).value).toEqual(call(delay, 2000));
-        expect(saga.next().value).toEqual(put(actions.api.retry(path)));
+      try {
+        expect(saga.throw(_400Exception).value).toEqual(
+          raceBetweenApiCallAndLogoutEffect
+        );
+        // should not reach statement
+        fail('It should throw an exception');
+      } catch (e) {
+        expect(e).toEqual(_400Exception);
       }
-    }
 
-    // the last failed api call should result in a dispatch
-    // of the failure action.
-    expect(saga.throw(mockError).value).toEqual(
-      put(actions.api.failure(path, mockError.message))
-    );
-
-    // there should be no more iterations...
-    // the generator should throw an Error.
-    expect(() => saga.next()).toThrowError();
-  });
-  // All apis have a root auth behavior that would listen
-  // to session or CSRF expiration
-  describe('auth behavior', () => {
-    test('should delete profile whenever an api call with session expiration error is encountered', () => {
-      const saga = apiCallWithRetry({ path, opts });
-      const requestEffect = saga.next().value;
-      const hideMessage = false;
-
-      expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, hideMessage, opts.method))
-      );
-      const callApiEffect = call(api, path, opts);
-
-      // first iteration should be the api call
-      expect(saga.next().value).toEqual(callApiEffect);
-      expect(saga.throw(status403).value).toEqual(
-        put(actions.api.complete(path))
-      );
-      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+      expect(saga.next().done).toBe(true);
     });
-    test('should delete profile whenever an api call with CSRF expiration is encountered', () => {
-      const saga = apiCallWithRetry({ path, opts });
-      const requestEffect = saga.next().value;
-      const hideMessage = false;
 
-      expect(requestEffect).toEqual(
-        put(actions.api.request(path, path, hideMessage, opts.method))
-      );
-      const callApiEffect = call(api, path, opts);
+    test('Any non signout request with a logout action should return null', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race({
+        apiResp: call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        logout: take(actionsTypes.USER_LOGOUT),
+      });
 
-      expect(saga.next().value).toEqual(callApiEffect);
-      expect(saga.throw(status401).value).toEqual(
-        put(actions.api.complete(path))
-      );
+      // How can we inject a logout action to resolve
+      // the race between two effects
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
 
-      expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+      const resp = { apiResp: null, logout: { something: 'dsd' } };
+
+      expect(saga.next(resp).value).toEqual(null);
+
+      expect(saga.next().done).toBe(true);
+    });
+
+    test('Any non signout request with a logout action should return null', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race({
+        apiResp: call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        logout: take(actionsTypes.USER_LOGOUT),
+      });
+
+      // How can we inject a logout action
+      // to resolve the race between two effects
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+
+      const resp = { apiResp: null, logout: { something: 'dsd' } };
+
+      expect(saga.next(resp).value).toEqual(null);
+
+      expect(saga.next().done).toBe(true);
+    });
+  });
+  describe('signout request', () => {
+    test('Any successful non signout request return the response back to the parent saga ', () => {
+      const logoutPath = apiConsts.logoutParams.path;
+      const args = {
+        path: logoutPath,
+        opts,
+        hidden: undefined,
+        message: undefined,
+      };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: logoutPath, args },
+      };
+      const sendRequestEffect = call(sendRequest, apiRequestAction, {
+        dispatchRequestAction: true,
+      });
+      const resp = { response: 'some response' };
+
+      expect(saga.next().value).toEqual(sendRequestEffect);
+      expect(saga.next(resp).value).toEqual('some response');
+      expect(saga.next().done).toBe(true);
     });
   });
 });
