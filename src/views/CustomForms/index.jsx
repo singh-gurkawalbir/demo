@@ -8,21 +8,7 @@ import DynaForm from '../../components/DynaForm';
 import { createAppropriatePathAndOptions } from '../../sagas/api';
 
 function optionsHandler(options) {
-  console.log('ran get options');
-
   console.log(`check ${JSON.stringify(options)}`);
-
-  // const { fields } = options;
-
-  // if (!fields) return [];
-  // const recordType = fields.find(f => f.id === 'type').value;
-
-  // if (recordType === '') return [];
-  // const allData = [
-  //   {
-  //     items: [`${recordType}.id`, `${recordType}.name`, `${recordType}.date`],
-  //   },
-  // ];
 
   return ['something1', 'something2'];
 }

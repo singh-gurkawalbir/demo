@@ -17,8 +17,6 @@ export default class ResourceFormFactory extends Component {
   render() {
     const { resourceType, resource } = this.props;
 
-    console.log('resource ', resource, resourceType);
-
     if (resourceType === 'connections' && resource && resource.type === 'ftp') {
       return <ConnectionForm {...this.props} />;
     }

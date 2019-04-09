@@ -128,8 +128,6 @@ const setDefaults = (fields, resourceType, resource) => {
       merged.id = merged.fieldId;
     }
 
-    console.log('check ', merged);
-
     return merged;
   });
 };

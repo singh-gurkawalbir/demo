@@ -47,11 +47,11 @@ export default class ResourceForm extends Component {
 
     if (resource.customForm && resource.customForm.form) {
       // this resource has an embedded custom form.
-      ({ fieldMeta } = factory.getFieldsWithDefaults(
+      fieldMeta = factory.getFieldsWithDefaults(
         resource.customForm.form,
         resourceType,
         resource
-      ));
+      );
       handleClick = value => {
         // eslint-disable-next-line no-console
         console.log('values passed to custom form submit handler: ', value);

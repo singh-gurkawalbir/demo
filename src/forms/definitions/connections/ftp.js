@@ -4,12 +4,8 @@ export default {
   // as well
   // The optionsHandler handler runs for every field
   optionsHandler(fieldId, fields) {
-    console.log('check port', fieldId, fields);
-
     if (fieldId === 'ftp.port') {
       const ftpPortField = fields.find(field => field.fieldId === 'ftp.port');
-
-      console.log('check port', ftpPortField);
 
       if (!ftpPortField.value) {
         const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
@@ -17,8 +13,6 @@ export default {
         if (ftpTypeField.value === 'sftp') {
           return [22];
         }
-
-        console.log('Returning value');
 
         return [21];
       }

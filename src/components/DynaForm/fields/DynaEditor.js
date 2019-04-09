@@ -79,8 +79,6 @@ class EditorField extends Component {
       isValid,
     } = this.props;
     const mode = this.getFileType(this.props);
-
-    console.log('mode ', mode);
     const editorDialog = (
       <Dialog
         open
