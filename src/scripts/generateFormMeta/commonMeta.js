@@ -85,10 +85,11 @@ export default (fieldDefs, resource) => {
   const path = generateCorrectPath(fieldDefs);
 
   return {
-    helpKey: helpKeyPath(path, resource),
-    name: namePath(path),
-    id: helpKeyPath(path, resource),
-    label: labelGeneration(path),
-    defaultValue: generateDefaultValuesFunctions(path),
+    // helpKey: helpKeyPath(path, resource),
+    // name: namePath(path),
+    // id: helpKeyPath(path, resource),
+    // label: labelGeneration(path),
+    // defaultValue: generateDefaultValuesFunctions(path),
+    fieldId: path,
   };
 };

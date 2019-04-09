@@ -79,7 +79,7 @@ const applyOurSpecificFilterRules = fields =>
   });
 const applyFiltersForAForm = (formName, data) => {
   const consolidatedFieldsForAForm = [
-    ...commonFields(data),
+    // ...commonFields(data),
     ...formSpecificFields(formName, data),
   ];
   const transformedItToAddPath = applyOurSpecificFilterRules(
@@ -105,7 +105,7 @@ const transformFieldsToMatchingComponent = (field, resourceType) => {
   const component = componentFactory(field, resourceType);
   const wrappedComponent = {};
 
-  wrappedComponent[component.id] = component;
+  wrappedComponent[component.fieldId] = component;
 
   return wrappedComponent;
 };
@@ -129,17 +129,20 @@ const generateFieldSetsHeader = formMeta =>
     (acc, obj) => {
       // i dont like this at all {sdsd:{"dsds":"sdd"}}
       const keys = Object.keys(obj);
-      const id = keys[0];
-      const currValue = obj[id];
-      const splitValues = currValue.helpKey.split('.');
+      const fieldId = keys[0];
+      // const currValue = obj[fieldId];
+      // const splitValues = currValue.fieldId.split('.');
+
+      acc.fields.push({ fieldId });
 
       // ignore first two
       // less than equal 3 mean goes into the fields
       // greater than 3 means there are collapsable section
-      if (splitValues.length <= 3) {
-        acc.fields.push({ id });
-      } else {
-        const headerName = splitValues[2];
+      /*  if (splitValues.length <= 2) {
+        acc.fields.push({ fieldId });
+      } 
+      else {
+        const headerName = splitValues[1];
         const foundHeaderArray = acc.fieldSets.filter(
           set => set.header === headerName
         );
@@ -147,22 +150,23 @@ const generateFieldSetsHeader = formMeta =>
         const foundHeader = foundHeaderArray[0];
 
         if (foundHeader) {
-          foundHeader.fields.push({ id });
+          foundHeader.fields.push({ fieldId });
         } else {
           acc.fieldSets.push({
             header: headerName,
             collapsed: false,
-            fields: [{ id }],
+            fields: [{ fieldId }],
           });
         }
       }
+      */
 
       return acc;
     },
     { fields: [], fieldSets: [] }
   );
-const resourceType = 'export';
-const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/formsMetadata/generatedHash/resourceViews/${resourceType}s/`;
+const resourceType = 'import';
+const folderToDumpGeneratedViewFiles = `/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/forms/definitions/${resourceType}s/`;
 const generateIndexFiles = data => {
   let str = '';
 
@@ -238,8 +242,8 @@ const gererateMatchingComponents = (data, resourceType) => {
 const schemaFile = `${resourceType}Schema.txt`;
 const data = fileread(join(__dirname, '..', schemaFile));
 
-gererateMatchingComponentsWithCollapsableComments(data, resourceType);
+// gererateMatchingComponentsWithCollapsableComments(data, resourceType);
 // be very careful of the function below...will overwrite your changes
-// gererateMatchingComponents(data, resourceType);
+gererateMatchingComponents(data, resourceType);
 
 // get a particular component
