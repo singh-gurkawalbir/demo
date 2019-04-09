@@ -9,7 +9,7 @@ import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceForm from '../../components/ResourceForm';
+import ResourceFormFactory from '../../components/ResourceForm';
 import ConflictAlertDialog from './ConflictAlertDialog';
 import factory from '../../forms/formFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
@@ -258,7 +258,7 @@ class Edit extends Component {
         )}
 
         <div className={classes.editableFields}>
-          <ResourceForm
+          <ResourceFormFactory
             key={hash}
             editMode={editMode}
             resourceType={resourceType}

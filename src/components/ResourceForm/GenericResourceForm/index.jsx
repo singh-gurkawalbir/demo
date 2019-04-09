@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import factory from '../../forms/formFactory';
-import DynaForm from '../DynaForm';
-import DynaSubmit from '../../components/DynaForm/DynaSubmit';
-import { sanitizePatchSet } from '../../formsMetadata/utils';
+import factory from '../../../forms/formFactory';
+import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
+import { sanitizePatchSet } from '../../../formsMetadata/utils';
 
 @withStyles(theme => ({
   actions: {
@@ -88,8 +88,9 @@ export default class ResourceForm extends Component {
         {...rest}
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>
-        {children}
         <div className={classes.actions}>
+          {children}
+
           <Button
             onClick={this.handleFormMetaChange}
             className={classes.actionButton}

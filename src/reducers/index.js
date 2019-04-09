@@ -8,7 +8,11 @@ import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
-import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
+import {
+  changePasswordParams,
+  changeEmailParams,
+  pingConnectionParams,
+} from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
 
@@ -246,6 +250,31 @@ export function changeEmailMsg(state) {
 }
 
 // #endregion PASSWORD & EMAIL update selectors for modals
+
+export function testConnectionCommState(state) {
+  if (
+    state &&
+    state.comms &&
+    state.comms[pingConnectionParams.path] &&
+    state.comms[pingConnectionParams.path].status
+  ) {
+    const comm = state.comms[pingConnectionParams.path];
+    // const commState = {
+    //   success: comm.status === fromComms.COMM_STATES.SUCCESS,
+    //   failure: comm.status === fromComms.COMM_STATES.ERROR,
+    //   loading: comm.status === fromComms.COMM_STATES.LOADING,
+    //   message: comm.message,
+    // };
+    const commState = {
+      commState: comm.status,
+      message: comm.message,
+    };
+
+    return commState;
+  }
+
+  return { success: null, failure: null, message: null };
+}
 
 export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);

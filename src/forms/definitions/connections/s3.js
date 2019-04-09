@@ -1,11 +1,11 @@
 export default {
   fields: [
-    { id: 'connectionType' },
-    { id: 'connectionName' },
-    { id: 'connectionAssistant' },
-    { id: 'connectionS3AccessKeyId' },
-    { id: 'connectionS3SecretAccessKey' },
-    { id: 'connectionS3PingBucket' },
+    { fieldId: 'type' },
+    { fieldId: 'name' },
+    { fieldId: 'assistant' },
+    { fieldId: 's3.accessKeyId' },
+    { fieldId: 's3.secretAccessKey' },
+    { fieldId: 's3.pingBucket' },
   ],
   fieldSets: [],
 };

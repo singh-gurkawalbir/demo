@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { getFieldPosition } from '../../formsMetadata/utils';
+import PingConnectionSaga from './connections';
 
 export function* getRequestOptions(path) {
   const opts = {
@@ -154,4 +155,5 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
+  ...PingConnectionSaga,
 ];

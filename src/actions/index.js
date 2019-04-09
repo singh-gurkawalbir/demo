@@ -70,6 +70,14 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
+  connections: {
+    testConnection: (connection, resourceType, resourceId) =>
+      action(actionTypes.TEST_CONNECTION, {
+        connection,
+        resourceType,
+        resourceId,
+      }),
+  },
   patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
     action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
       resourceType,
