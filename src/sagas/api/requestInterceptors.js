@@ -105,7 +105,7 @@ export function* onErrorSaga(error, action) {
   const { retryCount = 0 } = yield select(resourceStatus, path);
 
   if (retryCount < tryCount) {
-    yield delay(2000);
+    yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path));
     yield call(sendRequest, action, { silent: false });
   } else {

@@ -319,6 +319,9 @@ describe('request interceptors...testing the various stages of an api request on
       });
     });
     describe('500 level errors', () => {
+      const retryInterval = 2000;
+
+      process.env.REATTEMPT_INTERVAL = retryInterval;
       test('should retry when the retry count is less than 3', () => {
         const saga = onErrorSaga(
           some500Response,
@@ -327,7 +330,9 @@ describe('request interceptors...testing the various stages of an api request on
 
         expect(saga.next().value).toEqual(select(resourceStatus, path));
 
-        expect(saga.next({ retryCount: undefined }).value).toEqual(delay(2000));
+        expect(saga.next({ retryCount: undefined }).value).toEqual(
+          delay(retryInterval)
+        );
 
         expect(saga.next().value).toEqual(put(actions.api.retry(path)));
         // resend the request ..silent false meta allows the
