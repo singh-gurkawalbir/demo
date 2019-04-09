@@ -9,6 +9,7 @@ import {
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
 import { resourceStatus } from '../../reducers/index';
+import { pingConnectionParams } from '../api/apiPaths';
 
 const tryCount = 3;
 
@@ -29,6 +30,8 @@ export function* onRequestSaga(request) {
   // lets built for a good UX that can deal with high latency calls...
 
   yield call(introduceNetworkLatency);
+  // TODO: proxing path so that resourceStatus selector can pick up
+  // the right comm call status
   const requestPayload = yield {
     url,
     method,
@@ -61,10 +64,22 @@ export function* onSuccessSaga(response, action) {
     throw e;
   }
 
-  // if 204
-  if (response.data === '') return undefined;
+  if (response.data === '')
+    // if 204
+    return undefined;
 
   response.data = JSON.parse(response.data);
+
+  // This is just to support ping calls...
+  // if it succeeds or fails it would give back a 200
+  // status code...so for these failed ping calls
+  // we have the following code to support it
+  // which essentially throws an exception to the parent
+  if (path === pingConnectionParams.path) {
+    const { errors } = response.data;
+
+    if (errors) yield call(throwExceptionUsingTheResponse, response);
+  }
 
   return response.data;
 }

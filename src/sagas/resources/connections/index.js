@@ -1,17 +1,10 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
-import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
+import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
 import * as selectors from '../../../reducers/index';
-
-// ping exception
-function PingException(response) {
-  this.message = response.errors
-    .map(error => error.message)
-    .reduce((initialValue, iter) => initialValue + iter, '');
-}
 
 function* createPayload({ formFieldValues, resourceType, resourceId }) {
   const patchOperations = Object.keys(formFieldValues).map(key => ({
@@ -36,32 +29,32 @@ function* pingConnection({ connection, resourceType, resourceId }) {
       resourceType,
       resourceId,
     });
-    const resp = yield call(apiCallWithRetry, {
-      path: pingConnectionParams.path,
-      opts: { body: connectionPayload, ...pingConnectionParams.opts },
-      hidden: true,
+    const { apiResp } = yield race({
+      apiResp: call(apiCallWithRetry, {
+        path: pingConnectionParams.path,
+        opts: { body: connectionPayload, ...pingConnectionParams.opts },
+        hidden: true,
+      }),
+      cancelTask: take(actionTypes.CANCEL_TASK),
     });
 
-    if (resp && resp.errors) throw new PingException(resp);
-    yield put(
-      actions.api.complete(
-        pingConnectionParams.path,
-        'Connection is working fine!'
-      )
-    );
-  } catch (errors) {
-    if (errors.status === 'ABORTED') {
+    // if the api call raced successfully without errors
+    if (apiResp) {
       yield put(
         actions.api.complete(
           pingConnectionParams.path,
-          'Task has been cancelled'
+          'Connection is working fine!'
         )
       );
-
-      return;
     }
+  } catch (e) {
+    // these errors are json errors
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
 
-    yield put(actions.api.failure(pingConnectionParams.path, errors.message));
+    yield put(
+      actions.api.failure(pingConnectionParams.path, errors[0].message)
+    );
   }
 }
 

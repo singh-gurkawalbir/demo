@@ -131,6 +131,7 @@ const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
+const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
 // #region Editor actions
 const editor = {
@@ -153,6 +154,7 @@ const editor = {
 // #endregion
 
 export default {
+  cancelTask,
   reloadApp,
   clearComms,
   patchFilter,
