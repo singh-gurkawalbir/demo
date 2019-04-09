@@ -123,10 +123,17 @@ const setDefaults = (fields, resourceType, resource) => {
       merged.defaultValue = extractValue(merged.fieldId, resource);
     }
 
+    // if name isn't there
+    if (!merged.name) {
+      merged.name = `/${merged.fieldId.replace(/\./g, '/')}`;
+    }
+
     // Are fieldIds unique?
     if (!merged.id) {
       merged.id = merged.fieldId;
     }
+
+    console.log('check ', merged);
 
     return merged;
   });
