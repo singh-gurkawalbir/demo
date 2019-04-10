@@ -17,7 +17,7 @@ describe('Form Utils', () => {
   });
 
   describe('sanitizePatchSet', () => {
-    test('result patch set should succeed in patching resource', () => {
+    test('result patch set should succeed in patching resource when initial patch is missing operations.', () => {
       const resource = {
         html: {
           name: 'abc',
