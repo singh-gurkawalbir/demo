@@ -3,6 +3,16 @@ export default {
     { fieldId: 'name' },
     { fieldId: 'description' },
     { fieldId: 'assistant' },
+    {
+      formId: 'ftp',
+      visibleWhen: [
+        {
+          field: 'assistant',
+          is: ['ftp'],
+        },
+      ],
+    },
+    { fieldId: '_connectionId' },
     { fieldId: 'asynchronous' },
     { fieldId: 'apiIdentifier' },
     { fieldId: 'type' },

@@ -20,8 +20,10 @@ import salesforce from './salesforce';
 import wrapper from './wrapper';
 import mongodb from './mongodb';
 import as2 from './as2';
+import common from './common';
 
 export default {
+  common,
   inputFilter,
   test,
   delta,

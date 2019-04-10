@@ -4,12 +4,19 @@ export default {
     type: 'text',
     label: 'Name',
   },
+  // adaptor type has export appended to it
+  // strip it off and lowercase the connection type
   _connectionId: {
     type: 'selectresource',
     label: 'Connection',
     resourceType: 'connections',
-    // filter: r => ({ type: r.type }),
-    // excludeFilter: r => ({ _
+    filter: r => {
+      const removedExport = r.adaptorType.replace('Export', '');
+      const type = removedExport.toLowerCase();
+
+      return { type };
+    },
+    // excludeFilter: r => ({ _id: r._id }),
   },
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
@@ -258,7 +265,6 @@ export default {
           { label: 'Concur', value: 'concur' },
           { label: 'Oandav20fxtrade', value: 'oandav20fxtrade' },
           { label: 'Oandaexchangerates', value: 'oandaexchangerates' },
-          { label: 'Spreecommerce', value: 'spreecommerce' },
           { label: 'Tophatter', value: 'tophatter' },
           { label: 'Concurv4', value: 'concurv4' },
           { label: 'Sugarcrm', value: 'sugarcrm' },
@@ -267,7 +273,6 @@ export default {
           { label: 'Retailops', value: 'retailops' },
           { label: 'Sharepoint', value: 'sharepoint' },
           { label: 'Parseur', value: 'parseur' },
-          { label: 'Authorize.net', value: 'authorize.net' },
           { label: 'Firstdata', value: 'firstdata' },
           { label: 'Propack', value: 'propack' },
           { label: 'Outreach', value: 'outreach' },

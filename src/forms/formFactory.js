@@ -41,7 +41,7 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
       meta = formMeta[resourceType];
 
       if (meta) {
-        meta = meta[resourceType];
+        meta = meta.common;
 
         if (meta) {
           ({ fields, fieldSets, converter, initializer } = meta);
@@ -97,46 +97,77 @@ const extractValue = (path, resource) => {
 const setDefaults = (fields, resourceType, resource) => {
   if (!fields || fields.length === 0) return fields;
 
-  return fields.map(f => {
-    const merged = {
-      resourceId: resource._id,
-      resourceType,
-      ...masterFieldHash[resourceType][f.fieldId],
-      ...f,
-    };
+  return fields
+    .map(f => {
+      if (f.formId) {
+        let { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
 
-    Object.keys(merged).forEach(key => {
-      if (typeof merged[key] === 'function') {
-        merged[key] = merged[key](resource);
+        if (f.visibleWhen || f.visibleWhenAll) {
+          if (f.visibleWhen && f.visibleWhenAll)
+            throw new Error('Incorrect rule');
+
+          fieldsFromForm = fieldsFromForm.map(field => {
+            const fieldCopy = { ...field };
+
+            if (fieldCopy.visibleWhen && fieldCopy.visibleWhenAll)
+              throw new Error('Incorrect rule');
+
+            if (f.visibleWhen) {
+              fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
+              fieldCopy.visibleWhen.push(...f.visibleWhen);
+
+              return fieldCopy;
+            }
+
+            fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
+
+            fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
+
+            return fieldCopy;
+          });
+
+          return setDefaults(fieldsFromForm, resourceType, resource);
+        }
       }
-    });
 
-    if (!merged.helpText && !merged.helpKey) {
-      // console.log(`default helpKey for ${merged.id} used`);
-      merged.helpKey = merged.fieldId;
-    }
+      const merged = {
+        resourceId: resource._id,
+        resourceType,
+        ...masterFieldHash[resourceType][f.fieldId],
+        ...f,
+      };
 
-    // Why can't we do a check for the property directly...
-    // merged['defaultValue']
-    if (!Object.keys(merged).includes('defaultValue')) {
-      // console.log(`default value for ${merged.fieldId} used`);
-      merged.defaultValue = extractValue(merged.fieldId, resource);
-    }
+      Object.keys(merged).forEach(key => {
+        if (typeof merged[key] === 'function') {
+          merged[key] = merged[key](resource);
+        }
+      });
 
-    // if name isn't there
-    if (!merged.name) {
-      merged.name = `/${merged.fieldId.replace(/\./g, '/')}`;
-    }
+      if (!merged.helpText && !merged.helpKey) {
+        // console.log(`default helpKey for ${merged.id} used`);
+        merged.helpKey = merged.fieldId;
+      }
 
-    // Are fieldIds unique?
-    if (!merged.id) {
-      merged.id = merged.fieldId;
-    }
+      // Why can't we do a check for the property directly...
+      // merged['defaultValue']
+      if (!Object.keys(merged).includes('defaultValue')) {
+        // console.log(`default value for ${merged.fieldId} used`);
+        merged.defaultValue = extractValue(merged.fieldId, resource);
+      }
 
-    console.log('check ', merged);
+      // if name isn't there
+      if (!merged.name) {
+        merged.name = `/${merged.fieldId.replace(/\./g, '/')}`;
+      }
 
-    return merged;
-  });
+      // Are fieldIds unique?
+      if (!merged.id) {
+        merged.id = merged.fieldId;
+      }
+
+      return merged;
+    })
+    .flat();
 };
 
 const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
@@ -154,8 +185,10 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
     });
   }
 
+  const Allfields = setDefaults(fields, resourceType, resource);
+
   return {
-    fields: setDefaults(fields, resourceType, resource),
+    fields: Allfields,
     fieldSets: filled,
   };
 };
