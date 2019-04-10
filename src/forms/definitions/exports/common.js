@@ -2,6 +2,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     { fieldId: 'description' },
+    { fieldId: 'assistant' },
     { fieldId: 'asynchronous' },
     { fieldId: 'apiIdentifier' },
     { fieldId: 'type' },
@@ -11,7 +12,6 @@ export default {
     { fieldId: 'pathToMany' },
     { fieldId: 'sampleData' },
     { fieldId: 'originSampleData' },
-    { fieldId: 'assistant' },
     { fieldId: 'assistantMetadata' },
     { fieldId: 'isLookup' },
     { fieldId: 'useTechAdaptorForm' },
