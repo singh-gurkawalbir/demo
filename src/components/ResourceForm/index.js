@@ -72,6 +72,7 @@ export default class ResourceForm extends Component {
           sanitizePatchSet({
             patchSet: assets.converter(value),
             fieldMeta,
+            resource,
           })
         );
     }

@@ -56,7 +56,11 @@ export default class ConflictAlertDialog extends Component {
                       {p.op}
                     </TableCell>
                     <TableCell>{p.path}</TableCell>
-                    <TableCell>{p.value}</TableCell>
+                    <TableCell>
+                      {typeof p.value === 'string'
+                        ? p.value
+                        : JSON.stringify(p.value)}
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>

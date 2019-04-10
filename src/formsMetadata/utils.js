@@ -82,18 +82,81 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return field;
 };
 
-export const sanitizePatchSet = ({ patchSet, fieldMeta }) => {
-  if (!fieldMeta || !patchSet) return patchSet;
+export const getMissingPatchSet = (paths, resource) => {
+  const missing = [];
+  const getStub = segments => {
+    const o = {};
+    let cur = o;
 
-  return patchSet.reduce((sanitizedSet, patch) => {
-    const field = getFieldByName({ name: patch.path, fieldMeta });
+    segments.forEach(s => {
+      cur[s] = {};
+      cur = cur[s];
+    });
 
-    if (patch.op === 'replace' && field.defaultValue !== patch.value) {
-      sanitizedSet.push(patch);
+    return o;
+  };
+
+  paths.forEach(p => {
+    const segments = p.split('/');
+
+    // console.log(segments);
+
+    // only deep paths have reference errors.
+    // length >2 because first is empty root node.
+    if (segments.length > 2) {
+      let value = {};
+      let r = resource;
+      let path = '';
+
+      for (let i = 1; i <= segments.length - 1; i += 1) {
+        const segment = segments[i];
+
+        path = `${path}/${segment}`;
+
+        if (r === undefined || r[segment] === undefined) {
+          value = getStub(segments.slice(i + 1, segments.length));
+          missing.push({ path, value, op: 'add' });
+
+          break;
+        }
+
+        r = r[segment];
+      }
+    }
+  });
+  // console.log(missing);
+
+  return missing;
+};
+
+export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
+  if (!patchSet) return patchSet;
+
+  const sanitizedSet = patchSet.reduce((s, patch) => {
+    if (patch.op === 'replace') {
+      const field = getFieldByName({ name: patch.path, fieldMeta });
+
+      if (!field || field.defaultValue !== patch.value) {
+        s.push(patch);
+      }
     }
 
-    return sanitizedSet;
+    return s;
   }, []);
+
+  if (sanitizedSet.length === 0 || !resource) {
+    return sanitizedSet;
+  }
+
+  const missingPatchSet = getMissingPatchSet(
+    sanitizedSet.map(p => p.path),
+    resource
+  );
+  const newSet = [...missingPatchSet, ...sanitizedSet];
+
+  // console.log(newSet);
+
+  return newSet;
 };
 
 export const replaceField = ({ meta, field }) => {
