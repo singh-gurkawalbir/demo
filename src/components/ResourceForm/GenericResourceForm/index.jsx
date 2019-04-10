@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import factory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
-import { sanitizePatchSet } from '../../../formsMetadata/utils';
+import { sanitizePatchSet } from '../../../forms/utils';
 
 @withStyles(theme => ({
   actions: {

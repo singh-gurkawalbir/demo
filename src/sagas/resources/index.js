@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
-import { getFieldPosition } from '../../formsMetadata/utils';
+import { getFieldPosition } from '../../forms/utils';
 import PingConnectionSaga from './connections';
 
 export function* getRequestOptions(path) {

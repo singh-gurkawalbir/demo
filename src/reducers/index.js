@@ -13,7 +13,7 @@ import {
   changeEmailParams,
   pingConnectionParams,
 } from '../sagas/api/apiPaths';
-import { getFieldById } from '../formsMetadata/utils';
+import { getFieldById } from '../forms/utils';
 import stringUtil from '../utils/string';
 
 const combinedReducers = combineReducers({

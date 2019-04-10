@@ -4,7 +4,7 @@
 // import formMeta from '../formsMetadata/definitions';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
-import { defaultPatchSetConverter } from '../formsMetadata/utils';
+import { defaultPatchSetConverter } from './utils';
 
 const getResourceFormAssets = ({ resourceType, resource }) => {
   let fields;

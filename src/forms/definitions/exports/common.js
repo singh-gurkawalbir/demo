@@ -3,6 +3,7 @@ export default {
     { fieldId: 'name' },
     { fieldId: 'description' },
     { fieldId: 'assistant' },
+    { fieldId: '_connectionId' },
     {
       formId: 'ftp',
       visibleWhen: [
@@ -12,7 +13,6 @@ export default {
         },
       ],
     },
-    { fieldId: '_connectionId' },
     { fieldId: 'asynchronous' },
     { fieldId: 'apiIdentifier' },
     { fieldId: 'type' },
