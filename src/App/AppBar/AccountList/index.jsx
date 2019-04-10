@@ -8,6 +8,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -16,38 +17,14 @@ import { confirmDialog } from '../../../components/ConfirmDialog';
 
 const mapStateToProps = state => ({
   accounts: selectors.accountSummary(state),
+  userPreferences: selectors.userPreferences(state),
 });
 const mapDispatchToProps = dispatch => ({
   onAccountChange: (id, environment) => {
-    dispatch(
-      actions.user.preferences.update({
-        defaultAShareId: id,
-        environment,
-      })
-    );
+    dispatch(actions.user.org.accounts.switchTo({ id, environment }));
   },
-  onAccountLeave: account => {
-    confirmDialog({
-      title: 'Leave Account',
-      message: `By leaving the account "${
-        account.company
-      }", you will no longer have access to the account or any of the integrations within the account.`,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-        },
-      ],
-      callback: buttonLabel => {
-        if (buttonLabel !== 'Yes') {
-          return false;
-        }
-
-        dispatch(actions.user.org.accounts.leave(account.id));
-      },
-    });
+  onAccountLeave: id => {
+    dispatch(actions.user.org.accounts.leave(id));
   },
 });
 
@@ -109,9 +86,45 @@ class AccountList extends Component {
     this.setState({ anchorEl: null });
   };
 
+  handleAccountChange = (id, environment) => {
+    const { history, onAccountChange } = this.props;
+
+    history.push('/pg/');
+    onAccountChange(id, environment);
+  };
+  handleAccountLeaveClick = account => {
+    confirmDialog({
+      title: 'Leave Account',
+      message: `By leaving the account "${
+        account.company
+      }", you will no longer have access to the account or any of the integrations within the account.`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+        },
+      ],
+      callback: buttonLabel => {
+        if (buttonLabel !== 'Yes') {
+          return false;
+        }
+
+        const { userPreferences, history, onAccountLeave } = this.props;
+
+        if (userPreferences.defaultAShareId === account.id) {
+          history.push('/pg/');
+        }
+
+        onAccountLeave(account.id);
+      },
+    });
+  };
+
   render() {
     const { anchorEl } = this.state;
-    const { classes, accounts, onAccountChange, onAccountLeave } = this.props;
+    const { classes, accounts } = this.props;
     const open = !!anchorEl;
 
     if (!accounts || accounts.length < 2) {
@@ -145,7 +158,7 @@ class AccountList extends Component {
               <ListItem
                 button
                 onClick={() => {
-                  onAccountChange(a.id, a.environment);
+                  this.handleAccountChange(a.id, a.environment);
                 }}
                 classes={{
                   root: classes.itemRoot,
@@ -162,7 +175,7 @@ class AccountList extends Component {
                       className={classes.leave}
                       variant="text"
                       onClick={() => {
-                        onAccountLeave(a);
+                        this.handleAccountLeaveClick(a);
                       }}>
                       Leave
                     </Button>
@@ -178,4 +191,6 @@ class AccountList extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(AccountList);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(AccountList)
+);

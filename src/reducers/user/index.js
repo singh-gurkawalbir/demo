@@ -68,7 +68,9 @@ export function accessLevel(state) {
       const { accounts } = state.org;
       const account = accounts.find(a => a._id === defaultAShareId);
 
-      ({ accessLevel } = account);
+      if (account) {
+        ({ accessLevel } = account);
+      }
     }
   }
 

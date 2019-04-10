@@ -213,31 +213,49 @@ export function* rejectAccountInvite({ id }) {
   }
 }
 
-export function* leaveAccount({ id }) {
-  const requestOptions = {
-    opts: {
-      method: 'DELETE',
-    },
-    path: `/shared/ashares/${id}`,
-  };
+export function* switchAccount({ id, environment }) {
+  const userPreferences = yield select(selectors.userPreferences);
 
   try {
-    const payload = {
-      ...requestOptions.opts,
-      body: {},
-    };
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment,
+      })
+    );
 
+    if (userPreferences.defaultAShareId !== id) {
+      yield put(actions.auth.clearStore());
+      yield put(actions.auth.initSession());
+    }
+  } catch (ex) {
+    yield put(
+      actions.api.failure('switch account', 'Could not switch account')
+    );
+  }
+}
+
+export function* leaveAccount({ id }) {
+  const path = `/shared/ashares/${id}`;
+  const opts = { method: 'DELETE', body: {} };
+
+  try {
     yield call(apiCallWithRetry, {
-      path: requestOptions.path,
-      opts: payload,
+      path,
+      opts,
       message: 'Leaving account',
     });
 
-    yield put(actions.resource.requestCollection('shared/ashares'));
+    const userPreferences = yield select(selectors.userPreferences);
+
+    if (userPreferences.defaultAShareId === id) {
+      yield put(actions.auth.clearStore());
+      yield put(actions.auth.initSession());
+    } else {
+      yield put(actions.resource.requestCollection('shared/ashares'));
+    }
   } catch (e) {
-    yield put(
-      actions.api.failure(requestOptions.path, 'Could not leave account')
-    );
+    yield put(actions.api.failure(path, 'Could not leave account'));
   }
 }
 
@@ -251,4 +269,5 @@ export const userSagas = [
   takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
   takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
   takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
+  takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
 ];

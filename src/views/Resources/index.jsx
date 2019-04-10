@@ -17,12 +17,14 @@ import * as selectors from '../../reducers';
 const mapStateToProps = state => {
   const filterName = 'allResources';
   const filter = selectors.filter(state, filterName);
+  const userPreferences = selectors.userPreferences(state);
   const allResources = availableResources.map(resourceType => {
     const resourceFilter = selectors.filter(state, resourceType);
     const resources = selectors.resourceList(state, {
       type: resourceType,
       take: resourceFilter.take || 3,
       keyword: filter.keyword,
+      sandbox: userPreferences.environment === 'sandbox',
     });
 
     return resources;

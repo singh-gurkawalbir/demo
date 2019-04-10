@@ -187,7 +187,8 @@ export function sharedAccounts(state) {
     if (!a.ownerUser || !a.ownerUser.licenses) return;
 
     const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox = ioLicense && ioLicense.sandbox;
+    const sandbox =
+      ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0);
 
     shared.push({
       id: a._id,

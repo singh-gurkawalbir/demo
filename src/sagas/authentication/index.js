@@ -86,6 +86,7 @@ export function* retrieveAppInitializationResources() {
     yield put(
       actions.user.preferences.update({
         defaultAShareId: calculatedDefaultAShareId,
+        environment: 'production',
       })
     );
   }
