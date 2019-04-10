@@ -31,7 +31,11 @@ describe(`apiCallWithRetry saga`, () => {
         }),
         logout: take(actionsTypes.USER_LOGOUT),
       });
-      const resp = { apiResp: { response: 'some response' }, logout: null };
+      // if an effect does not succeeds in a race...we get an undefined
+      const resp = {
+        apiResp: { response: 'some response' },
+        logout: undefined,
+      };
 
       expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
       expect(saga.next(resp).value).toEqual('some response');
@@ -83,7 +87,7 @@ describe(`apiCallWithRetry saga`, () => {
       // the race between two effects
       expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
 
-      const resp = { apiResp: null, logout: { something: 'dsd' } };
+      const resp = { apiResp: undefined, logout: { something: 'dsd' } };
 
       expect(saga.next(resp).value).toEqual(null);
 
@@ -107,10 +111,36 @@ describe(`apiCallWithRetry saga`, () => {
       // How can we inject a logout action
       // to resolve the race between two effects
       expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
-
-      const resp = { apiResp: null, logout: { something: 'dsd' } };
+      // if an effect does not succeeds in a race...we get an undefined
+      const resp = { apiResp: undefined, logout: { something: 'dsd' } };
 
       expect(saga.next(resp).value).toEqual(null);
+
+      expect(saga.next().done).toBe(true);
+    });
+
+    test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent sags', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race({
+        apiResp: call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: true,
+        }),
+        logout: take(actionsTypes.USER_LOGOUT),
+      });
+
+      // to resolve the race between two effects
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      // if an effect does not succeeds in a race...we get an undefined
+
+      // we expect an undefined in the response
+      const resp = { apiResp: { response: undefined }, logout: undefined };
+
+      expect(saga.next(resp).value).toEqual(undefined);
 
       expect(saga.next().done).toBe(true);
     });
