@@ -64,9 +64,11 @@ export function* onSuccessSaga(response, action) {
     throw e;
   }
 
-  if (response.data === '')
-    // if 204
-    return undefined;
+  if (response.data === '') {
+    response.data = undefined;
+
+    return response;
+  }
 
   response.data = JSON.parse(response.data);
 
@@ -81,7 +83,7 @@ export function* onSuccessSaga(response, action) {
     if (errors) yield call(throwExceptionUsingTheResponse, response);
   }
 
-  return response.data;
+  return response;
 }
 
 export function* onErrorSaga(error, action) {
