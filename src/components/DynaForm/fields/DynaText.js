@@ -40,6 +40,8 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value.split(valueDelimiter));
     };
 
+    // console.log('render text ', label);
+
     return (
       <TextField
         autoComplete="off"

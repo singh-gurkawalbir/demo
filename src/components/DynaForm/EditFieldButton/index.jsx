@@ -29,10 +29,17 @@ const mapDispatchToProps = (dispatch, { field }) => {
   const { id, resourceId, resourceType } = field;
 
   return {
-    patchFormField: (value, op = 'replace') => {
+    patchFormField: (value, op = 'replace', offset = 0) => {
       // console.log(`patch ${fid} with:`, value);
       dispatch(
-        actions.resource.patchFormField(resourceType, resourceId, id, value, op)
+        actions.resource.patchFormField(
+          resourceType,
+          resourceId,
+          id,
+          value,
+          op,
+          offset
+        )
       );
     },
   };
@@ -48,6 +55,17 @@ class EditFieldButton extends Component {
     const { patchFormField, onChange } = this.props;
 
     patchFormField(newMeta);
+
+    if (typeof onChange === 'function') {
+      onChange(newMeta);
+    }
+  };
+
+  handleInsertField = newMeta => {
+    const { patchFormField, onChange } = this.props;
+    const { insertField } = this.state;
+
+    patchFormField(newMeta, 'add', insertField === 'after' ? 1 : 0);
 
     if (typeof onChange === 'function') {
       onChange(newMeta);
@@ -125,7 +143,7 @@ class EditFieldButton extends Component {
           <NewFieldDialog
             title={`Insert this new field ${insertField} ${fieldId}`}
             onClose={() => this.handleInsertFieldToggle()}
-            onSubmit={() => this.handleInsertFieldToggle()}
+            onSubmit={field => this.handleInsertField(field)}
           />
         )}
         {showEditor && (

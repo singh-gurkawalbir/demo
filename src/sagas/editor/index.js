@@ -1,5 +1,11 @@
-import { delay } from 'redux-saga';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+  delay,
+} from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
@@ -45,7 +51,7 @@ export function* autoEvaluateProcessor({ id }) {
   if (!editor.autoEvaluate) return;
 
   if (editor.autoEvaluateDelay) {
-    yield call(delay, editor.autoEvaluateDelay);
+    yield delay(editor.autoEvaluateDelay);
   }
 
   return yield call(evaluateProcessor, { id });

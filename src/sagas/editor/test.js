@@ -1,7 +1,7 @@
 /* global describe, test, expect,jest */
-import { delay } from 'redux-saga';
+
 import { advanceTo, clear } from 'jest-date-mock';
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
@@ -166,7 +166,7 @@ describe('autoEvaluateProcessor saga', () => {
 
     let callEffect = saga.next({ autoEvaluate: true, autoEvaluateDelay }).value;
 
-    expect(callEffect).toEqual(call(delay, autoEvaluateDelay));
+    expect(callEffect).toEqual(delay(autoEvaluateDelay));
 
     callEffect = saga.next().value;
     expect(callEffect).toEqual(call(evaluateProcessor, { id }));

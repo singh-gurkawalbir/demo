@@ -16,7 +16,12 @@ import {
   updatePreferences,
   updateProfile,
 } from './';
-import { status403 } from '../test';
+import { APIException } from '../api/index';
+
+const status403 = new APIException({
+  status: 403,
+  message: 'User Forbidden action',
+});
 
 describe('all modal sagas', () => {
   describe('change password saga ', () => {

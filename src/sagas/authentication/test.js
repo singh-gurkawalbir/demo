@@ -410,11 +410,12 @@ describe('invalidate session app', () => {
     expect(getCSRFTokenEffect).toEqual(expect.anything());
 
     const logOutUserEffect = saga.next('someCSRF1').value;
+    const logoutOpts = { ...logoutParams.opts, body: { _csrf: 'someCSRF1' } };
 
     expect(logOutUserEffect).toEqual(
       call(apiCallWithRetry, {
         path: logoutParams.path,
-        opts: logoutParams.opts,
+        opts: logoutOpts,
         message: 'Logging out user',
       })
     );
