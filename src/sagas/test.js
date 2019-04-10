@@ -33,7 +33,7 @@ describe(`apiCallWithRetry saga`, () => {
       });
       // if an effect does not succeeds in a race...we get an undefined
       const resp = {
-        apiResp: { response: 'some response' },
+        apiResp: { response: { data: 'some response' } },
         logout: undefined,
       };
 
@@ -119,7 +119,7 @@ describe(`apiCallWithRetry saga`, () => {
       expect(saga.next().done).toBe(true);
     });
 
-    test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent sags', () => {
+    test('In the event of a 204 response apiCallWithRetry saga should return undefined to the parent saga', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
       const apiRequestAction = {
@@ -137,8 +137,11 @@ describe(`apiCallWithRetry saga`, () => {
       expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
       // if an effect does not succeeds in a race...we get an undefined
 
-      // we expect an undefined in the response
-      const resp = { apiResp: { response: undefined }, logout: undefined };
+      // we expect an undefined data in the response
+      const resp = {
+        apiResp: { response: { data: undefined } },
+        logout: undefined,
+      };
 
       expect(saga.next(resp).value).toEqual(undefined);
 
@@ -162,7 +165,7 @@ describe(`apiCallWithRetry saga`, () => {
       const sendRequestEffect = call(sendRequest, apiRequestAction, {
         dispatchRequestAction: true,
       });
-      const resp = { response: 'some response' };
+      const resp = { response: { data: 'some response' } };
 
       expect(saga.next().value).toEqual(sendRequestEffect);
       expect(saga.next(resp).value).toEqual('some response');

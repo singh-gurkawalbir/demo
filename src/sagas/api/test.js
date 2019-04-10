@@ -243,7 +243,7 @@ describe('request interceptors...testing the various stages of an api request on
         call(checkToThrowSessionValidationException, regular204Response)
       );
 
-      expect(saga.next().value).toEqual(undefined);
+      expect(saga.next().value).toEqual({ data: undefined, status: 204 });
     });
 
     test('if there is a successful response with a a 200 status code it should respond with a JSON object of the resp', () => {
@@ -263,7 +263,7 @@ describe('request interceptors...testing the various stages of an api request on
         call(checkToThrowSessionValidationException, regular200Response)
       );
 
-      expect(saga.next().value).toEqual(jsonRespBody);
+      expect(saga.next().value).toEqual({ data: jsonRespBody, status: 200 });
     });
   });
 
