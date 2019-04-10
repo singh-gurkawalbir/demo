@@ -47,12 +47,13 @@ export function* apiCallWithRetry(args) {
       });
     }
 
-    // logout effect succeeded in then apiResp would be null
+    // logout effect succeeded then the apiResp would be undefined
+
     if (logout) return null;
 
-    const { response } = apiResp;
+    const { data } = apiResp.response;
 
-    return response;
+    return data;
   } catch (error) {
     throw error;
   }
