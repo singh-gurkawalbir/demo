@@ -240,7 +240,7 @@ class Edit extends Component {
           Last Modified: {prettyDate(merged.lastModified)}
         </Typography>
 
-        {patchLength && (
+        {patchLength > 0 && (
           <Typography variant="caption" className={classes.dates}>
             Unsaved changes made <TimeAgo date={Date(patch.lastChange)} />.
           </Typography>
