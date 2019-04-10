@@ -13,6 +13,15 @@ export default {
         },
       ],
     },
+    {
+      fieldId: 'transform.expression.rules',
+      visibleWhen: [
+        {
+          field: 'assistant',
+          is: ['ftp'],
+        },
+      ],
+    },
     { fieldId: 'asynchronous' },
     { fieldId: 'apiIdentifier' },
     { fieldId: 'type' },
