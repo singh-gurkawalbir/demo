@@ -160,6 +160,19 @@ describe('account (ashares) reducers', () => {
         },
       },
       {
+        _id: 'ghi',
+        accepted: true,
+        ownerUser: {
+          _id: '789',
+          email: 'ghi789@celigo.com',
+          name: 'ghi 789',
+          company: 'ghi 789 company',
+          licenses: [
+            { type: 'integrator', sandbox: false, numSandboxAddOnFlows: 2 },
+          ],
+        },
+      },
+      {
         _id: 'htng',
         accessLevel: 'monitor',
         ownerUser: {
@@ -190,13 +203,19 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Inc',
             email: 'name@gmail.com',
             id: 'abc',
-            sandbox: false,
+            hasSandbox: false,
           },
           {
             company: 'Celigo Playground',
             email: 'playground@celigo.com',
             id: 'def',
-            sandbox: true,
+            hasSandbox: true,
+          },
+          {
+            company: 'ghi 789 company',
+            email: 'ghi789@celigo.com',
+            id: 'ghi',
+            hasSandbox: true,
           },
         ];
         const result = selectors.sharedAccounts(state);
@@ -233,6 +252,7 @@ describe('account (ashares) reducers', () => {
           _id: 'license1',
           type: 'integrator',
           sandbox: true,
+          hasSandbox: true,
         });
 
         const state2 = reducer(
@@ -243,11 +263,19 @@ describe('account (ashares) reducers', () => {
         expect(selectors.integratorLicense(state2, 'abc')).toEqual({
           type: 'integrator',
           sandbox: false,
+          hasSandbox: false,
         });
 
         expect(selectors.integratorLicense(state2, 'def')).toEqual({
           type: 'integrator',
           sandbox: true,
+          hasSandbox: true,
+        });
+        expect(selectors.integratorLicense(state2, 'ghi')).toEqual({
+          type: 'integrator',
+          sandbox: false,
+          numSandboxAddOnFlows: 2,
+          hasSandbox: true,
         });
       });
       test('should return correct status, expiresInDays of integrator license', () => {
@@ -262,7 +290,7 @@ describe('account (ashares) reducers', () => {
           _id: 'license1',
           type: 'integrator',
           tier: 'none',
-          sandbox: false,
+          hasSandbox: false,
         });
 
         const state2 = reducer(
@@ -284,7 +312,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
-            sandbox: false,
+            hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'IN_TRIAL',
             expiresInDays: 10,
@@ -310,7 +338,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
-            sandbox: false,
+            hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
           })
@@ -335,7 +363,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
-            sandbox: false,
+            hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
           })
@@ -360,7 +388,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
-            sandbox: false,
+            hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
             expiresInDays: 60,
@@ -386,7 +414,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
-            sandbox: false,
+            hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
             expiresInDays: 1,
@@ -412,7 +440,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
-            sandbox: false,
+            hasSandbox: false,
             expires: expect.any(String),
             status: 'EXPIRED',
           })
@@ -444,6 +472,19 @@ describe('account (ashares) reducers', () => {
             id: 'def',
             label: 'Celigo Playground - Sandbox',
             environment: 'sandbox',
+            canLeave: false,
+          },
+          {
+            id: 'ghi',
+            environment: 'production',
+            label: 'ghi 789 company - Production',
+            company: 'ghi 789 company',
+            canLeave: true,
+          },
+          {
+            id: 'ghi',
+            environment: 'sandbox',
+            label: 'ghi 789 company - Sandbox',
             canLeave: false,
           },
         ];

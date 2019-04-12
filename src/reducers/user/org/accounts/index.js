@@ -144,9 +144,8 @@ export function integratorLicense(state, accountId) {
     return null;
   }
 
-  if (!ioLicense.sandbox) {
-    ioLicense.sandbox = ioLicense.numSandboxAddOnFlows > 0;
-  }
+  ioLicense.hasSandbox =
+    ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
   if (ioLicense.expires) {
     ioLicense.status =
@@ -187,14 +186,14 @@ export function sharedAccounts(state) {
     if (!a.ownerUser || !a.ownerUser.licenses) return;
 
     const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox =
+    const hasSandbox =
       ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0);
 
     shared.push({
       id: a._id,
       company: a.ownerUser.company,
       email: a.ownerUser.email,
-      sandbox,
+      hasSandbox,
     });
   });
 
@@ -215,7 +214,7 @@ export function accountSummary(state) {
         label: 'Production',
       });
 
-      if (ownLicense.sandbox) {
+      if (ownLicense.hasSandbox) {
         accounts.push({
           id: 'own',
           environment: 'sandbox',
@@ -228,7 +227,7 @@ export function accountSummary(state) {
   }
 
   shared.forEach(a => {
-    if (a.sandbox) {
+    if (a.hasSandbox) {
       accounts.push({
         id: a.id,
         environment: 'production',
