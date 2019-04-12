@@ -24,14 +24,15 @@ export default class ConfirmDialog extends React.Component {
   close = () => {
     const target = document.getElementById(rootElementId);
 
-    unmountComponentAtNode(target);
-    target.parentNode.removeChild(target);
+    if (target) {
+      unmountComponentAtNode(target);
+      target.parentNode.removeChild(target);
+    }
   };
   handleButtonClick = button => {
     this.close();
-    const { callback } = this.props;
 
-    if (callback) callback(button.label);
+    if (button.onClick) button.onClick();
   };
   render() {
     const { title, message, buttons } = this.props;

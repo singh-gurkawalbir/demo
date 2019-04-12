@@ -104,21 +104,17 @@ class AccountList extends Component {
         },
         {
           label: 'Yes',
+          onClick: () => {
+            const { userPreferences, history, onAccountLeave } = this.props;
+
+            if (userPreferences.defaultAShareId === account.id) {
+              history.push('/pg/');
+            }
+
+            onAccountLeave(account.id);
+          },
         },
       ],
-      callback: buttonLabel => {
-        if (buttonLabel !== 'Yes') {
-          return false;
-        }
-
-        const { userPreferences, history, onAccountLeave } = this.props;
-
-        if (userPreferences.defaultAShareId === account.id) {
-          history.push('/pg/');
-        }
-
-        onAccountLeave(account.id);
-      },
     });
   };
 
