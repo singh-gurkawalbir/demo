@@ -62,11 +62,15 @@ export function* onSuccessSaga(response, action) {
   }
 
   // if 204
-  if (response.data === '') return undefined;
+  if (response.data === '') {
+    response.data = undefined;
+
+    return response;
+  }
 
   response.data = JSON.parse(response.data);
 
-  return response.data;
+  return response;
 }
 
 export function* onErrorSaga(error, action) {
