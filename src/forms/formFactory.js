@@ -2,6 +2,7 @@
 // import formMeta from '../formsMetadata/generatedHash/resourceViews';
 // import masterFieldHash from '../formsMetadata/masterFieldHash';
 // import formMeta from '../formsMetadata/definitions';
+import { deepClone } from 'fast-json-patch';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
 import { defaultPatchSetConverter } from './utils';
@@ -104,19 +105,18 @@ const applyVisibilityRulesToForm = (f, resource, resourceType) => {
     );
 
   fieldsFromForm = fieldsFromForm.map(field => {
-    const fieldCopy = { ...field };
-
-    if (fieldCopy.visibleWhen && fieldCopy.visibleWhenAll)
+    if (field.visibleWhen && field.visibleWhenAll)
       throw new Error(
         'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
       );
+    const fieldCopy = deepClone(field);
 
     if (f.visibleWhen) {
       fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
       fieldCopy.visibleWhen.push(...f.visibleWhen);
 
       return fieldCopy;
-    } else if (f.visibleWhen) {
+    } else if (f.visibleWhenAll) {
       fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
 
       fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
@@ -193,6 +193,8 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   }
 
   const Allfields = setDefaults(fields, resourceType, resource);
+
+  console.log('chekc ', JSON.stringify(Allfields));
 
   return {
     fields: Allfields,

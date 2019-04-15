@@ -6051,9 +6051,9 @@ inspect-f@^1.2.0:
   resolved "https://registry.yarnpkg.com/inspect-f/-/inspect-f-1.2.2.tgz#7572803dc59099850e51d5c94f3d7962df10e46d"
   integrity sha512-kHR/iUJ670cg9QLeoEhyzp/kqzBnPvXfzl+wE72+sOPuVv1vfXBwvWIFcr8DqnNSN44SDw9U41m4HEUSam1K2A==
 
-"integrator-ui-forms@git+ssh://git@github.com/celigo/integrator-ui-forms.git":
+"integrator-ui-forms@git://github.com/suryaVemp/integrator-ui-forms.git#latestCode":
   version "0.0.1"
-  resolved "git+ssh://git@github.com/celigo/integrator-ui-forms.git#f5ae782050cd1fdcd382ce451f9b2f058b68f6d6"
+  resolved "git://github.com/suryaVemp/integrator-ui-forms.git#a529debbf7ca60137e5f574b8241087f2d2168b3"
 
 internal-ip@1.2.0:
   version "1.2.0"

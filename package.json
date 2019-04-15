@@ -47,7 +47,7 @@
     "dexie": "2.0.4",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
-    "integrator-ui-forms": "git+ssh://git@github.com/celigo/integrator-ui-forms.git",
+    "integrator-ui-forms": "git://github.com/suryaVemp/integrator-ui-forms.git#latestCode",
     "lodash": "4.17.11",
     "material-ui-popup-state": "1.3.2",
     "mdi-react": "5.2.0",
