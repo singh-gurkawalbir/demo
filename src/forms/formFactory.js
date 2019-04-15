@@ -94,44 +94,47 @@ const extractValue = (path, resource) => {
   return value;
 };
 
-const setDefaults = (fields, resourceType, resource) => {
+let setDefaults;
+const applyVisibilityRulesToForm = (f, resource, resourceType) => {
+  let { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
+
+  if (f.visibleWhen && f.visibleWhenAll)
+    throw new Error(
+      'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
+    );
+
+  fieldsFromForm = fieldsFromForm.map(field => {
+    const fieldCopy = { ...field };
+
+    if (fieldCopy.visibleWhen && fieldCopy.visibleWhenAll)
+      throw new Error(
+        'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
+      );
+
+    if (f.visibleWhen) {
+      fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
+      fieldCopy.visibleWhen.push(...f.visibleWhen);
+
+      return fieldCopy;
+    } else if (f.visibleWhen) {
+      fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
+
+      fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
+    }
+
+    return fieldCopy;
+  });
+
+  return setDefaults(fieldsFromForm, resourceType, resource);
+};
+
+setDefaults = (fields, resourceType, resource) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields
     .map(f => {
       if (f.formId) {
-        let { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
-
-        if (f.visibleWhen || f.visibleWhenAll) {
-          if (f.visibleWhen && f.visibleWhenAll)
-            throw new Error(
-              'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
-            );
-
-          fieldsFromForm = fieldsFromForm.map(field => {
-            const fieldCopy = { ...field };
-
-            if (fieldCopy.visibleWhen && fieldCopy.visibleWhenAll)
-              throw new Error(
-                'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
-              );
-
-            if (f.visibleWhen) {
-              fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
-              fieldCopy.visibleWhen.push(...f.visibleWhen);
-
-              return fieldCopy;
-            }
-
-            fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
-
-            fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
-
-            return fieldCopy;
-          });
-
-          return setDefaults(fieldsFromForm, resourceType, resource);
-        }
+        return applyVisibilityRulesToForm(f, resource, resourceType);
       }
 
       const merged = {

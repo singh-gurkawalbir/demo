@@ -4,6 +4,7 @@ export default {
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
     { fieldId: 'ftp.backupDirectoryPath' },
+    { formId: 'file' },
   ],
   fieldSets: [],
 };

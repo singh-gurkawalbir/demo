@@ -6,7 +6,7 @@ export default {
     { fieldId: '_connectionId' },
     {
       formId: 'ftp',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'assistant',
           is: ['ftp'],

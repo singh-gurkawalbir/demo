@@ -578,7 +578,9 @@ export default {
           { label: 'Json', value: 'json' },
           { label: 'Xlsx', value: 'xlsx' },
           { label: 'Xml', value: 'xml' },
-          { label: 'Filedefinition', value: 'filedefinition' },
+          // { label: 'Filedefinition', value: 'filedefinition' },
+          { label: 'Edi', value: 'edi' },
+          { label: 'Fixed width', value: 'fixedWidth' },
         ],
       },
     ],
@@ -652,7 +654,7 @@ export default {
     type: 'checkbox',
     label: 'File xlsx has Header Row',
   },
-  'file.xlsx.keyColumnss': {
+  'file.xlsx.keyColumns': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
