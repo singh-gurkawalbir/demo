@@ -46,7 +46,6 @@ const styles1 = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  w: theme.spacing.unit * 4,
   flexGrow: 0,
   justifyContent: 'center',
   textAlign: 'center',

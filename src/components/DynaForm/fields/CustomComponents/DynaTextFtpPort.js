@@ -11,24 +11,19 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
     // minWidth: 120,
   },
 }))
-class MaterialUiTextField extends React.Component {
+class FtpPort extends React.Component {
   render() {
     const {
       classes,
       description,
-      disabled,
       errorMessages,
       id,
       isValid,
       name,
       onFieldChange,
       placeholder,
-      required,
       value,
       label,
-      multiline,
-      valueDelimiter,
-      rowsMax,
       options,
       valueType,
       //   touched,
@@ -36,7 +31,7 @@ class MaterialUiTextField extends React.Component {
     let finalValue = value;
 
     if (!finalValue && options) {
-      finalValue = options[0];
+      [finalValue] = options;
     }
 
     const handleFieldChange = event => {
@@ -44,11 +39,7 @@ class MaterialUiTextField extends React.Component {
 
       if (!name || name !== this.props.name) return;
 
-      if (!valueDelimiter) {
-        return onFieldChange(id, value);
-      }
-
-      onFieldChange(id, value.split(valueDelimiter));
+      return onFieldChange(id, value);
     };
 
     return (
@@ -61,10 +52,6 @@ class MaterialUiTextField extends React.Component {
         className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        multiline={multiline}
-        rowsMax={rowsMax}
-        required={required}
         error={!isValid}
         value={finalValue}
         onChange={handleFieldChange}
@@ -75,7 +62,7 @@ class MaterialUiTextField extends React.Component {
 
 const DynaTextFtpPort = props => (
   <FieldWrapper {...props}>
-    <MaterialUiTextField />
+    <FtpPort />
   </FieldWrapper>
 );
 

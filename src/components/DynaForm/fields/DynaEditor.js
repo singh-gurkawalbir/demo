@@ -58,7 +58,9 @@ class EditorField extends Component {
 
     onFieldChange(id, sanitizedVal);
   }
-
+  // Options handler would return the selected file type we would use that
+  // and inject it as the mode of the editor so that syntax formating would work
+  // according to the file format
   getFileType = props => {
     const { options, mode } = props;
 

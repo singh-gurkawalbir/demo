@@ -47,7 +47,7 @@ class DynaCsvParse extends React.Component {
 
   render() {
     const { showEditor } = this.state;
-    const { classes, id, mode = 'csv', value, label, sampleData } = this.props;
+    const { classes, id, value, label, sampleData } = this.props;
 
     return (
       <Fragment>
@@ -55,7 +55,7 @@ class DynaCsvParse extends React.Component {
           <CsvParseEditorDialog
             title="CSV parse options"
             id={id}
-            mode={mode}
+            mode="csv"
             data={sampleData}
             rule={value}
             onClose={this.handleClose}

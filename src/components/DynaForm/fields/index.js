@@ -9,6 +9,8 @@ import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaTransformEditor from './DynaTransformEditor';
+import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
+import DynaUploadFile from './CustomComponents/DynaUploadFile';
 
 export default {
   text: DynaText,
@@ -23,4 +25,6 @@ export default {
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
   transformeditor: DynaTransformEditor,
+  ftpport: DynaTextFtpPort,
+  uploadFile: DynaUploadFile,
 };

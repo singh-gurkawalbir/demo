@@ -18,6 +18,11 @@ export default {
     // filter: r => ({ type: r.type }),
     // excludeFilter: r => ({ _
   },
+  uploadFile: {
+    type: 'uploadFile',
+    label: 'Sample File (that would be exported)',
+    resourceType: 'connections',
+  },
   type: {
     type: 'select',
     label: 'Type',
@@ -941,6 +946,8 @@ export default {
   'ftp.hostURI': {
     type: 'text',
     label: 'Host',
+    description:
+      'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
   },
   'ftp.type': {
     type: 'radiogroup',
@@ -962,24 +969,26 @@ export default {
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.authKey': {
     type: 'text',
     label: 'Authentication Key (PEM format)',
+    placeholder: 'Optional if password is entered',
+    multiline: true,
   },
   'ftp.port': {
     type: 'ftpport',
     label: 'Ftp port',
-    validWhen: [
-      {
-        fallsWithinNumericalRange: {
-          min: 0,
-          max: 65535,
-          message: 'The value must be more than 0 and less than 65535',
-        },
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
+        message: 'The value must be more than 0 and less than 65535',
       },
-    ],
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   'ftp.usePassiveMode': {
     type: 'checkbox',
@@ -1017,6 +1026,8 @@ export default {
   'ftp.requireSocketReUse': {
     type: 'checkbox',
     label: 'Ftp require Socket Re Use',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.usePgp': {
     type: 'checkbox',
@@ -1025,14 +1036,20 @@ export default {
   'ftp.pgpEncryptKey': {
     type: 'text',
     label: 'PGP Public Key',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP Private Key',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpPassphrase': {
     type: 'text',
     label: 'PGP Passphrase',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   // #endregion ftp
   // #region s3

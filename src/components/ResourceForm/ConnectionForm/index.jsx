@@ -63,7 +63,6 @@ const mapDispatchToProps = dispatch => ({
 class ConnectionForm extends Component {
   state = {
     advancedSettingsOpen: false,
-    // networkSnackBarError: false,
   };
   handleToggleAdvancedSettings = () => {
     this.setState({ advancedSettingsOpen: !this.state.advancedSettingsOpen });
@@ -91,11 +90,6 @@ class ConnectionForm extends Component {
       testConnectionCommState,
       // ...resourceFormProps
     } = this.props;
-    // can we mode didMount
-
-    // props to disable
-    // how many can you run in the background
-    // name: /type
 
     return (
       <Fragment>
@@ -105,7 +99,6 @@ class ConnectionForm extends Component {
           onHandleCancelTask={this.handleCancel}
         />
         <ResourceForm {...this.props}>
-          {/* TODO: use formValueToPatchSetConverter */}
           <DynaSubmit
             isValid={testConnectionCommState !== COMM_STATES.LOADING}
             onClick={this.handleTestConnection}

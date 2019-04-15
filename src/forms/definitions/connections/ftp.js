@@ -23,8 +23,6 @@ export default {
     { fieldId: 'type', disabled: true },
     {
       fieldId: 'ftp.hostURI',
-      description:
-        'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
     },
     { fieldId: 'ftp.type' },
     {
@@ -32,13 +30,10 @@ export default {
     },
     {
       fieldId: 'ftp.password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
     },
     {
       fieldId: 'ftp.authKey',
-      placeholder: 'Optional if password is entered',
-      multiline: true,
+
       visibleWhen: [
         {
           field: 'ftp.type',
@@ -82,8 +77,6 @@ export default {
         { fieldId: 'ftp.entryParser' },
         {
           fieldId: 'ftp.requireSocketReUse',
-          description:
-            'Note: for security reasons this field must always be re-entered.',
 
           visibleWhen: [
             {
@@ -97,8 +90,6 @@ export default {
         },
         {
           fieldId: 'ftp.pgpEncryptKey',
-          description:
-            'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
@@ -111,8 +102,6 @@ export default {
         {
           fieldId: 'ftp.pgpDecryptKey',
 
-          description:
-            'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [
@@ -124,8 +113,6 @@ export default {
         },
         {
           fieldId: 'ftp.pgpPassphrase',
-          description:
-            'Note: for security reasons this field must always be re-entered.',
           required: true,
           omitWhenHidden: true,
           visibleWhen: [

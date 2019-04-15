@@ -35,8 +35,7 @@
     "test": "neutrino test --require dotenv/config --verbose",
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --require dotenv/config && neutrino stage",
-    "styleguide": "neutrino styleguide:start --require dotenv/config",
-    "buildMeta": "node -r babel-register src/scripts/generateFormMeta/index.js"
+    "styleguide": "neutrino styleguide:start --require dotenv/config"
   },
   "dependencies": {
     "@material-ui/core": "3.9.1",

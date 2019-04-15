@@ -104,13 +104,17 @@ const setDefaults = (fields, resourceType, resource) => {
 
         if (f.visibleWhen || f.visibleWhenAll) {
           if (f.visibleWhen && f.visibleWhenAll)
-            throw new Error('Incorrect rule');
+            throw new Error(
+              'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
+            );
 
           fieldsFromForm = fieldsFromForm.map(field => {
             const fieldCopy = { ...field };
 
             if (fieldCopy.visibleWhen && fieldCopy.visibleWhenAll)
-              throw new Error('Incorrect rule');
+              throw new Error(
+                'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
+              );
 
             if (f.visibleWhen) {
               fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];

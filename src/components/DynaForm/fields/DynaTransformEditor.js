@@ -12,7 +12,7 @@ import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialo
     // float: 'right',
   },
 }))
-class DynaCsvParse extends React.Component {
+class DynaTransformEditor extends React.Component {
   state = {
     showEditor: false,
   };
@@ -72,10 +72,10 @@ class DynaCsvParse extends React.Component {
   }
 }
 
-const WrappedDynaCsvParse = props => (
+const WrappedDynaTransformEditor = props => (
   <FieldWrapper {...props}>
-    <DynaCsvParse />
+    <DynaTransformEditor />
   </FieldWrapper>
 );
 
-export default WrappedDynaCsvParse;
+export default WrappedDynaTransformEditor;
