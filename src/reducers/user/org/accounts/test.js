@@ -457,7 +457,6 @@ describe('account (ashares) reducers', () => {
           {
             id: 'abc',
             environment: 'production',
-            label: 'Celigo Inc',
             company: 'Celigo Inc',
             canLeave: true,
           },

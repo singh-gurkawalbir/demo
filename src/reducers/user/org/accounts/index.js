@@ -245,7 +245,6 @@ export function accountSummary(state) {
       accounts.push({
         id: a.id,
         environment: 'production',
-        label: a.company,
         company: a.company,
         canLeave: shared.length > 1,
       });

@@ -14,6 +14,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DownArrow from '../../../icons/DownArrow';
 import { confirmDialog } from '../../../components/ConfirmDialog';
+import getRoutePath from '../../../utils/routePaths';
 
 const mapStateToProps = state => ({
   accounts: selectors.accountSummary(state),
@@ -89,7 +90,7 @@ class AccountList extends Component {
   handleAccountChange = (id, environment) => {
     const { history, onAccountChange } = this.props;
 
-    history.push('/pg/');
+    history.push(getRoutePath('/'));
     onAccountChange(id, environment);
   };
   handleAccountLeaveClick = account => {
@@ -108,7 +109,7 @@ class AccountList extends Component {
             const { userPreferences, history, onAccountLeave } = this.props;
 
             if (userPreferences.defaultAShareId === account.id) {
-              history.push('/pg/');
+              history.push(getRoutePath('/'));
             }
 
             onAccountLeave(account.id);
@@ -128,6 +129,8 @@ class AccountList extends Component {
       return null;
     }
 
+    const selectedAccount = accounts.find(a => a.selected);
+
     return (
       <Fragment>
         <span onClick={this.handleClick} className={classes.currentContainer}>
@@ -135,7 +138,8 @@ class AccountList extends Component {
             className={classes.currentAccount}
             aria-owns={open ? 'accountList' : null}
             aria-haspopup="true">
-            {accounts.find(a => a.selected).label}
+            {selectedAccount &&
+              (selectedAccount.label || selectedAccount.company)}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
             <DownArrow className={classes.arrow} />
@@ -163,7 +167,7 @@ class AccountList extends Component {
                 key={`${a.id}-${a.environment}`}>
                 <ListItemText
                   classes={{ root: a.selected && classes.selected }}
-                  primary={a.label}
+                  primary={a.label || a.company}
                 />
                 {a.canLeave && (
                   <ListItemSecondaryAction>
