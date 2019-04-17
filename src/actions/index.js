@@ -1,6 +1,13 @@
 import actionTypes from './types';
 
-export const availableResources = ['exports', 'imports', 'connections'];
+export const availableResources = [
+  'published',
+  'integrations',
+  'exports',
+  'imports',
+  'connections',
+  'tiles',
+];
 
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
