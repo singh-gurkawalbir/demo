@@ -1,6 +1,7 @@
 import DynaMultiSelect from './DynaMultiSelect';
 import DynaRadioGroup from './DynaRadioGroup';
 import DynaSelect from './DynaSelect';
+import DynaLabel from './DynaLabel';
 import DynaSelectResource from './DynaSelectResource';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
@@ -27,4 +28,5 @@ export default {
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadFile: DynaUploadFile,
+  labelTitle: DynaLabel,
 };

@@ -7,6 +7,14 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
 import { defaultPatchSetConverter } from './utils';
 
+// // webhook is of type not adaptor type
+// const exportAdaptorTypeToConnectionType = {
+//   FTPExport: 'ftp',
+//   HTTPExport: 'http',
+//   RESTExport: 'rest',
+//   // SalesforceExport: 'salesForce',
+//   // NetSuiteExport: 'netsuite',
+// };
 const getResourceFormAssets = ({ resourceType, resource }) => {
   let fields;
   let fieldSets = [];
@@ -42,6 +50,12 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
       meta = formMeta[resourceType];
 
       if (meta) {
+        // We are only considering edits of exports
+        // //Vinay suggested using the connection to determine
+        // const connectionType =
+        //   exportAdaptorTypeToConnectionType[meta.adaptorType];
+
+        // meta = exportAdaptorTypeToConnectionType.edit[connectionType];
         meta = meta.common;
 
         if (meta) {
@@ -95,16 +109,15 @@ const extractValue = (path, resource) => {
   return value;
 };
 
-let setDefaults;
-const applyVisibilityRulesToForm = (f, resource, resourceType) => {
-  let { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
+const applyVisibilityRulesToForm = (f, resourceType) => {
+  const { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
 
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(
       'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
     );
 
-  fieldsFromForm = fieldsFromForm.map(field => {
+  return fieldsFromForm.map(field => {
     if (field.visibleWhen && field.visibleWhenAll)
       throw new Error(
         'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
@@ -124,17 +137,69 @@ const applyVisibilityRulesToForm = (f, resource, resourceType) => {
 
     return fieldCopy;
   });
-
-  return setDefaults(fieldsFromForm, resourceType, resource);
 };
 
-setDefaults = (fields, resourceType, resource) => {
+const applyingMissedOutFieldMetaProperties = (
+  incompleteField,
+  resource,
+  resourceType
+) => {
+  const field = incompleteField;
+
+  Object.keys(field).forEach(key => {
+    if (typeof field[key] === 'function') {
+      field[key] = field[key](resource);
+    }
+  });
+
+  if (!field.helpText || !field.helpKey) {
+    // console.log(`default helpKey for ${merged.id} used`);
+    let singularResourceType = resourceType;
+
+    // Make resourceType singular
+    if (resourceType.charAt(resourceType.length - 1) === 's') {
+      singularResourceType = resourceType.substring(0, resourceType.length - 1);
+    }
+
+    field.helpKey = `${singularResourceType}.${field.fieldId}`;
+  }
+
+  // Why can't we do a check for the property directly...
+  // merged['defaultValue']
+  if (!Object.keys(field).includes('defaultValue')) {
+    // console.log(`default value for ${merged.fieldId} used`);
+    field.defaultValue = extractValue(field.fieldId, resource);
+  }
+
+  // if name isn't there
+  if (!field.name) {
+    field.name = `/${field.fieldId.replace(/\./g, '/')}`;
+  }
+
+  // Are fieldIds unique?
+  if (!field.id) {
+    field.id = field.fieldId;
+  }
+
+  return field;
+};
+
+const setDefaults = (fields, resourceType, resource) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields
     .map(f => {
       if (f.formId) {
-        return applyVisibilityRulesToForm(f, resource, resourceType);
+        const fieldMetaHavingVisibilityRules = applyVisibilityRulesToForm(
+          f,
+          resourceType
+        );
+
+        return setDefaults(
+          fieldMetaHavingVisibilityRules,
+          resourceType,
+          resource
+        );
       }
 
       const merged = {
@@ -144,35 +209,11 @@ setDefaults = (fields, resourceType, resource) => {
         ...f,
       };
 
-      Object.keys(merged).forEach(key => {
-        if (typeof merged[key] === 'function') {
-          merged[key] = merged[key](resource);
-        }
-      });
-
-      if (!merged.helpText && !merged.helpKey) {
-        // console.log(`default helpKey for ${merged.id} used`);
-        merged.helpKey = merged.fieldId;
-      }
-
-      // Why can't we do a check for the property directly...
-      // merged['defaultValue']
-      if (!Object.keys(merged).includes('defaultValue')) {
-        // console.log(`default value for ${merged.fieldId} used`);
-        merged.defaultValue = extractValue(merged.fieldId, resource);
-      }
-
-      // if name isn't there
-      if (!merged.name) {
-        merged.name = `/${merged.fieldId.replace(/\./g, '/')}`;
-      }
-
-      // Are fieldIds unique?
-      if (!merged.id) {
-        merged.id = merged.fieldId;
-      }
-
-      return merged;
+      return applyingMissedOutFieldMetaProperties(
+        merged,
+        resource,
+        resourceType
+      );
     })
     .flat();
 };
@@ -192,12 +233,8 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
     });
   }
 
-  const Allfields = setDefaults(fields, resourceType, resource);
-
-  console.log('chekc ', JSON.stringify(Allfields));
-
   return {
-    fields: Allfields,
+    fields: setDefaults(fields, resourceType, resource),
     fieldSets: filled,
   };
 };

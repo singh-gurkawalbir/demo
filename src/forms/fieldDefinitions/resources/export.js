@@ -609,7 +609,6 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    helpText: 'Use this editor to preview how your parse options affect your ',
     label: 'Configure CSV parse options',
     sampleData: r => r.sampleData,
   },
@@ -835,6 +834,10 @@ export default {
   'ftp.backupDirectoryPath': {
     type: 'text',
     label: 'Ftp backup Directory Path',
+  },
+  'ftp.exportSampleDataLabel': {
+    type: 'labelTitle',
+    label: 'What data would you like to Export?',
   },
   // #endregion ftp
   // #region http
