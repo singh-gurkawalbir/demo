@@ -16,10 +16,48 @@ import DownArrow from '../../../icons/DownArrow';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 
-const mapStateToProps = state => ({
-  accounts: selectors.accountSummary(state),
-  userPreferences: selectors.userPreferences(state),
-});
+const mapStateToProps = state => {
+  let accounts = selectors.accountSummary(state);
+  const userPreferences = selectors.userPreferences(state);
+  const productionAccounts = accounts.filter(
+    a => a.environment === 'production'
+  );
+
+  accounts = accounts.map(a => {
+    if (productionAccounts.length === 1) {
+      return {
+        ...a,
+        label: a.environment === 'sandbox' ? 'Sandbox' : 'Production',
+      };
+    } else if (productionAccounts.length > 1) {
+      if (a.environment === 'sandbox') {
+        return {
+          ...a,
+          label: `${a.company} - Sandbox`,
+        };
+      }
+
+      const selectedAccountsSandbox = accounts.find(
+        sa => sa.id === a.id && sa.environment === 'sandbox'
+      );
+
+      return {
+        ...a,
+        label: selectedAccountsSandbox
+          ? `${a.company} - Production`
+          : a.company,
+      };
+    }
+
+    return a;
+  });
+
+  return {
+    accounts,
+    userPreferences,
+  };
+};
+
 const mapDispatchToProps = dispatch => ({
   onAccountChange: (id, environment) => {
     dispatch(actions.user.org.accounts.switchTo({ id, environment }));
@@ -138,8 +176,7 @@ class AccountList extends Component {
             className={classes.currentAccount}
             aria-owns={open ? 'accountList' : null}
             aria-haspopup="true">
-            {selectedAccount &&
-              (selectedAccount.label || selectedAccount.company)}
+            {selectedAccount.label}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
             <DownArrow className={classes.arrow} />

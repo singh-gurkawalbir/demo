@@ -463,27 +463,25 @@ describe('account (ashares) reducers', () => {
           {
             id: 'def',
             environment: 'production',
-            label: 'Celigo Playground - Production',
             company: 'Celigo Playground',
             canLeave: true,
           },
           {
             id: 'def',
-            label: 'Celigo Playground - Sandbox',
+            company: 'Celigo Playground',
             environment: 'sandbox',
             canLeave: false,
           },
           {
             id: 'ghi',
             environment: 'production',
-            label: 'ghi 789 company - Production',
             company: 'ghi 789 company',
             canLeave: true,
           },
           {
             id: 'ghi',
             environment: 'sandbox',
-            label: 'ghi 789 company - Sandbox',
+            company: 'ghi 789 company',
             canLeave: false,
           },
         ];
@@ -501,12 +499,10 @@ describe('account (ashares) reducers', () => {
           {
             id: 'own',
             environment: 'production',
-            label: 'Production',
           },
           {
             id: 'own',
             environment: 'sandbox',
-            label: 'Sandbox',
           },
         ];
         const result = selectors.accountSummary(state);
