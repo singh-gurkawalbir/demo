@@ -23,5 +23,6 @@ describe('Route paths util method', () => {
     expect(getRoutePath('/resources')).toEqual('/pg/resources');
     expect(getRoutePath('something')).toEqual('/pg/something');
     expect(getRoutePath('  something  ')).toEqual('/pg/something');
+    expect(getRoutePath({})).toEqual('/pg/');
   });
 });

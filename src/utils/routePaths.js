@@ -1,8 +1,8 @@
-export default function getRoutePath(path) {
+export default function getRoutePath(path = '') {
   const prefix = '/pg';
   let pagePath = path;
 
-  if (!pagePath || typeof pagePath !== 'string') {
+  if (typeof pagePath !== 'string') {
     pagePath = '';
   }
 
