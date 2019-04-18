@@ -263,6 +263,7 @@ class Edit extends Component {
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
+            connection={connection}
             handleSubmit={patchSet => {
               handlePatchResource(patchSet);
             }}

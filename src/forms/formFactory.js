@@ -15,7 +15,11 @@ import { defaultPatchSetConverter } from './utils';
 //   // SalesforceExport: 'salesForce',
 //   // NetSuiteExport: 'netsuite',
 // };
-const getResourceFormAssets = ({ resourceType, resource }) => {
+
+// TODO: We are considering editing a resource...maybe we should pass in a prop
+// so that the getResourceFromAssets picks out the
+// correct meta data like an enum create, edit
+const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   let fields;
   let fieldSets = [];
   let converter;
@@ -56,7 +60,16 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
         //   exportAdaptorTypeToConnectionType[meta.adaptorType];
 
         // meta = exportAdaptorTypeToConnectionType.edit[connectionType];
-        meta = meta.common;
+        let typeOfConnection;
+
+        if (connection) {
+          typeOfConnection = connection.type;
+        } else {
+          // for simple, distributed, webhooks
+          typeOfConnection = resource.type;
+        }
+
+        meta = meta.edit[typeOfConnection];
 
         if (meta) {
           ({ fields, fieldSets, converter, initializer } = meta);
@@ -110,7 +123,14 @@ const extractValue = (path, resource) => {
 };
 
 const applyVisibilityRulesToForm = (f, resourceType) => {
-  const { fields: fieldsFromForm } = formMeta[resourceType][f.formId];
+  let fieldsFromForm;
+
+  // TODO: We are assuming this factory applies defaults to edit exports
+  // no create export has been considered here
+  if (resourceType === 'exports') {
+    fieldsFromForm = formMeta[resourceType].edit[f.formId].fields;
+    console.log('edit ', formMeta[resourceType].edit[f.formId]);
+  } else fieldsFromForm = formMeta[resourceType][f.formId].fields;
 
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(

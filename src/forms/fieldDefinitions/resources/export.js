@@ -28,6 +28,11 @@ export default {
     // excludeFilter: r => ({ _
     //
   },
+  'ftp.exportFrom': {
+    type: 'labelTitle',
+    label: 'Where would you like to export data from?',
+  },
+
   description: {
     type: 'text',
     label: 'Description',
@@ -68,7 +73,7 @@ export default {
     ],
   },
   dataURITemplate: {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Data URITemplate',
   },
   oneToMany: {
@@ -487,24 +492,50 @@ export default {
   },
   // #endregion distributed
   // #region hooks
+  'ftp.exportHooks': {
+    label: 'Hooks (Optional, Developers Only)',
+    type: 'labelTitle',
+  },
+  hookType: {
+    type: 'radiogroup',
+    label: 'Hook Type',
+    defaultValue: 'script',
+    options: [
+      {
+        items: [
+          { label: 'Script', value: 'script' },
+          { label: 'Stack', value: 'stack' },
+        ],
+      },
+    ],
+  },
   'hooks.preSavePage.function': {
     type: 'text',
     label: 'Hooks pre Save Page function',
   },
   'hooks.preSavePage._scriptId': {
-    type: 'text',
+    type: 'selectresource',
+    resourceType: 'scripts',
+    placeholder: 'Please select a script',
     label: 'Hooks pre Save Page _script Id',
-  },
-  'hooks.preSavePage._stackId': {
-    type: 'text',
-    label: 'Hooks pre Save Page _stack Id',
   },
   'hooks.preSavePage.configuration': {
     type: 'text',
     label: 'Hooks pre Save Page configuration',
   },
+  'hooks.preSavePage._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Hooks pre Save Page _stack Id',
+  },
+
   // #endregion hooks
   // #region transform
+  'ftp.exportTransformRecords': {
+    label: 'Would you like to transform the records?',
+    type: 'labelTitle',
+  },
   'transform.expression.rules': {
     type: 'transformeditor',
     label: 'Transform expression rules',
@@ -555,6 +586,15 @@ export default {
   },
   // #endregion filter
   // #region file
+  csvFile: {
+    label: 'Sample File (that would be exported):',
+    type: 'uploadFile',
+  },
+  'file.extractFile': {
+    type: 'checkbox',
+    label: 'Decompress Files',
+  },
+
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
@@ -600,10 +640,10 @@ export default {
   },
   'file.skipDelete': {
     type: 'checkbox',
-    label: 'File skip Delete',
+    label: 'Leave File On Server',
   },
   'file.compressionFormat': {
-    type: 'radiogroup',
+    type: 'checkbox',
     label: 'File compression Format',
     options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
   },

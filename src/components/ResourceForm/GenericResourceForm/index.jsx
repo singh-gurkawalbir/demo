@@ -39,6 +39,7 @@ export default class ResourceForm extends Component {
       resource,
       handleSubmit,
       children,
+      connection,
       ...rest
     } = this.props;
     let fieldMeta;
@@ -47,10 +48,13 @@ export default class ResourceForm extends Component {
 
     if (resource.customForm && resource.customForm.form) {
       // this resource has an embedded custom form.
+      // TODO: will there be an associated connection for this custom form
+      // because you create an export based on a connection
       fieldMeta = factory.getFieldsWithDefaults(
         resource.customForm.form,
         resourceType,
-        resource
+        resource,
+        connection
       );
       handleClick = value => {
         // eslint-disable-next-line no-console
@@ -61,6 +65,7 @@ export default class ResourceForm extends Component {
       const assets = factory.getResourceFormAssets({
         resourceType,
         resource,
+        connection,
       });
 
       ({ optionsHandler } = assets);

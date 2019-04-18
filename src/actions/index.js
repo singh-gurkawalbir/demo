@@ -5,6 +5,8 @@ export const availableResources = [
   'imports',
   'connections',
   'agents',
+  'scripts',
+  'stacks',
 ];
 
 // These are redux action "creators". Actions are reusable by any
