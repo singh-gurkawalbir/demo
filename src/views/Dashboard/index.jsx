@@ -8,7 +8,7 @@ import Tile from './Tile';
 
 const mapStateToProps = state => {
   const userPreferences = selectors.userPreferences(state);
-  const resources = selectors.resourceList(state, {
+  const tiles = selectors.resourceList(state, {
     type: 'tiles',
     sandbox: userPreferences.environment === 'sandbox',
   });
@@ -20,7 +20,7 @@ const mapStateToProps = state => {
   });
 
   return {
-    tiles: resources.resources,
+    tiles: tiles.resources,
     integrations: integrations.resources,
     published: published.resources,
   };
@@ -49,7 +49,7 @@ class Dashboard extends Component {
 
     const connectorTiles = tiles.filter(t => t._connectorId);
 
-    if (connectorTiles && !published.length) {
+    if (connectorTiles.length && !published.length) {
       return null;
     }
 
@@ -79,7 +79,4 @@ class Dashboard extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

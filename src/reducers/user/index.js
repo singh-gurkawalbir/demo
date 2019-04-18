@@ -69,7 +69,7 @@ export function accessLevel(state) {
       const account = accounts.find(a => a._id === defaultAShareId);
 
       if (account) {
-        ({ accessLevel } = account);
+        ({ accessLevel = 'tile' } = account);
       }
     }
   }

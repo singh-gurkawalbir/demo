@@ -346,6 +346,56 @@ export function getOneValidSharedAccountId(state) {
 export function userAccessLevel(state) {
   return fromUser.accessLevel(state.user);
 }
+
+export function userPermissionsOnIntegration(state, integrationId) {
+  const accountLevelManagePermissions = {
+    canDelete: true,
+  };
+  const tileLevelManagePermissions = {
+    accessLevel: 'manage',
+  };
+  const monitorPermissions = {
+    accessLevel: 'monitor',
+  };
+  let accessLevel = userAccessLevel(state);
+
+  if (['owner', 'manage'].includes(accessLevel)) {
+    return { ...tileLevelManagePermissions, ...accountLevelManagePermissions };
+  }
+
+  let permissions = {};
+  const preferences = userPreferences(state);
+
+  if (['monitor', 'tile'].includes(accessLevel)) {
+    if (state && state.user && state.user.org && state.user.org.accounts) {
+      const currentAccount = state.user.org.accounts.find(
+        a => a._id === preferences.defaultAShareId
+      );
+
+      if (currentAccount && currentAccount.integrationAccessLevel) {
+        const integration = currentAccount.integrationAccessLevel.find(
+          al => al._integrationId === integrationId
+        );
+
+        if (integration) {
+          ({ accessLevel } = integration);
+        } else if (accessLevel === 'tile') {
+          accessLevel = undefined;
+        }
+      }
+    }
+  }
+
+  if (accessLevel) {
+    permissions = monitorPermissions;
+
+    if (accessLevel === 'manage') {
+      permissions = { ...permissions, ...tileLevelManagePermissions };
+    }
+  }
+
+  return permissions;
+}
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS

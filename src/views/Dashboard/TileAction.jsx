@@ -9,21 +9,19 @@ import Avatar from '@material-ui/core/Avatar';
     color: '#fff',
     width: 24,
     height: 24,
-  },
-  SUCCESS: {
     backgroundColor: '#6CC706',
   },
-  ERRORS: {
+  HAS_ERRORS: {
     backgroundColor: '#F53D05',
   },
-  PENDING_SETUP: {
+  IS_PENDING_SETUP: {
     backgroundColor: '#000000',
   },
-  OFFLINE_CONNECTIONS: {
+  HAS_OFFLINE_CONNECTIONS: {
     backgroundColor: '#F53D05',
   },
 }))
-export default class ActionButton extends Component {
+export default class TileAction extends Component {
   state = { hover: false };
   handleOnMouseOver = () => {
     this.setState({ hover: true });
@@ -32,34 +30,21 @@ export default class ActionButton extends Component {
     this.setState({ hover: false });
   };
   render() {
-    const { classes, data } = this.props;
+    const { classes, status, data } = this.props;
     const { hover } = this.state;
     let label;
-    let status;
-
-    if (
-      data._connectorId &&
-      data.integration &&
-      data.integration.mode !== 'settings'
-    ) {
-      status = 'PENDING_SETUP';
-    } else if (data.offlineConnections && data.offlineConnections.length > 0) {
-      status = 'OFFLINE_CONNECTIONS';
-    } else if (data.numError && data.numError > 0) {
-      status = 'ERRORS';
-    } else {
-      status = 'SUCCESS';
-    }
 
     switch (status) {
-      case 'PENDING_SETUP':
+      case 'IS_PENDING_SETUP':
         label = hover ? 'Continue Setup' : 'Pending Setup';
         break;
-      case 'OFFLINE_CONNECTIONS':
+      case 'HAS_OFFLINE_CONNECTIONS':
         label = hover ? 'Fix Connection' : 'Connection Down';
         break;
-      case 'ERRORS':
-        label = hover ? 'View Errors' : 'Errors';
+      case 'HAS_ERRORS':
+        label = hover
+          ? 'View Errors'
+          : `${data.numError} Error${data.numError > 0 ? 's' : ''}`;
         break;
       default:
         label = hover ? 'View Dashboard' : 'Success';
@@ -74,7 +59,7 @@ export default class ActionButton extends Component {
           onFocus={this.handleOnMouseOver}
           onMouseOut={this.handleOnMouseOut}
           onBlur={this.handleOnMouseOut}>
-          <Avatar className={[classes[status], classes.default]} />
+          <Avatar className={[classes.default, classes[status]].join(' ')} />
           {label}
         </Button>
       </Fragment>
