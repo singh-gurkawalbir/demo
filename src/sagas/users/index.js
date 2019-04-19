@@ -213,6 +213,52 @@ export function* rejectAccountInvite({ id }) {
   }
 }
 
+export function* switchAccount({ id, environment }) {
+  const userPreferences = yield select(selectors.userPreferences);
+
+  try {
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment,
+      })
+    );
+  } catch (ex) {
+    return yield put(
+      actions.api.failure('switch account', 'Could not switch account')
+    );
+  }
+
+  if (userPreferences.defaultAShareId !== id) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  }
+}
+
+export function* leaveAccount({ id }) {
+  const path = `/shared/ashares/${id}`;
+  const opts = { method: 'DELETE', body: {} };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Leaving account',
+    });
+  } catch (e) {
+    return yield put(actions.api.failure(path, 'Could not leave account'));
+  }
+
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (userPreferences.defaultAShareId === id) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  } else {
+    yield put(actions.resource.requestCollection('shared/ashares'));
+  }
+}
+
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -222,4 +268,6 @@ export const userSagas = [
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
   takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
   takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
+  takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
+  takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
 ];
