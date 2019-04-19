@@ -144,9 +144,8 @@ export function integratorLicense(state, accountId) {
     return null;
   }
 
-  if (!ioLicense.sandbox) {
-    ioLicense.sandbox = ioLicense.numSandboxAddOnFlows > 0;
-  }
+  ioLicense.hasSandbox =
+    ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
   if (ioLicense.expires) {
     ioLicense.status =
@@ -187,13 +186,14 @@ export function sharedAccounts(state) {
     if (!a.ownerUser || !a.ownerUser.licenses) return;
 
     const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    const sandbox = ioLicense && ioLicense.sandbox;
+    const hasSandbox =
+      ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0);
 
     shared.push({
       id: a._id,
       company: a.ownerUser.company,
       email: a.ownerUser.email,
-      sandbox,
+      hasSandbox,
     });
   });
 
@@ -211,14 +211,12 @@ export function accountSummary(state) {
       accounts.push({
         id: 'own',
         environment: 'production',
-        label: 'Production',
       });
 
-      if (ownLicense.sandbox) {
+      if (ownLicense.hasSandbox) {
         accounts.push({
           id: 'own',
           environment: 'sandbox',
-          label: 'Sandbox',
         });
       }
     }
@@ -227,24 +225,24 @@ export function accountSummary(state) {
   }
 
   shared.forEach(a => {
-    if (a.sandbox) {
+    if (a.hasSandbox) {
       accounts.push({
         id: a.id,
         environment: 'production',
-        label: `${a.company} - Production`,
+        company: a.company,
         canLeave: shared.length > 1,
       });
       accounts.push({
         id: a.id,
         environment: 'sandbox',
-        label: `${a.company} - Sandbox`,
+        company: a.company,
         canLeave: false,
       });
     } else {
       accounts.push({
         id: a.id,
         environment: 'production',
-        label: a.company,
+        company: a.company,
         canLeave: shared.length > 1,
       });
     }
