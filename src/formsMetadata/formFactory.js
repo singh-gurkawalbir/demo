@@ -29,6 +29,12 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
 
       break;
 
+    // TODO: bug here... we need to check connection for sub-type.
+    //  in case of NS, we have WS and restlet (conn.type=NS, but
+    //  this is not enough... some other imp/exp prop is needed.
+    //  Maybe presence of subschema)
+    // !!!! exp.ns.restlet.searchId = restlet else WS.
+    // !!!! imp.ns._da.recordType
     case 'imports':
     case 'exports':
       meta = formMeta[resourceType];
