@@ -173,7 +173,7 @@ export function isAuthLoading(state) {
   return !!(state && state.auth && state.auth.loading);
 }
 
-export function isUserLoggedOut(state) {
+export function isUserLoggedIn(state) {
   return !!(state && state.auth);
 }
 

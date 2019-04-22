@@ -11,8 +11,8 @@ import parsers from './parsers';
 import filter from './filter';
 import file from './file';
 import rest from './rest';
-// import ftp from './ftp';
-import edit from './edit';
+import ftp from './ftp';
+import subForms from './subForms';
 import http from './http';
 import netsuite from './netsuite';
 import rdbms from './rdbms';
@@ -37,8 +37,9 @@ export default {
   parsers,
   filter,
   file,
+  ftp,
   rest,
-  edit,
+  subForms,
   http,
   netsuite,
   rdbms,

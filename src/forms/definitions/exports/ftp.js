@@ -1,11 +1,31 @@
 export default {
   fields: [
-    { fieldId: 'ftp.directoryPath' },
-    { fieldId: 'ftp.fileNameStartsWith' },
-    { fieldId: 'ftp.fileNameEndsWith' },
-    { fieldId: 'ftp.backupDirectoryPath' },
-    { fieldId: 'ftp.exportSampleDataLabel' },
+    { formId: 'common' },
+    // { fieldId: 'ftp.directoryPath' },
+    // { fieldId: 'ftp.fileNameStartsWith' },
+    // { fieldId: 'ftp.fileNameEndsWith' },
+    // { fieldId: 'ftp.backupDirectoryPath' },
+    // { fieldId: 'ftp.exportSampleDataLabel' },
     { formId: 'file' },
+    { fieldId: 'ftp.exportTransformRecords' },
+    { fieldId: 'transform.expression.rules' },
+    { fieldId: 'ftp.exportHooks' },
+    { formId: 'hooks' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [
+        {
+          fieldId: 'file.compressionFormat',
+        },
+        { fieldId: 'file.skipDelete' },
+        { fieldId: 'file.encoding' },
+
+        { fieldId: 'pageSize' },
+        { fieldId: 'dataURITemplate' },
+      ],
+    },
+  ],
 };

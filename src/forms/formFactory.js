@@ -7,15 +7,6 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
 import { defaultPatchSetConverter } from './utils';
 
-// // webhook is of type not adaptor type
-// const exportAdaptorTypeToConnectionType = {
-//   FTPExport: 'ftp',
-//   HTTPExport: 'http',
-//   RESTExport: 'rest',
-//   // SalesforceExport: 'salesForce',
-//   // NetSuiteExport: 'netsuite',
-// };
-
 // TODO: We are considering editing a resource...maybe we should pass in a prop
 // so that the getResourceFromAssets picks out the
 // correct meta data like an enum create, edit
@@ -69,7 +60,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
           typeOfConnection = resource.type;
         }
 
-        meta = meta.edit[typeOfConnection];
+        meta = meta[typeOfConnection];
 
         if (meta) {
           ({ fields, fieldSets, converter, initializer } = meta);
@@ -122,15 +113,10 @@ const extractValue = (path, resource) => {
   return value;
 };
 
-const applyVisibilityRulesToForm = (f, resourceType) => {
-  let fieldsFromForm;
-
+const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // TODO: We are assuming this factory applies defaults to edit exports
   // no create export has been considered here
-  if (resourceType === 'exports') {
-    fieldsFromForm = formMeta[resourceType].edit[f.formId].fields;
-    console.log('edit ', formMeta[resourceType].edit[f.formId]);
-  } else fieldsFromForm = formMeta[resourceType][f.formId].fields;
+  const fieldsFromForm = formMeta[resourceType].subForms[f.formId].fields;
 
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(
@@ -210,7 +196,7 @@ const setDefaults = (fields, resourceType, resource) => {
   return fields
     .map(f => {
       if (f.formId) {
-        const fieldMetaHavingVisibilityRules = applyVisibilityRulesToForm(
+        const fieldMetaHavingVisibilityRules = applyVisibilityRulesToSubForm(
           f,
           resourceType
         );
@@ -242,7 +228,7 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
-  if (fieldSets) {
+  if (fieldSets && fieldSets.length > 0) {
     fieldSets.forEach(set => {
       const { fields, ...rest } = set;
 

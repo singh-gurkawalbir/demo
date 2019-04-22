@@ -19,7 +19,7 @@ const mapStateToProps = state => ({
   themeName: selectors.themeName(state),
   isAuthInitialized: selectors.isAuthInitialized(state),
   isAuthErrored: !!selectors.authenticationErrored(state),
-  isUserLoggedOut: selectors.isUserLoggedOut(state),
+  isUserLoggedIn: selectors.isUserLoggedIn(state),
   isAuthLoading: selectors.isAuthLoading(state),
   allLoadingOrErrored: selectors.allLoadingOrErrored(state),
   isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
@@ -86,12 +86,13 @@ class App extends Component {
     const {
       themeName,
       isAuthInitialized,
-      isUserLoggedOut,
+      isUserLoggedIn,
       isAuthErrored,
       isAuthLoading,
       reloadCount,
     } = this.props;
     const customTheme = themeProvider(themeName);
+    const isUserAuthenticatedOrFailed = !isAuthLoading && isAuthInitialized;
 
     // increment key to remount the app
     return (
@@ -104,8 +105,8 @@ class App extends Component {
             <AppBar themeName={themeName} />
             <AuthDialog />
 
-            {((!isAuthLoading && isAuthInitialized) ||
-              !isUserLoggedOut ||
+            {(isUserAuthenticatedOrFailed ||
+              !isUserLoggedIn ||
               isAuthErrored) && <AppRouting />}
           </Fragment>
         </BrowserRouter>
