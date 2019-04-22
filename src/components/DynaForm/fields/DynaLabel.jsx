@@ -15,7 +15,8 @@ import helpTextMap from '../../Help/helpTextMap';
   },
 
   textField: {
-    marginTop: theme.spacing.double,
+    paddingTop: theme.spacing.double,
+    paddingBottom: theme.spacing.double,
     display: 'inline-block',
     fontSize: theme.typography.fontSize * 1.5,
   },
@@ -54,7 +55,6 @@ class LabelElement extends React.Component {
           className={classes.textField}>
           {label}
         </Typography>
-        <hr />
       </Fragment>
     );
   }

@@ -17,15 +17,8 @@ export default {
       header: 'Advanced Settings',
       collapsed: true,
       fields: [
-        { fieldId: 'file.extractFile' },
         {
           fieldId: 'file.compressionFormat',
-          visibleWhenAll: [
-            {
-              field: 'file.extractFile',
-              is: [true],
-            },
-          ],
         },
         { fieldId: 'file.skipDelete' },
         { fieldId: 'file.encoding' },

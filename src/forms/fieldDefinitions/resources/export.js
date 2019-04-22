@@ -590,10 +590,6 @@ export default {
     label: 'Sample File (that would be exported):',
     type: 'uploadFile',
   },
-  'file.extractFile': {
-    type: 'checkbox',
-    label: 'Decompress Files',
-  },
 
   'file.encoding': {
     type: 'select',
@@ -642,9 +638,10 @@ export default {
     type: 'checkbox',
     label: 'Leave File On Server',
   },
+
   'file.compressionFormat': {
     type: 'checkbox',
-    label: 'File compression Format',
+    label: 'Decompress files of Gzip file format',
     options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
   },
   'file.csv': {
