@@ -588,7 +588,7 @@ export default {
     'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single export record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.xlsx.hasHeaderRow':
     'Set this field to true if the files you are exporting contain a top level header row.  Saying this another way, if the very first row in the CSV files being exported is reserved for column names (and not actual data) then set this field to true.',
-  'export.ftp.exportSampleDataLabel':
+  'export.exportData':
     'Over here you can specify how you would like to export data.',
   'export.ftp.directoryPath':
     "Use this field to specify the directory path of the FTP folder containing the files that you want to export.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then export all files from the child folder 'Orders'.  Please note that by default integrator.io will export all files in the folder, and also delete them from the folder once the export completes.   Copies of the original files will be stored in integrator.io for a maximum of 30 days, and can be exported from the jobs dashboard.  You can also (optionally) configure integrator.io to leave files on the FTP server, or to only export files that match a certain 'starts with' or 'ends with' name pattern.",

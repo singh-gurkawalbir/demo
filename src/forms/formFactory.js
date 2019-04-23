@@ -7,6 +7,57 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
 import { defaultPatchSetConverter } from './utils';
 
+const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
+  fields.forEach(field => {
+    const { formId } = field;
+
+    if (formId) {
+      const { optionsHandler: foundOptionsHandler, fields } = formMeta[
+        resourceType
+      ].subForms[formId];
+
+      // Is it necessary to make a deepClone
+      if (optionsHandler)
+        optionsHandler.push({
+          label: formId,
+          optionsHandler: deepClone(foundOptionsHandler),
+        });
+
+      return getAllOptionsHandlerSubForms(fields, resourceType, optionsHandler);
+    }
+  });
+
+  return optionsHandler;
+};
+
+const getAmalgamatedOptionsHandler = (
+  typeOfConnection,
+  resource,
+  meta,
+  fields,
+  resourceType
+) => {
+  const labelOptionsHandler = typeOfConnection || resource.type;
+  const allOptionsHandler = getAllOptionsHandlerSubForms(fields, resourceType, [
+    { label: labelOptionsHandler, optionsHandler: meta.optionsHandler },
+  ]);
+  const optionsHandler = (fieldId, fields) => {
+    const res = {};
+
+    allOptionsHandler.forEach(indvOptionsHandler => {
+      const { label, optionsHandler } = indvOptionsHandler;
+
+      if (optionsHandler) {
+        res[label] = optionsHandler(fieldId, fields);
+      }
+    });
+
+    return res;
+  };
+
+  return optionsHandler;
+};
+
 // TODO: We are considering editing a resource...maybe we should pass in a prop
 // so that the getResourceFromAssets picks out the
 // correct meta data like an enum create, edit
@@ -16,6 +67,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   let converter;
   let initializer;
   let meta;
+  let typeOfConnection;
 
   // console.log(resourceType, connection, resource);
   // Formmeta fromMeta[resourceType][connectionType]
@@ -51,7 +103,6 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
         //   exportAdaptorTypeToConnectionType[meta.adaptorType];
 
         // meta = exportAdaptorTypeToConnectionType.edit[connectionType];
-        let typeOfConnection;
 
         if (connection) {
           typeOfConnection = connection.type;
@@ -73,7 +124,13 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       break;
   }
 
-  const { optionsHandler } = meta;
+  const optionsHandler = getAmalgamatedOptionsHandler(
+    typeOfConnection,
+    resource,
+    meta,
+    fields,
+    resourceType
+  );
 
   return {
     fieldMeta: { fields, fieldSets },
@@ -182,7 +239,6 @@ const applyingMissedOutFieldMetaProperties = (
     field.name = `/${field.fieldId.replace(/\./g, '/')}`;
   }
 
-  // Are fieldIds unique?
   if (!field.id) {
     field.id = field.fieldId;
   }

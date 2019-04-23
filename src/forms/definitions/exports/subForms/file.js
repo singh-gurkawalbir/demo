@@ -1,6 +1,6 @@
 export default {
   fields: [
-    { fieldId: 'ftp.exportSampleDataLabel' },
+    { fieldId: 'exportData' },
     { fieldId: 'file.type' },
     { fieldId: 'file.output' },
     { fieldId: 'file.skipDelete' },

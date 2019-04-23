@@ -45,6 +45,10 @@ export default {
     type: 'text',
     label: 'Api Identifier',
   },
+  configureAsyncHelper: {
+    type: 'checkbox',
+    label: 'Configure Async Helper',
+  },
   type: {
     type: 'select',
     label: 'Type',
@@ -57,8 +61,8 @@ export default {
           { label: 'Delta', value: 'delta' },
           { label: 'Once', value: 'once' },
           { label: 'Tranlinedelta', value: 'tranlinedelta' },
-          { label: 'Simple', value: 'simple' },
-          { label: 'Blob', value: 'blob' },
+          { label: 'Simple', value: 'simple' }, // dataloader
+          { label: 'Blob', value: 'blob' }, // attachments
         ],
       },
     ],
@@ -872,7 +876,7 @@ export default {
     type: 'text',
     label: 'Ftp backup Directory Path',
   },
-  'ftp.exportSampleDataLabel': {
+  exportData: {
     type: 'labelTitle',
     label: 'What data would you like to Export?',
   },

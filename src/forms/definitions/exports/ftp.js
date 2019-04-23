@@ -5,7 +5,7 @@ export default {
     // { fieldId: 'ftp.fileNameStartsWith' },
     // { fieldId: 'ftp.fileNameEndsWith' },
     // { fieldId: 'ftp.backupDirectoryPath' },
-    // { fieldId: 'ftp.exportSampleDataLabel' },
+    // { fieldId: 'exportData' },
     { formId: 'file' },
     { fieldId: 'ftp.exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
