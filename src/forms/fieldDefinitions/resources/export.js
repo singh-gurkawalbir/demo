@@ -49,6 +49,21 @@ export default {
     type: 'checkbox',
     label: 'Configure Async Helper',
   },
+  allConnectionsExportType: {
+    type: 'select',
+    helpId: 'export.type',
+    label: 'Type',
+    options: [
+      {
+        items: [
+          { label: 'All', value: 'all' },
+          { label: 'Test', value: 'test' },
+          { label: 'Delta', value: 'delta' },
+          { label: 'Once', value: 'once' },
+        ],
+      },
+    ],
+  },
   type: {
     type: 'select',
     label: 'Type',
@@ -1263,7 +1278,8 @@ export default {
   // #endregion netsuite
   // #region rdbms
   'rdbms.query': {
-    type: 'text',
+    type: 'editor',
+    mode: 'sql',
     label: 'Rdbms query',
   },
   'rdbms.once.query': {

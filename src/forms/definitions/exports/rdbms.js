@@ -7,13 +7,12 @@ export default {
       label: 'What would you like to export from rdbms ?',
     },
     { fieldId: 'rdbms.query' },
-    { fieldId: 'type' },
-
+    { fieldId: 'allConnectionsExportType' },
     {
       fieldId: 'rdbms.once.query',
       visibleWhen: [
         {
-          field: 'type',
+          field: 'allConnectionsExportType',
           is: ['once'],
         },
       ],

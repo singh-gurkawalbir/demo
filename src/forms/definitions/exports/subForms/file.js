@@ -1,8 +1,27 @@
 export default {
+  optionsHandler(fieldId, fields) {
+    if (fieldId === 'uploadFile') {
+      const uploadFileField = fields.find(
+        field => field.fieldId === 'uploadFile'
+      );
+
+      // if there is a uploadFileField in the form meta
+      // then provide the file type if not return null
+      // then the prevelant mode value will take over
+      if (uploadFileField) {
+        const fileTypeField = fields.find(
+          field => field.fieldId === 'file.type'
+        );
+
+        return fileTypeField.value.toLowerCase();
+      }
+    }
+  },
   fields: [
     { fieldId: 'exportData' },
     { fieldId: 'file.type' },
     { fieldId: 'file.output' },
+    { fieldId: 'uploadFile', refreshOptionsOnChangesTo: 'file.type' },
     { fieldId: 'file.skipDelete' },
     {
       fieldId: 'file.csv.columnDelimiter',

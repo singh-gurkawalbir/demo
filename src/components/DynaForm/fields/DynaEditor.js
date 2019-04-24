@@ -61,10 +61,10 @@ class EditorField extends Component {
   // Options handler would return the selected file type we would use that
   // and inject it as the mode of the editor so that syntax formating would work
   // according to the file format
-  getFileType = props => {
-    const { options, mode } = props;
+  getFileType = () => {
+    const { options, mode } = this.props;
 
-    if (options) return options[0];
+    if (options && options.file) return options.file;
 
     return mode;
   };
@@ -80,7 +80,7 @@ class EditorField extends Component {
       errorMessages,
       isValid,
     } = this.props;
-    const mode = this.getFileType(this.props);
+    const mode = this.getFileType();
     const editorDialog = (
       <Dialog
         open
