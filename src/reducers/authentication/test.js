@@ -82,7 +82,7 @@ describe('authentication reducers', () => {
       const newState = reducer(undefined, actions.auth.failure(someFailureMsg));
 
       expect(newState).toEqual({
-        initialized: false,
+        initialized: true,
 
         loading: false,
         authenticated: false,

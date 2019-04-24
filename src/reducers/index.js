@@ -184,10 +184,8 @@ export function isAuthStateStable(state) {
   const isAuthSucceededOrFailedAfterIntialization =
     !isAuthLoading(state) && isAuthInitialized(state);
 
-  return (
-    isAuthSucceededOrFailedAfterIntialization ||
-    !isUserLoggedIn(state) ||
-    authenticationErrored(state)
+  return !!(
+    isAuthSucceededOrFailedAfterIntialization || !isUserLoggedIn(state)
   );
 }
 

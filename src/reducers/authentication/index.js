@@ -30,6 +30,8 @@ export default function(state = { initialized: false }, action) {
         newState.sessionExpired = true;
       }
 
+      newState.initialized = true;
+
       newState.authenticated = false;
 
       return newState;

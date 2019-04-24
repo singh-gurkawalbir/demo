@@ -165,23 +165,30 @@ export function* initializeApp() {
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
     } else {
-      yield put(actions.auth.logout());
+      // existing session is invalid
+      yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
     }
   } catch (e) {
     yield put(actions.auth.logout());
   }
 }
 
-export function* invalidateSession() {
+export function* invalidateSession({ isExistingSessionInvalid = false }) {
   try {
     const _csrf = yield call(getCSRFToken);
     const logoutOpts = { ...logoutParams.opts, body: { _csrf } };
 
-    yield call(apiCallWithRetry, {
-      path: logoutParams.path,
-      opts: logoutOpts,
-      message: 'Logging out user',
-    });
+    // if existing session is valid lets
+    // go ahead and make an api call to invalidate the session
+    // otherwise skip it
+    if (!isExistingSessionInvalid) {
+      yield call(apiCallWithRetry, {
+        path: logoutParams.path,
+        opts: logoutOpts,
+        message: 'Logging out user',
+      });
+    }
+
     yield call(removeCSRFToken);
     yield put(actions.auth.clearStore());
   } catch (e) {

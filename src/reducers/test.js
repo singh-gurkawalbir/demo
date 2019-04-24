@@ -109,7 +109,66 @@ describe('global selectors', () => {
     });
   });
 });
+describe('authentication selectors', () => {
+  test('isAuthInitialized should be false when the app loads for the very first time and subsequently should be sucessfully set to true for auth failure or success', () => {
+    const initiaizedState = reducer(undefined, { type: null });
 
+    expect(selectors.isAuthInitialized(initiaizedState)).toBe(false);
+
+    const authSucceededState = reducer(
+      initiaizedState,
+      actions.auth.complete()
+    );
+
+    expect(selectors.isAuthInitialized(authSucceededState)).toBe(true);
+    const authFailedState = reducer(initiaizedState, actions.auth.failure());
+
+    expect(selectors.isAuthInitialized(authFailedState)).toBe(true);
+  });
+
+  test('isUserLoggedIn should be set to true when the user logs out and for any other state it should be set to true ', () => {
+    const initiaizedState = reducer(undefined, { type: null });
+
+    expect(selectors.isUserLoggedIn(initiaizedState)).toBe(true);
+    // the user logout saga ultimately disptaches a clear store action
+    const loggedOutState = reducer(initiaizedState, actions.auth.clearStore());
+
+    expect(selectors.isUserLoggedIn(loggedOutState)).toBe(false);
+  });
+
+  describe('isAuthStateStable selector', () => {
+    test('when app intializing should be set to false but ultimately set to true when authentication cookie test succeeds or fails', () => {
+      const initiaizedState = reducer(undefined, { type: null });
+
+      expect(selectors.isAuthStateStable(initiaizedState)).toBe(false);
+
+      const authStateSucceeded = reducer(
+        initiaizedState,
+        actions.auth.complete()
+      );
+
+      expect(selectors.isAuthStateStable(authStateSucceeded)).toBe(true);
+
+      const authStateFailed = reducer(initiaizedState, actions.auth.failure());
+
+      expect(selectors.isAuthStateStable(authStateFailed)).toBe(true);
+    });
+
+    test('when app is logged out that may falsely be construed as a loading state hence signin route will never show up so isAuthStateStable should be true', () => {
+      const authStateSucceeded = reducer(undefined, actions.auth.complete());
+
+      expect(selectors.isAuthStateStable(authStateSucceeded)).toBe(true);
+
+      const userLogoutState = reducer(
+        authStateSucceeded,
+        actions.auth.logout()
+      );
+
+      // now signin route gets rendered
+      expect(selectors.isAuthStateStable(userLogoutState)).toBe(true);
+    });
+  });
+});
 describe('Reducers in the root reducer', () => {
   test('should wipe out the redux store in a user logout action', () => {
     const someInitialState = {
