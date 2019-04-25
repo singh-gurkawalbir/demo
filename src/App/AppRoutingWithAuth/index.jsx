@@ -29,14 +29,17 @@ class AppRoutingWithAuth extends Component {
   }
 
   render() {
+    const { isAuthStateStable } = this.props;
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
-    const {
-      location,
-      attemptedUrl,
-      clearAttemptedUrl,
-      isAuthStateStable,
-    } = this.props;
+
+    if (!isAuthStateStable) return null;
+
+    return <AppRouting />;
+  }
+
+  componentDidUpdate() {
+    const { location, attemptedUrl, clearAttemptedUrl } = this.props;
     const redirectedFrom = location && location.referer;
 
     // if i am redirected from the signin page and
@@ -48,13 +51,7 @@ class AppRoutingWithAuth extends Component {
     // pure function of props and state.
     if (location.pathname === attemptedUrl && redirectedFrom === '/pg/signin') {
       clearAttemptedUrl();
-
-      return null;
     }
-
-    if (!isAuthStateStable) return null;
-
-    return <AppRouting />;
   }
 }
 
