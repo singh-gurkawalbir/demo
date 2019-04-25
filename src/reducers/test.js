@@ -110,7 +110,7 @@ describe('global selectors', () => {
   });
 });
 describe('authentication selectors', () => {
-  test('isAuthInitialized should be false when the app loads for the very first time and subsequently should be sucessfully set to true for auth failure or success', () => {
+  test('isAuthInitialized selector should be false when the app loads for the very first time and subsequently should be sucessfully set to true for auth failure or success', () => {
     const initiaizedState = reducer(undefined, { type: null });
 
     expect(selectors.isAuthInitialized(initiaizedState)).toBe(false);
@@ -126,7 +126,7 @@ describe('authentication selectors', () => {
     expect(selectors.isAuthInitialized(authFailedState)).toBe(true);
   });
 
-  test('isUserLoggedIn should be set to true when the user logs out and for any other state it should be set to true ', () => {
+  test('isUserLoggedIn selector should be set to false when the user logs out and for any other state it should be set to true ', () => {
     const initiaizedState = reducer(undefined, { type: null });
 
     expect(selectors.isUserLoggedIn(initiaizedState)).toBe(true);
@@ -137,7 +137,10 @@ describe('authentication selectors', () => {
   });
 
   describe('isAuthStateStable selector', () => {
-    test('when app intializing should be set to false but ultimately set to true when authentication cookie test succeeds or fails', () => {
+    //  when the app is intializing isAuthStateStable selctor
+    // should be set to false but ultimately set to
+    // true when authentication cookie test succeeds or fails
+    test('isAuthStateStable should be false during app initialization but set to true after the auth test ', () => {
       const initiaizedState = reducer(undefined, { type: null });
 
       expect(selectors.isAuthStateStable(initiaizedState)).toBe(false);
@@ -153,8 +156,10 @@ describe('authentication selectors', () => {
 
       expect(selectors.isAuthStateStable(authStateFailed)).toBe(true);
     });
-
-    test('when app is logged out that may falsely be construed as a loading state hence signin route will never show up so isAuthStateStable should be true', () => {
+    // when app is logged out, that may falsely be construed as a loading
+    // state hence signin route will never show up, so isAuthStateStable
+    // should be true
+    test('should be true whe the user is logged out', () => {
       const authStateSucceeded = reducer(undefined, actions.auth.complete());
 
       expect(selectors.isAuthStateStable(authStateSucceeded)).toBe(true);

@@ -173,7 +173,7 @@ export function* initializeApp() {
   }
 }
 
-export function* invalidateSession({ isExistingSessionInvalid = false }) {
+export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   try {
     const _csrf = yield call(getCSRFToken);
     const logoutOpts = { ...logoutParams.opts, body: { _csrf } };

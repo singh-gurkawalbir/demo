@@ -405,7 +405,7 @@ describe('initialize app saga', () => {
 
 describe('invalidate session app', () => {
   test('Should invalidate session when user attempts to logout ', () => {
-    const saga = invalidateSession({});
+    const saga = invalidateSession();
     const getCSRFTokenEffect = saga.next().value;
 
     expect(getCSRFTokenEffect).toEqual(expect.anything());
@@ -431,7 +431,9 @@ describe('invalidate session app', () => {
   });
 
   test('should invalid session but skip the signout call when the existing session is invalid', () => {
-    const saga = invalidateSession({ isExistingSessionInvalid: true });
+    const saga = invalidateSession({
+      isExistingSessionInvalid: true,
+    });
     const getCSRFTokenEffect = saga.next().value;
 
     expect(getCSRFTokenEffect).toEqual(expect.anything());
@@ -446,7 +448,7 @@ describe('invalidate session app', () => {
   });
 
   test('Should invalidate session when user attempts to logout irrespective of any api failure', () => {
-    const saga = invalidateSession({});
+    const saga = invalidateSession();
     const getCSRFTokenEffect = saga.next().value;
 
     expect(getCSRFTokenEffect).toEqual(expect.anything());
