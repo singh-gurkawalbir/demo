@@ -434,10 +434,6 @@ describe('invalidate session app', () => {
     const saga = invalidateSession({
       isExistingSessionInvalid: true,
     });
-    const getCSRFTokenEffect = saga.next().value;
-
-    expect(getCSRFTokenEffect).toEqual(expect.anything());
-
     const removeCSRFTokenEffect = saga.next().value;
 
     expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));
