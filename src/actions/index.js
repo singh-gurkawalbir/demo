@@ -16,7 +16,10 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  logout: () => action(actionTypes.USER_LOGOUT),
+  logout: isExistingSessionInvalid =>
+    action(actionTypes.USER_LOGOUT, {
+      isExistingSessionInvalid,
+    }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
