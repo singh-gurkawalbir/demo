@@ -223,15 +223,15 @@ export function* switchAccount({ id, environment }) {
         environment,
       })
     );
-
-    if (userPreferences.defaultAShareId !== id) {
-      yield put(actions.auth.clearStore());
-      yield put(actions.auth.initSession());
-    }
   } catch (ex) {
-    yield put(
+    return yield put(
       actions.api.failure('switch account', 'Could not switch account')
     );
+  }
+
+  if (userPreferences.defaultAShareId !== id) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
   }
 }
 
@@ -245,17 +245,17 @@ export function* leaveAccount({ id }) {
       opts,
       message: 'Leaving account',
     });
-
-    const userPreferences = yield select(selectors.userPreferences);
-
-    if (userPreferences.defaultAShareId === id) {
-      yield put(actions.auth.clearStore());
-      yield put(actions.auth.initSession());
-    } else {
-      yield put(actions.resource.requestCollection('shared/ashares'));
-    }
   } catch (e) {
-    yield put(actions.api.failure(path, 'Could not leave account'));
+    return yield put(actions.api.failure(path, 'Could not leave account'));
+  }
+
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (userPreferences.defaultAShareId === id) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  } else {
+    yield put(actions.resource.requestCollection('shared/ashares'));
   }
 }
 

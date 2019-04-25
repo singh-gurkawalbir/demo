@@ -216,14 +216,12 @@ export function accountSummary(state) {
       accounts.push({
         id: ACCOUNT_IDS.OWN,
         environment: 'production',
-        label: 'Production',
       });
 
       if (ownLicense.hasSandbox) {
         accounts.push({
           id: ACCOUNT_IDS.OWN,
           environment: 'sandbox',
-          label: 'Sandbox',
         });
       }
     }
@@ -236,21 +234,19 @@ export function accountSummary(state) {
       accounts.push({
         id: a.id,
         environment: 'production',
-        label: `${a.company} - Production`,
         company: a.company,
         canLeave: shared.length > 1,
       });
       accounts.push({
         id: a.id,
         environment: 'sandbox',
-        label: `${a.company} - Sandbox`,
+        company: a.company,
         canLeave: false,
       });
     } else {
       accounts.push({
         id: a.id,
         environment: 'production',
-        label: a.company,
         company: a.company,
         canLeave: shared.length > 1,
       });
