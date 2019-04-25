@@ -5,24 +5,13 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import Tile from './Tile';
+import LoadResources from '../../components/LoadResources';
 
 const mapStateToProps = state => {
-  const userPreferences = selectors.userPreferences(state);
-  const tiles = selectors.resourceList(state, {
-    type: 'tiles',
-    sandbox: userPreferences.environment === 'sandbox',
-  });
-  const integrations = selectors.resourceList(state, {
-    type: 'integrations',
-  });
-  const published = selectors.resourceList(state, {
-    type: 'published',
-  });
+  const tiles = selectors.tiles(state);
 
   return {
-    tiles: tiles.resources,
-    integrations: integrations.resources,
-    published: published.resources,
+    tiles,
   };
 };
 
@@ -40,41 +29,22 @@ const mapStateToProps = state => {
 }))
 class Dashboard extends Component {
   render() {
-    const { classes, integrations, published } = this.props;
-    let { tiles } = this.props;
-
-    if (tiles.length && !integrations.length) {
-      return null;
-    }
-
-    const connectorTiles = tiles.filter(t => t._connectorId);
-
-    if (connectorTiles.length && !published.length) {
-      return null;
-    }
-
-    tiles = tiles.map(t => {
-      if (t._connectorId) {
-        return {
-          ...t,
-          integration: integrations.find(i => i._id === t._integrationId),
-          connector: published.find(i => i._id === t._connectorId),
-        };
-      }
-
-      return t;
-    });
+    const { classes, tiles } = this.props;
 
     return (
-      <div className={classes.root}>
-        <Grid container spacing={24}>
-          {tiles.map(t => (
-            <Grid key={t._integrationId} item xs={3}>
-              <Tile data={t} />
-            </Grid>
-          ))}
-        </Grid>
-      </div>
+      <LoadResources
+        resources={['published', 'integrations', 'tiles']}
+        required>
+        <div className={classes.root}>
+          <Grid container spacing={24}>
+            {tiles.map(t => (
+              <Grid key={t._integrationId} item xs={3}>
+                <Tile data={t} />
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+      </LoadResources>
     );
   }
 }

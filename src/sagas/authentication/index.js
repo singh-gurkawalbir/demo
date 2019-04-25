@@ -39,7 +39,6 @@ export function* retrievingOrgDetails() {
 export function* retrievingUserDetails() {
   yield all(
     intializationResources.map(resource =>
-      // put(actions.user[resource].request(`Retrieving user's ${resource}`))
       call(
         getResource,
         actions.user[resource].request(`Retrieving user's ${resource}`)
@@ -71,16 +70,6 @@ export function* retrieveAppInitializationResources() {
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
 
   if (hasAcceptedAccounts) {
-    /* const isValidSharedAccountId = yield select(
-      selectors.isValidSharedAccountId,
-      defaultAShareId
-    );
-
-    if (!isValidSharedAccountId) {
-      calculatedDefaultAShareId = yield select(
-        selectors.getOneValidSharedAccountId
-      );
-    } */
     calculatedDefaultAShareId = yield call(
       validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
       defaultAShareId
@@ -98,20 +87,7 @@ export function* retrieveAppInitializationResources() {
     );
   }
 
-  // retrieve user's accounts details
-  /*
-  yield put(actions.user.accounts.requestAshares(`Retrieving user's accounts`));
-
-  const ashares = yield select(selectors.hasAccounts);
-
-  if (!ashares || !ashares.length) {
-    yield put(
-      actions.user.accounts.requestSharedAshares(
-        'Retrieving Account Membership'
-      )
-    );
-  }
-  */
+  yield put(actions.user.profile.accountsPopulated());
 }
 
 export function* getCSRFTokenBackend() {

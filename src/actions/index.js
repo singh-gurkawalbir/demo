@@ -92,6 +92,7 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    accountsPopulated: () => action(actionTypes.ACCOUNTS_POPULATED),
   },
   org: {
     users: {

@@ -87,6 +87,9 @@ export class Appbar extends Component {
               <Link className={classes.navLink} to="/pg/resources">
                 Resources
               </Link>
+              <Link className={classes.navLink} to="/pg/permissions">
+                Permissions
+              </Link>
             </div>
             <LicenseAction />
             <div className={classes.iconContainer}>

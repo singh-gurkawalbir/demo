@@ -25,6 +25,7 @@ const mapStateToProps = state => ({
   isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
     state
   ),
+  accountsPopulated: selectors.accountsPopulated(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -90,6 +91,7 @@ class App extends Component {
       isAuthErrored,
       isAuthLoading,
       reloadCount,
+      accountsPopulated,
     } = this.props;
     const customTheme = themeProvider(themeName);
 
@@ -104,7 +106,7 @@ class App extends Component {
             <AppBar themeName={themeName} />
             <AuthDialog />
 
-            {((!isAuthLoading && isAuthInitialized) ||
+            {((!isAuthLoading && isAuthInitialized && accountsPopulated) ||
               !isUserLoggedOut ||
               isAuthErrored) && <AppRouting />}
           </Fragment>

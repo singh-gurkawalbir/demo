@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+import classNames from 'classnames';
+import { TILE_STATUS } from '../../utils/constants';
 
 @withStyles(() => ({
   default: {
@@ -11,13 +13,13 @@ import Avatar from '@material-ui/core/Avatar';
     height: 24,
     backgroundColor: '#6CC706',
   },
-  HAS_ERRORS: {
+  errors: {
     backgroundColor: '#F53D05',
   },
-  IS_PENDING_SETUP: {
+  pending_setup: {
     backgroundColor: '#000000',
   },
-  HAS_OFFLINE_CONNECTIONS: {
+  offline_connections: {
     backgroundColor: '#F53D05',
   },
 }))
@@ -30,21 +32,26 @@ export default class TileAction extends Component {
     this.setState({ hover: false });
   };
   render() {
-    const { classes, status, data } = this.props;
+    const { classes, data } = this.props;
+    const { status, numError } = data;
     const { hover } = this.state;
     let label;
+    let statusClassName;
 
     switch (status) {
-      case 'IS_PENDING_SETUP':
+      case TILE_STATUS.IS_PENDING_SETUP:
         label = hover ? 'Continue Setup' : 'Pending Setup';
+        statusClassName = 'pending_setup';
         break;
-      case 'HAS_OFFLINE_CONNECTIONS':
+      case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
         label = hover ? 'Fix Connection' : 'Connection Down';
+        statusClassName = 'offline_connections';
         break;
-      case 'HAS_ERRORS':
+      case TILE_STATUS.HAS_ERRORS:
         label = hover
           ? 'View Errors'
-          : `${data.numError} Error${data.numError > 0 ? 's' : ''}`;
+          : `${numError} Error${numError > 0 ? 's' : ''}`;
+        statusClassName = 'errors';
         break;
       default:
         label = hover ? 'View Dashboard' : 'Success';
@@ -59,7 +66,9 @@ export default class TileAction extends Component {
           onFocus={this.handleOnMouseOver}
           onMouseOut={this.handleOnMouseOut}
           onBlur={this.handleOnMouseOut}>
-          <Avatar className={[classes.default, classes[status]].join(' ')} />
+          <Avatar
+            className={classNames(classes.default, classes[statusClassName])}
+          />
           {label}
         </Button>
       </Fragment>

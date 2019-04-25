@@ -117,6 +117,10 @@ describe('initialze all app relevant resources sagas', () => {
       selectHasAcceptedAccountsEffect
     );
 
+    expect(saga.next().value).toEqual(
+      put(actions.user.profile.accountsPopulated())
+    );
+
     expect(saga.next(false).done).toEqual(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
@@ -148,7 +152,10 @@ describe('initialze all app relevant resources sagas', () => {
     expect(saga.next(true).value).toEqual(
       callValidateAndGetDefaultAShareIdEffect
     );
-    expect(saga.next('ashare1').done).toEqual(true);
+    expect(saga.next('ashare1').value).toEqual(
+      put(actions.user.profile.accountsPopulated())
+    );
+    expect(saga.next().done).toEqual(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
@@ -188,6 +195,10 @@ describe('initialze all app relevant resources sagas', () => {
         })
       )
     );
+    expect(saga.next().value).toEqual(
+      put(actions.user.profile.accountsPopulated())
+    );
+
     expect(saga.next().done).toEqual(true);
   });
 });

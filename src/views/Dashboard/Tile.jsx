@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -9,18 +8,6 @@ import Divider from '@material-ui/core/Divider';
 import { Link } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import TileAction from './TileAction';
-import * as selectors from '../../reducers';
-
-const mapStateToProps = (state, { data }) => {
-  const permissions = selectors.userPermissionsOnIntegration(
-    state,
-    data && data._integrationId
-  );
-
-  return {
-    permissions,
-  };
-};
 
 @withStyles(theme => ({
   card: {
@@ -46,68 +33,41 @@ const mapStateToProps = (state, { data }) => {
     maxWidth: '50%',
   },
 }))
-class Tile extends Component {
+export default class Tile extends Component {
   render() {
-    const { classes, data, permissions } = this.props;
-    let { numFlows } = data;
-    let connectorOwner;
-
-    numFlows = `${numFlows} Flow${numFlows === 1 ? '' : 's'}`;
-
-    if (data._connectorId) {
-      if (data.connector) {
-        connectorOwner =
-          data.connector.user.company || data.connector.user.name;
-      }
-    }
-
-    let status;
-
-    if (
-      data._connectorId &&
+    const { classes, data } = this.props;
+    const numFlowsText = `${data.numFlows} Flow${
+      data.numFlows === 1 ? '' : 's'
+    }`;
+    const accessLevel =
       data.integration &&
-      data.integration.mode !== 'settings'
-    ) {
-      status = 'IS_PENDING_SETUP';
-    } else if (data.offlineConnections && data.offlineConnections.length > 0) {
-      status = 'HAS_OFFLINE_CONNECTIONS';
-    } else if (data.numError && data.numError > 0) {
-      status = 'HAS_ERRORS';
-    } else {
-      status = 'SUCCESS';
-    }
+      data.integration.permissions &&
+      data.integration.permissions.accessLevel;
 
     return (
       <Card className={classes.card}>
         <CardActions>
-          <TileAction
-            size="small"
-            color="primary"
-            status={status}
-            data={data}
-          />
+          <TileAction size="small" color="primary" data={data} />
         </CardActions>
         <CardContent>
-          <Typography variant="headline" component="h2">
+          <Typography variant="h5" component="h2">
             {data.name}
           </Typography>
         </CardContent>
         <Divider component="br" />
         <CardActions>
-          {status === 'IS_PENDING_SETUP' && (
+          {data.status === 'IS_PENDING_SETUP' && (
             <Typography>Click to continue setup.</Typography>
           )}
-          {status !== 'IS_PENDING_SETUP' &&
-            permissions &&
-            permissions.accessLevel && (
-              <Link
-                className={classes.navLink}
-                to={`/pg/${data._connectorId ? 'connectors' : 'integrations'}/${
-                  data._integrationId
-                }/settings`}>
-                {permissions.accessLevel === 'manage' ? 'Manage' : 'Monitor'}
-              </Link>
-            )}
+          {data.status !== 'IS_PENDING_SETUP' && accessLevel && (
+            <Link
+              className={classes.navLink}
+              to={`/pg/${data._connectorId ? 'connectors' : 'integrations'}/${
+                data._integrationId
+              }/settings`}>
+              {accessLevel === 'monitor' ? 'Monitor' : 'Manage'}
+            </Link>
+          )}
           {data.tag && (
             <Chip label={data.tag} color="secondary" className={classes.tag} />
           )}
@@ -115,18 +75,13 @@ class Tile extends Component {
         <Divider />
         <CardActions>
           <Typography>
-            {data._connectorId ? 'SmartConnector' : numFlows}
+            {data._connectorId ? 'SmartConnector' : numFlowsText}
           </Typography>
           <Typography className={classes.connectorOwner}>
-            {connectorOwner}
+            {data.connector && data.connector.owner}
           </Typography>
         </CardActions>
       </Card>
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  null
-)(Tile);

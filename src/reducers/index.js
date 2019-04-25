@@ -11,6 +11,13 @@ import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
+import {
+  USER_ACCESS_LEVELS,
+  TILE_STATUS,
+  INTEGRATION_MODES,
+  STANDALONE_INTEGRATION,
+  ACCOUNT_IDS,
+} from '../utils/constants';
 
 const combinedReducers = combineReducers({
   app,
@@ -287,6 +294,15 @@ export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
+export function accountsPopulated(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.accountsPopulated
+  );
+}
+
 export function notifications(state) {
   return fromUser.notifications(state.user);
 }
@@ -311,7 +327,7 @@ export function hasAcceptedAccounts(state) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a => a._id !== 'own' && a.accepted && !a.disabled
+      a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
     ).length > 0
   );
 }
@@ -322,7 +338,8 @@ export function isValidSharedAccountId(state, _id) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a => a.accepted && !a.disabled && a._id === _id && a._id !== 'own'
+      a =>
+        a.accepted && !a.disabled && a._id === _id && a._id !== ACCOUNT_IDS.OWN
     ).length > 0
   );
 }
@@ -332,7 +349,7 @@ export function getOneValidSharedAccountId(state) {
 
   if (state && state.user && state.user.org && state.user.org.accounts) {
     const accepted = state.user.org.accounts.filter(
-      a => a.accepted && !a.disabled && a._id !== 'own'
+      a => a.accepted && !a.disabled && a._id !== ACCOUNT_IDS.OWN
     );
 
     if (accepted && accepted.length > 0) {
@@ -347,54 +364,107 @@ export function userAccessLevel(state) {
   return fromUser.accessLevel(state.user);
 }
 
-export function userPermissionsOnIntegration(state, integrationId) {
-  const accountLevelManagePermissions = {
-    canDelete: true,
-  };
-  const tileLevelManagePermissions = {
-    accessLevel: 'manage',
-  };
-  const monitorPermissions = {
-    accessLevel: 'monitor',
-  };
-  let accessLevel = userAccessLevel(state);
+export function userPermissions(state) {
+  return fromUser.permissions(state.user);
+}
 
-  if (['owner', 'manage'].includes(accessLevel)) {
-    return { ...tileLevelManagePermissions, ...accountLevelManagePermissions };
-  }
-
-  let permissions = {};
+export function tiles(state) {
   const preferences = userPreferences(state);
+  let tiles = resourceList(state, {
+    type: 'tiles',
+    sandbox: preferences.environment === 'sandbox',
+  }).resources;
+  let integrations = resourceList(state, {
+    type: 'integrations',
+  }).resources;
+  const published = resourceList(state, {
+    type: 'published',
+  }).resources;
+  const permissions = userPermissions(state);
+  const hasStandaloneTile = tiles.find(
+    t => t._integrationId === STANDALONE_INTEGRATION.id
+  );
 
-  if (['monitor', 'tile'].includes(accessLevel)) {
-    if (state && state.user && state.user.org && state.user.org.accounts) {
-      const currentAccount = state.user.org.accounts.find(
-        a => a._id === preferences.defaultAShareId
-      );
-
-      if (currentAccount && currentAccount.integrationAccessLevel) {
-        const integration = currentAccount.integrationAccessLevel.find(
-          al => al._integrationId === integrationId
-        );
-
-        if (integration) {
-          ({ accessLevel } = integration);
-        } else if (accessLevel === 'tile') {
-          accessLevel = undefined;
-        }
-      }
-    }
+  if (hasStandaloneTile) {
+    integrations = [
+      ...integrations,
+      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+    ];
   }
 
-  if (accessLevel) {
-    permissions = monitorPermissions;
-
-    if (accessLevel === 'manage') {
-      permissions = { ...permissions, ...tileLevelManagePermissions };
+  integrations = integrations.map(i => {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    ) {
+      return {
+        ...i,
+        permissions: {
+          accessLevel: permissions.integrations.all.accessLevel,
+          connections: {
+            edit: permissions.integrations.all.connections.edit,
+          },
+        },
+      };
     }
-  }
 
-  return permissions;
+    return {
+      ...i,
+      permissions: {
+        accessLevel: (permissions.integrations[i._id] || {}).accessLevel,
+        connections: {
+          edit:
+            permissions.integrations[i._id] &&
+            permissions.integrations[i._id].connections.edit,
+        },
+      },
+    };
+  });
+
+  let integration;
+  let connector;
+  let status;
+
+  tiles = tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
+
+    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
+
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId) || { user: {} };
+
+      return {
+        ...t,
+        status,
+        integration: {
+          mode: integration.mode,
+          permissions: integration.permissions,
+        },
+        connector: { owner: connector.user.company || connector.user.name },
+      };
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
+
+  return tiles;
 }
 // #endregion
 
