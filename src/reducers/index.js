@@ -22,7 +22,11 @@ const combinedReducers = combineReducers({
 });
 const rootReducer = (state, action) => {
   if (action.type === actionTypes.CLEAR_STORE) {
-    const { app } = state;
+    const { app, auth } = state;
+
+    if (auth.attemptedUrl) {
+      return { app, auth: { attemptedUrl: auth.attemptedUrl } };
+    }
 
     return { app };
   }
@@ -169,8 +173,10 @@ export function isAuthLoading(state) {
   return !!(state && state.auth && state.auth.loading);
 }
 
+// intialized has a default value false or set to true eventually
+// it can be interpreted as being undefined if deleted during logout
 export function isUserLoggedIn(state) {
-  return !!(state && state.auth);
+  return state && state.auth && state.auth.initialized !== undefined;
 }
 
 export function authenticationErrored(state) {
@@ -189,6 +195,10 @@ export function isAuthStateStable(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function authFailureAttemptedUrl(state) {
+  return state && state.auth && state.auth.attemptedUrl;
 }
 // #endregion AUTHENTICATION SELECTORS
 

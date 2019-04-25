@@ -30,9 +30,20 @@ export default function(state = { initialized: false }, action) {
         newState.sessionExpired = true;
       }
 
+      const { attemptedUrl } = action;
+
+      if (attemptedUrl) newState.attemptedUrl = attemptedUrl;
       newState.initialized = true;
 
       newState.authenticated = false;
+
+      return newState;
+    }
+
+    case actionTypes.CLEAR_ATTEMPTED_URL: {
+      newState = { ...state };
+
+      delete newState.attemptedUrl;
 
       return newState;
     }

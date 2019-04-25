@@ -7,16 +7,13 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import {
-  userProfileEmail,
-  authenticationErrored,
-  isAuthenticated,
-} from '../../reducers';
+import * as selectors from '../../reducers';
 
 const mapStateToProps = state => ({
-  error: authenticationErrored(state),
-  userEmail: userProfileEmail(state),
-  authenticated: isAuthenticated(state),
+  attemptedUrl: selectors.authFailureAttemptedUrl(state),
+  error: selectors.authenticationErrored(state),
+  userEmail: selectors.userProfileEmail(state),
+  authenticated: selectors.isAuthenticated(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
@@ -93,10 +90,17 @@ class SignIn extends Component {
       userEmail,
       iAmModal,
       authenticated,
+      attemptedUrl,
+      location,
     } = this.props;
     const { email } = this.state;
 
-    if (authenticated && !iAmModal) return <Redirect to="/pg" />;
+    if (authenticated && !iAmModal)
+      return (
+        <Redirect
+          to={{ pathname: attemptedUrl || '/pg', referer: location.pathname }}
+        />
+      );
 
     return (
       <div className={classes.editableFields}>

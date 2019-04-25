@@ -7,25 +7,50 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 
 const mapStateToProps = state => ({
+  attemptedUrl: selectors.authFailureAttemptedUrl(state),
   isAuthStateStable: selectors.isAuthStateStable(state),
+  isAuthInitialized: selectors.isAuthInitialized(state),
 });
 const mapDispatchToProps = dispatch => ({
-  initSession: () => {
-    dispatch(actions.auth.initSession());
+  initSession: attemptedUrl => {
+    dispatch(actions.auth.initSession(attemptedUrl));
+  },
+  clearAttemptedUrl: () => {
+    dispatch(actions.auth.clearAttemptedUrl());
   },
 });
 
 @hot(module)
 class AppRoutingWithAuth extends Component {
   componentWillMount() {
-    const { initSession, isAuthInitialized } = this.props;
+    const { initSession, isAuthInitialized, location } = this.props;
 
-    if (!isAuthInitialized) initSession();
+    if (!isAuthInitialized) initSession(location.pathname);
   }
+
   render() {
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
-    const { isAuthStateStable } = this.props;
+    const {
+      location,
+      attemptedUrl,
+      clearAttemptedUrl,
+      isAuthStateStable,
+    } = this.props;
+    const redirectedFrom = location && location.referer;
+
+    // if i am redirected from the signin page and
+    // redirectTed to the attempted Url
+    // I can go ahead and clear the attempted url
+
+    // Cannot update during an existing state transition
+    // (such as within `render`). Render methods should be a
+    // pure function of props and state.
+    if (location.pathname === attemptedUrl && redirectedFrom === '/pg/signin') {
+      clearAttemptedUrl();
+
+      return null;
+    }
 
     if (!isAuthStateStable) return null;
 

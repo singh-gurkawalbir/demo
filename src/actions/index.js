@@ -15,13 +15,16 @@ const auth = {
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  failure: (message, attemptedUrl) =>
+    action(actionTypes.AUTH_FAILURE, { message, attemptedUrl }),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  initSession: () => action(actionTypes.INIT_SESSION),
+  clearAttemptedUrl: () => action(actionTypes.CLEAR_ATTEMPTED_URL, {}),
+  initSession: attemptedUrl =>
+    action(actionTypes.INIT_SESSION, { attemptedUrl }),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
