@@ -286,6 +286,10 @@ export function notifications(state) {
 }
 
 export function accessLevel(state, accountId) {
+  if (!state) {
+    return undefined;
+  }
+
   if (accountId === ACCOUNT_IDS.OWN) {
     return USER_ACCESS_LEVELS.ACCOUNT_OWNER;
   }

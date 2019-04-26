@@ -30,7 +30,18 @@ export default function(state = { initialized: false }, action) {
         newState.sessionExpired = true;
       }
 
+      newState.initialized = true;
+
       newState.authenticated = false;
+
+      return newState;
+    }
+
+    case actionTypes.DEFAULT_ACCOUNT_SET: {
+      newState = {
+        ...state,
+        defaultAccountSet: true,
+      };
 
       return newState;
     }

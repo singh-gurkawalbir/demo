@@ -18,9 +18,6 @@ export default (state = null, action) => {
 
       return {};
 
-    case actionTypes.ACCOUNTS_POPULATED:
-      return { ...state, ...{ accountsPopulated: true } };
-
     default:
       return state;
   }

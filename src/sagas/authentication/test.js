@@ -117,9 +117,7 @@ describe('initialze all app relevant resources sagas', () => {
       selectHasAcceptedAccountsEffect
     );
 
-    expect(saga.next().value).toEqual(
-      put(actions.user.profile.accountsPopulated())
-    );
+    expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next(false).done).toEqual(true);
   });
@@ -153,7 +151,7 @@ describe('initialze all app relevant resources sagas', () => {
       callValidateAndGetDefaultAShareIdEffect
     );
     expect(saga.next('ashare1').value).toEqual(
-      put(actions.user.profile.accountsPopulated())
+      put(actions.auth.defaultAccountSet())
     );
     expect(saga.next().done).toEqual(true);
   });
@@ -195,9 +193,7 @@ describe('initialze all app relevant resources sagas', () => {
         })
       )
     );
-    expect(saga.next().value).toEqual(
-      put(actions.user.profile.accountsPopulated())
-    );
+    expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next().done).toEqual(true);
   });
@@ -394,7 +390,9 @@ describe('initialize app saga', () => {
     );
     const authLogoutEffect = saga.next().value;
 
-    expect(authLogoutEffect).toEqual(put(actions.auth.logout()));
+    expect(authLogoutEffect).toEqual(
+      put(actions.auth.logout({ isExistingSessionInvalid: true }))
+    );
   });
 
   test('should dispatch a user logout when the api call has failed', () => {
@@ -414,7 +412,7 @@ describe('initialize app saga', () => {
 });
 
 describe('invalidate session app', () => {
-  test('Should invalidate session when user attempts to logout', () => {
+  test('Should invalidate session when user attempts to logout ', () => {
     const saga = invalidateSession();
     const getCSRFTokenEffect = saga.next().value;
 
@@ -431,6 +429,19 @@ describe('invalidate session app', () => {
       })
     );
 
+    const removeCSRFTokenEffect = saga.next().value;
+
+    expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));
+
+    const clearStoreEffect = saga.next().value;
+
+    expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
+  });
+
+  test('should invalid session but skip the signout call when the existing session is invalid', () => {
+    const saga = invalidateSession({
+      isExistingSessionInvalid: true,
+    });
     const removeCSRFTokenEffect = saga.next().value;
 
     expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));

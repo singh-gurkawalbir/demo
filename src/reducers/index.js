@@ -168,6 +168,10 @@ export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
 
+export function isDefaultAccountSet(state) {
+  return !!(state && state.auth && state.auth.defaultAccountSet);
+}
+
 export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
@@ -176,12 +180,36 @@ export function isAuthLoading(state) {
   return !!(state && state.auth && state.auth.loading);
 }
 
-export function isUserLoggedOut(state) {
+export function isUserLoggedIn(state) {
   return !!(state && state.auth);
 }
 
 export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
+}
+
+// This selector encompasses several authentication scenarios and
+// is used by the UI to determine whether the authentication state computation
+// is stable.
+export function isAuthStateStable(state) {
+  const isAuthSucceededOrFailedAfterIntialization =
+    !isAuthLoading(state) && isAuthInitialized(state);
+
+  return isAuthSucceededOrFailedAfterIntialization || !isUserLoggedIn(state);
+}
+
+export function showAppRoutingWithAuth(state) {
+  if (isAuthStateStable(state)) {
+    const authenticated = isAuthenticated(state);
+
+    if (authenticated) {
+      return !!isDefaultAccountSet(state);
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 export function isSessionExpired(state) {

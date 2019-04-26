@@ -23,13 +23,17 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  logout: () => action(actionTypes.USER_LOGOUT),
+  logout: isExistingSessionInvalid =>
+    action(actionTypes.USER_LOGOUT, {
+      isExistingSessionInvalid,
+    }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
+  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
   request: (path, message, hidden, reqType) =>
@@ -92,7 +96,6 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
-    accountsPopulated: () => action(actionTypes.ACCOUNTS_POPULATED),
   },
   org: {
     users: {
