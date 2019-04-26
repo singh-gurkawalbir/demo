@@ -8,6 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import { Link } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import TileAction from './TileAction';
+import getRoutePath from '../../utils/routePaths';
 
 @withStyles(theme => ({
   card: {
@@ -62,9 +63,11 @@ export default class Tile extends Component {
           {data.status !== 'IS_PENDING_SETUP' && accessLevel && (
             <Link
               className={classes.navLink}
-              to={`/pg/${data._connectorId ? 'connectors' : 'integrations'}/${
-                data._integrationId
-              }/settings`}>
+              to={getRoutePath(
+                `/${data._connectorId ? 'connectors' : 'integrations'}/${
+                  data._integrationId
+                }/settings`
+              )}>
               {accessLevel === 'monitor' ? 'Monitor' : 'Manage'}
             </Link>
           )}

@@ -113,14 +113,9 @@ export function accountSummary(state) {
 // #endregion ACCOUNT
 
 export function permissions(state) {
-  const userAccessLevel = accessLevel(state);
-
-  if (!userAccessLevel) {
-    return {};
-  }
-
   const { defaultAShareId } = userPreferences(state);
-  const { allowedToPublish } = state && state.profile;
+  const allowedToPublish =
+    state && state.profile && state.profile.allowedToPublish;
   const permissions = fromAccounts.permissions(
     state && state.org && state.org.accounts,
     defaultAShareId,
@@ -128,16 +123,6 @@ export function permissions(state) {
   );
 
   return permissions;
-}
-
-export function integrationPermissions(state, integrationId) {
-  const userPermissions = permissions(state);
-
-  if (['owner', 'manage'].includes(userPermissions.accessLevel)) {
-    return userPermissions.integrations.all;
-  }
-
-  return userPermissions.integrations[integrationId] || {};
 }
 
 // #endregion PUBLIC USER SELECTORS

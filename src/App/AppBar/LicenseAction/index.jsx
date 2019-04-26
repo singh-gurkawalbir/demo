@@ -8,7 +8,7 @@ import Notifier, { openSnackbar } from '../../../components/Notifier';
 
 const mapStateToProps = state => ({
   license: selectors.integratorLicense(state),
-  accessLevel: selectors.userAccessLevel(state),
+  permissions: selectors.userPermissions(state),
 });
 const mapDispatchToProps = dispatch => ({
   onClick: action => {
@@ -57,9 +57,9 @@ class LicenseAction extends Component {
   }
 
   render() {
-    const { classes, license, accessLevel, onClick } = this.props;
+    const { classes, license, permissions, onClick } = this.props;
 
-    if (!['owner', 'manage'].includes(accessLevel)) {
+    if (!permissions.subscriptions.requestUpgrade) {
       return null;
     }
 

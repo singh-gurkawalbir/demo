@@ -468,11 +468,8 @@ export function permissions(
             ...integration.flows,
             create: true,
             edit: true,
-            attach: true,
-            detach: true,
+            delete: true,
             clone: true,
-
-            delete: false,
           };
           integration.connections = {
             ...integration.connections,
@@ -485,7 +482,6 @@ export function permissions(
             ...integration,
 
             edit: true,
-            delete: false,
           };
         }
 
