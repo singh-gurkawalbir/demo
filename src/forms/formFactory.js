@@ -17,11 +17,8 @@ const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
       ].subForms[formId];
 
       // Is it necessary to make a deepClone
-      if (optionsHandler)
-        optionsHandler.push({
-          label: formId,
-          optionsHandler: deepClone(foundOptionsHandler),
-        });
+      if (foundOptionsHandler)
+        optionsHandler.push(deepClone(foundOptionsHandler));
 
       return getAllOptionsHandlerSubForms(fields, resourceType, optionsHandler);
     }
@@ -30,29 +27,22 @@ const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
   return optionsHandler;
 };
 
-const getAmalgamatedOptionsHandler = (
-  typeOfConnection,
-  resource,
-  meta,
-  fields,
-  resourceType
-) => {
-  const labelOptionsHandler = typeOfConnection || resource.type;
+const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
   const allOptionsHandler = getAllOptionsHandlerSubForms(fields, resourceType, [
-    { label: labelOptionsHandler, optionsHandler: meta.optionsHandler },
+    meta.optionsHandler,
   ]);
   const optionsHandler = (fieldId, fields) => {
-    const res = {};
+    const finalRes = allOptionsHandler
+      .map(indvOptionsHandler => {
+        if (indvOptionsHandler) {
+          return indvOptionsHandler(fieldId, fields);
+        }
 
-    allOptionsHandler.forEach(indvOptionsHandler => {
-      const { label, optionsHandler } = indvOptionsHandler;
+        return null;
+      })
+      .reduce((acc, curr) => curr || acc);
 
-      if (optionsHandler) {
-        res[label] = optionsHandler(fieldId, fields);
-      }
-    });
-
-    return res;
+    return finalRes;
   };
 
   return optionsHandler;
@@ -125,8 +115,6 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   }
 
   const optionsHandler = getAmalgamatedOptionsHandler(
-    typeOfConnection,
-    resource,
     meta,
     fields,
     resourceType

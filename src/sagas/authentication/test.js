@@ -184,6 +184,7 @@ describe('initialze all app relevant resources sagas', () => {
       put(
         actions.user.preferences.update({
           defaultAShareId: 'ashare2',
+          environment: 'production',
         })
       )
     );
@@ -382,7 +383,9 @@ describe('initialize app saga', () => {
     );
     const authLogoutEffect = saga.next().value;
 
-    expect(authLogoutEffect).toEqual(put(actions.auth.logout()));
+    expect(authLogoutEffect).toEqual(
+      put(actions.auth.logout({ isExistingSessionInvalid: true }))
+    );
   });
 
   test('should dispatch a user logout when the api call has failed', () => {
@@ -402,7 +405,7 @@ describe('initialize app saga', () => {
 });
 
 describe('invalidate session app', () => {
-  test('Should invalidate session when user attempts to logout', () => {
+  test('Should invalidate session when user attempts to logout ', () => {
     const saga = invalidateSession();
     const getCSRFTokenEffect = saga.next().value;
 
@@ -419,6 +422,19 @@ describe('invalidate session app', () => {
       })
     );
 
+    const removeCSRFTokenEffect = saga.next().value;
+
+    expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));
+
+    const clearStoreEffect = saga.next().value;
+
+    expect(clearStoreEffect).toEqual(put(actions.auth.clearStore()));
+  });
+
+  test('should invalid session but skip the signout call when the existing session is invalid', () => {
+    const saga = invalidateSession({
+      isExistingSessionInvalid: true,
+    });
     const removeCSRFTokenEffect = saga.next().value;
 
     expect(removeCSRFTokenEffect).toEqual(call(removeCSRFToken));

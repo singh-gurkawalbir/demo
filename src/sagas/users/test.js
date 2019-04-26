@@ -15,6 +15,10 @@ import {
   changeEmail,
   updatePreferences,
   updateProfile,
+  acceptAccountInvite,
+  rejectAccountInvite,
+  switchAccount,
+  leaveAccount,
 } from './';
 import { APIException } from '../api/index';
 
@@ -248,6 +252,262 @@ describe('all modal sagas', () => {
             )
           )
         );
+      });
+    });
+    describe('accepting account share invite', () => {
+      test('should update aShare successfuly', () => {
+        const aShare = {
+          id: 'something',
+        };
+        const saga = acceptAccountInvite(aShare);
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path: `/ashares/${aShare.id}/accept`,
+            opts: { method: 'PUT', body: {} },
+            message: 'Accepting account share invite',
+          })
+        );
+        expect(saga.next().value).toEqual(
+          put(actions.resource.requestCollection('shared/ashares'))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should generate appropriate error message in case of api failure', () => {
+        const aShare = { id: 'something' };
+        const saga = acceptAccountInvite(aShare);
+        const path = `/ashares/${aShare.id}/accept`;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts: { method: 'PUT', body: {} },
+            message: 'Accepting account share invite',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(
+          put(
+            actions.api.failure(path, 'Could not accept account share invite')
+          )
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('rejecting account share invite', () => {
+      test('should update aShare successfuly', () => {
+        const aShare = {
+          id: 'something',
+        };
+        const saga = rejectAccountInvite(aShare);
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path: `/ashares/${aShare.id}/dismiss`,
+            opts: { method: 'PUT', body: {} },
+            message: 'Rejecting account share invite',
+          })
+        );
+        expect(saga.next().value).toEqual(
+          put(actions.resource.requestCollection('shared/ashares'))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should generate appropriate error message in case of api failure', () => {
+        const aShare = { id: 'something' };
+        const saga = rejectAccountInvite(aShare);
+        const path = `/ashares/${aShare.id}/dismiss`;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts: { method: 'PUT', body: {} },
+            message: 'Rejecting account share invite',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(
+          put(
+            actions.api.failure(path, 'Could not reject account share invite')
+          )
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('switching account', () => {
+      const defaultAShareId = 'something';
+
+      describe('switching to the same account, different environment', () => {
+        test('should switch to production environment successfuly', () => {
+          const aShare = {
+            id: defaultAShareId,
+            environment: 'production',
+          };
+          const saga = switchAccount(aShare);
+
+          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next({ defaultAShareId }).value).toEqual(
+            put(
+              actions.user.preferences.update({
+                defaultAShareId: aShare.id,
+                environment: aShare.environment,
+              })
+            )
+          );
+          expect(saga.next().done).toEqual(true);
+        });
+        test('should switch to sandbox environment successfuly', () => {
+          const aShare = {
+            id: defaultAShareId,
+            environment: 'sandbox',
+          };
+          const saga = switchAccount(aShare);
+
+          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next({ defaultAShareId }).value).toEqual(
+            put(
+              actions.user.preferences.update({
+                defaultAShareId: aShare.id,
+                environment: aShare.environment,
+              })
+            )
+          );
+          expect(saga.next().done).toEqual(true);
+        });
+      });
+      describe('switching to a different account', () => {
+        test('should switch to production environment successfuly', () => {
+          const aShare = {
+            id: 'somethingelse',
+            environment: 'production',
+          };
+          const saga = switchAccount(aShare);
+
+          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next({ defaultAShareId }).value).toEqual(
+            put(
+              actions.user.preferences.update({
+                defaultAShareId: aShare.id,
+                environment: aShare.environment,
+              })
+            )
+          );
+
+          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
+          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+          expect(saga.next().done).toEqual(true);
+        });
+        test('should switch to sandbox environment successfuly', () => {
+          const aShare = {
+            id: 'somethingelse',
+            environment: 'sandbox',
+          };
+          const saga = switchAccount(aShare);
+
+          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next({ defaultAShareId }).value).toEqual(
+            put(
+              actions.user.preferences.update({
+                defaultAShareId: aShare.id,
+                environment: aShare.environment,
+              })
+            )
+          );
+
+          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
+          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+          expect(saga.next().done).toEqual(true);
+        });
+      });
+      describe('handling api error', () => {
+        test('should generate appropriate error message in case of api failure', () => {
+          const aShare = {
+            id: 'somethingelse',
+            environment: 'sandbox',
+          };
+          const saga = switchAccount(aShare);
+
+          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next({ defaultAShareId }).value).toEqual(
+            put(
+              actions.user.preferences.update({
+                defaultAShareId: aShare.id,
+                environment: aShare.environment,
+              })
+            )
+          );
+          expect(saga.throw(new Error()).value).toEqual(
+            put(
+              actions.api.failure('switch account', 'Could not switch account')
+            )
+          );
+          expect(saga.next().done).toEqual(true);
+        });
+      });
+    });
+    describe('leaving account', () => {
+      const defaultAShareId = 'something';
+
+      test('should leave the default account successfuly', () => {
+        const aShare = {
+          id: defaultAShareId,
+        };
+        const saga = leaveAccount(aShare);
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path: `/shared/ashares/${aShare.id}`,
+            opts: { method: 'DELETE', body: {} },
+            message: 'Leaving account',
+          })
+        );
+
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+
+        expect(saga.next({ defaultAShareId }).value).toEqual(
+          put(actions.auth.clearStore())
+        );
+        expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+        expect(saga.next().done).toEqual(true);
+      });
+
+      test('should leave the non-default account successfuly', () => {
+        const aShare = {
+          id: 'somethingelse',
+        };
+        const saga = leaveAccount(aShare);
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path: `/shared/ashares/${aShare.id}`,
+            opts: { method: 'DELETE', body: {} },
+            message: 'Leaving account',
+          })
+        );
+
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+
+        expect(saga.next({ defaultAShareId }).value).toEqual(
+          put(actions.resource.requestCollection('shared/ashares'))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should generate appropriate error message in case of api failure', () => {
+        const aShare = {
+          id: defaultAShareId,
+        };
+        const saga = leaveAccount(aShare);
+        const path = `/shared/ashares/${aShare.id}`;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts: { method: 'DELETE', body: {} },
+            message: 'Leaving account',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(
+          put(actions.api.failure(path, 'Could not leave account'))
+        );
+        expect(saga.next().done).toEqual(true);
       });
     });
   });

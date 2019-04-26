@@ -45,13 +45,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @withStyles(theme => ({
-  formView: {
-    overflow: 'auto',
-    maxHeight: '500px',
-  },
-  chip: {
-    padding: theme.spacing.double,
-  },
   actions: {
     textAlign: 'right',
   },

@@ -23,7 +23,10 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  logout: () => action(actionTypes.USER_LOGOUT),
+  logout: isExistingSessionInvalid =>
+    action(actionTypes.USER_LOGOUT, {
+      isExistingSessionInvalid,
+    }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
@@ -120,6 +123,9 @@ const user = {
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
       rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
+      leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
+      switchTo: ({ id, environment }) =>
+        action(actionTypes.ACCOUNT_SWITCH, { id, environment }),
     },
   },
   preferences: {

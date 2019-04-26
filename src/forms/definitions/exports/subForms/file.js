@@ -109,7 +109,6 @@ export default {
         },
       ],
     },
-    { fieldId: 'csvFile' },
     {
       fieldId: 'file.xml.resourcePath',
 

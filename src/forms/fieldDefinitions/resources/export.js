@@ -605,10 +605,6 @@ export default {
   },
   // #endregion filter
   // #region file
-  csvFile: {
-    label: 'Sample File (that would be exported):',
-    type: 'uploadFile',
-  },
 
   'file.encoding': {
     type: 'select',

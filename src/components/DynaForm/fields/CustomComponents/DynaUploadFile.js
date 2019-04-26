@@ -44,12 +44,14 @@ class MaterialUiTextField extends React.Component {
     let acceptFileType = '.txt';
 
     if (options) {
-      acceptFileType = `.${options[0]}`;
+      acceptFileType = `.${options}`;
     }
 
     return (
       <TextField
         inputProps={{ accept: acceptFileType }}
+        InputLabelProps={{ shrink: true }}
+        input
         type="file"
         autoComplete="off"
         key={id}

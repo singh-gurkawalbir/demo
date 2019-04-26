@@ -8,24 +8,63 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DownArrow from '../../../icons/DownArrow';
+import { confirmDialog } from '../../../components/ConfirmDialog';
+import getRoutePath from '../../../utils/routePaths';
 
-const mapStateToProps = state => ({
-  accounts: selectors.accountSummary(state),
-});
+const mapStateToProps = state => {
+  let accounts = selectors.accountSummary(state);
+  const userPreferences = selectors.userPreferences(state);
+  const productionAccounts = accounts.filter(
+    a => a.environment === 'production'
+  );
+
+  accounts = accounts.map(a => {
+    if (productionAccounts.length === 1) {
+      return {
+        ...a,
+        label: a.environment === 'sandbox' ? 'Sandbox' : 'Production',
+      };
+    } else if (productionAccounts.length > 1) {
+      if (a.environment === 'sandbox') {
+        return {
+          ...a,
+          label: `${a.company} - Sandbox`,
+        };
+      }
+
+      const selectedAccountsSandbox = accounts.find(
+        sa => sa.id === a.id && sa.environment === 'sandbox'
+      );
+
+      return {
+        ...a,
+        label: selectedAccountsSandbox
+          ? `${a.company} - Production`
+          : a.company,
+      };
+    }
+
+    return a;
+  });
+
+  return {
+    accounts,
+    userPreferences,
+  };
+};
+
 const mapDispatchToProps = dispatch => ({
   onAccountChange: (id, environment) => {
-    dispatch(
-      actions.user.preferences.update({
-        defaultAShareId: id,
-        environment,
-      })
-    );
+    dispatch(actions.user.org.accounts.switchTo({ id, environment }));
   },
-  onAccountLeave: () => {},
+  onAccountLeave: id => {
+    dispatch(actions.user.org.accounts.leave(id));
+  },
 });
 
 @withStyles(theme => ({
@@ -86,15 +125,49 @@ class AccountList extends Component {
     this.setState({ anchorEl: null });
   };
 
+  handleAccountChange = (id, environment) => {
+    const { history, onAccountChange } = this.props;
+
+    history.push(getRoutePath('/'));
+    onAccountChange(id, environment);
+  };
+  handleAccountLeaveClick = account => {
+    confirmDialog({
+      title: 'Leave Account',
+      message: `By leaving the account "${
+        account.company
+      }", you will no longer have access to the account or any of the integrations within the account.`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            const { userPreferences, history, onAccountLeave } = this.props;
+
+            if (userPreferences.defaultAShareId === account.id) {
+              history.push(getRoutePath('/'));
+            }
+
+            onAccountLeave(account.id);
+          },
+        },
+      ],
+    });
+  };
+
   render() {
     const { anchorEl } = this.state;
-    const { classes, accounts, onAccountChange, onAccountLeave } = this.props;
+    const { classes, accounts } = this.props;
     const open = !!anchorEl;
 
     if (!accounts || accounts.length < 2) {
       // when user is part of only one org, no need to show the accounts
       return null;
     }
+
+    const selectedAccount = accounts.find(a => a.selected);
 
     return (
       <Fragment>
@@ -103,7 +176,7 @@ class AccountList extends Component {
             className={classes.currentAccount}
             aria-owns={open ? 'accountList' : null}
             aria-haspopup="true">
-            {accounts.find(a => a.selected).label}
+            {selectedAccount.label}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
             <DownArrow className={classes.arrow} />
@@ -122,7 +195,7 @@ class AccountList extends Component {
               <ListItem
                 button
                 onClick={() => {
-                  onAccountChange(a.id, a.environment);
+                  this.handleAccountChange(a.id, a.environment);
                 }}
                 classes={{
                   root: classes.itemRoot,
@@ -131,7 +204,7 @@ class AccountList extends Component {
                 key={`${a.id}-${a.environment}`}>
                 <ListItemText
                   classes={{ root: a.selected && classes.selected }}
-                  primary={a.label}
+                  primary={a.label || a.company}
                 />
                 {a.canLeave && (
                   <ListItemSecondaryAction>
@@ -139,7 +212,7 @@ class AccountList extends Component {
                       className={classes.leave}
                       variant="text"
                       onClick={() => {
-                        onAccountLeave(a.id);
+                        this.handleAccountLeaveClick(a);
                       }}>
                       Leave
                     </Button>
@@ -155,4 +228,6 @@ class AccountList extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(AccountList);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(AccountList)
+);

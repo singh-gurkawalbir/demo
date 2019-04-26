@@ -68,7 +68,7 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function resourceList(state, { type, take, keyword }) {
+export function resourceList(state, { type, take, keyword, sandbox }) {
   const result = {
     resources: [],
     type,
@@ -88,8 +88,12 @@ export function resourceList(state, { type, take, keyword }) {
 
   result.total = resources.length;
   result.count = resources.length;
-
+  const filterByEnvironment = typeof sandbox === 'boolean';
   const matchTest = r => {
+    if (filterByEnvironment && !!r.sandbox !== sandbox) {
+      return false;
+    }
+
     if (!keyword) return true;
 
     const searchableText = `${r._id}|${r.name}|${r.description}`;

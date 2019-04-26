@@ -29,8 +29,8 @@ class FtpPort extends React.Component {
       //   touched,
     } = this.props;
 
-    if (!value && options && options.ftp) {
-      onFieldChange(id, options.ftp);
+    if (!value && options) {
+      onFieldChange(id, options);
     }
 
     const handleFieldChange = event => {
