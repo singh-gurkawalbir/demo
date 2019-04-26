@@ -85,9 +85,6 @@ class SignIn extends Component {
     this.props.handleAuthentication(email, password);
   };
 
-  iAmModalCheck(modal) {
-    return !!modal;
-  }
   render() {
     const {
       classes,
@@ -99,8 +96,7 @@ class SignIn extends Component {
     } = this.props;
     const { email } = this.state;
 
-    if (authenticated && !this.iAmModalCheck(iAmModal))
-      return <Redirect to="/pg" />;
+    if (authenticated && !iAmModal) return <Redirect to="/pg" />;
 
     return (
       <div className={classes.editableFields}>
