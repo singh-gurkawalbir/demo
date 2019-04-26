@@ -184,6 +184,7 @@ describe('initialze all app relevant resources sagas', () => {
       put(
         actions.user.preferences.update({
           defaultAShareId: 'ashare2',
+          environment: 'production',
         })
       )
     );
