@@ -5,10 +5,11 @@ import { withRouter } from 'react-router-dom';
 import AppRouting from '../AppRouting';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+// import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = state => ({
   attemptedUrl: selectors.authFailureAttemptedUrl(state),
-  isAuthStateStable: selectors.isAuthStateStable(state),
+  shouldShowAppRouting: selectors.shouldShowAppRouting(state),
   isAuthInitialized: selectors.isAuthInitialized(state),
 });
 const mapDispatchToProps = dispatch => ({
@@ -29,13 +30,11 @@ class AppRoutingWithAuth extends Component {
   }
 
   render() {
-    const { isAuthStateStable } = this.props;
+    const { shouldShowAppRouting } = this.props;
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
 
-    if (!isAuthStateStable) return null;
-
-    return <AppRouting />;
+    return shouldShowAppRouting && <AppRouting />;
   }
 
   componentDidUpdate() {

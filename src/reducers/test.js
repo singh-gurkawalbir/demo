@@ -143,18 +143,18 @@ describe('authentication selectors', () => {
     test('should be false during app initialization but set to true after the auth test ', () => {
       const initiaizedState = reducer(undefined, { type: null });
 
-      expect(selectors.isAuthStateStable(initiaizedState)).toBe(false);
+      expect(selectors.shouldShowAppRouting(initiaizedState)).toBe(false);
 
       const authStateSucceeded = reducer(
         initiaizedState,
         actions.auth.complete()
       );
 
-      expect(selectors.isAuthStateStable(authStateSucceeded)).toBe(true);
+      expect(selectors.shouldShowAppRouting(authStateSucceeded)).toBe(true);
 
       const authStateFailed = reducer(initiaizedState, actions.auth.failure());
 
-      expect(selectors.isAuthStateStable(authStateFailed)).toBe(true);
+      expect(selectors.shouldShowAppRouting(authStateFailed)).toBe(true);
     });
     // when the user is logged out, that may falsely be construed as a loading
     // state hence signin route will never show up, so isAuthStateStable
@@ -162,7 +162,7 @@ describe('authentication selectors', () => {
     test('should be true whe the user is logged out', () => {
       const authStateSucceeded = reducer(undefined, actions.auth.complete());
 
-      expect(selectors.isAuthStateStable(authStateSucceeded)).toBe(true);
+      expect(selectors.shouldShowAppRouting(authStateSucceeded)).toBe(true);
 
       const userLogoutState = reducer(
         authStateSucceeded,
@@ -170,7 +170,7 @@ describe('authentication selectors', () => {
       );
 
       // now signin route gets rendered
-      expect(selectors.isAuthStateStable(userLogoutState)).toBe(true);
+      expect(selectors.shouldShowAppRouting(userLogoutState)).toBe(true);
     });
   });
 });

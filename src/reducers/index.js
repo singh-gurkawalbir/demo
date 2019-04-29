@@ -7,12 +7,11 @@ import comms, * as fromComms from './comms';
 import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
-import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
 
-const combinedReducers = combineReducers({
+const rootReducer = combineReducers({
   app,
   session,
   data,
@@ -20,19 +19,6 @@ const combinedReducers = combineReducers({
   auth,
   comms,
 });
-const rootReducer = (state, action) => {
-  if (action.type === actionTypes.CLEAR_STORE) {
-    const { app, auth } = state;
-
-    if (auth.attemptedUrl) {
-      return { app, auth: { attemptedUrl: auth.attemptedUrl } };
-    }
-
-    return { app };
-  }
-
-  return combinedReducers(state, action);
-};
 
 export default rootReducer;
 
@@ -169,28 +155,28 @@ export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
 
+// Auth Loading commStatus has a default value of undefined
+// So we have to account for that when the app is initialized
+// for the very first time
 export function isAuthLoading(state) {
-  return !!(state && state.auth && state.auth.loading);
-}
+  const auth = state && state.auth;
 
-// intialized has a default value false or set to true eventually
-// it can be interpreted as being undefined if deleted during logout
-export function isUserLoggedIn(state) {
-  return state && state.auth && state.auth.initialized !== undefined;
+  return (
+    (auth && auth.commStatus === undefined) ||
+    (auth && auth.commStatus === fromComms.COMM_STATES.LOADING)
+  );
 }
 
 export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
 }
 
-// This selector encompasses several authentication scenarios and
-// is used by the UI to determine whether the authentication state computation
-// is stable.
-export function isAuthStateStable(state) {
-  const isAuthSucceededOrFailedAfterIntialization =
-    !isAuthLoading(state) && isAuthInitialized(state);
-
-  return isAuthSucceededOrFailedAfterIntialization || !isUserLoggedIn(state);
+// This selector is used by the UI to determine
+// when to show appRouting component
+// For now only when the authentication process is complete do we
+// show the appRouting component
+export function shouldShowAppRouting(state) {
+  return !isAuthLoading(state);
 }
 
 export function isSessionExpired(state) {
