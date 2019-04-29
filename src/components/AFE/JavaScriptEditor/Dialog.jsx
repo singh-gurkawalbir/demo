@@ -5,7 +5,7 @@ import JavaScriptEditor from './';
 export default class MergeEditorDialog extends Component {
   render() {
     const defaults = {
-      layout: 'column',
+      layout: 'compact',
       width: '80vw',
       height: '60vh',
       open: true,
@@ -13,7 +13,7 @@ export default class MergeEditorDialog extends Component {
     const { id, rule, data, ...rest } = this.props;
 
     return (
-      <EditorDialog id={id} {...defaults} {...rest}>
+      <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
         <JavaScriptEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );
