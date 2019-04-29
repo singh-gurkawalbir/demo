@@ -10,7 +10,6 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 
 const mapStateToProps = state => ({
-  attemptedUrl: selectors.authFailureAttemptedUrl(state),
   error: selectors.authenticationErrored(state),
   userEmail: selectors.userProfileEmail(state),
   authenticated: selectors.isAuthenticated(state),

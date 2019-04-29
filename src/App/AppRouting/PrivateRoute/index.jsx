@@ -3,6 +3,7 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
 import { isSessionExpired, isAuthenticated } from '../../../reducers';
+import getRoutePath from '../../../utils/routePaths';
 
 const mapStateToProps = state => ({
   isAuthenticated: isAuthenticated(state),
@@ -12,10 +13,13 @@ const mapStateToProps = state => ({
 @hot(module)
 class PrivateRoute extends Component {
   render() {
+    const { location } = this.props;
+    const params = new URLSearchParams(location.search);
+    const redirectToRoute = params.get('redirectTo');
     const {
       component: Component,
       isAuthenticated,
-      redirectTo = '/pg/signin',
+      redirectTo = redirectToRoute || getRoutePath('signin'),
       isSessionExpired,
       rest,
     } = this.props;

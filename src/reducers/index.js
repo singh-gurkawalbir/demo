@@ -167,6 +167,18 @@ export function isAuthLoading(state) {
   );
 }
 
+// export function isAuthLoading(state) {
+//   return (
+//     state &&
+//     state.auth &&
+//     state.auth.commStatus === fromComms.COMM_STATES.LOADING
+//   );
+// }
+
+export function isUserLoggedIn(state) {
+  return !!(state && state.auth && state.auth.loggedIn);
+}
+
 export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
 }
@@ -183,9 +195,6 @@ export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
 
-export function authFailureAttemptedUrl(state) {
-  return state && state.auth && state.auth.attemptedUrl;
-}
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals

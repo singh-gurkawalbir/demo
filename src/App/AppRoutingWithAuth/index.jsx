@@ -5,28 +5,26 @@ import { withRouter } from 'react-router-dom';
 import AppRouting from '../AppRouting';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-// import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = state => ({
-  attemptedUrl: selectors.authFailureAttemptedUrl(state),
   shouldShowAppRouting: selectors.shouldShowAppRouting(state),
   isAuthInitialized: selectors.isAuthInitialized(state),
 });
 const mapDispatchToProps = dispatch => ({
-  initSession: attemptedUrl => {
-    dispatch(actions.auth.initSession(attemptedUrl));
-  },
-  clearAttemptedUrl: () => {
-    dispatch(actions.auth.clearAttemptedUrl());
+  initSession: () => {
+    dispatch(actions.auth.initSession());
   },
 });
 
 @hot(module)
 class AppRoutingWithAuth extends Component {
   componentWillMount() {
-    const { initSession, isAuthInitialized, location } = this.props;
+    const { initSession, isAuthInitialized, location, history } = this.props;
 
-    if (!isAuthInitialized) initSession(location.pathname);
+    if (!isAuthInitialized) {
+      history.push({ search: `?redirectTo=${location.pathname}` });
+      initSession();
+    }
   }
 
   render() {
@@ -35,22 +33,6 @@ class AppRoutingWithAuth extends Component {
     // till it determines the auth state
 
     return shouldShowAppRouting && <AppRouting />;
-  }
-
-  componentDidUpdate() {
-    const { location, attemptedUrl, clearAttemptedUrl } = this.props;
-    const redirectedFrom = location && location.referer;
-
-    // if i am redirected from the signin page and
-    // redirectTed to the attempted Url
-    // I can go ahead and clear the attempted url
-
-    // Cannot update during an existing state transition
-    // (such as within `render`). Render methods should be a
-    // pure function of props and state.
-    if (location.pathname === attemptedUrl && redirectedFrom === '/pg/signin') {
-      clearAttemptedUrl();
-    }
   }
 }
 

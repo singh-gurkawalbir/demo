@@ -12,19 +12,17 @@ function action(type, payload = {}) {
 }
 
 const auth = {
+  requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: (message, attemptedUrl) =>
-    action(actionTypes.AUTH_FAILURE, { message, attemptedUrl }),
+  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  clearAttemptedUrl: () => action(actionTypes.CLEAR_ATTEMPTED_URL, {}),
-  initSession: attemptedUrl =>
-    action(actionTypes.INIT_SESSION, { attemptedUrl }),
+  initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>

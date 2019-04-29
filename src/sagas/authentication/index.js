@@ -151,7 +151,7 @@ export function* auth({ email, password }) {
   }
 }
 
-export function* initializeApp({ attemptedUrl }) {
+export function* initializeApp() {
   try {
     const resp = yield call(
       getResource,
@@ -167,7 +167,6 @@ export function* initializeApp({ attemptedUrl }) {
       yield call(retrieveAppInitializationResources);
     } else {
       // existing session is invalid
-      yield put(actions.auth.failure(null, attemptedUrl));
       yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
     }
   } catch (e) {
