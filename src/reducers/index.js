@@ -8,10 +8,11 @@ import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
+import actionTypes from '../actions/types';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
 
-const rootReducer = combineReducers({
+const combinedReducers = combineReducers({
   app,
   session,
   data,
@@ -19,6 +20,15 @@ const rootReducer = combineReducers({
   auth,
   comms,
 });
+const rootReducer = (state, action) => {
+  if (action.type === actionTypes.CLEAR_STORE) {
+    const { app } = state;
+
+    return { app };
+  }
+
+  return combinedReducers(state, action);
+};
 
 export default rootReducer;
 
@@ -164,7 +174,7 @@ export function isAuthLoading(state) {
 }
 
 export function isUserLoggedIn(state) {
-  return !!(state && state.auth && state.auth.commStatus);
+  return !!(state && state.auth);
 }
 
 export function authenticationErrored(state) {
@@ -176,7 +186,7 @@ export function authenticationErrored(state) {
 // For now only when the authentication process is complete do we
 // show the appRouting component
 export function shouldShowAppRouting(state) {
-  return !isAuthLoading(state);
+  return !isAuthLoading(state) || !isUserLoggedIn(state);
 }
 
 export function isSessionExpired(state) {

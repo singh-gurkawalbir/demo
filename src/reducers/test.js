@@ -164,9 +164,11 @@ describe('authentication selectors', () => {
 
       expect(selectors.shouldShowAppRouting(authStateSucceeded)).toBe(true);
 
+      // In this test case the user saga ultimately dispatches
+      // a clearStore action we are using that to emulate a logout
       const userLogoutState = reducer(
         authStateSucceeded,
-        actions.auth.logout()
+        actions.auth.clearStore()
       );
 
       // now signin route gets rendered

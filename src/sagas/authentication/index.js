@@ -192,9 +192,9 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
+
   // Irrespective to what happens we will remove the csrf token and
   // clear the store
-
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
 }

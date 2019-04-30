@@ -11,7 +11,6 @@ export default function(
     case actionTypes.INIT_SESSION:
     case actionTypes.AUTH_REQUEST: {
       newState = { ...state, authenticated: false };
-
       newState.commStatus = COMM_STATES.LOADING;
 
       return newState;
@@ -25,7 +24,6 @@ export default function(
       };
 
       newState.commStatus = COMM_STATES.SUCCESS;
-      newState.loggedIn = true;
       delete newState.sessionExpired;
       delete newState.failure;
 
@@ -46,15 +44,6 @@ export default function(
       newState.authenticated = false;
 
       return newState;
-    }
-    // This is required by the shouldShowSelector in order
-    // to show the signin page when the user logs out.
-    // So some terminal auth state is given during logout.
-
-    case actionTypes.CLEAR_STORE: {
-      return {
-        commStatus: COMM_STATES.LOADING,
-      };
     }
 
     default: {

@@ -13,16 +13,23 @@ const mapStateToProps = state => ({
 @hot(module)
 class PrivateRoute extends Component {
   render() {
-    const { location } = this.props;
-    const params = new URLSearchParams(location.search);
-    const redirectToRoute = params.get('redirectTo');
     const {
       component: Component,
       isAuthenticated,
-      redirectTo = redirectToRoute || getRoutePath('signin'),
+      redirectTo = getRoutePath('signin'),
       isSessionExpired,
-      rest,
+      search,
+      ...rest
     } = this.props;
+    const redirectToRoute = this.props.location.search;
+    // If i get a query parameter let me pass the query parameter
+    // to there
+    // const params = new URLSearchParams(this.props.location.search);
+    // const redirectToRoute = params.get('redirectTo');
+
+    // if (redirectToRoute) {
+    //   this.props.history.push({ search: `?redirectTo=${redirectToRoute}` });
+    // }
 
     return (
       <Route
@@ -35,7 +42,7 @@ class PrivateRoute extends Component {
             <Redirect
               to={{
                 pathname: redirectTo,
-                state: { from: props.location },
+                search: redirectToRoute,
               }}
             />
           )

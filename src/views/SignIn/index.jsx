@@ -89,17 +89,23 @@ class SignIn extends Component {
       userEmail,
       iAmModal,
       authenticated,
-      attemptedUrl,
       location,
     } = this.props;
     const { email } = this.state;
 
-    if (authenticated && !iAmModal)
+    if (authenticated && !iAmModal) {
+      const params = new URLSearchParams(location.search);
+      const redirectToRoute = params.get('redirectTo');
+
       return (
         <Redirect
-          to={{ pathname: attemptedUrl || '/pg', referer: location.pathname }}
+          to={{
+            pathname: redirectToRoute || '/pg',
+            referer: location.pathname,
+          }}
         />
       );
+    }
 
     return (
       <div className={classes.editableFields}>

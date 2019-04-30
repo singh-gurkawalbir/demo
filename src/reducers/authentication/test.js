@@ -1,12 +1,16 @@
 /* global describe, test, expect */
 import reducer from './';
 import actions from '../../actions';
+import { COMM_STATES } from '../comms';
 
 describe('authentication reducers', () => {
   test('any other action return default state', () => {
     const newState = reducer(undefined, 'someaction');
 
-    expect(newState).toEqual({ initialized: false });
+    expect(newState).toEqual({
+      initialized: false,
+      commStatus: COMM_STATES.LOADING,
+    });
   });
 
   test('any other action return original state', () => {
@@ -16,24 +20,24 @@ describe('authentication reducers', () => {
     expect(newState).toEqual(someState);
   });
   describe('authentication request', () => {
-    test('should set loading flag to true and authentication to false', () => {
+    test('should set commStatus to loading and authentication to false', () => {
       const newState = reducer(undefined, actions.auth.request());
 
       expect(newState).toEqual({
         initialized: false,
-        loading: true,
+        commStatus: COMM_STATES.LOADING,
         authenticated: false,
       });
     });
   });
 
   describe('authentication successful', () => {
-    test('should set loading flag to false and authentication to true', () => {
+    test('should set the commStatus to success and authentication to true', () => {
       const newState = reducer(undefined, actions.auth.complete());
 
       expect(newState).toEqual({
         initialized: true,
-        loading: false,
+        commStatus: COMM_STATES.SUCCESS,
         authenticated: true,
       });
     });
@@ -44,8 +48,7 @@ describe('authentication reducers', () => {
 
       expect(finalState).toEqual({
         initialized: true,
-
-        loading: false,
+        commStatus: COMM_STATES.SUCCESS,
         authenticated: true,
       });
     });
@@ -70,7 +73,7 @@ describe('authentication reducers', () => {
 
       expect(sucessfulAuthenticatedState).toEqual({
         initialized: true,
-        loading: false,
+        commStatus: COMM_STATES.SUCCESS,
         authenticated: true,
       });
     });
@@ -83,8 +86,7 @@ describe('authentication reducers', () => {
 
       expect(newState).toEqual({
         initialized: true,
-
-        loading: false,
+        commStatus: COMM_STATES.ERROR,
         authenticated: false,
         failure: someFailureMsg,
       });
@@ -100,7 +102,7 @@ describe('authentication reducers', () => {
 
       expect(newState).toEqual({
         initialized: true,
-        loading: false,
+        commStatus: COMM_STATES.ERROR,
         authenticated: false,
         sessionExpired: true,
         failure: someFailureMsg,
