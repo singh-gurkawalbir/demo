@@ -155,28 +155,16 @@ export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
 
-// Auth Loading commStatus has a default value of undefined
-// So we have to account for that when the app is initialized
-// for the very first time
 export function isAuthLoading(state) {
-  const auth = state && state.auth;
-
   return (
-    (auth && auth.commStatus === undefined) ||
-    (auth && auth.commStatus === fromComms.COMM_STATES.LOADING)
+    state &&
+    state.auth &&
+    state.auth.commStatus === fromComms.COMM_STATES.LOADING
   );
 }
 
-// export function isAuthLoading(state) {
-//   return (
-//     state &&
-//     state.auth &&
-//     state.auth.commStatus === fromComms.COMM_STATES.LOADING
-//   );
-// }
-
 export function isUserLoggedIn(state) {
-  return !!(state && state.auth && state.auth.loggedIn);
+  return !!(state && state.auth && state.auth.commStatus);
 }
 
 export function authenticationErrored(state) {
