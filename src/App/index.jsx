@@ -19,7 +19,6 @@ const mapStateToProps = state => ({
   isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
     state
   ),
-  accountsPopulated: selectors.accountsPopulated(state),
 });
 let timer = null;
 

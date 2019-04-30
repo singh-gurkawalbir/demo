@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import TileAction from './TileAction';
 import getRoutePath from '../../utils/routePaths';
+import { INTEGRATION_ACCESS_LEVELS } from '../../utils/constants';
 
 @withStyles(theme => ({
   card: {
@@ -68,7 +69,9 @@ export default class Tile extends Component {
                   data._integrationId
                 }/settings`
               )}>
-              {accessLevel === 'monitor' ? 'Monitor' : 'Manage'}
+              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
+                ? 'Monitor'
+                : 'Manage'}
             </Link>
           )}
           {data.tag && (

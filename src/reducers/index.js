@@ -322,15 +322,6 @@ export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function accountsPopulated(state) {
-  return !!(
-    state &&
-    state.user &&
-    state.user.profile &&
-    state.user.profile.accountsPopulated
-  );
-}
-
 export function notifications(state) {
   return fromUser.notifications(state.user);
 }

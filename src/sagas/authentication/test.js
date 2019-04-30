@@ -17,6 +17,7 @@ import {
   invalidateSession,
 } from './';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 describe('initialze all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {
@@ -113,7 +114,7 @@ describe('initialze all app relevant resources sagas', () => {
       selectors.hasAcceptedAccounts
     );
 
-    expect(saga.next({ defaultAShareId: 'own' }).value).toEqual(
+    expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
       selectHasAcceptedAccountsEffect
     );
 

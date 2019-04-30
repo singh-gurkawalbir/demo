@@ -7,7 +7,6 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 
 const mapStateToProps = state => ({
-  // isAuthStateStable: selectors.isAuthStateStable(state),
   showAppRoutingWithAuth: selectors.showAppRoutingWithAuth(state),
 });
 const mapDispatchToProps = dispatch => ({

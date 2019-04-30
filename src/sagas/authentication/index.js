@@ -18,6 +18,7 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { intializationResources } from '../../reducers/data';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -75,7 +76,7 @@ export function* retrieveAppInitializationResources() {
       defaultAShareId
     );
   } else {
-    calculatedDefaultAShareId = 'own';
+    calculatedDefaultAShareId = ACCOUNT_IDS.OWN;
   }
 
   if (defaultAShareId !== calculatedDefaultAShareId) {
