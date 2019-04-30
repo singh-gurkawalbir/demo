@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import * as selectors from '../../reducers';
 
 const mapStateToProps = state => {
@@ -11,15 +11,9 @@ const mapStateToProps = state => {
   };
 };
 
-@withStyles({
-  permissionsError: {
-    textAlign: 'center',
-    color: '#ff0000',
-  },
-})
 class CheckPermissions extends Component {
   render() {
-    const { classes, permissions, permission, children } = this.props;
+    const { permissions, permission, children } = this.props;
     const hasPermission = !!permission
       .split('.')
       .reduce((prev, curr) => (prev ? prev[curr] : null), permissions);
@@ -27,9 +21,9 @@ class CheckPermissions extends Component {
     return hasPermission ? (
       children
     ) : (
-      <div className={classes.permissionsError}>
+      <Typography color="error" variant="h5">
         You do not have permissions to access this page.
-      </div>
+      </Typography>
     );
   }
 }
