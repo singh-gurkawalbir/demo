@@ -93,19 +93,19 @@ class SignIn extends Component {
     } = this.props;
     const { email } = this.state;
 
-    if (authenticated && !iAmModal) {
-      const params = new URLSearchParams(location.search);
-      const redirectToRoute = params.get('redirectTo');
+    // if (authenticated && !iAmModal) {
+    //   const params = new URLSearchParams(location.search);
+    //   const redirectToRoute = params.get('redirectTo');
 
-      return (
-        <Redirect
-          to={{
-            pathname: redirectToRoute || '/pg',
-            referer: location.pathname,
-          }}
-        />
-      );
-    }
+    //   return (
+    //     <Redirect
+    //       to={{
+    //         pathname: redirectToRoute || '/pg',
+    //         referer: location.pathname,
+    //       }}
+    //     />
+    //   );
+    // }
 
     return (
       <div className={classes.editableFields}>
