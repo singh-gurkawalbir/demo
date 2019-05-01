@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
-import PrivateRoute from './PrivateRoute';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
 

@@ -10,7 +10,6 @@ import getRoutePath from '../../utils/routePaths';
 const mapStateToProps = state => ({
   shouldShowAppRouting: selectors.shouldShowAppRouting(state),
   isAuthInitialized: selectors.isAuthInitialized(state),
-  isUserLoggedOut: !selectors.isUserLoggedIn(state),
   isSessionExpired: selectors.isSessionExpired(state),
   isAuthenticated: selectors.isAuthenticated(state),
 });
@@ -22,26 +21,6 @@ const mapDispatchToProps = dispatch => ({
 
 @hot(module)
 class AppRoutingWithAuth extends Component {
-  appendRedirectQueryParam = (queryParams, redirectRoute) => {
-    const params = new URLSearchParams(queryParams);
-
-    params.append('redirectTo', redirectRoute);
-
-    return params.toString();
-  };
-  getRedirectToParam = queryParams => {
-    const params = new URLSearchParams(queryParams);
-
-    return params.get('redirectTo');
-  };
-
-  deletedRedirectParamQuery = queryParams => {
-    const params = new URLSearchParams(queryParams);
-
-    params.delete('redirectTo');
-
-    return params.toString();
-  };
   componentWillMount() {
     const { initSession, isAuthInitialized, location, history } = this.props;
     const { pathname: currentRoute } = location;
@@ -49,7 +28,7 @@ class AppRoutingWithAuth extends Component {
     if (!isAuthInitialized) {
       if (currentRoute !== getRoutePath('signin'))
         history.push({
-          search: this.appendRedirectQueryParam(location.search, currentRoute),
+          state: { attemptedRoute: currentRoute },
         });
       initSession();
     }
@@ -59,10 +38,8 @@ class AppRoutingWithAuth extends Component {
     const {
       shouldShowAppRouting,
       isAuthenticated,
-      isUserLoggedOut,
       location,
       isSessionExpired,
-      // history,
     } = this.props;
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
@@ -71,13 +48,13 @@ class AppRoutingWithAuth extends Component {
 
     if (isAuthenticated) {
       if (location.pathname === getRoutePath('signin')) {
-        const redirectedTo = this.getRedirectToParam(location.search) || '/pg';
+        const { state: routeState } = location;
+        const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
 
         return (
           <Redirect
             to={{
               pathname: redirectedTo,
-              search: this.deletedRedirectParamQuery(location.search),
             }}
           />
         );
@@ -91,9 +68,7 @@ class AppRoutingWithAuth extends Component {
         <Redirect
           to={{
             pathname: getRoutePath('signin'),
-            search: isUserLoggedOut
-              ? this.deletedRedirectParamQuery(location.search)
-              : location.search,
+            state: location.state,
           }}
         />
       );

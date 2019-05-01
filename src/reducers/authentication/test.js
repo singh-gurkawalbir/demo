@@ -80,7 +80,7 @@ describe('authentication reducers', () => {
   });
 
   describe('authentication failure', () => {
-    test('should set loading flag to false and authentication to true', () => {
+    test('should set commStatus to error and authentication to false', () => {
       const someFailureMsg = 'Error';
       const newState = reducer(undefined, actions.auth.failure(someFailureMsg));
 
