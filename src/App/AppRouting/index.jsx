@@ -11,6 +11,9 @@ const Dashboard = loadable(() =>
 const NotFound = loadable(() =>
   import(/* webpackChunkName: 'NotFound' */ '../../views/NotFound')
 );
+const Permissions = loadable(() =>
+  import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions')
+);
 const Resources = loadable(() =>
   import(/* webpackChunkName: 'Resources' */ '../../views/Resources')
 );
@@ -37,6 +40,7 @@ export default class AppRouting extends Component {
       <Switch>
         <Route exact path="/pg/signin" component={SignIn} />
 
+        <PrivateRoute path="/pg/permissions" component={Permissions} />
         <PrivateRoute path="/pg/resources" component={Resources} />
         <PrivateRoute path="/pg/editors" component={Editors} />
         <PrivateRoute path="/pg/forms" component={CustomForms} />

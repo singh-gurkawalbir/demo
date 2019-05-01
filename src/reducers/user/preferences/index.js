@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { ACCOUNT_IDS } from '../../../utils/constants';
 
 export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
@@ -25,7 +26,7 @@ export default (state = { environment: 'production' }, action) => {
     case actionTypes.UPDATE_PREFERENCES: {
       const { defaultAShareId, accounts } = newState;
 
-      if (!defaultAShareId || defaultAShareId === 'own') {
+      if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
         newState = { ...newState, ...preferences };
       } else {
         Object.keys(preferences).forEach(key => {
@@ -54,7 +55,7 @@ export function userPreferences(state) {
   const { defaultAShareId, accounts = {} } = state;
   let mergedPreferences;
 
-  if (accounts && defaultAShareId && defaultAShareId !== 'own') {
+  if (accounts && defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
     mergedPreferences = { ...state, ...accounts[defaultAShareId] };
   } else {
     mergedPreferences = { ...state };

@@ -7,7 +7,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 
 const mapStateToProps = state => ({
-  isAuthStateStable: selectors.isAuthStateStable(state),
+  showAppRoutingWithAuth: selectors.showAppRoutingWithAuth(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -25,9 +25,9 @@ class AppRoutingWithAuth extends Component {
   render() {
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
-    const { isAuthStateStable } = this.props;
+    const { showAppRoutingWithAuth } = this.props;
 
-    if (!isAuthStateStable) return null;
+    if (!showAppRoutingWithAuth) return null;
 
     return <AppRouting />;
   }
