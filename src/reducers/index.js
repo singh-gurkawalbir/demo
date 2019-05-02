@@ -11,6 +11,13 @@ import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
+import {
+  USER_ACCESS_LEVELS,
+  TILE_STATUS,
+  INTEGRATION_MODES,
+  STANDALONE_INTEGRATION,
+  ACCOUNT_IDS,
+} from '../utils/constants';
 
 const combinedReducers = combineReducers({
   app,
@@ -161,6 +168,10 @@ export function isAuthenticated(state) {
   return !!(state && state.auth && state.auth.authenticated);
 }
 
+export function isDefaultAccountSet(state) {
+  return !!(state && state.auth && state.auth.defaultAccountSet);
+}
+
 export function isAuthInitialized(state) {
   return !!(state && state.auth && state.auth.initialized);
 }
@@ -185,6 +196,20 @@ export function isAuthStateStable(state) {
     !isAuthLoading(state) && isAuthInitialized(state);
 
   return isAuthSucceededOrFailedAfterIntialization || !isUserLoggedIn(state);
+}
+
+export function showAppRoutingWithAuth(state) {
+  if (isAuthStateStable(state)) {
+    const authenticated = isAuthenticated(state);
+
+    if (authenticated) {
+      return !!isDefaultAccountSet(state);
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 export function isSessionExpired(state) {
@@ -321,7 +346,7 @@ export function hasAcceptedAccounts(state) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a => a._id !== 'own' && a.accepted && !a.disabled
+      a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
     ).length > 0
   );
 }
@@ -332,7 +357,8 @@ export function isValidSharedAccountId(state, _id) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a => a.accepted && !a.disabled && a._id === _id && a._id !== 'own'
+      a =>
+        a.accepted && !a.disabled && a._id === _id && a._id !== ACCOUNT_IDS.OWN
     ).length > 0
   );
 }
@@ -342,7 +368,7 @@ export function getOneValidSharedAccountId(state) {
 
   if (state && state.user && state.user.org && state.user.org.accounts) {
     const accepted = state.user.org.accounts.filter(
-      a => a.accepted && !a.disabled && a._id !== 'own'
+      a => a.accepted && !a.disabled && a._id !== ACCOUNT_IDS.OWN
     );
 
     if (accepted && accepted.length > 0) {
@@ -355,6 +381,109 @@ export function getOneValidSharedAccountId(state) {
 
 export function userAccessLevel(state) {
   return fromUser.accessLevel(state.user);
+}
+
+export function userPermissions(state) {
+  return fromUser.permissions(state.user);
+}
+
+export function tiles(state) {
+  const preferences = userPreferences(state);
+  let tiles = resourceList(state, {
+    type: 'tiles',
+    sandbox: preferences.environment === 'sandbox',
+  }).resources;
+  let integrations = resourceList(state, {
+    type: 'integrations',
+  }).resources;
+  const published = resourceList(state, {
+    type: 'published',
+  }).resources;
+  const permissions = userPermissions(state);
+  const hasStandaloneTile = tiles.find(
+    t => t._integrationId === STANDALONE_INTEGRATION.id
+  );
+
+  if (hasStandaloneTile) {
+    integrations = [
+      ...integrations,
+      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+    ];
+  }
+
+  integrations = integrations.map(i => {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    ) {
+      return {
+        ...i,
+        permissions: {
+          accessLevel: permissions.integrations.all.accessLevel,
+          connections: {
+            edit: permissions.integrations.all.connections.edit,
+          },
+        },
+      };
+    }
+
+    return {
+      ...i,
+      permissions: {
+        accessLevel: (permissions.integrations[i._id] || {}).accessLevel,
+        connections: {
+          edit:
+            permissions.integrations[i._id] &&
+            permissions.integrations[i._id].connections.edit,
+        },
+      },
+    };
+  });
+
+  let integration;
+  let connector;
+  let status;
+
+  tiles = tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
+
+    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
+
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId) || { user: {} };
+
+      return {
+        ...t,
+        status,
+        integration: {
+          mode: integration.mode,
+          permissions: integration.permissions,
+        },
+        connector: { owner: connector.user.company || connector.user.name },
+      };
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
+
+  return tiles;
 }
 // #endregion
 

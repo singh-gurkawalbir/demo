@@ -5,6 +5,9 @@ export const availableResources = [
   'imports',
   'connections',
   'scripts',
+  'published',
+  'integrations',
+  'tiles',
 ];
 
 // These are redux action "creators". Actions are reusable by any
@@ -31,6 +34,7 @@ const auth = {
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
+  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
   request: (path, message, hidden, reqType) =>
