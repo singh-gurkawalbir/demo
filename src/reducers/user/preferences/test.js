@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
 import actions from '../../../actions';
+import { ACCOUNT_IDS } from '../../../utils/constants';
 
 describe('user reducers', () => {
   describe('setting theme in preferences reducer', () => {
@@ -38,7 +39,7 @@ describe('user reducers', () => {
       describe('for various user account types', () => {
         test('should update the correct set of preferences when the user is an owner', () => {
           const ownerAccountPreferences = {
-            defaultAShareId: 'own',
+            defaultAShareId: ACCOUNT_IDS.OWN,
             timeFormat: 'something',
             themeName: 'fancy',
           };
@@ -55,7 +56,7 @@ describe('user reducers', () => {
 
           expect(patchedState).toEqual({
             themeName: 'blue',
-            defaultAShareId: 'own',
+            defaultAShareId: ACCOUNT_IDS.OWN,
             timeFormat: 'something else',
           });
         });
@@ -156,7 +157,7 @@ describe('user reducers', () => {
 
     test('should generate the correct set of preferences when the user is an owner', () => {
       const ownerAccountPreferences = {
-        defaultAShareId: 'own',
+        defaultAShareId: ACCOUNT_IDS.OWN,
         timeFormat: 'something',
         themeName: 'fancy',
       };
@@ -168,7 +169,7 @@ describe('user reducers', () => {
 
       expect(selectors.userPreferences(state)).toEqual({
         themeName: 'fancy',
-        defaultAShareId: 'own',
+        defaultAShareId: ACCOUNT_IDS.OWN,
         timeFormat: 'something',
       });
     });

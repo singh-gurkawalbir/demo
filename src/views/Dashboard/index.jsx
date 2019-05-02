@@ -1,17 +1,52 @@
 import { hot } from 'react-hot-loader';
 import { Component } from 'react';
-// import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
-// import Button from '@material-ui/core/Button';
+import * as selectors from '../../reducers';
+import Tile from './Tile';
+import LoadResources from '../../components/LoadResources';
+
+const mapStateToProps = state => {
+  const tiles = selectors.tiles(state);
+
+  return {
+    tiles,
+  };
+};
 
 @hot(module)
 @withStyles(theme => ({
   root: {
-    margin: theme.spacing.quad,
+    flexGrow: 1,
+    padding: 12,
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
   },
 }))
-export default class Dashboard extends Component {
+class Dashboard extends Component {
   render() {
-    return <div className={this.props.classes.root} />;
+    const { classes, tiles } = this.props;
+
+    return (
+      <LoadResources
+        resources={['published', 'integrations', 'tiles']}
+        required>
+        <div className={classes.root}>
+          <Grid container spacing={24}>
+            {tiles.map(t => (
+              <Grid key={t._integrationId} item xs={3}>
+                <Tile data={t} />
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+      </LoadResources>
+    );
   }
 }
+
+export default connect(mapStateToProps)(Dashboard);

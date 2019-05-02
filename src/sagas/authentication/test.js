@@ -17,6 +17,7 @@ import {
   invalidateSession,
 } from './';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 describe('initialze all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {
@@ -113,9 +114,11 @@ describe('initialze all app relevant resources sagas', () => {
       selectors.hasAcceptedAccounts
     );
 
-    expect(saga.next({ defaultAShareId: 'own' }).value).toEqual(
+    expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
       selectHasAcceptedAccountsEffect
     );
+
+    expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next(false).done).toEqual(true);
   });
@@ -148,7 +151,10 @@ describe('initialze all app relevant resources sagas', () => {
     expect(saga.next(true).value).toEqual(
       callValidateAndGetDefaultAShareIdEffect
     );
-    expect(saga.next('ashare1').done).toEqual(true);
+    expect(saga.next('ashare1').value).toEqual(
+      put(actions.auth.defaultAccountSet())
+    );
+    expect(saga.next().done).toEqual(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
@@ -188,6 +194,8 @@ describe('initialze all app relevant resources sagas', () => {
         })
       )
     );
+    expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
+
     expect(saga.next().done).toEqual(true);
   });
 });

@@ -10,6 +10,7 @@ import {
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
 import * as selectors from '../../reducers';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 describe('getRequestOptions saga', () => {
   describe('checks for org owner.', () => {
@@ -25,7 +26,7 @@ describe('getRequestOptions saga', () => {
       const saga = getRequestOptions('/exports');
 
       expect(saga.next().value).toEqual(select(selectors.userPreferences));
-      expect(saga.next({ defaultAShareId: 'own' }).value).toEqual({
+      expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual({
         headers: {},
       });
       expect(saga.next().done).toEqual(true);

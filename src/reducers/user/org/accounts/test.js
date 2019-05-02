@@ -2,6 +2,11 @@
 import moment from 'moment';
 import reducer, * as selectors from './';
 import actions from '../../../../actions';
+import {
+  ACCOUNT_IDS,
+  USER_ACCESS_LEVELS,
+  INTEGRATION_ACCESS_LEVELS,
+} from '../../../../utils/constants';
 
 describe('account (ashares) reducers', () => {
   test('any other action should return default state', () => {
@@ -25,8 +30,8 @@ describe('account (ashares) reducers', () => {
     ];
     const accounts = [
       {
-        _id: 'own',
-        accessLevel: 'owner',
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
         ownerUser: {
           licenses: someCollection,
         },
@@ -87,8 +92,8 @@ describe('account (ashares) reducers', () => {
     ];
     const ownAccounts = [
       {
-        _id: 'own',
-        accessLevel: 'owner',
+        _id: ACCOUNT_IDS.OWN,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
         ownerUser: {
           licenses: someCollection,
         },
@@ -118,7 +123,7 @@ describe('account (ashares) reducers', () => {
     expect(newState).toEqual(someCollection);
   });
   test('should receive the right collection for shared/ashares resource type when own account present', () => {
-    const someState = [{ _id: 'own' }];
+    const someState = [{ _id: ACCOUNT_IDS.OWN }];
     const someCollection = [
       { account1: 'something 1' },
       { account2: 'something 2' },
@@ -174,7 +179,7 @@ describe('account (ashares) reducers', () => {
       },
       {
         _id: 'htng',
-        accessLevel: 'monitor',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
         ownerUser: {
           _id: '456',
           email: 'ignoreme@celigo.com',
@@ -248,7 +253,7 @@ describe('account (ashares) reducers', () => {
           actions.resource.receivedCollection('licenses', ownLicenses)
         );
 
-        expect(selectors.integratorLicense(state, 'own')).toEqual({
+        expect(selectors.integratorLicense(state, ACCOUNT_IDS.OWN)).toEqual({
           _id: 'license1',
           type: 'integrator',
           sandbox: true,
@@ -286,7 +291,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state, 'own')).toEqual({
+        expect(selectors.integratorLicense(state, ACCOUNT_IDS.OWN)).toEqual({
           _id: 'license1',
           type: 'integrator',
           tier: 'none',
@@ -307,7 +312,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state2, 'own')).toEqual(
+        expect(selectors.integratorLicense(state2, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -333,7 +338,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state3, 'own')).toEqual(
+        expect(selectors.integratorLicense(state3, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -358,7 +363,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state4, 'own')).toEqual(
+        expect(selectors.integratorLicense(state4, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -383,7 +388,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state5, 'own')).toEqual(
+        expect(selectors.integratorLicense(state5, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -409,7 +414,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state6, 'own')).toEqual(
+        expect(selectors.integratorLicense(state6, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -435,7 +440,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state7, 'own')).toEqual(
+        expect(selectors.integratorLicense(state7, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -497,11 +502,11 @@ describe('account (ashares) reducers', () => {
         );
         const expectedResult = [
           {
-            id: 'own',
+            id: ACCOUNT_IDS.OWN,
             environment: 'production',
           },
           {
-            id: 'own',
+            id: ACCOUNT_IDS.OWN,
             environment: 'sandbox',
           },
         ];
@@ -519,7 +524,7 @@ describe('account (ashares) reducers', () => {
         const expectedResult = [
           {
             id: 'htng',
-            accessLevel: 'monitor',
+            accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
             ownerUser: {
               company: 'skip',
               email: 'ignoreme@celigo.com',
@@ -530,6 +535,300 @@ describe('account (ashares) reducers', () => {
         const result = selectors.notifications(state);
 
         expect(result).toEqual(expectedResult);
+      });
+    });
+    describe('permissions', () => {
+      test('should return correct permissions for account owner', () => {
+        const ownAccount = {
+          _id: ACCOUNT_IDS.OWN,
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        };
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('shared/ashares', [ownAccount])
+        );
+        const permissions = selectors.permissions(state, ACCOUNT_IDS.OWN);
+        const ownerPermissions = {
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          audits: { view: true },
+          subscriptions: { view: true, requestUpgrade: true },
+          accesstokens: {
+            view: true,
+            create: true,
+            edit: true,
+            delete: true,
+          },
+          agents: { view: true, create: true, edit: true, delete: true },
+
+          connections: { view: true, create: true, edit: true, delete: true },
+          connectors: {},
+          integrations: {
+            create: true,
+            install: true,
+            none: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+              },
+              connections: {
+                create: true,
+                edit: true,
+              },
+            },
+            all: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              edit: true,
+              delete: true,
+              clone: true,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+                attach: true,
+                detach: true,
+              },
+              connections: {
+                create: true,
+                edit: true,
+                register: true,
+              },
+            },
+          },
+          recyclebin: {
+            view: true,
+            restore: true,
+            download: true,
+            purge: true,
+          },
+          scripts: { view: true, create: true, edit: true, delete: true },
+          stacks: { view: true, create: true, edit: true, delete: true },
+
+          templates: {},
+          transfers: {
+            view: true,
+            create: true,
+            edit: true,
+            delete: true,
+          },
+          users: {
+            view: true,
+            create: true,
+            edit: true,
+            delete: true,
+          },
+        };
+
+        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(permissions).toEqual(ownerPermissions);
+        const permissionsWithAllowedToPublish = selectors.permissions(
+          state,
+          ACCOUNT_IDS.OWN,
+          { allowedToPublish: true }
+        );
+
+        expect(Object.isFrozen(permissionsWithAllowedToPublish)).toEqual(true);
+        expect(permissionsWithAllowedToPublish).toEqual({
+          ...ownerPermissions,
+          connectors: {
+            view: true,
+            create: true,
+            edit: true,
+            delete: true,
+            publish: true,
+          },
+          templates: {
+            view: true,
+            create: true,
+            edit: true,
+            delete: true,
+            publish: true,
+          },
+        });
+      });
+      test('should return correct permissions for account level manage user', () => {
+        const account = {
+          _id: 'account1',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+          accepted: true,
+        };
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('shared/ashares', [account])
+        );
+        const permissions = selectors.permissions(state, 'account1');
+        const manageUserPermissions = {
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+          audits: {},
+          subscriptions: { requestUpgrade: true },
+          accesstokens: {},
+          agents: { view: true, create: true, edit: true, delete: true },
+
+          connections: { view: true, create: true, edit: true, delete: true },
+          connectors: {},
+          integrations: {
+            create: true,
+            install: true,
+            none: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+              },
+              connections: {
+                create: true,
+                edit: true,
+              },
+            },
+            all: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+              edit: true,
+              delete: true,
+              clone: true,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+                attach: true,
+                detach: true,
+              },
+              connections: {
+                create: true,
+                edit: true,
+                register: true,
+              },
+            },
+          },
+          recyclebin: {
+            view: true,
+            restore: true,
+            download: true,
+            purge: true,
+          },
+          scripts: { view: true, create: true, edit: true, delete: true },
+          stacks: { view: true, create: true, edit: true, delete: true },
+
+          templates: {},
+          transfers: {},
+          users: {},
+        };
+
+        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(permissions).toEqual(manageUserPermissions);
+      });
+      test('should return correct permissions for account level monitor user', () => {
+        const account = {
+          _id: 'account1',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          accepted: true,
+        };
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('shared/ashares', [account])
+        );
+        const permissions = selectors.permissions(state, 'account1');
+        const monitorUserPermissions = {
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          audits: {},
+          subscriptions: {},
+          accesstokens: {},
+          agents: {},
+
+          connections: {},
+          connectors: {},
+          integrations: {
+            none: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+              flows: {},
+              connections: {},
+            },
+            all: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+
+              flows: {},
+              connections: {},
+            },
+          },
+          recyclebin: {},
+          scripts: {},
+          stacks: {},
+
+          templates: {},
+          transfers: {},
+          users: {},
+        };
+
+        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(permissions).toEqual(monitorUserPermissions);
+      });
+      test('should return correct permissions for tile level access user', () => {
+        const account = {
+          _id: 'account1',
+          accepted: true,
+          integrationAccessLevel: [
+            {
+              _integrationId: 'manageIntegration',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+            },
+            {
+              _integrationId: 'monitorIntegration',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+          ],
+        };
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('shared/ashares', [account])
+        );
+        const permissions = selectors.permissions(state, 'account1');
+        const tileUserPermissions = {
+          accessLevel: USER_ACCESS_LEVELS.TILE,
+          audits: {},
+          subscriptions: {},
+          accesstokens: {},
+          agents: {},
+
+          connections: {},
+          connectors: {},
+          integrations: {
+            manageIntegration: {
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+              edit: true,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+              },
+              connections: {
+                create: true,
+                edit: true,
+                register: true,
+              },
+            },
+            monitorIntegration: {
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+              flows: {},
+              connections: {},
+            },
+          },
+          recyclebin: {},
+          scripts: {},
+          stacks: {},
+
+          templates: {},
+          transfers: {},
+          users: {},
+        };
+
+        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(permissions).toEqual(tileUserPermissions);
       });
     });
   });
