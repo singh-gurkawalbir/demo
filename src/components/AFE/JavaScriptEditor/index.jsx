@@ -18,12 +18,7 @@ const mapStateToProps = (state, { editorId }) => {
 
 const mapDispatchToProps = (
   dispatch,
-  {
-    editorId,
-    code = 'function main(form) {\n  return form\n}',
-    entryFunction = 'main',
-    data,
-  }
+  { editorId, scriptId, entryFunction = 'main', data }
 ) => ({
   handleDataChange: data => {
     dispatch(actions.editor.patch(editorId, { data }));
@@ -31,7 +26,7 @@ const mapDispatchToProps = (
   handleInit: () => {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
-        code,
+        scriptId,
         entryFunction,
         data,
       })
@@ -60,7 +55,6 @@ class JavaScriptEditor extends Component {
     return (
       <PanelGrid className={classes.template}>
         <PanelGridItem gridArea="rule">
-          <PanelTitle title="Your Script" />
           <JavaScriptPanel editorId={editorId} />
         </PanelGridItem>
         <PanelGridItem gridArea="data">
