@@ -16,21 +16,15 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
   },
 }))
 class MaterialUiSelect extends React.Component {
-  state = {
-    value: '',
-  };
-  componentDidMount() {
-    const { defaultValue } = this.props;
-
-    this.setState({ value: defaultValue });
-  }
   render() {
-    const { value } = this.state;
     const {
       classes,
       description,
       disableSelect,
+      disabled,
       id,
+      value,
+      defaultValue,
       // isValid,
       name,
       options = [],
@@ -65,17 +59,19 @@ class MaterialUiSelect extends React.Component {
     );
 
     return (
-      <FormControl key={id} disabled={disableSelect} className={classes.root}>
+      <FormControl
+        key={id}
+        disabled={disableSelect || disabled}
+        className={classes.root}>
         <InputLabel shrink={!!value} htmlFor={id}>
           {label}
         </InputLabel>
         <Select
-          value={value}
+          value={value || defaultValue}
           onChange={evt => {
             const { value } = evt.target;
 
             onFieldChange(id, value);
-            this.setState({ value });
           }}
           input={<Input name={name} id={id} />}>
           {items}

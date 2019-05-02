@@ -73,7 +73,8 @@ export default class ResourceForm extends Component {
       fieldMeta = factory.getFieldsWithDefaults(
         assets.fieldMeta,
         resourceType,
-        resource
+        resource,
+        connection
       );
       handleClick = value =>
         handleSubmit(

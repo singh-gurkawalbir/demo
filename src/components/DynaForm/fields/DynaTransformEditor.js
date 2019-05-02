@@ -47,7 +47,7 @@ class DynaTransformEditor extends React.Component {
 
   render() {
     const { showEditor } = this.state;
-    const { classes, id, value, label, sampleData } = this.props;
+    const { classes, id, rules, label, sampleData } = this.props;
 
     return (
       <Fragment>
@@ -56,7 +56,7 @@ class DynaTransformEditor extends React.Component {
             title="CSV parse options"
             id={id}
             data={sampleData}
-            rule={value}
+            rule={rules}
             onClose={this.handleClose}
           />
         )}

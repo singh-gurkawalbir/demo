@@ -1,3 +1,5 @@
+import applicationType from './utils/exportUtils';
+
 export default {
   // #region common
   name: {
@@ -42,8 +44,9 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
+    label: 'Invoke this Export [POST]:',
     type: 'text',
-    label: 'Api Identifier',
+    disableTextField: true,
   },
   configureAsyncHelper: {
     type: 'checkbox',
@@ -114,6 +117,9 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
+    disableSelect: true,
+    defaultValue: (resource, connection) =>
+      applicationType(resource, connection),
     options: [
       {
         items: [
@@ -121,7 +127,7 @@ export default {
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
-          { label: 'Amazonmws', value: 'amazonmws' },
+          { label: 'Amazon S3', value: 'amazon s3' },
           { label: 'Anaplan', value: 'anaplan' },
           { label: 'Ariba', value: 'ariba' },
           { label: 'Asana', value: 'asana' },
@@ -240,7 +246,7 @@ export default {
           { label: 'Pitneybowes', value: 'pitneybowes' },
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
-          { label: 'Mssql', value: 'mssql' },
+          { label: 'Microsoft SQL', value: 'microsoft sql' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },
@@ -559,11 +565,7 @@ export default {
     type: 'transformeditor',
     label: 'Transform expression rules',
     sampleData: r => r.sampleData,
-    rule: r =>
-      r &&
-      r.transform &&
-      r.transform.expression &&
-      r.transform.expression.rules,
+    rules: r => r && r.transform && r.transform.rules,
   },
   'transform.script._scriptId': {
     type: 'text',

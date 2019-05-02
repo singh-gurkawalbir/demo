@@ -9,14 +9,10 @@ export default {
     type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
-  // TODO test it if it actually works
-  // selecting all agents
   _agentId: {
     type: 'selectresource',
     label: 'Agent',
     resourceType: 'agents',
-    // filter: r => ({ type: r.type }),
-    // excludeFilter: r => ({ _
   },
   uploadFile: {
     type: 'uploadFile',
@@ -50,6 +46,7 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
+    disableSelect: true,
     options: [
       {
         items: [
@@ -283,6 +280,7 @@ export default {
   connMode: {
     type: 'radiogroup',
     label: 'Mode',
+    defaultValue: 'cloud',
     options: [
       {
         items: [

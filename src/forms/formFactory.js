@@ -1,7 +1,3 @@
-// import masterFieldHash from '../formsMetadata/generatedHash/index';
-// import formMeta from '../formsMetadata/generatedHash/resourceViews';
-// import masterFieldHash from '../formsMetadata/masterFieldHash';
-// import formMeta from '../formsMetadata/definitions';
 import { deepClone } from 'fast-json-patch';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
@@ -193,13 +189,14 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 const applyingMissedOutFieldMetaProperties = (
   incompleteField,
   resource,
-  resourceType
+  resourceType,
+  connection
 ) => {
   const field = incompleteField;
 
   Object.keys(field).forEach(key => {
     if (typeof field[key] === 'function') {
-      field[key] = field[key](resource);
+      field[key] = field[key](resource, connection);
     }
   });
 
@@ -234,7 +231,7 @@ const applyingMissedOutFieldMetaProperties = (
   return field;
 };
 
-const setDefaults = (fields, resourceType, resource) => {
+const setDefaults = (fields, resourceType, resource, connection) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields
@@ -248,7 +245,8 @@ const setDefaults = (fields, resourceType, resource) => {
         return setDefaults(
           fieldMetaHavingVisibilityRules,
           resourceType,
-          resource
+          resource,
+          connection
         );
       }
 
@@ -262,13 +260,20 @@ const setDefaults = (fields, resourceType, resource) => {
       return applyingMissedOutFieldMetaProperties(
         merged,
         resource,
-        resourceType
+        resourceType,
+        connection
       );
     })
     .flat();
 };
 
-const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
+// passing an additional a
+const getFieldsWithDefaults = (
+  fieldMeta,
+  resourceType,
+  resource,
+  connection
+) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
@@ -278,13 +283,13 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
 
       filled.push({
         ...rest,
-        fields: setDefaults(fields, resourceType, resource),
+        fields: setDefaults(fields, resourceType, resource, connection),
       });
     });
   }
 
   return {
-    fields: setDefaults(fields, resourceType, resource),
+    fields: setDefaults(fields, resourceType, resource, connection),
     fieldSets: filled,
   };
 };

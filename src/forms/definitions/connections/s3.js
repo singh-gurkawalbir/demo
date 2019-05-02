@@ -1,6 +1,5 @@
 export default {
   fields: [
-    { fieldId: 'type' },
     { fieldId: 'name' },
     { fieldId: 'assistant' },
     { fieldId: 's3.accessKeyId' },

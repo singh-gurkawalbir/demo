@@ -11,6 +11,7 @@ export default function reducer(state = {}, action) {
     result,
     error,
     helperFunctions,
+    rule,
     violations,
   } = action;
   let newState = Object.assign({}, state);
@@ -27,6 +28,7 @@ export default function reducer(state = {}, action) {
       newState[id] = {
         processor,
         defaultOptions: options,
+        rule,
         ...options,
         lastChange: Date.now(),
       };
