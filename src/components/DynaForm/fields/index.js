@@ -8,6 +8,7 @@ import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
+import DynaHook from './DynaHook';
 
 export default {
   text: DynaText,
@@ -21,4 +22,5 @@ export default {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
+  hook: DynaHook,
 };
