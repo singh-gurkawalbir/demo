@@ -3,6 +3,7 @@ import csvParser from './csvParser';
 import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
+import javascript from './javascript';
 
 const logicMap = {
   xmlParser,
@@ -10,6 +11,7 @@ const logicMap = {
   merge,
   transform,
   handlebars,
+  javascript,
 };
 
 function getLogic(editor) {

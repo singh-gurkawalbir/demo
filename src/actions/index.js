@@ -1,11 +1,12 @@
 import actionTypes from './types';
 
 export const availableResources = [
-  'published',
-  'integrations',
   'exports',
   'imports',
   'connections',
+  'scripts',
+  'published',
+  'integrations',
   'tiles',
 ];
 
