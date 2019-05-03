@@ -50,6 +50,12 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
       break;
 
     default:
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        ({ fields, fieldSets, converter, initializer } = meta);
+      }
+
       break;
   }
 
