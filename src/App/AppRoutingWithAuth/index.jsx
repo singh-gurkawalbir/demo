@@ -1,13 +1,17 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import AppRouting from '../AppRouting';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = state => ({
-  isAuthStateStable: selectors.isAuthStateStable(state),
+  shouldShowAppRouting: selectors.shouldShowAppRouting(state),
+  isAuthInitialized: selectors.isAuthInitialized(state),
+  isSessionExpired: selectors.isSessionExpired(state),
+  isAuthenticated: selectors.isAuthenticated(state),
 });
 const mapDispatchToProps = dispatch => ({
   initSession: () => {
@@ -18,16 +22,58 @@ const mapDispatchToProps = dispatch => ({
 @hot(module)
 class AppRoutingWithAuth extends Component {
   componentWillMount() {
-    const { initSession, isAuthInitialized } = this.props;
+    const { initSession, isAuthInitialized, location, history } = this.props;
+    const { pathname: currentRoute } = location;
 
-    if (!isAuthInitialized) initSession();
+    if (!isAuthInitialized) {
+      if (currentRoute !== getRoutePath('signin'))
+        history.push({
+          state: { attemptedRoute: currentRoute },
+        });
+      initSession();
+    }
   }
+
   render() {
+    const {
+      shouldShowAppRouting,
+      isAuthenticated,
+      location,
+      isSessionExpired,
+    } = this.props;
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
-    const { isAuthStateStable } = this.props;
+    const isSignInRoute = location.pathname === getRoutePath('signin');
 
-    if (!isAuthStateStable) return null;
+    if (!shouldShowAppRouting) return null;
+
+    if (isAuthenticated) {
+      if (isSignInRoute) {
+        const { state: routeState } = location;
+        const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
+
+        return (
+          <Redirect
+            to={{
+              pathname: redirectedTo,
+            }}
+          />
+        );
+      }
+
+      return <AppRouting />;
+    }
+
+    if (!isSessionExpired && !isSignInRoute) {
+      return (
+        <Redirect
+          to={{
+            pathname: getRoutePath('signin'),
+            state: location.state,
+          }}
+        />
+      );
+    }
 
     return <AppRouting />;
   }

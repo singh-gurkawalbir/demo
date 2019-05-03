@@ -56,7 +56,7 @@ export default {
     { fieldId: 'ftp.exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
     {
-      fieldId: 'netsuite.netsuiteExportlabel',
+      fieldId: 'netsuite.netsuiteSuiteScriptlabel',
       label: 'SuiteScript Hooks (Optional, Developers Only)',
       type: 'labelTitle',
     },

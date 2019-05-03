@@ -200,6 +200,9 @@ class Edit extends Component {
     } = this.props;
     const { editMode, showEditor } = this.state;
     const { /* master , */ merged, patch, conflict, hash } = resourceData;
+    const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
+      resourceType
+    );
 
     if (!merged) {
       return (
@@ -235,13 +238,15 @@ class Edit extends Component {
             }}
           />
         )}
-        <Button
-          className={classes.editButton}
-          size="small"
-          color="primary"
-          onClick={this.handleToggleEdit}>
-          {editMode ? 'Save form' : 'Edit form'}
-        </Button>
+        {allowsCustomForm && (
+          <Button
+            className={classes.editButton}
+            size="small"
+            color="primary"
+            onClick={this.handleToggleEdit}>
+            {editMode ? 'Save form' : 'Edit form'}
+          </Button>
+        )}
         {editMode && (
           <Fragment>
             <Button
@@ -263,7 +268,9 @@ class Edit extends Component {
           </Fragment>
         )}
         <Typography variant="h5">
-          {`${toName(type, true)} ${toName(resourceType, false, -1)}`}
+          {type
+            ? `${toName(type, true)} ${toName(resourceType, false, -1)}`
+            : toName(resourceType, true, -1)}
         </Typography>
 
         <Typography variant="caption" className={classes.dates}>

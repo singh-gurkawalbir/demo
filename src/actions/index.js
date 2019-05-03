@@ -7,6 +7,9 @@ export const availableResources = [
   'agents',
   'scripts',
   'stacks',
+  'published',
+  'integrations',
+  'tiles',
 ];
 
 // These are redux action "creators". Actions are reusable by any
@@ -19,6 +22,7 @@ function action(type, payload = {}) {
 }
 
 const auth = {
+  requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
@@ -33,6 +37,7 @@ const auth = {
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
+  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
   request: (path, message, hidden, reqType) =>

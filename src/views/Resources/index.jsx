@@ -7,12 +7,20 @@ import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import LoadResources from '../../components/LoadResources';
-import { availableResources } from '../../actions';
 import FilteredResources from './FilteredResources';
 import Edit from './Edit';
 import Add from './Add';
 import SearchOptions from './SearchOptions';
 import * as selectors from '../../reducers';
+
+export const availableResources = [
+  'exports',
+  'imports',
+  'connections',
+  'scripts',
+  // 'integrations',
+  // 'tiles',
+];
 
 const mapStateToProps = state => {
   const filterName = 'allResources';

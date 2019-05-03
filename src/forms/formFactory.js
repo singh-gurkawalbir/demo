@@ -24,9 +24,11 @@ const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
 };
 
 const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
-  const allOptionsHandler = getAllOptionsHandlerSubForms(fields, resourceType, [
-    meta.optionsHandler,
-  ]);
+  const allOptionsHandler = getAllOptionsHandlerSubForms(
+    fields,
+    resourceType,
+    meta.optionsHandler ? [meta.optionsHandler] : []
+  );
   const optionsHandler = (fieldId, fields) => {
     const finalRes = allOptionsHandler
       .map(indvOptionsHandler => {
@@ -36,7 +38,7 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
 
         return null;
       })
-      .reduce((acc, curr) => curr || acc);
+      .reduce((acc, curr) => curr || acc, {});
 
     return finalRes;
   };
@@ -105,7 +107,10 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       }
 
       break;
-
+    case 'scripts':
+      meta = formMeta[resourceType];
+      ({ fields } = meta);
+      break;
     default:
       break;
   }

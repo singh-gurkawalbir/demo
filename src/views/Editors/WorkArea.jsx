@@ -36,7 +36,7 @@ import sampleData from './sampleData';
 }))
 export default class WorkArea extends Component {
   state = {
-    sampleType: 'xml1',
+    sampleType: 'json2',
   };
 
   componentDidMount() {

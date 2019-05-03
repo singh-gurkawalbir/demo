@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { getFieldPosition } from '../../forms/utils';
 import PingConnectionSaga from './connections';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* getRequestOptions(path) {
   const opts = {
@@ -30,7 +31,7 @@ export function* getRequestOptions(path) {
   if (
     userPreferences &&
     userPreferences.defaultAShareId &&
-    userPreferences.defaultAShareId !== 'own'
+    userPreferences.defaultAShareId !== ACCOUNT_IDS.OWN
   ) {
     opts.headers['integrator-ashareid'] = userPreferences.defaultAShareId;
 

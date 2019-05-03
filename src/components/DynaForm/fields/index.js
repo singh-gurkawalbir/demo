@@ -12,6 +12,7 @@ import DynaCsvParse from './DynaCsvParse';
 import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
+import DynaHook from './DynaHook';
 
 export default {
   text: DynaText,
@@ -29,4 +30,5 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadFile: DynaUploadFile,
   labelTitle: DynaLabel,
+  hook: DynaHook,
 };

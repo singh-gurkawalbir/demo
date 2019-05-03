@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 export default class Users extends Component {
   render() {
@@ -8,9 +10,11 @@ export default class Users extends Component {
     if (hide) return '';
 
     return (
-      <div>
-        <Typography variant="h6">User Details</Typography>
-      </div>
+      <CheckPermissions permission={PERMISSIONS.users.view}>
+        <div>
+          <Typography variant="h6">User Details</Typography>
+        </div>
+      </CheckPermissions>
     );
   }
 }

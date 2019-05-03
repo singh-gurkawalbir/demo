@@ -6,6 +6,7 @@ import ArrowPopper from '../../components/ArrowPopper';
 import WaffleButton from './WaffleButton';
 import WaffleIcon from './WaffleIcon';
 import * as selectors from '../../reducers';
+import { USER_ACCESS_LEVELS } from '../../utils/constants';
 
 const mapStateToProps = state => ({
   accessLevel: selectors.userAccessLevel(state),
@@ -55,7 +56,12 @@ class WaffleBox extends Component {
     const { anchorEl } = this.state;
     const { classes, accessLevel } = this.props;
 
-    if (!['owner', 'manage'].includes(accessLevel)) {
+    if (
+      ![
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      ].includes(accessLevel)
+    ) {
       return null;
     }
 

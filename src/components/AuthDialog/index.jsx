@@ -35,7 +35,7 @@ class AlertDialog extends Component {
             {'Please login again'}
           </DialogTitle>
           <DialogContent>
-            <SignIn dialogOpen={dialogOpen} iAmModal />
+            <SignIn dialogOpen={dialogOpen} />
           </DialogContent>
           {/* <DialogActions>
             <Button onClick={this.handleClose} color="primary" autoFocus>
