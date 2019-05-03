@@ -10,11 +10,10 @@ export default class MergeEditorDialog extends Component {
       height: '50vh',
       open: true,
     };
-    const { id, rule, data, ...other } = this.props;
-    const props = Object.assign({}, defaults, other);
+    const { id, rule, data, ...rest } = this.props;
 
     return (
-      <EditorDialog id={id} {...props}>
+      <EditorDialog id={id} {...defaults} {...rest}>
         <MergeEditor editorId={id} rule={rule} data={data} />
       </EditorDialog>
     );

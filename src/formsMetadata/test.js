@@ -5,9 +5,9 @@ import { getMissingPatchSet, sanitizePatchSet } from './utils';
 describe('Form Utils', () => {
   describe('getMissingPatchSet', () => {
     test('should find missing node', () => {
-      const master = { a: 123 };
+      const resource = { a: 123 };
       const paths = ['/b/c', '/a/e/f'];
-      const patchResult = getMissingPatchSet(paths, master);
+      const patchResult = getMissingPatchSet(paths, resource);
 
       expect(patchResult).toEqual([
         { op: 'add', path: '/b', value: { c: {} } },
