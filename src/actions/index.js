@@ -20,6 +20,7 @@ function action(type, payload = {}) {
 }
 
 const auth = {
+  requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),

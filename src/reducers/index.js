@@ -7,8 +7,8 @@ import comms, * as fromComms from './comms';
 import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
-import actionTypes from '../actions/types';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
+import actionTypes from '../actions/types';
 import { getFieldById } from '../formsMetadata/utils';
 import stringUtil from '../utils/string';
 import {
@@ -177,7 +177,11 @@ export function isAuthInitialized(state) {
 }
 
 export function isAuthLoading(state) {
-  return !!(state && state.auth && state.auth.loading);
+  return (
+    state &&
+    state.auth &&
+    state.auth.commStatus === fromComms.COMM_STATES.LOADING
+  );
 }
 
 export function isUserLoggedIn(state) {
@@ -188,18 +192,8 @@ export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
 }
 
-// This selector encompasses several authentication scenarios and
-// is used by the UI to determine whether the authentication state computation
-// is stable.
-export function isAuthStateStable(state) {
-  const isAuthSucceededOrFailedAfterIntialization =
-    !isAuthLoading(state) && isAuthInitialized(state);
-
-  return isAuthSucceededOrFailedAfterIntialization || !isUserLoggedIn(state);
-}
-
-export function showAppRoutingWithAuth(state) {
-  if (isAuthStateStable(state)) {
+export function isDefaultAccountSetAfterAuth(state) {
+  if (!isAuthLoading(state)) {
     const authenticated = isAuthenticated(state);
 
     if (authenticated) {
@@ -212,9 +206,18 @@ export function showAppRoutingWithAuth(state) {
   return false;
 }
 
+// This selector is used by the UI to determine
+// when to show appRouting component
+// For now only when the default account is set or user is logged out
+// show the appRouting component
+export function shouldShowAppRouting(state) {
+  return isDefaultAccountSetAfterAuth(state) || !isUserLoggedIn(state);
+}
+
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
+
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals
