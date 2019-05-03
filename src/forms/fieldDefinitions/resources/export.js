@@ -1098,6 +1098,23 @@ export default {
   },
   // #endregion http
   // #region netsuite
+  'netsuite.restlet.searchType': {
+    type: 'radiogroup',
+    label: 'Saved Search Type',
+    options: [
+      {
+        items: [
+          { label: 'Public', value: 'public' },
+          { label: 'Private', value: 'private' },
+        ],
+      },
+    ],
+  },
+  // this should make a call to get resources
+  'netsuite.recordType': {
+    label: 'Record Type',
+    type: 'selectresource',
+  },
   'netsuite.searchess': {
     type: 'text',
     keyName: 'name',

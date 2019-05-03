@@ -1,15 +1,17 @@
 export default {
   fields: [
-    { fieldId: 'type' },
     { fieldId: 'name' },
-
+    { fieldId: 'netsuite.authType' },
+    { fieldId: 'netsuite.email' },
+    { fieldId: 'netsuite.password' },
+    { fieldId: 'netsuite.environment' },
+    { fieldId: 'netsuite.roleId' },
+    { fieldId: 'netsuite.linkSuiteScriptIntegrator' },
+    /*
     { fieldId: 'netsuite.account' },
     { fieldId: 'netsuite.tokenId' },
     { fieldId: 'netsuite.tokenSecret' },
-    { fieldId: 'netsuite.environment' },
-    { fieldId: 'netsuite.roleId' },
-    { fieldId: 'netsuite.email' },
-    { fieldId: 'netsuite.password' },
+
     { fieldId: 'netsuite.requestLevelCredentials' },
     { fieldId: 'netsuite.dataCenterURLs' },
     { fieldId: 'netsuite.accountName' },
@@ -19,6 +21,17 @@ export default {
     { fieldId: 'netsuite.concurrencyLevel' },
     { fieldId: 'netsuite.wsdlVersion' },
     { fieldId: 'netsuite.applicationId' },
+    */
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [
+        { fieldId: '_borrowConcurrencyFromConnectionId' },
+        // There isn't any help text for this
+        { fieldId: 'netsuite.concurrencyLevel' },
+      ],
+    },
+  ],
 };

@@ -1,6 +1,68 @@
 export default {
   fields: [
-    { fieldId: 'netsuite.searches' },
+    { formId: 'common' },
+    {
+      fieldId: 'netsuite.netsuiteExportlabel',
+      label: 'Would you like to transform the records?',
+      type: 'labelTitle',
+    },
+    {
+      fieldId: 'netsuite.recordType',
+    },
+    {
+      fieldId: 'netsuite.restlet.searchType',
+    },
+    // TODO: is this restlet.searchId or searches.searchId
+    {
+      fieldId: 'netsuite.restlet.searchId',
+      visibleWhenAll: [
+        {
+          field: 'netsuite.restlet.searchType',
+          is: ['public'],
+        },
+      ],
+    },
+    {
+      fieldId: 'netsuite.restlet.searchInternalId',
+      visibleWhenAll: [
+        {
+          field: 'netsuite.restlet.searchType',
+          is: ['private'],
+        },
+      ],
+    },
+    { fieldId: 'allConnectionsExportType' },
+
+    {
+      fieldId: 'delta.lagOffset',
+
+      visibleWhenAll: [
+        {
+          field: 'allConnectionsExportType',
+          is: ['delta'],
+        },
+      ],
+    },
+
+    {
+      fieldId: 'once.booleanField',
+      visibleWhenAll: [
+        {
+          field: 'allConnectionsExportType',
+          is: ['once'],
+        },
+      ],
+    },
+    { fieldId: 'ftp.exportTransformRecords' },
+    { fieldId: 'transform.expression.rules' },
+    {
+      fieldId: 'netsuite.netsuiteExportlabel',
+      label: 'SuiteScript Hooks (Optional, Developers Only)',
+      type: 'labelTitle',
+    },
+    { fieldId: 'ftp.exportHooks' },
+    { formId: 'hooks' },
+    /*
     { fieldId: 'netsuite.metadata' },
     { fieldId: 'netsuite.selectoption' },
     { fieldId: 'netsuite.customFieldMetadata' },
@@ -38,6 +100,7 @@ export default {
     { fieldId: 'netsuite.searchPreferences.bodyFieldsOnly' },
     { fieldId: 'netsuite.searchPreferences.pageSize' },
     { fieldId: 'netsuite.searchPreferences.returnSearchColumns' },
+*/
   ],
   fieldSets: [],
 };
