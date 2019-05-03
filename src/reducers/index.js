@@ -203,7 +203,7 @@ export function showAppRoutingWithAuth(state) {
     const authenticated = isAuthenticated(state);
 
     if (authenticated) {
-      return !!isDefaultAccountSet(state);
+      return isDefaultAccountSet(state);
     }
 
     return true;

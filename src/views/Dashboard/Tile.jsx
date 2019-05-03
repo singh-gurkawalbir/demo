@@ -20,7 +20,7 @@ import { INTEGRATION_ACCESS_LEVELS } from '../../utils/constants';
   },
   navLink: {
     color: theme.appBar.contrast,
-    paddingRight: theme.spacing.unit * 3,
+    paddingRight: theme.spacing.triple,
     letterSpacing: '1.3px',
     fontSize: '13px',
     fontWeight: 500,

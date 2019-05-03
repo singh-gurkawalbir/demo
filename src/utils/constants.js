@@ -26,3 +26,79 @@ export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
   SETTINGS: 'settings',
 });
+export const PERMISSIONS = Object.freeze({
+  accessLevel: 'accessLevel',
+  accesstokens: {
+    view: 'accesstokens.view',
+    create: 'accesstokens.create',
+    edit: 'accesstokens.edit',
+    delete: 'accesstokens.delete',
+  },
+  agents: {
+    view: 'agents.view',
+    create: 'agents.create',
+    edit: 'agents.edit',
+    delete: 'agents.delete',
+  },
+  audits: {
+    view: 'audits.view',
+  },
+  connections: {
+    view: 'connections.view',
+    create: 'connections.create',
+    edit: 'connections.edit',
+    delete: 'connections.delete',
+  },
+  connectors: {
+    publish: 'connectors.publish',
+    view: 'connectors.view',
+    create: 'connectors.create',
+    edit: 'connectors.edit',
+    delete: 'connectors.delete',
+  },
+  integrations: {
+    create: 'integrations.create',
+    install: 'integrations.install',
+  },
+  recyclebin: {
+    view: 'recyclebin.view',
+    restore: 'recyclebin.restore',
+    download: 'recyclebin.download',
+    purge: 'recyclebin.purge',
+  },
+  scripts: {
+    view: 'scripts.view',
+    create: 'scripts.create',
+    edit: 'scripts.edit',
+    delete: 'scripts.delete',
+  },
+  stacks: {
+    view: 'stacks.view',
+    create: 'stacks.create',
+    edit: 'stacks.edit',
+    delete: 'stacks.delete',
+  },
+  subscriptions: {
+    view: 'subscriptions.view',
+    requestUpgrade: 'subscriptions.requestUpgrade',
+  },
+  templates: {
+    publish: 'templates.publish',
+    view: 'templates.view',
+    create: 'templates.create',
+    edit: 'templates.edit',
+    delete: 'templates.delete',
+  },
+  transfers: {
+    view: 'transfers.view',
+    create: 'transfers.create',
+    edit: 'transfers.edit',
+    delete: 'transfers.delete',
+  },
+  users: {
+    view: 'users.view',
+    create: 'users.create',
+    edit: 'users.edit',
+    delete: 'users.delete',
+  },
+});

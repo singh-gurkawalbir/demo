@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 
 const mapStateToProps = state => {
@@ -11,9 +12,14 @@ const mapStateToProps = state => {
   };
 };
 
+@withStyles(theme => ({
+  permissionErrors: {
+    color: theme.palette.error.contrastText,
+  },
+}))
 class CheckPermissions extends Component {
   render() {
-    const { permissions, permission, children } = this.props;
+    const { classes, permissions, permission, children } = this.props;
     const hasPermission = !!permission
       .split('.')
       .reduce((prev, curr) => (prev ? prev[curr] : null), permissions);
@@ -21,7 +27,7 @@ class CheckPermissions extends Component {
     return hasPermission ? (
       children
     ) : (
-      <Typography color="error" variant="h5">
+      <Typography color={classes.permissionErrors} variant="h5">
         You do not have permissions to access this page.
       </Typography>
     );
