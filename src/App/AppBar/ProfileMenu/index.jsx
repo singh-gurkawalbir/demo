@@ -12,6 +12,8 @@ import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import { USER_ACCESS_LEVELS } from '../../../utils/constants';
+import getRoutePath from '../../../utils/routePaths';
 
 const mapStateToProps = state => ({
   hasProfile: selectors.hasProfile(state),
@@ -19,6 +21,7 @@ const mapStateToProps = state => ({
   profile: selectors.userProfile(state),
   preferences: selectors.userPreferences(state),
   avatarUrl: selectors.avatarUrl(state),
+  permissions: selectors.userPermissions(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleUserLogout: () => {
@@ -83,6 +86,7 @@ class AppBar extends Component {
       hasPreferences,
       handleUserLogout,
       preferences,
+      permissions,
     } = this.props;
     const { themeName } = preferences;
     const { name, email } = profile || {};
@@ -143,8 +147,14 @@ class AppBar extends Component {
             color="primary"
             className={classes.button}
             component={Link}
-            to="/pg/myAccount/profiles">
-            My Account
+            to={getRoutePath(
+              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+                ? '/myAccount/subscription'
+                : '/myAccount/profiles'
+            )}>
+            {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+              ? 'My Account'
+              : 'My Profile'}
           </Button>
           <Button
             onClick={handleUserLogout}

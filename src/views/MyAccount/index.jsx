@@ -6,7 +6,19 @@ import Drawer from '@material-ui/core/Drawer';
 import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import { Switch, Route, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import loadable from '../../utils/loadable';
+import * as selectors from '../../reducers';
+import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import getRoutePath from '../../utils/routePaths';
+
+const mapStateToProps = state => {
+  const permissions = selectors.userPermissions(state);
+
+  return {
+    permissions,
+  };
+};
 
 const Users = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Users')
@@ -53,9 +65,9 @@ const Subscription = loadable(() =>
     flex: 1,
   },
 }))
-export default class MyAccount extends Component {
+class MyAccount extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, permissions } = this.props;
 
     return (
       <Fragment>
@@ -66,46 +78,54 @@ export default class MyAccount extends Component {
           <Divider />
           <div className={classes.root}>
             <div className={classes.flex}>
-              <Drawer
-                variant="permanent"
-                anchor="left"
-                classes={{
-                  paper: classes.leftElement,
-                }}>
-                <List>
-                  <ListItem>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="/pg/myAccount/users">
-                      Users
-                    </NavLink>
-                  </ListItem>
-                  <ListItem>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="/pg/myAccount/profiles">
-                      Profiles
-                    </NavLink>
-                  </ListItem>
-                  <ListItem>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="/pg/myAccount/subscription">
-                      Subscription
-                    </NavLink>
-                  </ListItem>
-                </List>
-              </Drawer>
+              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER && (
+                <Drawer
+                  variant="permanent"
+                  anchor="left"
+                  classes={{
+                    paper: classes.leftElement,
+                  }}>
+                  <List>
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="users">
+                        Users
+                      </NavLink>
+                    </ListItem>
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="profiles">
+                        Profiles
+                      </NavLink>
+                    </ListItem>
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="subscription">
+                        Subscription
+                      </NavLink>
+                    </ListItem>
+                  </List>
+                </Drawer>
+              )}
             </div>
             <div className={classes.rightElement}>
               <Switch>
-                <Route path="/pg/myAccount/profiles" component={Profiles} />
-                <Route path="/pg/myAccount/users" component={Users} />
                 <Route
-                  path="/pg/myAccount/subscription"
+                  path={getRoutePath('/myAccount/profiles')}
+                  component={Profiles}
+                />
+                <Route
+                  path={getRoutePath('/myAccount/users')}
+                  component={Users}
+                />
+                <Route
+                  path={getRoutePath('/myAccount/subscription')}
                   component={Subscription}
                 />
               </Switch>
@@ -116,3 +136,5 @@ export default class MyAccount extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps)(MyAccount);

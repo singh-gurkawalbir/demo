@@ -1,6 +1,14 @@
 import actionTypes from './types';
 
-export const availableResources = ['exports', 'imports', 'connections'];
+export const availableResources = [
+  'exports',
+  'imports',
+  'connections',
+  'scripts',
+  'published',
+  'integrations',
+  'tiles',
+];
 
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
@@ -27,6 +35,7 @@ const auth = {
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
+  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
   request: (path, message, hidden, reqType) =>

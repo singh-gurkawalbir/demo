@@ -46,6 +46,15 @@ export default function(
       return newState;
     }
 
+    case actionTypes.DEFAULT_ACCOUNT_SET: {
+      newState = {
+        ...state,
+        defaultAccountSet: true,
+      };
+
+      return newState;
+    }
+
     default: {
       return state;
     }

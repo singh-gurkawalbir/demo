@@ -3,6 +3,7 @@ import users from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
 import profile, * as fromProfile from './profile';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export default combineReducers({
   preferences,
@@ -62,15 +63,13 @@ export function accessLevel(state) {
   if (state && state.preferences) {
     const { defaultAShareId } = userPreferences(state);
 
-    if (!defaultAShareId || defaultAShareId === 'own') {
-      accessLevel = 'owner';
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      accessLevel = USER_ACCESS_LEVELS.ACCOUNT_OWNER;
     } else {
-      const { accounts } = state.org;
-      const account = accounts.find(a => a._id === defaultAShareId);
-
-      if (account) {
-        ({ accessLevel = 'tile' } = account);
-      }
+      accessLevel = fromAccounts.accessLevel(
+        state.org.accounts,
+        defaultAShareId
+      );
     }
   }
 
@@ -113,5 +112,18 @@ export function accountSummary(state) {
   return summary;
 }
 // #endregion ACCOUNT
+
+export function permissions(state) {
+  const { defaultAShareId } = userPreferences(state);
+  const allowedToPublish =
+    state && state.profile && state.profile.allowedToPublish;
+  const permissions = fromAccounts.permissions(
+    state && state.org && state.org.accounts,
+    defaultAShareId,
+    { allowedToPublish }
+  );
+
+  return permissions;
+}
 
 // #endregion PUBLIC USER SELECTORS

@@ -10,6 +10,7 @@ import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEdi
 import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
 import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
+import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
@@ -127,6 +128,15 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'JavaScriptEditor':
+        return (
+          <JavaScriptEditorDialog
+            title="Javascript Editor"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -172,6 +182,13 @@ export default class Editors extends Component {
         label: 'Transform Editor',
         description:
           'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
+      },
+
+      {
+        name: 'JavaScriptEditor',
+        label: 'JavaScript Editor',
+        description:
+          'This processor allows a user to run javascript safely in our secure jsruntime environmnet.',
       },
     ];
 
