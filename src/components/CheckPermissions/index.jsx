@@ -27,7 +27,7 @@ class CheckPermissions extends Component {
     return hasPermission ? (
       children
     ) : (
-      <Typography color={classes.permissionErrors} variant="h5">
+      <Typography className={classes.permissionErrors} variant="h5">
         You do not have permissions to access this page.
       </Typography>
     );
