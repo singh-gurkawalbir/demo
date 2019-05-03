@@ -10,4 +10,4 @@ node_modules
 /coverage
 .vscode
 .DS_Store
-./src/scripts
+src/scripts
