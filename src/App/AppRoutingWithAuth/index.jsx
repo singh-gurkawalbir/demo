@@ -43,11 +43,12 @@ class AppRoutingWithAuth extends Component {
     } = this.props;
     // this selector is used by the UI to hold off rendering any routes
     // till it determines the auth state
+    const isSignInRoute = location.pathname === getRoutePath('signin');
 
     if (!shouldShowAppRouting) return null;
 
     if (isAuthenticated) {
-      if (location.pathname === getRoutePath('signin')) {
+      if (isSignInRoute) {
         const { state: routeState } = location;
         const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
 
@@ -63,7 +64,7 @@ class AppRoutingWithAuth extends Component {
       return <AppRouting />;
     }
 
-    if (!isSessionExpired && location.pathname !== getRoutePath('signin')) {
+    if (!isSessionExpired && !isSignInRoute) {
       return (
         <Redirect
           to={{
