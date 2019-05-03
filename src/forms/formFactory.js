@@ -189,14 +189,13 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 const applyingMissedOutFieldMetaProperties = (
   incompleteField,
   resource,
-  resourceType,
-  connection
+  resourceType
 ) => {
   const field = incompleteField;
 
   Object.keys(field).forEach(key => {
     if (typeof field[key] === 'function') {
-      field[key] = field[key](resource, connection);
+      field[key] = field[key](resource);
     }
   });
 
@@ -231,7 +230,7 @@ const applyingMissedOutFieldMetaProperties = (
   return field;
 };
 
-const setDefaults = (fields, resourceType, resource, connection) => {
+const setDefaults = (fields, resourceType, resource) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields
@@ -245,8 +244,7 @@ const setDefaults = (fields, resourceType, resource, connection) => {
         return setDefaults(
           fieldMetaHavingVisibilityRules,
           resourceType,
-          resource,
-          connection
+          resource
         );
       }
 
@@ -260,20 +258,14 @@ const setDefaults = (fields, resourceType, resource, connection) => {
       return applyingMissedOutFieldMetaProperties(
         merged,
         resource,
-        resourceType,
-        connection
+        resourceType
       );
     })
     .flat();
 };
 
 // passing an additional a
-const getFieldsWithDefaults = (
-  fieldMeta,
-  resourceType,
-  resource,
-  connection
-) => {
+const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
 
@@ -283,13 +275,13 @@ const getFieldsWithDefaults = (
 
       filled.push({
         ...rest,
-        fields: setDefaults(fields, resourceType, resource, connection),
+        fields: setDefaults(fields, resourceType, resource),
       });
     });
   }
 
   return {
-    fields: setDefaults(fields, resourceType, resource, connection),
+    fields: setDefaults(fields, resourceType, resource),
     fieldSets: filled,
   };
 };

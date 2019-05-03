@@ -1,3 +1,4 @@
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 
@@ -11,7 +12,6 @@ export default function reducer(state = {}, action) {
     result,
     error,
     helperFunctions,
-    rule,
     violations,
   } = action;
   let newState = Object.assign({}, state);
@@ -27,9 +27,8 @@ export default function reducer(state = {}, action) {
     case actionTypes.EDITOR_INIT:
       newState[id] = {
         processor,
-        defaultOptions: options,
-        rule,
-        ...options,
+        defaultOptions: deepClone(options),
+        ...deepClone(options),
         lastChange: Date.now(),
       };
 
@@ -49,7 +48,11 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_PATCH:
-      newState[id] = { ...newState[id], ...patch, lastChange: Date.now() };
+      newState[id] = {
+        ...newState[id],
+        ...deepClone(patch),
+        lastChange: Date.now(),
+      };
 
       return newState;
 

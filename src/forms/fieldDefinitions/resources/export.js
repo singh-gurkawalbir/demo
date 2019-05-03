@@ -1,5 +1,3 @@
-import applicationType from './utils/exportUtils';
-
 export default {
   // #region common
   name: {
@@ -114,12 +112,11 @@ export default {
     type: 'text',
     label: 'Origin Sample Data',
   },
+  // not using it
   assistant: {
     type: 'select',
     label: 'Assistant',
     disableSelect: true,
-    defaultValue: (resource, connection) =>
-      applicationType(resource, connection),
     options: [
       {
         items: [
@@ -667,20 +664,27 @@ export default {
     sampleData: r => r.sampleData,
   },
   'file.csv.columnDelimiter': {
-    type: 'text',
+    type: 'select',
     label: 'File csv column Delimiter',
+    options: [
+      {
+        items: [
+          { label: 'Comma', value: 'comma' },
+          { label: 'Pipe', value: 'pipe' },
+          { label: 'Semicolumn', value: 'semicolumn' },
+          { label: 'Space', value: 'space' },
+          { label: 'Tab', value: 'tab' },
+        ],
+      },
+    ],
   },
   'file.csv.rowDelimiter': {
     type: 'text',
     label: 'File csv row Delimiter',
   },
-  'file.csv.keyColumnss': {
+  'file.csv.keyColumns': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'File csv key Columns',
-    validWhen: [],
   },
   'file.csv.hasHeaderRow': {
     type: 'checkbox',

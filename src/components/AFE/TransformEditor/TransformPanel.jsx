@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
+// import { deepClone } from 'fast-json-patch';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
@@ -34,6 +35,7 @@ class TransformPanel extends Component {
     const { value } = event.target;
     const { patchEditor, editor } = this.props;
     const { rule = [] } = editor;
+    // const rule = deepClone(rule);
 
     event.preventDefault();
     event.stopPropagation();
@@ -52,11 +54,7 @@ class TransformPanel extends Component {
   render() {
     const { editor, classes } = this.props;
     const rule = editor.rule
-      ? editor.rule.flat().reduce((acc, curr, index) => {
-          acc.push({ ...curr, row: index });
-
-          return acc;
-        }, [])
+      ? editor.rule.map((rule, index) => ({ row: index, ...rule }))
       : [];
     // console.log(rule);
     const handleExtractUpdate = row => event =>

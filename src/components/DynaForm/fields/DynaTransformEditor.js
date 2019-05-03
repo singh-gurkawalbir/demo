@@ -48,6 +48,9 @@ class DynaTransformEditor extends React.Component {
   render() {
     const { showEditor } = this.state;
     const { classes, id, rules, label, sampleData } = this.props;
+    // when we launch the editor we are only going to entertain the first
+    // rule set
+    const firstRuleSet = rules ? rules[0] : null;
 
     return (
       <Fragment>
@@ -56,7 +59,7 @@ class DynaTransformEditor extends React.Component {
             title="CSV parse options"
             id={id}
             data={sampleData}
-            rule={rules}
+            rule={firstRuleSet}
             onClose={this.handleClose}
           />
         )}

@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import deepFreeze from 'deep-freeze';
 import reducer, * as selectors from './';
 import actions from '../../../actions';
 
@@ -121,6 +122,46 @@ describe('editor reducers', () => {
 
     expect(resetStateAfterSuccessfulEvaluation[1]).not.toMatchObject({
       result: 'some result',
+    });
+  });
+
+  // This test case is to verify we are doing a deep copy and not mutating
+  // the reducer state
+
+  describe('mutation behaiour of patch operations', () => {
+    test('should initialize with all options defined in the action and subsequent mutation to the to a option property should not alter the state', () => {
+      const id = 1;
+      const options = {
+        rules: [{ extract: 't', generate: 'g' }],
+      };
+      const initProcessorState = reducer(
+        undefined,
+        actions.editor.init(id, 'transformProcessor', options)
+      );
+
+      deepFreeze(initProcessorState);
+      expect(initProcessorState[id].rules).toEqual(options.rules);
+
+      try {
+        options.rules.push({ extract: 'c', generate: 'd' });
+      } catch (e) {
+        expect(true).toBe(false);
+      }
+    });
+    test('should not mutate the state of patch operation when the patch property is changed', () => {
+      const id = 1;
+      const patch = { rules: [{ extract: 'a', generate: 'b' }] };
+      const patchedState = reducer(undefined, actions.editor.patch(id, patch));
+
+      deepFreeze(patchedState);
+      expect(patchedState[id].rules).toEqual(patch.rules);
+
+      // this mutation should not throw an error
+      try {
+        patch.rules.push({ extract: 'c', generate: 'd' });
+      } catch (e) {
+        expect(true).toBe(false);
+      }
     });
   });
 });

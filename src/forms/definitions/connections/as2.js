@@ -2,7 +2,6 @@ export default {
   fields: [
     { fieldId: 'type' },
     { fieldId: 'name' },
-    { fieldId: 'assistant' },
     { fieldId: 'as2.as2Id' },
     { fieldId: 'as2.partnerId' },
     { fieldId: 'as2.encrypted' },

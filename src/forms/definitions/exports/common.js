@@ -2,7 +2,6 @@ export default {
   fields: [
     { fieldId: 'name' },
     { fieldId: 'description' },
-    { fieldId: 'assistant' },
     { fieldId: '_connectionId' },
     {
       formId: 'ftp',

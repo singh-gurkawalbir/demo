@@ -2,7 +2,7 @@ export default {
   fields: [
     { fieldId: 'type' },
     { fieldId: 'name' },
-    { fieldId: 'assistant' },
+
     { fieldId: 'salesforce.sandbox' },
     { fieldId: 'salesforce.baseURI' },
     { fieldId: 'salesforce.oauth2FlowType' },

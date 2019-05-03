@@ -3,8 +3,15 @@ export default {
     { fieldId: 'file.type' },
     { fieldId: 'file.encoding' },
     { fieldId: 'file.output' },
-    { fieldId: 'file.skipDelete' },
-    { fieldId: 'file.compressionFormat' },
+
+    {
+      fieldId: 'file.skipDelete',
+      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
+    },
+    {
+      fieldId: 'file.compressionFormat',
+      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
+    },
     {
       fieldId: 'file.csv.columnDelimiter',
       visibleWhenAll: [
@@ -12,6 +19,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -21,6 +29,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -31,6 +40,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -41,6 +51,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -51,6 +62,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -60,6 +72,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -70,6 +83,7 @@ export default {
           field: 'file.type',
           is: ['json'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -79,6 +93,7 @@ export default {
           field: 'file.type',
           is: ['xlsx'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -89,6 +104,7 @@ export default {
           field: 'file.type',
           is: ['xlsx'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -99,6 +115,7 @@ export default {
           field: 'file.type',
           is: ['xml'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -108,6 +125,7 @@ export default {
           field: 'file.type',
           is: ['edi', 'fixedWidth'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     {
@@ -117,6 +135,7 @@ export default {
           field: 'file.type',
           is: ['edi', 'fixedWidth'],
         },
+        { field: 'file.output', is: ['records'] },
       ],
     },
     { fieldId: 'file.purgeInternalBackup' },

@@ -101,6 +101,9 @@ const prettyDate = dateString => {
   //   marginRight: theme.spacing.unit,
   //   width: `calc(100% - ${theme.spacing.double}px)`,
   // },
+  relatedContent: {
+    textDecoration: 'none',
+  },
   dates: {
     color: theme.palette.text.secondary,
   },

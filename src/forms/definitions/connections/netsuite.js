@@ -2,7 +2,7 @@ export default {
   fields: [
     { fieldId: 'type' },
     { fieldId: 'name' },
-    { fieldId: 'assistant' },
+
     { fieldId: 'netsuite.account' },
     { fieldId: 'netsuite.tokenId' },
     { fieldId: 'netsuite.tokenSecret' },

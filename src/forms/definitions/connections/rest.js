@@ -2,7 +2,7 @@ export default {
   fields: [
     { fieldId: 'type' },
     { fieldId: 'name' },
-    { fieldId: 'assistant' },
+
     { fieldId: 'rest.mediaType' },
     { fieldId: 'rest.baseURI' },
     { fieldId: 'rest.bearerToken' },

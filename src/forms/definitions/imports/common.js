@@ -13,7 +13,6 @@ export default {
     { fieldId: 'oneToMany' },
     { fieldId: 'pathToMany' },
     { fieldId: 'blobKeyPath' },
-    { fieldId: 'assistant' },
     { fieldId: 'deleteAfterImport' },
     { fieldId: 'assistantMetadata' },
     { fieldId: 'useTechAdaptorForm' },

@@ -2,7 +2,6 @@ export default {
   fields: [
     { fieldId: 'type' },
     { fieldId: 'name' },
-    { fieldId: 'assistant' },
     { fieldId: 'http.mediaType' },
     { fieldId: 'http.baseURI' },
     { fieldId: 'http.disableStrictSSL' },

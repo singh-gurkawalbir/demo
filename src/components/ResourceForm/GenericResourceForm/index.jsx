@@ -53,8 +53,7 @@ export default class ResourceForm extends Component {
       fieldMeta = factory.getFieldsWithDefaults(
         resource.customForm.form,
         resourceType,
-        resource,
-        connection
+        resource
       );
       handleClick = value => {
         // eslint-disable-next-line no-console
@@ -73,8 +72,7 @@ export default class ResourceForm extends Component {
       fieldMeta = factory.getFieldsWithDefaults(
         assets.fieldMeta,
         resourceType,
-        resource,
-        connection
+        resource
       );
       handleClick = value =>
         handleSubmit(
