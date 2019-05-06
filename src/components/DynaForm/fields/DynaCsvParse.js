@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import CsvParseEditorDialog from '../../../components/AFE/CsvParseEditor/Dialog';
 
 @withStyles(() => ({

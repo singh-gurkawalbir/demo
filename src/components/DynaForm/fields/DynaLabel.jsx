@@ -1,7 +1,7 @@
 // @flow
 import React, { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import Typography from '@material-ui/core/Typography';
 import ArrowPopper from '../../ArrowPopper';
 import helpTextMap from '../../Help/helpTextMap';
