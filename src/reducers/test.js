@@ -279,7 +279,7 @@ describe('tiles', () => {
     {
       _id: 'connector2',
       name: 'Connector 2',
-      user: { name: 'User 2', company: 'Company 2' },
+      user: { name: 'User 2' },
     },
   ];
   const integrations = [
@@ -297,6 +297,7 @@ describe('tiles', () => {
     },
     {
       _id: 'integration5',
+      mode: 'settings',
     },
     {
       _id: 'integration6',
@@ -310,59 +311,74 @@ describe('tiles', () => {
       _id: 'integration8',
       mode: 'install',
     },
+    {
+      _id: 'integration9',
+      mode: 'install',
+    },
   ];
   const tilesCollection = [
     {
       _integrationId: 'integration1',
       name: 'Integration One',
       numError: 0,
-      numFlows: 1,
+      numFlows: 2,
     },
     {
       _integrationId: 'integration2',
       name: 'Integration Two',
-      numError: 10,
-      numFlows: 2,
+      numError: 4,
+      numFlows: 3,
     },
     {
       _integrationId: 'integration3',
       name: 'Integration Three',
-      numError: 10,
-      numFlows: 3,
-    },
-    {
-      _integrationId: 'integration4',
-      name: 'Integration Four',
-      numError: 10,
+      numError: 9,
       offlineConnections: ['conn1', 'conn2'],
       numFlows: 4,
     },
     {
-      _integrationId: 'integration5',
-      name: 'Integration Five',
+      _integrationId: 'integration4',
+      name: 'Integration Four',
       numError: 0,
       offlineConnections: ['conn1', 'conn2'],
       numFlows: 5,
     },
     {
-      _integrationId: 'integration6',
+      _integrationId: 'integration5',
       _connectorId: 'connector1',
       name: 'Connector 1',
       numFlows: 6,
     },
     {
-      _integrationId: 'integration7',
+      _integrationId: 'integration6',
       _connectorId: 'connector1',
       tag: 'tag 1',
       name: 'Connector 1',
-      numError: 10,
+      numError: 36,
       numFlows: 7,
+    },
+    {
+      _integrationId: 'integration7',
+      _connectorId: 'connector1',
+      tag: 'tag 2',
+      name: 'Connector 1',
+      numError: 49,
+      offlineConnections: ['conn1'],
+      numFlows: 8,
     },
     {
       _integrationId: 'integration8',
       _connectorId: 'connector2',
       name: 'Connector 2',
-      numFlows: 7,
+      numFlows: 9,
+    },
+    {
+      _integrationId: 'integration9',
+      _connectorId: 'connector2',
+      name: 'Connector 2',
+      tag: 'test tag',
+      numFlows: 10,
+      offlineConnections: ['conn1', 'conn2'],
     },
   ];
   const standaloneTiles = [
@@ -424,7 +440,7 @@ describe('tiles', () => {
         _integrationId: 'integration1',
         name: 'Integration One',
         numError: 0,
-        numFlows: 1,
+        numFlows: 2,
         integration: {
           permissions: expectedIntegrationPermissions,
         },
@@ -433,8 +449,8 @@ describe('tiles', () => {
       {
         _integrationId: 'integration2',
         name: 'Integration Two',
-        numError: 10,
-        numFlows: 2,
+        numError: 4,
+        numFlows: 3,
         integration: {
           permissions: expectedIntegrationPermissions,
         },
@@ -443,17 +459,7 @@ describe('tiles', () => {
       {
         _integrationId: 'integration3',
         name: 'Integration Three',
-        numError: 10,
-        numFlows: 3,
-        integration: {
-          permissions: expectedIntegrationPermissions,
-        },
-        status: TILE_STATUS.HAS_ERRORS,
-      },
-      {
-        _integrationId: 'integration4',
-        name: 'Integration Four',
-        numError: 10,
+        numError: 9,
         offlineConnections: ['conn1', 'conn2'],
         numFlows: 4,
         integration: {
@@ -462,8 +468,8 @@ describe('tiles', () => {
         status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
-        _integrationId: 'integration5',
-        name: 'Integration Five',
+        _integrationId: 'integration4',
+        name: 'Integration Four',
         numError: 0,
         offlineConnections: ['conn1', 'conn2'],
         numFlows: 5,
@@ -473,7 +479,7 @@ describe('tiles', () => {
         status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
-        _integrationId: 'integration6',
+        _integrationId: 'integration5',
         _connectorId: 'connector1',
         name: 'Connector 1',
         numFlows: 6,
@@ -487,11 +493,11 @@ describe('tiles', () => {
         status: TILE_STATUS.SUCCESS,
       },
       {
-        _integrationId: 'integration7',
+        _integrationId: 'integration6',
         _connectorId: 'connector1',
         tag: 'tag 1',
         name: 'Connector 1',
-        numError: 10,
+        numError: 36,
         numFlows: 7,
         connector: {
           owner: 'Company 1',
@@ -503,12 +509,45 @@ describe('tiles', () => {
         status: TILE_STATUS.HAS_ERRORS,
       },
       {
+        _integrationId: 'integration7',
+        _connectorId: 'connector1',
+        tag: 'tag 2',
+        name: 'Connector 1',
+        numError: 49,
+        numFlows: 8,
+        offlineConnections: ['conn1'],
+        connector: {
+          owner: 'Company 1',
+        },
+        integration: {
+          mode: 'settings',
+          permissions: expectedIntegrationPermissions,
+        },
+        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+      },
+      {
         _integrationId: 'integration8',
         _connectorId: 'connector2',
         name: 'Connector 2',
-        numFlows: 7,
+        numFlows: 9,
         connector: {
-          owner: 'Company 2',
+          owner: 'User 2',
+        },
+        integration: {
+          mode: 'install',
+          permissions: expectedIntegrationPermissions,
+        },
+        status: TILE_STATUS.IS_PENDING_SETUP,
+      },
+      {
+        _integrationId: 'integration9',
+        _connectorId: 'connector2',
+        name: 'Connector 2',
+        tag: 'test tag',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        connector: {
+          owner: 'User 2',
         },
         integration: {
           mode: 'install',
@@ -571,6 +610,10 @@ describe('tiles', () => {
                     _integrationId: 'integration8',
                     accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
                   },
+                  {
+                    _integrationId: 'integration9',
+                    accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                  },
                 ],
               },
             ],
@@ -594,84 +637,128 @@ describe('tiles', () => {
         numError: 0,
         offlineConnections: ['conn1', 'conn2'],
         numFlows: 5,
-        integration: {},
+        integration: {
+          permissions: {},
+        },
         status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
         _integrationId: 'integration1',
         name: 'Integration One',
         numError: 0,
-        numFlows: 1,
-        integration: {},
+        numFlows: 2,
+        integration: {
+          permissions: {},
+        },
         status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration2',
         name: 'Integration Two',
-        numError: 10,
-        numFlows: 2,
-        integration: {},
+        numError: 4,
+        numFlows: 3,
+        integration: {
+          permissions: {},
+        },
         status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration3',
         name: 'Integration Three',
-        numError: 10,
-        numFlows: 3,
-        integration: {},
-        status: TILE_STATUS.HAS_ERRORS,
+        numError: 9,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 4,
+        integration: {
+          permissions: {},
+        },
+        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
         _integrationId: 'integration4',
         name: 'Integration Four',
-        numError: 10,
+        numError: 0,
         offlineConnections: ['conn1', 'conn2'],
-        numFlows: 4,
-        integration: {},
+        numFlows: 5,
+        integration: {
+          permissions: {},
+        },
         status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
         _integrationId: 'integration5',
-        name: 'Integration Five',
-        numError: 0,
-        offlineConnections: ['conn1', 'conn2'],
-        numFlows: 5,
-        integration: {},
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
-      },
-      {
-        _integrationId: 'integration6',
         _connectorId: 'connector1',
         name: 'Connector 1',
         numFlows: 6,
         connector: {
           owner: 'Company 1',
         },
-        integration: { mode: 'settings' },
+        integration: {
+          mode: 'settings',
+          permissions: {},
+        },
         status: TILE_STATUS.SUCCESS,
       },
       {
-        _integrationId: 'integration7',
+        _integrationId: 'integration6',
         _connectorId: 'connector1',
         tag: 'tag 1',
         name: 'Connector 1',
-        numError: 10,
+        numError: 36,
         numFlows: 7,
         connector: {
           owner: 'Company 1',
         },
-        integration: { mode: 'settings' },
+        integration: {
+          mode: 'settings',
+          permissions: {},
+        },
         status: TILE_STATUS.HAS_ERRORS,
+      },
+      {
+        _integrationId: 'integration7',
+        _connectorId: 'connector1',
+        tag: 'tag 2',
+        name: 'Connector 1',
+        numError: 49,
+        numFlows: 8,
+        offlineConnections: ['conn1'],
+        connector: {
+          owner: 'Company 1',
+        },
+        integration: {
+          mode: 'settings',
+          permissions: {},
+        },
+        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
       },
       {
         _integrationId: 'integration8',
         _connectorId: 'connector2',
         name: 'Connector 2',
-        numFlows: 7,
+        numFlows: 9,
         connector: {
-          owner: 'Company 2',
+          owner: 'User 2',
         },
-        integration: { mode: 'install' },
+        integration: {
+          mode: 'install',
+          permissions: {},
+        },
+        status: TILE_STATUS.IS_PENDING_SETUP,
+      },
+      {
+        _integrationId: 'integration9',
+        _connectorId: 'connector2',
+        name: 'Connector 2',
+        tag: 'test tag',
+        numFlows: 10,
+        offlineConnections: ['conn1', 'conn2'],
+        connector: {
+          owner: 'User 2',
+        },
+        integration: {
+          mode: 'install',
+          permissions: {},
+        },
         status: TILE_STATUS.IS_PENDING_SETUP,
       },
     ];
@@ -735,6 +822,7 @@ describe('tiles', () => {
           'integration3',
           'integration5',
           'integration7',
+          'integration9',
         ].includes(t._integrationId)
       ) {
         integrationPermissions = expectedIntegrationPermissions.manage;
