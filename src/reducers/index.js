@@ -606,4 +606,16 @@ export function newResourceData(state, resourceType, id) {
   return data;
 }
 
+export function orgUsers(state) {
+  return fromUser.usersList(state.user);
+}
+
+export function integrationUsers(state, integrationId) {
+  return fromData.integrationUsers(state.data, integrationId);
+}
+
+export function accountOwner(state) {
+  return fromUser.accountOwner(state.user);
+}
+
 // #endregion

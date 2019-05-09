@@ -303,6 +303,20 @@ export function accessLevel(state, accountId) {
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
 }
 
+export function owner(state, accountId) {
+  if (!state) {
+    return undefined;
+  }
+
+  const account = state.find(a => a._id === accountId);
+
+  if (!account) {
+    return undefined;
+  }
+
+  return account.ownerUser;
+}
+
 export function permissions(
   state,
   accountId,
