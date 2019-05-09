@@ -1,8 +1,8 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
-import actions, { availableResources } from '../../actions';
+import actions, { availableResources } from '../../../actions';
 
-describe('data reducers', () => {
+describe('resources reducer', () => {
   availableResources.forEach(resourceType => {
     describe(`${resourceType} received resource action`, () => {
       test('should store the new resource if none exist', () => {
@@ -86,7 +86,7 @@ describe('data reducers', () => {
   });
 });
 
-describe('data selectors', () => {
+describe('resources selectors', () => {
   describe('resource', () => {
     test('should return null on bad/empty state.', () => {
       expect(selectors.resource(undefined, 'exports', 123)).toBeNull();
