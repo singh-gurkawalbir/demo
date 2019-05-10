@@ -8,20 +8,28 @@ export default {
     },
     {
       fieldId: 'netsuite.recordType',
+      resourceToRetrieve: r =>
+        `netsuite/metadata/webservices/connections/${
+          r._connectionId
+        }/recordTypes`,
     },
     {
       fieldId: 'netsuite.restlet.searchType',
     },
     // TODO: is this restlet.searchId or searches.searchId
-    {
-      fieldId: 'netsuite.restlet.searchId',
-      visibleWhenAll: [
-        {
-          field: 'netsuite.restlet.searchType',
-          is: ['public'],
-        },
-      ],
-    },
+    // {
+    //   fieldId: 'netsuite.restlet.searchId',
+    //   resourceToRetrieve: r =>
+    //     `netsuite/metadata/webservices/connections/${
+    //       r._connectionId
+    //     }/savedSearches`,
+    //   visibleWhenAll: [
+    //     {
+    //       field: 'netsuite.restlet.searchType',
+    //       is: ['public'],
+    //     },
+    //   ],
+    // },
     {
       fieldId: 'netsuite.restlet.searchInternalId',
       visibleWhenAll: [

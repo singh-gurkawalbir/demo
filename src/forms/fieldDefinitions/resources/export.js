@@ -1113,7 +1113,12 @@ export default {
   // this should make a call to get resources
   'netsuite.recordType': {
     label: 'Record Type',
-    type: 'selectresource',
+    type: 'refreshoptions',
+  },
+
+  'netsuite.searches.searchId': {
+    label: 'Record Type',
+    type: 'refreshoptions',
   },
   'netsuite.searchess': {
     type: 'text',

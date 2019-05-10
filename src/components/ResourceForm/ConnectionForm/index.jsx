@@ -93,7 +93,9 @@ class ConnectionForm extends Component {
         />
         <ResourceForm {...this.props}>
           <DynaSubmit
-            isValid={testConnectionCommState !== COMM_STATES.LOADING}
+            onGoingComm={
+              testConnectionCommState.commState === COMM_STATES.LOADING
+            }
             onClick={this.handleTestConnection}
             className={classes.actionButton}
             size="small"

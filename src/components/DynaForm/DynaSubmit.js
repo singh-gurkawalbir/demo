@@ -4,7 +4,14 @@ import Button from '@material-ui/core/Button';
 
 class FormButton extends Component {
   render() {
-    const { isValid, onClick, children, className, value = {} } = this.props;
+    const {
+      onGoingComm,
+      isValid,
+      onClick,
+      children,
+      className,
+      value = {},
+    } = this.props;
 
     return (
       <Button
@@ -12,7 +19,7 @@ class FormButton extends Component {
         variant="contained"
         color="secondary"
         className={className}
-        disabled={!isValid}
+        disabled={onGoingComm || !isValid}
         onClick={() => onClick(value)}>
         {children}
       </Button>

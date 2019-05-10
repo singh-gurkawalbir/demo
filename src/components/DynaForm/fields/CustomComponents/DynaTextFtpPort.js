@@ -22,15 +22,17 @@ class FtpPort extends React.Component {
       name,
       onFieldChange,
       placeholder,
-      value,
       label,
-      options,
       valueType,
       //   touched,
     } = this.props;
+    let result;
+    const { value, options } = this.props;
 
     if (!value && options) {
-      onFieldChange(id, options);
+      result = options;
+    } else {
+      result = value;
     }
 
     const handleFieldChange = event => {
@@ -52,7 +54,7 @@ class FtpPort extends React.Component {
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
         error={!isValid}
-        value={value}
+        value={result}
         onChange={handleFieldChange}
       />
     );

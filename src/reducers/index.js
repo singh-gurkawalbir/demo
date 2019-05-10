@@ -534,9 +534,13 @@ export function isProfileLoading(state) {
 
 export function isDataReady(state, resource) {
   return (
-    fromData.hasData(state.data, resource) &&
-    !fromComms.isLoading(state.comms, resource)
+    fromComms.commStatus(state.comms, `/${resource}`) ===
+    fromComms.COMM_STATES.SUCCESS
   );
+}
+
+export function resourceCollection(state, origResourceType) {
+  return state && state.data && state.data[origResourceType];
 }
 
 // the keys for the comm's reducers require a forward slash before
