@@ -77,10 +77,20 @@ class EditorField extends Component {
       value,
       label,
       description,
+      mode,
       errorMessages,
       isValid,
     } = this.props;
-    const mode = this.getFileType();
+    const modeFromFileOption = this.getFileType();
+    let resultantMode = mode;
+
+    // In the event the user selected a different file type
+    // we would use that
+    // The default values for both the fields would be the same
+    if (modeFromFileOption !== mode) {
+      resultantMode = modeFromFileOption;
+    }
+
     const editorDialog = (
       <Dialog
         open
@@ -92,7 +102,7 @@ class EditorField extends Component {
             <CodeEditor
               name={id}
               value={value}
-              mode={mode}
+              mode={resultantMode}
               onChange={value => this.handleUpdate(value)}
             />
           </div>

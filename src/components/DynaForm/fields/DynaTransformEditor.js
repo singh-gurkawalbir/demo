@@ -56,7 +56,7 @@ class DynaTransformEditor extends React.Component {
       <Fragment>
         {showEditor && (
           <TransformEditorDialog
-            title="CSV parse options"
+            title="Transform Mapping"
             id={id}
             data={sampleData}
             rule={firstRuleSet}

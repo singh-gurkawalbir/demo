@@ -24,6 +24,7 @@ export default {
     type: 'uploadFile',
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
+    mode: r => r && r.file && r.file.type,
     // filter: r => ({ type: r.type }),
     // excludeFilter: r => ({ _
     //

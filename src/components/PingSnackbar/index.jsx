@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -51,7 +50,7 @@ const styles1 = theme => ({
   textAlign: 'center',
 });
 
-function MySnackbarContent(props) {
+function ClosableSnackbar(props) {
   const { classes, className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
 
@@ -82,15 +81,7 @@ function MySnackbarContent(props) {
   );
 }
 
-MySnackbarContent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  className: PropTypes.string,
-  message: PropTypes.node,
-  onClose: PropTypes.func,
-  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
-};
-
-const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
+const WrappedClosableSnackbar = withStyles(styles1)(ClosableSnackbar);
 const styles2 = theme => ({
   margin: {
     marginTop: theme.spacing.unit,
@@ -119,7 +110,7 @@ const CancellableSpinner = props => (
   </div>
 );
 
-class CustomizedSnackbars extends React.Component {
+class PingSnackbar extends React.Component {
   generateMessageBasedOnState = (commState, messages, onHandleCancel) => {
     if (commState === COMM_STATES.LOADING)
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
@@ -164,7 +155,7 @@ class CustomizedSnackbars extends React.Component {
           }}
           open
           autoHideDuration={6000}>
-          <MySnackbarContentWrapper
+          <WrappedClosableSnackbar
             onClose={onHandleClose}
             variant={variant || 'info'}
             message={msg}
@@ -175,8 +166,4 @@ class CustomizedSnackbars extends React.Component {
   }
 }
 
-CustomizedSnackbars.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles2)(CustomizedSnackbars);
+export default withStyles(styles2)(PingSnackbar);

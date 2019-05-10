@@ -60,10 +60,10 @@ class LabelElement extends React.Component {
   }
 }
 
-const DynaText = props => (
+const WrappedDynaLabel = props => (
   <FieldWrapper {...props}>
     <LabelElement />
   </FieldWrapper>
 );
 
-export default DynaText;
+export default WrappedDynaLabel;
