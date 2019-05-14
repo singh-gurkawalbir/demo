@@ -18,7 +18,7 @@ export default {
     },
     {
       id: 'content',
-      name: '/content',
+      name: '/ignore/me',
       defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
       type: 'hook',
       label: 'Edit Script',

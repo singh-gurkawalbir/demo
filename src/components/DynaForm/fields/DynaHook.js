@@ -79,7 +79,7 @@ class DynaHook extends React.Component {
           <JavaScriptEditorDialog
             title="Script Editor"
             id={id}
-            data={{}}
+            data="{}"
             scriptId={value._scriptId}
             entryFunction={value.function}
             onClose={this.handleClose}

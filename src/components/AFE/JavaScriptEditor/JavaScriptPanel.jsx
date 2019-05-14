@@ -19,13 +19,15 @@ const mapStateToProps = (state, { editorId }) => {
   return {
     editor,
     allScripts,
-    getScript: id => selectors.resource(state, 'scripts', id),
   };
 };
 
 const mapDispatchToProps = (dispatch, { editorId }) => ({
   patchEditor: (option, value) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
+  },
+  requestScript: id => {
+    dispatch(actions.resource.request('scripts', id));
   },
 });
 
@@ -47,29 +49,25 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
   },
 }))
 class JavaScriptPanel extends Component {
-  componentDidMount() {
-    const { editor, getScript, patchEditor } = this.props;
-    const { scriptId } = editor;
+  patchOrRequestContent(scriptId) {
+    const { allScripts, requestScript, patchEditor } = this.props;
 
     if (!scriptId) return;
-
-    const script = getScript(scriptId);
-
-    // console.log(scriptId, script);
+    const script = allScripts.find(s => s._id === scriptId);
 
     if (script) {
-      patchEditor('code', script.description);
+      if (script.content !== undefined) {
+        patchEditor('code', script.content);
+      } else {
+        requestScript(scriptId);
+      }
     }
   }
 
-  handleScriptChange(id) {
-    const { patchEditor, getScript } = this.props;
+  componentDidMount() {
+    const { editor } = this.props;
 
-    patchEditor('scriptId', id);
-
-    const script = getScript(id);
-
-    patchEditor('code', script.description);
+    this.patchOrRequestContent(editor.scriptId);
   }
 
   render() {
@@ -87,7 +85,9 @@ class JavaScriptPanel extends Component {
               id="scriptId"
               margin="dense"
               value={scriptId}
-              onChange={event => this.handleScriptChange(event.target.value)}>
+              onChange={event =>
+                this.patchOrRequestContent(event.target.value)
+              }>
               {allScripts.map(s => (
                 <MenuItem key={s._id} value={s._id}>
                   {s.name}
