@@ -1,11 +1,17 @@
 import actionTypes from '../../actions/types';
+import { COMM_STATES } from '../comms/index';
 
-export default function(state = { initialized: false }, action) {
+export default function(
+  state = { initialized: false, commStatus: COMM_STATES.LOADING },
+  action
+) {
   let newState;
 
   switch (action.type) {
+    case actionTypes.INIT_SESSION:
     case actionTypes.AUTH_REQUEST: {
-      newState = { ...state, loading: true, authenticated: false };
+      newState = { ...state, authenticated: false };
+      newState.commStatus = COMM_STATES.LOADING;
 
       return newState;
     }
@@ -13,10 +19,11 @@ export default function(state = { initialized: false }, action) {
     case actionTypes.AUTH_SUCCESSFUL: {
       newState = {
         ...state,
-        loading: false,
         authenticated: true,
         initialized: true,
       };
+
+      newState.commStatus = COMM_STATES.SUCCESS;
       delete newState.sessionExpired;
       delete newState.failure;
 
@@ -24,7 +31,9 @@ export default function(state = { initialized: false }, action) {
     }
 
     case actionTypes.AUTH_FAILURE: {
-      newState = { ...state, loading: false, failure: action.message };
+      newState = { ...state, failure: action.message };
+
+      newState.commStatus = COMM_STATES.ERROR;
 
       if (newState.authenticated) {
         newState.sessionExpired = true;

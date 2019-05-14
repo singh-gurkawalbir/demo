@@ -17,7 +17,7 @@ import {
   getCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
-import { intializationResources } from '../../reducers/data';
+import { intializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
@@ -169,9 +169,9 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
+
   // Irrespective to what happens we will remove the csrf token and
   // clear the store
-
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
 }
