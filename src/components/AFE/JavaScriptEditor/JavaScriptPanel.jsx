@@ -13,21 +13,28 @@ import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
+  const getScriptContent = id => selectors.scriptContent(state, id);
   const allScripts = selectors.resourceList(state, { type: 'scripts' })
     .resources;
 
   return {
     editor,
     allScripts,
+    getScriptContent,
   };
 };
 
 const mapDispatchToProps = (dispatch, { editorId }) => ({
   patchEditor: (option, value) => {
-    dispatch(actions.editor.patch(editorId, { [option]: value }));
+    if (typeof option === 'string') {
+      dispatch(actions.editor.patch(editorId, { [option]: value }));
+    } else {
+      // option is already an object.
+      dispatch(actions.editor.patch(editorId, option));
+    }
   },
   requestScript: id => {
-    dispatch(actions.resource.request('scripts', id));
+    dispatch(actions.resource.request('scriptsContent', id));
   },
 });
 
@@ -49,25 +56,23 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
   },
 }))
 class JavaScriptPanel extends Component {
-  patchOrRequestContent(scriptId) {
-    const { allScripts, requestScript, patchEditor } = this.props;
+  setOrRequestContent(scriptId) {
+    const { getScriptContent, requestScript, patchEditor } = this.props;
 
     if (!scriptId) return;
-    const script = allScripts.find(s => s._id === scriptId);
+    const content = getScriptContent(scriptId);
 
-    if (script) {
-      if (script.content !== undefined) {
-        patchEditor('code', script.content);
-      } else {
-        requestScript(scriptId);
-      }
+    if (content === undefined) {
+      requestScript(scriptId);
+    } else {
+      patchEditor({ code: content, scriptId });
     }
   }
 
   componentDidMount() {
     const { editor } = this.props;
 
-    this.patchOrRequestContent(editor.scriptId);
+    this.setOrRequestContent(editor.scriptId);
   }
 
   render() {
@@ -85,9 +90,7 @@ class JavaScriptPanel extends Component {
               id="scriptId"
               margin="dense"
               value={scriptId}
-              onChange={event =>
-                this.patchOrRequestContent(event.target.value)
-              }>
+              onChange={event => this.setOrRequestContent(event.target.value)}>
               {allScripts.map(s => (
                 <MenuItem key={s._id} value={s._id}>
                   {s.name}

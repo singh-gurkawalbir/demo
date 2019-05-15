@@ -2,7 +2,12 @@ import actionTypes from '../../../actions/types';
 
 export const intializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
-const resourceTypesToIgnore = [...intializationResources, ...accountResources];
+const virtualResources = ['scriptsContent', 'fileDefinitionsContent']; // managed in s3
+const resourceTypesToIgnore = [
+  ...intializationResources,
+  ...accountResources,
+  ...virtualResources,
+];
 
 function replaceOrInsertResource(state, type, resource) {
   // handle case of no collection

@@ -285,6 +285,7 @@ export function changeEmailMsg(state) {
 
 // #endregion PASSWORD & EMAIL update selectors for modals
 
+// #region USER SELECTORS
 export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
 }
@@ -311,6 +312,10 @@ export function resourceList(state, options) {
 
 export function processors(state) {
   return fromData.processors(state.data);
+}
+
+export function scriptContent(state, id) {
+  return fromData.scriptContent(state.data, id);
 }
 // #endregion
 

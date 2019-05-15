@@ -83,8 +83,16 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 }
 
+const typeAlias = {
+  scriptsContent: 'scripts',
+  fileDefinitionsContent: 'fileDefinitions', // not supported, just stubbed out code.
+};
+
 export function* getResource({ resourceType, id, message }) {
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+  const apiResourceType = typeAlias[resourceType]
+    ? typeAlias[resourceType]
+    : resourceType;
+  const path = id ? `/${apiResourceType}/${id}` : `/${apiResourceType}`;
   const opts = yield call(getRequestOptions, path);
 
   try {
