@@ -13,18 +13,50 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
 
+const utilGetResourcePath = (applicationType, connectionId, resourceType) =>
+  `${applicationType}/metadata/webservices/connections/${connectionId}/${resourceType}`;
 const mapStateToProps = (state, ownProps) => {
-  const { resourceToRetrieve } = ownProps;
+  const { connectionId, resourceType } = ownProps;
+  // export function resource(state, resourceType, id) {
+  const connection = selectors.resource(state, 'connections', connectionId);
+  const applicationType = connection.type;
+  const commResourcePath = utilGetResourcePath(
+    applicationType,
+    connectionId,
+    resourceType
+  );
 
   return {
-    loadingData: selectors.resourceStatus(state, resourceToRetrieve).isLoading,
-    resourceData: selectors.resourceCollection(state, resourceToRetrieve),
+    applicationType,
+    commResourcePath,
+    loadingData: selectors.resourceStatus(state, commResourcePath).isLoading,
+    resourceData: selectors.metadataResource(
+      state,
+      connectionId,
+      applicationType,
+      resourceType
+    ),
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  onFetchResource: resource =>
-    dispatch(actions.resource.requestCollection(resource)),
+  onFetchResource: stateProps => {
+    const {
+      commResourcePath,
+      applicationType,
+      connectionId,
+      resourceType,
+    } = stateProps;
+
+    return dispatch(
+      actions.metadata.requestCollection(
+        commResourcePath,
+        applicationType,
+        connectionId,
+        resourceType
+      )
+    );
+  },
 });
 
 @withStyles(() => ({
@@ -36,13 +68,10 @@ const mapDispatchToProps = dispatch => ({
   },
 }))
 class DynaRefreshOptions extends React.Component {
-  handleRetrieveResource(props) {
-    const { onFetchResource, resourceToRetrieve } = props;
-
-    onFetchResource(resourceToRetrieve);
-  }
   componentDidMount() {
-    this.handleRetrieveResource(this.props);
+    const { onFetchResource } = this.props;
+
+    onFetchResource(this.props);
   }
   render() {
     const {
@@ -57,6 +86,7 @@ class DynaRefreshOptions extends React.Component {
       defaultItemLabel,
       onFieldChange,
       resourceData,
+      onFetchResource,
       loadingData,
       classes,
     } = this.props;
@@ -102,9 +132,7 @@ class DynaRefreshOptions extends React.Component {
             {availableResourceOptions}
           </Select>
           {!loadingData && (
-            <RefreshIcon
-              onClick={() => this.handleRetrieveResource(this.props)}
-            />
+            <RefreshIcon onClick={() => onFetchResource(this.props)} />
           )}
           {resourceData && loadingData && <Spinner />}
           {description && <FormHelperText>{description}</FormHelperText>}

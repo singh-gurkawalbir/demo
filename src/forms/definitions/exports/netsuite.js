@@ -7,11 +7,10 @@ export default {
       type: 'labelTitle',
     },
     {
+      resourceType: 'recordTypes',
+      netsuiteSpecificResource: 'suitescript',
       fieldId: 'netsuite.recordType',
-      resourceToRetrieve: r =>
-        `netsuite/metadata/webservices/connections/${
-          r._connectionId
-        }/recordTypes`,
+      connectionId: r => r._connectionId,
     },
     {
       fieldId: 'netsuite.restlet.searchType',

@@ -9,7 +9,7 @@ import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
-import DynaRefreshOptions from './DynaRefreshOptions';
+import DynaRefreshOptions from './DynaRefreshOptions/RefreshOptionsFactory';
 import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';

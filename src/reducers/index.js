@@ -640,3 +640,54 @@ export function newResourceData(state, resourceType, id) {
 }
 
 // #endregion
+// #region Session metadata selectors
+export function generateOptionsFromMeta(
+  state,
+  connectionId,
+  applicationType,
+  resourceType,
+  netsuiteSpecificResource
+) {
+  return fromSession.generateOptionsFromMeta(
+    (state && state.session) || null,
+    connectionId,
+    applicationType,
+    resourceType,
+    netsuiteSpecificResource
+  );
+}
+
+export function metdataOptionsAndResources(
+  state,
+  connectionId,
+  netsuiteSpecificResource,
+  resourceType
+) {
+  const connection = resource(state, 'connections', connectionId);
+  // determining application type from the connection
+  const applicationType = connection.type;
+  let commResourcePath;
+
+  if (applicationType === 'netsuite') {
+    commResourcePath = `${applicationType}/metadata/${netsuiteSpecificResource}/connections/${connectionId}/${resourceType}`;
+  } else if (applicationType === 'salesforce') {
+    commResourcePath = `${applicationType}/metadata/webservices/connections/${connectionId}/${resourceType}`;
+  } else {
+    throw Error('Invalid application type...cannot support it');
+  }
+
+  return {
+    // resourceData
+    applicationType,
+    commResourcePath,
+    options: generateOptionsFromMeta(
+      state,
+      connectionId,
+      applicationType,
+      resourceType,
+      netsuiteSpecificResource
+    ),
+    isLoadingData: resourceStatus(state, commResourcePath).isLoading,
+  };
+}
+// #endregion

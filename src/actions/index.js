@@ -99,6 +99,36 @@ const resource = {
     }),
 };
 // #endregion
+const metadata = {
+  requestCollection: (
+    commResourcePath,
+    applicationType,
+    connectionId,
+    resourceType,
+    netsuiteSpecificResource
+  ) =>
+    action(actionTypes.REQUEST_APPLICATION_COLLECTION, {
+      commResourcePath,
+      applicationType,
+      connectionId,
+      resourceType,
+      netsuiteSpecificResource,
+    }),
+  netsuite: {
+    receivedCollection: (
+      resource,
+      resourceType,
+      connectionId,
+      netsuiteSpecificResource
+    ) =>
+      action(actionTypes.RECEIVED_NETSUITE_COLLECTION, {
+        resource,
+        resourceType,
+        connectionId,
+        netsuiteSpecificResource,
+      }),
+  },
+};
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
@@ -167,6 +197,7 @@ const editor = {
 // #endregion
 
 export default {
+  metadata,
   cancelTask,
   reloadApp,
   clearComms,
