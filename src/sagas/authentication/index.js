@@ -17,7 +17,7 @@ import {
   getCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
-import { intializationResources } from '../../reducers/data';
+import { intializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
