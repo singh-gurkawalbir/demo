@@ -9,7 +9,7 @@ export default {
     },
     {
       id: 'description',
-      name: 'description',
+      name: '/description',
       defaultValue: r => r.description,
       type: 'text',
       multiline: true,
@@ -18,9 +18,8 @@ export default {
     },
     {
       id: 'content',
-      name: '/ignore/me',
-      defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
-      type: 'hook',
+      name: '/content',
+      type: 'scriptcontent',
       label: 'Edit Script',
     },
   ],

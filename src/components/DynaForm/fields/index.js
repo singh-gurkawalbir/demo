@@ -9,6 +9,7 @@ import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaHook from './DynaHook';
+import DynaScriptContent from './DynaScriptContent';
 
 export default {
   text: DynaText,
@@ -23,4 +24,5 @@ export default {
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
   hook: DynaHook,
+  scriptcontent: DynaScriptContent,
 };

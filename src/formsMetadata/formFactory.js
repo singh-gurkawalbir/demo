@@ -118,7 +118,7 @@ const setDefaults = (fields, resourceType, resource) => {
       merged.helpKey = merged.fieldId;
     }
 
-    if (!Object.keys(merged).includes('defaultValue')) {
+    if (!Object.keys(merged).includes('defaultValue') && merged.fieldId) {
       // console.log(`default value for ${merged.fieldId} used`);
       merged.defaultValue = extractValue(merged.fieldId, resource);
     }

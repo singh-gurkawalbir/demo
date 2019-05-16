@@ -77,6 +77,14 @@ export function* commitStagedChanges({ resourceType, id }) {
     });
 
     yield put(actions.resource.received(resourceType, updated));
+
+    // HACK! We store scriptcontent in a seperate redux store and handled by a
+    // seperate reducer we need to force our store.data.scriptsContent reducer
+    // to act on the commit.
+    if (resourceType === 'scripts' && merged.content !== undefined) {
+      yield put(actions.resource.received('scriptsContent', merged));
+    }
+
     yield put(actions.resource.clearStaged(id));
   } catch (error) {
     // Dave would handle this part

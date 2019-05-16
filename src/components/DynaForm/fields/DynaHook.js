@@ -1,4 +1,4 @@
-import React, { Fragment as div } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -74,7 +74,7 @@ class DynaHook extends React.Component {
     };
 
     return (
-      <div>
+      <Fragment>
         {showEditor && (
           <JavaScriptEditorDialog
             title="Script Editor"
@@ -125,7 +125,7 @@ class DynaHook extends React.Component {
             <EditIcon />
           </IconButton>
         </div>
-      </div>
+      </Fragment>
     );
   }
 }
