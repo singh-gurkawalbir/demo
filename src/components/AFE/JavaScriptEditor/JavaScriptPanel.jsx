@@ -13,7 +13,14 @@ import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
-  const getScriptContent = id => selectors.scriptContent(state, id);
+  const getScriptContent = id => {
+    const data = selectors.resourceData(state, 'scripts', id);
+
+    if (data && data.merged) {
+      return data.merged.content;
+    }
+  };
+
   const allScripts = selectors.resourceList(state, { type: 'scripts' })
     .resources;
 
@@ -34,7 +41,7 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     }
   },
   requestScript: id => {
-    dispatch(actions.resource.request('scriptsContent', id));
+    dispatch(actions.resource.request('scripts', id));
   },
 });
 

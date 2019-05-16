@@ -1,20 +1,26 @@
 import { connect } from 'react-redux';
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 import { EditorField } from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const mapStateToProps = state => {
-  const getScriptContent = id => selectors.scriptContent(state, id);
+const mapStateToProps = (state, { resourceId }) => {
+  const data = selectors.resourceData(state, 'scripts', resourceId);
+  let scriptContent;
 
-  return { getScriptContent };
+  if (data) {
+    scriptContent = data.merged && data.merged.content;
+  }
+
+  return { scriptContent };
 };
 
-const mapDispatchToProps = dispatch => ({
-  requestScript: id => {
-    dispatch(actions.resource.request('scriptsContent', id));
+const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  requestScript: () => {
+    dispatch(actions.resource.request('scripts', resourceId));
   },
 });
 
@@ -25,24 +31,21 @@ const mapDispatchToProps = dispatch => ({
 })
 class DynaScriptContent extends Component {
   componentDidMount() {
-    const {
-      id,
-      getScriptContent,
-      onFieldChange,
-      resourceId,
-      requestScript,
-    } = this.props;
-    const scriptContent = getScriptContent(resourceId);
+    const { id, scriptContent, onFieldChange, requestScript } = this.props;
 
     if (scriptContent === undefined) {
-      requestScript(resourceId);
+      requestScript();
     } else {
       onFieldChange(id, scriptContent);
     }
   }
 
   render() {
-    const { classes, ...rest } = this.props;
+    const { scriptContent, classes, ...rest } = this.props;
+
+    if (scriptContent === undefined) {
+      return <Typography>Loading Script...</Typography>;
+    }
 
     return (
       <EditorField

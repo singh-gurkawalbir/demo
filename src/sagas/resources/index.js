@@ -76,14 +76,13 @@ export function* commitStagedChanges({ resourceType, id }) {
       },
     });
 
-    yield put(actions.resource.received(resourceType, updated));
-
-    // HACK! We store scriptcontent in a seperate redux store and handled by a
-    // seperate reducer we need to force our store.data.scriptsContent reducer
-    // to act on the commit.
-    if (resourceType === 'scripts' && merged.content !== undefined) {
-      yield put(actions.resource.received('scriptsContent', merged));
+    // HACK! when updating scripts, since content is stored in s3, it
+    // seems the PUT API response does not contain the content.
+    if (merged.content && updated.content === undefined) {
+      updated.content = merged.content;
     }
+
+    yield put(actions.resource.received(resourceType, updated));
 
     yield put(actions.resource.clearStaged(id));
   } catch (error) {
