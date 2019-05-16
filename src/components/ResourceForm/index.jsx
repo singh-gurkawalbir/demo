@@ -2,17 +2,11 @@ import { Component } from 'react';
 import ResourceForm from './GenericResourceForm';
 import ConnectionForm from './ConnectionForm';
 
-const connectionFormConnections = ['ftp', 's3'];
-
 export default class ResourceFormFactory extends Component {
   render() {
-    const { resourceType, resource } = this.props;
+    const { resourceType } = this.props;
 
-    if (
-      resourceType === 'connections' &&
-      resource &&
-      connectionFormConnections.includes(resource.type)
-    ) {
+    if (resourceType === 'connections') {
       return <ConnectionForm {...this.props} />;
     }
 

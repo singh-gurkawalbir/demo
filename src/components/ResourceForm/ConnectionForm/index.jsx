@@ -11,29 +11,13 @@ import * as selectors from '../../../reducers/index';
 import { COMM_STATES } from '../../../reducers/comms';
 import ResourceForm from '../GenericResourceForm';
 
-// const CancellableSpinner = props => (
-//   <div>
-//     <CircularProgress />
-//     <Button
-//       size="small"
-//       variant="contained"
-//       color="secondary"
-//       onClick={props.onHandleCancel}>
-//       Click here to cancel this Test call
-//     </Button>
-//   </div>
-// );
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
 const mapDispatchToProps = dispatch => ({
   testConnection: (connection, resourceType, resourceId) => {
     dispatch(
-      actions.resource.connections.testConnection(
-        connection,
-        resourceType,
-        resourceId
-      )
+      actions.resource.test.connection(connection, resourceType, resourceId)
     );
   },
   clearComms: () => {

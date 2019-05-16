@@ -291,27 +291,24 @@ export function changeEmailMsg(state) {
 
 export function testConnectionCommState(state) {
   if (
-    state &&
-    state.comms &&
-    state.comms[pingConnectionParams.path] &&
-    state.comms[pingConnectionParams.path].status
-  ) {
-    const comm = state.comms[pingConnectionParams.path];
-    // const commState = {
-    //   success: comm.status === fromComms.COMM_STATES.SUCCESS,
-    //   failure: comm.status === fromComms.COMM_STATES.ERROR,
-    //   loading: comm.status === fromComms.COMM_STATES.LOADING,
-    //   message: comm.message,
-    // };
-    const commState = {
-      commState: comm.status,
-      message: comm.message,
+    !(
+      state &&
+      state.comms &&
+      state.comms[pingConnectionParams.path] &&
+      state.comms[pingConnectionParams.path].status
+    )
+  )
+    return {
+      commState: null,
+      message: null,
     };
 
-    return commState;
-  }
+  const comm = state.comms[pingConnectionParams.path];
 
-  return { success: null, failure: null, message: null };
+  return {
+    commState: comm.status,
+    message: comm.message,
+  };
 }
 
 export function themeName(state) {

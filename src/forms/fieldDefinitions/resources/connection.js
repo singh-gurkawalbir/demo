@@ -46,7 +46,6 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
-    disableSelect: true,
     options: [
       {
         items: [

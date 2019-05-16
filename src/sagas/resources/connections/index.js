@@ -48,13 +48,16 @@ function* pingConnection({ connection, resourceType, resourceId }) {
       );
     }
   } catch (e) {
-    // these errors are json errors
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
+    // The ping test gives back a 200 response if the ping connection has failed
+    if (e.status === 200) {
+      // these errors are json errors
+      const errorsJSON = JSON.parse(e.message);
+      const { errors } = errorsJSON;
 
-    yield put(
-      actions.api.failure(pingConnectionParams.path, errors[0].message)
-    );
+      yield put(
+        actions.api.failure(pingConnectionParams.path, errors[0].message)
+      );
+    }
   }
 }
 

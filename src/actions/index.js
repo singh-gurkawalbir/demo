@@ -80,8 +80,8 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
-  connections: {
-    testConnection: (connection, resourceType, resourceId) =>
+  test: {
+    connection: (connection, resourceType, resourceId) =>
       action(actionTypes.TEST_CONNECTION, {
         connection,
         resourceType,
