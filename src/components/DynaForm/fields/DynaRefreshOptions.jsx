@@ -92,7 +92,6 @@ class DynaRefreshOptions extends React.Component {
     } = this.props;
 
     if (!resourceData) return <Spinner />;
-    console.log('check options');
     let availableResourceOptions = resourceData.map(recordType => {
       const { label, internalId: value } = recordType;
 

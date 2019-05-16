@@ -1,1 +1,24 @@
-export default {"fields":[{"fieldId":"rest.relativeURI"},{"fieldId":"rest.method"},{"fieldId":"rest.requestType"},{"fieldId":"rest.body"},{"fieldId":"rest.headers"},{"fieldId":"rest.responseIdPath"},{"fieldId":"rest.successPath"},{"fieldId":"rest.successValues"},{"fieldId":"rest.ignoreLookupName"},{"fieldId":"rest.ignoreExtract"},{"fieldId":"rest.blobFormat"},{"fieldId":"rest.lookups"},{"fieldId":"rest.lookups[*].map"},{"fieldId":"rest.lookups[*].default"},{"fieldId":"rest.lookups[*].relativeURI"},{"fieldId":"rest.lookups[*].method"},{"fieldId":"rest.lookups[*].postBody"},{"fieldId":"rest.lookups[*].extract"},{"fieldId":"rest.lookups[*].allowFailures"}],"fieldSets":[]};
+export default {
+  fields: [
+    { fieldId: 'rest.relativeURI' },
+    { fieldId: 'rest.method' },
+    { fieldId: 'rest.requestType' },
+    { fieldId: 'rest.body' },
+    { fieldId: 'rest.headers' },
+    { fieldId: 'rest.responseIdPath' },
+    { fieldId: 'rest.successPath' },
+    { fieldId: 'rest.successValues' },
+    { fieldId: 'rest.ignoreLookupName' },
+    { fieldId: 'rest.ignoreExtract' },
+    { fieldId: 'rest.blobFormat' },
+    { fieldId: 'rest.lookups' },
+    { fieldId: 'rest.lookups[*].map' },
+    { fieldId: 'rest.lookups[*].default' },
+    { fieldId: 'rest.lookups[*].relativeURI' },
+    { fieldId: 'rest.lookups[*].method' },
+    { fieldId: 'rest.lookups[*].postBody' },
+    { fieldId: 'rest.lookups[*].extract' },
+    { fieldId: 'rest.lookups[*].allowFailures' },
+  ],
+  fieldSets: [],
+};
