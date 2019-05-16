@@ -135,27 +135,10 @@ class Edit extends Component {
           resource,
           resourceType,
         });
-        // TODO: I don't really need to set defaults, the getFieldsWithDefaults
-        // has support to add visibiltyWhen rules for fieldMeta having formId
-        // or deeply nested forms
-        const nestedFieldMeta = factory.getFieldsWithDefaults(
+        const flattenedFieldMeta = factory.getFlattenedFieldMetaWithRules(
           fieldMeta,
           resourceType,
           resource
-        );
-        // Lets retain fieldId, visibleWhen and lets remove all
-        // other properties.
-        // since fieldSets aren't expected to have formId nor
-        // the formIds are expected to have any fieldSets,
-        // so lets use the fields from getFieldsWithDefaults
-        const fieldMetaWithJustFieldIdAndRules = nestedFieldMeta.fields.map(
-          field => {
-            const { fieldId, visibleWhen } = field;
-
-            if (visibleWhen) return { fieldId, visibleWhen };
-
-            return { fieldId };
-          }
         );
         const patchSet = [
           {
@@ -163,7 +146,7 @@ class Edit extends Component {
             path: '/customForm',
             value: {
               form: {
-                fields: fieldMetaWithJustFieldIdAndRules,
+                fields: flattenedFieldMeta,
                 fieldSets: { ...fieldMeta.fieldSets },
               },
             },
