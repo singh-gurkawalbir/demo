@@ -13,6 +13,7 @@ import ResourceForm from '../../components/ResourceForm';
 import ConflictAlertDialog from './ConflictAlertDialog';
 import factory from '../../formsMetadata/formFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
+import HooksButton from './HooksButton';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -225,6 +226,13 @@ class Edit extends Component {
               onClick={this.handleToggleEditor}>
               JSON
             </Button>
+
+            <HooksButton
+              resourceId={id}
+              resourceType={resourceType}
+              className={classes.editButton}
+            />
+
             {patchLength > 1 && (
               <Button
                 className={classes.editButton}
