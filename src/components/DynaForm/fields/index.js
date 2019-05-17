@@ -13,6 +13,7 @@ import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
+import DynaResourceText from './DynaResourceText';
 
 export default {
   text: DynaText,
@@ -26,6 +27,7 @@ export default {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
+  resourceText: DynaResourceText,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadFile: DynaUploadFile,

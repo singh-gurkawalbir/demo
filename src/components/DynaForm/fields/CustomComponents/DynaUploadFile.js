@@ -1,22 +1,12 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FieldWrapper } from 'react-forms-processor/dist';
 
-@withStyles(() => ({
-  textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    // minWidth: 120,
-  },
-}))
 class DynaUploadFile extends React.Component {
   render() {
     const {
       options,
-      classes,
       disabled,
-
       id,
       isValid,
       name,
@@ -46,7 +36,7 @@ class DynaUploadFile extends React.Component {
         key={id}
         name={name}
         label={label}
-        className={classes.textField}
+        type="file"
         placeholder={placeholder}
         disabled={disabled}
         required={required}

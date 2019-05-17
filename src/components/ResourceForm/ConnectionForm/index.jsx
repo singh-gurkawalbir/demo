@@ -10,23 +10,32 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers/index';
 import { COMM_STATES } from '../../../reducers/comms';
 import ResourceForm from '../GenericResourceForm';
+import {
+  sanitizePatchSet,
+  defaultPatchSetConverter,
+} from '../../../forms/utils';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
-const mapDispatchToProps = dispatch => ({
-  testConnection: (connection, resourceType, resourceId) => {
-    dispatch(
-      actions.resource.test.connection(connection, resourceType, resourceId)
-    );
-  },
-  clearComms: () => {
-    dispatch(actions.clearComms());
-  },
-  cancelProcess: () => {
-    dispatch(actions.cancelTask());
-  },
-});
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { resourceType, resource } = ownProps;
+  const resourceId = resource._id;
+
+  return {
+    testConnection: connection => {
+      dispatch(
+        actions.resource.test.connection(connection, resourceType, resourceId)
+      );
+    },
+    clearComms: () => {
+      dispatch(actions.clearComms());
+    },
+    cancelProcess: () => {
+      dispatch(actions.cancelTask());
+    },
+  };
+};
 
 @withStyles(theme => ({
   actions: {
@@ -45,9 +54,14 @@ class ConnectionForm extends Component {
     this.setState({ advancedSettingsOpen: !this.state.advancedSettingsOpen });
   };
   handleTestConnection = value => {
-    const { testConnection, resourceType, resource } = this.props;
+    const { testConnection, fieldMeta, resource, converter } = this.props;
+    const fieldValuesPatchOperations = sanitizePatchSet({
+      patchSet: (converter || defaultPatchSetConverter)(value),
+      fieldMeta,
+      resource,
+    });
 
-    testConnection(value, resourceType, resource._id);
+    testConnection(fieldValuesPatchOperations);
   };
   handleCancel = () => {
     this.props.cancelProcess();
@@ -62,11 +76,7 @@ class ConnectionForm extends Component {
     this.props.clearComms();
   };
   render() {
-    const {
-      classes,
-      testConnectionCommState,
-      // ...resourceFormProps
-    } = this.props;
+    const { classes, testConnectionCommState, converter, ...rest } = this.props;
 
     return (
       <Fragment>
@@ -75,7 +85,7 @@ class ConnectionForm extends Component {
           onHandleClose={this.handleClearComms}
           onHandleCancelTask={this.handleCancel}
         />
-        <ResourceForm {...this.props}>
+        <ResourceForm {...rest}>
           <DynaSubmit
             isValid={testConnectionCommState !== COMM_STATES.LOADING}
             onClick={this.handleTestConnection}

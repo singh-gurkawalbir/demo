@@ -7,15 +7,11 @@ export default {
   // adaptor type has export appended to it
   // strip it off and lowercase the connection type
   _connectionId: {
-    type: 'selectresource',
+    type: 'resourceText',
     label: 'Connection',
     resourceType: 'connections',
-    filter: r => {
-      const removedExport = r.adaptorType.replace('Export', '');
-      const type = removedExport.toLowerCase();
-
-      return { type };
-    },
+    resourceProp: 'type',
+    filter: r => ({ _id: r._connectionId }),
     // excludeFilter: r => ({ _id: r._id }),
   },
   // Todo why helpKey is it named csv file id like to change it to
@@ -117,7 +113,6 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
-    disableSelect: true,
     options: [
       {
         items: [

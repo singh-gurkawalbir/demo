@@ -7,9 +7,7 @@ import Help from '../../components/Help';
 import DynaForm from '../../components/DynaForm';
 import { createAppropriatePathAndOptions } from '../../sagas/api';
 
-function optionsHandler(options) {
-  console.log(`check ${JSON.stringify(options)}`);
-
+function optionsHandler() {
   return ['something1', 'something2'];
 }
 

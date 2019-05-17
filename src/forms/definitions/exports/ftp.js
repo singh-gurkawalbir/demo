@@ -1,7 +1,7 @@
 export default {
   fields: [
     { formId: 'common' },
-    { formId: 'file' },
+    { formId: 'ftpFile' },
     { fieldId: 'ftp.exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
     { fieldId: 'ftp.exportHooks' },
