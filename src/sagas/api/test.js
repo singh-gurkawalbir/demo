@@ -274,10 +274,19 @@ describe('request interceptors...testing the various stages of an api request on
           some401Response,
           actionWithMetaProxiedFromRequestAction
         );
+        const hidden = true;
 
         // complete the api request
-        expect(saga.next().value).toEqual(put(actions.api.complete(path)));
         expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+        expect(saga.next().value).toEqual(
+          put(
+            actions.api.failure(
+              path,
+              JSON.stringify(some401Response.data),
+              hidden
+            )
+          )
+        );
 
         expect(saga.next().value).toEqual(
           call(throwExceptionUsingTheResponse, some401Response)
@@ -290,10 +299,19 @@ describe('request interceptors...testing the various stages of an api request on
           some403Response,
           actionWithMetaProxiedFromRequestAction
         );
+        const hidden = true;
 
         // complete the api request
-        expect(saga.next().value).toEqual(put(actions.api.complete(path)));
         expect(saga.next().value).toEqual(call(unauthenticateAndDeleteProfile));
+        expect(saga.next().value).toEqual(
+          put(
+            actions.api.failure(
+              path,
+              JSON.stringify(some403Response.data),
+              hidden
+            )
+          )
+        );
 
         expect(saga.next().value).toEqual(
           call(throwExceptionUsingTheResponse, some403Response)
@@ -309,7 +327,9 @@ describe('request interceptors...testing the various stages of an api request on
         );
 
         // complete the api request
-        expect(saga.next().value).toEqual(put(actions.api.complete(path)));
+        expect(saga.next().value).toEqual(
+          put(actions.api.failure(path, JSON.stringify(some400Response.data)))
+        );
 
         expect(saga.next().value).toEqual(
           call(throwExceptionUsingTheResponse, some400Response)

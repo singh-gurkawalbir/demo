@@ -43,8 +43,8 @@ const api = {
   retry: path => action(actionTypes.API_RETRY, { path }),
   complete: (path, message) =>
     action(actionTypes.API_COMPLETE, { path, message }),
-  failure: (path, message) =>
-    action(actionTypes.API_FAILURE, { path, message }),
+  failure: (path, message, hidden) =>
+    action(actionTypes.API_FAILURE, { path, message, hidden }),
 };
 // #region Resource Actions
 const resource = {

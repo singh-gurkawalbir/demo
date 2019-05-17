@@ -77,15 +77,22 @@ export function* onErrorSaga(error, action) {
   const { path } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
-    // give up and let the parent saga try.
-    yield put(actions.api.complete(path));
-
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
     if (error.status === 401 || error.status === 403) {
       yield call(unauthenticateAndDeleteProfile);
+      const hidden = true;
+
+      // make sure it is hidden so that it does not show up
+      // in the network snackbar and simply launch the session
+      // expiration modal
+      yield put(actions.api.failure(path, JSON.stringify(error.data), hidden));
+    } else {
+      yield put(actions.api.failure(path, JSON.stringify(error.data)));
     }
 
+    // give up and let the parent saga try.
+    // send the first message
     yield call(throwExceptionUsingTheResponse, error);
 
     return { error };

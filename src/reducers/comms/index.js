@@ -47,6 +47,9 @@ export default (state = initialState, action) => {
       newState = Object.assign({}, state[path]);
       newState.status = COMM_STATES.ERROR;
       newState.message = message || 'unknown error';
+
+      // if not defined it should be false
+      if (hidden) newState.hidden = hidden;
       delete newState.retry;
       delete newState.timestamp;
 
