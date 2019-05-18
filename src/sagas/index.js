@@ -5,6 +5,7 @@ import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
+import { dynaFormSagas } from './dynaForm';
 import { userSagas } from './users';
 import editorSagas from './editor';
 import {
@@ -77,5 +78,6 @@ export default function* rootSaga() {
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
+    ...dynaFormSagas,
   ]);
 }

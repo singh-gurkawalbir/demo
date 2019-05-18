@@ -12,7 +12,7 @@ export const availableResources = [
 
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
-// a type are symetrical in shape by generating them via "action creator"
+// a type are symmetrical in shape by generating them via "action creator"
 // functions.
 
 function action(type, payload = {}) {
@@ -154,6 +154,15 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
 };
 // #endregion
+//
+// #region DynaForm Actions
+const dynaForm = {
+  init: (resourceType, resourceId, formMeta) =>
+    action(actionTypes.DYNAFORM.INIT, { resourceType, resourceId, formMeta }),
+  submit: (resourceType, resourceId, values) =>
+    action(actionTypes.DYNAFORM.SUBMIT, { resourceType, resourceId, values }),
+};
+// #endregion
 
 export default {
   reloadApp,
@@ -161,6 +170,7 @@ export default {
   patchFilter,
   clearFilter,
   editor,
+  dynaForm,
   resource,
   user,
   api,

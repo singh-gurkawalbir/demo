@@ -46,9 +46,9 @@ const mapDispatchToProps = (dispatch, { match }) => {
       // return null;
       dispatch(actions.resource.patchStaged(id, patchSet));
 
-      if (!skipCommit) {
-        dispatch(actions.resource.commitStaged(resourceType, id));
-      }
+      if (skipCommit) return;
+
+      dispatch(actions.resource.commitStaged(resourceType, id));
     },
     // handleCommitChanges: (a, b, c) => {
     //   console.log(a, b, c);

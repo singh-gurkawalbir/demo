@@ -5,7 +5,6 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
-import { getFieldPosition } from '../../formsMetadata/utils';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* getRequestOptions(path) {
@@ -90,16 +89,8 @@ export function* commitStagedChanges({ resourceType, id }) {
   }
 }
 
-const typeAlias = {
-  scriptsContent: 'scripts',
-  fileDefinitionsContent: 'fileDefinitions', // not supported, just stubbed out code.
-};
-
 export function* getResource({ resourceType, id, message }) {
-  const apiResourceType = typeAlias[resourceType]
-    ? typeAlias[resourceType]
-    : resourceType;
-  const path = id ? `/${apiResourceType}/${id}` : `/${apiResourceType}`;
+  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
   const opts = yield call(getRequestOptions, path);
 
   try {
@@ -130,44 +121,8 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* patchFormField({
-  resourceType,
-  resourceId,
-  fieldId,
-  value,
-  op = 'replace',
-  offset = 0,
-}) {
-  const { merged } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
-
-  if (!merged) return; // nothing to do.
-
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return; // nothing to do
-
-  const { index, fieldSetIndex } = getFieldPosition({ meta, id: fieldId });
-
-  if (index === undefined) return; // nothing to do.
-
-  const path =
-    fieldSetIndex === undefined
-      ? `/customForm/form/fields/${index + offset}`
-      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
-  const patchSet = [{ op, path, value }];
-
-  // console.log('dispatching patch with: ', patchSet);
-
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
-}
-
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
-  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
 ];

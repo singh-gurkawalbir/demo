@@ -6,7 +6,7 @@ export default {
       function: entryFunction,
       code,
     },
-    data: JSON.parse(data),
+    data: typeof data === 'string' ? JSON.parse(data) : data,
   }),
   validate: ({ data }) => ({
     // ruleError: undefined //  no validation yet.

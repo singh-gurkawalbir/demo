@@ -72,6 +72,10 @@ function createResourceActionTypes(base, includeStagedActions) {
 
 const PROFILE = createResourceActionTypes('PROFILE');
 const RESOURCE = createResourceActionTypes('RESOURCE', true);
+const DYNAFORM = {
+  INIT: 'DYNAFORM_INIT',
+  SUBMIT: 'DYNAFORM_SUBMIT',
+};
 const LICENSE_TRIAL_REQUEST = 'LICENSE_TRIAL_REQUEST';
 const LICENSE_TRIAL_ISSUED = 'LICENSE_TRIAL_ISSUED';
 const LICENSE_UPGRADE_REQUEST = 'LICENSE_UPGRADE_REQUEST';
@@ -123,4 +127,5 @@ export default {
   ACCOUNT_LEAVE_REQUEST,
   ACCOUNT_SWITCH,
   DEFAULT_ACCOUNT_SET,
+  DYNAFORM,
 };

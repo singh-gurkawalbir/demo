@@ -1,10 +1,26 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import factory from '../../formsMetadata/formFactory';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
-import { sanitizePatchSet } from '../../formsMetadata/utils';
+// import { sanitizePatchSet } from '../../formsMetadata/utils';
+import actions from '../../actions';
+// import * as selectors from '../../reducers';
+
+const mapStateToProps = () =>
+  // const mapStateToProps = (state, { resource }) => {
+  // const formStatus = selectors.formStatus(state, 'submit', resource._id);
+  ({
+    formStatus: {},
+  });
+const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
+  handleSubmitForm: value => {
+    // console.log(`request resource "${resource}"`);
+    dispatch(actions.dynaForm.submit(resourceType, resource._id, value));
+  },
+});
 
 @withStyles(theme => ({
   actions: {
@@ -16,7 +32,7 @@ import { sanitizePatchSet } from '../../formsMetadata/utils';
     marginLeft: theme.spacing.double,
   },
 }))
-export default class ResourceForm extends Component {
+class ResourceForm extends Component {
   state = {
     formKey: 1,
   };
@@ -37,44 +53,52 @@ export default class ResourceForm extends Component {
       classes,
       resourceType,
       resource,
-      handleSubmit,
+      // handleSubmit,
+      handleSubmitForm,
       children,
+      runHook,
       ...rest
     } = this.props;
     let fieldMeta;
-    let handleClick;
+    // We load the defaults because even custom forms may use the
+    // stock handlers...
+    const defaultFormAssets = factory.getResourceFormAssets({
+      resourceType,
+      resource,
+    });
+    // this is the default save form handler.
+    // even with custom forms, the default handler can be used,
+    // provided the shape of the form value arg doesn't change.
+    // const handleClick = value =>
+    //  handleSubmit(
+    //    sanitizePatchSet({
+    //      patchSet: defaultFormAssets.converter(value),
+    //      fieldMeta,
+    //      resource,
+    //    })
+    //  );
 
     if (resource.customForm && resource.customForm.form) {
       // this resource has an embedded custom form.
-      fieldMeta = factory.getFieldsWithDefaults(
-        resource.customForm.form,
-        resourceType,
-        resource
-      );
-      handleClick = value => {
-        // eslint-disable-next-line no-console
-        console.log('values passed to custom form submit handler: ', value);
-      };
+      const { form, submit } = resource.customForm;
+
+      fieldMeta = factory.getFieldsWithDefaults(form, resourceType, resource);
+
+      // only override the default handler if a custom submit handler if present
+      if (submit) {
+        // handleClick = value => {
+        //   // eslint-disable-next-line no-console
+        //   console.log('args passed to custom form submit hook: ', value);
+        //   runHook(value);
+        // };
+      }
     } else {
       // this is a stock UI form...
-      const assets = factory.getResourceFormAssets({
-        resourceType,
-        resource,
-      });
-
       fieldMeta = factory.getFieldsWithDefaults(
-        assets.fieldMeta,
+        defaultFormAssets.fieldMeta,
         resourceType,
         resource
       );
-      handleClick = value =>
-        handleSubmit(
-          sanitizePatchSet({
-            patchSet: assets.converter(value),
-            fieldMeta,
-            resource,
-          })
-        );
     }
 
     // console.log(fieldMeta);
@@ -94,7 +118,9 @@ export default class ResourceForm extends Component {
             variant="contained">
             Cancel
           </Button>
-          <DynaSubmit onClick={handleClick} className={classes.actionButton}>
+          <DynaSubmit
+            onClick={handleSubmitForm}
+            className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>
@@ -102,3 +128,8 @@ export default class ResourceForm extends Component {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ResourceForm);
