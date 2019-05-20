@@ -5,19 +5,21 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
 import actions from '../../actions';
+import commPathGenerator from '../../utils/comPathGenerator';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 const STATES = selectors.COMM_STATES;
 
 describe('comms reducers', () => {
   const path = '/test/path/';
+  const reqType = 'GET';
 
   describe(`clear comms action `, () => {
     test('clear the comms part of the redux store', () => {
-      const newState = reducer(undefined, actions.api.request(path));
+      const newState = reducer(undefined, actions.api.request(path, reqType));
       let completedApiActionState = reducer(
         newState,
-        actions.api.complete(path)
+        actions.api.complete(path, reqType)
       );
       const failedApiResourcePath = '/sisnifdif';
 
@@ -39,41 +41,43 @@ describe('comms reducers', () => {
   });
   describe(`request action`, () => {
     test('should set loading flag', () => {
-      const newState = reducer(undefined, actions.api.request(path));
+      const newState = reducer(undefined, actions.api.request(path, reqType));
+      const genPath = commPathGenerator(path, reqType);
 
-      expect(newState[path].status).toBe(STATES.LOADING);
+      expect(newState[genPath].status).toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, reqType));
+      const genPath = commPathGenerator(path, reqType);
 
-      expect(state[path].retry).toBe(1);
+      expect(state[genPath].retry).toBe(1);
 
-      const newState = reducer(state, actions.api.request(path));
+      const newState = reducer(state, actions.api.request(path, reqType));
 
-      expect(newState[path].retry).toBeUndefined();
+      expect(newState[genPath].retry).toBeUndefined();
     });
   });
 
   describe(`completed action`, () => {
     test('should clear loading flag', () => {
-      const state = reducer(undefined, actions.api.request(path));
+      const state = reducer(undefined, actions.api.request(path, reqType));
 
       expect(state[path].status).toBe(STATES.LOADING);
 
-      const newState = reducer(state, actions.api.complete(path));
+      const newState = reducer(state, actions.api.request(path, reqType));
 
       expect(newState[path].status).not.toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, reqType));
 
       expect(state[path].retry).toBe(1);
 
-      const newState = reducer(state, actions.api.complete(path));
+      const newState = reducer(state, actions.api.request(path, reqType));
 
       expect(newState[path].retry).toBeUndefined();
     });
@@ -81,23 +85,26 @@ describe('comms reducers', () => {
 
   describe(`failure action`, () => {
     test('should set error message', () => {
-      const state = reducer(undefined, actions.api.failure(path, 'error'));
+      const state = reducer(
+        undefined,
+        actions.api.failure(path, reqType, 'error')
+      );
 
       expect(state[path].message).toEqual('error');
     });
     test('should default an error message if none is provided in the action', () => {
-      const state = reducer(undefined, actions.api.failure(path));
+      const state = reducer(undefined, actions.api.failure(path, reqType));
 
       expect(state[path].message).toEqual('unknown error');
     });
     test('should clear loading and retry count', () => {
-      let state = reducer(undefined, actions.api.request(path));
+      let state = reducer(undefined, actions.api.request(path, reqType));
 
-      state = reducer(state, actions.api.retry(path));
+      state = reducer(state, actions.api.retry(path, reqType));
       expect(state[path].status).toBe(STATES.LOADING);
       expect(state[path].retry).toBe(1);
 
-      state = reducer(state, actions.api.failure(path, 'error'));
+      state = reducer(state, actions.api.failure(path, reqType, 'error'));
 
       expect(state[path].status).toBe(STATES.ERROR);
       expect(state[path].retry).toBeUndefined();
@@ -107,15 +114,15 @@ describe('comms reducers', () => {
   describe(`retry action`, () => {
     test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, reqType));
 
       expect(state[path].retry).toBe(1);
 
-      let newState = reducer(state, actions.api.retry(path));
+      let newState = reducer(state, actions.api.retry(path, reqType));
 
       expect(newState[path].retry).toBe(2);
 
-      newState = reducer(newState, actions.api.retry(path));
+      newState = reducer(newState, actions.api.retry(path, reqType));
 
       expect(newState[path].retry).toBe(3);
     });
@@ -124,6 +131,7 @@ describe('comms reducers', () => {
 
 describe('comms selectors', () => {
   const path = '/test/path';
+  const reqType = 'GET';
 
   describe(`isLoading`, () => {
     test('should be false on initial state', () => {
@@ -133,7 +141,7 @@ describe('comms selectors', () => {
     });
 
     test('should be true after request action', () => {
-      const state = reducer(undefined, actions.api.request(path));
+      const state = reducer(undefined, actions.api.request(path, reqType));
       const isLoading = selectors.isLoading(state, path);
 
       expect(isLoading).toBe(true);
@@ -154,7 +162,7 @@ describe('comms selectors', () => {
     });
 
     test('should be 1 after first retry action', () => {
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, reqType));
       const count = selectors.retryCount(state, path);
 
       expect(count).toBe(1);
@@ -164,7 +172,7 @@ describe('comms selectors', () => {
       let state;
 
       for (let i = 1; i < 5; i += 1) {
-        state = reducer(state, actions.api.retry(path));
+        state = reducer(state, actions.api.retry(path, reqType));
         const count = selectors.retryCount(state, path);
 
         expect(count).toBe(i);
@@ -201,8 +209,8 @@ describe('comms selectors', () => {
       let state;
 
       // assign
-      state = reducer(state, actions.api.request(path));
-      state = reducer(state, actions.api.complete(path));
+      state = reducer(state, actions.api.request(path, reqType));
+      state = reducer(state, actions.api.request(path, reqType));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -215,7 +223,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.api.request('exports', 'Loading Exports')
+        actions.api.request('exports', reqType, 'Loading Exports')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -241,11 +249,19 @@ describe('comms selectors', () => {
 
       state = reducer(
         state,
-        actions.api.request(pathA, 'Some msg indicating loading of Resource')
+        actions.api.request(
+          pathA,
+          reqType,
+          'Some msg indicating loading of Resource'
+        )
       );
       state = reducer(
         state,
-        actions.api.request(pathB, 'Some msg indicating loading of Resource')
+        actions.api.request(
+          pathB,
+          reqType,
+          'Some msg indicating loading of Resource'
+        )
       );
 
       // act
@@ -276,7 +292,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.api.failure(path, 'my nice error')
+        actions.api.failure(path, reqType, 'my nice error')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);

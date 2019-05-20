@@ -16,7 +16,7 @@ export function* onRequestSaga(request) {
   const { path, opts, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
 
-  yield put(actions.api.request(path, message, hidden, method));
+  yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
 
@@ -35,6 +35,7 @@ export function* onRequestSaga(request) {
     ...options,
     meta: {
       path,
+      reqType: method,
     },
     responseType: 'text',
   };
@@ -45,9 +46,9 @@ export function* onRequestSaga(request) {
 export function* onSuccessSaga(response, action) {
   // the path is an additional attribute proxied in the request action
   // we could use the uri but some of them have api prefixed some dont
-  const { path } = action.request.meta;
+  const { path, reqType } = action.request.meta;
 
-  yield put(actions.api.complete(path));
+  yield put(actions.api.complete(path, reqType));
 
   // if error in response
 
@@ -74,7 +75,7 @@ export function* onSuccessSaga(response, action) {
 }
 
 export function* onErrorSaga(error, action) {
-  const { path } = action.request.meta;
+  const { path, reqType } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
@@ -102,7 +103,7 @@ export function* onErrorSaga(error, action) {
 
   if (retryCount < tryCount) {
     yield delay(2000);
-    yield put(actions.api.retry(path));
+    yield put(actions.api.retry(path, reqType));
     yield call(sendRequest, action, { silent: false });
   } else {
     // attempts failed after 'tryCount' attempts
@@ -118,5 +119,7 @@ export function* onErrorSaga(error, action) {
 }
 
 export function* onAbortSaga(action) {
-  yield put(actions.api.complete(action.request.meta.path, 'Request aborted'));
+  const { path, reqType } = action.request.meta;
+
+  yield put(actions.api.complete(path, reqType, 'Request aborted'));
 }

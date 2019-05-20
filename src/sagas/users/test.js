@@ -50,6 +50,7 @@ describe('all modal sagas', () => {
         put(
           actions.api.complete(
             changePasswordParams.path,
+            changePasswordParams.method,
             'Success!! Changed user password'
           )
         )
@@ -103,6 +104,7 @@ describe('all modal sagas', () => {
         put(
           actions.api.complete(
             changeEmailParams.path,
+            changeEmailParams.method,
             'Success!! Sent user change Email setup to you email'
           )
         )
@@ -129,6 +131,7 @@ describe('all modal sagas', () => {
         put(
           actions.api.failure(
             changeEmailParams.path,
+            changeEmailParams.opts.method,
             'Existing email provided, Please try again.'
           )
         )
@@ -155,6 +158,7 @@ describe('all modal sagas', () => {
         put(
           actions.api.failure(
             changeEmailParams.path,
+            changeEmailParams.opts.method,
             'Cannot change user Email , Please try again.'
           )
         )
@@ -205,6 +209,7 @@ describe('all modal sagas', () => {
           put(
             actions.api.failure(
               updatePreferencesParams.path,
+              updatePreferencesParams.opts.method,
               'Could not update user Preferences'
             )
           )
@@ -248,6 +253,7 @@ describe('all modal sagas', () => {
           put(
             actions.api.failure(
               updateProfileParams.path,
+              updateProfileParams.opts.method,
               'Could not update user Profile'
             )
           )
@@ -277,17 +283,22 @@ describe('all modal sagas', () => {
         const aShare = { id: 'something' };
         const saga = acceptAccountInvite(aShare);
         const path = `/ashares/${aShare.id}/accept`;
+        const opts = { method: 'PUT', body: {} };
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
-            opts: { method: 'PUT', body: {} },
+            opts,
             message: 'Accepting account share invite',
           })
         );
         expect(saga.throw(new Error()).value).toEqual(
           put(
-            actions.api.failure(path, 'Could not accept account share invite')
+            actions.api.failure(
+              path,
+              opts.method,
+              'Could not accept account share invite'
+            )
           )
         );
         expect(saga.next().done).toEqual(true);
@@ -316,17 +327,22 @@ describe('all modal sagas', () => {
         const aShare = { id: 'something' };
         const saga = rejectAccountInvite(aShare);
         const path = `/ashares/${aShare.id}/dismiss`;
+        const opts = { method: 'PUT', body: {} };
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
-            opts: { method: 'PUT', body: {} },
+            opts,
             message: 'Rejecting account share invite',
           })
         );
         expect(saga.throw(new Error()).value).toEqual(
           put(
-            actions.api.failure(path, 'Could not reject account share invite')
+            actions.api.failure(
+              path,
+              opts.method,
+              'Could not reject account share invite'
+            )
           )
         );
         expect(saga.next().done).toEqual(true);
@@ -436,7 +452,11 @@ describe('all modal sagas', () => {
           );
           expect(saga.throw(new Error()).value).toEqual(
             put(
-              actions.api.failure('switch account', 'Could not switch account')
+              actions.api.failure(
+                'switch account',
+                'PUT',
+                'Could not switch account'
+              )
             )
           );
           expect(saga.next().done).toEqual(true);
@@ -496,16 +516,17 @@ describe('all modal sagas', () => {
         };
         const saga = leaveAccount(aShare);
         const path = `/shared/ashares/${aShare.id}`;
+        const opts = { method: 'DELETE', body: {} };
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
             path,
-            opts: { method: 'DELETE', body: {} },
+            opts,
             message: 'Leaving account',
           })
         );
         expect(saga.throw(new Error()).value).toEqual(
-          put(actions.api.failure(path, 'Could not leave account'))
+          put(actions.api.failure(path, opts.method, 'Could not leave account'))
         );
         expect(saga.next().done).toEqual(true);
       });

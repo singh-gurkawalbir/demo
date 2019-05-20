@@ -64,10 +64,12 @@ describe('global selectors', () => {
   });
   describe('resourceStatus ', () => {
     describe('GET resource calls ', () => {
+      const reqType = 'GET';
+
       test('should correctly indicate the resource is not Ready for a loading resource call', () => {
         const state = reducer(
           undefined,
-          actions.api.request('/exports', 'some message')
+          actions.api.request('/exports', reqType, 'some message')
         );
 
         expect(selectors.resourceStatus(state, 'exports').isReady).toBe(false);
@@ -75,10 +77,10 @@ describe('global selectors', () => {
       test('should correctly indicate the resource is not Ready for a failed resource call', () => {
         let state = reducer(
           undefined,
-          actions.api.request('/exports', 'some message')
+          actions.api.request('/exports', reqType, 'some message')
         );
 
-        state = reducer(state, actions.api.failure('/exports'));
+        state = reducer(state, actions.api.failure('/exports', reqType));
 
         expect(selectors.resourceStatus(state, 'exports').isReady).toBe(false);
       });
@@ -88,8 +90,11 @@ describe('global selectors', () => {
           actions.resource.receivedCollection('exports', { data: 'something' })
         );
 
-        state = reducer(state, actions.api.request('/exports', 'some message'));
-        state = reducer(state, actions.api.complete('/exports'));
+        state = reducer(
+          state,
+          actions.api.request('/exports', reqType, 'some message')
+        );
+        state = reducer(state, actions.api.complete('/exports', reqType));
 
         expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
       });
@@ -102,9 +107,9 @@ describe('global selectors', () => {
 
       state = reducer(
         state,
-        actions.api.request('/exports', 'some message', true, 'POST')
+        actions.api.request('/exports', 'POST', 'some message', true, 'POST')
       );
-      state = reducer(state, actions.api.complete('/exports'));
+      state = reducer(state, actions.api.complete('/exports', 'POST'));
       expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
     });
   });
@@ -228,11 +233,12 @@ describe('Reducers in the root reducer', () => {
 
 describe('Comm selector to verify comms exceeding threshold', () => {
   const path = '/somePath';
+  const reqType = 'GET';
 
   test('selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
     advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
 
-    const state = reducer(undefined, actions.api.request(path));
+    const state = reducer(undefined, actions.api.request(path, reqType));
 
     advanceBy(5);
 
@@ -246,14 +252,14 @@ describe('Comm selector to verify comms exceeding threshold', () => {
   test('verify comm selector for multiple resources', () => {
     advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
 
-    let state = reducer(undefined, actions.api.request(path));
+    let state = reducer(undefined, actions.api.request(path, reqType));
 
-    state = reducer(state, actions.api.request('someotherResource'));
+    state = reducer(state, actions.api.request('someotherResource', reqType));
 
     advanceBy(50);
 
     expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
-    state = reducer(state, actions.api.complete(path));
+    state = reducer(state, actions.api.complete(path, reqType));
     expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
 
     advanceBy(20000); // advance sufficiently large time

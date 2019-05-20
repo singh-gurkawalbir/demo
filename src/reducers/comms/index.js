@@ -1,4 +1,5 @@
 import actionTypes from '../../actions/types';
+import commPathGenerator from '../../utils/comPathGenerator';
 
 const initialState = {};
 
@@ -9,14 +10,23 @@ export const COMM_STATES = {
 };
 Object.freeze(COMM_STATES);
 
+export const REQ_TYPES = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+Object.freeze(REQ_TYPES);
+
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, reqType } = action;
+  const { type, path, message, hidden, reqType = 'GET' } = action;
   let newState;
   const timestamp = Date.now();
+  const commPath = commPathGenerator(path, reqType);
 
   switch (type) {
     case actionTypes.API_REQUEST:
-      newState = Object.assign({}, state[path]);
+      newState = Object.assign({}, state[commPath]);
       newState.timestamp = timestamp;
       newState.status = COMM_STATES.LOADING;
       newState.message = message;
@@ -24,27 +34,27 @@ export default (state = initialState, action) => {
       newState.reqType = reqType;
       delete newState.retry;
 
-      return { ...state, [path]: newState };
+      return { ...state, [commPath]: newState };
 
     case actionTypes.API_COMPLETE:
-      newState = Object.assign({}, state[path]);
+      newState = Object.assign({}, state[commPath]);
       newState.status = COMM_STATES.SUCCESS;
       newState.message = message;
       delete newState.retry;
       delete newState.timestamp;
 
-      return { ...state, [path]: newState };
+      return { ...state, [commPath]: newState };
 
     case actionTypes.API_RETRY:
-      newState = Object.assign({}, state[path]);
+      newState = Object.assign({}, state[commPath]);
       newState.retry = newState.retry || 0;
       newState.retry += 1;
       newState.timestamp = timestamp;
 
-      return { ...state, [path]: newState };
+      return { ...state, [commPath]: newState };
 
     case actionTypes.API_FAILURE:
-      newState = Object.assign({}, state[path]);
+      newState = Object.assign({}, state[commPath]);
       newState.status = COMM_STATES.ERROR;
       newState.message = message || 'unknown error';
 
@@ -53,7 +63,7 @@ export default (state = initialState, action) => {
       delete newState.retry;
       delete newState.timestamp;
 
-      return { ...state, [path]: newState };
+      return { ...state, [commPath]: newState };
     case actionTypes.CLEAR_COMMS:
       newState = Object.assign({}, state);
       Object.keys(newState).forEach(i => {

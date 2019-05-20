@@ -28,6 +28,7 @@ describe('request interceptors...testing the various stages of an api request on
   const jsonRespBody = { failure: 'some failure' };
   const textRespBody = "[{ failure: 'some failure' }]";
   const path = '/somePath';
+  const reqType = 'GET';
   const protocol = 'someProtocol:';
   const host = 'someHost';
   const regular200Response = {
@@ -66,6 +67,7 @@ describe('request interceptors...testing the various stages of an api request on
     request: {
       meta: {
         path,
+        reqType,
       },
     },
   };
@@ -88,7 +90,7 @@ describe('request interceptors...testing the various stages of an api request on
       // and comm activity not hidden
       // method is defaulted to get as well
       expect(saga.next().value).toEqual(
-        put(actions.api.request(path, path, false, 'GET'))
+        put(actions.api.request(path, 'GET', path, false))
       );
     });
 
@@ -100,7 +102,7 @@ describe('request interceptors...testing the various stages of an api request on
       const saga = onRequestSaga(request);
 
       expect(saga.next().value).toEqual(
-        put(actions.api.request(path, path, false, 'GET'))
+        put(actions.api.request(path, 'GET', path, false))
       );
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
@@ -113,7 +115,7 @@ describe('request interceptors...testing the various stages of an api request on
       const saga = onRequestSaga(request);
 
       expect(saga.next().value).toEqual(
-        put(actions.api.request(path, path, false, 'POST'))
+        put(actions.api.request(path, 'POST', path, false))
       );
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
 
@@ -203,7 +205,7 @@ describe('request interceptors...testing the various stages of an api request on
         sessionError200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path));
+      const apiCompleteEffect = put(actions.api.complete(path, reqType));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -235,7 +237,7 @@ describe('request interceptors...testing the various stages of an api request on
         regular204Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path));
+      const apiCompleteEffect = put(actions.api.complete(path, reqType));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -255,7 +257,7 @@ describe('request interceptors...testing the various stages of an api request on
         regular200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path));
+      const apiCompleteEffect = put(actions.api.complete(path, reqType));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -282,6 +284,7 @@ describe('request interceptors...testing the various stages of an api request on
           put(
             actions.api.failure(
               path,
+              reqType,
               JSON.stringify(some401Response.data),
               hidden
             )
@@ -307,6 +310,7 @@ describe('request interceptors...testing the various stages of an api request on
           put(
             actions.api.failure(
               path,
+              reqType,
               JSON.stringify(some403Response.data),
               hidden
             )
@@ -328,7 +332,13 @@ describe('request interceptors...testing the various stages of an api request on
 
         // complete the api request
         expect(saga.next().value).toEqual(
-          put(actions.api.failure(path, JSON.stringify(some400Response.data)))
+          put(
+            actions.api.failure(
+              path,
+              reqType,
+              JSON.stringify(some400Response.data)
+            )
+          )
         );
 
         expect(saga.next().value).toEqual(
@@ -349,7 +359,9 @@ describe('request interceptors...testing the various stages of an api request on
 
         expect(saga.next({ retryCount: undefined }).value).toEqual(delay(2000));
 
-        expect(saga.next().value).toEqual(put(actions.api.retry(path)));
+        expect(saga.next().value).toEqual(
+          put(actions.api.retry(path, reqType))
+        );
         // resend the request ..silent false meta allows the
         // sendRequest to dispatch redux actions
         // otherwise its defaulted to true in an interceptor
@@ -370,7 +382,7 @@ describe('request interceptors...testing the various stages of an api request on
         expect(saga.next().value).toEqual(select(resourceStatus, path));
 
         expect(saga.next({ retryCount: 3 }).value).toEqual(
-          put(actions.api.failure(path, some500Response.data))
+          put(actions.api.failure(path, reqType, some500Response.data))
         );
         expect(saga.next().value).toEqual(
           call(throwExceptionUsingTheResponse, some500Response)

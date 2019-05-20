@@ -25,6 +25,7 @@ export function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.complete(
         changePasswordParams.path,
+        changePasswordParams.method,
         'Success!! Changed user password'
       )
     );
@@ -147,6 +148,7 @@ export function* changeEmail({ updatedEmail }) {
     yield put(
       actions.api.complete(
         changeEmailParams.path,
+        changeEmailParams.method,
         'Success!! Sent user change Email setup to you email'
       )
     );
