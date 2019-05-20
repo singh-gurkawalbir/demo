@@ -619,3 +619,18 @@ export function accountOwner(state) {
 }
 
 // #endregion
+
+export function commStatusByPath(state, path, reqType) {
+  const commStatus = state && state.comms && state.comms[path];
+
+  if (
+    commStatus &&
+    reqType &&
+    commStatus.reqType &&
+    commStatus.reqType !== reqType
+  ) {
+    return undefined;
+  }
+
+  return commStatus;
+}

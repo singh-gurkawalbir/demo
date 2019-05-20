@@ -43,6 +43,10 @@ const MySnackbarContentStyles = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  messageContent: {
+    textAlign: 'left',
+    maxWidth: 400,
+  },
 });
 
 function MySnackbarContent(props) {
@@ -56,7 +60,7 @@ function MySnackbarContent(props) {
       message={
         <span id="client-snackbar" className={classes.message}>
           <Icon className={classNames(classes.icon, classes.iconVariant)} />
-          {message}
+          <span className={classes.messageContent}>{message}</span>
         </span>
       }
       action={[

@@ -6,11 +6,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Switch from '@material-ui/core/Switch';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import EditIcon from 'mdi-react/EditIcon';
+import UserDialog from './UserDialog';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import {
@@ -18,29 +16,67 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   ACCOUNT_IDS,
 } from '../../utils/constants';
+import UserDetail from './UserDetail';
+import Notifier, { openSnackbar } from '../Notifier';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);
-  let users;
+  let users = [];
 
-  if (integrationId) {
-    users = selectors.integrationUsers(state, integrationId);
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    const orgUsers = selectors.orgUsers(state);
 
-    if (users && users.length > 0) {
-      const accountOwner = selectors.accountOwner(state);
+    if (integrationId) {
+      let integrationAccessLevel;
 
-      users = [
-        {
-          _id: ACCOUNT_IDS.OWN,
-          accepted: true,
-          accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
-          sharedWithUser: accountOwner,
-        },
-        ...users,
-      ];
+      orgUsers.forEach(u => {
+        if (
+          [
+            USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+            USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          ].includes(u.accessLevel)
+        ) {
+          users.push({
+            ...u,
+            accessLevel:
+              u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+                ? INTEGRATION_ACCESS_LEVELS.MANAGE
+                : INTEGRATION_ACCESS_LEVELS.MONITOR,
+            integrationAccessLevel: undefined,
+          });
+        } else if (u.accessLevel === USER_ACCESS_LEVELS.TILE) {
+          integrationAccessLevel = u.integrationAccessLevel.find(
+            ial => ial._integrationId === integrationId
+          );
+
+          if (integrationAccessLevel) {
+            users.push({
+              ...u,
+              accessLevel: integrationAccessLevel.accessLevel,
+              integrationAccessLevel: undefined,
+            });
+          }
+        }
+      });
+    } else {
+      users = orgUsers;
     }
-  } else {
-    users = selectors.orgUsers(state);
+  } else if (integrationId) {
+    users = selectors.integrationUsers(state, integrationId);
+  }
+
+  if (integrationId && users && users.length > 0) {
+    const accountOwner = selectors.accountOwner(state);
+
+    users = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accepted: true,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+        sharedWithUser: accountOwner,
+      },
+      ...users,
+    ];
   }
 
   return {
@@ -81,13 +117,10 @@ const mapDispatchToProps = dispatch => ({
 }))
 class UserList extends Component {
   state = {
-    showDialog: false,
+    selectedUserId: undefined,
+    showUserDialog: false,
   };
-  handleClick = () => {
-    this.setState({
-      showDialog: !this.state.showDialog,
-    });
-  };
+
   componentDidMount() {
     const { integrationId, requestIntegrationAShares, users } = this.props;
 
@@ -97,15 +130,53 @@ class UserList extends Component {
       }
     }
   }
+
+  statusHandler({ status, message }) {
+    openSnackbar({
+      message,
+      variant: status,
+      autoHideDuration: 10000,
+    });
+    this.setState({ showUserDialog: false });
+  }
+  handleActionClick(action, userId) {
+    switch (action) {
+      case 'create':
+        this.setState({
+          showUserDialog: true,
+          selectedUserId: undefined,
+        });
+        break;
+      case 'edit':
+        this.setState({
+          showUserDialog: true,
+          selectedUserId: userId,
+        });
+        break;
+      default:
+    }
+  }
+
   render() {
-    const { showDialog } = this.state;
+    const { showUserDialog, selectedUserId } = this.state;
     const { classes, users, integrationId, permissions } = this.props;
     const isAccountOwner =
-      permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+      permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
     return (
       <Fragment>
-        {showDialog && 'InviteUser'}
+        <Notifier />
+        {showUserDialog && (
+          <UserDialog
+            data={{ _id: selectedUserId }}
+            onCancelClick={() => {
+              this.setState({ showUserDialog: false });
+            }}
+            successHandler={message => {
+              this.statusHandler({ status: 'success', message });
+            }}
+          />
+        )}
         <div className={classes.root}>
           <div>
             <Typography className={classes.title} variant="h4">
@@ -113,13 +184,17 @@ class UserList extends Component {
                 ? `Integration #${integrationId} Users`
                 : 'Org Users'}
             </Typography>
-            <Button
-              className={classes.inviteUserButton}
-              variant="contained"
-              color="secondary"
-              onClick={this.handleClick}>
-              Invite User
-            </Button>
+            {isAccountOwner && (
+              <Button
+                className={classes.inviteUserButton}
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  this.handleActionClick('create');
+                }}>
+                Invite User
+              </Button>
+            )}
           </div>
           <Table className={classes.table}>
             <TableHead>
@@ -129,7 +204,7 @@ class UserList extends Component {
                 <TableCell>Status</TableCell>
                 {isAccountOwner && (
                   <Fragment>
-                    <TableCell>Off/On</TableCell>
+                    {!integrationId && <TableCell>Off/On</TableCell>}
                     <TableCell>Actions</TableCell>
                   </Fragment>
                 )}
@@ -138,43 +213,18 @@ class UserList extends Component {
             <TableBody>
               {users &&
                 users.map(user => (
-                  <TableRow key={user._id}>
-                    <TableCell component="th" scope="row">
-                      <div>{user.sharedWithUser.name}</div>
-                      <div>{user.sharedWithUser.email}</div>
-                    </TableCell>
-                    <TableCell>
-                      {!integrationId &&
-                        {
-                          [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
-                          [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
-                          [USER_ACCESS_LEVELS.TILE]: 'Tile',
-                        }[user.accessLevel]}
-                      {integrationId &&
-                        {
-                          [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',
-                          [INTEGRATION_ACCESS_LEVELS.MANAGE]: 'Manage',
-                          [INTEGRATION_ACCESS_LEVELS.MONITOR]: 'Monitor',
-                        }[user.accessLevel]}
-                    </TableCell>
-                    <TableCell>
-                      {user.accepted && 'Accepted'}
-                      {user.dismissed && 'Dismissed'}
-                      {!user.accepted && !user.dismissed && 'Pending'}
-                    </TableCell>
-                    {isAccountOwner && (
-                      <Fragment>
-                        <TableCell>
-                          <Switch checked={!user.disabled} />
-                        </TableCell>
-                        <TableCell>
-                          <IconButton>
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
-                      </Fragment>
-                    )}
-                  </TableRow>
+                  <UserDetail
+                    key={user._id}
+                    data={user}
+                    integrationId={integrationId}
+                    isAccountOwner={isAccountOwner}
+                    editClickHandler={userId => {
+                      this.handleActionClick('edit', userId);
+                    }}
+                    statusHandler={({ status, message }) => {
+                      this.statusHandler({ status, message });
+                    }}
+                  />
                 ))}
             </TableBody>
           </Table>

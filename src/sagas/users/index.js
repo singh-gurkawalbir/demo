@@ -11,6 +11,8 @@ import {
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+import getErrorMessage from '../../utils/apiException';
+import getRequestOptions from '../../utils/requestOptions';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -259,6 +261,102 @@ export function* leaveAccount({ id }) {
   }
 }
 
+export function* createUser({ user }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+  const { path, opts } = requestOptions;
+
+  opts.body = user;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Inviting User',
+    });
+  } catch (e) {
+    return yield put(actions.api.failure(path, getErrorMessage(e)));
+  }
+
+  yield put(actions.user.org.users.created(response));
+}
+
+export function* updateUser({ _id, user }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  opts.body = user;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Updating User',
+    });
+  } catch (e) {
+    return yield put(actions.api.failure(path, getErrorMessage(e)));
+  }
+
+  yield put(actions.user.org.users.updated({ ...user, _id }));
+}
+
+export function* deleteUser({ _id }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Deleting User',
+    });
+  } catch (e) {
+    return yield put(actions.api.failure(path, getErrorMessage(e)));
+  }
+
+  yield put(actions.user.org.users.deleted(_id));
+}
+
+export function* disableUser({ _id, disabled }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: disabled ? 'Enabling User' : 'Disabling User',
+    });
+  } catch (e) {
+    return yield put(actions.api.failure(path, getErrorMessage(e)));
+  }
+
+  yield put(actions.user.org.users.disabled(_id));
+}
+
+export function* makeOwner({ email }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+  const { path, opts } = requestOptions;
+
+  opts.body = { email, account: true };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Updating User',
+    });
+  } catch (e) {
+    yield put(actions.api.failure(path, getErrorMessage(e)));
+  }
+}
+
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -270,4 +368,9 @@ export const userSagas = [
   takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
   takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
   takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
+  takeEvery(actionTypes.USER_CREATE, createUser),
+  takeEvery(actionTypes.USER_UPDATE, updateUser),
+  takeEvery(actionTypes.USER_DISABLE, disableUser),
+  takeEvery(actionTypes.USER_DELETE, deleteUser),
+  takeEvery(actionTypes.USER_MAKE_OWNER, makeOwner),
 ];

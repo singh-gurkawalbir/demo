@@ -62,6 +62,14 @@ export default (state = initialState, action) => {
       });
 
       return newState;
+    case actionTypes.CLEAR_COMM_BY_PATH:
+      newState = Object.assign({}, state);
+
+      if (newState[path]) {
+        delete newState[path];
+      }
+
+      return newState;
     // case actionTypes.CLEAR_SUCCESS_COMMS:
     //   newState = Object.assign({}, state);
     //   Object.keys(newState).forEach(i => {
