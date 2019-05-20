@@ -65,9 +65,7 @@ class MaterialUiSelect extends React.Component {
         <Select
           value={value || defaultValue}
           onChange={evt => {
-            const { value } = evt.target;
-
-            onFieldChange(id, value);
+            onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}>
           {items}

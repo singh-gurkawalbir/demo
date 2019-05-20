@@ -6,14 +6,14 @@ export default {
   },
   // adaptor type has export appended to it
   // strip it off and lowercase the connection type
-  _connectionId: {
-    type: 'resourceText',
-    label: 'Connection',
-    resourceType: 'connections',
-    resourceProp: 'type',
-    filter: r => ({ _id: r._connectionId }),
-    // excludeFilter: r => ({ _id: r._id }),
-  },
+  // _connectionId: {
+  //   type: 'text',
+  //   label: 'Connection',
+  //   resourceType: 'connections',
+  //   resourceProp: 'type',
+  //   filter: r => ({ _id: r._connectionId }),
+  //   // excludeFilter: r => ({ _id: r._id }),
+  // },
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
   uploadFile: {

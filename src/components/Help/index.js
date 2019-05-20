@@ -40,7 +40,9 @@ export default class Help extends Component {
     const open = !!anchorEl;
     const helpTextValue = this.helpText(helpText, helpKey);
 
-    return helpTextValue ? (
+    if (!helpTextValue) return null;
+
+    return (
       <Fragment>
         <ClickAwayListener onClickAway={this.handleClose}>
           <IconButton className={className} onClick={this.handleMenu}>
@@ -56,6 +58,6 @@ export default class Help extends Component {
           <Typography variant="caption">{helpTextValue}</Typography>
         </ArrowPopper>
       </Fragment>
-    ) : null;
+    );
   }
 }
