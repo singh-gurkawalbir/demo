@@ -21,6 +21,7 @@ import {
   leaveAccount,
 } from './';
 import { APIException } from '../api/index';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 const status403 = new APIException({
   status: 403,
@@ -255,7 +256,7 @@ describe('all modal sagas', () => {
       });
     });
     describe('accepting account share invite', () => {
-      test('should update aShare successfuly', () => {
+      test('should update aShare successfuly and reload shared/ashares when the default account is some shared account', () => {
         const aShare = {
           id: 'something',
         };
@@ -268,9 +269,30 @@ describe('all modal sagas', () => {
             message: 'Accepting account share invite',
           })
         );
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+        expect(
+          saga.next({ defaultAShareId: 'SomeSharedAccount' }).value
+        ).toEqual(put(actions.resource.requestCollection('shared/ashares')));
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should update aShare successfuly and clear store and re-init session when the default account is own', () => {
+        const aShare = {
+          id: 'something',
+        };
+        const saga = acceptAccountInvite(aShare);
+
         expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('shared/ashares'))
+          call(apiCallWithRetry, {
+            path: `/ashares/${aShare.id}/accept`,
+            opts: { method: 'PUT', body: {} },
+            message: 'Accepting account share invite',
+          })
         );
+        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+        expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+          put(actions.auth.clearStore())
+        );
+        expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
       });
       test('should generate appropriate error message in case of api failure', () => {
