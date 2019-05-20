@@ -408,8 +408,10 @@ describe('tiles', () => {
           },
         },
         data: {
-          published,
-          integrations,
+          resources: {
+            published,
+            integrations,
+          },
         },
       },
       actions.resource.receivedCollection('tiles', [
@@ -621,8 +623,10 @@ describe('tiles', () => {
           },
         },
         data: {
-          published,
-          integrations,
+          resources: {
+            published,
+            integrations,
+          },
         },
       },
       actions.resource.receivedCollection('tiles', [
