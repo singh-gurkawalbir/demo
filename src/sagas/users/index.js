@@ -183,18 +183,19 @@ export function* acceptAccountInvite({ id }) {
       opts,
       message: 'Accepting account share invite',
     });
-    const userPreferences = yield select(selectors.userPreferences);
-
-    if (userPreferences.defaultAShareId === ACCOUNT_IDS.OWN) {
-      yield put(actions.auth.clearStore());
-      yield put(actions.auth.initSession());
-    } else {
-      yield put(actions.resource.requestCollection('shared/ashares'));
-    }
   } catch (e) {
-    yield put(
+    return yield put(
       actions.api.failure(path, 'Could not accept account share invite')
     );
+  }
+
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (userPreferences.defaultAShareId === ACCOUNT_IDS.OWN) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  } else {
+    yield put(actions.resource.requestCollection('shared/ashares'));
   }
 }
 
@@ -211,13 +212,13 @@ export function* rejectAccountInvite({ id }) {
       opts,
       message: 'Rejecting account share invite',
     });
-
-    yield put(actions.resource.requestCollection('shared/ashares'));
   } catch (e) {
-    yield put(
+    return yield put(
       actions.api.failure(path, 'Could not reject account share invite')
     );
   }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
 export function* switchAccount({ id, environment }) {
