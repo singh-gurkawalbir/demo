@@ -40,13 +40,14 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
-  request: (path, message, hidden, reqType) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, reqType }),
-  retry: path => action(actionTypes.API_RETRY, { path }),
-  complete: (path, message) =>
-    action(actionTypes.API_COMPLETE, { path, message }),
-  failure: (path, message) =>
-    action(actionTypes.API_FAILURE, { path, message }),
+  request: (path, reqMethod, message, hidden) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, reqMethod }),
+  retry: (path, reqMethod) =>
+    action(actionTypes.API_RETRY, { path, reqMethod }),
+  complete: (path, reqMethod, message) =>
+    action(actionTypes.API_COMPLETE, { path, reqMethod, message }),
+  failure: (path, reqMethod, message, hidden) =>
+    action(actionTypes.API_FAILURE, { path, reqMethod, message, hidden }),
 };
 // #region Resource Actions
 const resource = {

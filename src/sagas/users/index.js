@@ -26,6 +26,7 @@ export function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.complete(
         changePasswordParams.path,
+        changePasswordParams.opts.method,
         'Success!! Changed user password'
       )
     );
@@ -33,6 +34,7 @@ export function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.failure(
         changePasswordParams.path,
+        changePasswordParams.opts.method,
         'Invalid credentials provided.  Please try again.'
       )
     );
@@ -57,6 +59,7 @@ export function* updatePreferences() {
     yield put(
       actions.api.failure(
         updatePreferencesParams.path,
+        updatePreferencesParams.opts.method,
         'Could not update user Preferences'
       )
     );
@@ -80,6 +83,7 @@ export function* requestTrialLicense() {
     yield put(
       actions.api.failure(
         requestTrialLicenseParams.path,
+        requestTrialLicenseParams.opts.method,
         'Could not start trial'
       )
     );
@@ -105,6 +109,7 @@ export function* requestLicenseUpgrade() {
     yield put(
       actions.api.failure(
         requestLicenseUpgradeParams.path,
+        requestTrialLicenseParams.opts.method,
         'Could not request license upgrade'
       )
     );
@@ -129,6 +134,7 @@ export function* updateProfile() {
     yield put(
       actions.api.failure(
         updateProfileParams.path,
+        updateProfileParams.opts.method,
         'Could not update user Profile'
       )
     );
@@ -148,6 +154,7 @@ export function* changeEmail({ updatedEmail }) {
     yield put(
       actions.api.complete(
         changeEmailParams.path,
+        changeEmailParams.opts.method,
         'Success!! Sent user change Email setup to you email'
       )
     );
@@ -156,6 +163,7 @@ export function* changeEmail({ updatedEmail }) {
       yield put(
         actions.api.failure(
           changeEmailParams.path,
+          changeEmailParams.opts.method,
           'Existing email provided, Please try again.'
         )
       );
@@ -164,6 +172,7 @@ export function* changeEmail({ updatedEmail }) {
     yield put(
       actions.api.failure(
         changeEmailParams.path,
+        changeEmailParams.opts.method,
         'Cannot change user Email , Please try again.'
       )
     );
@@ -185,7 +194,11 @@ export function* acceptAccountInvite({ id }) {
     });
   } catch (e) {
     return yield put(
-      actions.api.failure(path, 'Could not accept account share invite')
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not accept account share invite'
+      )
     );
   }
 
@@ -214,7 +227,11 @@ export function* rejectAccountInvite({ id }) {
     });
   } catch (e) {
     return yield put(
-      actions.api.failure(path, 'Could not reject account share invite')
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not reject account share invite'
+      )
     );
   }
 
@@ -232,8 +249,9 @@ export function* switchAccount({ id, environment }) {
       })
     );
   } catch (ex) {
+    // is it put?
     return yield put(
-      actions.api.failure('switch account', 'Could not switch account')
+      actions.api.failure('switch account', 'PUT', 'Could not switch account')
     );
   }
 
@@ -254,7 +272,9 @@ export function* leaveAccount({ id }) {
       message: 'Leaving account',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, 'Could not leave account'));
+    return yield put(
+      actions.api.failure(path, opts.method, 'Could not leave account')
+    );
   }
 
   const userPreferences = yield select(selectors.userPreferences);

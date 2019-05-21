@@ -39,6 +39,7 @@ function* pingConnection({ connection, resourceType, resourceId, converter }) {
       yield put(
         actions.api.complete(
           pingConnectionParams.path,
+          pingConnectionParams.opts.method,
           'Connection is working fine!'
         )
       );
