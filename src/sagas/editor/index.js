@@ -34,7 +34,7 @@ export function* evaluateProcessor({ id }) {
 
   try {
     // should i hide this comm activity...from the network snackbar
-    const results = yield call(apiCallWithRetry, { path, opts });
+    const results = yield call(apiCallWithRetry, { path, opts, hidden: true });
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {
