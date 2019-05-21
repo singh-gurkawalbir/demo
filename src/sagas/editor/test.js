@@ -54,7 +54,7 @@ describe('evaluateProcessor saga', () => {
     const selectResponse = { processor: 'p', body: 'body' };
     const callEffect = saga.next(selectResponse).value;
     const opts = {
-      method: 'post',
+      method: 'POST',
       body: 'body',
     };
 
@@ -86,7 +86,7 @@ describe('evaluateProcessor saga', () => {
     const selectResponse = { processor: 'p', body: 'body' };
     const callEffect = saga.next(selectResponse).value;
     const opts = {
-      method: 'post',
+      method: 'POST',
       body: 'body',
     };
 

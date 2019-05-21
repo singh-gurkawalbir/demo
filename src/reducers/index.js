@@ -576,13 +576,17 @@ export function isDataReady(state, resource) {
 
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
-export function resourceStatus(state, origResourceType, resourceReqMethod) {
-  const commPath = commPathGen(origResourceType, resourceReqMethod);
+export function resourceStatus(
+  state,
+  origResourceType,
+  resourceReqMethod = 'GET'
+) {
   const resourceType = `/${origResourceType}`;
-  const reqMethod = fromComms.commReqType(state.comms, commPath);
+  const commPath = commPathGen(resourceType, resourceReqMethod);
+  const reqMethod = resourceReqMethod;
   const hasData = fromData.hasData(state.data, origResourceType);
-  const isLoading = fromComms.isLoading(state.comms, resourceType);
-  const retryCount = fromComms.retryCount(state.comms, resourceType);
+  const isLoading = fromComms.isLoading(state.comms, commPath);
+  const retryCount = fromComms.retryCount(state.comms, commPath);
   const isReady = reqMethod !== 'GET' || (hasData && !isLoading);
 
   return {
