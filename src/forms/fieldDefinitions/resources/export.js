@@ -41,7 +41,6 @@ export default {
   apiIdentifier: {
     label: 'Invoke this Export [POST]:',
     type: 'text',
-    disableTextField: true,
   },
   configureAsyncHelper: {
     type: 'checkbox',

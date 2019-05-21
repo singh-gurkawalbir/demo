@@ -16,10 +16,6 @@ class MaterialUiTextField extends React.Component {
     const {
       classes,
       description,
-      // this is a custom prop ...we cannot use `disable` because react
-      // forms processor use the same prop and will overwrite we would like
-      // to pass in
-      disableTextField,
       disabled,
       errorMessages,
       id,
@@ -53,7 +49,7 @@ class MaterialUiTextField extends React.Component {
         className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
-        disabled={disableTextField || disabled}
+        disabled={disabled}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}
