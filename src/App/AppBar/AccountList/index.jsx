@@ -176,7 +176,7 @@ class AccountList extends Component {
             className={classes.currentAccount}
             aria-owns={open ? 'accountList' : null}
             aria-haspopup="true">
-            {selectedAccount.label}
+            {selectedAccount && selectedAccount.label}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
             <DownArrow className={classes.arrow} />

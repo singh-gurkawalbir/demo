@@ -104,9 +104,12 @@ export function accountSummary(state) {
     filteredAccount.selected = true;
   } else {
     [{ environment }] = summary;
-    summary.find(
-      a => a.id === id && a.environment === environment
-    ).selected = true;
+
+    if (summary.find(a => a.id === id && a.environment === environment)) {
+      summary.find(
+        a => a.id === id && a.environment === environment
+      ).selected = true;
+    }
   }
 
   return summary;
