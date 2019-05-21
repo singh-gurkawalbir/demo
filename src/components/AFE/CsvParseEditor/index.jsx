@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
       actions.editor.init(editorId, 'csvParser', {
         data,
         autoEvaluate: true,
-        ...rule,
+        rule,
       })
     );
   },

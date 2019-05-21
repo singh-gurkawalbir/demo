@@ -1,6 +1,6 @@
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
@@ -58,19 +58,39 @@ class EditorField extends Component {
 
     onFieldChange(id, sanitizedVal);
   }
+  // Options handler would return the selected file type we would use that
+  // and inject it as the mode of the editor so that syntax formating would work
+  // according to the file format
+  getFileType = () => {
+    const { options, mode } = this.props;
+
+    if (options && options.file) return options.file;
+
+    return mode;
+  };
 
   render() {
     const { showEditor } = this.state;
     const {
       classes,
       id,
-      mode,
       value,
       label,
       description,
+      mode,
       errorMessages,
       isValid,
     } = this.props;
+    const modeFromFileOption = this.getFileType();
+    let resultantMode = mode;
+
+    // In the event the user selected a different file type
+    // we would use that
+    // The default values for both the fields would be the same
+    if (modeFromFileOption !== mode) {
+      resultantMode = modeFromFileOption;
+    }
+
     const editorDialog = (
       <Dialog
         open
@@ -82,7 +102,7 @@ class EditorField extends Component {
             <CodeEditor
               name={id}
               value={value}
-              mode={mode}
+              mode={resultantMode}
               onChange={value => this.handleUpdate(value)}
             />
           </div>

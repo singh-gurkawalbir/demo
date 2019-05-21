@@ -78,6 +78,12 @@ export const requestLicenseUpgradeParams = {
   path: '/licenses/upgradeRequest',
 };
 
+export const pingConnectionParams = {
+  opts: {
+    method: 'POST',
+  },
+  path: '/connections/ping',
+};
 export function getHostAndProtocol() {
   return { protocol: window.location.protocol, host: window.location.host };
 }
