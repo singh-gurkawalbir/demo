@@ -25,20 +25,10 @@ class DynaTransformEditor extends React.Component {
     const { id, onFieldChange } = this.props;
 
     if (shouldCommit) {
-      const {
-        columnDelimiter,
-        hasHeaderRow,
-        keyColumns,
-        rowsToSkip,
-        trimSpaces,
-      } = editorValues;
+      const { rule } = editorValues;
 
       onFieldChange(id, {
-        columnDelimiter,
-        hasHeaderRow,
-        keyColumns,
-        rowsToSkip,
-        trimSpaces,
+        rule,
       });
     }
 
