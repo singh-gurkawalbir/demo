@@ -7,9 +7,13 @@ import comms, * as fromComms from './comms';
 import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
-import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import actionTypes from '../actions/types';
-import { getFieldById } from '../formsMetadata/utils';
+import {
+  changePasswordParams,
+  changeEmailParams,
+  pingConnectionParams,
+} from '../sagas/api/apiPaths';
+import { getFieldById } from '../forms/utils';
 import stringUtil from '../utils/string';
 import {
   USER_ACCESS_LEVELS,
@@ -286,6 +290,28 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
+export function testConnectionCommState(state) {
+  if (
+    !(
+      state &&
+      state.comms &&
+      state.comms[pingConnectionParams.path] &&
+      state.comms[pingConnectionParams.path].status
+    )
+  )
+    return {
+      commState: null,
+      message: null,
+    };
+
+  const comm = state.comms[pingConnectionParams.path];
+
+  return {
+    commState: comm.status,
+    message: comm.message,
+  };
+}
+
 export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
 }

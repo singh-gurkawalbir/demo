@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(() => ({
   root: {
@@ -17,17 +17,18 @@ import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
 }))
 class MaterialUiSelect extends React.Component {
   render() {
-    const { classes } = this.props;
     const {
+      classes,
       description,
       disabled,
       id,
+      value,
+      defaultValue,
       // isValid,
       name,
       options = [],
       // placeholder,
       // required,
-      value = '',
       label,
       onFieldChange,
     } = this.props;
@@ -62,7 +63,7 @@ class MaterialUiSelect extends React.Component {
           {label}
         </InputLabel>
         <Select
-          value={value}
+          value={value || defaultValue}
           onChange={evt => {
             onFieldChange(id, evt.target.value);
           }}

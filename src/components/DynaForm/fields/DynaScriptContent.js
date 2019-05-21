@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import { EditorField } from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';

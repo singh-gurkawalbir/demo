@@ -450,9 +450,7 @@ export function permissions(
     };
     permissions.integrations.all = { ...permissions.integrations.none };
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
-    const account = state.find(
-      a => a._id === accountId && a.accepted && !a.disabled
-    );
+    const account = state.find(a => a._id === accountId);
     let integration;
 
     if (

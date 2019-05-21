@@ -1,0 +1,20 @@
+export default {
+  fields: [
+    { fieldId: 'salesforce.sObjectType' },
+    { fieldId: 'salesforce.id' },
+    { fieldId: 'salesforce.api' },
+    { fieldId: 'salesforce.soql.query' },
+    { fieldId: 'salesforce.distributed.referencedFields' },
+    { fieldId: 'salesforce.distributed.disabled' },
+    { fieldId: 'salesforce.distributed.connectorId' },
+    { fieldId: 'salesforce.distributed.userDefinedReferencedFields' },
+    { fieldId: 'salesforce.distributed.qualifier' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].referencedFields' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].parentField' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].sObjectType' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].filter' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].orderBy' },
+    { fieldId: 'salesforce.distributed.relatedLists[*].userDefined' },
+  ],
+  fieldSets: [],
+};

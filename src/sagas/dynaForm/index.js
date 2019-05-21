@@ -3,8 +3,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
-import { getFieldPosition, sanitizePatchSet } from '../../formsMetadata/utils';
-import factory from '../../formsMetadata/formFactory';
+import { getFieldPosition, sanitizePatchSet } from '../../forms/utils';
+import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource } from '../resources';
 
@@ -76,7 +76,12 @@ export function* runHook({ hook, data }) {
   return yield results;
 }
 
-export function* submitFormValues({ resourceType, resourceId, values }) {
+export function* submitFormValues({
+  resourceType,
+  resourceId,
+  connection,
+  values,
+}) {
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
@@ -86,8 +91,9 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   if (!merged) return; // nothing to do.
 
   const defaultFormAssets = factory.getResourceFormAssets({
+    connection,
     resourceType,
-    merged,
+    resource: merged,
   });
   let finalValues = values;
   const { customForm } = merged;
@@ -97,18 +103,21 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
       : defaultFormAssets.fieldMeta;
   const fieldMeta = factory.getFieldsWithDefaults(form, resourceType, merged);
 
-  if (customForm) {
-    if (customForm.submit) {
-      // this resource has an embedded custom form.
+  if (customForm && customForm.submit) {
+    // pre-save-resource
+    // this resource has an embedded custom form.
 
-      // eslint-disable-next-line no-console
-      console.log('args passed to custom form submit hook: ', values);
+    finalValues = yield call(runHook, {
+      hook: customForm.submit,
+      data: values,
+    });
 
-      finalValues = yield call(runHook, {
-        hook: customForm.submit,
-        data: values,
-      });
-    }
+    // eslint-disable-next-line no-console
+    console.log(
+      'values passed/returned to custom form submit hook: ',
+      values,
+      finalValues
+    );
   }
 
   const patchSet = sanitizePatchSet({
@@ -124,6 +133,7 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 }
 
 export const dynaFormSagas = [
+  // takeEvery(actionTypes.DYNAFORM.INIT, fieldMeta),
   takeEvery(actionTypes.DYNAFORM.SUBMIT, submitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
 ];
