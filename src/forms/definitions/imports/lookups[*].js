@@ -1,0 +1,23 @@
+export default {
+  fields: [
+    { fieldId: 'lookups' },
+    { fieldId: 'lookups[*].map' },
+    { fieldId: 'lookups[*].default' },
+    { fieldId: 'lookups[*].allowFailures' },
+    { fieldId: 'lookups[*].relativeURI' },
+    { fieldId: 'lookups[*].method' },
+    { fieldId: 'lookups[*].postBody' },
+    { fieldId: 'lookups[*].extract' },
+    { fieldId: 'lookups[*].body' },
+    { fieldId: 'lookups[*].useDefaultOnMultipleMatches' },
+    { fieldId: 'lookups[*].recordType' },
+    { fieldId: 'lookups[*].searchField' },
+    { fieldId: 'lookups[*].expression' },
+    { fieldId: 'lookups[*].resultField' },
+    { fieldId: 'lookups[*].includeInactive' },
+    { fieldId: 'lookups[*].query' },
+    { fieldId: 'lookups[*].sObjectType' },
+    { fieldId: 'lookups[*].whereClause' },
+  ],
+  fieldSets: [],
+};

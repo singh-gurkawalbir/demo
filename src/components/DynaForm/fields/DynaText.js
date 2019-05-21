@@ -2,7 +2,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(() => ({
   textField: {
@@ -16,6 +16,10 @@ class MaterialUiTextField extends React.Component {
     const {
       classes,
       description,
+      // this is a custom prop ...we cannot use `disable` because react
+      // forms processor use the same prop and will overwrite we would like
+      // to pass in
+      disableTextField,
       disabled,
       errorMessages,
       id,
@@ -40,8 +44,6 @@ class MaterialUiTextField extends React.Component {
       onFieldChange(id, value.split(valueDelimiter));
     };
 
-    // console.log('render text ', label);
-
     return (
       <TextField
         autoComplete="off"
@@ -51,7 +53,7 @@ class MaterialUiTextField extends React.Component {
         className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
-        disabled={disabled}
+        disabled={disableTextField || disabled}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}

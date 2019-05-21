@@ -4,11 +4,13 @@ import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 
+const fieldsToSkipHelpPopper = ['labelTitle'];
 const FieldWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 })(props => {
   const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
+  const { type: fieldType } = field;
 
   return (
     <Fragment>
@@ -19,7 +21,7 @@ const FieldWrapper = withStyles({
           className={classes.editIcon}
         />
       )}
-      {(helpKey || helpText) && (
+      {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
           className={classes.helpIcon}
           helpKey={helpKey}

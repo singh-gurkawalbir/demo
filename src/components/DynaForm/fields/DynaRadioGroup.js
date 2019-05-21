@@ -6,7 +6,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(theme => ({
   root: {
@@ -29,6 +29,7 @@ class MaterialUiRadioGroup extends React.Component {
       name,
       options = [],
       // placeholder,
+      defaultValue,
       required,
       value,
       label,
@@ -68,6 +69,7 @@ class MaterialUiRadioGroup extends React.Component {
         <RadioGroup
           aria-label={label}
           name={name}
+          defaultValue={defaultValue}
           value={value}
           onChange={evt => {
             onFieldChange(id, evt.target.value);

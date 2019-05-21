@@ -10,19 +10,11 @@ export const COMM_STATES = {
 };
 Object.freeze(COMM_STATES);
 
-export const REQ_TYPES = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
-};
-Object.freeze(REQ_TYPES);
-
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, reqType = 'GET' } = action;
+  const { type, path, message, hidden, reqMethod = 'GET' } = action;
   let newState;
   const timestamp = Date.now();
-  const commPath = commPathGenerator(path, reqType);
+  const commPath = commPathGenerator(path, reqMethod);
 
   switch (type) {
     case actionTypes.API_REQUEST:
@@ -31,7 +23,7 @@ export default (state = initialState, action) => {
       newState.status = COMM_STATES.LOADING;
       newState.message = message;
       newState.hidden = hidden;
-      newState.reqType = reqType;
+      newState.reqMethod = reqMethod;
       delete newState.retry;
 
       return { ...state, [commPath]: newState };
@@ -89,7 +81,9 @@ export default (state = initialState, action) => {
 
 // #region PUBLIC SELECTORS
 export function commReqType(state, resourceName) {
-  return (state && state[resourceName] && state[resourceName].reqType) || 'GET';
+  return (
+    (state && state[resourceName] && state[resourceName].reqMethod) || 'GET'
+  );
 }
 
 export function isLoading(state, resourceName) {

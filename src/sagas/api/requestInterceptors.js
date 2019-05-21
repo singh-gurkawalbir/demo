@@ -9,6 +9,7 @@ import {
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
 import { resourceStatus } from '../../reducers/index';
+import { pingConnectionParams } from '../api/apiPaths';
 
 const tryCount = 3;
 
@@ -29,13 +30,15 @@ export function* onRequestSaga(request) {
   // lets built for a good UX that can deal with high latency calls...
 
   yield call(introduceNetworkLatency);
+  // TODO: proxing path so that resourceStatus selector can pick up
+  // the right comm call status
   const requestPayload = yield {
     url,
     method,
     ...options,
     meta: {
       path,
-      reqType: method,
+      reqMethod: method,
     },
     responseType: 'text',
   };
@@ -46,9 +49,9 @@ export function* onRequestSaga(request) {
 export function* onSuccessSaga(response, action) {
   // the path is an additional attribute proxied in the request action
   // we could use the uri but some of them have api prefixed some dont
-  const { path, reqType } = action.request.meta;
+  const { path, reqMethod } = action.request.meta;
 
-  yield put(actions.api.complete(path, reqType));
+  yield put(actions.api.complete(path, reqMethod));
 
   // if error in response
 
@@ -62,7 +65,6 @@ export function* onSuccessSaga(response, action) {
     throw e;
   }
 
-  // if 204
   if (response.data === '') {
     response.data = undefined;
 
@@ -71,11 +73,22 @@ export function* onSuccessSaga(response, action) {
 
   response.data = JSON.parse(response.data);
 
+  // This is just to support ping calls...
+  // if it succeeds or fails it would give back a 200
+  // status code...so for these failed ping calls
+  // we have the following code to support it
+  // which essentially throws an exception to the parent
+  if (path === pingConnectionParams.path) {
+    const { errors } = response.data;
+
+    if (errors) yield call(throwExceptionUsingTheResponse, response);
+  }
+
   return response;
 }
 
 export function* onErrorSaga(error, action) {
-  const { path, reqType } = action.request.meta;
+  const { path, reqMethod } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
@@ -87,9 +100,13 @@ export function* onErrorSaga(error, action) {
       // make sure it is hidden so that it does not show up
       // in the network snackbar and simply launch the session
       // expiration modal
-      yield put(actions.api.failure(path, JSON.stringify(error.data), hidden));
+      yield put(
+        actions.api.failure(path, reqMethod, JSON.stringify(error.data), hidden)
+      );
     } else {
-      yield put(actions.api.failure(path, JSON.stringify(error.data)));
+      yield put(
+        actions.api.failure(path, reqMethod, JSON.stringify(error.data))
+      );
     }
 
     // give up and let the parent saga try.
@@ -99,16 +116,16 @@ export function* onErrorSaga(error, action) {
     return { error };
   }
 
-  const { retryCount = 0 } = yield select(resourceStatus, path);
+  const { retryCount = 0 } = yield select(resourceStatus, path, reqMethod);
 
   if (retryCount < tryCount) {
-    yield delay(2000);
-    yield put(actions.api.retry(path, reqType));
+    yield delay(Number(process.env.REATTEMPT_INTERVAL));
+    yield put(actions.api.retry(path, reqMethod));
     yield call(sendRequest, action, { silent: false });
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...
-    yield put(actions.api.failure(path, error.data));
+    yield put(actions.api.failure(path, reqMethod, error.data));
     // the parent saga may need to know if there was an error for
     // its own "Data story"...
     yield call(throwExceptionUsingTheResponse, error);
@@ -119,7 +136,7 @@ export function* onErrorSaga(error, action) {
 }
 
 export function* onAbortSaga(action) {
-  const { path, reqType } = action.request.meta;
+  const { path, reqMethod } = action.request.meta;
 
-  yield put(actions.api.complete(path, reqType, 'Request aborted'));
+  yield put(actions.api.complete(path, reqMethod, 'Request aborted'));
 }

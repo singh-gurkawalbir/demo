@@ -1,1 +1,1 @@
-export default (path, reqType) => `${reqType}:${path}`;
+export default (path, reqMethod) => `${reqMethod}:${path}`;

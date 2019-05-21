@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Form, FormFragment } from 'integrator-ui-forms/packages/core/dist';
+import { Form, FormFragment } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';

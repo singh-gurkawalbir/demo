@@ -9,15 +9,16 @@ import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceForm from '../../components/ResourceForm';
+import ResourceFormFactory from '../../components/ResourceForm';
 import ConflictAlertDialog from './ConflictAlertDialog';
-import factory from '../../formsMetadata/formFactory';
+import factory from '../../forms/formFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const resourceData = selectors.resourceData(state, resourceType, id);
   const { _connectionId } = resourceData.merged ? resourceData.merged : {};
+  // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
@@ -100,6 +101,9 @@ const prettyDate = dateString => {
   //   marginRight: theme.spacing.unit,
   //   width: `calc(100% - ${theme.spacing.double}px)`,
   // },
+  relatedContent: {
+    textDecoration: 'none',
+  },
   dates: {
     color: theme.palette.text.secondary,
   },
@@ -131,11 +135,21 @@ class Edit extends Component {
           resource,
           resourceType,
         });
+        const flattenedFieldMeta = factory.getFlattenedFieldMetaWithRules(
+          fieldMeta,
+          resourceType,
+          resource
+        );
         const patchSet = [
           {
             op: 'replace',
             path: '/customForm',
-            value: { form: fieldMeta },
+            value: {
+              form: {
+                fields: flattenedFieldMeta,
+                fieldSets: { ...fieldMeta.fieldSets },
+              },
+            },
           },
         ];
 
@@ -264,11 +278,12 @@ class Edit extends Component {
         )}
 
         <div className={classes.editableFields}>
-          <ResourceForm
+          <ResourceFormFactory
             key={hash}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
+            connection={connection}
             handleSubmit={patchSet => {
               handlePatchResource(patchSet);
             }}

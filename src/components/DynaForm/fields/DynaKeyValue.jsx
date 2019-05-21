@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 

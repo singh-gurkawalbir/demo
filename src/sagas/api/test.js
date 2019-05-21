@@ -28,7 +28,7 @@ describe('request interceptors...testing the various stages of an api request on
   const jsonRespBody = { failure: 'some failure' };
   const textRespBody = "[{ failure: 'some failure' }]";
   const path = '/somePath';
-  const reqType = 'GET';
+  const reqMethod = 'GET';
   const protocol = 'someProtocol:';
   const host = 'someHost';
   const regular200Response = {
@@ -67,7 +67,7 @@ describe('request interceptors...testing the various stages of an api request on
     request: {
       meta: {
         path,
-        reqType,
+        reqMethod,
       },
     },
   };
@@ -133,6 +133,7 @@ describe('request interceptors...testing the various stages of an api request on
         },
         meta: {
           path,
+          reqMethod: 'POST',
         },
       };
 
@@ -205,7 +206,7 @@ describe('request interceptors...testing the various stages of an api request on
         sessionError200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, reqType));
+      const apiCompleteEffect = put(actions.api.complete(path, reqMethod));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -237,7 +238,7 @@ describe('request interceptors...testing the various stages of an api request on
         regular204Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, reqType));
+      const apiCompleteEffect = put(actions.api.complete(path, reqMethod));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -257,7 +258,7 @@ describe('request interceptors...testing the various stages of an api request on
         regular200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, reqType));
+      const apiCompleteEffect = put(actions.api.complete(path, reqMethod));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
 
@@ -284,7 +285,7 @@ describe('request interceptors...testing the various stages of an api request on
           put(
             actions.api.failure(
               path,
-              reqType,
+              reqMethod,
               JSON.stringify(some401Response.data),
               hidden
             )
@@ -310,7 +311,7 @@ describe('request interceptors...testing the various stages of an api request on
           put(
             actions.api.failure(
               path,
-              reqType,
+              reqMethod,
               JSON.stringify(some403Response.data),
               hidden
             )
@@ -335,7 +336,7 @@ describe('request interceptors...testing the various stages of an api request on
           put(
             actions.api.failure(
               path,
-              reqType,
+              reqMethod,
               JSON.stringify(some400Response.data)
             )
           )
@@ -349,18 +350,25 @@ describe('request interceptors...testing the various stages of an api request on
       });
     });
     describe('500 level errors', () => {
+      const retryInterval = 2000;
+
+      process.env.REATTEMPT_INTERVAL = retryInterval;
       test('should retry when the retry count is less than 3', () => {
         const saga = onErrorSaga(
           some500Response,
           actionWithMetaProxiedFromRequestAction
         );
 
-        expect(saga.next().value).toEqual(select(resourceStatus, path));
+        expect(saga.next().value).toEqual(
+          select(resourceStatus, path, reqMethod)
+        );
 
-        expect(saga.next({ retryCount: undefined }).value).toEqual(delay(2000));
+        expect(saga.next({ retryCount: undefined }).value).toEqual(
+          delay(retryInterval)
+        );
 
         expect(saga.next().value).toEqual(
-          put(actions.api.retry(path, reqType))
+          put(actions.api.retry(path, reqMethod))
         );
         // resend the request ..silent false meta allows the
         // sendRequest to dispatch redux actions
@@ -379,10 +387,12 @@ describe('request interceptors...testing the various stages of an api request on
           actionWithMetaProxiedFromRequestAction
         );
 
-        expect(saga.next().value).toEqual(select(resourceStatus, path));
+        expect(saga.next().value).toEqual(
+          select(resourceStatus, path, reqMethod)
+        );
 
         expect(saga.next({ retryCount: 3 }).value).toEqual(
-          put(actions.api.failure(path, reqType, some500Response.data))
+          put(actions.api.failure(path, reqMethod, some500Response.data))
         );
         expect(saga.next().value).toEqual(
           call(throwExceptionUsingTheResponse, some500Response)
