@@ -21,6 +21,31 @@ const mapStateToProps = (state, { actionsToMonitor = {} }) => {
     );
   });
 
+  Object.keys(toMonitor).forEach(actionName => {
+    if (toMonitor[actionName] && toMonitor[actionName].message) {
+      if (
+        Object.prototype.toString.apply(toMonitor[actionName].message) ===
+        '[object String]'
+      ) {
+        try {
+          toMonitor[actionName].message = JSON.parse(
+            toMonitor[actionName].message
+          );
+        } catch (ex) {
+          // do nothing
+        }
+      }
+
+      if (
+        Object.prototype.toString.apply(toMonitor[actionName].message) ===
+        '[object Object]'
+      ) {
+        toMonitor[actionName].message =
+          toMonitor[actionName].message.errors[0].message;
+      }
+    }
+  });
+
   return {
     toMonitor,
   };
