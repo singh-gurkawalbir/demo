@@ -4,6 +4,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRequestOptions from '../../utils/requestOptions';
 import { COMM_STATES } from '../../reducers/comms';
+import commPathGenerator from '../../utils/comPathGenerator';
 
 const mapStateToProps = (state, { actionsToMonitor = {} }) => {
   const toMonitor = {};
@@ -14,10 +15,9 @@ const mapStateToProps = (state, { actionsToMonitor = {} }) => {
       resourceId: action.resourceId,
     });
 
-    toMonitor[actionName] = selectors.commStatusByPath(
+    toMonitor[actionName] = selectors.commStatusByKey(
       state,
-      path,
-      opts.method
+      commPathGenerator(path, opts.method)
     );
   });
 
@@ -27,8 +27,8 @@ const mapStateToProps = (state, { actionsToMonitor = {} }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  clearCommByPath: path => {
-    dispatch(actions.clearCommByPath(path));
+  clearCommByKey: key => {
+    dispatch(actions.clearCommByKey(key));
   },
 });
 
@@ -38,7 +38,7 @@ class CommStatus extends Component {
       actionsToMonitor,
       autoClearOnComplete,
       actionsToClear,
-      clearCommByPath,
+      clearCommByKey,
       toMonitor,
       commStatusHandler,
     } = nextProps;
@@ -57,11 +57,11 @@ class CommStatus extends Component {
             toMonitor[actionKey].status
           )
         ) {
-          const { path } = getRequestOptions(action.action, {
+          const { path, opts } = getRequestOptions(action.action, {
             resourceId: action.resourceId,
           });
 
-          clearCommByPath(path);
+          clearCommByKey(commPathGenerator(path, opts.method));
         }
       });
     } else if (actionsToClear && actionsToClear.length) {
@@ -69,11 +69,11 @@ class CommStatus extends Component {
         action = actionsToMonitor[actionKey];
 
         if (toMonitor && toMonitor[actionKey]) {
-          const { path } = getRequestOptions(action.action, {
+          const { path, opts } = getRequestOptions(action.action, {
             resourceId: action.resourceId,
           });
 
-          clearCommByPath(path);
+          clearCommByKey(commPathGenerator(path, opts.method));
         }
       });
     }
