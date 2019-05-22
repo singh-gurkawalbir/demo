@@ -8,6 +8,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import { withSnackbar } from 'notistack';
 import UserDialog from './UserDialog';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -17,7 +20,7 @@ import {
   ACCOUNT_IDS,
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
-import Notifier, { openSnackbar } from '../Notifier';
+import { COMM_STATES } from '../../reducers/comms';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);
@@ -132,10 +135,25 @@ class UserList extends Component {
   }
 
   statusHandler({ status, message }) {
-    openSnackbar({
-      message,
+    const { enqueueSnackbar } = this.props;
+
+    enqueueSnackbar(message, {
       variant: status,
-      autoHideDuration: 10000,
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center',
+      },
+      action: key => (
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => {
+            this.props.closeSnackbar(key);
+          }}>
+          <CloseIcon />
+        </IconButton>
+      ),
     });
     this.setState({ showUserDialog: false });
   }
@@ -165,7 +183,6 @@ class UserList extends Component {
 
     return (
       <Fragment>
-        <Notifier />
         {showUserDialog && (
           <UserDialog
             data={{ _id: selectedUserId }}
@@ -173,7 +190,7 @@ class UserList extends Component {
               this.setState({ showUserDialog: false });
             }}
             successHandler={message => {
-              this.statusHandler({ status: 'success', message });
+              this.statusHandler({ status: COMM_STATES.SUCCESS, message });
             }}
           />
         )}
@@ -234,7 +251,9 @@ class UserList extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UserList);
+export default withSnackbar(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(UserList)
+);

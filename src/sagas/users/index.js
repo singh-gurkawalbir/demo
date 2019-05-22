@@ -6,12 +6,9 @@ import {
   changeEmailParams,
   changePasswordParams,
   updatePreferencesParams,
-  requestTrialLicenseParams,
-  requestLicenseUpgradeParams,
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
-import getErrorMessage from '../../utils/apiException';
 import getRequestOptions from '../../utils/requestOptions';
 
 export function* changePassword({ updatedPassword }) {
@@ -65,51 +62,37 @@ export function* updatePreferences() {
 }
 
 export function* requestTrialLicense() {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE_TRIAL_REQUEST);
+  let response;
+
   try {
-    const payload = {
-      ...requestTrialLicenseParams.opts,
-      body: {},
-    };
-    const response = yield call(apiCallWithRetry, {
-      path: requestTrialLicenseParams.path,
-      opts: payload,
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
       message: 'Requesting trial license',
     });
-
-    yield put(actions.user.org.accounts.trialLicenseIssued(response));
   } catch (e) {
-    yield put(
-      actions.api.failure(
-        requestTrialLicenseParams.path,
-        'Could not start trial'
-      )
-    );
+    return true;
   }
+
+  yield put(actions.user.org.accounts.trialLicenseIssued(response));
 }
 
 export function* requestLicenseUpgrade() {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPGRADE_REQUEST);
+  let response;
+
   try {
-    const payload = {
-      ...requestTrialLicenseParams.opts,
-      body: {},
-    };
-    const response = yield call(apiCallWithRetry, {
-      path: requestLicenseUpgradeParams.path,
-      opts: payload,
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
       message: 'Requesting license upgrade',
     });
-
-    yield put(
-      actions.user.org.accounts.licenseUpgradeRequestSubmitted(response)
-    );
   } catch (e) {
-    yield put(
-      actions.api.failure(
-        requestLicenseUpgradeParams.path,
-        'Could not request license upgrade'
-      )
-    );
+    return true;
   }
+
+  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
 export function* updateProfile() {
@@ -275,7 +258,7 @@ export function* createUser({ user }) {
       message: 'Inviting User',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, getErrorMessage(e)));
+    return true;
   }
 
   yield put(actions.user.org.users.created(response));
@@ -296,7 +279,7 @@ export function* updateUser({ _id, user }) {
       message: 'Updating User',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, getErrorMessage(e)));
+    return true;
   }
 
   yield put(actions.user.org.users.updated({ ...user, _id }));
@@ -315,7 +298,7 @@ export function* deleteUser({ _id }) {
       message: 'Deleting User',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, getErrorMessage(e)));
+    return true;
   }
 
   yield put(actions.user.org.users.deleted(_id));
@@ -334,7 +317,7 @@ export function* disableUser({ _id, disabled }) {
       message: disabled ? 'Enabling User' : 'Disabling User',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, getErrorMessage(e)));
+    return true;
   }
 
   yield put(actions.user.org.users.disabled(_id));
@@ -350,10 +333,10 @@ export function* makeOwner({ email }) {
     yield call(apiCallWithRetry, {
       path,
       opts,
-      message: 'Updating User',
+      message: 'Requesting account transfer',
     });
   } catch (e) {
-    yield put(actions.api.failure(path, getErrorMessage(e)));
+    return true;
   }
 }
 

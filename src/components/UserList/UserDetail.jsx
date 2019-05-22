@@ -172,7 +172,10 @@ class UserDetail extends Component {
     const { data, statusHandler } = this.props;
 
     ['disable', 'makeOwner', 'delete'].forEach(a => {
-      if (objStatus[a] && ['success', 'error'].includes(objStatus[a].status)) {
+      if (
+        objStatus[a] &&
+        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
+      ) {
         statusHandler({
           status: objStatus[a].status,
           message: this.getMessageForAction(a, objStatus[a], data),
@@ -194,7 +197,6 @@ class UserDetail extends Component {
             delete: { action: actionTypes.USER_DELETE, resourceId: data._id },
           }}
           autoClearOnComplete
-          // actionsToClear={actionsToClear}
           commStatusHandler={objStatus => {
             this.commStatusHandler(objStatus);
           }}

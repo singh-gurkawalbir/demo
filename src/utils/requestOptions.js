@@ -15,6 +15,16 @@ export default function getRequestOptions(action, { resourceId } = {}) {
       };
     case actionTypes.USER_MAKE_OWNER:
       return { path: '/transfers/invite', opts: { method: 'POST' } };
+    case actionTypes.LICENSE_TRIAL_REQUEST:
+      return {
+        path: '/licenses/startTrial',
+        opts: { method: 'POST' },
+      };
+    case actionTypes.LICENSE_UPGRADE_REQUEST:
+      return {
+        path: '/licenses/upgradeRequest',
+        opts: { method: 'POST' },
+      };
     default:
       return {};
   }

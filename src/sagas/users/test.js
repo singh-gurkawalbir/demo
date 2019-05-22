@@ -2,6 +2,7 @@
 
 import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
+import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers/index';
 import {
@@ -19,8 +20,16 @@ import {
   rejectAccountInvite,
   switchAccount,
   leaveAccount,
+  createUser,
+  updateUser,
+  deleteUser,
+  disableUser,
+  makeOwner,
+  requestTrialLicense,
 } from './';
 import { APIException } from '../api/index';
+import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import getRequestOptions from '../../utils/requestOptions';
 
 const status403 = new APIException({
   status: 403,
@@ -507,6 +516,290 @@ describe('all modal sagas', () => {
         expect(saga.throw(new Error()).value).toEqual(
           put(actions.api.failure(path, 'Could not leave account'))
         );
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('integrator license trial & upgrade requests', () => {
+      test('should start trial successfully', () => {
+        const saga = requestTrialLicense();
+        const requestOptions = getRequestOptions(
+          actionTypes.LICENSE_TRIAL_REQUEST
+        );
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Requesting trial license',
+          })
+        );
+        const response = {
+          _id: 'something',
+          trialEndDate: new Date().toISOString(),
+        };
+
+        expect(saga.next(response).value).toEqual(
+          put(actions.user.org.accounts.trialLicenseIssued(response))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while starting license trial', () => {
+        const saga = requestTrialLicense();
+        const requestOptions = getRequestOptions(
+          actionTypes.LICENSE_TRIAL_REQUEST
+        );
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Requesting trial license',
+          })
+        );
+
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('create/invite user', () => {
+      test('should create user successfully', () => {
+        const user = {
+          email: 'something@something.com',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        };
+        const response = { _id: 'something' };
+        const saga = createUser({ user });
+        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const { path, opts } = requestOptions;
+
+        opts.body = user;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Inviting User',
+          })
+        );
+        expect(saga.next(response).value).toEqual(
+          put(actions.user.org.users.created(response))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while creating user', () => {
+        const user = {
+          email: 'something@something.com',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        };
+        const saga = createUser({ user });
+        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const { path, opts } = requestOptions;
+
+        opts.body = user;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Inviting User',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('update user', () => {
+      test('should update user successfully', () => {
+        const userId = 'something';
+        const user = {
+          email: 'something@something.com',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        };
+        const response = { _id: 'something' };
+        const saga = updateUser({ _id: userId, user });
+        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        opts.body = user;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Updating User',
+          })
+        );
+        expect(saga.next(response).value).toEqual(
+          put(actions.user.org.users.updated({ ...user, _id: userId }))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while updating user', () => {
+        const userId = 'something';
+        const user = {
+          email: 'something@something.com',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        };
+        const saga = updateUser({ _id: userId, user });
+        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        opts.body = user;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Updating User',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('delete user', () => {
+      test('should delete user successfully', () => {
+        const userId = 'something';
+        const saga = deleteUser({ _id: userId });
+        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Deleting User',
+          })
+        );
+        expect(saga.next({}).value).toEqual(
+          put(actions.user.org.users.deleted(userId))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while deleting user', () => {
+        const userId = 'something';
+        const saga = deleteUser({ _id: userId });
+        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Deleting User',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('disable user', () => {
+      test('should disable user successfully', () => {
+        const userId = 'something';
+        const disabled = false;
+        const saga = disableUser({ _id: userId, disabled });
+        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Disabling User',
+          })
+        );
+        expect(saga.next({}).value).toEqual(
+          put(actions.user.org.users.disabled(userId))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should enable user successfully', () => {
+        const userId = 'something';
+        const disabled = true;
+        const saga = disableUser({ _id: userId, disabled });
+        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Enabling User',
+          })
+        );
+        expect(saga.next({}).value).toEqual(
+          put(actions.user.org.users.disabled(userId))
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while disabling user', () => {
+        const userId = 'something';
+        const disabled = false;
+        const saga = disableUser({ _id: userId, disabled });
+        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Disabling User',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('making an user as owner', () => {
+      test('should request account transfer successfully', () => {
+        const email = 'something@something.com';
+        const saga = makeOwner({ email });
+        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const { path, opts } = requestOptions;
+
+        opts.body = { email, account: true };
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Requesting account transfer',
+          })
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while requesting an account transfer', () => {
+        const email = 'something@something.com';
+        const saga = makeOwner({ email });
+        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const { path, opts } = requestOptions;
+
+        opts.body = { email, account: true };
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Requesting account transfer',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
       });
     });
