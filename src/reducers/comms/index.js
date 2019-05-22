@@ -11,7 +11,7 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, reqMethod = 'GET' } = action;
+  const { type, path, message, hidden, reqMethod = 'GET', key } = action;
   let newState;
   const timestamp = Date.now();
   const commPath = commPathGenerator(path, reqMethod);
@@ -65,6 +65,14 @@ export default (state = initialState, action) => {
         )
           delete newState[i];
       });
+
+      return newState;
+    case actionTypes.CLEAR_COMM_BY_KEY:
+      newState = Object.assign({}, state);
+
+      if (newState[key]) {
+        delete newState[key];
+      }
 
       return newState;
     // case actionTypes.CLEAR_SUCCESS_COMMS:
