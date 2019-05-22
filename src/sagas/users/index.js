@@ -10,6 +10,7 @@ import {
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -24,6 +25,7 @@ export function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.complete(
         changePasswordParams.path,
+        changePasswordParams.opts.method,
         'Success!! Changed user password'
       )
     );
@@ -31,6 +33,7 @@ export function* changePassword({ updatedPassword }) {
     yield put(
       actions.api.failure(
         changePasswordParams.path,
+        changePasswordParams.opts.method,
         'Invalid credentials provided.  Please try again.'
       )
     );
@@ -55,6 +58,7 @@ export function* updatePreferences() {
     yield put(
       actions.api.failure(
         updatePreferencesParams.path,
+        updatePreferencesParams.opts.method,
         'Could not update user Preferences'
       )
     );
@@ -113,6 +117,7 @@ export function* updateProfile() {
     yield put(
       actions.api.failure(
         updateProfileParams.path,
+        updateProfileParams.opts.method,
         'Could not update user Profile'
       )
     );
@@ -132,6 +137,7 @@ export function* changeEmail({ updatedEmail }) {
     yield put(
       actions.api.complete(
         changeEmailParams.path,
+        changeEmailParams.opts.method,
         'Success!! Sent user change Email setup to you email'
       )
     );
@@ -140,6 +146,7 @@ export function* changeEmail({ updatedEmail }) {
       yield put(
         actions.api.failure(
           changeEmailParams.path,
+          changeEmailParams.opts.method,
           'Existing email provided, Please try again.'
         )
       );
@@ -148,6 +155,7 @@ export function* changeEmail({ updatedEmail }) {
     yield put(
       actions.api.failure(
         changeEmailParams.path,
+        changeEmailParams.opts.method,
         'Cannot change user Email , Please try again.'
       )
     );
@@ -167,12 +175,23 @@ export function* acceptAccountInvite({ id }) {
       opts,
       message: 'Accepting account share invite',
     });
-
-    yield put(actions.resource.requestCollection('shared/ashares'));
   } catch (e) {
-    yield put(
-      actions.api.failure(path, 'Could not accept account share invite')
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not accept account share invite'
+      )
     );
+  }
+
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (userPreferences.defaultAShareId === ACCOUNT_IDS.OWN) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  } else {
+    yield put(actions.resource.requestCollection('shared/ashares'));
   }
 }
 
@@ -189,13 +208,17 @@ export function* rejectAccountInvite({ id }) {
       opts,
       message: 'Rejecting account share invite',
     });
-
-    yield put(actions.resource.requestCollection('shared/ashares'));
   } catch (e) {
-    yield put(
-      actions.api.failure(path, 'Could not reject account share invite')
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not reject account share invite'
+      )
     );
   }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
 export function* switchAccount({ id, environment }) {
@@ -209,8 +232,9 @@ export function* switchAccount({ id, environment }) {
       })
     );
   } catch (ex) {
+    // is it put?
     return yield put(
-      actions.api.failure('switch account', 'Could not switch account')
+      actions.api.failure('switch account', 'PUT', 'Could not switch account')
     );
   }
 
@@ -231,7 +255,9 @@ export function* leaveAccount({ id }) {
       message: 'Leaving account',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, 'Could not leave account'));
+    return yield put(
+      actions.api.failure(path, opts.method, 'Could not leave account')
+    );
   }
 
   const userPreferences = yield select(selectors.userPreferences);

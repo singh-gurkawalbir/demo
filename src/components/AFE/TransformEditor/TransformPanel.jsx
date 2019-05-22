@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
+// import { deepClone } from 'fast-json-patch';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
@@ -33,12 +34,13 @@ class TransformPanel extends Component {
   handleUpdate(row, event, field) {
     const { value } = event.target;
     const { patchEditor, editor } = this.props;
-    const { rule = [] } = editor;
+    let { rule } = editor;
+
+    if (!rule) rule = [];
 
     event.preventDefault();
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
-    // console.log(`"${row}"`, value, field);
 
     if (row !== undefined) {
       rule[row][field] = value;
@@ -52,9 +54,8 @@ class TransformPanel extends Component {
   render() {
     const { editor, classes } = this.props;
     const rule = editor.rule
-      ? editor.rule.map((r, n) => ({ ...r, row: n }))
+      ? editor.rule.map((rule, index) => ({ row: index, ...rule }))
       : [];
-    // console.log(rule);
     const handleExtractUpdate = row => event =>
       this.handleUpdate(row, event, 'extract');
     const handleGenerateUpdate = row => event =>
@@ -63,7 +64,14 @@ class TransformPanel extends Component {
     return (
       <div className={classes.container}>
         {rule.map(r => (
-          <div className={classes.rowContainer} key={r.row}>
+          // We were using the row index as a key and if we had
+          // Another single rule element but with different values
+          // then react will choose not to rerender the rule and
+          // show the older value
+          // Attempting to make a more unique key
+          <div
+            className={classes.rowContainer}
+            key={r.row + r.extract + r.generate}>
             <Input
               autoFocus
               defaultValue={r.extract}

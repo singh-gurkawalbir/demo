@@ -5,7 +5,8 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
-import { getFieldPosition } from '../../formsMetadata/utils';
+import { getFieldPosition } from '../../forms/utils';
+import PingConnectionSaga from './connections';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* getRequestOptions(path) {
@@ -155,4 +156,5 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
+  ...PingConnectionSaga,
 ];

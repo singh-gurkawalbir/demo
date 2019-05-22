@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { FormContext } from 'integrator-ui-forms/packages/core/dist';
+import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 
 class FormButton extends Component {

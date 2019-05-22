@@ -80,6 +80,7 @@ class App extends Component {
             {showSnackBar && <NetworkSnackbar />}
             <AppBar themeName={themeName} />
             <AuthDialog />
+
             <AppRoutingWithAuth />
           </Fragment>
         </BrowserRouter>

@@ -54,12 +54,14 @@ describe('evaluateProcessor saga', () => {
     const selectResponse = { processor: 'p', body: 'body' };
     const callEffect = saga.next(selectResponse).value;
     const opts = {
-      method: 'post',
+      method: 'POST',
       body: 'body',
     };
 
+    // we are hiding this comms message from the network snackbar
+    // if there are any errors let the editor show it
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, { path: '/processors/p', opts })
+      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
     );
 
     const apiResult = 'result';
@@ -84,12 +86,12 @@ describe('evaluateProcessor saga', () => {
     const selectResponse = { processor: 'p', body: 'body' };
     const callEffect = saga.next(selectResponse).value;
     const opts = {
-      method: 'post',
+      method: 'POST',
       body: 'body',
     };
 
     expect(callEffect).toEqual(
-      call(apiCallWithRetry, { path: '/processors/p', opts })
+      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
     );
 
     const putEffect = saga.throw(new Error('boom')).value;

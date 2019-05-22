@@ -4,7 +4,9 @@ export const availableResources = [
   'exports',
   'imports',
   'connections',
+  'agents',
   'scripts',
+  'stacks',
   'published',
   'integrations',
   'tiles',
@@ -38,13 +40,14 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
-  request: (path, message, hidden, reqType) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, reqType }),
-  retry: path => action(actionTypes.API_RETRY, { path }),
-  complete: (path, message) =>
-    action(actionTypes.API_COMPLETE, { path, message }),
-  failure: (path, message) =>
-    action(actionTypes.API_FAILURE, { path, message }),
+  request: (path, reqMethod, message, hidden) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, reqMethod }),
+  retry: (path, reqMethod) =>
+    action(actionTypes.API_RETRY, { path, reqMethod }),
+  complete: (path, reqMethod, message) =>
+    action(actionTypes.API_COMPLETE, { path, reqMethod, message }),
+  failure: (path, reqMethod, message, hidden) =>
+    action(actionTypes.API_FAILURE, { path, reqMethod, message, hidden }),
 };
 // #region Resource Actions
 const resource = {
@@ -78,6 +81,15 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
+  test: {
+    connection: (connection, resourceType, resourceId, converter) =>
+      action(actionTypes.TEST_CONNECTION, {
+        connection,
+        resourceType,
+        resourceId,
+        converter,
+      }),
+  },
   patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
     action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
       resourceType,
@@ -147,6 +159,7 @@ const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
 const clearCommByPath = path =>
   action(actionTypes.CLEAR_COMM_BY_PATH, { path });
+const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
 // #region Editor actions
 const editor = {
@@ -169,6 +182,7 @@ const editor = {
 // #endregion
 
 export default {
+  cancelTask,
   reloadApp,
   clearComms,
   clearCommByPath,

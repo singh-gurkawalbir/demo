@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, ownProps) => {

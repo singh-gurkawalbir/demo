@@ -2,7 +2,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FieldWrapper } from 'integrator-ui-forms/packages/core/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(() => ({
   textField: {
@@ -39,8 +39,6 @@ class MaterialUiTextField extends React.Component {
 
       onFieldChange(id, value.split(valueDelimiter));
     };
-
-    // console.log('render text ', label);
 
     return (
       <TextField
