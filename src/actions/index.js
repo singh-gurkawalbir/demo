@@ -10,6 +10,7 @@ export const availableResources = [
   'published',
   'integrations',
   'tiles',
+  'flows',
 ];
 
 // These are redux action "creators". Actions are reusable by any

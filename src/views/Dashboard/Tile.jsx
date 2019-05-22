@@ -67,7 +67,7 @@ export default class Tile extends Component {
               to={getRoutePath(
                 `/${data._connectorId ? 'connectors' : 'integrations'}/${
                   data._integrationId
-                }/settings`
+                }/settings/flows`
               )}>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
                 ? 'Monitor'
