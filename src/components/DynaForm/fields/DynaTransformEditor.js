@@ -44,8 +44,8 @@ class DynaTransformEditor extends React.Component {
 
     // We are deliberately compounding the id and resourceId, inorder to create
     // a more unique key for the transform editor launch per resource. This will
-    // cause react to shake the tree to perform a rerender and the rule elements
-    // key would use just the row index.
+    // cause react to shake the component tree to perform a rerender and the
+    // rule elements key would use just the row index.
     return (
       <Fragment>
         {showEditor && (

@@ -64,11 +64,6 @@ class TransformPanel extends Component {
     return (
       <div className={classes.container}>
         {rule.map(r => (
-          // We were using the row index as a key and if we had
-          // Another single rule element but with different values
-          // then react will choose not to rerender the rule and
-          // show the older value
-          // Attempting to make a more unique key
           <div className={classes.rowContainer} key={r.row}>
             <Input
               autoFocus
