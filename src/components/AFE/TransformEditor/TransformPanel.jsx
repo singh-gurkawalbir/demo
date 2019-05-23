@@ -69,9 +69,7 @@ class TransformPanel extends Component {
           // then react will choose not to rerender the rule and
           // show the older value
           // Attempting to make a more unique key
-          <div
-            className={classes.rowContainer}
-            key={r.row + r.extract + r.generate}>
+          <div className={classes.rowContainer} key={r.row}>
             <Input
               autoFocus
               defaultValue={r.extract}
