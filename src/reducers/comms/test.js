@@ -5,7 +5,7 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
 import actions from '../../actions';
-import commPathGenerator from '../../utils/comPathGenerator';
+import commKeyGenerator from '../../utils/comPathGenerator';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 const STATES = selectors.COMM_STATES;
@@ -13,7 +13,7 @@ const STATES = selectors.COMM_STATES;
 describe('comms reducers', () => {
   const path = '/test/path/';
   const reqMethod = 'GET';
-  const commPath = commPathGenerator(path, reqMethod);
+  const commPath = commKeyGenerator(path, reqMethod);
 
   describe(`clear comms action `, () => {
     test('clear the comms part of the redux store', () => {
@@ -132,7 +132,7 @@ describe('comms reducers', () => {
 describe('comms selectors', () => {
   const path = '/test/path';
   const reqMethod = 'GET';
-  const commPath = commPathGenerator(path, reqMethod);
+  const commPath = commKeyGenerator(path, reqMethod);
 
   describe(`isLoading`, () => {
     test('should be false on initial state', () => {
@@ -236,7 +236,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Loading Exports',
           status: STATES.LOADING,
-          name: commPathGenerator('exports', reqMethod),
+          name: commKeyGenerator('exports', reqMethod),
           retryCount: 0,
           timestamp: expect.any(Number),
         },
@@ -275,7 +275,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
           status: STATES.LOADING,
-          name: commPathGenerator(pathA, reqMethod),
+          name: commKeyGenerator(pathA, reqMethod),
           retryCount: 0,
           timestamp: expect.any(Number),
         },
@@ -283,7 +283,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
           status: STATES.LOADING,
-          name: commPathGenerator(pathB, reqMethod),
+          name: commKeyGenerator(pathB, reqMethod),
           retryCount: 0,
           timestamp: expect.any(Number),
         },

@@ -4,7 +4,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRequestOptions from '../../utils/requestOptions';
 import { COMM_STATES } from '../../reducers/comms';
-import commPathGenerator from '../../utils/comPathGenerator';
+import commKeyGenerator from '../../utils/comPathGenerator';
 
 const mapStateToProps = (state, { actionsToMonitor = {} }) => {
   const toMonitor = {};
@@ -17,7 +17,7 @@ const mapStateToProps = (state, { actionsToMonitor = {} }) => {
 
     toMonitor[actionName] = selectors.commStatusByKey(
       state,
-      commPathGenerator(path, opts.method)
+      commKeyGenerator(path, opts.method)
     );
   });
 
@@ -86,7 +86,7 @@ class CommStatus extends Component {
             resourceId: action.resourceId,
           });
 
-          clearCommByKey(commPathGenerator(path, opts.method));
+          clearCommByKey(commKeyGenerator(path, opts.method));
         }
       });
     } else if (actionsToClear && actionsToClear.length) {
@@ -98,7 +98,7 @@ class CommStatus extends Component {
             resourceId: action.resourceId,
           });
 
-          clearCommByKey(commPathGenerator(path, opts.method));
+          clearCommByKey(commKeyGenerator(path, opts.method));
         }
       });
     }
