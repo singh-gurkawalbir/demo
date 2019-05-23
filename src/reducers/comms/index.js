@@ -1,5 +1,5 @@
 import actionTypes from '../../actions/types';
-import commKeyGenerator from '../../utils/comPathGenerator';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 
 const initialState = {};
 
@@ -11,10 +11,10 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, reqMethod = 'GET', key } = action;
+  const { type, path, message, hidden, method = 'GET', key } = action;
   let newState;
   const timestamp = Date.now();
-  const commKey = commKeyGenerator(path, reqMethod);
+  const commKey = commKeyGenerator(path, method);
 
   switch (type) {
     case actionTypes.API_REQUEST:
@@ -23,7 +23,7 @@ export default (state = initialState, action) => {
       newState.status = COMM_STATES.LOADING;
       newState.message = message;
       newState.hidden = hidden;
-      newState.reqMethod = reqMethod;
+      newState.method = method;
       delete newState.retry;
 
       return { ...state, [commKey]: newState };
@@ -89,9 +89,7 @@ export default (state = initialState, action) => {
 
 // #region PUBLIC SELECTORS
 export function commReqType(state, resourceName) {
-  return (
-    (state && state[resourceName] && state[resourceName].reqMethod) || 'GET'
-  );
+  return (state && state[resourceName] && state[resourceName].method) || 'GET';
 }
 
 export function isLoading(state, resourceName) {

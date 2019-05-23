@@ -4,7 +4,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRequestOptions from '../../utils/requestOptions';
 import { COMM_STATES } from '../../reducers/comms';
-import commKeyGenerator from '../../utils/comPathGenerator';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 
 const mapStateToProps = (state, { actionsToMonitor = {} }) => {
   const toMonitor = {};
