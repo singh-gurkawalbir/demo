@@ -52,7 +52,11 @@ function* pingConnection({ connection, resourceType, resourceId, converter }) {
       const { errors } = errorsJSON;
 
       yield put(
-        actions.api.failure(pingConnectionParams.path, errors[0].message)
+        actions.api.failure(
+          pingConnectionParams.path,
+          pingConnectionParams.opts.method,
+          errors[0].message
+        )
       );
     }
   }
