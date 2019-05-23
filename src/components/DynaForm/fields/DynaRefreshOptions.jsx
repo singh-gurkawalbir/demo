@@ -29,7 +29,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     applicationType,
     commResourcePath,
-    loadingData: selectors.resourceStatus(state, commResourcePath).isLoading,
+    loadingData: selectors.resourceStatus(state, commResourcePath, 'GET')
+      .isLoading,
     resourceData: selectors.metadataResource(
       state,
       connectionId,

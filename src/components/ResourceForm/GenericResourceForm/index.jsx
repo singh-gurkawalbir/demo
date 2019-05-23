@@ -1,10 +1,8 @@
 import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import factory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
-import { sanitizePatchSet } from '../../../forms/utils';
 
 @withStyles(theme => ({
   actions: {
@@ -40,49 +38,11 @@ export default class ResourceForm extends Component {
       handleSubmit,
       children,
       connection,
+      optionsHandler,
+      fieldMeta,
+      handleClick,
       ...rest
     } = this.props;
-    let fieldMeta;
-    let handleClick;
-    let optionsHandler;
-
-    if (resource.customForm && resource.customForm.form) {
-      // this resource has an embedded custom form.
-      // TODO: will there be an associated connection for this custom form
-      // because you create an export based on a connection
-      fieldMeta = factory.getFieldsWithDefaults(
-        resource.customForm.form,
-        resourceType,
-        resource
-      );
-      handleClick = value => {
-        // eslint-disable-next-line no-console
-        console.log('values passed to custom form submit handler: ', value);
-      };
-    } else {
-      // this is a stock UI form...
-      const assets = factory.getResourceFormAssets({
-        resourceType,
-        resource,
-        connection,
-      });
-
-      ({ optionsHandler } = assets);
-
-      fieldMeta = factory.getFieldsWithDefaults(
-        assets.fieldMeta,
-        resourceType,
-        resource
-      );
-      handleClick = value =>
-        handleSubmit(
-          sanitizePatchSet({
-            patchSet: assets.converter(value),
-            fieldMeta,
-            resource,
-          })
-        );
-    }
 
     // console.log(fieldMeta);
 

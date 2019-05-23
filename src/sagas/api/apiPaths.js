@@ -64,20 +64,6 @@ export const updatePreferencesParams = {
   path: '/preferences',
 };
 
-export const requestTrialLicenseParams = {
-  opts: {
-    method: 'POST',
-  },
-  path: '/licenses/startTrial',
-};
-
-export const requestLicenseUpgradeParams = {
-  opts: {
-    method: 'POST',
-  },
-  path: '/licenses/upgradeRequest',
-};
-
 export const pingConnectionParams = {
   opts: {
     method: 'POST',

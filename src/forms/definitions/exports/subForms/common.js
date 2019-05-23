@@ -2,9 +2,9 @@ export default {
   fields: [
     { fieldId: 'name' },
     { fieldId: 'description' },
-    { fieldId: 'apiIdentifier' },
-    { fieldId: 'ftp.exportFrom' },
-    { fieldId: '_connectionId', disableSelect: true },
+
+    // { fieldId: 'apiIdentifier' },
+    // { fieldId: 'ftp.exportFrom' },
   ],
   fieldSets: [],
 };

@@ -303,6 +303,20 @@ export function accessLevel(state, accountId) {
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
 }
 
+export function owner(state, accountId) {
+  if (!state) {
+    return undefined;
+  }
+
+  const account = state.find(a => a._id === accountId);
+
+  if (!account) {
+    return undefined;
+  }
+
+  return account.ownerUser;
+}
+
 export function permissions(
   state,
   accountId,
@@ -450,9 +464,7 @@ export function permissions(
     };
     permissions.integrations.all = { ...permissions.integrations.none };
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
-    const account = state.find(
-      a => a._id === accountId && a.accepted && !a.disabled
-    );
+    const account = state.find(a => a._id === accountId);
     let integration;
 
     if (

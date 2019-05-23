@@ -1,24 +1,12 @@
-// @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FieldWrapper } from 'react-forms-processor/dist';
 
-@withStyles(() => ({
-  textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    // minWidth: 120,
-  },
-}))
-class MaterialUiTextField extends React.Component {
+class DynaUploadFile extends React.Component {
   render() {
     const {
       options,
-      classes,
-      description,
       disabled,
-      errorMessages,
       id,
       isValid,
       name,
@@ -27,18 +15,11 @@ class MaterialUiTextField extends React.Component {
       required,
       value,
       label,
-      multiline,
-      valueDelimiter,
-      rowsMax,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
 
-      if (!valueDelimiter) {
-        return onFieldChange(id, value);
-      }
-
-      onFieldChange(id, value.split(valueDelimiter));
+      onFieldChange(id, value);
     };
 
     let acceptFileType = '.txt';
@@ -52,17 +33,12 @@ class MaterialUiTextField extends React.Component {
         inputProps={{ accept: acceptFileType }}
         InputLabelProps={{ shrink: true }}
         input
-        type="file"
-        autoComplete="off"
         key={id}
         name={name}
         label={label}
-        className={classes.textField}
+        type="file"
         placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
         disabled={disabled}
-        multiline={multiline}
-        rowsMax={rowsMax}
         required={required}
         error={!isValid}
         value={value}
@@ -72,10 +48,10 @@ class MaterialUiTextField extends React.Component {
   }
 }
 
-const DynaText = props => (
+const WrappedDynaUploadFile = props => (
   <FieldWrapper {...props}>
-    <MaterialUiTextField />
+    <DynaUploadFile />
   </FieldWrapper>
 );
 
-export default DynaText;
+export default WrappedDynaUploadFile;

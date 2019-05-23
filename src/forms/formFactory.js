@@ -291,7 +291,35 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   };
 };
 
+const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType, resource) => {
+  // TODO: I don't really need to set defaults, the getFieldsWithDefaults
+  // has support to add visibiltyWhen rules for fieldMeta having formId
+  // or deeply nested forms
+  const flattenedFieldMeta = getFieldsWithDefaults(
+    fieldMeta,
+    resourceType,
+    resource
+  );
+  // Lets retain fieldId, visibleWhen and lets remove all
+  // other properties.
+  // since fieldSets aren't expected to have formId nor
+  // the formIds are expected to have any fieldSets,
+  // so lets use the fields from getFieldsWithDefaults
+  const fieldMetaWithJustFieldIdAndRules = flattenedFieldMeta.fields.map(
+    field => {
+      const { fieldId, visibleWhen } = field;
+
+      if (visibleWhen) return { fieldId, visibleWhen };
+
+      return { fieldId };
+    }
+  );
+
+  return fieldMetaWithJustFieldIdAndRules;
+};
+
 export default {
   getResourceFormAssets,
   getFieldsWithDefaults,
+  getFlattenedFieldMetaWithRules,
 };

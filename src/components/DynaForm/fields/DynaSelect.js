@@ -20,7 +20,6 @@ class MaterialUiSelect extends React.Component {
     const {
       classes,
       description,
-      disableSelect,
       disabled,
       id,
       value,
@@ -59,19 +58,14 @@ class MaterialUiSelect extends React.Component {
     );
 
     return (
-      <FormControl
-        key={id}
-        disabled={disableSelect || disabled}
-        className={classes.root}>
+      <FormControl key={id} disabled={disabled} className={classes.root}>
         <InputLabel shrink={!!value} htmlFor={id}>
           {label}
         </InputLabel>
         <Select
           value={value || defaultValue}
           onChange={evt => {
-            const { value } = evt.target;
-
-            onFieldChange(id, value);
+            onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}>
           {items}

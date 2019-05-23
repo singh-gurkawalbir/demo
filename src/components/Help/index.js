@@ -40,25 +40,23 @@ export default class Help extends Component {
     const open = !!anchorEl;
     const helpTextValue = this.helpText(helpText, helpKey);
 
+    if (!helpTextValue) return null;
+
     return (
       <Fragment>
-        {helpTextValue && (
-          <Fragment>
-            <ClickAwayListener onClickAway={this.handleClose}>
-              <IconButton className={className} onClick={this.handleMenu}>
-                <HelpIcon fontSize="small" />
-              </IconButton>
-            </ClickAwayListener>
-            <ArrowPopper
-              placement="left"
-              className={classes.helpPopper}
-              id="helpBubble"
-              open={open}
-              anchorEl={anchorEl}>
-              <Typography variant="caption">{helpTextValue}</Typography>
-            </ArrowPopper>
-          </Fragment>
-        )}
+        <ClickAwayListener onClickAway={this.handleClose}>
+          <IconButton className={className} onClick={this.handleMenu}>
+            <HelpIcon fontSize="small" />
+          </IconButton>
+        </ClickAwayListener>
+        <ArrowPopper
+          placement="left"
+          className={classes.helpPopper}
+          id="helpBubble"
+          open={open}
+          anchorEl={anchorEl}>
+          <Typography variant="caption">{helpTextValue}</Typography>
+        </ArrowPopper>
       </Fragment>
     );
   }

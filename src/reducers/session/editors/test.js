@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, fail */
 import deepFreeze from 'deep-freeze';
 import reducer, * as selectors from './';
 import actions from '../../../actions';
@@ -128,8 +128,8 @@ describe('editor reducers', () => {
   // This test case is to verify we are doing a deep copy and not mutating
   // the reducer state
 
-  describe('mutation behaiour of patch operations', () => {
-    test('should initialize with all options defined in the action and subsequent mutation to the to a option property should not alter the state', () => {
+  describe('mutation behaviour of patch operations', () => {
+    test('should initialize with all options defined in the action and subsequent mutation to an option property should not alter the state', () => {
       const id = 1;
       const options = {
         rules: [{ extract: 't', generate: 'g' }],
@@ -145,7 +145,7 @@ describe('editor reducers', () => {
       try {
         options.rules.push({ extract: 'c', generate: 'd' });
       } catch (e) {
-        expect(true).toBe(false);
+        fail('should not throw an object freeze exception');
       }
     });
     test('should not mutate the state of patch operation when the patch property is changed', () => {
@@ -160,7 +160,7 @@ describe('editor reducers', () => {
       try {
         patch.rules.push({ extract: 'c', generate: 'd' });
       } catch (e) {
-        expect(true).toBe(false);
+        fail('should not throw an object freeze exception');
       }
     });
   });

@@ -21,9 +21,6 @@ export default {
     { fieldId: 'exportData' },
     { fieldId: 'file.type' },
     { fieldId: 'file.output' },
-    // TODO: should be visible when connection type is ftp
-    { fieldId: 'ftp.fileNameStartsWith' },
-    { fieldId: 'ftp.fileNameEndsWith' },
     {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',

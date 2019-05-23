@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import resources, * as fromResources from './resources';
+import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 
 export default combineReducers({
   resources,
+  integrationAShares,
 });
 
 export function resource(state, resourceType, id) {
@@ -19,4 +21,11 @@ export function processors(state) {
 
 export function hasData(state, resourceType) {
   return fromResources.hasData(state.resources, resourceType);
+}
+
+export function integrationUsers(state, integrationId) {
+  return fromIntegrationAShares.integrationUsers(
+    state.integrationAShares,
+    integrationId
+  );
 }
