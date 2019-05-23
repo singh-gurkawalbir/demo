@@ -37,6 +37,15 @@ export default (state = {}, action) => {
     return state;
   }
 
+  // skip integrations/:_integrationId/ashares
+  if (
+    resourceType &&
+    resourceType.startsWith('integrations/') &&
+    resourceType.endsWith('/ashares')
+  ) {
+    return state;
+  }
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };

@@ -6,11 +6,10 @@ import {
   changeEmailParams,
   changePasswordParams,
   updatePreferencesParams,
-  requestTrialLicenseParams,
-  requestLicenseUpgradeParams,
   updateProfileParams,
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* changePassword({ updatedPassword }) {
@@ -67,53 +66,37 @@ export function* updatePreferences() {
 }
 
 export function* requestTrialLicense() {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE_TRIAL_REQUEST);
+  let response;
+
   try {
-    const payload = {
-      ...requestTrialLicenseParams.opts,
-      body: {},
-    };
-    const response = yield call(apiCallWithRetry, {
-      path: requestTrialLicenseParams.path,
-      opts: payload,
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
       message: 'Requesting trial license',
     });
-
-    yield put(actions.user.org.accounts.trialLicenseIssued(response));
   } catch (e) {
-    yield put(
-      actions.api.failure(
-        requestTrialLicenseParams.path,
-        requestTrialLicenseParams.opts.method,
-        'Could not start trial'
-      )
-    );
+    return true;
   }
+
+  yield put(actions.user.org.accounts.trialLicenseIssued(response));
 }
 
 export function* requestLicenseUpgrade() {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPGRADE_REQUEST);
+  let response;
+
   try {
-    const payload = {
-      ...requestTrialLicenseParams.opts,
-      body: {},
-    };
-    const response = yield call(apiCallWithRetry, {
-      path: requestLicenseUpgradeParams.path,
-      opts: payload,
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
       message: 'Requesting license upgrade',
     });
-
-    yield put(
-      actions.user.org.accounts.licenseUpgradeRequestSubmitted(response)
-    );
   } catch (e) {
-    yield put(
-      actions.api.failure(
-        requestLicenseUpgradeParams.path,
-        requestTrialLicenseParams.opts.method,
-        'Could not request license upgrade'
-      )
-    );
+    return true;
   }
+
+  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
 export function* updateProfile() {
@@ -287,6 +270,102 @@ export function* leaveAccount({ id }) {
   }
 }
 
+export function* createUser({ user }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+  const { path, opts } = requestOptions;
+
+  opts.body = user;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Inviting User',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.users.created(response));
+}
+
+export function* updateUser({ _id, user }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  opts.body = user;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Updating User',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.users.updated({ ...user, _id }));
+}
+
+export function* deleteUser({ _id }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Deleting User',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.users.deleted(_id));
+}
+
+export function* disableUser({ _id, disabled }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: disabled ? 'Enabling User' : 'Disabling User',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.users.disabled(_id));
+}
+
+export function* makeOwner({ email }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+  const { path, opts } = requestOptions;
+
+  opts.body = { email, account: true };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Requesting account transfer',
+    });
+  } catch (e) {
+    return true;
+  }
+}
+
 export const userSagas = [
   takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
   takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -298,4 +377,9 @@ export const userSagas = [
   takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
   takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
   takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
+  takeEvery(actionTypes.USER_CREATE, createUser),
+  takeEvery(actionTypes.USER_UPDATE, updateUser),
+  takeEvery(actionTypes.USER_DISABLE, disableUser),
+  takeEvery(actionTypes.USER_DELETE, deleteUser),
+  takeEvery(actionTypes.USER_MAKE_OWNER, makeOwner),
 ];

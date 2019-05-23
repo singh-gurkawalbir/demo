@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import users from './org/users';
+import users, * as fromUsers from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
 import profile, * as fromProfile from './profile';
@@ -127,6 +127,32 @@ export function permissions(state) {
   );
 
   return permissions;
+}
+
+export function usersList(state) {
+  const permissions = fromUsers.list(state && state.org && state.org.users);
+
+  return permissions;
+}
+
+export function accountOwner(state) {
+  const userAccessLevel = accessLevel(state);
+
+  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    const { name, email } = state && state.profile;
+
+    return { name, email };
+  }
+
+  if (state && state.preferences) {
+    const { defaultAShareId } = userPreferences(state);
+
+    if (defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
+      const ownerUser = fromAccounts.owner(state.org.accounts, defaultAShareId);
+
+      return ownerUser || {};
+    }
+  }
 }
 
 // #endregion PUBLIC USER SELECTORS

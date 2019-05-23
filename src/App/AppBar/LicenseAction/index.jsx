@@ -2,9 +2,14 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import { withSnackbar } from 'notistack';
 import actions from '../../../actions';
+import actionTypes from '../../../actions/types';
 import * as selectors from '../../../reducers';
-import Notifier, { openSnackbar } from '../../../components/Notifier';
+import CommStatus from '../../../components/CommStatus';
+import { COMM_STATES } from '../../../reducers/comms';
 
 const mapStateToProps = state => ({
   license: selectors.integratorLicense(state),
@@ -34,26 +39,49 @@ const mapDispatchToProps = dispatch => ({
 class LicenseAction extends Component {
   state = {};
 
-  componentDidUpdate(prevProps) {
-    const { license } = this.props;
-    const prevLicense = (prevProps && prevProps.license) || {};
+  commStatusHandler(objStatus) {
+    const { enqueueSnackbar } = this.props;
 
-    if (license && license.trialStarted && !prevLicense.trialStarted) {
-      openSnackbar({
-        message: 'Activated! Your 30 days of unlimited flows starts now.',
-      });
-    }
+    ['startTrial', 'upgrade'].forEach(a => {
+      if (
+        objStatus[a] &&
+        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
+      ) {
+        let message;
 
-    if (
-      license &&
-      license.upgradeRequested &&
-      prevLicense.upgradeRequested !== license.upgradeRequested
-    ) {
-      openSnackbar({
-        message: 'Your request has been received. We will contact you soon.',
-        variant: 'success',
-      });
-    }
+        if (objStatus[a].status === COMM_STATES.ERROR) {
+          ({ message } = objStatus[a]);
+        } else if (a === 'startTrial') {
+          if (objStatus[a].status === COMM_STATES.SUCCESS) {
+            message = 'Activated! Your 30 days of unlimited flows starts now.';
+          }
+        } else if (a === 'upgrade') {
+          if (objStatus[a].status === COMM_STATES.SUCCESS) {
+            message =
+              'Your request has been received. We will contact you soon.';
+          }
+        }
+
+        enqueueSnackbar(message, {
+          variant: objStatus[a].status,
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center',
+          },
+          action: key => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => {
+                this.props.closeSnackbar(key);
+              }}>
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    });
   }
 
   render() {
@@ -98,17 +126,30 @@ class LicenseAction extends Component {
     if (buttonProps.action) {
       return (
         <Fragment>
-          <Notifier />
           {!license.upgradeRequested && (
-            <Button
-              className={buttonProps.className}
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                onClick(buttonProps.action);
-              }}>
-              {buttonProps.label}
-            </Button>
+            <Fragment>
+              <CommStatus
+                actionsToMonitor={{
+                  startTrial: {
+                    action: actionTypes.LICENSE_TRIAL_REQUEST,
+                  },
+                  upgrade: { action: actionTypes.LICENSE_UPGRADE_REQUEST },
+                }}
+                autoClearOnComplete
+                commStatusHandler={objStatus => {
+                  this.commStatusHandler(objStatus);
+                }}
+              />
+              <Button
+                className={buttonProps.className}
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  onClick(buttonProps.action);
+                }}>
+                {buttonProps.label}
+              </Button>
+            </Fragment>
           )}
         </Fragment>
       );
@@ -119,4 +160,9 @@ class LicenseAction extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(LicenseAction);
+export default withSnackbar(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(LicenseAction)
+);
