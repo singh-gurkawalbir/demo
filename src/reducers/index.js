@@ -569,8 +569,8 @@ export function isProfileLoading(state) {
 
 export function isDataReady(state, resource) {
   return (
-    fromComms.commStatus(state.comms, `/${resource}`) ===
-    fromComms.COMM_STATES.SUCCESS
+    fromData.hasData(state.data, resource) &&
+    !fromComms.isLoading(state.comms, resource)
   );
 }
 

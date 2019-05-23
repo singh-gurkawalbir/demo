@@ -102,7 +102,7 @@ export function isLoading(state, resourceName) {
   );
 }
 
-export function commStatus(state, resourceName) {
+function commStatus(state, resourceName) {
   return state && state[resourceName] && state[resourceName].status;
 }
 

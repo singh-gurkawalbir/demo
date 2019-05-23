@@ -14,6 +14,11 @@ export default (
   let newState;
 
   switch (type) {
+    // This is quiet a deep object...ensuring i am creating
+    // new instances all the way to the children of the object.
+    // This is to ensure that a react component listening
+    // to just the root of the object realizes they are updates to
+    // the children and subsequently rerenders.
     case actionTypes.RECEIVED_NETSUITE_COLLECTION: {
       newState = Object.assign({}, state.netsuite);
       newState[netsuiteSpecificResource] = Object.assign(
@@ -21,9 +26,6 @@ export default (
         state.netsuite[netsuiteSpecificResource]
       );
       const specificResource = newState[netsuiteSpecificResource];
-
-      // do i need to do this
-      if (!specificResource[connectionId]) specificResource[connectionId] = {};
 
       specificResource[connectionId] = {
         ...specificResource[connectionId],
