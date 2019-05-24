@@ -127,6 +127,27 @@ describe('comms reducers', () => {
       expect(newState[commKey].retry).toBe(3);
     });
   });
+
+  describe('clear comm by key', () => {
+    test('should not change the state when key not found', () => {
+      const state = reducer(undefined, 'some action');
+      const newState = reducer(state, actions.clearCommByKey('something'));
+
+      expect(newState).toEqual(state);
+    });
+    test('should remove the key from state', () => {
+      const state = reducer(
+        {
+          something: { test: 'something' },
+          somethingelse: { test: 'somethingelse' },
+        },
+        'some action'
+      );
+      const newState = reducer(state, actions.clearCommByKey('something'));
+
+      expect(newState).toEqual({ somethingelse: { test: 'somethingelse' } });
+    });
+  });
 });
 
 describe('comms selectors', () => {
