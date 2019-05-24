@@ -15,7 +15,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import stringUtil from '../utils/string';
-import commPathGen from '../utils/comPathGenerator';
+import commKeyGen from '../utils/commKeyGenerator';
 import {
   USER_ACCESS_LEVELS,
   TILE_STATUS,
@@ -227,7 +227,7 @@ export function isSessionExpired(state) {
 
 // #region PASSWORD & EMAIL update selectors for modals
 export function changePasswordSuccess(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
@@ -235,14 +235,14 @@ export function changePasswordSuccess(state) {
   return (
     state &&
     state.comms &&
-    state.comms[commPath] &&
-    state.comms[commPath].status &&
-    state.comms[commPath].status === fromComms.COMM_STATES.SUCCESS
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
   );
 }
 
 export function changePasswordFailure(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
@@ -250,14 +250,14 @@ export function changePasswordFailure(state) {
   return (
     state &&
     state.comms &&
-    state.comms[commPath] &&
-    state.comms[commPath].status &&
-    state.comms[commPath].status === fromComms.COMM_STATES.ERROR
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
   );
 }
 
 export function changePasswordMsg(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
@@ -265,14 +265,14 @@ export function changePasswordMsg(state) {
   return (
     (state &&
       state.comms &&
-      state.comms[commPath] &&
-      state.comms[commPath].message) ||
+      state.comms[commKey] &&
+      state.comms[commKey].message) ||
     ''
   );
 }
 
 export function changeEmailFailure(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
@@ -280,14 +280,14 @@ export function changeEmailFailure(state) {
   return (
     state &&
     state.comms &&
-    state.comms[commPath] &&
-    state.comms[commPath].status &&
-    state.comms[commPath].status === fromComms.COMM_STATES.ERROR
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
   );
 }
 
 export function changeEmailSuccess(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
@@ -295,14 +295,14 @@ export function changeEmailSuccess(state) {
   return (
     state &&
     state.comms &&
-    state.comms[commPath] &&
-    state.comms[commPath].status &&
-    state.comms[commPath].status === fromComms.COMM_STATES.SUCCESS
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
   );
 }
 
 export function changeEmailMsg(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
@@ -310,8 +310,8 @@ export function changeEmailMsg(state) {
   return (
     (state &&
       state.comms &&
-      state.comms[commPath] &&
-      state.comms[commPath].message) ||
+      state.comms[commKey] &&
+      state.comms[commKey].message) ||
     ''
   );
 }
@@ -319,7 +319,7 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 export function testConnectionCommState(state) {
-  const commPath = commPathGen(
+  const commKey = commKeyGen(
     pingConnectionParams.path,
     pingConnectionParams.opts.method
   );
@@ -328,8 +328,8 @@ export function testConnectionCommState(state) {
     !(
       state &&
       state.comms &&
-      state.comms[commPath] &&
-      state.comms[commPath].status
+      state.comms[commKey] &&
+      state.comms[commKey].status
     )
   )
     return {
@@ -337,7 +337,7 @@ export function testConnectionCommState(state) {
       message: null,
     };
 
-  const comm = state.comms[commPath];
+  const comm = state.comms[commKey];
 
   return {
     commState: comm.status,
@@ -552,19 +552,19 @@ export function tiles(state) {
 
 // #region PUBLIC GLOBAL SELECTORS
 export function isProfileDataReady(state) {
-  const commPath = commPathGen('/profile', 'GET');
+  const commKey = commKeyGen('/profile', 'GET');
 
   return !!(
     state &&
     hasProfile(state) &&
-    !fromComms.isLoading(state.comms, commPath)
+    !fromComms.isLoading(state.comms, commKey)
   );
 }
 
 export function isProfileLoading(state) {
-  const commPath = commPathGen('/profile', 'GET');
+  const commKey = commKeyGen('/profile', 'GET');
 
-  return !!(state && fromComms.isLoading(state.comms, commPath));
+  return !!(state && fromComms.isLoading(state.comms, commKey));
 }
 
 export function isDataReady(state, resource) {
@@ -586,19 +586,19 @@ export function resourceStatus(
   resourceReqMethod = 'GET'
 ) {
   const resourceType = `/${origResourceType}`;
-  const commPath = commPathGen(resourceType, resourceReqMethod);
-  const reqMethod = resourceReqMethod;
+  const commKey = commKeyGen(resourceType, resourceReqMethod);
+  const method = resourceReqMethod;
   const hasData = fromData.hasData(state.data, origResourceType);
-  const isLoading = fromComms.isLoading(state.comms, commPath);
-  const retryCount = fromComms.retryCount(state.comms, commPath);
-  const isReady = reqMethod !== 'GET' || (hasData && !isLoading);
+  const isLoading = fromComms.isLoading(state.comms, commKey);
+  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
 
   return {
     resourceType: origResourceType,
     hasData,
     isLoading,
     retryCount,
-    reqMethod,
+    method,
     isReady,
   };
 }
