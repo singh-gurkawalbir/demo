@@ -89,6 +89,11 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 
   if (!resource) return; // nothing to do.
 
+  const formState = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
   const { customForm } = resource;
   let finalValues = values;
 
@@ -100,20 +105,14 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
       hook: customForm.submit,
       data: values,
     });
-
-    // eslint-disable-next-line no-console
-    console.log(
-      'values passed/returned to custom form submit hook: ',
-      values,
-      finalValues
-    );
+  } else if (typeof formState.submit === 'function') {
+    // stock submit handler present...
+    finalValues = formState.submit(values);
   }
 
-  const formState = yield select(
-    selectors.resourceFormState,
-    resourceType,
-    resourceId
-  );
+  // eslint-disable-next-line no-console
+  console.log('values passed/returned from submit hook: ', values, finalValues);
+
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
     fieldMeta: formState.fieldMeta,
@@ -167,25 +166,21 @@ export function* initFormValues({ resourceType, resourceId }) {
       hook: customForm.init,
       data: fieldMeta,
     });
-
-    // eslint-disable-next-line no-console
-    console.log(
-      'metadata passed/returned to custom form init hook: ',
-      fieldMeta,
-      finalFieldMeta
-    );
   } else if (typeof defaultFormAssets.init === 'function') {
     // standard form init fn...
 
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
+  // console.log('metadata from init hook: ', fieldMeta, finalFieldMeta);
+
   yield put(
     actions.resourceForm.initComplete(
       resourceType,
       resourceId,
       finalFieldMeta,
-      defaultFormAssets.optionsHandler
+      defaultFormAssets.optionsHandler,
+      defaultFormAssets.submit
     )
   );
 }

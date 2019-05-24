@@ -8,6 +8,7 @@ export default function reducer(state = {}, action) {
     fieldMeta,
     optionsHandler,
     formValues,
+    submit,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -21,7 +22,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
       return {
         ...state,
-        [key]: { initComplete: true, fieldMeta, optionsHandler },
+        [key]: { initComplete: true, fieldMeta, optionsHandler, submit },
       };
 
     case actionTypes.RESOURCE_FORM.SUBMIT:
