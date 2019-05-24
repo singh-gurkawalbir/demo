@@ -1,5 +1,5 @@
-import jira from './jira';
+import rest from './rest';
 
 export default {
-  jira,
+  rest,
 };

@@ -1,48 +1,43 @@
-import { defaultPatchSetConverter } from '../../../utils';
-
 export default {
   // initHook: fieldMeta => { return fieldMeta=undefined}
   // preSubmitHook: formValues => { // getFormattedData
-  converter: formValues => {
+  init: fieldMeta => ({
+    fields: [
+      {
+        id: 'injected',
+        type: 'text',
+        label: 'Injected field',
+        placeholder: 'using init hook',
+      },
+      ...fieldMeta.fields,
+    ],
+  }),
+  submit: formValues => {
     const fixedValues = {
       '/rest/authType': 'basic',
       '/rest/mediaType': 'json',
       '/rest/pingRelativeURI': '/',
     };
-    const patchSet = defaultPatchSetConverter({
+    const newValues = {
       ...formValues,
       ...fixedValues,
-    });
+    };
 
-    // console.log('custom converter', v);
+    // eslint-disable-next-line no-console
+    console.log('jira new values', newValues);
 
-    return patchSet;
+    return newValues;
   },
 
   fields: [
     {
-      id: 'Name',
-      name: '/name',
-      helpKey: 'connection.name',
-      type: 'text',
-      label: 'Name',
+      fieldId: 'name',
     },
     {
-      id: 'baseURI',
-      name: '/rest/baseURI',
-      helpKey: 'connection.rest.baseURI',
-      type: 'text',
-      label: 'Base URI',
-      required: true,
+      fieldId: 'rest.baseURI',
     },
     {
-      id: 'Username',
-      name: '/rest/basicAuth/username',
-      helpKey: 'connection.rest.basicAuth.username',
-      defaultValue: r => r.rest.basicAuth && r.rest.basicAuth.username,
-      type: 'text',
-      label: 'Username',
-      required: true,
+      fieldId: 'rest.basicAuth.username',
     },
     {
       id: 'Password',

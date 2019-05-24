@@ -3,7 +3,11 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
-import { getFieldPosition, sanitizePatchSet } from '../../forms/utils';
+import {
+  getFieldPosition,
+  sanitizePatchSet,
+  defaultPatchSetConverter,
+} from '../../forms/utils';
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource } from '../resources';
@@ -76,32 +80,17 @@ export function* runHook({ hook, data }) {
   return yield results;
 }
 
-export function* submitFormValues({
-  resourceType,
-  resourceId,
-  connection,
-  values,
-}) {
-  const { merged } = yield select(
+export function* submitFormValues({ resourceType, resourceId, values }) {
+  const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId
   );
 
-  if (!merged) return; // nothing to do.
+  if (!resource) return; // nothing to do.
 
-  const defaultFormAssets = factory.getResourceFormAssets({
-    connection,
-    resourceType,
-    resource: merged,
-  });
+  const { customForm } = resource;
   let finalValues = values;
-  const { customForm } = merged;
-  const form =
-    customForm && customForm.form
-      ? customForm.form
-      : defaultFormAssets.fieldMeta;
-  const fieldMeta = factory.getFieldsWithDefaults(form, resourceType, merged);
 
   if (customForm && customForm.submit) {
     // pre-save-resource
@@ -120,10 +109,15 @@ export function* submitFormValues({
     );
   }
 
+  const formState = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
   const patchSet = sanitizePatchSet({
-    patchSet: defaultFormAssets.converter(finalValues),
-    fieldMeta,
-    merged,
+    patchSet: defaultPatchSetConverter(finalValues),
+    fieldMeta: formState.fieldMeta,
+    resource,
   });
 
   if (patchSet.length > 0) {
@@ -145,6 +139,7 @@ export function* initFormValues({ resourceType, resourceId }) {
 
   if (!resource) return; // nothing to do.
 
+  // TODO: skip this if resourceType === 'connections'
   const { merged: connection } = yield select(
     selectors.resourceData,
     'connections',
@@ -179,6 +174,10 @@ export function* initFormValues({ resourceType, resourceId }) {
       fieldMeta,
       finalFieldMeta
     );
+  } else if (typeof defaultFormAssets.init === 'function') {
+    // standard form init fn...
+
+    finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
   yield put(

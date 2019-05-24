@@ -1,7 +1,6 @@
 import { deepClone } from 'fast-json-patch';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
-import { defaultPatchSetConverter } from './utils';
 
 const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
   fields.forEach(field => {
@@ -52,8 +51,8 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
 const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   let fields;
   let fieldSets = [];
-  let converter;
-  let initializer;
+  let submit;
+  let init;
   let meta;
   let typeOfConnection;
 
@@ -75,7 +74,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets, converter, initializer } = meta);
+        ({ fields, fieldSets, submit, init } = meta);
       }
 
       break;
@@ -102,7 +101,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
         meta = meta[typeOfConnection];
 
         if (meta) {
-          ({ fields, fieldSets, converter, initializer } = meta);
+          ({ fields, fieldSets, init, submit } = meta);
         }
       }
 
@@ -123,8 +122,8 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
 
   return {
     fieldMeta: { fields, fieldSets },
-    converter: converter || defaultPatchSetConverter,
-    initializer,
+    init,
+    submit,
     optionsHandler,
   };
 };
@@ -269,7 +268,6 @@ const setDefaults = (fields, resourceType, resource) => {
     .flat();
 };
 
-// passing an additional a
 const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;

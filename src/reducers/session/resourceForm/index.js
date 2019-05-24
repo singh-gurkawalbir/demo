@@ -27,7 +27,11 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.SUBMIT:
       return {
         ...state,
-        [key]: { ...state[key], submitComplete: false, formValues: undefined },
+        [key]: {
+          ...state[key],
+          submitComplete: false,
+          formValues: undefined,
+        },
       };
 
     case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:
