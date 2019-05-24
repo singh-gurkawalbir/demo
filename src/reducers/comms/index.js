@@ -1,5 +1,5 @@
 import actionTypes from '../../actions/types';
-import commPathGenerator from '../../utils/comPathGenerator';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 
 const initialState = {};
 
@@ -11,42 +11,42 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, reqMethod = 'GET', key } = action;
+  const { type, path, message, hidden, method = 'GET', key } = action;
   let newState;
   const timestamp = Date.now();
-  const commPath = commPathGenerator(path, reqMethod);
+  const commKey = commKeyGenerator(path, method);
 
   switch (type) {
     case actionTypes.API_REQUEST:
-      newState = Object.assign({}, state[commPath]);
+      newState = { ...state[commKey] };
       newState.timestamp = timestamp;
       newState.status = COMM_STATES.LOADING;
       newState.message = message;
       newState.hidden = hidden;
-      newState.reqMethod = reqMethod;
+      newState.method = method;
       delete newState.retry;
 
-      return { ...state, [commPath]: newState };
+      return { ...state, [commKey]: newState };
 
     case actionTypes.API_COMPLETE:
-      newState = Object.assign({}, state[commPath]);
+      newState = { ...state[commKey] };
       newState.status = COMM_STATES.SUCCESS;
       newState.message = message;
       delete newState.retry;
       delete newState.timestamp;
 
-      return { ...state, [commPath]: newState };
+      return { ...state, [commKey]: newState };
 
     case actionTypes.API_RETRY:
-      newState = Object.assign({}, state[commPath]);
+      newState = { ...state[commKey] };
       newState.retry = newState.retry || 0;
       newState.retry += 1;
       newState.timestamp = timestamp;
 
-      return { ...state, [commPath]: newState };
+      return { ...state, [commKey]: newState };
 
     case actionTypes.API_FAILURE:
-      newState = Object.assign({}, state[commPath]);
+      newState = { ...state[commKey] };
       newState.status = COMM_STATES.ERROR;
       newState.message = message || 'unknown error';
 
@@ -55,9 +55,9 @@ export default (state = initialState, action) => {
       delete newState.retry;
       delete newState.timestamp;
 
-      return { ...state, [commPath]: newState };
+      return { ...state, [commKey]: newState };
     case actionTypes.CLEAR_COMMS:
-      newState = Object.assign({}, state);
+      newState = { ...state[commKey] };
       Object.keys(newState).forEach(i => {
         if (
           newState[i].status === COMM_STATES.ERROR ||
@@ -67,14 +67,11 @@ export default (state = initialState, action) => {
       });
 
       return newState;
-    case actionTypes.CLEAR_COMM_BY_KEY:
-      newState = Object.assign({}, state);
+    case actionTypes.CLEAR_COMM_BY_KEY: {
+      const { [key]: value, ...rest } = state;
 
-      if (newState[key]) {
-        delete newState[key];
-      }
-
-      return newState;
+      return rest;
+    }
     // case actionTypes.CLEAR_SUCCESS_COMMS:
     //   newState = Object.assign({}, state);
     //   Object.keys(newState).forEach(i => {
@@ -89,9 +86,7 @@ export default (state = initialState, action) => {
 
 // #region PUBLIC SELECTORS
 export function commReqType(state, resourceName) {
-  return (
-    (state && state[resourceName] && state[resourceName].reqMethod) || 'GET'
-  );
+  return (state && state[resourceName] && state[resourceName].method) || 'GET';
 }
 
 export function isLoading(state, resourceName) {

@@ -38,7 +38,7 @@ export function* onRequestSaga(request) {
     ...options,
     meta: {
       path,
-      reqMethod: method,
+      method,
     },
     responseType: 'text',
   };
@@ -49,9 +49,9 @@ export function* onRequestSaga(request) {
 export function* onSuccessSaga(response, action) {
   // the path is an additional attribute proxied in the request action
   // we could use the uri but some of them have api prefixed some dont
-  const { path, reqMethod } = action.request.meta;
+  const { path, method } = action.request.meta;
 
-  yield put(actions.api.complete(path, reqMethod));
+  yield put(actions.api.complete(path, method));
 
   // if error in response
 
@@ -88,7 +88,7 @@ export function* onSuccessSaga(response, action) {
 }
 
 export function* onErrorSaga(error, action) {
-  const { path, reqMethod } = action.request.meta;
+  const { path, method } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
@@ -101,12 +101,10 @@ export function* onErrorSaga(error, action) {
       // in the network snackbar and simply launch the session
       // expiration modal
       yield put(
-        actions.api.failure(path, reqMethod, JSON.stringify(error.data), hidden)
+        actions.api.failure(path, method, JSON.stringify(error.data), hidden)
       );
     } else {
-      yield put(
-        actions.api.failure(path, reqMethod, JSON.stringify(error.data))
-      );
+      yield put(actions.api.failure(path, method, JSON.stringify(error.data)));
     }
 
     // give up and let the parent saga try.
@@ -116,16 +114,16 @@ export function* onErrorSaga(error, action) {
     return { error };
   }
 
-  const { retryCount = 0 } = yield select(resourceStatus, path, reqMethod);
+  const { retryCount = 0 } = yield select(resourceStatus, path, method);
 
   if (retryCount < tryCount) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
-    yield put(actions.api.retry(path, reqMethod));
+    yield put(actions.api.retry(path, method));
     yield call(sendRequest, action, { silent: false });
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...
-    yield put(actions.api.failure(path, reqMethod, error.data));
+    yield put(actions.api.failure(path, method, error.data));
     // the parent saga may need to know if there was an error for
     // its own "Data story"...
     yield call(throwExceptionUsingTheResponse, error);
@@ -136,7 +134,7 @@ export function* onErrorSaga(error, action) {
 }
 
 export function* onAbortSaga(action) {
-  const { path, reqMethod } = action.request.meta;
+  const { path, method } = action.request.meta;
 
-  yield put(actions.api.complete(path, reqMethod, 'Request aborted'));
+  yield put(actions.api.complete(path, method, 'Request aborted'));
 }
