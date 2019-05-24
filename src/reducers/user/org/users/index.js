@@ -1,5 +1,8 @@
 import actionTypes from '../../../../actions/types';
-import { USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import {
+  USER_ACCESS_LEVELS,
+  INTEGRATION_ACCESS_LEVELS,
+} from '../../../../utils/constants';
 
 export default (state = [], action) => {
   const { type, resourceType, collection, user, _id } = action;
@@ -75,6 +78,48 @@ export function list(state) {
   }));
 
   return aShares;
+}
+
+export function integrationUsers(state, integrationId) {
+  if (!state || !state.length) {
+    return [];
+  }
+
+  const aShares = list(state);
+  const integrationUsers = [];
+  let integrationAccessLevel;
+
+  aShares.forEach(u => {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(u.accessLevel)
+    ) {
+      integrationUsers.push({
+        ...u,
+        accessLevel:
+          u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+            ? INTEGRATION_ACCESS_LEVELS.MANAGE
+            : INTEGRATION_ACCESS_LEVELS.MONITOR,
+        integrationAccessLevel: undefined,
+      });
+    } else if (u.accessLevel === USER_ACCESS_LEVELS.TILE) {
+      integrationAccessLevel = u.integrationAccessLevel.find(
+        ial => ial._integrationId === integrationId
+      );
+
+      if (integrationAccessLevel) {
+        integrationUsers.push({
+          ...u,
+          accessLevel: integrationAccessLevel.accessLevel,
+          integrationAccessLevel: undefined,
+        });
+      }
+    }
+  });
+
+  return integrationUsers;
 }
 
 // #endregion
