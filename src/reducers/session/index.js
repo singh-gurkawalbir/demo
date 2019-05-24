@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
+import resourceForm, * as fromResourceForm from './resourceForm';
 
 export default combineReducers({
+  stage,
   filters,
   editors,
-  stage,
+  resourceForm,
 });
 
 // #region PUBLIC SELECTORS
@@ -32,5 +34,13 @@ export function stagedResource(state, id) {
   if (!state) return {};
 
   return fromStage.stagedResource(state.stage, id);
+}
+
+export function resourceFormState(state, resourceType, resourceId) {
+  return fromResourceForm.resourceFormState(
+    state && state.resourceForm,
+    resourceType,
+    resourceId
+  );
 }
 // #endregion

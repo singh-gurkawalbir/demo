@@ -168,11 +168,29 @@ const editor = {
 // #endregion
 //
 // #region DynaForm Actions
-const dynaForm = {
-  init: (resourceType, resourceId, formMeta) =>
-    action(actionTypes.DYNAFORM.INIT, { resourceType, resourceId, formMeta }),
-  submit: (resourceType, resourceId, values) =>
-    action(actionTypes.DYNAFORM.SUBMIT, { resourceType, resourceId, values }),
+const resourceForm = {
+  init: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId }),
+  initComplete: (resourceType, resourceId, fieldMeta, optionsHandler) =>
+    action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
+      resourceId,
+      resourceType,
+      fieldMeta,
+      optionsHandler,
+    }),
+  submit: (resourceType, resourceId, connection, values) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+      connection,
+    }),
+  submitComplete: (resourceType, resourceId, formValues) =>
+    action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
+      resourceType,
+      resourceId,
+      formValues,
+    }),
 };
 // #endregion
 
@@ -183,7 +201,7 @@ export default {
   patchFilter,
   clearFilter,
   editor,
-  dynaForm,
+  resourceForm,
   resource,
   user,
   api,

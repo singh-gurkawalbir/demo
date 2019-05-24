@@ -43,10 +43,10 @@ const rootReducer = (state, action) => {
 
 export default rootReducer;
 
-// TODO: Do we realy need to proxy all selectors here?
+// TODO: Do we really need to proxy all selectors here?
 // Instead, we could only have the selectors that cross
 // state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintian for the
+// This is a lot of boiler plate code to maintain for the
 // sole purpose of abstracting the state "shape" completely.
 // It may be just fine to directly reference the primary state
 // subdivisions (data, session, comms) in order to simplify the code further...
@@ -91,6 +91,14 @@ export function isAllLoadingCommsAboveThresold(state) {
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
+export function resourceFormState(state, resourceType, resourceId) {
+  return fromSession.resourceFormState(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }
@@ -166,6 +174,7 @@ export function userProfilePreferencesProps(state) {
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
+// #endregion
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {
@@ -221,7 +230,6 @@ export function shouldShowAppRouting(state) {
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
-
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals

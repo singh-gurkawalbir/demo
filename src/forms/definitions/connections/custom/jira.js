@@ -1,6 +1,8 @@
-import { defaultPatchSetConverter } from '../../utils';
+import { defaultPatchSetConverter } from '../../../utils';
 
 export default {
+  // initHook: fieldMeta => { return fieldMeta=undefined}
+  // preSubmitHook: formValues => { // getFormattedData
   converter: formValues => {
     const fixedValues = {
       '/rest/authType': 'basic',
@@ -22,7 +24,6 @@ export default {
       id: 'Name',
       name: '/name',
       helpKey: 'connection.name',
-      defaultValue: r => r.name,
       type: 'text',
       label: 'Name',
     },
@@ -30,7 +31,6 @@ export default {
       id: 'baseURI',
       name: '/rest/baseURI',
       helpKey: 'connection.rest.baseURI',
-      defaultValue: r => r.rest.baseURI,
       type: 'text',
       label: 'Base URI',
       required: true,

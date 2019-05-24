@@ -130,10 +130,69 @@ export function* submitFormValues({
     yield put(actions.resource.patchStaged(resourceId, patchSet));
     yield put(actions.resource.commitStaged(resourceType, resourceId));
   }
+
+  yield put(
+    actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
+  );
 }
 
-export const dynaFormSagas = [
-  // takeEvery(actionTypes.DYNAFORM.INIT, fieldMeta),
-  takeEvery(actionTypes.DYNAFORM.SUBMIT, submitFormValues),
+export function* initFormValues({ resourceType, resourceId }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  if (!resource) return; // nothing to do.
+
+  const { merged: connection } = yield select(
+    selectors.resourceData,
+    'connections',
+    resource._connectionId
+  );
+  const defaultFormAssets = factory.getResourceFormAssets({
+    connection,
+    resourceType,
+    resource,
+  });
+  const { customForm } = resource;
+  const form =
+    customForm && customForm.form
+      ? customForm.form
+      : defaultFormAssets.fieldMeta;
+  //
+  const fieldMeta = factory.getFieldsWithDefaults(form, resourceType, resource);
+  let finalFieldMeta = fieldMeta;
+
+  if (customForm && customForm.init) {
+    // pre-save-resource
+    // this resource has an embedded custom form.
+
+    finalFieldMeta = yield call(runHook, {
+      hook: customForm.init,
+      data: fieldMeta,
+    });
+
+    // eslint-disable-next-line no-console
+    console.log(
+      'metadata passed/returned to custom form init hook: ',
+      fieldMeta,
+      finalFieldMeta
+    );
+  }
+
+  yield put(
+    actions.resourceForm.initComplete(
+      resourceType,
+      resourceId,
+      finalFieldMeta,
+      defaultFormAssets.optionsHandler
+    )
+  );
+}
+
+export const resourceFormSagas = [
+  takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
 ];
