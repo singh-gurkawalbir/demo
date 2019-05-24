@@ -8,7 +8,7 @@ export default function reducer(state = {}, action) {
     fieldMeta,
     optionsHandler,
     formValues,
-    submit,
+    preSubmit,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -22,7 +22,11 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
       return {
         ...state,
-        [key]: { initComplete: true, fieldMeta, optionsHandler, submit },
+        // Are there any issues with storing fn pointers here?
+        // if the state is not serializable, will we recover properly from
+        // refreshing session? Doing this makes the submit resource saga
+        // easier as we dont need to lookup the preSubmit handler...
+        [key]: { initComplete: true, fieldMeta, optionsHandler, preSubmit },
       };
 
     case actionTypes.RESOURCE_FORM.SUBMIT:

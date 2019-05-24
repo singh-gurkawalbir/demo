@@ -51,7 +51,7 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
 const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   let fields;
   let fieldSets = [];
-  let submit;
+  let preSubmit;
   let init;
   let meta;
   let typeOfConnection;
@@ -74,7 +74,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets, submit, init } = meta);
+        ({ fields, fieldSets, preSubmit, init } = meta);
       }
 
       break;
@@ -101,7 +101,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
         meta = meta[typeOfConnection];
 
         if (meta) {
-          ({ fields, fieldSets, init, submit } = meta);
+          ({ fields, fieldSets, init, preSubmit } = meta);
         }
       }
 
@@ -123,7 +123,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   return {
     fieldMeta: { fields, fieldSets },
     init,
-    submit,
+    preSubmit,
     optionsHandler,
   };
 };

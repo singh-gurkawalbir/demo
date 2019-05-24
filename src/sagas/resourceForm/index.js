@@ -97,21 +97,21 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   const { customForm } = resource;
   let finalValues = values;
 
-  if (customForm && customForm.submit) {
+  if (customForm && customForm.preSubmit) {
     // pre-save-resource
     // this resource has an embedded custom form.
 
     finalValues = yield call(runHook, {
-      hook: customForm.submit,
+      hook: customForm.preSubmit,
       data: values,
     });
-  } else if (typeof formState.submit === 'function') {
-    // stock submit handler present...
-    finalValues = formState.submit(values);
+  } else if (typeof formState.preSubmit === 'function') {
+    // stock preSubmit handler present...
+    finalValues = formState.preSubmit(values);
   }
 
   // eslint-disable-next-line no-console
-  console.log('values passed/returned from submit hook: ', values, finalValues);
+  console.log('values before/after preSubmit: ', values, finalValues);
 
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
@@ -180,7 +180,7 @@ export function* initFormValues({ resourceType, resourceId }) {
       resourceId,
       finalFieldMeta,
       defaultFormAssets.optionsHandler,
-      defaultFormAssets.submit
+      defaultFormAssets.preSubmit
     )
   );
 }

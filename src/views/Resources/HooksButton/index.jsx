@@ -88,13 +88,14 @@ class EditFieldButton extends Component {
                   }}>
                   Init
                 </MenuItem>
+                {/* We do not yet have support for an optionsHandler...
                 <MenuItem
                   onClick={() => {
                     popupState.close();
                     this.handleEditorToggle('optionsHandler');
                   }}>
                   Options Handler
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem
                   onClick={() => {
                     popupState.close();

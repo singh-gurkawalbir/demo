@@ -171,13 +171,19 @@ const editor = {
 const resourceForm = {
   init: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId }),
-  initComplete: (resourceType, resourceId, fieldMeta, optionsHandler, submit) =>
+  initComplete: (
+    resourceType,
+    resourceId,
+    fieldMeta,
+    optionsHandler,
+    preSubmit
+  ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
       resourceType,
       fieldMeta,
       optionsHandler,
-      submit,
+      preSubmit,
     }),
   submit: (resourceType, resourceId, connection, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {

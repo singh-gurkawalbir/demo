@@ -12,7 +12,7 @@ export default {
       ...fieldMeta.fields,
     ],
   }),
-  submit: formValues => {
+  preSubmit: formValues => {
     const fixedValues = {
       '/rest/authType': 'basic',
       '/rest/mediaType': 'json',
