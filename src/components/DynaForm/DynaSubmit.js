@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 class FormButton extends Component {
   render() {
     const {
-      onGoingComm,
+      pendingCommResponse,
       isValid,
       onClick,
       children,
@@ -19,7 +19,7 @@ class FormButton extends Component {
         variant="contained"
         color="secondary"
         className={className}
-        disabled={onGoingComm || !isValid}
+        disabled={pendingCommResponse || !isValid}
         onClick={() => onClick(value)}>
         {children}
       </Button>

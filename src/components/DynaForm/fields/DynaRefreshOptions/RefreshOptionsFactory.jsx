@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
     commResourcePath,
     isLoadingData,
     options: computedOptions,
-  } = selectors.metdataOptionsAndResources(
+  } = selectors.metadataOptionsAndResources(
     state,
     connectionId,
     netsuiteSpecificResource,

@@ -709,7 +709,7 @@ export function generateOptionsFromMeta(
   );
 }
 
-export function metdataOptionsAndResources(
+export function metadataOptionsAndResources(
   state,
   connectionId,
   netsuiteSpecificResource,

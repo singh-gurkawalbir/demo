@@ -30,7 +30,7 @@ export default {
   refreshoptions: DynaRefreshOptions,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
-  uploadFile: DynaUploadFile,
+  uploadfile: DynaUploadFile,
   labelTitle: DynaLabel,
   hook: DynaHook,
 };

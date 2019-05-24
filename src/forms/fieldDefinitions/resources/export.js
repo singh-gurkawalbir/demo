@@ -17,7 +17,7 @@ export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
   uploadFile: {
-    type: 'uploadFile',
+    type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
     mode: r => r && r.file && r.file.type,

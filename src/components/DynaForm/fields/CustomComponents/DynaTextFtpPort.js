@@ -13,11 +13,12 @@ class FtpPort extends React.Component {
       name,
       onFieldChange,
       placeholder,
+      value,
       label,
+      options,
       valueType,
     } = this.props;
     let result;
-    const { value, options } = this.props;
 
     if (!value && options) {
       result = options;
