@@ -77,7 +77,7 @@ export function* runHook({ hook, data }) {
   };
   const results = yield call(apiCallWithRetry, { path, opts });
 
-  return yield results;
+  return yield results.data;
 }
 
 export function* submitFormValues({ resourceType, resourceId, values }) {
@@ -110,8 +110,7 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     finalValues = formState.preSubmit(values);
   }
 
-  // eslint-disable-next-line no-console
-  console.log('values before/after preSubmit: ', values, finalValues);
+  // console.log('values before/after preSubmit: ', values, finalValues);
 
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
@@ -172,7 +171,7 @@ export function* initFormValues({ resourceType, resourceId }) {
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
-  // console.log('metadata from init hook: ', fieldMeta, finalFieldMeta);
+  // console.log('fieldMeta before/after init: ', fieldMeta, finalFieldMeta);
 
   yield put(
     actions.resourceForm.initComplete(

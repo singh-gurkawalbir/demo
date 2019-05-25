@@ -11,7 +11,6 @@ import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceFormFactory from '../../components/ResourceForm';
 import ConflictAlertDialog from './ConflictAlertDialog';
-import factory from '../../forms/formFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 
@@ -23,12 +22,14 @@ const mapStateToProps = (state, { match }) => {
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
+  const formState = selectors.resourceFormState(state, resourceType, id);
 
   return {
     resourceType,
     resourceData,
     connection,
     id,
+    fieldMeta: formState.fieldMeta,
   };
 };
 
@@ -119,37 +120,20 @@ class Edit extends Component {
   };
 
   handleToggleEdit = () => {
-    const {
-      resourceData,
-      handlePatchResource,
-      resourceType,
-      connection,
-    } = this.props;
+    const { resourceData, handlePatchResource, fieldMeta } = this.props;
     const { merged: resource } = resourceData;
     const { editMode } = this.state;
 
     if (!editMode) {
       if (!resource.customForm || !resource.customForm.form) {
-        // init the custom form with a copy of current form
-        const { fieldMeta } = factory.getResourceFormAssets({
-          connection,
-          resource,
-          resourceType,
-        });
-        const flattenedFieldMeta = factory.getFlattenedFieldMetaWithRules(
-          fieldMeta,
-          resourceType,
-          resource
-        );
+        // init the resource custom form prop with a copy of current form
+
         const patchSet = [
           {
             op: 'replace',
             path: '/customForm',
             value: {
-              form: {
-                fields: flattenedFieldMeta,
-                fieldSets: { ...fieldMeta.fieldSets },
-              },
+              form: fieldMeta,
             },
           },
         ];

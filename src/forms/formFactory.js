@@ -109,6 +109,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
     case 'scripts':
       meta = formMeta[resourceType];
       ({ fields } = meta);
+
       break;
     default:
       break;
@@ -222,8 +223,8 @@ const applyingMissedOutFieldMetaProperties = (
     field.defaultValue = extractValue(field.fieldId, resource);
   }
 
-  // if name isn't there
-  if (!field.name) {
+  // if name isn't there, fill it!
+  if (!field.name && field.fieldId) {
     field.name = `/${field.fieldId.replace(/\./g, '/')}`;
   }
 
