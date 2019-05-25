@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import users from './org/users';
+import users, * as fromUsers from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
 import profile, * as fromProfile from './profile';
@@ -58,19 +58,12 @@ export function avatarUrl(state) {
 
 // #region ACCESS LEVEL
 export function accessLevel(state) {
-  let accessLevel = null;
+  let accessLevel;
 
   if (state && state.preferences) {
     const { defaultAShareId } = userPreferences(state);
 
-    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      accessLevel = USER_ACCESS_LEVELS.ACCOUNT_OWNER;
-    } else {
-      accessLevel = fromAccounts.accessLevel(
-        state.org.accounts,
-        defaultAShareId
-      );
-    }
+    accessLevel = fromAccounts.accessLevel(state.org.accounts, defaultAShareId);
   }
 
   return accessLevel;
@@ -88,12 +81,12 @@ export function accountSummary(state) {
   const summary = fromAccounts.accountSummary(
     state && state.org && state.org.accounts
   );
-  const prefs = fromPreferences.userPreferences(state && state.preferences);
 
   if (!summary || summary.length === 0) {
     return summary;
   }
 
+  const prefs = fromPreferences.userPreferences(state && state.preferences);
   const id = prefs.defaultAShareId || summary[0].id;
   let environment = prefs.environment || summary[0].environment;
   const filteredAccount = summary.find(
@@ -127,6 +120,37 @@ export function permissions(state) {
   );
 
   return permissions;
+}
+
+export function usersList(state) {
+  return fromUsers.list(state && state.org && state.org.users);
+}
+
+export function integrationUsers(state, integrationId) {
+  return fromUsers.integrationUsers(
+    state && state.org && state.org.users,
+    integrationId
+  );
+}
+
+export function accountOwner(state) {
+  const userAccessLevel = accessLevel(state);
+
+  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    const { name, email } = state && state.profile;
+
+    return { name, email };
+  }
+
+  if (state && state.preferences) {
+    const { defaultAShareId } = userPreferences(state);
+
+    if (defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
+      const ownerUser = fromAccounts.owner(state.org.accounts, defaultAShareId);
+
+      return ownerUser || {};
+    }
+  }
 }
 
 // #endregion PUBLIC USER SELECTORS

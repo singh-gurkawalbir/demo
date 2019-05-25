@@ -34,13 +34,13 @@ class TransformPanel extends Component {
   handleUpdate(row, event, field) {
     const { value } = event.target;
     const { patchEditor, editor } = this.props;
-    const { rule = [] } = editor;
-    // const rule = deepClone(rule);
+    let { rule } = editor;
+
+    if (!rule) rule = [];
 
     event.preventDefault();
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
-    // console.log(`"${row}"`, value, field);
 
     if (row !== undefined) {
       rule[row][field] = value;
@@ -56,7 +56,6 @@ class TransformPanel extends Component {
     const rule = editor.rule
       ? editor.rule.map((rule, index) => ({ row: index, ...rule }))
       : [];
-    // console.log(rule);
     const handleExtractUpdate = row => event =>
       this.handleUpdate(row, event, 'extract');
     const handleGenerateUpdate = row => event =>
@@ -71,13 +70,13 @@ class TransformPanel extends Component {
               defaultValue={r.extract}
               placeholder="extract"
               className={classes.input}
-              onChange={event => handleExtractUpdate(r.row)(event)}
+              onChange={handleExtractUpdate(r.row)}
             />
             <Input
               defaultValue={r.generate}
               placeholder="generate"
               className={classes.input}
-              onChange={event => handleGenerateUpdate(r.row)(event)}
+              onChange={handleGenerateUpdate(r.row)}
             />
           </div>
         ))}
@@ -86,13 +85,13 @@ class TransformPanel extends Component {
             value=""
             placeholder="extract"
             className={classes.input}
-            onChange={event => handleExtractUpdate()(event)}
+            onChange={handleExtractUpdate()}
           />
           <Input
             value=""
             placeholder="generate"
             className={classes.input}
-            onChange={event => handleGenerateUpdate()(event)}
+            onChange={handleGenerateUpdate()}
           />
         </div>
       </div>

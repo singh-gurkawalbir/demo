@@ -15,6 +15,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import stringUtil from '../utils/string';
+import commKeyGen from '../utils/commKeyGenerator';
 import {
   USER_ACCESS_LEVELS,
   TILE_STATUS,
@@ -234,63 +235,91 @@ export function isSessionExpired(state) {
 
 // #region PASSWORD & EMAIL update selectors for modals
 export function changePasswordSuccess(state) {
+  const commKey = commKeyGen(
+    changePasswordParams.path,
+    changePasswordParams.opts.method
+  );
+
   return (
     state &&
     state.comms &&
-    state.comms[changePasswordParams.path] &&
-    state.comms[changePasswordParams.path].status &&
-    state.comms[changePasswordParams.path].status ===
-      fromComms.COMM_STATES.SUCCESS
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
   );
 }
 
 export function changePasswordFailure(state) {
+  const commKey = commKeyGen(
+    changePasswordParams.path,
+    changePasswordParams.opts.method
+  );
+
   return (
     state &&
     state.comms &&
-    state.comms[changePasswordParams.path] &&
-    state.comms[changePasswordParams.path].status &&
-    state.comms[changePasswordParams.path].status ===
-      fromComms.COMM_STATES.ERROR
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
   );
 }
 
 export function changePasswordMsg(state) {
+  const commKey = commKeyGen(
+    changePasswordParams.path,
+    changePasswordParams.opts.method
+  );
+
   return (
     (state &&
       state.comms &&
-      state.comms[changePasswordParams.path] &&
-      state.comms[changePasswordParams.path].message) ||
+      state.comms[commKey] &&
+      state.comms[commKey].message) ||
     ''
   );
 }
 
 export function changeEmailFailure(state) {
+  const commKey = commKeyGen(
+    changeEmailParams.path,
+    changeEmailParams.opts.method
+  );
+
   return (
     state &&
     state.comms &&
-    state.comms[changeEmailParams.path] &&
-    state.comms[changeEmailParams.path].status &&
-    state.comms[changeEmailParams.path].status === fromComms.COMM_STATES.ERROR
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
   );
 }
 
 export function changeEmailSuccess(state) {
+  const commKey = commKeyGen(
+    changeEmailParams.path,
+    changeEmailParams.opts.method
+  );
+
   return (
     state &&
     state.comms &&
-    state.comms[changeEmailParams.path] &&
-    state.comms[changeEmailParams.path].status &&
-    state.comms[changeEmailParams.path].status === fromComms.COMM_STATES.SUCCESS
+    state.comms[commKey] &&
+    state.comms[commKey].status &&
+    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
   );
 }
 
 export function changeEmailMsg(state) {
+  const commKey = commKeyGen(
+    changeEmailParams.path,
+    changeEmailParams.opts.method
+  );
+
   return (
     (state &&
       state.comms &&
-      state.comms[changeEmailParams.path] &&
-      state.comms[changeEmailParams.path].message) ||
+      state.comms[commKey] &&
+      state.comms[commKey].message) ||
     ''
   );
 }
@@ -299,12 +328,17 @@ export function changeEmailMsg(state) {
 
 // #region USER SELECTORS
 export function testConnectionCommState(state) {
+  const commKey = commKeyGen(
+    pingConnectionParams.path,
+    pingConnectionParams.opts.method
+  );
+
   if (
     !(
       state &&
       state.comms &&
-      state.comms[pingConnectionParams.path] &&
-      state.comms[pingConnectionParams.path].status
+      state.comms[commKey] &&
+      state.comms[commKey].status
     )
   )
     return {
@@ -312,7 +346,7 @@ export function testConnectionCommState(state) {
       message: null,
     };
 
-  const comm = state.comms[pingConnectionParams.path];
+  const comm = state.comms[commKey];
 
   return {
     commState: comm.status,
@@ -531,15 +565,19 @@ export function tiles(state) {
 
 // #region PUBLIC GLOBAL SELECTORS
 export function isProfileDataReady(state) {
+  const commKey = commKeyGen('/profile', 'GET');
+
   return !!(
     state &&
     hasProfile(state) &&
-    !fromComms.isLoading(state.comms, '/profile')
+    !fromComms.isLoading(state.comms, commKey)
   );
 }
 
 export function isProfileLoading(state) {
-  return !!(state && fromComms.isLoading(state.comms, '/profile'));
+  const commKey = commKeyGen('/profile', 'GET');
+
+  return !!(state && fromComms.isLoading(state.comms, commKey));
 }
 
 export function isDataReady(state, resource) {
@@ -551,20 +589,25 @@ export function isDataReady(state, resource) {
 
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
-export function resourceStatus(state, origResourceType) {
+export function resourceStatus(
+  state,
+  origResourceType,
+  resourceReqMethod = 'GET'
+) {
   const resourceType = `/${origResourceType}`;
-  const reqType = fromComms.commReqType(state.comms, resourceType);
+  const commKey = commKeyGen(resourceType, resourceReqMethod);
+  const method = resourceReqMethod;
   const hasData = fromData.hasData(state.data, origResourceType);
-  const isLoading = fromComms.isLoading(state.comms, resourceType);
-  const retryCount = fromComms.retryCount(state.comms, resourceType);
-  const isReady = reqType !== 'GET' || (hasData && !isLoading);
+  const isLoading = fromComms.isLoading(state.comms, commKey);
+  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
 
   return {
     resourceType: origResourceType,
     hasData,
     isLoading,
     retryCount,
-    reqType,
+    method,
     isReady,
   };
 }
@@ -645,4 +688,26 @@ export function newResourceData(state, resourceType, id) {
   return data;
 }
 
+export function orgUsers(state) {
+  return fromUser.usersList(state.user);
+}
+
+export function integrationUsersForOwner(state, integrationId) {
+  return fromUser.integrationUsers(state.user, integrationId);
+}
+
+export function integrationUsers(state, integrationId) {
+  return fromData.integrationUsers(state.data, integrationId);
+}
+
+export function accountOwner(state) {
+  return fromUser.accountOwner(state.user);
+}
+
 // #endregion
+
+export function commStatusByKey(state, key) {
+  const commStatus = state && state.comms && state.comms[key];
+
+  return commStatus;
+}

@@ -40,13 +40,13 @@ const auth = {
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
 };
 const api = {
-  request: (path, message, hidden, reqType) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, reqType }),
-  retry: path => action(actionTypes.API_RETRY, { path }),
-  complete: (path, message) =>
-    action(actionTypes.API_COMPLETE, { path, message }),
-  failure: (path, message) =>
-    action(actionTypes.API_FAILURE, { path, message }),
+  request: (path, method, message, hidden) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, method }),
+  retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
+  complete: (path, method, message) =>
+    action(actionTypes.API_COMPLETE, { path, method, message }),
+  failure: (path, method, message, hidden) =>
+    action(actionTypes.API_FAILURE, { path, method, message, hidden }),
 };
 // #region Resource Actions
 const resource = {
@@ -114,6 +114,16 @@ const user = {
     users: {
       requestCollection: message =>
         resource.requestCollection('ashares', undefined, message),
+      create: user => action(actionTypes.USER_CREATE, { user }),
+      created: user => action(actionTypes.USER_CREATED, { user }),
+      update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
+      updated: user => action(actionTypes.USER_UPDATED, { user }),
+      delete: _id => action(actionTypes.USER_DELETE, { _id }),
+      deleted: _id => action(actionTypes.USER_DELETED, { _id }),
+      disable: (_id, disabled) =>
+        action(actionTypes.USER_DISABLE, { _id, disabled }),
+      disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
+      makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
     },
     accounts: {
       requestCollection: message =>
@@ -128,6 +138,7 @@ const user = {
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
+      acceptedInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPTED, { id }),
       rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id, environment }) =>
@@ -145,6 +156,7 @@ const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
+const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
 // #region Editor actions
@@ -205,6 +217,7 @@ export default {
   cancelTask,
   reloadApp,
   clearComms,
+  clearCommByKey,
   patchFilter,
   clearFilter,
   editor,

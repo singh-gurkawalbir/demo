@@ -28,12 +28,14 @@ export function* evaluateProcessor({ id }) {
   // console.log(`editorProcessorOptions for ${id}`, processor, body);
   const path = `/processors/${processor}`;
   const opts = {
-    method: 'post',
+    method: 'POST',
     body,
   };
 
   try {
-    const results = yield call(apiCallWithRetry, { path, opts });
+    // we are hidding this comm activity from the network snackbar
+
+    const results = yield call(apiCallWithRetry, { path, opts, hidden: true });
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {

@@ -5,25 +5,28 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
 import actions from '../../actions';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 const STATES = selectors.COMM_STATES;
 
 describe('comms reducers', () => {
   const path = '/test/path/';
+  const method = 'GET';
+  const commKey = commKeyGenerator(path, method);
 
   describe(`clear comms action `, () => {
     test('clear the comms part of the redux store', () => {
-      const newState = reducer(undefined, actions.api.request(path));
+      const newState = reducer(undefined, actions.api.request(path, method));
       let completedApiActionState = reducer(
         newState,
-        actions.api.complete(path)
+        actions.api.complete(path, method)
       );
       const failedApiResourcePath = '/sisnifdif';
 
       completedApiActionState = reducer(
         completedApiActionState,
-        actions.api.failure(failedApiResourcePath)
+        actions.api.failure(failedApiResourcePath, method)
       );
 
       // now wipe out the comms store
@@ -37,125 +40,152 @@ describe('comms reducers', () => {
       });
     });
   });
+
   describe(`request action`, () => {
     test('should set loading flag', () => {
-      const newState = reducer(undefined, actions.api.request(path));
+      const newState = reducer(undefined, actions.api.request(path, method));
 
-      expect(newState[path].status).toBe(STATES.LOADING);
+      expect(newState[commKey].status).toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, method));
 
-      expect(state[path].retry).toBe(1);
+      expect(state[commKey].retry).toBe(1);
 
-      const newState = reducer(state, actions.api.request(path));
+      const newState = reducer(state, actions.api.request(path, method));
 
-      expect(newState[path].retry).toBeUndefined();
+      expect(newState[commKey].retry).toBeUndefined();
     });
   });
 
   describe(`completed action`, () => {
     test('should clear loading flag', () => {
-      const state = reducer(undefined, actions.api.request(path));
+      const state = reducer(undefined, actions.api.request(path, method));
 
-      expect(state[path].status).toBe(STATES.LOADING);
+      expect(state[commKey].status).toBe(STATES.LOADING);
 
-      const newState = reducer(state, actions.api.complete(path));
+      const newState = reducer(state, actions.api.complete(path, method));
 
-      expect(newState[path].status).not.toBe(STATES.LOADING);
+      expect(newState[commKey].status).not.toBe(STATES.LOADING);
     });
 
     test('should reset retry flag', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, method));
 
-      expect(state[path].retry).toBe(1);
+      expect(state[commKey].retry).toBe(1);
 
-      const newState = reducer(state, actions.api.complete(path));
+      const newState = reducer(state, actions.api.request(path, method));
 
-      expect(newState[path].retry).toBeUndefined();
+      expect(newState[commKey].retry).toBeUndefined();
     });
   });
 
   describe(`failure action`, () => {
     test('should set error message', () => {
-      const state = reducer(undefined, actions.api.failure(path, 'error'));
+      const state = reducer(
+        undefined,
+        actions.api.failure(path, method, 'error')
+      );
 
-      expect(state[path].message).toEqual('error');
+      expect(state[commKey].message).toEqual('error');
     });
     test('should default an error message if none is provided in the action', () => {
-      const state = reducer(undefined, actions.api.failure(path));
+      const state = reducer(undefined, actions.api.failure(path, method));
 
-      expect(state[path].message).toEqual('unknown error');
+      expect(state[commKey].message).toEqual('unknown error');
     });
     test('should clear loading and retry count', () => {
-      let state = reducer(undefined, actions.api.request(path));
+      let state = reducer(undefined, actions.api.request(path, method));
 
-      state = reducer(state, actions.api.retry(path));
-      expect(state[path].status).toBe(STATES.LOADING);
-      expect(state[path].retry).toBe(1);
+      state = reducer(state, actions.api.retry(path, method));
+      expect(state[commKey].status).toBe(STATES.LOADING);
+      expect(state[commKey].retry).toBe(1);
 
-      state = reducer(state, actions.api.failure(path, 'error'));
+      state = reducer(state, actions.api.failure(path, method, 'error'));
 
-      expect(state[path].status).toBe(STATES.ERROR);
-      expect(state[path].retry).toBeUndefined();
+      expect(state[commKey].status).toBe(STATES.ERROR);
+      expect(state[commKey].retry).toBeUndefined();
     });
   });
 
   describe(`retry action`, () => {
     test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
       // force the retry value to be set...
-      const state = reducer(undefined, actions.api.retry(path));
+      const state = reducer(undefined, actions.api.retry(path, method));
 
-      expect(state[path].retry).toBe(1);
+      expect(state[commKey].retry).toBe(1);
 
-      let newState = reducer(state, actions.api.retry(path));
+      let newState = reducer(state, actions.api.retry(path, method));
 
-      expect(newState[path].retry).toBe(2);
+      expect(newState[commKey].retry).toBe(2);
 
-      newState = reducer(newState, actions.api.retry(path));
+      newState = reducer(newState, actions.api.retry(path, method));
 
-      expect(newState[path].retry).toBe(3);
+      expect(newState[commKey].retry).toBe(3);
+    });
+  });
+
+  describe('clear comm by key', () => {
+    test('should not change the state when key not found', () => {
+      const state = reducer(undefined, 'some action');
+      const newState = reducer(state, actions.clearCommByKey('something'));
+
+      expect(newState).toEqual(state);
+    });
+    test('should remove the key from state', () => {
+      const state = reducer(
+        {
+          something: { test: 'something' },
+          somethingelse: { test: 'somethingelse' },
+        },
+        'some action'
+      );
+      const newState = reducer(state, actions.clearCommByKey('something'));
+
+      expect(newState).toEqual({ somethingelse: { test: 'somethingelse' } });
     });
   });
 });
 
 describe('comms selectors', () => {
   const path = '/test/path';
+  const method = 'GET';
+  const commKey = commKeyGenerator(path, method);
 
   describe(`isLoading`, () => {
     test('should be false on initial state', () => {
-      const isLoading = selectors.isLoading(undefined, path);
+      const isLoading = selectors.isLoading(undefined, commKey);
 
       expect(isLoading).toBe(false);
     });
 
     test('should be true after request action', () => {
-      const state = reducer(undefined, actions.api.request(path));
-      const isLoading = selectors.isLoading(state, path);
+      const state = reducer(undefined, actions.api.request(path, method));
+      const isLoading = selectors.isLoading(state, commKey);
 
       expect(isLoading).toBe(true);
     });
 
     test('should be false after received action', () => {
       const state = reducer(undefined, actions.resource.received(path));
-      const isLoading = selectors.isLoading(state, path);
+      const isLoading = selectors.isLoading(state, commKey);
 
       expect(isLoading).toBe(false);
     });
   });
   describe(`retryCount`, () => {
     test('should be 0 on initial state', () => {
-      const count = selectors.retryCount(undefined, path);
+      const count = selectors.retryCount(undefined, commKey);
 
       expect(count).toBe(0);
     });
 
     test('should be 1 after first retry action', () => {
-      const state = reducer(undefined, actions.api.retry(path));
-      const count = selectors.retryCount(state, path);
+      const state = reducer(undefined, actions.api.retry(path, method));
+      const count = selectors.retryCount(state, commKey);
 
       expect(count).toBe(1);
     });
@@ -164,8 +194,8 @@ describe('comms selectors', () => {
       let state;
 
       for (let i = 1; i < 5; i += 1) {
-        state = reducer(state, actions.api.retry(path));
-        const count = selectors.retryCount(state, path);
+        state = reducer(state, actions.api.retry(path, method));
+        const count = selectors.retryCount(state, commKey);
 
         expect(count).toBe(i);
       }
@@ -201,8 +231,9 @@ describe('comms selectors', () => {
       let state;
 
       // assign
-      state = reducer(state, actions.api.request(path));
-      state = reducer(state, actions.api.complete(path));
+      state = reducer(state, actions.api.request(path, method));
+      // check this action
+      state = reducer(state, actions.api.complete(path, method));
 
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -215,7 +246,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.api.request('exports', 'Loading Exports')
+        actions.api.request('exports', method, 'Loading Exports')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -226,7 +257,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Loading Exports',
           status: STATES.LOADING,
-          name: 'exports',
+          name: commKeyGenerator('exports', method),
           retryCount: 0,
           timestamp: expect.any(Number),
         },
@@ -241,11 +272,19 @@ describe('comms selectors', () => {
 
       state = reducer(
         state,
-        actions.api.request(pathA, 'Some msg indicating loading of Resource')
+        actions.api.request(
+          pathA,
+          method,
+          'Some msg indicating loading of Resource'
+        )
       );
       state = reducer(
         state,
-        actions.api.request(pathB, 'Some msg indicating loading of Resource')
+        actions.api.request(
+          pathB,
+          method,
+          'Some msg indicating loading of Resource'
+        )
       );
 
       // act
@@ -257,7 +296,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
           status: STATES.LOADING,
-          name: pathA,
+          name: commKeyGenerator(pathA, method),
           retryCount: 0,
           timestamp: expect.any(Number),
         },
@@ -265,7 +304,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'Some msg indicating loading of Resource',
           status: STATES.LOADING,
-          name: pathB,
+          name: commKeyGenerator(pathB, method),
           retryCount: 0,
           timestamp: expect.any(Number),
         },
@@ -276,7 +315,7 @@ describe('comms selectors', () => {
       // assign
       const state = reducer(
         undefined,
-        actions.api.failure(path, 'my nice error')
+        actions.api.failure(path, method, 'my nice error')
       );
       // act
       const result = selectors.allLoadingOrErrored(state);
@@ -287,7 +326,7 @@ describe('comms selectors', () => {
           isHidden: false,
           message: 'my nice error',
           status: STATES.ERROR,
-          name: path,
+          name: commKey,
           retryCount: 0,
           timestamp: expect.any(Number),
         },
