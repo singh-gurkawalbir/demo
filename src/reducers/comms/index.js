@@ -67,14 +67,11 @@ export default (state = initialState, action) => {
       });
 
       return newState;
-    case actionTypes.CLEAR_COMM_BY_KEY:
-      newState = { ...state[commKey] };
+    case actionTypes.CLEAR_COMM_BY_KEY: {
+      const { [key]: value, ...rest } = state;
 
-      if (newState[key]) {
-        delete newState[key];
-      }
-
-      return newState;
+      return rest;
+    }
     // case actionTypes.CLEAR_SUCCESS_COMMS:
     //   newState = Object.assign({}, state);
     //   Object.keys(newState).forEach(i => {

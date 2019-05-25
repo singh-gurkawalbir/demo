@@ -679,6 +679,10 @@ export function orgUsers(state) {
   return fromUser.usersList(state.user);
 }
 
+export function integrationUsersForOwner(state, integrationId) {
+  return fromUser.integrationUsers(state.user, integrationId);
+}
+
 export function integrationUsers(state, integrationId) {
   return fromData.integrationUsers(state.data, integrationId);
 }

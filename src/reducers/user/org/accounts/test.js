@@ -831,5 +831,112 @@ describe('account (ashares) reducers', () => {
         expect(permissions).toEqual(tileUserPermissions);
       });
     });
+    describe('accessLevel', () => {
+      test('should return correct access level when state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+
+        expect(selectors.accessLevel(state)).toEqual(undefined);
+        expect(selectors.accessLevel(state, 'something')).toEqual(undefined);
+        expect(selectors.accessLevel(state, ACCOUNT_IDS.OWN)).toEqual(
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER
+        );
+      });
+
+      test('should return correct accessLevel for an owner', () => {
+        const state = reducer([], 'some action');
+
+        expect(selectors.accessLevel(state, ACCOUNT_IDS.OWN)).toEqual(
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER
+        );
+      });
+      test('should return correct accessLevel for an org user with account level manage access', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+            },
+            {
+              _id: 'ashare2',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.accessLevel(state, 'ashare1')).toEqual(
+          USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+        );
+      });
+      test('should return correct accessLevel for an org user with account level monitor access', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+            },
+            {
+              _id: 'ashare2',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.accessLevel(state, 'ashare2')).toEqual(
+          USER_ACCESS_LEVELS.ACCOUNT_MONITOR
+        );
+      });
+      test('should return correct accessLevel for an org user with tile level access', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+            },
+            {
+              _id: 'ashare2',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.accessLevel(state, 'ashare1')).toEqual(
+          USER_ACCESS_LEVELS.TILE
+        );
+      });
+    });
+    describe('owner', () => {
+      test('should return undefined if state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+
+        expect(selectors.owner(state, 'ashare1')).toEqual(undefined);
+      });
+      test('should return correct owner info', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashare2',
+              ownerUser: { email: 'owner2@test.com', name: 'Owner Two' },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.owner(state, 'ashare1')).toEqual({
+          email: 'owner1@test.com',
+          name: 'Owner One',
+        });
+        expect(selectors.owner(state, 'ashare2')).toEqual({
+          email: 'owner2@test.com',
+          name: 'Owner Two',
+        });
+        expect(selectors.owner(state, 'invalid')).toEqual(undefined);
+      });
+    });
   });
 });

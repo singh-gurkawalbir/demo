@@ -851,3 +851,41 @@ describe('tiles', () => {
     expect(tilesForTileLevelAccessUser).toEqual(expectedForTileLevelAccessUser);
   });
 });
+
+describe('commStatusByKey', () => {
+  test('should return correct status', () => {
+    const state = reducer(
+      {
+        comms: {
+          'GET:/test': { something: 'something' },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.commStatusByKey(state, 'GET:/test')).toEqual({
+      something: 'something',
+    });
+  });
+  test('should return undefined if key not found', () => {
+    const state = reducer(
+      {
+        comms: {
+          'GET:/test': { something: 'something' },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
+      undefined
+    );
+  });
+  test('should return undefined if state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
+      undefined
+    );
+  });
+});

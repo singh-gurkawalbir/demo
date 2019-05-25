@@ -34,10 +34,10 @@ class UserForm extends Component {
       users,
       onSaveClick,
       onCancelClick,
-      userId,
+      id,
     } = this.props;
-    const isEditMode = !!userId;
-    const data = isEditMode ? users.find(u => u._id === userId) : undefined;
+    const isEditMode = !!id;
+    const data = isEditMode ? users.find(u => u._id === id) : undefined;
     let integrationsToManage = [];
     let integrationsToMonitor = [];
 
@@ -64,7 +64,6 @@ class UserForm extends Component {
         type: 'text',
         label: 'Email',
         defaultValue: isEditMode ? data.sharedWithUser.email : '',
-        visible: true,
         required: true,
         disabled: isEditMode,
         helpText:
@@ -76,9 +75,7 @@ class UserForm extends Component {
         type: 'select',
         label: 'Access Level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
-        visible: true,
         required: true,
-        disabled: false,
         options: [
           {
             items: [
@@ -117,7 +114,6 @@ class UserForm extends Component {
             is: [[]],
           },
         ],
-        disabled: false,
         options: [
           {
             items: integrations.map(i => ({ label: i.name, value: i._id })),
@@ -144,7 +140,6 @@ class UserForm extends Component {
             is: [[]],
           },
         ],
-        disabled: false,
         options: [
           {
             items: integrations.map(i => ({ label: i.name, value: i._id })),
