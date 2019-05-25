@@ -2,11 +2,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import { resourceStatus } from '../../reducers';
+import * as selectors from '../../reducers';
 
 const mapStateToProps = (state, { resources }) => {
   const requiredStatus = resources.reduce((acc, resourceType) => {
-    acc.push(resourceStatus(state, resourceType));
+    acc.push(selectors.resourceStatus(state, resourceType));
 
     return acc;
   }, []);

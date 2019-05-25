@@ -9,6 +9,7 @@ import netSuiteDistributedAdaptor from './netSuiteDistributedAdaptor';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
 import mongodb from './mongodb';
+import custom from './custom';
 
 export default {
   rdbms,
@@ -22,4 +23,5 @@ export default {
   salesforce,
   wrapper,
   mongodb,
+  custom,
 };

@@ -5,7 +5,6 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
-import { getFieldPosition } from '../../forms/utils';
 import PingConnectionSaga from './connections';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
@@ -77,7 +76,14 @@ export function* commitStagedChanges({ resourceType, id }) {
       },
     });
 
+    // HACK! when updating scripts, since content is stored in s3, it
+    // seems the PUT API response does not contain the content.
+    if (merged.content && updated.content === undefined) {
+      updated.content = merged.content;
+    }
+
     yield put(actions.resource.received(resourceType, updated));
+
     yield put(actions.resource.clearStaged(id));
   } catch (error) {
     // Dave would handle this part
@@ -116,45 +122,9 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* patchFormField({
-  resourceType,
-  resourceId,
-  fieldId,
-  value,
-  op = 'replace',
-  offset = 0,
-}) {
-  const { merged } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
-
-  if (!merged) return; // nothing to do.
-
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return; // nothing to do
-
-  const { index, fieldSetIndex } = getFieldPosition({ meta, id: fieldId });
-
-  if (index === undefined) return; // nothing to do.
-
-  const path =
-    fieldSetIndex === undefined
-      ? `/customForm/form/fields/${index + offset}`
-      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
-  const patchSet = [{ op, path, value }];
-
-  // console.log('dispatching patch with: ', patchSet);
-
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
-}
-
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
-  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   ...PingConnectionSaga,
 ];

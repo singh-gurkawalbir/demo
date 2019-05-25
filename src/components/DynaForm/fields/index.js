@@ -13,6 +13,7 @@ import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
+import DynaScriptContent from './DynaScriptContent';
 
 export default {
   text: DynaText,
@@ -31,4 +32,5 @@ export default {
   uploadFile: DynaUploadFile,
   labelTitle: DynaLabel,
   hook: DynaHook,
+  scriptcontent: DynaScriptContent,
 };

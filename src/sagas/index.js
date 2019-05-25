@@ -5,6 +5,7 @@ import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
+import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import editorSagas from './editor';
 import {
@@ -62,7 +63,7 @@ export function* apiCallWithRetry(args) {
 export default function* rootSaga() {
   yield createRequestInstance({
     driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this pollyfill package
+      // AbortController Not supported in IE installed this polyfill package
       // that it would resort to
       // TODO: Have to check if it works in an IE explorer
       AbortController: window.AbortController,
@@ -77,5 +78,6 @@ export default function* rootSaga() {
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
+    ...resourceFormSagas,
   ]);
 }
