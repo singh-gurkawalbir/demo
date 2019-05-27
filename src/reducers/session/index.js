@@ -41,14 +41,14 @@ export function metadataResource(
   connectionId,
   applicationType,
   resourceType,
-  netsuiteSpecificResource
+  mode
 ) {
   return fromMetadata.metadataCollection(
     (state && state.metadata) || null,
     connectionId,
     applicationType,
     resourceType,
-    netsuiteSpecificResource
+    mode
   );
 }
 
@@ -57,7 +57,7 @@ export function generateOptionsFromMeta(
   connectionId,
   applicationType,
   resourceType,
-  netsuiteSpecificResource
+  mode
 ) {
   let options = null;
 
@@ -68,10 +68,10 @@ export function generateOptionsFromMeta(
         connectionId,
         applicationType,
         resourceType,
-        netsuiteSpecificResource
+        mode
       ) || [];
 
-    if (netsuiteSpecificResource === 'webservices') {
+    if (mode === 'webservices') {
       if (resourceType === 'recordTypes') {
         // {"internalId":"Account","label":"Account"}
         options = data.map(item => ({ label: item.label, value: item.label }));
@@ -83,7 +83,7 @@ export function generateOptionsFromMeta(
           value: item.scriptId,
         }));
       }
-    } else if (netsuiteSpecificResource === 'suitescript') {
+    } else if (mode === 'suitescript') {
       if (resourceType === 'recordTypes') {
         // {id: "account",name: "Account",
         // permissionId: "LIST_ACCOUNT",scriptId: "account",

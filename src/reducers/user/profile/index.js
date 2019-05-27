@@ -2,7 +2,7 @@ import actionTypes from '../../../actions/types';
 
 export default (state = null, action) => {
   const { type, resourceType, resource, profile } = action;
-  const newState = Object.assign({}, state);
+  const newState = { ...state };
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED:

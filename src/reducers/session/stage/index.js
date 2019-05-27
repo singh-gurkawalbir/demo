@@ -12,7 +12,7 @@ export default (state = {}, action) => {
         return state;
       }
 
-      newState = Object.assign({}, state);
+      newState = { ...state };
 
       // drop all staged patches.
       delete newState[id].patch;
@@ -26,7 +26,7 @@ export default (state = {}, action) => {
         return state;
       }
 
-      newState = Object.assign({}, state);
+      newState = { ...state };
 
       // drop last patch.
       if (newState[id].patch.length > 1) {
@@ -38,7 +38,7 @@ export default (state = {}, action) => {
       return newState;
 
     case actionTypes.RESOURCE.STAGE_PATCH:
-      newState = Object.assign({}, state);
+      newState = { ...state };
       newState[id] = newState[id] || {};
       newPatch = newState[id].patch || [];
 
@@ -61,7 +61,7 @@ export default (state = {}, action) => {
       return newState;
 
     case actionTypes.RESOURCE.STAGE_CONFLICT:
-      newState = Object.assign({}, state);
+      newState = { ...state };
       newState[id] = newState[id] || {};
       newState[id].conflict = conflict;
 
@@ -72,8 +72,7 @@ export default (state = {}, action) => {
         return state;
       }
 
-      newState = Object.assign({}, state);
-
+      newState = { ...state };
       delete newState[id].conflict;
 
       return newState;

@@ -1109,6 +1109,10 @@ export default {
   'netsuite.recordType': {
     label: 'Record Type',
     type: 'refreshoptions',
+    resourceType: 'recordTypes',
+    mode: 'suitescript',
+    placeholder: 'Please select a record type',
+    connectionId: r => r._connectionId,
   },
 
   'netsuite.searches.searchId': {

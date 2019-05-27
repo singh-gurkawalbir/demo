@@ -4,13 +4,7 @@ export default (
   state = { netsuite: { webservices: {}, suitescript: {} }, salesforce: {} },
   action
 ) => {
-  const {
-    type,
-    resource,
-    connectionId,
-    resourceType,
-    netsuiteSpecificResource,
-  } = action;
+  const { type, resource, connectionId, resourceType, mode } = action;
   let newState;
 
   switch (type) {
@@ -20,12 +14,9 @@ export default (
     // to just the root of the object realizes they are updates to
     // the children and subsequently rerenders.
     case actionTypes.RECEIVED_NETSUITE_COLLECTION: {
-      newState = Object.assign({}, state.netsuite);
-      newState[netsuiteSpecificResource] = Object.assign(
-        {},
-        state.netsuite[netsuiteSpecificResource]
-      );
-      const specificResource = newState[netsuiteSpecificResource];
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificResource = newState[mode];
 
       specificResource[connectionId] = {
         ...specificResource[connectionId],
@@ -45,18 +36,16 @@ export const metadataCollection = (
   connectionId,
   applicationType,
   resourceType,
-  netsuiteSpecificResource
+  mode
 ) => {
   const applicationResource = (state && state[applicationType]) || null;
 
   if (applicationType === 'netsuite') {
     return (
       (applicationResource &&
-        applicationResource[netsuiteSpecificResource] &&
-        applicationResource[netsuiteSpecificResource][connectionId] &&
-        applicationResource[netsuiteSpecificResource][connectionId][
-          resourceType
-        ]) ||
+        applicationResource[mode] &&
+        applicationResource[mode][connectionId] &&
+        applicationResource[mode][connectionId][resourceType]) ||
       null
     );
   }

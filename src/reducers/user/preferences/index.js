@@ -16,7 +16,7 @@ export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
 export default (state = { environment: 'production' }, action) => {
   const { type, resourceType, resource, preferences } = action;
-  let newState = Object.assign({}, state);
+  let newState = { ...state };
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED:

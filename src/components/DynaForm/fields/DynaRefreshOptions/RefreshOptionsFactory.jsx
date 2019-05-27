@@ -6,16 +6,16 @@ import actions from '../../../../actions';
 import RefreshGenericResource from './RefreshGenericResource';
 
 const mapStateToProps = (state, ownProps) => {
-  const { connectionId, resourceType, netsuiteSpecificResource } = ownProps;
+  const { connectionId, resourceType, mode } = ownProps;
   const {
     applicationType,
     commResourcePath,
     isLoadingData,
-    options: computedOptions,
+    options,
   } = selectors.metadataOptionsAndResources(
     state,
     connectionId,
-    netsuiteSpecificResource,
+    mode,
     resourceType
   );
 
@@ -23,7 +23,7 @@ const mapStateToProps = (state, ownProps) => {
     applicationType,
     commResourcePath,
     isLoadingData,
-    computedOptions,
+    options,
   };
 };
 
@@ -34,7 +34,7 @@ const mapDispatchToProps = dispatch => ({
       applicationType,
       connectionId,
       resourceType,
-      netsuiteSpecificResource,
+      mode,
     } = stateProps;
 
     return dispatch(
@@ -43,7 +43,7 @@ const mapDispatchToProps = dispatch => ({
         applicationType,
         connectionId,
         resourceType,
-        netsuiteSpecificResource
+        mode
       )
     );
   },
@@ -51,18 +51,14 @@ const mapDispatchToProps = dispatch => ({
 
 class DynaSelectOptionsGenerator extends React.Component {
   render() {
-    const {
-      onFetchResource,
-      computedOptions,
-      isLoadingData,
-      ...rest
-    } = this.props;
+    const { onFetchResource, options, isLoadingData, ...rest } = this.props;
 
     return (
       <RefreshGenericResource
+        place
         onFetchResource={() => onFetchResource(this.props)}
-        resourceIsLoading={isLoadingData}
-        computedOptions={computedOptions}
+        isLoading={isLoadingData}
+        options={options}
         {...rest}
       />
     );

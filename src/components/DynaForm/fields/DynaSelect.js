@@ -23,7 +23,7 @@ class MaterialUiSelect extends React.Component {
       disabled,
       id,
       value,
-      defaultValue,
+      defaultValue = '',
       // isValid,
       name,
       options = [],

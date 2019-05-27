@@ -8,7 +8,7 @@ function* getNetsuiteOrSalesforceResourceCollection({
   applicationType,
   connectionId,
   resourceType,
-  netsuiteSpecificResource,
+  mode,
 }) {
   const path = `/${commResourcePath}`;
 
@@ -21,7 +21,7 @@ function* getNetsuiteOrSalesforceResourceCollection({
           resource,
           resourceType,
           connectionId,
-          netsuiteSpecificResource
+          mode
         )
       );
 
@@ -33,7 +33,7 @@ function* getNetsuiteOrSalesforceResourceCollection({
 
 export default [
   takeEvery(
-    actionTypes.REQUEST_APPLICATION_COLLECTION,
+    actionTypes.REQUEST_METADATA_COLLECTION,
     getNetsuiteOrSalesforceResourceCollection
   ),
 ];

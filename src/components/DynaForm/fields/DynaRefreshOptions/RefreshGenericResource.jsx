@@ -31,19 +31,21 @@ class RefreshGenericResource extends React.Component {
       disabled,
       id,
       name,
+      defaultValue = '',
       // options = [],
-      value = '',
+      value,
       label,
       onFieldChange,
-      computedOptions,
+      options,
       onFetchResource,
-      resourceIsLoading,
+      isLoading,
+      placeholder,
       classes,
     } = this.props;
 
-    if (!computedOptions) return <Spinner />;
+    if (!options) return <Spinner />;
 
-    const availableResourceOptions = computedOptions.map(option => {
+    let optionsMenuItems = options.map(option => {
       const { label, value } = option;
 
       return (
@@ -52,27 +54,38 @@ class RefreshGenericResource extends React.Component {
         </MenuItem>
       );
     });
+    const placeHolderMenuItem = (
+      <MenuItem key="" value="" disabled>
+        {placeholder}
+      </MenuItem>
+    );
 
+    optionsMenuItems = [placeHolderMenuItem, ...optionsMenuItems];
+
+    // the input label shrinks irrespective of the value
+    // because there will always be some value
+    // TODO: should this be the same behavior for other dropdown
     return (
       <div>
         <FormControl
           key={id}
           disabled={disabled}
           className={classes.inlineElements}>
-          <InputLabel shrink={!!value} htmlFor={id}>
+          <InputLabel shrink htmlFor={id}>
             {label}
           </InputLabel>
           <Select
             className={classes.selectElement}
-            value={value}
+            displayEmpty
+            value={value || defaultValue}
             onChange={evt => {
               onFieldChange(id, evt.target.value);
             }}
             input={<Input name={name} id={id} />}>
-            {availableResourceOptions}
+            {optionsMenuItems}
           </Select>
-          {!resourceIsLoading && <RefreshIcon onClick={onFetchResource} />}
-          {computedOptions && resourceIsLoading && <Spinner />}
+          {!isLoading && <RefreshIcon onClick={onFetchResource} />}
+          {options && isLoading && <Spinner />}
           {description && <FormHelperText>{description}</FormHelperText>}
         </FormControl>
       </div>

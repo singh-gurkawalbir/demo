@@ -7,10 +7,7 @@ export default {
       type: 'labelTitle',
     },
     {
-      resourceType: 'recordTypes',
-      netsuiteSpecificResource: 'suitescript',
       fieldId: 'netsuite.recordType',
-      connectionId: r => r._connectionId,
     },
     {
       fieldId: 'netsuite.restlet.searchType',

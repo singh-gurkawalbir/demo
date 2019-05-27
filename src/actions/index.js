@@ -106,27 +106,22 @@ const metadata = {
     applicationType,
     connectionId,
     resourceType,
-    netsuiteSpecificResource
+    mode
   ) =>
-    action(actionTypes.REQUEST_APPLICATION_COLLECTION, {
+    action(actionTypes.REQUEST_METADATA_COLLECTION, {
       commResourcePath,
       applicationType,
       connectionId,
       resourceType,
-      netsuiteSpecificResource,
+      mode,
     }),
   netsuite: {
-    receivedCollection: (
-      resource,
-      resourceType,
-      connectionId,
-      netsuiteSpecificResource
-    ) =>
+    receivedCollection: (resource, resourceType, connectionId, mode) =>
       action(actionTypes.RECEIVED_NETSUITE_COLLECTION, {
         resource,
         resourceType,
         connectionId,
-        netsuiteSpecificResource,
+        mode,
       }),
   },
 };

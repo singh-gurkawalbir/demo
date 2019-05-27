@@ -574,10 +574,6 @@ export function isDataReady(state, resource) {
   );
 }
 
-export function resourceCollection(state, origResourceType) {
-  return state && state.data && state.data[origResourceType];
-}
-
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
 export function resourceStatus(
@@ -698,21 +694,21 @@ export function generateOptionsFromMeta(
   connectionId,
   applicationType,
   resourceType,
-  netsuiteSpecificResource
+  mode
 ) {
   return fromSession.generateOptionsFromMeta(
     (state && state.session) || null,
     connectionId,
     applicationType,
     resourceType,
-    netsuiteSpecificResource
+    mode
   );
 }
 
 export function metadataOptionsAndResources(
   state,
   connectionId,
-  netsuiteSpecificResource,
+  mode,
   resourceType
 ) {
   const connection = resource(state, 'connections', connectionId);
@@ -721,7 +717,7 @@ export function metadataOptionsAndResources(
   let commResourcePath;
 
   if (applicationType === 'netsuite') {
-    commResourcePath = `${applicationType}/metadata/${netsuiteSpecificResource}/connections/${connectionId}/${resourceType}`;
+    commResourcePath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${resourceType}`;
   } else if (applicationType === 'salesforce') {
     commResourcePath = `${applicationType}/metadata/webservices/connections/${connectionId}/${resourceType}`;
   } else {
@@ -737,7 +733,7 @@ export function metadataOptionsAndResources(
       connectionId,
       applicationType,
       resourceType,
-      netsuiteSpecificResource
+      mode
     ),
     isLoadingData: resourceStatus(state, commResourcePath).isLoading,
   };

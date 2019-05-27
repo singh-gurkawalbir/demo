@@ -87,9 +87,7 @@ class ConnectionForm extends Component {
         />
         <ResourceForm {...rest}>
           <DynaSubmit
-            pendingCommResponse={
-              testConnectionCommState.commState === COMM_STATES.LOADING
-            }
+            disabled={testConnectionCommState.commState === COMM_STATES.LOADING}
             onClick={this.handleTestConnection}
             className={classes.actionButton}
             size="small"
