@@ -26,7 +26,7 @@ export default {
     //
   },
   'ftp.exportFrom': {
-    type: 'labelTitle',
+    type: 'labeltitle',
     label: 'Where would you like to export data from?',
   },
 
@@ -511,7 +511,7 @@ export default {
   // #region hooks
   'ftp.exportHooks': {
     label: 'Hooks (Optional, Developers Only)',
-    type: 'labelTitle',
+    type: 'labeltitle',
   },
   hookType: {
     type: 'radiogroup',
@@ -551,7 +551,7 @@ export default {
   // #region transform
   'ftp.exportTransformRecords': {
     label: 'Would you like to transform the records?',
-    type: 'labelTitle',
+    type: 'labeltitle',
   },
   'transform.expression.rules': {
     type: 'transformeditor',
@@ -889,7 +889,7 @@ export default {
     label: 'Ftp backup Directory Path',
   },
   exportData: {
-    type: 'labelTitle',
+    type: 'labeltitle',
     label: 'What data would you like to Export?',
   },
   // #endregion ftp

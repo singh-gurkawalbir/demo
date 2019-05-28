@@ -36,69 +36,20 @@ export function stagedResource(state, id) {
   return fromStage.stagedResource(state.stage, id);
 }
 
-export function metadataResource(
+export function optionsFromMetadata(
   state,
   connectionId,
   applicationType,
-  resourceType,
+  metadataType,
   mode
 ) {
-  return fromMetadata.metadataCollection(
+  return fromMetadata.optionsFromMetadata(
     (state && state.metadata) || null,
     connectionId,
     applicationType,
-    resourceType,
+    metadataType,
     mode
   );
 }
 
-export function generateOptionsFromMeta(
-  state,
-  connectionId,
-  applicationType,
-  resourceType,
-  mode
-) {
-  let options = null;
-
-  if (applicationType === 'netsuite') {
-    const data =
-      metadataResource(
-        state,
-        connectionId,
-        applicationType,
-        resourceType,
-        mode
-      ) || [];
-
-    if (mode === 'webservices') {
-      if (resourceType === 'recordTypes') {
-        // {"internalId":"Account","label":"Account"}
-        options = data.map(item => ({ label: item.label, value: item.label }));
-      } else if (resourceType === 'savedSearches') {
-        // {internalId: "794", name: "New Account Search",
-        // scriptId: "customsearch794"}
-        options = data.map(item => ({
-          label: item.name,
-          value: item.scriptId,
-        }));
-      }
-    } else if (mode === 'suitescript') {
-      if (resourceType === 'recordTypes') {
-        // {id: "account",name: "Account",
-        // permissionId: "LIST_ACCOUNT",scriptId: "account",
-        // scriptable: true,url: "/app/accounting/account/account.nl",
-        // userPermission: "4"}
-        options = data.map(item => ({ label: item.name, value: item.id }));
-      } else if (resourceType === 'savedSearches') {
-        // {id: "2615", name: "1mb data"}
-        options = data.map(item => ({ label: item.name, value: item.id }));
-      }
-    }
-  } else if (applicationType === 'salesforce') {
-    // have to implement this
-  }
-
-  return options;
-}
 // #endregion

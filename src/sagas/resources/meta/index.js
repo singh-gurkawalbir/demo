@@ -1,31 +1,34 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
+import { resource, commMetadataPathGen } from '../../../reducers/index';
 
-function* getNetsuiteOrSalesforceResourceCollection({
-  commResourcePath,
-  applicationType,
-  connectionId,
-  resourceType,
-  mode,
-}) {
-  const path = `/${commResourcePath}`;
+function* getNetsuiteOrSalesforceMeta({ connectionId, metadataType, mode }) {
+  const connection = yield select(resource, 'connections', connectionId);
+  const applicationType = connection.type;
+  const commMetadataPath = commMetadataPathGen(
+    applicationType,
+    connectionId,
+    metadataType,
+    mode
+  );
+  const path = `/${commMetadataPath}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, { path, opts: {} });
+    const metadata = yield call(apiCallWithRetry, { path, opts: {} });
 
     if (applicationType === 'netsuite')
       yield put(
         actions.metadata.netsuite.receivedCollection(
-          resource,
-          resourceType,
+          metadata,
+          metadataType,
           connectionId,
           mode
         )
       );
 
-    return resource;
+    return metadata;
   } catch (error) {
     return undefined;
   }
@@ -34,6 +37,6 @@ function* getNetsuiteOrSalesforceResourceCollection({
 export default [
   takeEvery(
     actionTypes.REQUEST_METADATA_COLLECTION,
-    getNetsuiteOrSalesforceResourceCollection
+    getNetsuiteOrSalesforceMeta
   ),
 ];

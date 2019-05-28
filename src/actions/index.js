@@ -101,25 +101,17 @@ const resource = {
 };
 // #endregion
 const metadata = {
-  requestCollection: (
-    commResourcePath,
-    applicationType,
-    connectionId,
-    resourceType,
-    mode
-  ) =>
+  requestCollection: (connectionId, metadataType, mode) =>
     action(actionTypes.REQUEST_METADATA_COLLECTION, {
-      commResourcePath,
-      applicationType,
       connectionId,
-      resourceType,
+      metadataType,
       mode,
     }),
   netsuite: {
-    receivedCollection: (resource, resourceType, connectionId, mode) =>
+    receivedCollection: (metadata, metadataType, connectionId, mode) =>
       action(actionTypes.RECEIVED_NETSUITE_COLLECTION, {
-        resource,
-        resourceType,
+        metadata,
+        metadataType,
         connectionId,
         mode,
       }),

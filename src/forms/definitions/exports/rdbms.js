@@ -3,7 +3,7 @@ export default {
     { formId: 'common' },
     {
       fieldId: 'exportRdbmsData',
-      type: 'labelTitle',
+      type: 'labeltitle',
       label: 'What would you like to export from rdbms ?',
     },
     { fieldId: 'rdbms.query' },
@@ -20,7 +20,7 @@ export default {
 
     {
       fieldId: 'exportRdbmsSampleData',
-      type: 'labelTitle',
+      type: 'labeltitle',
       label: 'Sample Data',
     },
     { fieldId: 'sampleData' },

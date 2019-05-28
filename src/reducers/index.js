@@ -689,56 +689,70 @@ export function accountOwner(state) {
 
 // #endregion
 // #region Session metadata selectors
-export function generateOptionsFromMeta(
+export function optionsFromMetadata(
   state,
   connectionId,
   applicationType,
-  resourceType,
+  metadataType,
   mode
 ) {
-  return fromSession.generateOptionsFromMeta(
+  return fromSession.optionsFromMetadata(
     (state && state.session) || null,
     connectionId,
     applicationType,
-    resourceType,
+    metadataType,
     mode
   );
+}
+
+export function commMetadataPathGen(
+  applicationType,
+  connectionId,
+  metadataType,
+  mode
+) {
+  let commMetadataPath;
+
+  if (applicationType === 'netsuite') {
+    commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+  } else if (applicationType === 'salesforce') {
+    commMetadataPath = `${applicationType}/metadata/webservices/connections/${connectionId}/${metadataType}`;
+  } else {
+    throw Error('Invalid application type...cannot support it');
+  }
+
+  return commMetadataPath;
 }
 
 export function metadataOptionsAndResources(
   state,
   connectionId,
   mode,
-  resourceType
+  metadataType
 ) {
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
   const applicationType = connection.type;
-  let commResourcePath;
-
-  if (applicationType === 'netsuite') {
-    commResourcePath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${resourceType}`;
-  } else if (applicationType === 'salesforce') {
-    commResourcePath = `${applicationType}/metadata/webservices/connections/${connectionId}/${resourceType}`;
-  } else {
-    throw Error('Invalid application type...cannot support it');
-  }
+  const commMetadataPath = commMetadataPathGen(
+    applicationType,
+    connectionId,
+    metadataType,
+    mode
+  );
 
   return {
     // resourceData
-    applicationType,
-    commResourcePath,
-    options: generateOptionsFromMeta(
+    options: optionsFromMetadata(
       state,
       connectionId,
       applicationType,
-      resourceType,
+      metadataType,
       mode
     ),
-    isLoadingData: resourceStatus(state, commResourcePath).isLoading,
+    isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
   };
 }
-// #endregion
+// #endregion Session metadata selectors
 
 export function commStatusByKey(state, key) {
   const commStatus = state && state.comms && state.comms[key];

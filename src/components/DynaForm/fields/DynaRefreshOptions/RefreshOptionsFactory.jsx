@@ -7,12 +7,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 
 const mapStateToProps = (state, ownProps) => {
   const { connectionId, resourceType, mode } = ownProps;
-  const {
-    applicationType,
-    commResourcePath,
-    isLoadingData,
-    options,
-  } = selectors.metadataOptionsAndResources(
+  const { isLoadingData, options } = selectors.metadataOptionsAndResources(
     state,
     connectionId,
     mode,
@@ -20,33 +15,19 @@ const mapStateToProps = (state, ownProps) => {
   );
 
   return {
-    applicationType,
-    commResourcePath,
     isLoadingData,
     options,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  onFetchResource: stateProps => {
-    const {
-      commResourcePath,
-      applicationType,
-      connectionId,
-      resourceType,
-      mode,
-    } = stateProps;
-
-    return dispatch(
-      actions.metadata.requestCollection(
-        commResourcePath,
-        applicationType,
-        connectionId,
-        resourceType,
-        mode
-      )
-    );
-  },
+const mapDispatchToProps = (
+  dispatch,
+  { connectionId, resourceType, mode }
+) => ({
+  onFetchResource: () =>
+    dispatch(
+      actions.metadata.requestCollection(connectionId, resourceType, mode)
+    ),
 });
 
 class DynaSelectOptionsGenerator extends React.Component {
@@ -55,8 +36,7 @@ class DynaSelectOptionsGenerator extends React.Component {
 
     return (
       <RefreshGenericResource
-        place
-        onFetchResource={() => onFetchResource(this.props)}
+        onFetchResource={onFetchResource}
         isLoading={isLoadingData}
         options={options}
         {...rest}

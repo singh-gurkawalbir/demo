@@ -31,6 +31,6 @@ export default {
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
-  labelTitle: DynaLabel,
+  labeltitle: DynaLabel,
   hook: DynaHook,
 };

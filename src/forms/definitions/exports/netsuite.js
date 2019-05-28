@@ -4,7 +4,7 @@ export default {
     {
       fieldId: 'netsuite.netsuiteExportlabel',
       label: 'Would you like to transform the records?',
-      type: 'labelTitle',
+      type: 'labeltitle',
     },
     {
       fieldId: 'netsuite.recordType',
@@ -62,7 +62,7 @@ export default {
     {
       fieldId: 'netsuite.netsuiteSuiteScriptlabel',
       label: 'SuiteScript Hooks (Optional, Developers Only)',
-      type: 'labelTitle',
+      type: 'labeltitle',
     },
     { fieldId: 'ftp.exportHooks' },
     { formId: 'hooks' },
