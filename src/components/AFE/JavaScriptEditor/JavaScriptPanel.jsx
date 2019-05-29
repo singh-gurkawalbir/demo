@@ -13,19 +13,35 @@ import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
+  const getScriptContent = id => {
+    const data = selectors.resourceData(state, 'scripts', id);
+
+    if (data && data.merged) {
+      return data.merged.content;
+    }
+  };
+
   const allScripts = selectors.resourceList(state, { type: 'scripts' })
     .resources;
 
   return {
     editor,
     allScripts,
-    getScript: id => selectors.resource(state, 'scripts', id),
+    getScriptContent,
   };
 };
 
 const mapDispatchToProps = (dispatch, { editorId }) => ({
   patchEditor: (option, value) => {
-    dispatch(actions.editor.patch(editorId, { [option]: value }));
+    if (typeof option === 'string') {
+      dispatch(actions.editor.patch(editorId, { [option]: value }));
+    } else {
+      // option is already an object.
+      dispatch(actions.editor.patch(editorId, option));
+    }
+  },
+  requestScript: id => {
+    dispatch(actions.resource.request('scripts', id));
   },
 });
 
@@ -47,29 +63,23 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
   },
 }))
 class JavaScriptPanel extends Component {
-  componentDidMount() {
-    const { editor, getScript, patchEditor } = this.props;
-    const { scriptId } = editor;
+  setOrRequestContent(scriptId) {
+    const { getScriptContent, requestScript, patchEditor } = this.props;
 
     if (!scriptId) return;
+    const content = getScriptContent(scriptId);
 
-    const script = getScript(scriptId);
-
-    // console.log(scriptId, script);
-
-    if (script) {
-      patchEditor('code', script.description);
+    if (content === undefined) {
+      requestScript(scriptId);
+    } else {
+      patchEditor({ code: content, scriptId });
     }
   }
 
-  handleScriptChange(id) {
-    const { patchEditor, getScript } = this.props;
+  componentDidMount() {
+    const { editor } = this.props;
 
-    patchEditor('scriptId', id);
-
-    const script = getScript(id);
-
-    patchEditor('code', script.description);
+    this.setOrRequestContent(editor.scriptId);
   }
 
   render() {
@@ -87,7 +97,7 @@ class JavaScriptPanel extends Component {
               id="scriptId"
               margin="dense"
               value={scriptId}
-              onChange={event => this.handleScriptChange(event.target.value)}>
+              onChange={event => this.setOrRequestContent(event.target.value)}>
               {allScripts.map(s => (
                 <MenuItem key={s._id} value={s._id}>
                   {s.name}

@@ -372,6 +372,7 @@ export default {
   'rest.baseURI': {
     type: 'text',
     label: 'Rest base URI',
+    required: true,
   },
   'rest.bearerToken': {
     type: 'text',
@@ -464,7 +465,8 @@ export default {
   },
   'rest.basicAuth.username': {
     type: 'text',
-    label: 'Rest basic Auth username',
+    label: 'Username',
+    required: true,
   },
   'rest.basicAuth.password': {
     type: 'text',

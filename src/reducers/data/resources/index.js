@@ -1,9 +1,9 @@
 import actionTypes from '../../../actions/types';
 
-export const intializationResources = ['profile', 'preferences'];
+export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
 const resourceTypesToIgnore = [
-  ...intializationResources,
+  ...initializationResources,
   ...accountResources,
   'audit',
 ];
@@ -23,13 +23,13 @@ function replaceOrInsertResource(state, type, resource) {
     return { ...state, [type]: [...collection, resource] };
   }
 
-  const newColletion = [
+  const newCollection = [
     ...collection.slice(0, index),
     resource,
     ...collection.slice(index + 1),
   ];
 
-  return { ...state, [type]: newColletion };
+  return { ...state, [type]: newCollection };
 }
 
 export default (state = {}, action) => {

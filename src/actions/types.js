@@ -22,6 +22,7 @@ const STAGE_COMMIT = 'STAGE_COMMIT';
 const STAGE_CONFLICT = 'STAGE_CONFLICT';
 const CLEAR_CONFLICT = 'CLEAR_CONFLICT';
 const PATCH_FORM_FIELD = 'PATCH_FORM_FIELD';
+const INIT_CUSTOM_FORM = 'INIT_CUSTOM_FORM';
 // The API_* action types below are used for managing network activity.
 // Typically this set of actions are only dispatched in Redux Sagas.
 const API_REQUEST = 'API_REQUEST';
@@ -59,6 +60,7 @@ const stageResourceActions = [
   STAGE_CONFLICT,
   CLEAR_CONFLICT,
   PATCH_FORM_FIELD,
+  INIT_CUSTOM_FORM,
 ];
 
 function createResourceActionTypes(base, includeStagedActions) {
@@ -75,6 +77,12 @@ function createResourceActionTypes(base, includeStagedActions) {
 
 const PROFILE = createResourceActionTypes('PROFILE');
 const RESOURCE = createResourceActionTypes('RESOURCE', true);
+const RESOURCE_FORM = {
+  INIT: 'RESOURCE_FORM_INIT',
+  INIT_COMPLETE: 'RESOURCE_FORM_INIT_COMPLETE',
+  SUBMIT: 'RESOURCE_FORM_SUBMIT',
+  SUBMIT_COMPLETE: 'RESOURCE_FORM_SUBMIT_COMPLETE',
+};
 const LICENSE_TRIAL_REQUEST = 'LICENSE_TRIAL_REQUEST';
 const LICENSE_TRIAL_ISSUED = 'LICENSE_TRIAL_ISSUED';
 const LICENSE_UPGRADE_REQUEST = 'LICENSE_UPGRADE_REQUEST';
@@ -141,6 +149,7 @@ export default {
   ACCOUNT_LEAVE_REQUEST,
   ACCOUNT_SWITCH,
   DEFAULT_ACCOUNT_SET,
+  RESOURCE_FORM,
   USER_CREATE,
   USER_CREATED,
   USER_UPDATE,

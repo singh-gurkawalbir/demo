@@ -19,7 +19,7 @@ import {
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
-describe('initialze all app relevant resources sagas', () => {
+describe('initialize all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {
     test('should retrieve licenses, org users and accounts', () => {
       const saga = retrievingOrgDetails();

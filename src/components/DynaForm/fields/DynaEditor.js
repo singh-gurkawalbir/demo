@@ -1,4 +1,5 @@
 import { Component, Fragment } from 'react';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -35,7 +36,7 @@ import CodeEditor from '../../../components/CodeEditor';
     width: '65vh',
   },
 }))
-class EditorField extends Component {
+export class EditorField extends Component {
   state = {
     showEditor: false,
   };
@@ -80,6 +81,7 @@ class EditorField extends Component {
       mode,
       errorMessages,
       isValid,
+      editorClassName,
     } = this.props;
     const modeFromFileOption = this.getFileType();
     let resultantMode = mode;
@@ -131,7 +133,11 @@ class EditorField extends Component {
 
           <FormLabel className={classes.label}>{label}</FormLabel>
 
-          <div className={classes.inlineEditorContainer}>
+          <div
+            className={classNames(
+              classes.inlineEditorContainer,
+              editorClassName
+            )}>
             <CodeEditor
               name={`${id}-inline`}
               value={value}
@@ -148,10 +154,10 @@ class EditorField extends Component {
   }
 }
 
-const DynaKeyValue = props => (
+const DynaEditor = props => (
   <FieldWrapper {...props}>
     <EditorField />
   </FieldWrapper>
 );
 
-export default DynaKeyValue;
+export default DynaEditor;

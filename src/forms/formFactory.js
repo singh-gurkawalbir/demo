@@ -1,7 +1,6 @@
 import { deepClone } from 'fast-json-patch';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
-import { defaultPatchSetConverter } from './utils';
 
 const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
   fields.forEach(field => {
@@ -52,19 +51,19 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
 const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   let fields;
   let fieldSets = [];
-  let converter;
-  let initializer;
+  let preSubmit;
+  let init;
   let meta;
   let typeOfConnection;
 
   // console.log(resourceType, connection, resource);
-  // Formmeta fromMeta[resourceType][connectionType]
+  // FormMeta fromMeta[resourceType][connectionType]
 
-  // Formmeta fromMeta[resourceType].custom.[connectionType]
+  // FormMeta fromMeta[resourceType].custom.[connectionType]
   // optionsHandler comes in here
   switch (resourceType) {
     case 'connections':
-      if (resource.assistant) {
+      if (resource && resource.assistant) {
         meta = formMeta.connections.custom[resource.type];
 
         if (meta) {
@@ -75,7 +74,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets, converter, initializer } = meta);
+        ({ fields, fieldSets, preSubmit, init } = meta);
       }
 
       break;
@@ -102,7 +101,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
         meta = meta[typeOfConnection];
 
         if (meta) {
-          ({ fields, fieldSets, converter, initializer } = meta);
+          ({ fields, fieldSets, init, preSubmit } = meta);
         }
       }
 
@@ -110,6 +109,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
     case 'scripts':
       meta = formMeta[resourceType];
       ({ fields } = meta);
+
       break;
     default:
       break;
@@ -123,8 +123,8 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
 
   return {
     fieldMeta: { fields, fieldSets },
-    converter: converter || defaultPatchSetConverter,
-    initializer,
+    init,
+    preSubmit,
     optionsHandler,
   };
 };
@@ -149,7 +149,7 @@ const extractValue = (path, resource) => {
     // logger.info('segment: ' + segments[i])
     // logger.info(value[segments[i]])
     // if the last iteration resulted in no value, and yet the path indicates
-    // that there still should be another node in the object heirarchy, return.
+    // that there still should be another node in the object hierarchy, return.
     // return if we have an object but no child object exists in the next path.
     // otherwise set the value to the new node and iterate.
     if (!value || value[segments[i]] === undefined) return;
@@ -223,8 +223,8 @@ const applyingMissedOutFieldMetaProperties = (
     field.defaultValue = extractValue(field.fieldId, resource);
   }
 
-  // if name isn't there
-  if (!field.name) {
+  // if name isn't there, fill it!
+  if (!field.name && field.fieldId) {
     field.name = `/${field.fieldId.replace(/\./g, '/')}`;
   }
 
@@ -269,7 +269,6 @@ const setDefaults = (fields, resourceType, resource) => {
     .flat();
 };
 
-// passing an additional a
 const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   const filled = [];
   const { fields, fieldSets } = fieldMeta;
@@ -293,7 +292,7 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
 
 const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType, resource) => {
   // TODO: I don't really need to set defaults, the getFieldsWithDefaults
-  // has support to add visibiltyWhen rules for fieldMeta having formId
+  // has support to add visibility When rules for fieldMeta having formId
   // or deeply nested forms
   const flattenedFieldMeta = getFieldsWithDefaults(
     fieldMeta,

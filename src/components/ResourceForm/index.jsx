@@ -1,78 +1,70 @@
 import { Component } from 'react';
-import ResourceForm from './GenericResourceForm';
+import { connect } from 'react-redux';
+import { Typography } from '@material-ui/core';
+import GenericResourceForm from './GenericResourceForm';
 import ConnectionForm from './ConnectionForm';
-import factory from '../../forms/formFactory';
-import { sanitizePatchSet } from '../../forms/utils';
+import actions from '../../actions';
+import * as selectors from '../../reducers';
 
-const getRelevantMeta = (resource, resourceType, connection, handleSubmit) => {
-  let fieldMeta;
-  let handleClick;
-  let optionsHandler;
-  let converter;
-
-  // TODO: does custom forms support optionsHanlder
-  // and a converter function
-  if (resource.customForm && resource.customForm.form) {
-    // this resource has an embedded custom form.
-    // TODO: will there be an associated connection for this custom form
-    // because you create an export based on a connection
-    fieldMeta = factory.getFieldsWithDefaults(
-      resource.customForm.form,
-      resourceType,
-      resource
-    );
-    handleClick = value => {
-      // eslint-disable-next-line no-console
-      console.log('values passed to custom form submit handler: ', value);
-    };
-  } else {
-    // this is a stock UI form...
-    const assets = factory.getResourceFormAssets({
-      resourceType,
-      resource,
-      connection,
-    });
-
-    ({ optionsHandler, converter } = assets);
-
-    fieldMeta = factory.getFieldsWithDefaults(
-      assets.fieldMeta,
-      resourceType,
-      resource
-    );
-    handleClick = value =>
-      handleSubmit(
-        sanitizePatchSet({
-          patchSet: assets.converter(value),
-          fieldMeta,
-          resource,
-        })
-      );
-  }
+const mapStateToProps = (state, { resourceType, resource }) => {
+  const formState = selectors.resourceFormState(
+    state,
+    resourceType,
+    resource._id
+  );
 
   return {
-    fieldMeta,
-    handleSubmit,
-    handleClick,
-    optionsHandler,
-    converter,
+    formState,
   };
 };
 
-export default class ResourceFormFactory extends Component {
-  render() {
-    const { resource, resourceType, connection, handleSubmit } = this.props;
-    const metaProps = getRelevantMeta(
-      resource,
-      resourceType,
-      connection,
-      handleSubmit
+const mapDispatchToProps = (
+  dispatch,
+  { resourceType, resource, connection }
+) => ({
+  handleSubmitForm: value => {
+    // console.log(`request resource:`, resourceType, resource._id, connection);
+    dispatch(
+      actions.resourceForm.submit(resourceType, resource._id, connection, value)
     );
+  },
+  handleInitForm: () => {
+    dispatch(actions.resourceForm.init(resourceType, resource._id));
+  },
+});
 
-    if (resourceType === 'connections') {
-      return <ConnectionForm {...this.props} {...metaProps} />;
+class ResourceFormFactory extends Component {
+  componentDidMount() {
+    this.props.handleInitForm();
+  }
+
+  render() {
+    const { resourceType, handleSubmitForm, formState } = this.props;
+
+    if (!formState.initComplete) {
+      return <Typography>Initializing Form</Typography>;
     }
 
-    return <ResourceForm {...this.props} {...metaProps} />;
+    let Form;
+
+    if (resourceType === 'connections') {
+      Form = ConnectionForm;
+    } else {
+      Form = GenericResourceForm;
+    }
+
+    return (
+      <Form
+        {...this.props}
+        fieldMeta={formState.fieldMeta}
+        optionsHandler={formState.optionsHandler}
+        handleSubmit={handleSubmitForm}
+      />
+    );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ResourceFormFactory);

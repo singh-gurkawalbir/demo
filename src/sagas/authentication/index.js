@@ -17,7 +17,7 @@ import {
   getCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
-import { intializationResources } from '../../reducers/data/resources';
+import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
@@ -39,7 +39,7 @@ export function* retrievingOrgDetails() {
 
 export function* retrievingUserDetails() {
   yield all(
-    intializationResources.map(resource =>
+    initializationResources.map(resource =>
       call(
         getResource,
         actions.user[resource].request(`Retrieving user's ${resource}`)
