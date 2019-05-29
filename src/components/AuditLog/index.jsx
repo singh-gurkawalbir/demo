@@ -197,7 +197,7 @@ class AuditLog extends Component {
   }
 
   handleFiltersChange = filters => {
-    this.setState({ filters });
+    this.setState({ filters, page: 0 });
   };
 
   handleChangePage = (event, newPage) => {
