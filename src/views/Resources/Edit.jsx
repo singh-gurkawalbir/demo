@@ -167,7 +167,7 @@ class Edit extends Component {
       handleConflict,
     } = this.props;
     const { editMode, showEditor } = this.state;
-    const { /* master , */ merged, patch, conflict, hash } = resourceData;
+    const { /* master , */ merged, patch, conflict } = resourceData;
     const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
       resourceType
     );
@@ -271,7 +271,7 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceFormFactory
-            key={hash}
+            key={merged._id}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}

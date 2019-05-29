@@ -205,7 +205,7 @@ const resourceForm = {
       connection,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
-    action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
+    action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
       resourceType,
       resourceId,
       formValues,

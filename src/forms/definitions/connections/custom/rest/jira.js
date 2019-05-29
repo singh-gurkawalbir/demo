@@ -40,13 +40,14 @@ export default {
     { fieldId: 'name' },
     { fieldId: 'rest.baseURI' },
     { fieldId: 'rest.basicAuth.username' },
+
     // ...or, we can create completely custom fields like this:
     {
       id: 'Password',
       name: '/rest/basicAuth/password',
       helpKey: 'connection.rest.basicAuth.password',
-      defaultValue: r => r.rest.basicAuth && r.rest.basicAuth.password,
       type: 'text',
+      inputType: 'password',
       label: 'Password',
       description:
         'Note: for security reasons this field must always be re-entered.',
