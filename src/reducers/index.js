@@ -691,6 +691,26 @@ export function accountOwner(state) {
   return fromUser.accountOwner(state.user);
 }
 
+export function auditLogs(state, resourceType, resourceId) {
+  return fromData.auditLogs(state.data, resourceType, resourceId);
+}
+
+export function affectedResourcesFromAuditLogs(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromData.affectedResourcesFromAuditLogs(
+    state.data,
+    resourceType,
+    resourceId
+  );
+}
+
+export function usersFromAuditLogs(state, resourceType, resourceId) {
+  return fromData.usersFromAuditLogs(state.data, resourceType, resourceId);
+}
+
 // #endregion
 
 export function commStatusByKey(state, key) {

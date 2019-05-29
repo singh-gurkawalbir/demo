@@ -11,10 +11,20 @@ import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
+import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const mapStateToProps = (state, { match }) => {
   const { integrationId } = match.params;
-  const integration = selectors.resource(state, 'integrations', integrationId);
+  let integration;
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    integration = {
+      _id: STANDALONE_INTEGRATION.id,
+      name: STANDALONE_INTEGRATION.name,
+    };
+  } else {
+    integration = selectors.resource(state, 'integrations', integrationId);
+  }
 
   return {
     integration,
@@ -26,6 +36,9 @@ const Flows = loadable(() =>
 );
 const Users = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings.Users' */ './Users')
+);
+const AuditLog = loadable(() =>
+  import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
 );
 
 @hot(module)
@@ -84,14 +97,16 @@ class IntegrationSettings extends Component {
                     paper: classes.leftElement,
                   }}>
                   <List>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="general">
-                        General
-                      </NavLink>
-                    </ListItem>
+                    {integration._id !== STANDALONE_INTEGRATION.id && (
+                      <ListItem>
+                        <NavLink
+                          activeClassName={classes.activeLink}
+                          className={classes.link}
+                          to="general">
+                          General
+                        </NavLink>
+                      </ListItem>
+                    )}
                     <ListItem>
                       <NavLink
                         activeClassName={classes.activeLink}
@@ -125,12 +140,14 @@ class IntegrationSettings extends Component {
                       </NavLink>
                     </ListItem>
                     <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="delete">
-                        Delete
-                      </NavLink>
+                      {integration._id !== STANDALONE_INTEGRATION.id && (
+                        <NavLink
+                          activeClassName={classes.activeLink}
+                          className={classes.link}
+                          to="delete">
+                          Delete
+                        </NavLink>
+                      )}
                     </ListItem>
                   </List>
                 </Drawer>
@@ -148,6 +165,12 @@ class IntegrationSettings extends Component {
                       `/integrations/:integrationId/settings/users`
                     )}
                     component={Users}
+                  />
+                  <Route
+                    path={getRoutePath(
+                      `/integrations/:integrationId/settings/audit`
+                    )}
+                    component={AuditLog}
                   />
                 </Switch>
               </div>

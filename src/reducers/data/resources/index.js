@@ -2,7 +2,11 @@ import actionTypes from '../../../actions/types';
 
 export const intializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
-const resourceTypesToIgnore = [...intializationResources, ...accountResources];
+const resourceTypesToIgnore = [
+  ...intializationResources,
+  ...accountResources,
+  'audit',
+];
 
 function replaceOrInsertResource(state, type, resource) {
   // handle case of no collection
@@ -38,10 +42,11 @@ export default (state = {}, action) => {
   }
 
   // skip integrations/:_integrationId/ashares
+  // skip integrations/:_integrationId/audit
   if (
     resourceType &&
     resourceType.startsWith('integrations/') &&
-    resourceType.endsWith('/ashares')
+    (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
   ) {
     return state;
   }

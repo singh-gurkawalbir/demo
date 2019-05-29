@@ -10,12 +10,23 @@ import { withStyles } from '@material-ui/core/styles';
 import { NavLink } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
+import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const mapStateToProps = (state, { match }) => {
   const { integrationId } = match.params;
   let flows = selectors.resourceList(state, { type: 'flows' }).resources;
+  const preferences = selectors.userProfilePreferencesProps(state);
 
-  flows = flows && flows.filter(f => f._integrationId === integrationId);
+  flows =
+    flows &&
+    flows.filter(
+      f =>
+        f._integrationId ===
+          (integrationId === STANDALONE_INTEGRATION.id
+            ? undefined
+            : integrationId) &&
+        !!f.sandbox === (preferences.environment === 'sandbox')
+    );
 
   return {
     flows,
@@ -62,6 +73,11 @@ class Flows extends Component {
                     </NavLink>
                   </TableCell>
                   <TableCell>{flow.description}</TableCell>
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
                 </TableRow>
               ))}
           </TableBody>

@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
+import audit, * as fromAudit from './audit';
 
 export default combineReducers({
   resources,
   integrationAShares,
+  audit,
 });
 
 export function resource(state, resourceType, id) {
@@ -28,4 +30,20 @@ export function integrationUsers(state, integrationId) {
     state.integrationAShares,
     integrationId
   );
+}
+
+export function auditLogs(state, resourceType, resourceId) {
+  return fromAudit.auditLogs(state.audit, resourceType, resourceId);
+}
+
+export function affectedResourcesFromAuditLogs(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromAudit.affectedResources(state.audit, resourceType, resourceId);
+}
+
+export function usersFromAuditLogs(state, resourceType, resourceId) {
+  return fromAudit.users(state.audit, resourceType, resourceId);
 }
