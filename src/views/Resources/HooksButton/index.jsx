@@ -82,6 +82,12 @@ class EditFieldButton extends Component {
     const { showEditor, hookName } = this.state;
     const { className, getScriptMeta, formMeta } = this.props;
     const { scriptId, entryFunction } = getScriptMeta(hookName);
+    // TODO: We need to have the Hooks button wrapped with
+    // DynaSubmit so that we can collect the form values and set them as the
+    // "Data" argument for the submit hook. For now, lets just create some
+    // dummy values...
+    const formValues = { field1: 'abc', field2: 123, field3: true };
+    const data = hookName === 'init' ? formMeta : formValues;
 
     return (
       <Fragment>
@@ -128,7 +134,7 @@ class EditFieldButton extends Component {
             onClose={this.handleEditorChange}
             scriptId={scriptId}
             entryFunction={entryFunction}
-            data={formMeta}
+            data={data}
             title={`Editing ${hookName} hook`}
             id={hookName}
           />
