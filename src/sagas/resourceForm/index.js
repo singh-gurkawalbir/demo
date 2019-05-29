@@ -184,7 +184,49 @@ export function* initFormValues({ resourceType, resourceId }) {
   );
 }
 
+// we want to init the customForm metadata with a copy of the default metadata
+// we would normally send to the DynaForm component.
+export function* initCustomForm({ resourceType, resourceId }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  if (!resource) return; // nothing to do.
+
+  if (resource.customForm && resource.customForm.form) {
+    // init the resource custom form only if no current form exists.
+    return;
+  }
+
+  const { merged: connection } = yield select(
+    selectors.resourceData,
+    'connections',
+    resource._connectionId
+  );
+  const defaultFormAssets = factory.getResourceFormAssets({
+    connection,
+    resourceType,
+    resource,
+  });
+  // TODO: @Surya, we need to flatten the 'defaultFormAssets.fieldMeta'
+  // to replace formId with the relevant fields
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/customForm',
+      value: {
+        form: defaultFormAssets.fieldMeta,
+      },
+    },
+  ];
+
+  yield put(actions.resource.patchStaged(resourceId, patchSet));
+}
+
 export const resourceFormSagas = [
+  takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
