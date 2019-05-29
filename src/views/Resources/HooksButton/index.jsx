@@ -24,6 +24,19 @@ const mapStateToProps = (state, { resourceId, resourceType }) => {
 };
 
 const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  patchAndCommitScript: (scriptId, code) => {
+    const patchSet = [
+      {
+        op: 'replace',
+        path: `/content`,
+        value: code,
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(scriptId, patchSet));
+    dispatch(actions.resource.commitStaged('scripts', scriptId));
+  },
+
   patchHook: (hookName, value) => {
     const patchSet = [
       {
@@ -43,14 +56,16 @@ class EditFieldButton extends Component {
     hookName: null,
   };
 
-  handleEditorChange = (shouldCommit, { scriptId, entryFunction }) => {
+  handleEditorChange = (shouldCommit, editor) => {
+    const { scriptId, entryFunction, code } = editor;
     const { hookName } = this.state;
-    const { patchHook } = this.props;
+    const { patchHook, patchAndCommitScript } = this.props;
     const value = { scriptId, entryFunction };
 
-    // console.log(hookName, value);
+    // console.log(hookName, value, editor);
 
     if (shouldCommit) {
+      patchAndCommitScript(scriptId, code);
       patchHook(hookName, value);
     }
 
@@ -101,7 +116,7 @@ class EditFieldButton extends Component {
                     popupState.close();
                     this.handleEditorToggle('submit');
                   }}>
-                  Submit
+                  PreSubmit
                 </MenuItem>
               </Menu>
             </Fragment>
