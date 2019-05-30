@@ -24,6 +24,19 @@ const mapStateToProps = (state, { resourceId, resourceType }) => {
 };
 
 const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  patchAndCommitScript: (scriptId, code) => {
+    const patchSet = [
+      {
+        op: 'replace',
+        path: `/content`,
+        value: code,
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(scriptId, patchSet));
+    dispatch(actions.resource.commitStaged('scripts', scriptId));
+  },
+
   patchHook: (hookName, value) => {
     const patchSet = [
       {
@@ -43,14 +56,16 @@ class EditFieldButton extends Component {
     hookName: null,
   };
 
-  handleEditorChange = (shouldCommit, { scriptId, entryFunction }) => {
+  handleEditorChange = (shouldCommit, editor) => {
+    const { scriptId, entryFunction, code } = editor;
     const { hookName } = this.state;
-    const { patchHook } = this.props;
+    const { patchHook, patchAndCommitScript } = this.props;
     const value = { scriptId, entryFunction };
 
-    // console.log(hookName, value);
+    // console.log(hookName, value, editor);
 
     if (shouldCommit) {
+      patchAndCommitScript(scriptId, code);
       patchHook(hookName, value);
     }
 
@@ -67,6 +82,12 @@ class EditFieldButton extends Component {
     const { showEditor, hookName } = this.state;
     const { className, getScriptMeta, formMeta } = this.props;
     const { scriptId, entryFunction } = getScriptMeta(hookName);
+    // TODO: We need to have the Hooks button wrapped with
+    // DynaSubmit so that we can collect the form values and set them as the
+    // "Data" argument for the submit hook. For now, lets just create some
+    // dummy values...
+    const formValues = { field1: 'abc', field2: 123, field3: true };
+    const data = hookName === 'init' ? formMeta : formValues;
 
     return (
       <Fragment>
@@ -101,7 +122,7 @@ class EditFieldButton extends Component {
                     popupState.close();
                     this.handleEditorToggle('submit');
                   }}>
-                  Submit
+                  PreSubmit
                 </MenuItem>
               </Menu>
             </Fragment>
@@ -113,7 +134,7 @@ class EditFieldButton extends Component {
             onClose={this.handleEditorChange}
             scriptId={scriptId}
             entryFunction={entryFunction}
-            data={formMeta}
+            data={data}
             title={`Editing ${hookName} hook`}
             id={hookName}
           />

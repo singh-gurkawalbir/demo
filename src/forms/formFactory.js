@@ -110,6 +110,7 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
     case 'scripts':
       meta = formMeta[resourceType];
       ({ fields } = meta);
+
       break;
     default:
       break;

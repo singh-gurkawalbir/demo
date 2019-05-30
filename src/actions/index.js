@@ -88,6 +88,9 @@ const resource = {
         values,
       }),
   },
+  initCustomForm: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, { resourceType, resourceId }),
+
   patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
     action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
       resourceType,

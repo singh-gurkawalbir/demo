@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
+import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 
 @withStyles(theme => ({
   actions: {

@@ -42,20 +42,13 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
       dispatch(actions.resource.patchStaged(id, patchSet));
     },
-    handlePatchResource: (patchSet, skipCommit) => {
-      // console.log('patchSet Handled', patchSet);
-
-      // return null;
-      dispatch(actions.resource.patchStaged(id, patchSet));
-
-      if (skipCommit) return;
-
-      dispatch(actions.resource.commitStaged(resourceType, id));
-    },
     // handleCommitChanges: (a, b, c) => {
     //   console.log(a, b, c);
     //   dispatch(actions.resource.commitStaged(resourceType, id));
     // },
+    handleInitCustomResourceForm: () => {
+      dispatch(actions.resource.initCustomForm(resourceType, id));
+    },
     handleUndoChange: () => {
       dispatch(actions.resource.undoStaged(id));
     },
@@ -120,26 +113,11 @@ class Edit extends Component {
   };
 
   handleToggleEdit = () => {
-    const { resourceData, handlePatchResource, fieldMeta } = this.props;
-    const { merged: resource } = resourceData;
+    const { handleInitCustomResourceForm } = this.props;
     const { editMode } = this.state;
 
     if (!editMode) {
-      if (!resource.customForm || !resource.customForm.form) {
-        // init the resource custom form prop with a copy of current form
-
-        const patchSet = [
-          {
-            op: 'replace',
-            path: '/customForm',
-            value: {
-              form: fieldMeta,
-            },
-          },
-        ];
-
-        handlePatchResource(patchSet, true);
-      }
+      handleInitCustomResourceForm();
     }
 
     this.setState({ editMode: !editMode });
@@ -160,7 +138,6 @@ class Edit extends Component {
       connection,
       resourceType,
       classes,
-      handlePatchResource,
       handlePatchFormMeta,
       handleUndoChange,
       // handleCommitChanges,
@@ -271,14 +248,11 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceFormFactory
-            key={id}
+            key={merged._id}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
             connection={connection}
-            handleSubmit={patchSet => {
-              handlePatchResource(patchSet);
-            }}
           />
 
           {conflict && (

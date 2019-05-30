@@ -56,19 +56,16 @@ class ResourceFormFactory extends Component {
       return <Typography>Initializing Form</Typography>;
     }
 
+    let Form;
+
     if (resourceType === 'connections') {
-      return (
-        <ConnectionForm
-          {...this.props}
-          fieldMeta={formState.fieldMeta}
-          optionsHandler={formState.optionsHandler}
-          handleSubmit={handleSubmitForm}
-        />
-      );
+      Form = ConnectionForm;
+    } else {
+      Form = GenericResourceForm;
     }
 
     return (
-      <GenericResourceForm
+      <Form
         {...this.props}
         fieldMeta={formState.fieldMeta}
         optionsHandler={formState.optionsHandler}
