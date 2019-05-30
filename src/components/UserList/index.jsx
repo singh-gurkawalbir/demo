@@ -165,9 +165,7 @@ class UserList extends Component {
         <div className={classes.root}>
           <div>
             <Typography className={classes.title} variant="h4">
-              {integrationId
-                ? `Integration #${integrationId} Users`
-                : 'Org Users'}
+              {integrationId ? 'Users' : 'Manage Users'}
             </Typography>
             {isAccountOwner && (
               <Button
