@@ -225,14 +225,22 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType,
     resource,
   });
+  const flattenedFields = factory.getFlattenedFieldMetaWithRules(
+    defaultFormAssets.fieldMeta,
+    resourceType,
+    resource
+  );
+  const { fieldSets } = defaultFormAssets.fieldMeta;
   // TODO: @Surya, we need to flatten the 'defaultFormAssets.fieldMeta'
   // to replace formId with the relevant fields
+  // I have fixed it with a flattened fields...but it does cascade
+  // form visibiilty rules to its childern
   const patchSet = [
     {
       op: 'replace',
       path: '/customForm',
       value: {
-        form: defaultFormAssets.fieldMeta,
+        form: { fields: flattenedFields, fieldSets },
       },
     },
   ];
@@ -241,7 +249,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
 }
 
 export const resourceFormSagas = [
-  takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
+  takeEvery(actionTypes.RESOURCE_FORM.INIT_CUSTOM_FORM, initCustomForm),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),

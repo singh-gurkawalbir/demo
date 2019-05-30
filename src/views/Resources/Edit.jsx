@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
     //   dispatch(actions.resource.commitStaged(resourceType, id));
     // },
     handleInitCustomResourceForm: () => {
-      dispatch(actions.resource.initCustomForm(resourceType, id));
+      dispatch(actions.resourceForm.initCustomForm(resourceType, id));
     },
     handleUndoChange: () => {
       dispatch(actions.resource.undoStaged(id));
