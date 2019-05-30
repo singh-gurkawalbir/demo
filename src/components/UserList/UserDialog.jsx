@@ -32,7 +32,7 @@ class UserDialog extends Component {
     const { saveUser } = this.props;
     const { email, accessLevel } = data;
     const aShareData = {
-      _id: this.props.data._id,
+      _id: this.props.id,
       email,
       accessLevel,
       integrationAccessLevel: [],
@@ -60,7 +60,7 @@ class UserDialog extends Component {
   }
 
   render() {
-    const { data = {}, onCancelClick, successHandler } = this.props;
+    const { id, onCancelClick, successHandler } = this.props;
     const { errorMessage, actionsToClear } = this.state;
 
     return (
@@ -68,10 +68,8 @@ class UserDialog extends Component {
         <CommStatus
           actionsToMonitor={{
             createOrUpdate: {
-              action: data._id
-                ? actionTypes.USER_UPDATE
-                : actionTypes.USER_CREATE,
-              resourceId: data._id,
+              action: id ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
+              resourceId: id,
             },
           }}
           actionsToClear={actionsToClear}
@@ -87,9 +85,7 @@ class UserDialog extends Component {
 
               if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
                 successHandler(
-                  data._id
-                    ? 'User updated successfully'
-                    : 'User invited successfully'
+                  id ? 'User updated successfully' : 'User invited successfully'
                 );
               } else if (
                 objStatus.createOrUpdate.status === COMM_STATES.ERROR
@@ -105,12 +101,12 @@ class UserDialog extends Component {
 
         <Dialog open maxWidth={false}>
           <DialogTitle>
-            {data._id ? 'Change User Permissions' : 'Invite User'}
+            {id ? 'Change User Permissions' : 'Invite User'}
           </DialogTitle>
           <DialogContent style={{ width: '30vw' }}>
             <Typography>{errorMessage}</Typography>
             <UserForm
-              userId={data._id}
+              id={id}
               onSaveClick={data => {
                 this.handleSaveClick(data);
               }}

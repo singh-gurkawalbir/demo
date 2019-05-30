@@ -36,6 +36,9 @@ const themes = {
         background: {
           paper: celigo.white,
           default: celigo.superDuperLightGrey,
+          // success:
+          // warning: celigo.orange
+          // error:
         },
         // action: {[object]},
         primary: {

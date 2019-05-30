@@ -3,12 +3,14 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import resourceForm, * as fromResourceForm from './resourceForm';
 
 export default combineReducers({
+  stage,
   filters,
   editors,
-  stage,
   metadata,
+  resourceForm,
 });
 
 // #region PUBLIC SELECTORS
@@ -52,4 +54,11 @@ export function optionsFromMetadata(
   );
 }
 
+export function resourceFormState(state, resourceType, resourceId) {
+  return fromResourceForm.resourceFormState(
+    state && state.resourceForm,
+    resourceType,
+    resourceId
+  );
+}
 // #endregion

@@ -131,7 +131,8 @@ class EditorDialog extends Component {
           </div>
         </div>
         <DialogContent style={size} className={classes.dialogContent}>
-          {children && cloneElement(children, { layout })}
+          {// Is there a better way to do this?
+          children && cloneElement(children, { layout })}
         </DialogContent>
         <DialogActions className={classes.actions}>
           {showPreviewAction && (

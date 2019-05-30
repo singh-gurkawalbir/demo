@@ -14,7 +14,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
     marginLeft: theme.spacing.double,
   },
 }))
-export default class ResourceForm extends Component {
+export default class GenericResourceForm extends Component {
   state = {
     formKey: 1,
   };
@@ -35,12 +35,11 @@ export default class ResourceForm extends Component {
       classes,
       resourceType,
       resource,
-      handleSubmit,
+      handleSubmitForm,
       children,
       connection,
       optionsHandler,
       fieldMeta,
-      handleClick,
       ...rest
     } = this.props;
 
@@ -63,7 +62,9 @@ export default class ResourceForm extends Component {
             variant="contained">
             Cancel
           </Button>
-          <DynaSubmit onClick={handleClick} className={classes.actionButton}>
+          <DynaSubmit
+            onClick={handleSubmitForm}
+            className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>

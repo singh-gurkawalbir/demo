@@ -16,7 +16,11 @@ function* getNetsuiteOrSalesforceMeta({ connectionId, metadataType, mode }) {
   const path = `/${commMetadataPath}`;
 
   try {
-    const metadata = yield call(apiCallWithRetry, { path, opts: {} });
+    const metadata = yield call(apiCallWithRetry, {
+      path,
+      opts: {},
+      message: `Fetching ${metadataType}`,
+    });
 
     if (applicationType === 'netsuite')
       yield put(

@@ -7,6 +7,7 @@ export default combineReducers({
   integrationAShares,
 });
 
+// #region resource selectors
 export function resource(state, resourceType, id) {
   return fromResources.resource(state.resources, resourceType, id);
 }
@@ -22,6 +23,7 @@ export function processors(state) {
 export function hasData(state, resourceType) {
   return fromResources.hasData(state.resources, resourceType);
 }
+// #endregion
 
 export function integrationUsers(state, integrationId) {
   return fromIntegrationAShares.integrationUsers(

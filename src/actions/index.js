@@ -14,7 +14,7 @@ export const availableResources = [
 
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
-// a type are symetrical in shape by generating them via "action creator"
+// a type are symmetrical in shape by generating them via "action creator"
 // functions.
 
 function action(type, payload = {}) {
@@ -81,12 +81,11 @@ const resource = {
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
   test: {
-    connection: (connection, resourceType, resourceId, converter) =>
+    connection: (resourceType, resourceId, values) =>
       action(actionTypes.TEST_CONNECTION, {
-        connection,
         resourceType,
         resourceId,
-        converter,
+        values,
       }),
   },
   patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
@@ -195,6 +194,39 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
 };
 // #endregion
+//
+// #region DynaForm Actions
+const resourceForm = {
+  init: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId }),
+  initComplete: (
+    resourceType,
+    resourceId,
+    fieldMeta,
+    optionsHandler,
+    preSubmit
+  ) =>
+    action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
+      resourceId,
+      resourceType,
+      fieldMeta,
+      optionsHandler,
+      preSubmit,
+    }),
+  submit: (resourceType, resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+    }),
+  submitComplete: (resourceType, resourceId, formValues) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
+      resourceType,
+      resourceId,
+      formValues,
+    }),
+};
+// #endregion
 
 export default {
   metadata,
@@ -205,6 +237,7 @@ export default {
   patchFilter,
   clearFilter,
   editor,
+  resourceForm,
   resource,
   user,
   api,

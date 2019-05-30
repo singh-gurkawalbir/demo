@@ -27,42 +27,10 @@ const mapStateToProps = (state, { integrationId }) => {
   let users = [];
 
   if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-    const orgUsers = selectors.orgUsers(state);
-
     if (integrationId) {
-      let integrationAccessLevel;
-
-      orgUsers.forEach(u => {
-        if (
-          [
-            USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-            USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-          ].includes(u.accessLevel)
-        ) {
-          users.push({
-            ...u,
-            accessLevel:
-              u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
-                ? INTEGRATION_ACCESS_LEVELS.MANAGE
-                : INTEGRATION_ACCESS_LEVELS.MONITOR,
-            integrationAccessLevel: undefined,
-          });
-        } else if (u.accessLevel === USER_ACCESS_LEVELS.TILE) {
-          integrationAccessLevel = u.integrationAccessLevel.find(
-            ial => ial._integrationId === integrationId
-          );
-
-          if (integrationAccessLevel) {
-            users.push({
-              ...u,
-              accessLevel: integrationAccessLevel.accessLevel,
-              integrationAccessLevel: undefined,
-            });
-          }
-        }
-      });
+      users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
-      users = orgUsers;
+      users = selectors.orgUsers(state);
     }
   } else if (integrationId) {
     users = selectors.integrationUsers(state, integrationId);
@@ -185,7 +153,7 @@ class UserList extends Component {
       <Fragment>
         {showUserDialog && (
           <UserDialog
-            data={{ _id: selectedUserId }}
+            id={selectedUserId}
             onCancelClick={() => {
               this.setState({ showUserDialog: false });
             }}
@@ -232,7 +200,7 @@ class UserList extends Component {
                 users.map(user => (
                   <UserDetail
                     key={user._id}
-                    data={user}
+                    user={user}
                     integrationId={integrationId}
                     isAccountOwner={isAccountOwner}
                     editClickHandler={userId => {

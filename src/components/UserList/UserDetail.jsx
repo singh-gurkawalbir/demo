@@ -51,7 +51,7 @@ class UserDetail extends Component {
     this.setState({ anchorEl: null });
 
     const {
-      data,
+      user,
       disableUser,
       deleteUser,
       makeOwner,
@@ -63,7 +63,7 @@ class UserDetail extends Component {
         confirmDialog({
           title: 'Confirm',
           message: `Are you sure you want to ${
-            data.disabled ? 'enable' : 'disable'
+            user.disabled ? 'enable' : 'disable'
           } this user?`,
           buttons: [
             {
@@ -72,7 +72,7 @@ class UserDetail extends Component {
             {
               label: 'Yes',
               onClick: () => {
-                disableUser(data._id, data.disabled);
+                disableUser(user._id, user.disabled);
               },
             },
           ],
@@ -82,7 +82,7 @@ class UserDetail extends Component {
         confirmDialog({
           title: 'Transfer Account Ownership',
           message: [
-            `<b>${data.sharedWithUser.name}</b> (${data.sharedWithUser.email})`,
+            `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`,
             'All owner privilages will be transfered to this user, and your account will be converted to Manager.',
             'Please click Confirm to proceed with this change.',
           ].join('<br/>'),
@@ -93,7 +93,7 @@ class UserDetail extends Component {
             {
               label: 'Yes',
               onClick: () => {
-                makeOwner(data.sharedWithUser.email);
+                makeOwner(user.sharedWithUser.email);
               },
             },
           ],
@@ -110,55 +110,55 @@ class UserDetail extends Component {
             {
               label: 'Yes',
               onClick: () => {
-                deleteUser(data._id);
+                deleteUser(user._id);
               },
             },
           ],
         });
         break;
       case 'edit':
-        editClickHandler(data._id);
+        editClickHandler(user._id);
         break;
       default:
     }
   };
 
-  getMessageForAction(action, commStatus, data) {
+  getMessageForAction(action, commStatus, user) {
     let message;
 
     if (action === 'disable') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
-        message = `User ${data.sharedWithUser.name ||
-          data.sharedWithUser.email} ${
-          data.disabled ? 'enabled' : 'disabled'
+        message = `User ${user.sharedWithUser.name ||
+          user.sharedWithUser.email} ${
+          user.disabled ? 'enabled' : 'disabled'
         } successfully`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
-        message = `${data.disabled ? 'Enabling' : 'Disabling'} user ${data
+        message = `${user.disabled ? 'Enabling' : 'Disabling'} user ${user
           .sharedWithUser.name ||
-          data.sharedWithUser.email} is failed due to the erorr "${
+          user.sharedWithUser.email} is failed due to the erorr "${
           commStatus.message
         }"`;
       }
     } else if (action === 'delete') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
-        message = `User ${data.sharedWithUser.name ||
-          data.sharedWithUser.email} deleted successfully`;
+        message = `User ${user.sharedWithUser.name ||
+          user.sharedWithUser.email} deleted successfully`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
-        message = `Deleting user ${data.sharedWithUser.name ||
-          data.sharedWithUser.email} is failed due to the error "${
+        message = `Deleting user ${user.sharedWithUser.name ||
+          user.sharedWithUser.email} is failed due to the error "${
           commStatus.message
         }"`;
       }
     } else if (action === 'makeOwner') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
         message = `An Account Ownership invitation has been sent to ${
-          data.sharedWithUser.name
+          user.sharedWithUser.name
         } (${
-          data.sharedWithUser.email
+          user.sharedWithUser.email
         }).<br/>Once accepted, your account will be converted to a regular user account with Manager access.`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
-        message = `Request to make user ${data.sharedWithUser.name ||
-          data.sharedWithUser
+        message = `Request to make user ${user.sharedWithUser.name ||
+          user.sharedWithUser
             .email} as account owner is failed due to the erorr "${
           commStatus.message
         }"`;
@@ -169,7 +169,7 @@ class UserDetail extends Component {
   }
 
   commStatusHandler(objStatus) {
-    const { data, statusHandler } = this.props;
+    const { user, statusHandler } = this.props;
 
     ['disable', 'makeOwner', 'delete'].forEach(a => {
       if (
@@ -178,23 +178,22 @@ class UserDetail extends Component {
       ) {
         statusHandler({
           status: objStatus[a].status,
-          message: this.getMessageForAction(a, objStatus[a], data),
+          message: this.getMessageForAction(a, objStatus[a], user),
         });
       }
     });
   }
   render() {
     const { anchorEl } = this.state;
-    const { data, integrationId, isAccountOwner } = this.props;
-    const user = data;
+    const { user, integrationId, isAccountOwner } = this.props;
 
     return (
       <Fragment>
         <CommStatus
           actionsToMonitor={{
-            disable: { action: actionTypes.USER_DISABLE, resourceId: data._id },
+            disable: { action: actionTypes.USER_DISABLE, resourceId: user._id },
             makeOwner: { action: actionTypes.USER_MAKE_OWNER },
-            delete: { action: actionTypes.USER_DELETE, resourceId: data._id },
+            delete: { action: actionTypes.USER_DELETE, resourceId: user._id },
           }}
           autoClearOnComplete
           commStatusHandler={objStatus => {
@@ -246,7 +245,7 @@ class UserDetail extends Component {
                 <TableCell>
                   <IconButton
                     onClick={() => {
-                      this.handleActionClick('edit', user._id);
+                      this.handleActionClick('edit');
                     }}>
                     <EditIcon />
                   </IconButton>
@@ -269,7 +268,7 @@ class UserDetail extends Component {
                       onClose={this.handleClose}>
                       <MenuItem
                         onClick={() => {
-                          this.handleActionClick('edit', user._id);
+                          this.handleActionClick('edit');
                         }}>
                         Change permissions
                       </MenuItem>

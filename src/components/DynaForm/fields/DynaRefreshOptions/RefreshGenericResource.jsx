@@ -19,11 +19,11 @@ import Spinner from '../../../Spinner';
 }))
 class RefreshGenericResource extends React.Component {
   componentDidMount() {
-    const { onFetchResource, computedOptions } = this.props;
+    const { onFetchResource, options } = this.props;
 
     // When it has data don't refetch again...if the user
     // specifically wants to do it...user can use refresh icon
-    if (!computedOptions || computedOptions.length === 0) onFetchResource();
+    if (!options || options.length === 0) onFetchResource();
   }
   render() {
     const {

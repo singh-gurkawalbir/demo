@@ -14,7 +14,6 @@ import {
   pingConnectionParams,
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
-import stringUtil from '../utils/string';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
   USER_ACCESS_LEVELS,
@@ -44,10 +43,10 @@ const rootReducer = (state, action) => {
 
 export default rootReducer;
 
-// TODO: Do we realy need to proxy all selectors here?
+// TODO: Do we really need to proxy all selectors here?
 // Instead, we could only have the selectors that cross
 // state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintian for the
+// This is a lot of boiler plate code to maintain for the
 // sole purpose of abstracting the state "shape" completely.
 // It may be just fine to directly reference the primary state
 // subdivisions (data, session, comms) in order to simplify the code further...
@@ -92,6 +91,14 @@ export function isAllLoadingCommsAboveThresold(state) {
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
+export function resourceFormState(state, resourceType, resourceId) {
+  return fromSession.resourceFormState(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }
@@ -167,6 +174,7 @@ export function userProfilePreferencesProps(state) {
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
+// #endregion
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {
@@ -222,7 +230,6 @@ export function shouldShowAppRouting(state) {
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
 }
-
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals
@@ -318,6 +325,7 @@ export function changeEmailMsg(state) {
 
 // #endregion PASSWORD & EMAIL update selectors for modals
 
+// #region USER SELECTORS
 export function testConnectionCommState(state) {
   const commKey = commKeyGen(
     pingConnectionParams.path,
@@ -371,6 +379,10 @@ export function resourceList(state, options) {
 
 export function processors(state) {
   return fromData.processors(state.data);
+}
+
+export function scriptContent(state, id) {
+  return fromData.scriptContent(state.data, id);
 }
 // #endregion
 
@@ -620,12 +632,10 @@ export function resourceData(state, resourceType, id) {
     merged = patchResult.newDocument;
   }
 
-  const hash = stringUtil.hashCode(JSON.stringify(merged || master));
   const data = {
     master,
     patch,
     merged: merged || master,
-    hash,
   };
 
   if (conflict) data.conflict = conflict;
@@ -677,6 +687,10 @@ export function newResourceData(state, resourceType, id) {
 
 export function orgUsers(state) {
   return fromUser.usersList(state.user);
+}
+
+export function integrationUsersForOwner(state, integrationId) {
+  return fromUser.integrationUsers(state.user, integrationId);
 }
 
 export function integrationUsers(state, integrationId) {
