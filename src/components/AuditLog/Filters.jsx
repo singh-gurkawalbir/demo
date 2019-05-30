@@ -5,6 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core';
 import * as _ from 'lodash';
+import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../utils/constants';
 
 @withStyles(theme => ({
   root: {
@@ -65,7 +66,9 @@ export default class Filters extends Component {
 
     return (
       <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="_resourceId">Select {resourceType}</InputLabel>
+        <InputLabel htmlFor="_resourceId">
+          Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[resourceType]}
+        </InputLabel>
         <Select
           inputProps={{
             name: '_resourceId',

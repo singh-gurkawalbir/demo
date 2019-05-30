@@ -104,6 +104,22 @@ const resource = {
     }),
 };
 // #endregion
+const auditLogs = {
+  requestCollection: (resourceType, resourceId, message) => {
+    if (resourceType && resourceId) {
+      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+        resourceType: `${resourceType}/${resourceId}/audit`,
+        message,
+      });
+    }
+
+    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+      resourceType: 'audit',
+      message,
+    });
+  },
+  clear: () => action(actionTypes.CLEAR_AUDIT_LOGS),
+};
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
@@ -160,7 +176,6 @@ const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
-const clearAuditLogs = () => action(actionTypes.CLEAR_AUDIT_LOGS);
 const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
@@ -232,5 +247,5 @@ export default {
   api,
   ashares,
   auth,
-  clearAuditLogs,
+  auditLogs,
 };

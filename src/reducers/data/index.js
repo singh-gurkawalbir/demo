@@ -34,8 +34,8 @@ export function integrationUsers(state, integrationId) {
   );
 }
 
-export function auditLogs(state, resourceType, resourceId) {
-  return fromAudit.auditLogs(state.audit, resourceType, resourceId);
+export function auditLogs(state, resourceType, resourceId, filters) {
+  return fromAudit.auditLogs(state.audit, resourceType, resourceId, filters);
 }
 
 export function affectedResourcesFromAuditLogs(

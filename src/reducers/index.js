@@ -704,8 +704,8 @@ export function accountOwner(state) {
   return fromUser.accountOwner(state.user);
 }
 
-export function auditLogs(state, resourceType, resourceId) {
-  return fromData.auditLogs(state.data, resourceType, resourceId);
+export function auditLogs(state, resourceType, resourceId, filters) {
+  return fromData.auditLogs(state.data, resourceType, resourceId, filters);
 }
 
 export function affectedResourcesFromAuditLogs(

@@ -33,7 +33,7 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function auditLogs(state, resourceType, resourceId) {
+export function auditLogs(state, resourceType, resourceId, filters) {
   let logs = [];
 
   if (!state) {
@@ -46,16 +46,39 @@ export function auditLogs(state, resourceType, resourceId) {
     logs = state.all;
   }
 
-  return logs || [];
+  if (!logs) {
+    logs = [];
+  }
+
+  if (!filters) {
+    return logs;
+  }
+
+  const filteredLogs = logs.filter(al => {
+    if (filters.resourceType && filters.resourceType !== al.resourceType) {
+      return false;
+    }
+
+    if (filters._resourceId && filters._resourceId !== al._resourceId) {
+      return false;
+    }
+
+    if (filters.byUser && filters.byUser !== al.byUser._id) {
+      return false;
+    }
+
+    if (filters.source && filters.source !== al.source) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return filteredLogs;
 }
 
 export function affectedResources(state, resourceType, resourceId) {
   const logs = auditLogs(state, resourceType, resourceId);
-
-  if (!logs.length) {
-    return {};
-  }
-
   const affectedResources = {};
 
   logs.forEach(a => {
@@ -75,11 +98,6 @@ export function affectedResources(state, resourceType, resourceId) {
 
 export function users(state, resourceType, resourceId) {
   const logs = auditLogs(state, resourceType, resourceId);
-
-  if (!logs.length) {
-    return [];
-  }
-
   const users = {};
 
   logs.forEach(a => {
