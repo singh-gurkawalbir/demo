@@ -5,7 +5,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core';
 import * as _ from 'lodash';
-import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../utils/constants';
+import {
+  AUDIT_LOG_SOURCE_LABELS,
+  RESOURCE_TYPE_SINGULAR_TO_LABEL,
+} from '../../utils/constants';
+
+const optionAll = { id: 'all', label: 'All' };
 
 @withStyles(theme => ({
   root: {
@@ -22,23 +27,23 @@ import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../utils/constants';
 }))
 export default class Filters extends Component {
   state = {
-    resourceType: 'all',
-    _resourceId: 'all',
-    byUser: 'all',
-    source: 'all',
+    resourceType: optionAll.id,
+    _resourceId: optionAll.id,
+    byUser: optionAll.id,
+    source: optionAll.id,
   };
   getResourceIdFilter = () => {
     const { resourceType, _resourceId } = this.state;
     const {
       classes,
       affectedResources,
-      resources,
+      resourceDetails,
       isIntegrationLevelAudit,
     } = this.props;
 
     if (
       !resourceType ||
-      resourceType === 'all' ||
+      resourceType === optionAll.id ||
       (resourceType === 'integration' && isIntegrationLevelAudit)
     ) {
       return null;
@@ -51,9 +56,9 @@ export default class Filters extends Component {
         options.push({
           id: ar,
           name:
-            resources[resourceType] &&
-            resources[resourceType][ar] &&
-            resources[resourceType][ar].name,
+            resourceDetails[resourceType] &&
+            resourceDetails[resourceType][ar] &&
+            resourceDetails[resourceType][ar].name,
         });
       });
     options = _.sortBy(options, ['name']);
@@ -76,8 +81,8 @@ export default class Filters extends Component {
           }}
           value={_resourceId}
           onChange={this.handleChange}>
-          <MenuItem key="all" value="all">
-            All
+          <MenuItem key={optionAll.id} value={optionAll.id}>
+            {optionAll.label}
           </MenuItem>
           {menuOptions}
         </Select>
@@ -88,7 +93,7 @@ export default class Filters extends Component {
     const toUpdate = { [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
-      toUpdate._resourceId = 'all';
+      toUpdate._resourceId = optionAll.id;
     }
 
     this.setState(toUpdate);
@@ -101,7 +106,7 @@ export default class Filters extends Component {
         filters[key] = this.state[key];
       }
 
-      if (filters[key] === 'all') {
+      if (filters[key] === optionAll.id) {
         filters[key] = undefined;
       }
     });
@@ -124,7 +129,7 @@ export default class Filters extends Component {
               id: 'resourceType',
             }}>
             {[
-              ['all', 'All'],
+              [optionAll.id, optionAll.label],
               ['integration', 'Integration'],
               ['flow', 'Flow'],
               ['import', 'Import'],
@@ -150,7 +155,7 @@ export default class Filters extends Component {
             }}
             onChange={this.handleChange}
             value={byUser}>
-            <MenuItem key="all" value="all">
+            <MenuItem key={optionAll.id} value={optionAll.id}>
               All
             </MenuItem>
             {users.map(opt => (
@@ -170,11 +175,11 @@ export default class Filters extends Component {
             onChange={this.handleChange}
             value={source}>
             {[
-              ['all', 'All'],
-              ['ui', 'UI'],
-              ['api', 'API'],
-              ['stack', 'Stack'],
-              ['system', 'System'],
+              [optionAll.id, optionAll.label],
+              ...Object.keys(AUDIT_LOG_SOURCE_LABELS).map(k => [
+                k,
+                AUDIT_LOG_SOURCE_LABELS[k],
+              ]),
             ].map(opt => (
               <MenuItem key={opt[0]} value={opt[0]}>
                 {opt[1]}

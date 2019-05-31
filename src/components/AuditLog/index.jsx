@@ -29,29 +29,30 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     resourceType,
     resourceId
   );
-  const resources = {};
+  const resourceDetails = {};
 
   resourceTypes.forEach(rt => {
     const resourceList = selectors.resourceList(state, {
       type: rt,
     }).resources;
 
-    resources[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = {};
+    resourceDetails[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = {};
     resourceList.forEach(r => {
-      resources[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]][r._id] = {
+      resourceDetails[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]][r._id] = {
         name: r.name,
       };
 
       if (rt === 'flows') {
-        resources[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]][r._id]._integrationId =
-          r._integrationId;
+        resourceDetails[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]][
+          r._id
+        ]._integrationId = r._integrationId;
       }
     });
   });
 
   return {
     auditLogs,
-    resources,
+    resourceDetails,
     affectedResources,
     usersFromAudit,
   };
@@ -76,11 +77,6 @@ const mapDispatchToProps = dispatch => ({
   title: {
     marginBottom: theme.spacing.unit * 2,
     float: 'left',
-  },
-  inviteUserButton: {
-    margin: theme.spacing.unit,
-    textAlign: 'center',
-    float: 'right',
   },
   table: {
     minWidth: 700,
@@ -119,7 +115,7 @@ class AuditLog extends Component {
   render() {
     const {
       classes,
-      resources,
+      resourceDetails,
       affectedResources,
       usersFromAudit,
       resourceType,
@@ -136,7 +132,7 @@ class AuditLog extends Component {
             </Typography>
             <Filters
               affectedResources={affectedResources}
-              resources={resources}
+              resourceDetails={resourceDetails}
               users={usersFromAudit}
               onFiltersChange={this.handleFiltersChange}
               isIntegrationLevelAudit={resourceType === 'integrations'}
@@ -144,7 +140,7 @@ class AuditLog extends Component {
             <AuditLogsTable
               resourceType={resourceType}
               resourceId={resourceId}
-              resources={resources}
+              resourceDetails={resourceDetails}
               filters={filters}
             />
           </div>

@@ -104,6 +104,18 @@ export const PERMISSIONS = Object.freeze({
     delete: 'users.delete',
   },
 });
+export const AUDIT_LOG_SOURCE_LABELS = {
+  ui: 'UI',
+  api: 'API',
+  stack: 'Stack',
+  system: 'System',
+};
+export const AUDIT_LOG_EVENT_LABELS = {
+  create: 'Create',
+  delete: 'Delete',
+  update: 'Update',
+  view: 'View',
+};
 export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   accesstoken: 'accesstokens',
   agent: 'agents',
