@@ -76,7 +76,11 @@ class MyAccount extends Component {
       <Fragment>
         <div className={classes.appFrame}>
           <div className={classes.about}>
-            <Typography variant="h5">My Account</Typography>
+            <Typography variant="h5">
+              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+                ? 'My Account'
+                : 'My Profile'}
+            </Typography>
           </div>
           <Divider />
           <div className={classes.root}>
