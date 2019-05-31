@@ -227,10 +227,8 @@ export function* initCustomForm({ resourceType, resourceId }) {
   });
   const flattenedFields = factory.getFlattenedFieldMetaWithRules(
     defaultFormAssets.fieldMeta,
-    resourceType,
-    resource
+    resourceType
   );
-  const { fieldSets } = defaultFormAssets.fieldMeta;
   // TODO: @Surya, we need to flatten the 'defaultFormAssets.fieldMeta'
   // to replace formId with the relevant fields
   // I have fixed it with a flattened fields...but it does cascade
@@ -240,7 +238,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
       op: 'replace',
       path: '/customForm',
       value: {
-        form: { fields: flattenedFields, fieldSets },
+        form: flattenedFields,
       },
     },
   ];
