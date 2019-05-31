@@ -20,7 +20,12 @@ export default (state = { environment: 'production' }, action) => {
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED:
-      if (resourceType === 'preferences') return resource;
+      if (resourceType === 'preferences')
+        return {
+          dateFormat: 'MM/DD/YYYY',
+          timeFormat: 'h:mm:ss a',
+          ...resource,
+        };
 
       return newState;
     case actionTypes.UPDATE_PREFERENCES: {
