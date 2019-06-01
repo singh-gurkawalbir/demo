@@ -13,8 +13,28 @@ import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
 
+const adaptorTypeMap = {
+  NetSuiteExport: 'netsuite',
+  NetSuiteImport: 'netsuite',
+  NetSuiteConnection: 'netsuite',
+  XMLImport: 'xml',
+  XMLExport: 'xml',
+  XMLConnection: 'xml',
+  FTPExport: 'ftp',
+  FTPImport: 'ftp',
+  FTPConnection: 'ftp',
+  HTTPExport: 'http',
+  HTTPImport: 'http',
+  HTTPConnection: 'http',
+  RESTImport: 'rest',
+  RESTExport: 'rest',
+  RESTConnection: 'rest',
+};
 const mapStateToProps = (state, { field }) => {
   const { id, resourceId, resourceType } = field;
+  const resource =
+    selectors.resourceData(state, resourceType, resourceId) || {};
+  const { adaptorType } = resource.merged || {};
   const fieldMeta = selectors.resourceFormField(
     state,
     resourceType,
@@ -22,7 +42,9 @@ const mapStateToProps = (state, { field }) => {
     id
   );
 
-  return { fieldMeta };
+  // console.log('adaptorType: ', adaptorType);
+
+  return { adaptorType: adaptorTypeMap[adaptorType], resourceType, fieldMeta };
 };
 
 const mapDispatchToProps = (dispatch, { field }) => {
@@ -94,7 +116,7 @@ class EditFieldButton extends Component {
 
   render() {
     const { showEditor, insertField } = this.state;
-    const { className, fieldMeta = {} } = this.props;
+    const { className, fieldMeta = {}, adaptorType, resourceType } = this.props;
     const fieldId = fieldMeta.fieldId || 'new';
 
     /* eslint-disable react/jsx-handler-names */
@@ -141,6 +163,8 @@ class EditFieldButton extends Component {
         </PopupState>
         {insertField && (
           <NewFieldDialog
+            resourceType={resourceType}
+            adaptorType={adaptorType}
             title={`Insert this new field ${insertField} ${fieldId}`}
             onClose={() => this.handleInsertFieldToggle()}
             onSubmit={field => this.handleInsertField(field)}

@@ -227,7 +227,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
 
 export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
+  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
-  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
 ];
