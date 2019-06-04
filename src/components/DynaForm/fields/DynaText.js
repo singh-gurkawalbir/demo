@@ -24,7 +24,7 @@ class MaterialUiTextField extends React.Component {
       onFieldChange,
       placeholder,
       required,
-      value,
+      value = '',
       label,
       multiline,
       valueDelimiter,

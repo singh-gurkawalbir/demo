@@ -1,11 +1,11 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
-import PingConnectionSaga from './connections';
+import metadataSagas from './meta';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
 export function* getRequestOptions(path) {
@@ -126,5 +126,5 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
-  ...PingConnectionSaga,
+  ...metadataSagas,
 ];

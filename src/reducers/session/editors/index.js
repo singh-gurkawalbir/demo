@@ -14,7 +14,7 @@ export default function reducer(state = {}, action) {
     helperFunctions,
     violations,
   } = action;
-  let newState = Object.assign({}, state);
+  let newState = { ...state };
 
   switch (type) {
     case actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS:

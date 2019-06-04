@@ -4,26 +4,31 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
+import { createFormValuesPatchSet } from '../index';
 import * as selectors from '../../../reducers/index';
 
-function* createPayload({ formFieldValues, resourceType, resourceId }) {
+function* createPayload({ values, resourceType, resourceId }) {
   // TODO: Select resource Data staged changes should be included
   const connectionResource = yield select(
     selectors.resource,
     resourceType,
     resourceId
   );
+  const { patchSet } = yield call(createFormValuesPatchSet, {
+    resourceType,
+    resourceId,
+    values,
+  });
 
-  return jsonpatch.applyPatch(connectionResource, formFieldValues).newDocument;
+  return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-function* pingConnection({ connection, resourceType, resourceId, converter }) {
+function* pingConnection({ resourceType, resourceId, values }) {
   try {
     const connectionPayload = yield call(createPayload, {
-      formFieldValues: connection,
+      values,
       resourceType,
       resourceId,
-      converter,
     });
     const { apiResp } = yield race({
       apiResp: call(apiCallWithRetry, {

@@ -26,7 +26,12 @@ export default function reducer(state = {}, action) {
         // if the state is not serializable, will we recover properly from
         // refreshing session? Doing this makes the submit resource saga
         // easier as we dont need to lookup the preSubmit handler...
-        [key]: { initComplete: true, fieldMeta, optionsHandler, preSubmit },
+        [key]: {
+          initComplete: true,
+          fieldMeta,
+          optionsHandler,
+          preSubmit,
+        },
       };
 
     case actionTypes.RESOURCE_FORM.SUBMIT:
