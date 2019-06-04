@@ -14,12 +14,11 @@ function* createPayload({ values, resourceType, resourceId }) {
     resourceType,
     resourceId
   );
-  const { patchSet } = yield call(
-    createFormValuesPatchSet,
+  const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values
-  );
+    values,
+  });
 
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }

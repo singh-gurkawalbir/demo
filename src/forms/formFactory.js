@@ -23,7 +23,8 @@ const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
 };
 
 const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
-  if (!meta || !meta.optionsHandler) return null;
+  if (!meta) return null;
+
   const allOptionsHandler = getAllOptionsHandlerSubForms(
     fields,
     resourceType,

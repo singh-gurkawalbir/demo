@@ -13,7 +13,7 @@ class DynaUploadFile extends React.Component {
       onFieldChange,
       placeholder,
       required,
-      value,
+      value = '',
       label,
     } = this.props;
     const handleFieldChange = event => {
@@ -32,7 +32,6 @@ class DynaUploadFile extends React.Component {
       <TextField
         inputProps={{ accept: acceptFileType }}
         InputLabelProps={{ shrink: true }}
-        input
         key={id}
         name={name}
         label={label}

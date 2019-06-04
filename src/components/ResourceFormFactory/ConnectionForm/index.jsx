@@ -19,7 +19,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const resourceId = resource._id;
 
   return {
-    testConnection: values => {
+    handleTestConnection: values => {
       dispatch(
         actions.resource.test.connection(resourceType, resourceId, values)
       );
@@ -67,7 +67,7 @@ class ConnectionForm extends Component {
       classes,
       testConnectionCommState,
       converter,
-      testConnection,
+      handleTestConnection,
       ...rest
     } = this.props;
 
@@ -81,7 +81,7 @@ class ConnectionForm extends Component {
         <ResourceForm {...rest}>
           <DynaSubmit
             disabled={testConnectionCommState.commState === COMM_STATES.LOADING}
-            onClick={testConnection}
+            onClick={handleTestConnection}
             className={classes.actionButton}
             size="small"
             variant="contained"

@@ -25,9 +25,7 @@ const mapDispatchToProps = (
   { connectionId, resourceType, mode }
 ) => ({
   onFetchResource: () =>
-    dispatch(
-      actions.metadata.requestCollection(connectionId, resourceType, mode)
-    ),
+    dispatch(actions.metadata.request(connectionId, resourceType, mode)),
 });
 
 class DynaSelectOptionsGenerator extends React.Component {
