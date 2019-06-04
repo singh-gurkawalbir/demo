@@ -1688,4 +1688,58 @@ export default {
     label: 'Mongodb replica Set',
   },
   // #endregion mongodb
+
+  // #region custom connection
+  'zendesk.subdomain': {
+    type: 'text',
+    startAdornment: 'https://',
+    endAdornment: '.zendesk.com',
+    label: 'Enter subdomain into the base uri',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[a-zA-Z0-9]*$',
+        message: 'Subdomain should not contain spaces.',
+      },
+    },
+  },
+  'authorizeNet.accType': {
+    type: 'select',
+    label: 'Account Type:',
+    options: [
+      {
+        items: [
+          { label: 'Production', value: 'production' },
+          { label: 'Sandbox', value: 'sandbox' },
+        ],
+      },
+    ],
+  },
+  'http.encrypted.apiLoginID': {
+    type: 'text',
+    label: 'API Login ID:',
+    required: true,
+  },
+  'http.encrypted.transactionKey': {
+    type: 'text',
+    label: 'Transaction Key:',
+    required: true,
+  },
+  'integrator.token': {
+    type: 'text',
+    label: 'Token:',
+    required: true,
+    inputType: 'password',
+  },
+  'integrator.environment': {
+    type: 'select',
+    label: 'Environment:',
+    options: [
+      {
+        items: [
+          { label: 'Production', value: 'production' },
+          { label: 'Staging', value: 'staging' },
+        ],
+      },
+    ],
+  },
 };

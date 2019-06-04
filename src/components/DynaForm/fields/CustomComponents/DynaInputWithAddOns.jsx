@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FieldWrapper } from 'react-forms-processor/dist';
-import { InputAdornment } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 @withStyles(() => ({
   textField: {
@@ -17,6 +17,10 @@ class MaterialUiTextField extends React.Component {
     const {
       classes,
       description,
+      // this is a custom prop ...we cannot use `disable` because react
+      // forms processor use the same prop and will overwrite we would like
+      // to pass in
+      disableTextField,
       disabled,
       errorMessages,
       id,
@@ -25,14 +29,11 @@ class MaterialUiTextField extends React.Component {
       onFieldChange,
       placeholder,
       required,
-      value = '',
+      value,
       label,
       multiline,
       valueDelimiter,
       rowsMax,
-      startAdornment,
-      endAdornment,
-      inputType,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
@@ -45,39 +46,34 @@ class MaterialUiTextField extends React.Component {
     };
 
     return (
-      <TextField
-        autoComplete="off"
-        key={id}
-        name={name}
-        label={label}
-        InputProps={{
-          startAdornment: startAdornment ? (
-            <InputAdornment position="start">{startAdornment}</InputAdornment>
-          ) : null,
-          endAdornment: endAdornment ? (
-            <InputAdornment position="end">{endAdornment}</InputAdornment>
-          ) : null,
-        }}
-        type={inputType}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        multiline={multiline}
-        rowsMax={rowsMax}
-        required={required}
-        error={!isValid}
-        value={value}
-        onChange={handleFieldChange}
-      />
+      <div>
+        <Typography>https://</Typography>
+        <TextField
+          autoComplete="off"
+          key={id}
+          name={name}
+          label={label}
+          className={classes.textField}
+          placeholder={placeholder}
+          helperText={isValid ? description : errorMessages}
+          disabled={disableTextField || disabled}
+          multiline={multiline}
+          rowsMax={rowsMax}
+          required={required}
+          error={!isValid}
+          value={value}
+          onChange={handleFieldChange}
+        />
+        <Typography>.zendesk.com</Typography>
+      </div>
     );
   }
 }
 
-const DynaText = props => (
+const DynaInputWithAddOns = props => (
   <FieldWrapper {...props}>
     <MaterialUiTextField />
   </FieldWrapper>
 );
 
-export default DynaText;
+export default DynaInputWithAddOns;

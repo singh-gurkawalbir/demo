@@ -1,4 +1,5 @@
 export default {
+  'connection.zendesk.subdomain': 'zendesk subdomain',
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':

@@ -13,6 +13,7 @@ import DynaRefreshOptions from './DynaRefreshOptions/RefreshOptionsFactory';
 import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
+import DynaInputWithAddOns from './CustomComponents/DynaInputWithAddOns';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 
@@ -35,4 +36,5 @@ export default {
   labeltitle: DynaLabel,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
+  inputWithAddOns: DynaInputWithAddOns,
 };
