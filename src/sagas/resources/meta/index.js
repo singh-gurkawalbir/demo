@@ -39,5 +39,5 @@ function* getNetsuiteOrSalesforceMeta({ connectionId, metadataType, mode }) {
 }
 
 export default [
-  takeEvery(actionTypes.REQUEST_METADATA, getNetsuiteOrSalesforceMeta),
+  takeEvery(actionTypes.METADATA.REQUEST, getNetsuiteOrSalesforceMeta),
 ];

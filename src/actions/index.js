@@ -107,14 +107,14 @@ const resource = {
 // #endregion
 const metadata = {
   request: (connectionId, metadataType, mode) =>
-    action(actionTypes.REQUEST_METADATA, {
+    action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
       mode,
     }),
   netsuite: {
     receivedCollection: (metadata, metadataType, connectionId, mode) =>
-      action(actionTypes.RECEIVED_NETSUITE_COLLECTION, {
+      action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
         metadataType,
         connectionId,

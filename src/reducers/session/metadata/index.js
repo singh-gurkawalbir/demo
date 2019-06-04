@@ -44,7 +44,7 @@ export default (
     // This is to ensure that a react component listening
     // to just the root of the object realizes they are updates to
     // the children and subsequently rerenders.
-    case actionTypes.RECEIVED_NETSUITE_COLLECTION: {
+    case actionTypes.METADATA.RECEIVED_NETSUITE: {
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
