@@ -231,6 +231,8 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
+  clear: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };
 // #endregion
 

@@ -248,7 +248,6 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceFormFactory
-            key={merged._id}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
