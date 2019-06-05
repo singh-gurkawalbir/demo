@@ -1,35 +1,34 @@
-import * as _ from 'lodash';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, resourceType, collection } = action;
 
+  if (!type) {
+    return state;
+  }
+
+  if (type === actionTypes.CLEAR_AUDIT_LOGS) {
+    return {};
+  }
+
   if (!resourceType) {
     return state;
   }
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
-      if (resourceType === 'audit') {
-        return { all: collection || [] };
-      } else if (
-        resourceType.startsWith('integrations/') &&
-        resourceType.endsWith('/audit')
-      ) {
-        const integrationId = resourceType
-          .replace('integrations/', '')
-          .replace('/audit', '');
+  if (type === actionTypes.RESOURCE.RECEIVED_COLLECTION) {
+    if (resourceType === 'audit') {
+      return { all: collection || [] };
+    } else if (resourceType.endsWith('/audit')) {
+      const modelPlural = resourceType.split('/')[0];
+      const resourceId = resourceType
+        .replace(`${modelPlural}/`, '')
+        .replace('/audit', '');
 
-        return { integrations: { [integrationId]: collection || [] } };
-      }
-
-      return state;
-
-    case actionTypes.CLEAR_AUDIT_LOGS:
-      return {};
-    default:
-      return state;
+      return { [modelPlural]: { [resourceId]: collection || [] } };
+    }
   }
+
+  return state;
 };
 
 // #region PUBLIC SELECTORS
@@ -77,33 +76,4 @@ export function auditLogs(state, resourceType, resourceId, filters) {
   return filteredLogs;
 }
 
-export function affectedResources(state, resourceType, resourceId) {
-  const logs = auditLogs(state, resourceType, resourceId);
-  const affectedResources = {};
-
-  logs.forEach(a => {
-    if (!affectedResources[a.resourceType]) {
-      affectedResources[a.resourceType] = [];
-    }
-
-    affectedResources[a.resourceType].push(a._resourceId);
-  });
-
-  Object.keys(affectedResources).forEach(resourceType => {
-    affectedResources[resourceType] = _.uniq(affectedResources[resourceType]);
-  });
-
-  return affectedResources;
-}
-
-export function users(state, resourceType, resourceId) {
-  const logs = auditLogs(state, resourceType, resourceId);
-  const users = {};
-
-  logs.forEach(a => {
-    users[a.byUser._id] = a.byUser;
-  });
-
-  return Object.keys(users).map(id => users[id]);
-}
 // #endregion

@@ -107,6 +107,7 @@ export const PERMISSIONS = Object.freeze({
 export const AUDIT_LOG_SOURCE_LABELS = {
   ui: 'UI',
   api: 'API',
+  connector: 'Connector',
   stack: 'Stack',
   system: 'System',
 };
@@ -119,6 +120,7 @@ export const AUDIT_LOG_EVENT_LABELS = {
 export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   accesstoken: 'accesstokens',
   agent: 'agents',
+  asynchelper: 'asynchelpers',
   connection: 'connections',
   connector: 'connectors',
   export: 'exports',

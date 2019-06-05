@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -8,9 +9,26 @@ import * as _ from 'lodash';
 import {
   AUDIT_LOG_SOURCE_LABELS,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
+  RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
+import * as selectors from '../../reducers';
 
 const optionAll = { id: 'all', label: 'All' };
+const mapStateToProps = (state, { resourceType, resourceId }) => {
+  const {
+    affectedResources,
+    users,
+  } = selectors.affectedResourcesAndUsersFromAuditLogs(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return {
+    affectedResources,
+    users,
+  };
+};
 
 @withStyles(theme => ({
   root: {
@@ -25,42 +43,134 @@ const optionAll = { id: 'all', label: 'All' };
     marginTop: theme.spacing.double,
   },
 }))
-export default class Filters extends Component {
+class Filters extends Component {
   state = {
-    resourceType: optionAll.id,
-    _resourceId: optionAll.id,
-    byUser: optionAll.id,
-    source: optionAll.id,
+    filters: {
+      resourceType: optionAll.id,
+      _resourceId: optionAll.id,
+      byUser: optionAll.id,
+      source: optionAll.id,
+    },
+  };
+  getResource = () => {
+    const { resourceType, resourceId, resourceDetails } = this.props;
+    const resource =
+      resourceType &&
+      resourceDetails[resourceType] &&
+      resourceDetails[resourceType][resourceId];
+
+    return resource;
+  };
+  getResourceTypeFilter = () => {
+    const { classes, resourceType } = this.props;
+    const { filters } = this.state;
+    const hideFilterForResourceTypes = [
+      'accesstokens',
+      'connections',
+      'stacks',
+    ];
+    const resource = this.getResource();
+
+    if (resource && resource._connectorId) {
+      hideFilterForResourceTypes.push('flows');
+    }
+
+    if (hideFilterForResourceTypes.includes(resourceType)) {
+      return null;
+    }
+
+    const resourceTypeFilterOptionsByResourceType = {
+      exports: ['export', 'connection', 'stack'],
+      imports: ['import', 'connection', 'stack'],
+      flows: [
+        'flow',
+        'export',
+        'import',
+        'connection',
+        'stack',
+        'asynchelper',
+        'filedefinition',
+      ],
+      integrations:
+        resource && resource._connectorId
+          ? ['integration', 'flow', 'connection', 'import']
+          : [
+              'integration',
+              'flow',
+              'export',
+              'import',
+              'connection',
+              'stack',
+              'asynchelper',
+              'filedefinition',
+            ],
+    };
+
+    resourceTypeFilterOptionsByResourceType.all =
+      resourceTypeFilterOptionsByResourceType.integrations;
+
+    return (
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="resourceType">Select Resource Type</InputLabel>
+        <Select
+          value={filters.resourceType}
+          onChange={this.handleChange}
+          inputProps={{
+            name: 'resourceType',
+            id: 'resourceType',
+          }}>
+          {[
+            [optionAll.id, optionAll.label],
+            ...resourceTypeFilterOptionsByResourceType[
+              resourceType || 'all'
+            ].map(rt => [rt, RESOURCE_TYPE_SINGULAR_TO_LABEL[rt]]),
+          ].map(opt => (
+            <MenuItem key={opt[0]} value={opt[0]}>
+              {opt[1]}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
   };
   getResourceIdFilter = () => {
-    const { resourceType, _resourceId } = this.state;
+    const { filters } = this.state;
     const {
       classes,
       affectedResources,
       resourceDetails,
-      isIntegrationLevelAudit,
+      resourceType,
     } = this.props;
 
     if (
-      !resourceType ||
-      resourceType === optionAll.id ||
-      (resourceType === 'integration' && isIntegrationLevelAudit)
+      !filters.resourceType ||
+      filters.resourceType === optionAll.id ||
+      RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType] === resourceType
     ) {
       return null;
     }
 
     let options = [];
 
-    affectedResources[resourceType] &&
-      affectedResources[resourceType].forEach(ar => {
-        options.push({
-          id: ar,
-          name:
-            resourceDetails[resourceType] &&
-            resourceDetails[resourceType][ar] &&
-            resourceDetails[resourceType][ar].name,
-        });
+    affectedResources[filters.resourceType] &&
+      affectedResources[filters.resourceType].forEach(ar => {
+        if (
+          resourceDetails[
+            RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
+          ]
+        )
+          options.push({
+            id: ar,
+            name:
+              resourceDetails[
+                RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
+              ][ar] &&
+              resourceDetails[
+                RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
+              ][ar].name,
+          });
       });
+
     options = _.sortBy(options, ['name']);
 
     const menuOptions = options.map(opt => (
@@ -72,14 +182,14 @@ export default class Filters extends Component {
     return (
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor="_resourceId">
-          Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[resourceType]}
+          Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
         </InputLabel>
         <Select
           inputProps={{
             name: '_resourceId',
             id: '_resourceId',
           }}
-          value={_resourceId}
+          value={filters._resourceId}
           onChange={this.handleChange}>
           <MenuItem key={optionAll.id} value={optionAll.id}>
             {optionAll.label}
@@ -90,61 +200,34 @@ export default class Filters extends Component {
     );
   };
   handleChange = event => {
-    const toUpdate = { [event.target.name]: event.target.value };
+    const { filters } = this.state;
+    const toUpdate = { ...filters, [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
       toUpdate._resourceId = optionAll.id;
     }
 
-    this.setState(toUpdate);
+    this.setState({ filters: toUpdate });
 
     const { onFiltersChange } = this.props;
-    const filters = { ...toUpdate };
+    const updatedFilters = { ...toUpdate };
 
-    ['resourceType', '_resourceId', 'byUser', 'source'].forEach(key => {
-      if (!filters[key]) {
-        filters[key] = this.state[key];
-      }
-
-      if (filters[key] === optionAll.id) {
-        filters[key] = undefined;
+    Object.keys(updatedFilters).forEach(key => {
+      if (updatedFilters[key] === optionAll.id) {
+        updatedFilters[key] = undefined;
       }
     });
 
-    onFiltersChange(filters);
+    onFiltersChange(updatedFilters);
   };
   render() {
     const { classes, users } = this.props;
-    const { resourceType, byUser, source } = this.state;
+    const { byUser, source } = this.state.filters;
+    const resource = this.getResource();
 
     return (
       <form className={classes.root} autoComplete="off">
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="resourceType">Select Resource Type</InputLabel>
-          <Select
-            value={resourceType}
-            onChange={this.handleChange}
-            inputProps={{
-              name: 'resourceType',
-              id: 'resourceType',
-            }}>
-            {[
-              [optionAll.id, optionAll.label],
-              ['integration', 'Integration'],
-              ['flow', 'Flow'],
-              ['import', 'Import'],
-              ['export', 'Export'],
-              ['connection', 'Connection'],
-              ['stack', 'Stack'],
-              ['asynchelper', 'Asynchelper'],
-              ['filedefinition', 'File Definitions'],
-            ].map(opt => (
-              <MenuItem key={opt[0]} value={opt[0]}>
-                {opt[1]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {this.getResourceTypeFilter()}
         {this.getResourceIdFilter()}
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="byUser">Select User</InputLabel>
@@ -176,10 +259,19 @@ export default class Filters extends Component {
             value={source}>
             {[
               [optionAll.id, optionAll.label],
-              ...Object.keys(AUDIT_LOG_SOURCE_LABELS).map(k => [
-                k,
-                AUDIT_LOG_SOURCE_LABELS[k],
-              ]),
+              ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
+                .filter(k => {
+                  if (!resource) {
+                    return true;
+                  }
+
+                  if (resource._connectorId) {
+                    return k !== 'stack';
+                  }
+
+                  return k !== 'connector';
+                })
+                .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
             ].map(opt => (
               <MenuItem key={opt[0]} value={opt[0]}>
                 {opt[1]}
@@ -191,3 +283,8 @@ export default class Filters extends Component {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  null
+)(Filters);

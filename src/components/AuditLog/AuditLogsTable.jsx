@@ -17,6 +17,7 @@ import {
   AUDIT_LOG_SOURCE_LABELS,
   AUDIT_LOG_EVENT_LABELS,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
+  RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
 import getResourcePagePath from '../../utils/resource';
 import showViewDiffLink from '../../utils/auditLog';
@@ -29,21 +30,10 @@ const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
     resourceId,
     filters
   );
-  const expandedLogs = [];
-
-  auditLogs.forEach(a => {
-    if (a.fieldChanges && a.fieldChanges.length > 0) {
-      a.fieldChanges.forEach(fc => {
-        expandedLogs.push({ ...a, fieldChanges: undefined, fieldChange: fc });
-      });
-    } else {
-      expandedLogs.push({ ...a, fieldChange: {} });
-    }
-  });
 
   return {
     preferences,
-    auditLogs: expandedLogs,
+    auditLogs,
   };
 };
 
@@ -84,10 +74,20 @@ class AuditLogsTable extends Component {
     this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
   };
 
+  getResource = (resourceType, resourceId) => {
+    const { resourceDetails } = this.props;
+    const resourceTypePlural = RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType];
+    const resource =
+      resourceType &&
+      resourceDetails[resourceTypePlural] &&
+      resourceDetails[resourceTypePlural][resourceId];
+
+    return resource;
+  };
+
   render() {
-    const { classes, auditLogs, preferences, resourceDetails } = this.props;
+    const { classes, auditLogs, preferences } = this.props;
     const { showDiffDialog, selectedLog, rowsPerPage, page } = this.state;
-    const expandedLogs = [];
     const auditLogsInCurrentPage = auditLogs.slice(
       page * rowsPerPage,
       (page + 1) * rowsPerPage
@@ -111,7 +111,7 @@ class AuditLogsTable extends Component {
             classes={{ root: classes.tablePaginationRoot }}
             rowsPerPageOptions={[10, 25, 50, 100]}
             component="div"
-            count={expandedLogs.length}
+            count={auditLogs.length}
             rowsPerPage={rowsPerPage}
             page={page}
             backIconButtonProps={{
@@ -175,20 +175,18 @@ class AuditLogsTable extends Component {
                             al.resourceType,
                             al._resourceId,
                             {
-                              _integrationId:
-                                resourceDetails[al.resourceType] &&
-                                resourceDetails[al.resourceType][
+                              _integrationId: (
+                                this.getResource(
+                                  al.resourceType,
                                   al._resourceId
-                                ] &&
-                                resourceDetails[al.resourceType][al._resourceId]
-                                  ._integrationId,
+                                ) || {}
+                              )._integrationId,
                             }
                           )}>
-                          {(resourceDetails[al.resourceType] &&
-                            resourceDetails[al.resourceType][al._resourceId] &&
-                            resourceDetails[al.resourceType][al._resourceId]
-                              .name) ||
-                            `${al._resourceId}`}
+                          {(
+                            this.getResource(al.resourceType, al._resourceId) ||
+                            {}
+                          ).name || `${al._resourceId}`}
                         </Link>
                       )}
                     </TableCell>

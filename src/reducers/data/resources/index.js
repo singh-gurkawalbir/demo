@@ -148,4 +148,38 @@ export function processors(state) {
 
   return list.filter(p => !processorBlacklist.includes(p.name));
 }
+
+export function resourceDetailsMap(state) {
+  const allResources = {};
+
+  if (!state) {
+    return allResources;
+  }
+
+  Object.keys(state).forEach(resourceType => {
+    if (!['published', 'tiles'].includes(resourceType)) {
+      allResources[resourceType] = {};
+
+      if (state[resourceType] && state[resourceType].length) {
+        state[resourceType].forEach(resource => {
+          allResources[resourceType][resource._id] = {
+            name: resource.name,
+          };
+
+          if (resource._integrationId) {
+            allResources[resourceType][resource._id]._integrationId =
+              resource._integrationId;
+          }
+
+          if (resource._connectorId) {
+            allResources[resourceType][resource._id]._connectorId =
+              resource._connectorId;
+          }
+        });
+      }
+    }
+  });
+
+  return allResources;
+}
 // #endregion

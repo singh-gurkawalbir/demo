@@ -378,6 +378,10 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function resourceDetailsMap(state) {
+  return fromData.resourceDetailsMap(state.data);
+}
+
 export function processors(state) {
   return fromData.processors(state.data);
 }
@@ -708,20 +712,16 @@ export function auditLogs(state, resourceType, resourceId, filters) {
   return fromData.auditLogs(state.data, resourceType, resourceId, filters);
 }
 
-export function affectedResourcesFromAuditLogs(
+export function affectedResourcesAndUsersFromAuditLogs(
   state,
   resourceType,
   resourceId
 ) {
-  return fromData.affectedResourcesFromAuditLogs(
+  return fromData.affectedResourcesAndUsersFromAuditLogs(
     state.data,
     resourceType,
     resourceId
   );
-}
-
-export function usersFromAuditLogs(state, resourceType, resourceId) {
-  return fromData.usersFromAuditLogs(state.data, resourceType, resourceId);
 }
 
 // #endregion
