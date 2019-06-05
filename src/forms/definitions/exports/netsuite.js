@@ -4,7 +4,7 @@ export default {
     {
       fieldId: 'netsuite.netsuiteExportlabel',
       label: 'Would you like to transform the records?',
-      type: 'labelTitle',
+      type: 'labeltitle',
     },
     {
       fieldId: 'netsuite.recordType',
@@ -13,15 +13,19 @@ export default {
       fieldId: 'netsuite.restlet.searchType',
     },
     // TODO: is this restlet.searchId or searches.searchId
-    {
-      fieldId: 'netsuite.restlet.searchId',
-      visibleWhenAll: [
-        {
-          field: 'netsuite.restlet.searchType',
-          is: ['public'],
-        },
-      ],
-    },
+    // {
+    //   fieldId: 'netsuite.restlet.searchId',
+    //   resourceToRetrieve: r =>
+    //     `netsuite/metadata/webservices/connections/${
+    //       r._connectionId
+    //     }/savedSearches`,
+    //   visibleWhenAll: [
+    //     {
+    //       field: 'netsuite.restlet.searchType',
+    //       is: ['public'],
+    //     },
+    //   ],
+    // },
     {
       fieldId: 'netsuite.restlet.searchInternalId',
       visibleWhenAll: [
@@ -58,7 +62,7 @@ export default {
     {
       fieldId: 'netsuite.netsuiteSuiteScriptlabel',
       label: 'SuiteScript Hooks (Optional, Developers Only)',
-      type: 'labelTitle',
+      type: 'labeltitle',
     },
     { fieldId: 'ftp.exportHooks' },
     { formId: 'hooks' },

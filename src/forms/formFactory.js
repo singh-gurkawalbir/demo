@@ -23,6 +23,8 @@ const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
 };
 
 const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
+  if (!meta) return null;
+
   const allOptionsHandler = getAllOptionsHandlerSubForms(
     fields,
     resourceType,
@@ -179,8 +181,6 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
     if (f.visibleWhen) {
       fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
       fieldCopy.visibleWhen.push(...f.visibleWhen);
-
-      return fieldCopy;
     } else if (f.visibleWhenAll) {
       fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
 
@@ -290,31 +290,39 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   };
 };
 
-const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType, resource) => {
-  // TODO: I don't really need to set defaults, the getFieldsWithDefaults
-  // has support to add visibility When rules for fieldMeta having formId
-  // or deeply nested forms
-  const flattenedFieldMeta = getFieldsWithDefaults(
-    fieldMeta,
-    resourceType,
-    resource
-  );
-  // Lets retain fieldId, visibleWhen and lets remove all
-  // other properties.
-  // since fieldSets aren't expected to have formId nor
-  // the formIds are expected to have any fieldSets,
-  // so lets use the fields from getFieldsWithDefaults
-  const fieldMetaWithJustFieldIdAndRules = flattenedFieldMeta.fields.map(
-    field => {
-      const { fieldId, visibleWhen } = field;
+const returnFieldWithJustVisibilityRules = f => {
+  const { fieldId, visibleWhen, visibleWhenAll } = f;
 
-      if (visibleWhen) return { fieldId, visibleWhen };
+  if (fieldId) {
+    if (visibleWhen) return { fieldId, visibleWhen };
+    else if (visibleWhenAll) return { fieldId, visibleWhenAll };
 
-      return { fieldId };
+    return { fieldId };
+  }
+  // else it could be a custom form field
+  // just return it completely
+
+  return f;
+};
+
+const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType) => {
+  const { fields, fieldSets } = fieldMeta;
+  const modifiedFields = fields.flatMap(field => {
+    if (field.formId) {
+      const fieldsWithVisibility = applyVisibilityRulesToSubForm(
+        field,
+        resourceType
+      ).map(returnFieldWithJustVisibilityRules);
+      const updatedFieldMeta = { fields: fieldsWithVisibility, fieldSets };
+
+      return getFlattenedFieldMetaWithRules(updatedFieldMeta, resourceType)
+        .fields;
     }
-  );
 
-  return fieldMetaWithJustFieldIdAndRules;
+    return returnFieldWithJustVisibilityRules(field);
+  });
+
+  return { fields: modifiedFields, fieldSets };
 };
 
 export default {

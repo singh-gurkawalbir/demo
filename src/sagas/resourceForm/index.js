@@ -10,7 +10,8 @@ import {
 } from '../../forms/utils';
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
-import { getResource } from '../resources';
+import { getResource, commitStagedChanges } from '../resources';
+import pingConnectionSaga from '../resourceForm/connections';
 
 export function* patchFormField({
   resourceType,
@@ -80,14 +81,18 @@ export function* runHook({ hook, data }) {
   return yield results.data;
 }
 
-export function* submitFormValues({ resourceType, resourceId, values }) {
+export function* createFormValuesPatchSet({
+  resourceType,
+  resourceId,
+  values,
+}) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId
   );
 
-  if (!resource) return; // nothing to do.
+  if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
 
   const formState = yield select(
     selectors.resourceFormState,
@@ -118,9 +123,20 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     resource,
   });
 
+  return { patchSet, finalValues };
+}
+
+export function* submitFormValues({ resourceType, resourceId, values }) {
+  const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
+    resourceType,
+    resourceId,
+    values,
+  });
+
   if (patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
-    yield put(actions.resource.commitStaged(resourceType, resourceId));
+    // yield put(actions.resource.commitStaged(resourceType, resourceId));
+    yield call(commitStagedChanges, { resourceType, id: resourceId });
   }
 
   yield put(
@@ -172,7 +188,6 @@ export function* initFormValues({ resourceType, resourceId }) {
   }
 
   // console.log('fieldMeta before/after init: ', fieldMeta, finalFieldMeta);
-
   yield put(
     actions.resourceForm.initComplete(
       resourceType,
@@ -210,14 +225,18 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType,
     resource,
   });
-  // TODO: @Surya, we need to flatten the 'defaultFormAssets.fieldMeta'
-  // to replace formId with the relevant fields
+  const flattenedFields = factory.getFlattenedFieldMetaWithRules(
+    defaultFormAssets.fieldMeta,
+    resourceType
+  );
+  // I have fixed it with a flattened fields...but it does cascade
+  // form visibiilty rules to its childern
   const patchSet = [
     {
       op: 'replace',
       path: '/customForm',
       value: {
-        form: defaultFormAssets.fieldMeta,
+        form: flattenedFields,
       },
     },
   ];
@@ -230,4 +249,5 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
+  ...pingConnectionSaga,
 ];

@@ -42,7 +42,6 @@ describe('global selectors', () => {
       );
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        hash: -1092997807,
         merged: exports[0],
         staged: undefined,
         master: exports[0],
@@ -61,7 +60,6 @@ describe('global selectors', () => {
       state = reducer(state, actions.resource.patchStaged(1, patch));
 
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
-        hash: 1201750584,
         merged: { _id: 1, name: 'patch X' },
         patch,
         master: exports[0],

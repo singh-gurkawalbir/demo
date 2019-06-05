@@ -10,7 +10,7 @@ export default class XmlParseEditorDialog extends Component {
       height: '70vh',
       open: true,
     };
-    const dialogProps = Object.assign({}, defaults, other);
+    const dialogProps = { ...defaults, ...other };
 
     return (
       <EditorDialog

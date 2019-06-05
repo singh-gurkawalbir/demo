@@ -2,12 +2,14 @@ import { combineReducers } from 'redux';
 import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
+import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
 
 export default combineReducers({
   stage,
   filters,
   editors,
+  metadata,
   resourceForm,
 });
 
@@ -34,6 +36,22 @@ export function stagedResource(state, id) {
   if (!state) return {};
 
   return fromStage.stagedResource(state.stage, id);
+}
+
+export function optionsFromMetadata(
+  state,
+  connectionId,
+  applicationType,
+  metadataType,
+  mode
+) {
+  return fromMetadata.optionsFromMetadata(
+    (state && state.metadata) || null,
+    connectionId,
+    applicationType,
+    metadataType,
+    mode
+  );
 }
 
 export function resourceFormState(state, resourceType, resourceId) {

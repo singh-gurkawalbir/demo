@@ -10,7 +10,7 @@ export default class UrlEditorDialog extends Component {
       height: '55vh',
     };
     const { id, rule, data, ...other } = this.props;
-    const props = Object.assign({}, defaults, other);
+    const props = { ...defaults, ...other };
 
     return (
       <EditorDialog id={id} {...props} showLayoutOptions={false}>

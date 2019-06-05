@@ -10,10 +10,6 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers/index';
 import { COMM_STATES } from '../../../reducers/comms';
 import ResourceForm from '../GenericResourceForm';
-import {
-  sanitizePatchSet,
-  defaultPatchSetConverter,
-} from '../../../forms/utils';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
@@ -23,9 +19,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const resourceId = resource._id;
 
   return {
-    testConnection: connection => {
+    handleTestConnection: values => {
       dispatch(
-        actions.resource.test.connection(connection, resourceType, resourceId)
+        actions.resource.test.connection(resourceType, resourceId, values)
       );
     },
     clearComms: () => {
@@ -53,16 +49,7 @@ class ConnectionForm extends Component {
   handleToggleAdvancedSettings = () => {
     this.setState({ advancedSettingsOpen: !this.state.advancedSettingsOpen });
   };
-  handleTestConnection = value => {
-    const { testConnection, fieldMeta, resource, converter } = this.props;
-    const fieldValuesPatchOperations = sanitizePatchSet({
-      patchSet: (converter || defaultPatchSetConverter)(value),
-      fieldMeta,
-      resource,
-    });
 
-    testConnection(fieldValuesPatchOperations);
-  };
   handleCancel = () => {
     this.props.cancelProcess();
   };
@@ -76,7 +63,13 @@ class ConnectionForm extends Component {
     this.props.clearComms();
   };
   render() {
-    const { classes, testConnectionCommState, converter, ...rest } = this.props;
+    const {
+      classes,
+      testConnectionCommState,
+      converter,
+      handleTestConnection,
+      ...rest
+    } = this.props;
 
     return (
       <Fragment>
@@ -87,8 +80,8 @@ class ConnectionForm extends Component {
         />
         <ResourceForm {...rest}>
           <DynaSubmit
-            isValid={testConnectionCommState !== COMM_STATES.LOADING}
-            onClick={this.handleTestConnection}
+            disabled={testConnectionCommState.commState === COMM_STATES.LOADING}
+            onClick={handleTestConnection}
             className={classes.actionButton}
             size="small"
             variant="contained"

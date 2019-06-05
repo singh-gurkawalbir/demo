@@ -6,14 +6,13 @@ export default function reducer(state = {}, action) {
 
   switch (type) {
     case actionTypes.CLEAR_FILTER:
-      newState = Object.assign({}, state);
-
+      newState = { ...state };
       delete newState[name];
 
       return newState;
 
     case actionTypes.PATCH_FILTER:
-      newState = Object.assign({}, state);
+      newState = { ...state };
       newState[name] = { ...newState[name], ...filter };
 
       return newState;

@@ -9,7 +9,7 @@ import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceFormFactory from '../../components/ResourceForm';
+import ResourceFormFactory from '../../components/ResourceFormFactory';
 import ConflictAlertDialog from './ConflictAlertDialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
