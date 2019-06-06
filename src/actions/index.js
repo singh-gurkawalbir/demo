@@ -107,7 +107,7 @@ const resource = {
 };
 // #endregion
 const auditLogs = {
-  requestCollection: (resourceType, resourceId, message) => {
+  request: (resourceType, resourceId, message) => {
     if (resourceType && resourceId) {
       return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
         resourceType: `${resourceType}/${resourceId}/audit`,
@@ -120,7 +120,7 @@ const auditLogs = {
       message,
     });
   },
-  clear: () => action(actionTypes.CLEAR_AUDIT_LOGS),
+  clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const metadata = {
   request: (connectionId, metadataType, mode) =>

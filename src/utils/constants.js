@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { invert } from 'lodash';
 
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
@@ -104,19 +104,7 @@ export const PERMISSIONS = Object.freeze({
     delete: 'users.delete',
   },
 });
-export const AUDIT_LOG_SOURCE_LABELS = {
-  ui: 'UI',
-  api: 'API',
-  connector: 'Connector',
-  stack: 'Stack',
-  system: 'System',
-};
-export const AUDIT_LOG_EVENT_LABELS = {
-  create: 'Create',
-  delete: 'Delete',
-  update: 'Update',
-  view: 'View',
-};
+
 export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   accesstoken: 'accesstokens',
   agent: 'agents',
@@ -133,7 +121,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   stack: 'stacks',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
-  _.invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
+  invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
 );
 export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   accesstoken: 'API Token',

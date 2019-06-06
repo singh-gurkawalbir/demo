@@ -5,12 +5,12 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core';
-import * as _ from 'lodash';
+import { sortBy } from 'lodash';
 import {
-  AUDIT_LOG_SOURCE_LABELS,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
+import { AUDIT_LOG_SOURCE_LABELS } from './constants';
 import * as selectors from '../../reducers';
 
 const optionAll = { id: 'all', label: 'All' };
@@ -141,11 +141,13 @@ class Filters extends Component {
       resourceDetails,
       resourceType,
     } = this.props;
+    const filterResourceType =
+      RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType];
 
     if (
       !filters.resourceType ||
       filters.resourceType === optionAll.id ||
-      RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType] === resourceType
+      filterResourceType === resourceType
     ) {
       return null;
     }
@@ -154,24 +156,16 @@ class Filters extends Component {
 
     affectedResources[filters.resourceType] &&
       affectedResources[filters.resourceType].forEach(ar => {
-        if (
-          resourceDetails[
-            RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
-          ]
-        )
+        if (resourceDetails[filterResourceType])
           options.push({
             id: ar,
             name:
-              resourceDetails[
-                RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
-              ][ar] &&
-              resourceDetails[
-                RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType]
-              ][ar].name,
+              resourceDetails[filterResourceType][ar] &&
+              resourceDetails[filterResourceType][ar].name,
           });
       });
 
-    options = _.sortBy(options, ['name']);
+    options = sortBy(options, ['name']);
 
     const menuOptions = options.map(opt => (
       <MenuItem key={opt.id} value={opt.id}>

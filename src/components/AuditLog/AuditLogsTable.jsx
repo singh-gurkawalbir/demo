@@ -14,12 +14,11 @@ import { withSnackbar } from 'notistack';
 import * as selectors from '../../reducers';
 import DiffDialog from './DiffDialog';
 import {
-  AUDIT_LOG_SOURCE_LABELS,
-  AUDIT_LOG_EVENT_LABELS,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
-import getResourcePagePath from '../../utils/resource';
+import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_EVENT_LABELS } from './constants';
+import getExistingResourcePagePath from '../../utils/resource';
 import showViewDiffLink from '../../utils/auditLog';
 
 const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
@@ -66,7 +65,12 @@ class AuditLogsTable extends Component {
     page: 0,
     rowsPerPage: 10,
   };
-
+  handleDiffCancelClick = () => {
+    this.setState({
+      showDiffDialog: false,
+      selectedLog: undefined,
+    });
+  };
   handleChangePage = (event, newPage) => {
     this.setState({ page: newPage });
   };
@@ -98,12 +102,7 @@ class AuditLogsTable extends Component {
         {showDiffDialog && (
           <DiffDialog
             auditLog={selectedLog}
-            onCancelClick={() => {
-              this.setState({
-                showDiffDialog: false,
-                selectedLog: undefined,
-              });
-            }}
+            onCancelClick={this.handleDiffCancelClick}
           />
         )}
         <div className={classes.root}>
@@ -171,18 +170,16 @@ class AuditLogsTable extends Component {
                         al.deletedInfo.name}
                       {al.event !== 'delete' && (
                         <Link
-                          to={getResourcePagePath(
-                            al.resourceType,
-                            al._resourceId,
-                            {
-                              _integrationId: (
-                                this.getResource(
-                                  al.resourceType,
-                                  al._resourceId
-                                ) || {}
-                              )._integrationId,
-                            }
-                          )}>
+                          to={getExistingResourcePagePath({
+                            type: al.resourceType,
+                            id: al._resourceId,
+                            _integrationId: (
+                              this.getResource(
+                                al.resourceType,
+                                al._resourceId
+                              ) || {}
+                            )._integrationId,
+                          })}>
                           {(
                             this.getResource(al.resourceType, al._resourceId) ||
                             {}

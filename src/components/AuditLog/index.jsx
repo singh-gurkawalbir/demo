@@ -21,7 +21,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.auditLogs.clear());
   },
   requestAuditLogs: (resourceType, resourceId) => {
-    dispatch(actions.auditLogs.requestCollection(resourceType, resourceId));
+    dispatch(actions.auditLogs.request(resourceType, resourceId));
   },
 });
 

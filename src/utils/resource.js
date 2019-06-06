@@ -1,34 +1,37 @@
 import getRoutePath from './routePaths';
 
-export default function getResourcePagePath(
-  resourceType,
-  resourceId,
-  options = {}
-) {
+/**
+ * @param resourceDetails Details about the resource.
+ * @param resourceDetails.type The type of the resource.
+ * @param resourceDetails.id The id of the resource.
+ * @param resourceDetails._integrationId _integrationId of the resource.
+ */
+export default function getExistingResourcePagePath(resourceDetails = {}) {
+  const { type, id, _integrationId } = resourceDetails;
   let path;
 
-  switch (resourceType) {
+  switch (type) {
     case 'accesstoken':
-      path = `/tokens?_id=${resourceId}`;
+      path = `/tokens?_id=${id}`;
       break;
     case 'connection':
-      path = `/connections?_id=${resourceId}`;
+      path = `/connections?_id=${id}`;
       break;
     case 'export':
-      path = `/exports/${resourceId}/edit`;
+      path = `/exports/${id}/edit`;
       break;
     case 'flow':
-      path = `/integrations/${options._integrationId ||
-        'none'}/settings/flows/${resourceId}/edit`;
+      path = `/integrations/${_integrationId ||
+        'none'}/settings/flows/${id}/edit`;
       break;
     case 'import':
-      path = `/imports/${resourceId}/edit`;
+      path = `/imports/${id}/edit`;
       break;
     case 'integration':
-      path = `/integrations/${resourceId}/settings/flows`;
+      path = `/integrations/${id}/settings/flows`;
       break;
     case 'stack':
-      path = `/stacks/${resourceId}/edit`;
+      path = `/stacks/${id}/edit`;
       break;
     default:
       path = undefined;

@@ -6,6 +6,7 @@ import { Typography, withStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import ReactDiffViewer from 'react-diff-viewer';
+import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../utils/constants';
 
 @withStyles(theme => ({
   root: {
@@ -27,7 +28,9 @@ export default class DiffDialog extends Component {
       <Dialog open maxWidth={false}>
         <DialogTitle disableTypography className={classes.root}>
           <Typography variant="h6">
-            {`${auditLog.resourceType} Audit Log`}
+            {`${
+              RESOURCE_TYPE_SINGULAR_TO_LABEL[auditLog.resourceType]
+            } Audit Log`}
           </Typography>
           <Typography>{`Field: ${auditLog.fieldChange.fieldPath}`}</Typography>
           <IconButton

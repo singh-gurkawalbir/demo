@@ -7,7 +7,7 @@ export default (state = {}, action) => {
     return state;
   }
 
-  if (type === actionTypes.CLEAR_AUDIT_LOGS) {
+  if (type === actionTypes.AUDIT_LOGS_CLEAR) {
     return {};
   }
 
@@ -19,12 +19,11 @@ export default (state = {}, action) => {
     if (resourceType === 'audit') {
       return { all: collection || [] };
     } else if (resourceType.endsWith('/audit')) {
-      const modelPlural = resourceType.split('/')[0];
-      const resourceId = resourceType
-        .replace(`${modelPlural}/`, '')
-        .replace('/audit', '');
+      const resourceTypeParts = resourceType.split('/');
 
-      return { [modelPlural]: { [resourceId]: collection || [] } };
+      return {
+        [resourceTypeParts[0]]: { [resourceTypeParts[1]]: collection || [] },
+      };
     }
   }
 

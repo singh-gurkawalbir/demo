@@ -8,7 +8,7 @@ describe('audit reducer', () => {
 
     expect(newState).toEqual({});
   });
-  test('any other action should return original state', () => {
+  test('any other action, when state exists, should return original state', () => {
     const someState = { something: 'something' };
     const newState = reducer(someState, 'someaction');
 
