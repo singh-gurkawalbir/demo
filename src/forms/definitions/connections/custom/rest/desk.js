@@ -1,24 +1,20 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'desk',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/api/v2/cases',
-      '/rest/pingMethod': 'GET',
-      '/rest/baseURI': `https://${formValues['/rest/deskSubdomain']}'.desk.com`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'desk',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/api/v2/cases',
+    '/rest/pingMethod': 'GET',
+    '/rest/baseURI': `https://${formValues['/rest/deskSubdomain']}'.desk.com`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'deskSubdomain',
       type: 'text',
       name: '/rest/deskSubdomain',
+      helpKey: 'desk.subdomain',
       startAdornment: 'https://',
       endAdornment: '.desk.com',
       label: 'Enter subdomain into the base uri',
@@ -38,9 +34,15 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username' },
+    { fieldId: 'rest.basicAuth.username', helpKey: 'desk.username' },
     {
       fieldId: 'rest.basicAuth.password',
+      helpKey: 'desk.password',
+      inputType: 'password',
+      label: 'Password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
+      required: true,
     },
   ],
 };

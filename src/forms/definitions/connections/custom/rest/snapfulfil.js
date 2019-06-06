@@ -1,25 +1,19 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'snapfulfil',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': 'api/Receipts',
-      '/rest/baseURI': `https://${
-        formValues['/rest/subdomain']
-      }.snapfulfil.net/`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'snapfulfil',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': 'api/Receipts',
+    '/rest/baseURI': `https://${formValues['/rest/subdomain']}.snapfulfil.net/`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'subDomain',
       type: 'text',
       name: '/rest/subdomain',
+      helpKey: 'snapfulfil.subdomain',
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
       label: 'Enter subdomain into the base uri',
@@ -43,10 +37,8 @@ export default {
       fieldId: 'rest.basicAuth.username',
     },
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
+      fieldId: 'rest.basicAuth.password',
       helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
       inputType: 'password',
       label: 'Password',
       description:

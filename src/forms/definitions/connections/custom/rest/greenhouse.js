@@ -11,7 +11,9 @@ export default {
       value: 'application/json',
     });
     headers.push({ name: 'Accept', value: 'application/json' });
-    const fixedValues = {
+
+    return {
+      ...formValues,
       '/type': 'rest',
       '/assistant': 'greenhouse',
       '/rest/authType': 'basic',
@@ -20,16 +22,12 @@ export default {
       '/rest/baseURI': `https://harvest.greenhouse.io/v1`,
       '/rest/headers': headers,
     };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
   },
   fields: [
     { fieldId: 'name' },
     {
-      id: 'apiToken',
-      name: '/rest/basicAuth/username',
-      type: 'text',
+      fieldId: 'rest.basicAuth.username',
+      helpKey: 'greenhouse.apiToken',
       inputType: 'password',
       label: 'API Token',
       description:
@@ -37,18 +35,16 @@ export default {
       required: true,
     },
     {
-      id: 'userId',
       type: 'text',
       name: '/rest/unencrypted/userID',
-      label: 'Only numbers are allowed.',
+      label: 'User ID:',
+      helpKey: 'greenhouse.userId',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\d]+$',
           message: 'Only numbers allowed',
         },
       },
-      defaultValue: r =>
-        r && r.rest && r.rest.unencrypted && r.rest.unencrypted.userID,
     },
   ],
 };

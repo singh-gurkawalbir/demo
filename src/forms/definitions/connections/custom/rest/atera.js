@@ -7,7 +7,9 @@ export default {
       value: '{{{connection.rest.encrypted.apiKey}}}',
     });
     headers.push({ name: 'Content-Type', value: 'application/json' });
-    const fixedValues = {
+
+    return {
+      ...formValues,
       '/rest/authType': 'custom',
       '/rest/mediaType': 'json',
       '/rest/pingRelativeURI': '/v3/customers',
@@ -16,21 +18,14 @@ export default {
       '/rest/baseURI': 'https://app.atera.com/api',
       '/rest/headers': headers,
     };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
   },
 
   fields: [
     { fieldId: 'name' },
     {
-      id: 'apiKey',
       name: '/rest/encrypted/apiKey',
-      helpKey: 'rest.encrypted.apiKey',
       type: 'text',
+      helpKey: 'atera.apiKey',
       inputType: 'password',
       label: 'API Key',
       description:

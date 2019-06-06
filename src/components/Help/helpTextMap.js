@@ -1,5 +1,4 @@
 export default {
-  'connection.zendesk.subdomain': 'zendesk subdomain',
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':
@@ -179,6 +178,26 @@ export default {
     "Use this JSON field to store all the non security sensitive fields needed by your imports and exports (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
   'connection.http.encrypted':
     "Use this encrypted JSON field to store all the security sensitive fields needed by your imports and exports (to access the application being integrated).  For example:  {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.  Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
+  'connection.http.activecampaignSubdomain':
+    'Please enter your account here. This can be found in your account on the My Settings page under the Developer tab.',
+  'connection.http.activecampaignToken':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
+  'connection.http.authorizeNet.apiLoginID':
+    'Merchants unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+  'connection.http.authorizeNet.accType':
+    'Please select your account type here. Select Sandbox if your API Endpoint starts with https://apitest.authorize.net. Select Production if your API Endpoint starts with https://api.authorize.net.',
+  'connection.http.authorizeNet.transactionKey':
+    'Merchants unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+  'anaplan.username': 'The username of your Anaplan account.',
+  'anaplan.password': 'The password of your Anaplan account.',
+  'atera.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
+  'avalara.username': 'The username of your Avalara account.',
+  'avalara.password': 'The password of your Avalara account.',
+  'avalara.accType':
+    'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
+  'chargebee.subdomain': '',
+  'chargebee.password': '',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
     'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',

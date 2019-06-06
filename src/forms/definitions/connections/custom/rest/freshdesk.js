@@ -1,27 +1,23 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'freshdesk',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': 'ticket_fields.json',
-      '/rest/baseURI': `https://${
-        formValues['/rest/freshdeskSubdomain']
-      }.freshdesk.com/`,
-      '/rest/pingFailurePath': 'require_login',
-      '/rest/pingFailureValues': [true],
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'freshdesk',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': 'ticket_fields.json',
+    '/rest/baseURI': `https://${
+      formValues['/rest/freshdeskSubdomain']
+    }.freshdesk.com/`,
+    '/rest/pingFailurePath': 'require_login',
+    '/rest/pingFailureValues': [true],
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'freshdeskSubdomain',
       type: 'text',
       name: '/rest/freshdeskSubdomain',
+      helpKey: 'freshdesk.subdomain',
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
       label: 'Enter subdomain into the base uri',
@@ -41,9 +37,15 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username' },
+    { fieldId: 'rest.basicAuth.username', helpKey: 'freshdesk.username' },
     {
       fieldId: 'rest.basicAuth.password',
+      inputType: 'password',
+      helpKey: 'freshdesk.password',
+      label: 'Password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
+      required: true,
     },
   ],
 };

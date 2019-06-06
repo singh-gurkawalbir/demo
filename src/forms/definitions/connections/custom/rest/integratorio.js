@@ -7,7 +7,9 @@ export default {
       value: `Bearer ${formValues['/integrator/token']}`,
     });
     headers.push({ name: 'Content-Type', value: 'application/json' });
-    const fixedValues = {
+
+    return {
+      ...formValues,
       '/type': 'rest',
       '/assistant': 'integratorio',
       '/rest/authType': 'custom',
@@ -18,14 +20,10 @@ export default {
       '/rest/pingRelativeURI': '/v1/connections',
       '/rest/headers': headers,
     };
-    const newValues = { ...formValues, ...fixedValues };
-
-    return newValues;
   },
   fields: [
     { fieldId: 'name' },
     {
-      id: 'integratorEnvironment',
       name: '/integrator/environment',
       type: 'text',
       defaultValue: r => {
@@ -44,6 +42,7 @@ export default {
     },
     {
       fieldId: 'integrator.token',
+      helpKey: 'integrator.token',
     },
   ],
 };

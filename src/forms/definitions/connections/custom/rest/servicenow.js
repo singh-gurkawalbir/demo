@@ -1,23 +1,19 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'servicenow',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/api/now/pa/scorecards',
-      '/rest/baseURI': `https://${formValues['/instanceName']}.service-now.com`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'servicenow',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/api/now/pa/scorecards',
+    '/rest/baseURI': `https://${formValues['/instanceName']}.service-now.com`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'instanceName',
       type: 'text',
       name: '/instanceName',
+      helpKey: 'servicenow.instanceName',
       startAdornment: 'https://',
       endAdornment: '.service-now.com',
       label: 'Enter subdomain into the base uri',
@@ -41,10 +37,8 @@ export default {
       fieldId: 'rest.basicAuth.username',
     },
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
+      fieldId: 'rest.basicAuth.password',
       helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
       inputType: 'password',
       label: 'Password',
       description:

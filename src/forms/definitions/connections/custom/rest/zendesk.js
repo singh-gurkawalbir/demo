@@ -1,19 +1,13 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'zendesk',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/api/v2/users.json',
-      '/rest/baseURI': `https://${
-        formValues['/zendesk/subdomain']
-      }.zendesk.com`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'zendesk',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/api/v2/users.json',
+    '/rest/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
@@ -31,6 +25,12 @@ export default {
     { fieldId: 'rest.basicAuth.username' },
     {
       fieldId: 'rest.basicAuth.password',
+      helpKey: 'connection.rest.basicAuth.password',
+      inputType: 'password',
+      label: 'Consumer Secret:',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
+      required: true,
     },
   ],
 };

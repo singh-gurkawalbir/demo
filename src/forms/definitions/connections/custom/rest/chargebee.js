@@ -1,28 +1,24 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'chargebee',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/basicAuth/password': '',
-      '/rest/pingRelativeURI': '/v2/subscriptions',
-      '/rest/pingMethod': 'GET',
-      '/rest/baseURI': `https://${
-        formValues['/rest/chargebeeSubdomain']
-      }.chargebee.com/api`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'chargebee',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'urlencoded',
+    '/rest/basicAuth/password': '',
+    '/rest/pingRelativeURI': '/v2/subscriptions',
+    '/rest/pingMethod': 'GET',
+    '/rest/baseURI': `https://${
+      formValues['/rest/chargebeeSubdomain']
+    }.chargebee.com/api`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'chargebeeSubdomain',
       type: 'text',
       name: '/rest/chargebeeSubdomain',
       startAdornment: 'https://',
+      helpKey: 'chargebee.subdomain',
       endAdornment: '.chargebee.com/api',
       label: 'Enter subdomain into the base uri',
       validWhen: {
@@ -41,6 +37,11 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username' },
+    {
+      fieldId: 'rest.basicAuth.username',
+      label: 'API Key:',
+      required: true,
+      helpKey: 'chargebee.apiKey',
+    },
   ],
 };

@@ -19,19 +19,12 @@ export default {
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/',
+  }),
 
   fields: [
     // Fields can be referenced by their fieldDefinition key, and the

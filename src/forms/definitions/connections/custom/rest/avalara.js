@@ -1,32 +1,25 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': 'v2/companies',
-      '/type': 'rest',
-      '/assistant': 'avalara',
-      '/rest/baseURI': `https://${
-        formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
-      }rest.avatax.com/api/`,
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': 'v2/companies',
+    '/type': 'rest',
+    '/assistant': 'avalara',
+    '/rest/baseURI': `https://${
+      formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
+    }rest.avatax.com/api/`,
+  }),
 
   fields: [
     { fieldId: 'name' },
 
     {
-      id: 'accType',
       name: '/accType',
       type: 'select',
       label: 'Account Type',
       required: true,
+      helpKey: 'avalara.accType',
       options: [
         {
           items: [
@@ -51,14 +44,12 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.username',
-      defaultValue: r => r.rest.basicAuth && r.rest.basicAuth.username,
+      helpKey: 'avalara.username',
     },
 
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
-      helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
+      fieldId: 'rest.basicAuth.password',
+      helpKey: 'avalara.password',
       inputType: 'password',
       label: 'Password',
       description:

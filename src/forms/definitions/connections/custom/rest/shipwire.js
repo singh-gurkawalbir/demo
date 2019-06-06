@@ -1,26 +1,22 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'shipwire',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/v3/orders',
-      '/rest/baseURI': `https://api${
-        formValues['/environment'] === 'sandbox' ? '.beta' : ''
-      }.shipwire.com/api`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'shipwire',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/v3/orders',
+    '/rest/baseURI': `https://api${
+      formValues['/environment'] === 'sandbox' ? '.beta' : ''
+    }.shipwire.com/api`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'environment',
       name: '/environment',
       type: 'select',
-      label: 'Account Type',
+      label: 'Environment:',
+      helpKey: 'shipwire.environment',
       required: true,
       options: [
         {
@@ -48,9 +44,8 @@ export default {
       fieldId: 'rest.basicAuth.username',
     },
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
-      type: 'text',
+      fieldId: 'rest.basicAuth.password',
+      helpKey: 'connection.rest.basicAuth.password',
       inputType: 'password',
       label: 'Password:',
       description:

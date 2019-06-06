@@ -1,24 +1,19 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'rest',
-      '/assistant': 'insightly',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/pingRelativeURI': '/v2.1/Contacts',
-      '/rest/pingMethod': 'GET',
-      '/rest/baseURI': `https://api.insight.ly`,
-    };
-    const newValues = [...formValues, ...fixedValues];
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'insightly',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'urlencoded',
+    '/rest/pingRelativeURI': '/v2.1/Contacts',
+    '/rest/pingMethod': 'GET',
+    '/rest/baseURI': `https://api.insight.ly`,
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'apiKey',
-      name: '/rest/basicAuth/username',
-      type: 'text',
+      fieldId: 'rest.basicAuth.username',
+      helpKey: 'insightly.apiKey',
       inputType: 'password',
       label: 'API Key',
       description:

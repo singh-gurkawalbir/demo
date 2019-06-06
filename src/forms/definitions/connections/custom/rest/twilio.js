@@ -1,39 +1,23 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/baseURI': 'https://api.twilio.com',
-      '/rest/pingRelativeURI': '/2010-04-01/Accounts',
-      '/type': 'rest',
-      '/assistant': 'twilio',
-      '/rest/pingMethod': 'GET',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
-
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'urlencoded',
+    '/rest/baseURI': 'https://api.twilio.com',
+    '/rest/pingRelativeURI': '/2010-04-01/Accounts',
+    '/type': 'rest',
+    '/assistant': 'twilio',
+    '/rest/pingMethod': 'GET',
+  }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'Username',
-      name: '/rest/basicAuth/username',
-      helpKey: 'connection.rest.basicAuth.username',
-      type: 'text',
+      fieldId: 'rest.basicAuth.username',
       label: 'Account Sid:',
-      defaultValue: r =>
-        r && r.rest && r.rest.basicAuth && r.rest.basicAuth.username,
-      required: true,
     },
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
+      fieldId: '/rest/basicAuth/password',
       helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
       inputType: 'password',
       label: 'Auth Token:',
       description:

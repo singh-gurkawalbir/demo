@@ -11,14 +11,12 @@ export default {
 
   fields: [
     { fieldId: 'name' },
-    { fieldId: 'rest.basicAuth.username' },
+    { fieldId: 'rest.basicAuth.username', helpKey: 'anaplan.username' },
 
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
-      helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
+      fieldId: 'rest.basicAuth.password',
       inputType: 'password',
+      helpKey: 'anaplan.password',
       label: 'Password',
       description:
         'Note: for security reasons this field must always be re-entered.',
