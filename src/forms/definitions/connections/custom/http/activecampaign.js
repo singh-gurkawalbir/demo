@@ -1,50 +1,19 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/type': 'http',
-      '/assistant': 'activecampaign',
-      '/http/auth/type': 'token',
-      '/http/mediaType': 'json',
-      '/http/ping/relativeURI':
-        '/admin/api.php?api_action=account_view&api_output=json',
-      '/http/baseURI': `https://${
-        formValues['/http/activecampaignSubdomain']
-      }.api-us1.com`,
-      '/http/auth/token/location': 'url',
-      '/http/auth/token/paramName': 'api_key',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
-  converter: formValues => {
-    const fixedValues = {
-      '/type': 'http',
-      '/assistant': 'activecampaign',
-      '/http/auth/type': 'token',
-      '/http/mediaType': 'json',
-      '/http/ping/relativeURI':
-        '/admin/api.php?api_action=account_view&api_output=json',
-      '/http/baseURI': `https://${
-        formValues['/http/activecampaignSubdomain']
-      }.api-us1.com`,
-      '/http/auth/token/location': 'url',
-      '/http/auth/token/paramName': 'api_key',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'activecampaign',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI':
+      '/admin/api.php?api_action=account_view&api_output=json',
+    '/http/baseURI': `https://${
+      formValues['/http/activecampaignSubdomain']
+    }.api-us1.com`,
+    '/http/auth/token/location': 'url',
+    '/http/auth/token/paramName': 'api_key',
+  }),
   fields: [
-    // Fields can be referenced by their fieldDefinition key, and the
-    // framework will fetch the missing values. Any values present in
-    // this file override the references field's props.
     { fieldId: 'name' },
     {
       type: 'text',
@@ -58,6 +27,7 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      helpKey: 'connection.http.activecampaignSubdomain',
       defaultValue: r => {
         const baseUri = r.http.baseURI;
         const subdomain = baseUri.substring(
@@ -69,11 +39,11 @@ export default {
       },
     },
     {
-      id: 'apiKey',
       name: '/http/auth/token/token',
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      helpKey: 'connection.http.activecampaignToken',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

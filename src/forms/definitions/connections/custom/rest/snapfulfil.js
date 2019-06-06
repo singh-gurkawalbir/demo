@@ -41,8 +41,6 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.username',
-      defaultValue: r =>
-        r.rest && r.rest.basicAuth && r.rest.basicAuth.username,
     },
     {
       id: 'Password',

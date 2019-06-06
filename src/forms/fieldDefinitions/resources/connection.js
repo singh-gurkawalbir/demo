@@ -1705,6 +1705,7 @@ export default {
   'authorizeNet.accType': {
     type: 'select',
     label: 'Account Type:',
+    helpKey: 'connection.http.authorizeNet.accType',
     options: [
       {
         items: [
@@ -1717,11 +1718,13 @@ export default {
   'http.encrypted.apiLoginID': {
     type: 'text',
     label: 'API Login ID:',
+    helpKey: 'connection.http.authorizeNet.apiLoginID',
     required: true,
   },
   'http.encrypted.transactionKey': {
     type: 'text',
     label: 'Transaction Key:',
+    helpKey: 'connection.http.authorizeNet.transactionKey',
     required: true,
   },
   'integrator.token': {

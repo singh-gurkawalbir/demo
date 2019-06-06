@@ -22,8 +22,6 @@ export default {
     { fieldId: 'rest.baseURI' },
     {
       fieldId: 'rest.basicAuth.username',
-      defaultValue: r =>
-        r.rest && r.rest.basicAuth && r.rest.basicAuth.username,
     },
 
     // ...or, we can create completely custom fields like this:

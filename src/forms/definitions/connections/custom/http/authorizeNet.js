@@ -1,7 +1,5 @@
-import { defaultPatchSetConverter } from '../../../../utils';
-
 export default {
-  converter: formValues => {
+  preSubmit: formValues => {
     const pingBody = {
       authenticateTestRequest: {
         merchantAuthentication: {
@@ -10,7 +8,9 @@ export default {
         },
       },
     };
-    const fixedValues = {
+
+    return {
+      ...formValues,
       '/type': 'http',
       '/assistant': 'authorize.net',
       '/http/auth/type': 'custom',
@@ -24,12 +24,6 @@ export default {
       '/http/ping/body': JSON.stringify(pingBody),
       '/http/ping/method': 'POST',
     };
-    const patchSet = defaultPatchSetConverter({
-      ...formValues,
-      ...fixedValues,
-    });
-
-    return patchSet;
   },
   fields: [
     { fieldId: 'name' },

@@ -1,20 +1,13 @@
 export default {
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '1/3/workspaces',
-      '/type': 'rest',
-      '/assistant': 'anaplan',
-      '/rest/baseURI': 'https://api.anaplan.com/',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '1/3/workspaces',
+    '/type': 'rest',
+    '/assistant': 'anaplan',
+    '/rest/baseURI': 'https://api.anaplan.com/',
+  }),
 
   fields: [
     { fieldId: 'name' },
