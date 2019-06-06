@@ -35,8 +35,8 @@ export default class GenericResourceForm extends Component {
       classes,
       resourceType,
       resource,
-      handleSubmitForm,
-      children,
+      onHandleSubmit,
+      children: actionButtons,
       connection,
       optionsHandler,
       fieldMeta,
@@ -53,7 +53,7 @@ export default class GenericResourceForm extends Component {
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>
         <div className={classes.actions}>
-          {children}
+          {actionButtons}
 
           <Button
             onClick={this.handleFormMetaChange}
@@ -62,9 +62,7 @@ export default class GenericResourceForm extends Component {
             variant="contained">
             Cancel
           </Button>
-          <DynaSubmit
-            onClick={handleSubmitForm}
-            className={classes.actionButton}>
+          <DynaSubmit onClick={onHandleSubmit} className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>

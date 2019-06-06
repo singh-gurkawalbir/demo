@@ -11,7 +11,10 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import pingConnectionSaga from '../resourceForm/connections';
+import pingConnectionSaga, {
+  pingConnection,
+  PING_STATES,
+} from '../resourceForm/connections';
 
 export function* patchFormField({
   resourceType,
@@ -144,6 +147,21 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
+export function* testAndSubmitFormValues({ resourceType, resourceId, values }) {
+  console.log('test and submit', values);
+  const pingStatus = yield call(pingConnection, {
+    resourceType,
+    resourceId,
+    values,
+  });
+
+  console.log('ping called');
+
+  if (pingStatus === PING_STATES.SUCCESS) {
+    yield call(submitFormValues, { resourceType, resourceId, values });
+  }
+}
+
 export function* initFormValues({ resourceType, resourceId }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
@@ -248,6 +266,7 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.TEST_AND_SUBMIT, testAndSubmitFormValues),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   ...pingConnectionSaga,
 ];

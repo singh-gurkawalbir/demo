@@ -219,6 +219,13 @@ const resourceForm = {
       optionsHandler,
       preSubmit,
     }),
+
+  testAndSubmit: (resourceType, resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.TEST_AND_SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+    }),
   submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,

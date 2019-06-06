@@ -23,6 +23,11 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
     // console.log(`request resource:`, resourceType, resource._id, connection);
     dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
   },
+  handleTestAndSubmit: values => {
+    dispatch(
+      actions.resourceForm.testAndSubmit(resourceType, resource._id, values)
+    );
+  },
   handleInitForm: () => {
     dispatch(actions.resourceForm.init(resourceType, resource._id));
   },
@@ -50,26 +55,30 @@ const ResourceFormFactory = props => {
     return handleClearResourceForm;
   }, [props.resource._id]);
 
-  const { resourceType, handleSubmitForm, formState } = props;
+  const { handleSubmitForm, handleTestAndSubmit, formState, ...rest } = props;
 
   if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
   }
 
   let Form;
+  let handleSubmit;
 
-  if (resourceType === 'connections') {
+  if (props.resourceType === 'connections') {
     Form = ConnectionForm;
+    handleSubmit = handleTestAndSubmit;
   } else {
     Form = GenericResourceForm;
+    handleSubmit = handleSubmitForm;
   }
 
   return (
     <Form
-      {...props}
+      {...rest}
       fieldMeta={formState.fieldMeta}
       optionsHandler={formState.optionsHandler}
-      handleSubmit={handleSubmitForm}
+      onHandleSubmit={handleSubmit}
+      saveForm={handleSubmitForm}
     />
   );
 };

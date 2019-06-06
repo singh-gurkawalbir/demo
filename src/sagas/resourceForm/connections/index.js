@@ -7,6 +7,12 @@ import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet } from '../index';
 import * as selectors from '../../../reducers/index';
 
+export const PING_STATES = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  CANCELLED: 'cancelled',
+};
+Object.freeze(PING_STATES);
 function* createPayload({ values, resourceType, resourceId }) {
   // TODO: Select resource Data staged changes should be included
   const connectionResource = yield select(
@@ -23,14 +29,20 @@ function* createPayload({ values, resourceType, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-function* pingConnection({ resourceType, resourceId, values }) {
+export function* pingConnection({ resourceType, resourceId, values }) {
+  let pingCallStatus;
+
+  console.log('check ', values);
+
   try {
     const connectionPayload = yield call(createPayload, {
       values,
       resourceType,
       resourceId,
     });
-    const { apiResp } = yield race({
+    // Either apiResp or canelTask can race successfully
+    // , both will never happen
+    const { apiResp, cancelTask } = yield race({
       apiResp: call(apiCallWithRetry, {
         path: pingConnectionParams.path,
         opts: { body: connectionPayload, ...pingConnectionParams.opts },
@@ -48,7 +60,10 @@ function* pingConnection({ resourceType, resourceId, values }) {
           'Connection is working fine!'
         )
       );
+      pingCallStatus = PING_STATES.SUCCESS;
     }
+
+    if (cancelTask) pingCallStatus = PING_STATES.CANCELLED;
   } catch (e) {
     // The ping test gives back a 200 response if the ping connection has failed
     if (e.status === 200) {
@@ -64,7 +79,11 @@ function* pingConnection({ resourceType, resourceId, values }) {
         )
       );
     }
+
+    pingCallStatus = PING_STATES.ERROR;
   }
+
+  return pingCallStatus;
 }
 
 export default [takeEvery(actionTypes.TEST_CONNECTION, pingConnection)];
