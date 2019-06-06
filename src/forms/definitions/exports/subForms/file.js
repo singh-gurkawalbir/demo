@@ -16,6 +16,8 @@ export default {
         return fileTypeField.value.toLowerCase();
       }
     }
+
+    return null;
   },
   fields: [
     { fieldId: 'exportData' },
@@ -23,7 +25,7 @@ export default {
     { fieldId: 'file.output' },
     {
       fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: 'file.type',
+      refreshOptionsOnChangesTo: ['file.type'],
       visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
     },
 

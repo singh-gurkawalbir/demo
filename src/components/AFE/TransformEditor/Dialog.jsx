@@ -11,7 +11,7 @@ export default class TransformEditorDialog extends Component {
       height: '60vh',
       open: true,
     };
-    const dialogProps = Object.assign({}, defaults, other);
+    const dialogProps = { ...defaults, ...other };
 
     return (
       <EditorDialog {...dialogProps} showLayoutOptions={false}>

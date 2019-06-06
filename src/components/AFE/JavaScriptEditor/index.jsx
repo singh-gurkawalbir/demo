@@ -42,7 +42,7 @@ const mapDispatchToProps = (
   },
 }))
 class JavaScriptEditor extends Component {
-  componentWillMount() {
+  componentDidMount() {
     const { handleInit } = this.props;
 
     handleInit();

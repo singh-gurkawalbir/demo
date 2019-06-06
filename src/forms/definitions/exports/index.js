@@ -9,7 +9,6 @@ import hooks from './hooks';
 import transform from './transform';
 import parsers from './parsers';
 import filter from './filter';
-import file from './file';
 import rest from './rest';
 import ftp from './ftp';
 import subForms from './subForms';
@@ -36,7 +35,6 @@ export default {
   transform,
   parsers,
   filter,
-  file,
   ftp,
   rest,
   subForms,

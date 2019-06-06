@@ -4,7 +4,7 @@ import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 
-const fieldsToSkipHelpPopper = ['labelTitle'];
+const fieldsToSkipHelpPopper = ['labeltitle'];
 const FieldWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },

@@ -81,16 +81,18 @@ const resource = {
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
   test: {
-    connection: (connection, resourceType, resourceId, converter) =>
+    connection: (resourceType, resourceId, values) =>
       action(actionTypes.TEST_CONNECTION, {
-        connection,
         resourceType,
         resourceId,
-        converter,
+        values,
       }),
   },
   initCustomForm: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, { resourceType, resourceId }),
+    action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, {
+      resourceType,
+      resourceId,
+    }),
 
   patchFormField: (resourceType, resourceId, fieldId, value, op, offset = 0) =>
     action(actionTypes.RESOURCE.PATCH_FORM_FIELD, {
@@ -103,6 +105,23 @@ const resource = {
     }),
 };
 // #endregion
+const metadata = {
+  request: (connectionId, metadataType, mode) =>
+    action(actionTypes.METADATA.REQUEST, {
+      connectionId,
+      metadataType,
+      mode,
+    }),
+  netsuite: {
+    receivedCollection: (metadata, metadataType, connectionId, mode) =>
+      action(actionTypes.METADATA.RECEIVED_NETSUITE, {
+        metadata,
+        metadataType,
+        connectionId,
+        mode,
+      }),
+  },
+};
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
@@ -200,12 +219,11 @@ const resourceForm = {
       optionsHandler,
       preSubmit,
     }),
-  submit: (resourceType, resourceId, connection, values) =>
+  submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
       values,
-      connection,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -217,6 +235,7 @@ const resourceForm = {
 // #endregion
 
 export default {
+  metadata,
   cancelTask,
   reloadApp,
   clearComms,

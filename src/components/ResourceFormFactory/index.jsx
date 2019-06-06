@@ -18,15 +18,10 @@ const mapStateToProps = (state, { resourceType, resource }) => {
   };
 };
 
-const mapDispatchToProps = (
-  dispatch,
-  { resourceType, resource, connection }
-) => ({
-  handleSubmitForm: value => {
+const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
+  handleSubmitForm: values => {
     // console.log(`request resource:`, resourceType, resource._id, connection);
-    dispatch(
-      actions.resourceForm.submit(resourceType, resource._id, connection, value)
-    );
+    dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
   },
   handleInitForm: () => {
     dispatch(actions.resourceForm.init(resourceType, resource._id));
@@ -34,14 +29,30 @@ const mapDispatchToProps = (
 });
 
 class ResourceFormFactory extends Component {
+  state = {
+    intializing: true,
+  };
   componentDidMount() {
+    this.setState({ intializing: true });
     this.props.handleInitForm();
+  }
+  componentDidUpdate() {
+    const { formState } = this.props;
+    const { intializing } = this.state;
+
+    if (intializing && formState && formState.initComplete) {
+      // documentation indicates componentDidUpdate a safe place
+      // to call setState
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ intializing: false });
+    }
   }
 
   render() {
     const { resourceType, handleSubmitForm, formState } = this.props;
+    const { intializing } = this.state;
 
-    if (!formState.initComplete) {
+    if (intializing) {
       return <Typography>Initializing Form</Typography>;
     }
 

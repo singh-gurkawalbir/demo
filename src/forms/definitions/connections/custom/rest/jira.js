@@ -40,7 +40,6 @@ export default {
     { fieldId: 'name' },
     { fieldId: 'rest.baseURI' },
     { fieldId: 'rest.basicAuth.username' },
-
     // ...or, we can create completely custom fields like this:
     {
       id: 'Password',

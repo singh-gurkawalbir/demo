@@ -15,7 +15,7 @@ export default {
     resourceType: 'agents',
   },
   uploadFile: {
-    type: 'uploadFile',
+    type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
   },
