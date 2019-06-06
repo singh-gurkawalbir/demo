@@ -32,8 +32,6 @@ function* createPayload({ values, resourceType, resourceId }) {
 export function* pingConnection({ resourceType, resourceId, values }) {
   let pingCallStatus;
 
-  console.log('check ', values);
-
   try {
     const connectionPayload = yield call(createPayload, {
       values,

@@ -40,6 +40,7 @@ export default class GenericResourceForm extends Component {
       connection,
       optionsHandler,
       fieldMeta,
+      disableButton,
       ...rest
     } = this.props;
 
@@ -62,7 +63,10 @@ export default class GenericResourceForm extends Component {
             variant="contained">
             Cancel
           </Button>
-          <DynaSubmit onClick={onHandleSubmit} className={classes.actionButton}>
+          <DynaSubmit
+            disabled={disableButton}
+            onClick={onHandleSubmit}
+            className={classes.actionButton}>
             Save
           </DynaSubmit>
         </div>

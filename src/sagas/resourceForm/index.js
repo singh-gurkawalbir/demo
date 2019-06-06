@@ -148,16 +148,14 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 }
 
 export function* testAndSubmitFormValues({ resourceType, resourceId, values }) {
-  console.log('test and submit', values);
   const pingStatus = yield call(pingConnection, {
     resourceType,
     resourceId,
     values,
   });
 
-  console.log('ping called');
-
   if (pingStatus === PING_STATES.SUCCESS) {
+    yield put(actions.clearComms());
     yield call(submitFormValues, { resourceType, resourceId, values });
   }
 }

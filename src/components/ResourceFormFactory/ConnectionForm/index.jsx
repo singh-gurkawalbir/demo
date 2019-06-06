@@ -60,10 +60,11 @@ class ConnectionForm extends Component {
     this.props.clearComms();
   };
   handleSubmitAndShowConfirmDialog = values => {
-    this.props.onHandleSubmit(values);
-    this.setState({ showConfirmDialog: true });
-    this.setState({ formValuesState: deepClone(values) });
-    console.log('set state ');
+    this.props.handleTestAndSubmit(values);
+    this.setState({
+      showConfirmDialog: true,
+      formValuesState: deepClone(values),
+    });
   };
   render() {
     const {
@@ -71,12 +72,14 @@ class ConnectionForm extends Component {
       testConnectionCommState,
       converter,
       handleTestConnection,
-      onHandleSubmit,
-      saveForm,
+      handleTestAndSubmit,
+      handleSubmit,
       ...rest
     } = this.props;
     const { showConfirmDialog, formValuesState } = this.state;
     const { message } = testConnectionCommState;
+    const pingLoading =
+      testConnectionCommState.commState === COMM_STATES.LOADING;
 
     return (
       <Fragment>
@@ -96,9 +99,9 @@ class ConnectionForm extends Component {
               {
                 label: 'Yes',
                 onClick: () => {
-                  const { saveForm } = this.props;
+                  const { handleSubmit } = this.props;
 
-                  saveForm(formValuesState);
+                  handleSubmit(formValuesState);
                   this.setState({ showConfirmDialog: false });
                   this.props.clearComms();
                 },
@@ -114,9 +117,10 @@ class ConnectionForm extends Component {
         )}
         <ResourceForm
           {...rest}
+          disableButton={pingLoading}
           onHandleSubmit={this.handleSubmitAndShowConfirmDialog}>
           <DynaSubmit
-            disabled={testConnectionCommState.commState === COMM_STATES.LOADING}
+            disabled={pingLoading}
             onClick={handleTestConnection}
             className={classes.actionButton}
             size="small"

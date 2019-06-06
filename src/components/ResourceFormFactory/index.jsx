@@ -62,25 +62,23 @@ const ResourceFormFactory = props => {
   }
 
   let Form;
-  let handleSubmit;
+  const { fieldMeta, optionsHandler } = formState;
+  const commonProps = {
+    fieldMeta,
+    optionsHandler,
+    handleSubmit: handleSubmitForm,
+  };
+  let formProps;
 
   if (props.resourceType === 'connections') {
     Form = ConnectionForm;
-    handleSubmit = handleTestAndSubmit;
+    formProps = { ...commonProps, handleTestAndSubmit };
   } else {
     Form = GenericResourceForm;
-    handleSubmit = handleSubmitForm;
+    formProps = commonProps;
   }
 
-  return (
-    <Form
-      {...rest}
-      fieldMeta={formState.fieldMeta}
-      optionsHandler={formState.optionsHandler}
-      onHandleSubmit={handleSubmit}
-      saveForm={handleSubmitForm}
-    />
-  );
+  return <Form {...rest} {...formProps} />;
 };
 
 export default connect(
