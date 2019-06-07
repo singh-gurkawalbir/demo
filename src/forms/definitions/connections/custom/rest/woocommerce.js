@@ -10,16 +10,15 @@ export default {
   }),
   fields: [
     { fieldId: 'name' },
-    {
-      fieldId: 'rest.basicAuth.username',
-    },
+    { fieldId: 'rest.baseURI', helpKey: 'woocommerce.baseURI' },
     {
       fieldId: 'rest.basicAuth.username',
       label: 'Consumer Key:',
+      helpKey: 'woocommerce.username',
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
+      helpKey: 'woocommerce.password',
       inputType: 'password',
       label: 'Consumer Secret:',
       description:

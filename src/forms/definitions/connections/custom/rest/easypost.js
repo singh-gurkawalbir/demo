@@ -14,12 +14,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
-      inputType: 'password',
-      helpKey: 'easypost.apiKey',
       label: 'API Key',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

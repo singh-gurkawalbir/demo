@@ -13,11 +13,12 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
+      helpKey: 'twilio.accountSid',
       label: 'Account Sid:',
     },
     {
       fieldId: '/rest/basicAuth/password',
-      helpKey: 'connection.rest.basicAuth.password',
+      helpKey: 'twilio.authToken',
       inputType: 'password',
       label: 'Auth Token:',
       description:

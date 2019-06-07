@@ -12,6 +12,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'zendesk.subdomain',
+      helpKey: 'zendesk.subdomain',
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
         const subdomain = baseUri.substring(
@@ -27,7 +28,6 @@ export default {
       fieldId: 'rest.basicAuth.password',
       helpKey: 'connection.rest.basicAuth.password',
       inputType: 'password',
-      label: 'Consumer Secret:',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

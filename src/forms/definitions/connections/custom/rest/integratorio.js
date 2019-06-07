@@ -24,8 +24,8 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      name: '/integrator/environment',
-      type: 'text',
+      fieldId: 'integrator.environment',
+      helpKey: 'integrator.environment',
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
 
