@@ -9,14 +9,14 @@ export default {
     '/rest/pingRelativeURI': '/v2/subscriptions',
     '/rest/pingMethod': 'GET',
     '/rest/baseURI': `https://${
-      formValues['/rest/chargebeeSubdomain']
+      formValues['/chargebeeSubdomain']
     }.chargebee.com/api`,
   }),
   fields: [
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/rest/chargebeeSubdomain',
+      name: '/chargebeeSubdomain',
       startAdornment: 'https://',
       helpKey: 'chargebee.subdomain',
       endAdornment: '.chargebee.com/api',
