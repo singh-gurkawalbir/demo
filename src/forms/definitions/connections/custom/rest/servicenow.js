@@ -12,8 +12,9 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/instanceName',
-      helpKey: 'servicenow.instanceName',
+      fieldId: 'instanceName',
+      helpText:
+        'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
       startAdornment: 'https://',
       endAdornment: '.service-now.com',
       label: 'Enter subdomain into the base uri',
@@ -35,15 +36,11 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.username',
+      helpText: 'The username of your ServiceNow account.',
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
-      inputType: 'password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
+      helpText: 'The password of your ServiceNow account.',
     },
   ],
 };

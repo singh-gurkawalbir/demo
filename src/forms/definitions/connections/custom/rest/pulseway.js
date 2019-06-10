@@ -12,20 +12,14 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.baseURI',
+      helpText:
+        'Please enter baseURI of your Pulseway account. If you host your own Pulseway Enterprise Server, use “https://your-server-name/api” as base URL.',
     },
     {
       fieldId: 'rest.basicAuth.username',
     },
-
-    // ...or, we can create completely custom fields like this:
     {
       fieldId: 'rest.basicAuth.password',
-      inputType: 'password',
-      label: 'Password',
-      helpKey: 'connection.rest.basicAuth.password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

@@ -10,20 +10,20 @@ export default {
   }),
   fields: [
     { fieldId: 'name' },
-    { fieldId: 'rest.baseURI', helpKey: 'woocommerce.baseURI' },
+    {
+      fieldId: 'rest.baseURI',
+      helpText:
+        'Please enter baseURI of your WooCommerce account. If your endpoint is  “https://shopName.com/wp-json/wc/v1/orders”, then use "https://shopName.com" as base URL.',
+    },
     {
       fieldId: 'rest.basicAuth.username',
       label: 'Consumer Key:',
-      helpKey: 'woocommerce.username',
+      helpText: 'The consumer key of your WooCommerce account.',
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'woocommerce.password',
-      inputType: 'password',
+      helpText: 'The consumer secret of your WooCommerce account.',
       label: 'Consumer Secret:',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

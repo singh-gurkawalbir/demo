@@ -23,9 +23,10 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      name: '/rest/encrypted/apiKey',
+      fieldId: 'rest.encrypted.apiKey',
       type: 'text',
-      helpKey: 'atera.apiKey',
+      helpText:
+        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
       inputType: 'password',
       label: 'API Key',
       description:

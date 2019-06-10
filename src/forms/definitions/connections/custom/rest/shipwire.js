@@ -13,10 +13,11 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      name: '/environment',
+      fieldId: 'environment',
       type: 'select',
       label: 'Environment:',
-      helpKey: 'shipwire.environment',
+      helpText:
+        'Please select your environment here. Select Sandbox if the account is created on https://beta.shipwire.com. Select Production if the account is created on https://www.shipwire.com.',
       required: true,
       options: [
         {
@@ -42,15 +43,11 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.username',
+      helpText: 'The username of your Shipwire account.',
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
-      inputType: 'password',
-      label: 'Password:',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
+      helpText: 'The password of your Shipwire account.',
     },
   ],
 };

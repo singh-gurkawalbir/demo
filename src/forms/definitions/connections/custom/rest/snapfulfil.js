@@ -12,8 +12,9 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/rest/subdomain',
-      helpKey: 'snapfulfil.subdomain',
+      fieldId: 'rest.subdomain',
+      helpText:
+        "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
       label: 'Enter subdomain into the base uri',
@@ -38,12 +39,6 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
-      inputType: 'password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

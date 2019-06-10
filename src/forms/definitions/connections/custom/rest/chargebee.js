@@ -16,9 +16,10 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/chargebeeSubdomain',
+      fieldId: 'chargebeeSubdomain',
       startAdornment: 'https://',
-      helpKey: 'chargebee.subdomain',
+      helpText:
+        "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
       endAdornment: '.chargebee.com/api',
       label: 'Enter subdomain into the base uri',
       validWhen: {
@@ -40,8 +41,7 @@ export default {
     {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key:',
-      required: true,
-      helpKey: 'chargebee.apiKey',
+      helpText: 'The API Key of your Chargebee account.',
     },
   ],
 };

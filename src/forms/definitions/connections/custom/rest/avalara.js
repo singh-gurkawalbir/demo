@@ -15,11 +15,12 @@ export default {
     { fieldId: 'name' },
 
     {
-      name: '/accType',
+      fieldId: 'accType',
       type: 'select',
       label: 'Account Type',
       required: true,
-      helpKey: 'avalara.accType',
+      helpText:
+        'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
       options: [
         {
           items: [
@@ -44,17 +45,10 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.username',
-      helpKey: 'avalara.username',
     },
 
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'avalara.password',
-      inputType: 'password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

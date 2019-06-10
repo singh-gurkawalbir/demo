@@ -13,7 +13,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
-      helpKey: 'insightly.apiKey',
+      helpText: 'The API key of your Insightly account.',
       inputType: 'password',
       label: 'API Key',
       description:

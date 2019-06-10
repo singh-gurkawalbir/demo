@@ -13,15 +13,12 @@ export default {
     {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key',
+      helpText: 'The API Key of your ShipStation account.',
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
-      inputType: 'password',
+      helpText: 'The API Secret of your ShipStation account.',
       label: 'API Secret:',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

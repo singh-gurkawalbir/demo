@@ -470,7 +470,11 @@ export default {
   },
   'rest.basicAuth.password': {
     type: 'text',
-    label: 'Rest basic Auth password',
+    label: 'Password',
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
   },
   'rest.cookieAuth.uri': {
     type: 'text',
@@ -1690,59 +1694,4 @@ export default {
   // #endregion mongodb
 
   // #region custom connection
-  'zendesk.subdomain': {
-    type: 'text',
-    startAdornment: 'https://',
-    endAdornment: '.zendesk.com',
-    label: 'Enter subdomain into the base uri',
-    validWhen: {
-      matchesRegEx: {
-        pattern: '^[a-zA-Z0-9]*$',
-        message: 'Subdomain should not contain spaces.',
-      },
-    },
-  },
-  'authorizeNet.accType': {
-    type: 'select',
-    label: 'Account Type:',
-    helpKey: 'connection.http.authorizeNet.accType',
-    options: [
-      {
-        items: [
-          { label: 'Production', value: 'production' },
-          { label: 'Sandbox', value: 'sandbox' },
-        ],
-      },
-    ],
-  },
-  'http.encrypted.apiLoginID': {
-    type: 'text',
-    label: 'API Login ID:',
-    helpKey: 'connection.http.authorizeNet.apiLoginID',
-    required: true,
-  },
-  'http.encrypted.transactionKey': {
-    type: 'text',
-    label: 'Transaction Key:',
-    helpKey: 'connection.http.authorizeNet.transactionKey',
-    required: true,
-  },
-  'integrator.token': {
-    type: 'text',
-    label: 'Token:',
-    required: true,
-    inputType: 'password',
-  },
-  'integrator.environment': {
-    type: 'select',
-    label: 'Environment:',
-    options: [
-      {
-        items: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
-      },
-    ],
-  },
 };

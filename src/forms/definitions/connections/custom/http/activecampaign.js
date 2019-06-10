@@ -27,7 +27,8 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
-      helpKey: 'connection.http.activecampaignSubdomain',
+      helpText:
+        'Please enter your account here. This can be found in your account on the My Settings page under the "Developer" tab.',
       defaultValue: r => {
         const baseUri = r.http.baseURI;
         const subdomain = baseUri.substring(
@@ -39,11 +40,12 @@ export default {
       },
     },
     {
-      name: '/http/auth/token/token',
+      fieldId: 'http.auth.token.token',
       type: 'text',
       inputType: 'password',
-      label: 'Password',
-      helpKey: 'connection.http.activecampaignToken',
+      label: 'API Key:',
+      helpText:
+        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

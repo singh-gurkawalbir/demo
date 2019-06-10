@@ -13,17 +13,13 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
-      helpKey: 'twilio.accountSid',
+      helpText: 'The Account Sid of your Twilio account.',
       label: 'Account Sid:',
     },
     {
-      fieldId: '/rest/basicAuth/password',
-      helpKey: 'twilio.authToken',
-      inputType: 'password',
+      fieldId: 'rest.basicAuth.password',
+      helpText: 'The token of your Twilio account.',
       label: 'Auth Token:',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

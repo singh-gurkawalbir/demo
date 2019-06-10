@@ -27,7 +27,8 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
-      helpKey: 'greenhouse.apiToken',
+      helpText:
+        'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
       inputType: 'password',
       label: 'API Token',
       description:
@@ -36,9 +37,10 @@ export default {
     },
     {
       type: 'text',
-      name: '/rest/unencrypted/userID',
+      fieldId: 'rest.unencrypted.userID',
       label: 'User ID:',
-      helpKey: 'greenhouse.userId',
+      helpText:
+        'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\d]+$',

@@ -16,8 +16,9 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/rest/freshdeskSubdomain',
-      helpKey: 'freshdesk.subdomain',
+      fieldId: 'rest.freshdeskSubdomain',
+      helpText:
+        "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
       label: 'Enter subdomain into the base uri',
@@ -37,15 +38,14 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username', helpKey: 'freshdesk.username' },
+    {
+      fieldId: 'rest.basicAuth.username',
+      helpText:
+        'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
+    },
     {
       fieldId: 'rest.basicAuth.password',
-      inputType: 'password',
-      helpKey: 'freshdesk.password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
+      helpKey: 'The password of your Freshdesk account.',
     },
   ],
 };

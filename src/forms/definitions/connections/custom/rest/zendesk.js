@@ -12,7 +12,18 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'zendesk.subdomain',
-      helpKey: 'zendesk.subdomain',
+      type: 'text',
+      startAdornment: 'https://',
+      endAdornment: '.zendesk.com',
+      label: 'Enter subdomain into the base uri',
+      helpText:
+        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[a-zA-Z0-9]*$',
+          message: 'Subdomain should not contain spaces.',
+        },
+      },
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
         const subdomain = baseUri.substring(
@@ -26,11 +37,6 @@ export default {
     { fieldId: 'rest.basicAuth.username' },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'connection.rest.basicAuth.password',
-      inputType: 'password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
     },
   ],
 };

@@ -15,6 +15,9 @@ export default {
     {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key',
+      inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
     },
   ],
 };

@@ -13,8 +13,9 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      name: '/rest/deskSubdomain',
-      helpKey: 'desk.subdomain',
+      fieldId: 'rest.deskSubdomain',
+      helpText:
+        "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.desk.com',
       label: 'Enter subdomain into the base uri',
@@ -34,15 +35,13 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username', helpKey: 'desk.username' },
+    {
+      fieldId: 'rest.basicAuth.username',
+      helpText: 'The API Key of your Desk account.',
+    },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'desk.password',
-      inputType: 'password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
+      helpText: 'The password of your Desk account.',
     },
   ],
 };
