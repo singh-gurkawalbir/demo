@@ -1,4 +1,5 @@
 import getRoutePath from './routePaths';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
 
 /**
  * @param resourceDetails Details about the resource.
@@ -7,34 +8,43 @@ import getRoutePath from './routePaths';
  * @param resourceDetails._integrationId _integrationId of the resource.
  */
 export default function getExistingResourcePagePath(resourceDetails = {}) {
-  const { type, id, _integrationId } = resourceDetails;
+  let { type } = resourceDetails;
+  const { id, _integrationId } = resourceDetails;
   let path;
 
-  switch (type) {
-    case 'accesstoken':
-      path = `/tokens?_id=${id}`;
-      break;
-    case 'connection':
-      path = `/connections?_id=${id}`;
-      break;
-    case 'export':
-      path = `/exports/${id}/edit`;
-      break;
-    case 'flow':
-      path = `/integrations/${_integrationId ||
-        'none'}/settings/flows/${id}/edit`;
-      break;
-    case 'import':
-      path = `/imports/${id}/edit`;
-      break;
-    case 'integration':
-      path = `/integrations/${id}/settings/flows`;
-      break;
-    case 'stack':
-      path = `/stacks/${id}/edit`;
-      break;
-    default:
-      path = undefined;
+  if (type) {
+    if (RESOURCE_TYPE_SINGULAR_TO_PLURAL[type]) {
+      type = RESOURCE_TYPE_SINGULAR_TO_PLURAL[type];
+    }
+
+    const routeMap = {
+      accesstokens: 'tokens',
+    };
+
+    switch (type) {
+      case 'exports':
+      case 'imports':
+      case 'stacks':
+        path = `/${type}/${id}/edit`;
+        break;
+
+      case 'accesstokens':
+      case 'connections':
+        path = `/${routeMap[type] || type}?_id=${id}`;
+        break;
+
+      case 'flows':
+        path = `/integrations/${_integrationId ||
+          'none'}/settings/${type}/${id}/edit`;
+        break;
+
+      case 'integrations':
+        path = `/${type}/${id}/settings/flows`;
+        break;
+
+      default:
+        path = undefined;
+    }
   }
 
   return getRoutePath(path);

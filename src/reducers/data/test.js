@@ -1,67 +1,108 @@
 /* global describe, test, expect */
+import each from 'jest-each';
 import reducer, * as selectors from './';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../utils/constants';
 
-let logId = 0;
 const allResources = {};
+let isConnector = false;
+let uniqueId;
+let flowIntegrationId;
+const logIds = {};
+let logId = 0;
 
 ['integrations', 'connections', 'flows', 'exports', 'imports'].forEach(rt => {
   allResources[rt] = [];
+  logIds[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = 0;
   new Array(5).fill('something').forEach((v, i) => {
+    uniqueId = i + 1;
+    isConnector = i % 2 === 1;
+    flowIntegrationId = undefined;
+
+    if (rt === 'flows' && i === 0) {
+      flowIntegrationId = `integration${uniqueId}`;
+    }
+
     allResources[rt].push({
-      _id: `${rt}${i + 1}${i % 2 === 1 ? 'connector' : ''}`,
-      name: `${rt} ${i + 1}`,
+      _id: `${rt}${uniqueId}${isConnector ? 'connector' : ''}`,
+      name: `${rt} ${uniqueId}`,
       something: 'test',
       somethingelse: 'xyz',
-      _connectorId: i % 2 === 1 ? `connector${i + 1}` : undefined,
-      _integrationId:
-        i % 3 !== 0 && rt === 'flows' ? `integration${i + 1}` : undefined,
+      _connectorId: isConnector ? `connector${uniqueId}` : undefined,
+      _integrationId: flowIntegrationId,
     });
   });
 });
 
+function getRandomUser(logId) {
+  const logNumber = parseInt(logId.split('-')[2], 10);
+  let randomUser = logNumber % 3;
+
+  if (randomUser === 0) {
+    randomUser = 3;
+  }
+
+  return {
+    _id: `user${randomUser}`,
+    name: `User ${randomUser}`,
+    email: `user${randomUser}@test.com`,
+  };
+}
+
+function getRandomSource(logId) {
+  const logNumber = parseInt(logId.split('-')[2], 10);
+  let randomSource = logNumber % 4;
+
+  if (randomSource === 0) {
+    randomSource = 4;
+  }
+
+  return `source${randomSource}`;
+}
+
 function getAuditLogDetails(resourceType, _resourceId) {
-  logId += 1;
-  const randomNumber = (logId % 4) + 1;
+  logIds[resourceType] += 1;
+  logId = logIds[resourceType];
+  let randomNumber = logId % 5;
+
+  if (randomNumber === 0) {
+    randomNumber = 5;
+  }
+
   const fieldChanges = [
     {
       fieldPath: 'field1',
       oldValue: `old${randomNumber}`,
-      newValue: `new1${randomNumber}`,
+      newValue: `new${randomNumber}`,
     },
     {
-      fieldPath: 'field1',
+      fieldPath: 'field2',
       oldValue: `old${randomNumber + 1}`,
-      newValue: `new1${randomNumber + 1}`,
+      newValue: `new${randomNumber + 1}`,
     },
   ];
 
   if (resourceType === 'import' && logId % 2 === 1) {
     fieldChanges.push({
       fieldPath: 'some_lookups',
-      oldValue: `oldLookup${randomNumber + 1}`,
-      newValue: `newLookup${randomNumber + 1}`,
+      oldValue: `oldLookup${randomNumber + 3}`,
+      newValue: `newLookup${randomNumber + 3}`,
     });
   }
 
   if (resourceType === 'import' && logId % 3 === 1) {
     fieldChanges.push({
       fieldPath: 'some_mapping',
-      oldValue: `oldMapping${randomNumber + 1}`,
-      newValue: `newMapping${randomNumber + 1}`,
+      oldValue: `oldMapping${randomNumber + 4}`,
+      newValue: `newMapping${randomNumber + 4}`,
     });
   }
 
   return {
-    _id: `log${logId}`,
+    _id: `log-${resourceType}-${logId}`,
     resourceType,
     _resourceId,
-    source: `s${randomNumber}`,
-    byUser: {
-      _id: `user${randomNumber}`,
-      name: `User ${randomNumber}`,
-      email: `user${randomNumber}@test.com`,
-    },
+    source: getRandomSource(`log-${resourceType}-${logId}`),
+    byUser: getRandomUser(`log-${resourceType}-${logId}`),
     fieldChanges,
   };
 }
@@ -123,6 +164,154 @@ function getExpectedLogs(allLogs, filters = {}) {
   return expandedLogs;
 }
 
+function getTestCases(resourceType = undefined, resourceId = undefined) {
+  let testCases = [
+    [resourceType, resourceId, undefined, true],
+    [resourceType, resourceId, { resourceType: 'integration' }, true],
+    [resourceType, resourceId, { source: 'source1' }, true],
+    [resourceType, resourceId, { byUser: 'user2' }, true],
+    [resourceType, resourceId, { source: 'source3', byUser: 'user3' }, true],
+    [
+      resourceType,
+      resourceId,
+      {
+        resourceType: 'integration',
+        _resourceId: resourceId,
+        source: 'source1',
+        byUser: 'user1',
+      },
+      true,
+    ],
+    [
+      resourceType,
+      resourceId,
+      {
+        resourceType: 'flow',
+        _resourceId: 'flows3',
+        source: 'source3',
+        byUser: 'user3',
+      },
+      true,
+    ],
+    [
+      resourceType,
+      resourceId,
+      {
+        resourceType: 'connection',
+        _resourceId: 'connections5',
+        source: 'source1',
+        byUser: 'user2',
+      },
+      true,
+    ],
+    [
+      resourceType,
+      resourceId,
+      {
+        resourceType: 'export',
+        _resourceId: 'exports1',
+        source: 'source1',
+        byUser: 'user1',
+      },
+      true,
+    ],
+    [
+      resourceType,
+      resourceId,
+      {
+        resourceType: 'import',
+        _resourceId: 'imports3',
+        source: 'source3',
+        byUser: 'user3',
+      },
+      true,
+    ],
+    ['something', 'somethingelse', undefined, false],
+    [
+      'something',
+      'somethingelse',
+      {
+        resourceType: 'integration',
+      },
+      false,
+    ],
+  ];
+
+  if (!resourceType && !resourceId) {
+    // account level audit logs
+    testCases = testCases.concat([
+      [
+        undefined,
+        undefined,
+        {
+          resourceType: 'integration',
+          _resourceId: 'integrations2connector',
+          source: 'source2',
+          byUser: 'user2',
+        },
+        true,
+      ],
+    ]);
+  }
+
+  if (
+    (!resourceType && !resourceId) ||
+    (resourceType === 'integrations' &&
+      resourceId &&
+      resourceId.endsWith('connector'))
+  ) {
+    // account level or connector integration audit logs
+    testCases = testCases.concat([
+      [
+        resourceType,
+        resourceId,
+        {
+          resourceType: 'flow',
+          _resourceId: 'flows4connector',
+          source: 'source4',
+          byUser: 'user1',
+        },
+        true,
+      ],
+      [
+        resourceType,
+        resourceId,
+        {
+          resourceType: 'connection',
+          _resourceId: 'connections2connector',
+          source: 'source2',
+          byUser: 'user2',
+        },
+        true,
+      ],
+      [
+        resourceType,
+        resourceId,
+        {
+          resourceType: 'export',
+          _resourceId: 'exports2connector',
+          source: 'source2',
+          byUser: 'user2',
+        },
+        false,
+      ],
+      [
+        resourceType,
+        resourceId,
+        {
+          resourceType: 'import',
+          _resourceId: 'imports4connector',
+          source: 'source4',
+          byUser: 'user1',
+        },
+        true,
+      ],
+    ]);
+  }
+
+  return testCases;
+}
+
 describe('auditLogs selector', () => {
   test('should return correct details when state is undefined', () => {
     const state = reducer(undefined, 'some action');
@@ -137,10 +326,11 @@ describe('auditLogs selector', () => {
     ).toEqual([]);
   });
 
-  test('should return correct details for account audit logs', () => {
+  describe('account audit logs selector ', () => {
     const logs = [];
 
     Object.keys(allResources).forEach(rt => {
+      logIds[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = 0;
       allResources[rt].forEach(r => {
         logs.push(
           getAuditLogDetails(RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt], r._id)
@@ -151,66 +341,42 @@ describe('auditLogs selector', () => {
       { resources: allResources, audit: { all: logs } },
       'some action'
     );
-    let resultLogs = selectors.auditLogs(state);
 
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs));
-    resultLogs = selectors.auditLogs(state, undefined, undefined, {
-      resourceType: 'integration',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { resourceType: 'integration' })
+    each(getTestCases(undefined, undefined)).test(
+      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      (
+        resourceType,
+        resourceId,
+        filters,
+        resultsLengthShouldBeGreaterThanZero
+      ) => {
+        const resultLogs = selectors.auditLogs(
+          state,
+          resourceType,
+          resourceId,
+          filters
+        );
+
+        if (resultsLengthShouldBeGreaterThanZero) {
+          expect(resultLogs.length).toBeGreaterThan(0);
+          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+        } else {
+          expect(resultLogs.length).toEqual(0);
+        }
+      }
     );
-    resultLogs = selectors.auditLogs(state, undefined, undefined, {
-      source: 's1',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { source: 's1' }));
-    resultLogs = selectors.auditLogs(state, undefined, undefined, {
-      byUser: 'user2',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { byUser: 'user2' }));
-    resultLogs = selectors.auditLogs(state, undefined, undefined, {
-      source: 's3',
-      byUser: 'user3',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { source: 's3', byUser: 'user3' })
-    );
-    resultLogs = selectors.auditLogs(state, undefined, undefined, {
-      resourceType: 'integration',
-      _resourceId: 'integrations1',
-      source: 's2',
-      byUser: 'user2',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, {
-        resourceType: 'integration',
-        _resourceId: 'integrations1',
-        source: 's2',
-        byUser: 'user2',
-      })
-    );
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {})
-    ).toEqual([]);
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {
-        resourceType: 'integration',
-      })
-    ).toEqual([]);
   });
-  test('should return correct details for diy integration audit logs', () => {
+
+  describe('diy integration audit logs selector', () => {
     const logs = [];
+    const resourceType = 'integrations';
+    const resourceId = 'integrations1';
 
     Object.keys(allResources).forEach(rt => {
+      logIds[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = 0;
       allResources[rt].forEach(r => {
-        if (rt === 'integrations') {
-          if (r._id === 'integrations1') {
+        if (rt === resourceType) {
+          if (r._id === resourceId) {
             logs.push(
               getAuditLogDetails(RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt], r._id)
             );
@@ -225,75 +391,46 @@ describe('auditLogs selector', () => {
     const state = reducer(
       {
         resources: allResources,
-        audit: { integrations: { integrations1: logs } },
+        audit: { [resourceType]: { [resourceId]: logs } },
       },
       'some action'
     );
-    let resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations1'
-    );
 
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs));
-    resultLogs = selectors.auditLogs(state, 'integrations', 'integrations1', {
-      resourceType: 'integration',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { resourceType: 'integration' })
+    each(getTestCases(resourceType, resourceId)).test(
+      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      (
+        resourceType,
+        resourceId,
+        filters,
+        resultsLengthShouldBeGreaterThanZero
+      ) => {
+        const resultLogs = selectors.auditLogs(
+          state,
+          resourceType,
+          resourceId,
+          filters
+        );
+
+        if (resultsLengthShouldBeGreaterThanZero) {
+          expect(resultLogs.length).toBeGreaterThan(0);
+          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+        } else {
+          expect(resultLogs.length).toEqual(0);
+        }
+      }
     );
-    resultLogs = selectors.auditLogs(state, 'integrations', 'integrations1', {
-      source: 's1',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { source: 's1' }));
-    resultLogs = selectors.auditLogs(state, 'integrations', 'integrations1', {
-      byUser: 'user2',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { byUser: 'user2' }));
-    resultLogs = selectors.auditLogs(state, 'integrations', 'integrations1', {
-      source: 's3',
-      byUser: 'user3',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { source: 's3', byUser: 'user3' })
-    );
-    resultLogs = selectors.auditLogs(state, 'integrations', 'integrations1', {
-      resourceType: 'integration',
-      _resourceId: 'integrations1',
-      source: 's3',
-      byUser: 'user3',
-    });
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, {
-        resourceType: 'integration',
-        _resourceId: 'integrations1',
-        source: 's3',
-        byUser: 'user3',
-      })
-    );
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {})
-    ).toEqual([]);
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {
-        resourceType: 'integration',
-      })
-    ).toEqual([]);
-    expect(selectors.auditLogs(state)).toEqual([]);
   });
-  test('should return correct details for connector integration audit logs', () => {
+
+  describe('connector integration audit logs selector', () => {
     const logs = [];
+    const resourceType = 'integrations';
+    const resourceId = 'integrations2connector';
 
     Object.keys(allResources).forEach(rt => {
+      logIds[RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt]] = 0;
       allResources[rt].forEach(r => {
-        if (rt === 'integrations') {
-          if (r._id === 'integrations2connector') {
+        if (rt === resourceType) {
+          if (r._id === resourceId) {
             logs.push(
               getAuditLogDetails(RESOURCE_TYPE_PLURAL_TO_SINGULAR[rt], r._id)
             );
@@ -308,92 +445,34 @@ describe('auditLogs selector', () => {
     const state = reducer(
       {
         resources: allResources,
-        audit: { integrations: { integrations2connector: logs } },
+        audit: { [resourceType]: { [resourceId]: logs } },
       },
       'some action'
     );
-    let resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector'
-    );
 
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs));
-    resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector',
-      {
-        resourceType: 'integration',
+    each(getTestCases(resourceType, resourceId)).test(
+      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      (
+        resourceType,
+        resourceId,
+        filters,
+        resultsLengthShouldBeGreaterThanZero
+      ) => {
+        const resultLogs = selectors.auditLogs(
+          state,
+          resourceType,
+          resourceId,
+          filters
+        );
+
+        if (resultsLengthShouldBeGreaterThanZero) {
+          expect(resultLogs.length).toBeGreaterThan(0);
+          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+        } else {
+          expect(resultLogs.length).toEqual(0);
+        }
       }
     );
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { resourceType: 'integration' })
-    );
-    resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector',
-      {
-        source: 's1',
-      }
-    );
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { source: 's1' }));
-    resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector',
-      {
-        byUser: 'user2',
-      }
-    );
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(getExpectedLogs(logs, { byUser: 'user2' }));
-    resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector',
-      {
-        source: 's3',
-        byUser: 'user3',
-      }
-    );
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, { source: 's3', byUser: 'user3' })
-    );
-    resultLogs = selectors.auditLogs(
-      state,
-      'integrations',
-      'integrations2connector',
-      {
-        resourceType: 'integration',
-        _resourceId: 'integrations2connector',
-        source: 's4',
-        byUser: 'user4',
-      }
-    );
-    expect(resultLogs.length).toBeGreaterThan(0);
-    expect(resultLogs).toEqual(
-      getExpectedLogs(logs, {
-        resourceType: 'integration',
-        _resourceId: 'integrations2connector',
-        source: 's4',
-        byUser: 'user4',
-      })
-    );
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {})
-    ).toEqual([]);
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {
-        resourceType: 'integration',
-      })
-    ).toEqual([]);
-    expect(selectors.auditLogs(state)).toEqual([]);
   });
 });
 

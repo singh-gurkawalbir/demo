@@ -10,10 +10,10 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
-import { AUDIT_LOG_SOURCE_LABELS } from './constants';
+import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
 import * as selectors from '../../reducers';
+import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 
-const optionAll = { id: 'all', label: 'All' };
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const {
     affectedResources,
@@ -46,10 +46,10 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 class Filters extends Component {
   state = {
     filters: {
-      resourceType: optionAll.id,
-      _resourceId: optionAll.id,
-      byUser: optionAll.id,
-      source: optionAll.id,
+      resourceType: OPTION_ALL.id,
+      _resourceId: OPTION_ALL.id,
+      byUser: OPTION_ALL.id,
+      source: OPTION_ALL.id,
     },
   };
   getResource = () => {
@@ -61,78 +61,7 @@ class Filters extends Component {
 
     return resource;
   };
-  getResourceTypeFilter = () => {
-    const { classes, resourceType } = this.props;
-    const { filters } = this.state;
-    const hideFilterForResourceTypes = [
-      'accesstokens',
-      'connections',
-      'stacks',
-    ];
-    const resource = this.getResource();
 
-    if (resource && resource._connectorId) {
-      hideFilterForResourceTypes.push('flows');
-    }
-
-    if (hideFilterForResourceTypes.includes(resourceType)) {
-      return null;
-    }
-
-    const resourceTypeFilterOptionsByResourceType = {
-      exports: ['export', 'connection', 'stack'],
-      imports: ['import', 'connection', 'stack'],
-      flows: [
-        'flow',
-        'export',
-        'import',
-        'connection',
-        'stack',
-        'asynchelper',
-        'filedefinition',
-      ],
-      integrations:
-        resource && resource._connectorId
-          ? ['integration', 'flow', 'connection', 'import']
-          : [
-              'integration',
-              'flow',
-              'export',
-              'import',
-              'connection',
-              'stack',
-              'asynchelper',
-              'filedefinition',
-            ],
-    };
-
-    resourceTypeFilterOptionsByResourceType.all =
-      resourceTypeFilterOptionsByResourceType.integrations;
-
-    return (
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="resourceType">Select Resource Type</InputLabel>
-        <Select
-          value={filters.resourceType}
-          onChange={this.handleChange}
-          inputProps={{
-            name: 'resourceType',
-            id: 'resourceType',
-          }}>
-          {[
-            [optionAll.id, optionAll.label],
-            ...resourceTypeFilterOptionsByResourceType[
-              resourceType || 'all'
-            ].map(rt => [rt, RESOURCE_TYPE_SINGULAR_TO_LABEL[rt]]),
-          ].map(opt => (
-            <MenuItem key={opt[0]} value={opt[0]}>
-              {opt[1]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  };
   getResourceIdFilter = () => {
     const { filters } = this.state;
     const {
@@ -146,7 +75,7 @@ class Filters extends Component {
 
     if (
       !filters.resourceType ||
-      filters.resourceType === optionAll.id ||
+      filters.resourceType === OPTION_ALL.id ||
       filterResourceType === resourceType
     ) {
       return null;
@@ -185,8 +114,8 @@ class Filters extends Component {
           }}
           value={filters._resourceId}
           onChange={this.handleChange}>
-          <MenuItem key={optionAll.id} value={optionAll.id}>
-            {optionAll.label}
+          <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+            {OPTION_ALL.label}
           </MenuItem>
           {menuOptions}
         </Select>
@@ -198,7 +127,7 @@ class Filters extends Component {
     const toUpdate = { ...filters, [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
-      toUpdate._resourceId = optionAll.id;
+      toUpdate._resourceId = OPTION_ALL.id;
     }
 
     this.setState({ filters: toUpdate });
@@ -207,7 +136,7 @@ class Filters extends Component {
     const updatedFilters = { ...toUpdate };
 
     Object.keys(updatedFilters).forEach(key => {
-      if (updatedFilters[key] === optionAll.id) {
+      if (updatedFilters[key] === OPTION_ALL.id) {
         updatedFilters[key] = undefined;
       }
     });
@@ -221,8 +150,16 @@ class Filters extends Component {
 
     return (
       <form className={classes.root} autoComplete="off">
-        {this.getResourceTypeFilter()}
-        {this.getResourceIdFilter()}
+        <ResourceTypeFilter
+          {...this.props}
+          filters={this.state.filters}
+          onChange={this.handleChange}
+        />
+        <ResourceIdFilter
+          {...this.props}
+          filters={this.state.filters}
+          onChange={this.handleChange}
+        />
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="byUser">Select User</InputLabel>
           <Select
@@ -232,7 +169,7 @@ class Filters extends Component {
             }}
             onChange={this.handleChange}
             value={byUser}>
-            <MenuItem key={optionAll.id} value={optionAll.id}>
+            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
               All
             </MenuItem>
             {users.map(opt => (
@@ -252,7 +189,7 @@ class Filters extends Component {
             onChange={this.handleChange}
             value={source}>
             {[
-              [optionAll.id, optionAll.label],
+              [OPTION_ALL.id, OPTION_ALL.label],
               ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
                 .filter(k => {
                   if (!resource) {

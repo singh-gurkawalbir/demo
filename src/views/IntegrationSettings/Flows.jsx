@@ -44,7 +44,7 @@ class Flows extends Component {
     const { classes, flows } = this.props;
 
     return (
-      <LoadResources resources={['flows']} required>
+      <LoadResources required resources="flows">
         <Typography className={classes.title} variant="h4">
           Integration Flows
         </Typography>

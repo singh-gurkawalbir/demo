@@ -70,14 +70,8 @@ class AuditLog extends Component {
 
     return (
       <LoadResources
-        resources={[
-          'integrations',
-          'flows',
-          'exports',
-          'imports',
-          'connections',
-        ]}
-        required>
+        required
+        resources="integrations, flows, exports, imports, connections">
         <Fragment>
           <div className={classes.root}>
             <Typography className={classes.title} variant="h4">

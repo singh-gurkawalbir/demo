@@ -17,9 +17,12 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../utils/constants';
-import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_EVENT_LABELS } from './constants';
+import {
+  AUDIT_LOG_SOURCE_LABELS,
+  AUDIT_LOG_EVENT_LABELS,
+  showViewDiffLink,
+} from './util';
 import getExistingResourcePagePath from '../../utils/resource';
-import showViewDiffLink from '../../utils/auditLog';
 
 const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
   const preferences = selectors.userProfilePreferencesProps(state);
@@ -209,7 +212,7 @@ class AuditLogsTable extends Component {
                                   selectedLog: al,
                                 });
                               }}>
-                              Click to view the changes
+                              Click to see the changes
                             </Button>
                           </TableCell>
                         </Fragment>

@@ -81,7 +81,7 @@ class IntegrationSettings extends Component {
     const { classes, integration } = this.props;
 
     return (
-      <LoadResources resources={['integrations']} required>
+      <LoadResources required resources="integrations">
         <Fragment>
           <div className={classes.appFrame}>
             <div className={classes.about}>
