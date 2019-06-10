@@ -45,7 +45,7 @@ export default {
     },
     {
       fieldId: 'rest.basicAuth.password',
-      helpKey: 'The password of your Freshdesk account.',
+      helpText: 'The password of your Freshdesk account.',
     },
   ],
 };
