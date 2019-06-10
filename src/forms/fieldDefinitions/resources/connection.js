@@ -761,11 +761,16 @@ export default {
   },
   'http.auth.basic.username': {
     type: 'text',
-    label: 'Http auth basic username',
+    label: 'Username',
+    required: true,
   },
   'http.auth.basic.password': {
     type: 'text',
-    label: 'Http auth basic password',
+    label: 'Password',
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
   },
   'http.auth.oauth.authURI': {
     type: 'text',

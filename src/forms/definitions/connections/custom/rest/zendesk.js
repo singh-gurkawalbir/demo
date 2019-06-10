@@ -20,7 +20,7 @@ export default {
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {
         matchesRegEx: {
-          pattern: '^[a-zA-Z0-9]*$',
+          pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
         },
       },

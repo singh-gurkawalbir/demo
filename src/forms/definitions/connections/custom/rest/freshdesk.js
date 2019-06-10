@@ -24,7 +24,7 @@ export default {
       label: 'Enter subdomain into the base uri',
       validWhen: {
         matchesRegEx: {
-          pattern: '^[a-zA-Z0-9]*$',
+          pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
         },
       },
