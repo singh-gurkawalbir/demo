@@ -178,59 +178,6 @@ export default {
     "Use this JSON field to store all the non security sensitive fields needed by your imports and exports (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
   'connection.http.encrypted':
     "Use this encrypted JSON field to store all the security sensitive fields needed by your imports and exports (to access the application being integrated).  For example:  {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.  Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
-  'connection.http.activecampaignSubdomain':
-    'Please enter your account here. This can be found in your account on the My Settings page under the Developer tab.',
-  'connection.http.activecampaignToken':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
-  'connection.http.authorizeNet.apiLoginID':
-    'Merchants unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
-  'connection.http.authorizeNet.accType':
-    'Please select your account type here. Select Sandbox if your API Endpoint starts with https://apitest.authorize.net. Select Production if your API Endpoint starts with https://api.authorize.net.',
-  'connection.http.authorizeNet.transactionKey':
-    'Merchants unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
-  'anaplan.username': 'The username of your Anaplan account.',
-  'anaplan.password': 'The password of your Anaplan account.',
-  'atera.apiKey':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
-  'avalara.username': 'The username of your Avalara account.',
-  'avalara.password': 'The password of your Avalara account.',
-  'avalara.accType':
-    'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
-  'chargebee.subdomain':
-    "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
-  'chargebee.apiKey': 'The API Key of your Chargebee account.',
-  'desk.subdomain':
-    "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
-  'desk.username': 'The API Key of your Desk account.',
-  'desk.password': 'The password of your Desk account.',
-  'freshdesk.subdomain':
-    "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
-  'freshdesk.username':
-    'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
-  'freshdesk.password': 'The password of your Freshdesk account.',
-  'greenhouse.apiToken':
-    'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
-  'greenhouse.userId':
-    'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
-  'insightly.apiKey': 'The API key of your Insightly account.',
-  'integrator.environment':
-    'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
-  'integrator.token':
-    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
-  'snapfulfil.subdomain':
-    "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
-  'twilio.accountSid': 'The Account Sid of your Twilio account.',
-  'twilio.authToken': 'The token of your Twilio account.',
-  'woocommerce.baseURI':
-    'Please enter baseURI of your WooCommerce account. If your endpoint is  “https://shopName.com/wp-json/wc/v1/orders”, then use "https://shopName.com" as base URL.',
-  'woocommerce.username': 'The consumer key of your WooCommerce account.',
-  'woocommerce.password': 'The consumer secret of your WooCommerce account.',
-  'zendesk.subdomain':
-    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
-  'servicenow.instanceName':
-    'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
-  'shipwire.environment':
-    'Please select your environment here. Select Sandbox if the account is created on https://beta.shipwire.com. Select Production if the account is created on https://www.shipwire.com.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
     'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
