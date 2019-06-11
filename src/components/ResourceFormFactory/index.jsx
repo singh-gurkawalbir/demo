@@ -68,11 +68,9 @@ class ResourceFormFactory extends Component {
     let formProps = { ...commonProps };
 
     if (resourceType === 'connections') {
-      if (
-        resource &&
-        resource.assistant &&
-        resourceConstants.OAUTH_APPLICATIONS.includes(resource.assistant)
-      ) {
+      const connectionType = (resource && resource.assistant) || resource.type;
+
+      if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
         formProps = { ...commonProps, saveButtonLabel: 'Save and Authorize' };
         Form = OAuthForm;
       } else {
