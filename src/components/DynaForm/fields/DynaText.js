@@ -3,6 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FieldWrapper } from 'react-forms-processor/dist';
+import { InputAdornment } from '@material-ui/core';
 
 @withStyles(() => ({
   textField: {
@@ -29,6 +30,9 @@ class MaterialUiTextField extends React.Component {
       multiline,
       valueDelimiter,
       rowsMax,
+      startAdornment,
+      endAdornment,
+      inputType,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
@@ -46,6 +50,15 @@ class MaterialUiTextField extends React.Component {
         key={id}
         name={name}
         label={label}
+        InputProps={{
+          startAdornment: startAdornment ? (
+            <InputAdornment position="start">{startAdornment}</InputAdornment>
+          ) : null,
+          endAdornment: endAdornment ? (
+            <InputAdornment position="end">{endAdornment}</InputAdornment>
+          ) : null,
+        }}
+        type={inputType}
         className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
