@@ -4,7 +4,7 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
-import { createFormValuesPatchSet } from '../index';
+import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
 
 function* createPayload({ values, resourceType, resourceId }) {
@@ -67,4 +67,51 @@ function* pingConnection({ resourceType, resourceId, values }) {
   }
 }
 
-export default [takeEvery(actionTypes.TEST_CONNECTION, pingConnection)];
+function openOAuthWindow(dataIn) {
+  const win = window.open(dataIn.url, '_blank', dataIn.options);
+
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    // POPUP BLOCKED
+    // eslint-disable-next-line no-alert
+    window.alert('POPUP blocked');
+
+    try {
+      win.close();
+    } catch (ex) {
+      throw ex;
+    }
+
+    return false;
+  }
+
+  win.focus();
+}
+
+export function* saveAndAuthorizeConnection({
+  resourceType,
+  resourceId,
+  values,
+}) {
+  try {
+    const _id = resourceId;
+
+    yield call(submitFormValues, { resourceType, resourceId, values });
+    const url = `/connection/${_id}/oauth2`;
+
+    openOAuthWindow({
+      url,
+      options: 'scrollbars=1,height=600,width=800',
+    });
+  } catch (e) {
+    // could not save or open the window
+  }
+}
+
+export default [
+  takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
+
+  takeEvery(
+    actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
+    saveAndAuthorizeConnection
+  ),
+];
