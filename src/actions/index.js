@@ -231,6 +231,12 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
+  saveAndAuthorize: (resourceType, resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
+      resourceType,
+      resourceId,
+      values,
+    }),
 };
 // #endregion
 
