@@ -32,7 +32,7 @@ export default class GenericResourceForm extends Component {
   render() {
     const { formKey } = this.state;
     const {
-      saveButtonLabel = 'save',
+      saveButtonLabel = 'Save',
       classes,
       resourceType,
       resource,
