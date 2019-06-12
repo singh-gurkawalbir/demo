@@ -29,6 +29,9 @@ const Profiles = loadable(() =>
 const Subscription = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription')
 );
+const Audit = loadable(() =>
+  import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')
+);
 
 @hot(module)
 @withStyles(theme => ({
@@ -73,7 +76,11 @@ class MyAccount extends Component {
       <Fragment>
         <div className={classes.appFrame}>
           <div className={classes.about}>
-            <Typography variant="h5">My Account</Typography>
+            <Typography variant="h5">
+              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+                ? 'My Account'
+                : 'My Profile'}
+            </Typography>
           </div>
           <Divider />
           <div className={classes.root}>
@@ -110,6 +117,14 @@ class MyAccount extends Component {
                         Subscription
                       </NavLink>
                     </ListItem>
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="audit">
+                        Audit Log
+                      </NavLink>
+                    </ListItem>
                   </List>
                 </Drawer>
               )}
@@ -127,6 +142,10 @@ class MyAccount extends Component {
                 <Route
                   path={getRoutePath('/myAccount/subscription')}
                   component={Subscription}
+                />
+                <Route
+                  path={getRoutePath('/myAccount/audit')}
+                  component={Audit}
                 />
               </Switch>
             </div>

@@ -31,12 +31,19 @@ const Imports = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
+const IntegrationSettings = loadable(() =>
+  import(/* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings')
+);
 
 @hot(module)
 export default class AppRouting extends Component {
   render() {
     return (
       <Switch>
+        <Route
+          path="/pg/integrations/:integrationId/settings"
+          component={IntegrationSettings}
+        />
         <Route exact path="/pg/signin" component={SignIn} />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />

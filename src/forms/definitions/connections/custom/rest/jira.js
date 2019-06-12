@@ -19,38 +19,31 @@ export default {
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
-  preSubmit: formValues => {
-    const fixedValues = {
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/',
-    };
-    const newValues = {
-      ...formValues,
-      ...fixedValues,
-    };
-
-    return newValues;
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/',
+  }),
 
   fields: [
     // Fields can be referenced by their fieldDefinition key, and the
     // framework will fetch the missing values. Any values present in
     // this file override the references field's props.
     { fieldId: 'name' },
-    { fieldId: 'rest.baseURI' },
-    { fieldId: 'rest.basicAuth.username' },
+    {
+      fieldId: 'rest.baseURI',
+      helpText:
+        'The base URI for JIRA. For example, http://www.company.com/confluence',
+    },
+    {
+      fieldId: 'rest.basicAuth.username',
+      helpText: 'The username of your JIRA account.',
+    },
     // ...or, we can create completely custom fields like this:
     {
-      id: 'Password',
-      name: '/rest/basicAuth/password',
-      helpKey: 'connection.rest.basicAuth.password',
-      type: 'text',
-      inputType: 'password',
-      label: 'Password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-      required: true,
+      fieldId: 'rest.basicAuth.password',
+      helpText: 'The password of your JIRA account.',
     },
   ],
 };
