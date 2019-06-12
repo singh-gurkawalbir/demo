@@ -87,23 +87,27 @@ function openOAuthWindow(dataIn) {
   win.focus();
 }
 
-export function* saveAndAuthorizeConnection({
-  resourceType,
-  resourceId,
-  values,
-}) {
+export function* saveAndAuthorizeConnection({ resourceId, values }) {
   try {
-    const _id = resourceId;
+    yield call(submitFormValues, {
+      resourceType: 'connections',
+      resourceId,
+      values,
+    });
+  } catch (e) {
+    // could not save the resource...lets just return
+    return;
+  }
 
-    yield call(submitFormValues, { resourceType, resourceId, values });
-    const url = `/connection/${_id}/oauth2`;
+  const url = `/connection/${resourceId}/oauth2`;
 
+  try {
     openOAuthWindow({
       url,
       options: 'scrollbars=1,height=600,width=800',
     });
   } catch (e) {
-    // could not save or open the window
+    // could not close the window
   }
 }
 
