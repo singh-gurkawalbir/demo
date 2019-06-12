@@ -59,19 +59,11 @@ class ResourceFormFactory extends Component {
     }
 
     let Form;
-    const commonProps = {
-      ...this.props,
-      fieldMeta: formState.fieldMeta,
-      optionsHandler: formState.optionsHandler,
-      handleSubmit: handleSubmitForm,
-    };
-    let formProps = { ...commonProps };
 
     if (resourceType === 'connections') {
       const connectionType = (resource && resource.assistant) || resource.type;
 
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-        formProps = { ...commonProps, saveButtonLabel: 'Save and Authorize' };
         Form = OAuthForm;
       } else {
         Form = TestableForm;
@@ -80,7 +72,14 @@ class ResourceFormFactory extends Component {
       Form = GenericResourceForm;
     }
 
-    return <Form {...formProps} />;
+    return (
+      <Form
+        {...this.props}
+        fieldMeta={formState.fieldMeta}
+        optionsHandler={formState.optionsHandler}
+        handleSubmit={handleSubmitForm}
+      />
+    );
   }
 }
 

@@ -42,23 +42,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     marginLeft: theme.spacing.double,
   },
 }))
-class ConnectionForm extends Component {
-  state = {
-    advancedSettingsOpen: false,
-  };
-  handleToggleAdvancedSettings = () => {
-    this.setState({ advancedSettingsOpen: !this.state.advancedSettingsOpen });
-  };
-
+class TestableForm extends Component {
   handleCancel = () => {
     this.props.cancelProcess();
   };
   componentDidMount() {
     this.props.clearComms();
   }
-  // handleCloseNetworkErrorChip = () => {
-  //   this.setState({ networkSnackBarError: false });
-  // };
+
   handleClearComms = () => {
     this.props.clearComms();
   };
@@ -97,4 +88,4 @@ class ConnectionForm extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ConnectionForm);
+)(TestableForm);

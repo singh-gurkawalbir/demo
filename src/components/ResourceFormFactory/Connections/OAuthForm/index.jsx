@@ -4,19 +4,17 @@ import actions from '../../../../actions';
 import ResourceForm from '../../GenericResourceForm';
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { resourceType, resource } = ownProps;
+  const { resource } = ownProps;
   const resourceId = resource._id;
 
   return {
     handleSaveAndAuthorizeConnection: values => {
-      dispatch(
-        actions.resourceForm.saveAndAuthorize(resourceType, resourceId, values)
-      );
+      dispatch(actions.resourceForm.saveAndAuthorize(resourceId, values));
     },
   };
 };
 
-class ConnectionForm extends Component {
+class OAuthForm extends Component {
   render() {
     const { handleSaveAndAuthorizeConnection, ...rest } = this.props;
 
@@ -24,7 +22,7 @@ class ConnectionForm extends Component {
       <Fragment>
         <ResourceForm
           {...rest}
-          saveButtonLabel="Save and Authorize"
+          saveButtonLabel="Save & Authorize"
           handleSubmitForm={handleSaveAndAuthorizeConnection}
         />
       </Fragment>
@@ -35,4 +33,4 @@ class ConnectionForm extends Component {
 export default connect(
   null,
   mapDispatchToProps
-)(ConnectionForm);
+)(OAuthForm);
