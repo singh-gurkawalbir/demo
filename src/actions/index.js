@@ -10,6 +10,7 @@ export const availableResources = [
   'published',
   'integrations',
   'tiles',
+  'flows',
 ];
 
 // These are redux action "creators". Actions are reusable by any
@@ -105,6 +106,22 @@ const resource = {
     }),
 };
 // #endregion
+const auditLogs = {
+  request: (resourceType, resourceId, message) => {
+    if (resourceType && resourceId) {
+      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+        resourceType: `${resourceType}/${resourceId}/audit`,
+        message,
+      });
+    }
+
+    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+      resourceType: 'audit',
+      message,
+    });
+  },
+  clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
+};
 const metadata = {
   request: (connectionId, metadataType, mode) =>
     action(actionTypes.METADATA.REQUEST, {
@@ -231,6 +248,11 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
+  saveAndAuthorize: (resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
+      resourceId,
+      values,
+    }),
 };
 // #endregion
 
@@ -249,4 +271,5 @@ export default {
   api,
   ashares,
   auth,
+  auditLogs,
 };

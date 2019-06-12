@@ -11,5 +11,7 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://app.practicepanther.com/oauth/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',
   }),
+
   fields: [{ fieldId: 'name' }],
+  fieldSets: [],
 };
