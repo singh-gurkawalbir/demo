@@ -13,7 +13,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'environment',
+      id: 'environment',
       type: 'select',
       label: 'Environment:',
       helpText:

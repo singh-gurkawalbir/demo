@@ -24,7 +24,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'integrator.environment',
+      id: 'integrator.environment',
       type: 'select',
       label: 'Environment:',
       options: [
@@ -52,7 +52,7 @@ export default {
       },
     },
     {
-      fieldId: 'integrator.token',
+      id: 'integrator.token',
       type: 'text',
       label: 'Token:',
       required: true,

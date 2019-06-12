@@ -11,7 +11,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'zendesk.subdomain',
+      id: 'zendesk.subdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
