@@ -12,7 +12,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'rest.subdomain',
+      id: 'rest.subdomain',
       helpText:
         "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
       startAdornment: 'https://',

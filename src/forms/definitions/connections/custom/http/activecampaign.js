@@ -17,7 +17,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'http.activecampaignSubdomain',
+      id: 'http.activecampaignSubdomain',
       startAdornment: 'https://',
       endAdornment: '.api-us1.com',
       label: 'Enter subdomain into the base uri',
@@ -40,7 +40,7 @@ export default {
       },
     },
     {
-      fieldId: 'http.auth.token.token',
+      id: 'http.auth.token.token',
       type: 'text',
       inputType: 'password',
       label: 'API Key:',

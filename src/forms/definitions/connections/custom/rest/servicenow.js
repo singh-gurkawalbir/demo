@@ -12,7 +12,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'instanceName',
+      id: 'instanceName',
       helpText:
         'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
       startAdornment: 'https://',

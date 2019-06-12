@@ -15,7 +15,7 @@ export default {
     { fieldId: 'name' },
 
     {
-      fieldId: 'accType',
+      id: 'accType',
       type: 'select',
       label: 'Account Type',
       required: true,

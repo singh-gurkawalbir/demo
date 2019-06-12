@@ -20,7 +20,7 @@ class FtpPort extends React.Component {
     } = this.props;
     let result;
 
-    if (!value && options) {
+    if ((!value || [21, 22, 990].includes(value)) && options) {
       result = options;
     } else {
       result = value;
