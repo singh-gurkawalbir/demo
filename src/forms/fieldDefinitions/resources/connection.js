@@ -19,6 +19,10 @@ export default {
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
   },
+  scope: {
+    type: 'scopeseditor',
+    label: 'Configure Scopes',
+  },
   type: {
     type: 'select',
     label: 'Type',

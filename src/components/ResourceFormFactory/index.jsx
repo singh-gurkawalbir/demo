@@ -6,7 +6,7 @@ import TestableForm from './Connections/TestableForm';
 import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import resourceConstants from '../../forms/constants';
+import resourceConstants from '../../forms/constants/connection';
 
 const mapStateToProps = (state, { resourceType, resource }) => {
   const formState = selectors.resourceFormState(

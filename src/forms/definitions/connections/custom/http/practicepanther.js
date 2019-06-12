@@ -12,6 +12,6 @@ export default {
     '/http/auth/oauth/accessTokenPath': 'access_token',
   }),
 
-  fields: [{ fieldId: 'name' }],
+  fields: [{ fieldId: 'name' }, { fieldId: 'scope' }],
   fieldSets: [],
 };
