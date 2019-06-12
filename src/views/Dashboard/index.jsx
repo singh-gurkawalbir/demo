@@ -32,9 +32,7 @@ class Dashboard extends Component {
     const { classes, tiles } = this.props;
 
     return (
-      <LoadResources
-        resources={['published', 'integrations', 'tiles']}
-        required>
+      <LoadResources required resources="published, integrations, tiles">
         <div className={classes.root}>
           <Grid container spacing={24}>
             {tiles.map(t => (
