@@ -8,7 +8,7 @@ describe('integrationAShares reducers', () => {
 
     expect(newState).toEqual({});
   });
-  test('any other action return original state', () => {
+  test('any other action should return original state', () => {
     const someState = { something: 'something' };
     const newState = reducer(someState, 'someaction');
 

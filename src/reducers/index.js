@@ -377,6 +377,10 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function resourceDetailsMap(state) {
+  return fromData.resourceDetailsMap(state.data);
+}
+
 export function processors(state) {
   return fromData.processors(state.data);
 }
@@ -699,6 +703,22 @@ export function integrationUsers(state, integrationId) {
 
 export function accountOwner(state) {
   return fromUser.accountOwner(state.user);
+}
+
+export function auditLogs(state, resourceType, resourceId, filters) {
+  return fromData.auditLogs(state.data, resourceType, resourceId, filters);
+}
+
+export function affectedResourcesAndUsersFromAuditLogs(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromData.affectedResourcesAndUsersFromAuditLogs(
+    state.data,
+    resourceType,
+    resourceId
+  );
 }
 
 // #endregion

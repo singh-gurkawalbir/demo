@@ -65,9 +65,9 @@ export default class Tile extends Component {
             <Link
               className={classes.navLink}
               to={getRoutePath(
-                `/${data._connectorId ? 'connectors' : 'integrations'}/${
+                `/${data._connectorId ? 'integrations' : 'integrations'}/${
                   data._integrationId
-                }/settings`
+                }/settings/flows`
               )}>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
                 ? 'Monitor'

@@ -2,7 +2,11 @@ import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
-const resourceTypesToIgnore = [...initializationResources, ...accountResources];
+const resourceTypesToIgnore = [
+  ...initializationResources,
+  ...accountResources,
+  'audit',
+];
 
 function replaceOrInsertResource(state, type, resource) {
   // handle case of no collection
@@ -38,10 +42,11 @@ export default (state = {}, action) => {
   }
 
   // skip integrations/:_integrationId/ashares
+  // skip integrations/:_integrationId/audit
   if (
     resourceType &&
     resourceType.startsWith('integrations/') &&
-    resourceType.endsWith('/ashares')
+    (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
   ) {
     return state;
   }
@@ -142,5 +147,39 @@ export function processors(state) {
   const list = Object.entries(processorMap).map(i => i[1]);
 
   return list.filter(p => !processorBlacklist.includes(p.name));
+}
+
+export function resourceDetailsMap(state) {
+  const allResources = {};
+
+  if (!state) {
+    return allResources;
+  }
+
+  Object.keys(state).forEach(resourceType => {
+    if (!['published', 'tiles'].includes(resourceType)) {
+      allResources[resourceType] = {};
+
+      if (state[resourceType] && state[resourceType].length) {
+        state[resourceType].forEach(resource => {
+          allResources[resourceType][resource._id] = {
+            name: resource.name,
+          };
+
+          if (resource._integrationId) {
+            allResources[resourceType][resource._id]._integrationId =
+              resource._integrationId;
+          }
+
+          if (resource._connectorId) {
+            allResources[resourceType][resource._id]._connectorId =
+              resource._connectorId;
+          }
+        });
+      }
+    }
+  });
+
+  return allResources;
 }
 // #endregion
