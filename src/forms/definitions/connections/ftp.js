@@ -103,7 +103,16 @@ export default {
         {
           fieldId: 'ftp.userDirectoryIsRoot',
         },
-        { fieldId: 'ftp.entryParser' },
+        {
+          fieldId: 'ftp.entryParser',
+          required: true,
+          validWhen: {
+            isNot: {
+              values: [''],
+              message: 'An option must be selected',
+            },
+          },
+        },
         {
           fieldId: 'ftp.requireSocketReUse',
 

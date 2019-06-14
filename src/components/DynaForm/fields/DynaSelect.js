@@ -9,77 +9,90 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FieldWrapper } from 'react-forms-processor/dist';
 
-@withStyles(() => ({
+const styles = () => ({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
   },
-}))
-class MaterialUiSelect extends React.Component {
-  render() {
-    const {
-      classes,
-      description,
-      disabled,
-      id,
-      value,
-      defaultValue = '',
-      // isValid,
-      name,
-      options = [],
-      // placeholder,
-      // required,
-      label,
-      onFieldChange,
-    } = this.props;
-    const items = options.reduce(
-      (itemsSoFar, option) =>
-        itemsSoFar.concat(
-          option.items.map(item => {
-            let label;
-            let value;
+});
 
-            if (typeof item === 'string') {
-              label = item;
-              value = item;
-            } else {
-              ({ value } = item);
-              label = item.label || item.value;
-            }
+function MaterialUiSelect(props) {
+  const {
+    classes,
+    description,
+    disabled,
+    id,
+    value,
+    isValid,
+    errorMessages,
+    name,
+    options = [],
+    defaultValue = '',
+    // placeholder,
+    // required,
+    label,
+    onFieldChange,
+  } = props;
+  const items = options.reduce(
+    (itemsSoFar, option) =>
+      itemsSoFar.concat(
+        option.items.map(item => {
+          let label;
+          let value;
 
-            return (
-              <MenuItem key={value} value={value}>
-                {label}
-              </MenuItem>
-            );
-          })
-        ),
-      []
-    );
+          if (typeof item === 'string') {
+            label = item;
+            value = item;
+          } else {
+            ({ value } = item);
+            label = item.label || item.value;
+          }
 
-    return (
-      <FormControl key={id} disabled={disabled} className={classes.root}>
-        <InputLabel shrink={!!value} htmlFor={id}>
-          {label}
-        </InputLabel>
-        <Select
-          value={value || defaultValue}
-          onChange={evt => {
-            onFieldChange(id, evt.target.value);
-          }}
-          input={<Input name={name} id={id} />}>
-          {items}
-        </Select>
-        {description && <FormHelperText>{description}</FormHelperText>}
-      </FormControl>
-    );
+          return (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          );
+        })
+      ),
+    []
+  );
+  let finalTextValue;
+
+  if (value === undefined || value === null) {
+    finalTextValue = defaultValue;
+  } else {
+    finalTextValue = value;
   }
+
+  return (
+    <FormControl key={id} disabled={disabled} className={classes.root}>
+      <InputLabel shrink htmlFor={id}>
+        {label}
+      </InputLabel>
+      <Select
+        value={finalTextValue}
+        displayEmpty
+        onChange={evt => {
+          const { value } = evt.target;
+
+          onFieldChange(id, value);
+        }}
+        input={<Input name={name} id={id} />}>
+        {items}
+      </Select>
+
+      <FormHelperText error={!isValid}>
+        {isValid ? description : errorMessages}
+      </FormHelperText>
+    </FormControl>
+  );
 }
 
 const DynaSelect = props => (
   <FieldWrapper {...props}>
-    <MaterialUiSelect />
+    <MaterialUiSelect classes={props.classes} />
   </FieldWrapper>
 );
 
-export default DynaSelect;
+export default withStyles(styles)(DynaSelect);
