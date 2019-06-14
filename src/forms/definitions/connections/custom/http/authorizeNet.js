@@ -29,7 +29,7 @@ export default {
     { fieldId: 'name' },
 
     {
-      fieldId: 'authorizeNet.accType',
+      id: 'authorizeNet.accType',
       type: 'select',
       label: 'Account Type:',
       helpText:
@@ -57,7 +57,7 @@ export default {
       },
     },
     {
-      fieldId: 'http.encrypted.apiLoginID',
+      id: 'http.encrypted.apiLoginID',
       type: 'text',
       label: 'API Login ID:',
       helpText:
@@ -68,7 +68,7 @@ export default {
         'Note: for security reasons this field must always be re-entered',
     },
     {
-      fieldId: 'http.encrypted.transactionKey',
+      id: 'http.encrypted.transactionKey',
       type: 'text',
       label: 'Transaction Key:',
       helpText:

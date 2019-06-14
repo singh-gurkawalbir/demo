@@ -37,7 +37,7 @@ export default {
     },
     {
       type: 'text',
-      fieldId: 'rest.unencrypted.userID',
+      id: 'rest.unencrypted.userID',
       label: 'User ID:',
       helpText:
         'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',

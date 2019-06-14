@@ -13,7 +13,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'rest.deskSubdomain',
+      id: 'rest.deskSubdomain',
       helpText:
         "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',

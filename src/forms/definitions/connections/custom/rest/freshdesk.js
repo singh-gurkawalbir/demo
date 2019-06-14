@@ -16,7 +16,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'rest.freshdeskSubdomain',
+      id: 'rest.freshdeskSubdomain',
       helpText:
         "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',

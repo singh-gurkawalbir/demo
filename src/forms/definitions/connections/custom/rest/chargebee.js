@@ -16,7 +16,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      fieldId: 'chargebeeSubdomain',
+      id: 'chargebeeSubdomain',
       startAdornment: 'https://',
       helpText:
         "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
