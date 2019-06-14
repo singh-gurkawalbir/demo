@@ -20,7 +20,7 @@ export default {
     resourceType: 'connections',
   },
   scope: {
-    type: 'scopeseditor',
+    type: 'selectscopes',
     label: 'Configure Scopes',
   },
   type: {
@@ -399,7 +399,7 @@ export default {
     label: 'Rest token Param',
   },
   'rest.scope': {
-    type: 'scopeseditor',
+    type: 'selectscopes',
     label: 'Rest scope',
   },
   'rest.scopeDelimiter': {

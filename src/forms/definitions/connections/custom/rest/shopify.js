@@ -6,7 +6,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.scope',
-      allScopes: [
+      scopes: [
         'read_content',
         'write_content',
         'read_themes',
