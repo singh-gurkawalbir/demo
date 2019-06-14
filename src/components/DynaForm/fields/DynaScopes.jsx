@@ -3,22 +3,27 @@ import Button from '@material-ui/core/Button';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferListComponent';
-import defaultScopes from '../../../forms/constants/scopes';
 
-const convertScopesDataIntoListData = scopes => scopes.map(scope => scope.name);
 const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
 const TransferListModal = props => {
   const {
-    leftListDefaults,
-    rightListDefaults,
+    availableScopes: defaultAvailableScopes,
+    selectedScopes: defaultSelectedScopes,
     handleClose,
     id,
     onFieldChange,
   } = props;
-  const [left, setLeft] = useState(leftListDefaults);
-  const [right, setRight] = useState(rightListDefaults);
-  const transferListProps = { left, setLeft, right, setRight };
+  const [availableScopes, setAvailableScopes] = useState(
+    defaultAvailableScopes
+  );
+  const [selectedScopes, setSelectedScopes] = useState(defaultSelectedScopes);
+  const transferListProps = {
+    left: availableScopes,
+    setLeft: setAvailableScopes,
+    right: selectedScopes,
+    setRight: setSelectedScopes,
+  };
 
   return (
     <ModalDialog show handleClose={handleClose}>
@@ -27,13 +32,15 @@ const TransferListModal = props => {
       </Fragment>
       <TransferList {...transferListProps} />
       <Fragment>
-        <Button variant="contained" onClick={() => onFieldChange(id, right)}>
+        <Button
+          variant="contained"
+          onClick={() => onFieldChange(id, selectedScopes)}>
           Save
         </Button>
         <Button
           variant="contained"
           onClick={() => {
-            onFieldChange(id, right);
+            onFieldChange(id, selectedScopes);
             handleClose();
           }}>
           Save And Close
@@ -43,22 +50,18 @@ const TransferListModal = props => {
   );
 };
 
-function DynaScopesDialog(props) {
-  const { label, assistantType, value, onFieldChange, id } = props;
+const DynaScopesDialog = props => {
+  const { label, allScopes, value, onFieldChange, id } = props;
   const [showScopesEditor, setShowScopesEditor] = useState(false);
-  const defaultAssistantScopes = excludeSelectedScopes(
-    convertScopesDataIntoListData(defaultScopes[assistantType]),
-    value
-  );
+  const defaultAvailableScopes = excludeSelectedScopes(allScopes, value);
 
   return (
     <Fragment>
       {showScopesEditor && (
         <TransferListModal
           id={id}
-          leftListDefaults={defaultAssistantScopes}
-          rightListDefaults={value}
-          showModal={showScopesEditor}
+          availableScopes={defaultAvailableScopes}
+          selectedScopes={value}
           onFieldChange={onFieldChange}
           handleClose={() => {
             setShowScopesEditor(false);
@@ -73,7 +76,7 @@ function DynaScopesDialog(props) {
       </Button>
     </Fragment>
   );
-}
+};
 
 const FieldWrappedScopesDialog = props => (
   <FieldWrapper {...props}>

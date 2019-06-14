@@ -138,7 +138,7 @@ export default {
     'zohocrm',
     'microsoftdynamics365',
     'zohobooks',
-
+    'shopify',
     'microsoftbusinesscentral',
     'microsoftoutlookcalendar',
     'microsoftoutlookmail',
