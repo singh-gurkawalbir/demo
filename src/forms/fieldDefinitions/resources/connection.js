@@ -398,13 +398,9 @@ export default {
     type: 'text',
     label: 'Rest token Param',
   },
-  'rest.scopes': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+  'rest.scope': {
+    type: 'scopeseditor',
     label: 'Rest scope',
-    validWhen: [],
   },
   'rest.scopeDelimiter': {
     type: 'text',
@@ -1012,6 +1008,7 @@ export default {
     options: [
       {
         items: [
+          { label: 'Please select an option', value: '' },
           { label: 'UNIX', value: 'UNIX' },
           { label: 'UNIX-TRIM', value: 'UNIX-TRIM' },
           { label: 'VMS', value: 'VMS' },

@@ -19,7 +19,7 @@ const styles = theme => ({
     overflow: 'auto',
   },
   button: {
-    margin: theme.spacing(0.5, 0),
+    margin: theme.spacing.unit,
   },
 });
 
@@ -32,10 +32,8 @@ function intersection(a, b) {
 }
 
 function TransferList(props) {
-  const { leftDefault = [], rightDefault = [], classes } = props;
+  const { left, setLeft, right, setRight, classes } = props;
   const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState(leftDefault);
-  const [right, setRight] = React.useState(rightDefault);
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
   const handleToggle = value => () => {
@@ -93,7 +91,7 @@ function TransferList(props) {
                   inputProps={{ 'aria-labelledby': labelId }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
+              <ListItemText id={labelId} primary={value} />
             </ListItem>
           );
         })}
@@ -105,7 +103,7 @@ function TransferList(props) {
   return (
     <Grid
       container
-      spacing={2}
+      spacing={8}
       justify="center"
       alignItems="center"
       className={classes.root}>
