@@ -138,7 +138,6 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 
   if (patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
-    // yield put(actions.resource.commitStaged(resourceType, resourceId));
     yield call(commitStagedChanges, { resourceType, id: resourceId });
   }
 

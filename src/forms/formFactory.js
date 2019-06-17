@@ -204,7 +204,7 @@ const applyingMissedOutFieldMetaProperties = (
     }
   });
 
-  if (!field.helpText || !field.helpKey) {
+  if (!field.helpText && !field.helpKey) {
     // console.log(`default helpKey for ${merged.id} used`);
     let singularResourceType = resourceType;
 

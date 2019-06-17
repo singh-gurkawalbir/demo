@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
-import ConnectionForm from './ConnectionForm';
+import TestableForm from './Connections/TestableForm';
+import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
+import resourceConstants from '../../forms/constants/connection';
 
 const mapStateToProps = (state, { resourceType, resource }) => {
   const formState = selectors.resourceFormState(
@@ -55,7 +57,13 @@ const ResourceFormFactory = props => {
     return handleClearResourceForm;
   }, [props.resource._id]);
 
-  const { handleSubmitForm, handleTestAndSubmit, formState, ...rest } = props;
+  const {
+    resourceType,
+    handleSubmitForm,
+    handleTestAndSubmit,
+    formState,
+    resource,
+  } = props;
 
   if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
@@ -68,17 +76,22 @@ const ResourceFormFactory = props => {
     optionsHandler,
     handleSubmit: handleSubmitForm,
   };
-  let formProps;
+  let formProps = commonProps;
 
-  if (props.resourceType === 'connections') {
-    Form = ConnectionForm;
-    formProps = { ...commonProps, handleTestAndSubmit };
+  if (resourceType === 'connections') {
+    const connectionType = (resource && resource.assistant) || resource.type;
+
+    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+      Form = OAuthForm;
+    } else {
+      Form = TestableForm;
+      formProps = { ...commonProps, handleTestAndSubmit };
+    }
   } else {
     Form = GenericResourceForm;
-    formProps = commonProps;
   }
 
-  return <Form {...rest} {...formProps} />;
+  return <Form {...props} {...formProps} />;
 };
 
 export default connect(

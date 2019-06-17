@@ -5,8 +5,11 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 
 const mapStateToProps = (state, { resources }) => {
-  const requiredStatus = resources.reduce((acc, resourceType) => {
-    acc.push(selectors.resourceStatus(state, resourceType));
+  const requiredStatus = (typeof resources === 'string'
+    ? resources.split(',')
+    : resources
+  ).reduce((acc, resourceType) => {
+    acc.push(selectors.resourceStatus(state, resourceType.trim()));
 
     return acc;
   }, []);

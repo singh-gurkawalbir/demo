@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 import actions from '../../actions';
-import ModalDialog from './ModalDialog';
+import ModalDialog from '../../components/ModalDialog';
 import {
   changeEmailFailure,
   changeEmailSuccess,

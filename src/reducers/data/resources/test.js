@@ -245,3 +245,73 @@ describe('resources selectors', () => {
     });
   });
 });
+
+describe('resourceDetailsMap selector', () => {
+  test('should return {} when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.resourceDetailsMap(state)).toEqual({});
+  });
+  test('should return correct resource details', () => {
+    const integrations = [
+      { _id: 'int1', name: 'int_One', something: 'something' },
+      {
+        _id: 'int2',
+        name: 'int_Two',
+        _connectorId: 'connector2',
+        something: 'something',
+      },
+    ];
+    const flows = [
+      { _id: 'flow1', name: 'flow_One', something: 'something' },
+      {
+        _id: 'flow2',
+        name: 'flow_Two',
+        _integrationId: 'int2',
+        something: 'something',
+      },
+      {
+        _id: 'flow3',
+        name: 'flow_Three',
+        _integrationId: 'int3',
+        _connectorId: 'connector3',
+        something: 'something',
+      },
+      {
+        _id: 'flow4',
+        name: 'flow_Four',
+        _connectorId: 'connector4',
+        something: 'something',
+      },
+    ];
+    const published = [
+      { _id: 'pub1', name: 'pub 1' },
+      { _id: 'pub2', name: 'pub 2' },
+    ];
+    const tiles = [
+      { _integrationId: 'int1', name: 'int 1' },
+      { _integrationId: 'int2', name: 'int 2' },
+    ];
+    const state = reducer(
+      { published, tiles, integrations, flows },
+      'some action'
+    );
+
+    expect(selectors.resourceDetailsMap(state)).toEqual({
+      integrations: {
+        int1: { name: 'int_One' },
+        int2: { name: 'int_Two', _connectorId: 'connector2' },
+      },
+      flows: {
+        flow1: { name: 'flow_One' },
+        flow2: { name: 'flow_Two', _integrationId: 'int2' },
+        flow3: {
+          name: 'flow_Three',
+          _integrationId: 'int3',
+          _connectorId: 'connector3',
+        },
+        flow4: { name: 'flow_Four', _connectorId: 'connector4' },
+      },
+    });
+  });
+});

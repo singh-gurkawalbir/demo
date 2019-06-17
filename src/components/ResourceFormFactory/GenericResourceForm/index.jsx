@@ -32,6 +32,7 @@ export default class GenericResourceForm extends Component {
   render() {
     const { formKey } = this.state;
     const {
+      saveButtonLabel = 'Save',
       classes,
       resourceType,
       resource,
@@ -67,7 +68,7 @@ export default class GenericResourceForm extends Component {
             disabled={disableButton}
             onClick={onHandleSubmit}
             className={classes.actionButton}>
-            Save
+            {saveButtonLabel}
           </DynaSubmit>
         </div>
       </DynaForm>

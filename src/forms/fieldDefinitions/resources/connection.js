@@ -19,6 +19,10 @@ export default {
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
   },
+  scope: {
+    type: 'selectscopes',
+    label: 'Configure Scopes',
+  },
   type: {
     type: 'select',
     label: 'Type',
@@ -394,13 +398,9 @@ export default {
     type: 'text',
     label: 'Rest token Param',
   },
-  'rest.scopes': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+  'rest.scope': {
+    type: 'selectscopes',
     label: 'Rest scope',
-    validWhen: [],
   },
   'rest.scopeDelimiter': {
     type: 'text',
@@ -470,7 +470,11 @@ export default {
   },
   'rest.basicAuth.password': {
     type: 'text',
-    label: 'Rest basic Auth password',
+    label: 'Password',
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
   },
   'rest.cookieAuth.uri': {
     type: 'text',
@@ -757,11 +761,16 @@ export default {
   },
   'http.auth.basic.username': {
     type: 'text',
-    label: 'Http auth basic username',
+    label: 'Username',
+    required: true,
   },
   'http.auth.basic.password': {
     type: 'text',
-    label: 'Http auth basic password',
+    label: 'Password',
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
   },
   'http.auth.oauth.authURI': {
     type: 'text',
@@ -999,6 +1008,7 @@ export default {
     options: [
       {
         items: [
+          { label: 'Please Select (Optional)', value: '' },
           { label: 'UNIX', value: 'UNIX' },
           { label: 'UNIX-TRIM', value: 'UNIX-TRIM' },
           { label: 'VMS', value: 'VMS' },
@@ -1688,4 +1698,6 @@ export default {
     label: 'Mongodb replica Set',
   },
   // #endregion mongodb
+
+  // #region custom connection
 };

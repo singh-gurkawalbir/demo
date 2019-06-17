@@ -14,12 +14,20 @@ import { withStyles } from '@material-ui/core/styles';
     minWidth: 500,
   },
   modalContent: {
+    margin: `0 ${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
     width: '100',
   },
   iconButton: {
     position: 'absolute',
     top: '10px',
     right: '10px',
+  },
+  actions: {
+    '& *': { marginRight: theme.spacing.unit },
+    marginRight: theme.spacing.unit,
+    marginTop: theme.spacing.unit, // theme.spacing.unit / 2,
+    marginBottom: theme.spacing.double,
   },
 }))
 export default class ModalDialog extends Component {
@@ -47,7 +55,9 @@ export default class ModalDialog extends Component {
             {this.props.children[1]}
           </DialogContent>
           <Divider />
-          <DialogActions>{this.props.children[2]}</DialogActions>
+          <DialogActions className={classes.actions}>
+            {this.props.children[2]}
+          </DialogActions>
         </Dialog>
       </div>
     );

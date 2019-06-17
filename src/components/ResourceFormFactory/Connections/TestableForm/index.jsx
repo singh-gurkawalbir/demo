@@ -5,13 +5,14 @@ import { connect } from 'react-redux';
 import { deepClone } from 'fast-json-patch';
 // import Chip from '@material-ui/core/Chip';
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import PingSnackbar from '../../PingSnackbar';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers/index';
-import { COMM_STATES } from '../../../reducers/comms';
-import ResourceForm from '../GenericResourceForm';
-import { confirmDialog } from '../../ConfirmDialog';
+import PingSnackbar from '../../../PingSnackbar';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers/index';
+import { COMM_STATES } from '../../../../reducers/comms';
+import ResourceForm from '../../GenericResourceForm';
+// fix the confirm dialog import
+import { confirmDialog } from '../../../ConfirmDialog';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
@@ -44,7 +45,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     marginLeft: theme.spacing.double,
   },
 }))
-class ConnectionForm extends Component {
+class TestableForm extends Component {
   state = {
     showConfirmDialog: false,
     formValuesState: null,
@@ -137,4 +138,4 @@ class ConnectionForm extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ConnectionForm);
+)(TestableForm);

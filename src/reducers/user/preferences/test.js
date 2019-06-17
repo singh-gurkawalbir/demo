@@ -4,6 +4,9 @@ import actions from '../../../actions';
 import { ACCOUNT_IDS } from '../../../utils/constants';
 
 describe('user reducers', () => {
+  const defaultDateFormat = 'MM/DD/YYYY';
+  const defaultTimeFormat = 'h:mm:ss a';
+
   describe('setting theme in preferences reducer', () => {
     describe('should set the right theme using the preferences action', () => {
       test('should set the theme on first dispatch', () => {
@@ -58,6 +61,7 @@ describe('user reducers', () => {
             themeName: 'blue',
             defaultAShareId: ACCOUNT_IDS.OWN,
             timeFormat: 'something else',
+            dateFormat: defaultDateFormat,
           });
         });
 
@@ -82,6 +86,7 @@ describe('user reducers', () => {
           const updatePreferencePatch = actions.user.preferences.update({
             defaultAShareId: '123',
             timeFormat: 'something else',
+            dateFormat: 'test',
             themeName: 'blue',
           });
           const patchedState = reducer(state, updatePreferencePatch);
@@ -89,6 +94,7 @@ describe('user reducers', () => {
           expect(patchedState).toEqual({
             defaultAShareId: '123',
             timeFormat: 'something else',
+            dateFormat: 'test',
             accounts: {
               '123': { themeName: 'blue' },
               '345': { themeName: 'white' },
@@ -107,7 +113,11 @@ describe('user reducers', () => {
         );
         const state = reducer(undefined, receivedPreferences);
 
-        expect(state).toEqual({ themeName: 'fancy' });
+        expect(state).toEqual({
+          themeName: 'fancy',
+          dateFormat: defaultDateFormat,
+          timeFormat: defaultTimeFormat,
+        });
       });
 
       test('should not update preferences for any other resource type', () => {
@@ -152,6 +162,7 @@ describe('user reducers', () => {
       expect(selectors.userPreferences(state)).toEqual({
         themeName: 'fancy',
         timeFormat: 'something',
+        dateFormat: defaultDateFormat,
       });
     });
 
@@ -171,6 +182,7 @@ describe('user reducers', () => {
         themeName: 'fancy',
         defaultAShareId: ACCOUNT_IDS.OWN,
         timeFormat: 'something',
+        dateFormat: defaultDateFormat,
       });
     });
 
@@ -193,6 +205,7 @@ describe('user reducers', () => {
       expect(selectors.userPreferences(state)).toEqual({
         defaultAShareId: '123',
         timeFormat: 'something',
+        dateFormat: defaultDateFormat,
         themeName: 'fancy',
       });
     });
