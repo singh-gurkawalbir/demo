@@ -36,7 +36,7 @@ export default class GenericResourceForm extends Component {
       classes,
       resourceType,
       resource,
-      onHandleSubmit,
+      handleSubmitForm,
       children: actionButtons,
       connection,
       optionsHandler,
@@ -66,7 +66,7 @@ export default class GenericResourceForm extends Component {
           </Button>
           <DynaSubmit
             disabled={disableButton}
-            onClick={onHandleSubmit}
+            onClick={handleSubmitForm}
             className={classes.actionButton}>
             {saveButtonLabel}
           </DynaSubmit>
