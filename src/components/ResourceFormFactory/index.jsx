@@ -25,11 +25,7 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
     // console.log(`request resource:`, resourceType, resource._id, connection);
     dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
   },
-  handleTestAndSubmit: values => {
-    dispatch(
-      actions.resourceForm.testAndSubmit(resourceType, resource._id, values)
-    );
-  },
+
   handleInitForm: () => {
     dispatch(actions.resourceForm.init(resourceType, resource._id));
   },
@@ -57,13 +53,7 @@ const ResourceFormFactory = props => {
     return handleClearResourceForm;
   }, [props.resource._id]);
 
-  const {
-    resourceType,
-    handleSubmitForm,
-    handleTestAndSubmit,
-    formState,
-    resource,
-  } = props;
+  const { resourceType, handleSubmitForm, formState, resource } = props;
 
   if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
@@ -74,9 +64,9 @@ const ResourceFormFactory = props => {
   const commonProps = {
     fieldMeta,
     optionsHandler,
-    handleSubmit: handleSubmitForm,
+    handleSubmitForm,
   };
-  let formProps = commonProps;
+  const formProps = commonProps;
 
   if (resourceType === 'connections') {
     const connectionType = (resource && resource.assistant) || resource.type;
@@ -85,7 +75,6 @@ const ResourceFormFactory = props => {
       Form = OAuthForm;
     } else {
       Form = TestableForm;
-      formProps = { ...commonProps, handleTestAndSubmit };
     }
   } else {
     Form = GenericResourceForm;

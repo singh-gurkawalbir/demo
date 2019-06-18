@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import DoneIcon from '@material-ui/icons/Done';
 import { connect } from 'react-redux';
@@ -12,7 +12,7 @@ import * as selectors from '../../../../reducers/index';
 import { COMM_STATES } from '../../../../reducers/comms';
 import ResourceForm from '../../GenericResourceForm';
 // fix the confirm dialog import
-import { confirmDialog } from '../../../ConfirmDialog';
+import GenericConfirmDialog from '../../../ConfirmDialog';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   };
 };
 
-@withStyles(theme => ({
+const styles = theme => ({
   actions: {
     textAlign: 'right',
   },
@@ -44,98 +44,104 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-}))
-class TestableForm extends Component {
-  state = {
-    showConfirmDialog: false,
-    formValuesState: null,
-  };
-  handleCancel = () => {
-    this.props.cancelProcess();
-  };
-  componentDidMount() {
-    this.props.clearComms();
-  }
+});
+const ConfirmDialog = props => {
+  const {
+    formValues,
+    setShowConfirmDialog,
+    clearComms,
+    handleSubmit,
+    commErrorMessage,
+  } = props;
 
-  handleClearComms = () => {
-    this.props.clearComms();
-  };
-  handleSubmitAndShowConfirmDialog = values => {
-    this.props.handleTestAndSubmit(values);
-    this.setState({
-      showConfirmDialog: true,
-      formValuesState: deepClone(values),
-    });
-  };
-  render() {
-    const {
-      classes,
-      testConnectionCommState,
-      converter,
-      handleTestConnection,
-      handleTestAndSubmit,
-      handleSubmit,
-      ...rest
-    } = this.props;
-    const { showConfirmDialog, formValuesState } = this.state;
-    const { message } = testConnectionCommState;
-    const pingLoading =
-      testConnectionCommState.commState === COMM_STATES.LOADING;
+  useEffect(() => clearComms, []);
 
-    return (
-      <Fragment>
-        {showConfirmDialog &&
-        testConnectionCommState.commState === COMM_STATES.ERROR ? (
-          confirmDialog({
-            title: 'Confirm',
-            message: `Test failed for this connection with the following error. ${message}. Do you want to save this connection regardless (i.e. in offline mode)?`,
-            buttons: [
-              {
-                label: 'No',
-                onClick: () => {
-                  this.setState({ showConfirmDialog: false });
-                  this.props.clearComms();
-                },
-              },
-              {
-                label: 'Yes',
-                onClick: () => {
-                  const { handleSubmit } = this.props;
+  return (
+    <GenericConfirmDialog
+      title="Confirm"
+      message={`Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`}
+      buttons={[
+        {
+          label: 'No',
+          onClick: () => {
+            setShowConfirmDialog(false);
+          },
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            handleSubmit(formValues);
+            setShowConfirmDialog(false);
+          },
+        },
+      ]}
+    />
+  );
+};
 
-                  handleSubmit(formValuesState);
-                  this.setState({ showConfirmDialog: false });
-                  this.props.clearComms();
-                },
-              },
-            ],
-          })
-        ) : (
-          <PingSnackbar
-            commStatus={testConnectionCommState}
-            onHandleClose={this.handleClearComms}
-            onHandleCancelTask={this.handleCancel}
-          />
-        )}
-        <ResourceForm
-          {...rest}
-          disableButton={pingLoading}
-          onHandleSubmit={this.handleSubmitAndShowConfirmDialog}>
-          <DynaSubmit
-            disabled={pingLoading}
-            onClick={handleTestConnection}
-            className={classes.actionButton}
-            size="small"
-            variant="contained"
-            color="secondary">
-            Test
-          </DynaSubmit>
-        </ResourceForm>
-      </Fragment>
-    );
-  }
-}
+const TestableForm = props => {
+  const {
+    classes,
+    testConnectionCommState,
+    converter,
+    handleTestConnection,
+    handleSubmitForm,
+    cancelProcess,
+    clearComms,
+    ...rest
+  } = props;
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [formValues, setFormValues] = useState(null);
+
+  useEffect(() => {
+    clearComms();
+  }, []);
+  const handleSubmitAndShowConfirmDialog = values => {
+    handleTestConnection(values);
+    setShowConfirmDialog(true);
+    setFormValues(deepClone(values));
+  };
+
+  const { message } = testConnectionCommState;
+  const pingLoading = testConnectionCommState.commState === COMM_STATES.LOADING;
+
+  return (
+    <Fragment>
+      {showConfirmDialog &&
+      testConnectionCommState.commState === COMM_STATES.ERROR ? (
+        <ConfirmDialog
+          commErrorMessage={message}
+          formValues={formValues}
+          setShowConfirmDialog={setShowConfirmDialog}
+          clearComms={clearComms}
+          handleSubmit={handleSubmitForm}
+        />
+      ) : (
+        <PingSnackbar
+          commStatus={testConnectionCommState}
+          onHandleClose={clearComms}
+          onHandleCancelTask={cancelProcess}
+        />
+      )}
+      <ResourceForm
+        {...rest}
+        disableButton={pingLoading}
+        handleSubmitForm={handleSubmitAndShowConfirmDialog}>
+        <DynaSubmit
+          disabled={pingLoading}
+          onClick={handleTestConnection}
+          className={classes.actionButton}
+          size="small"
+          variant="contained"
+          color="secondary">
+          Test
+        </DynaSubmit>
+      </ResourceForm>
+    </Fragment>
+  );
+};
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TestableForm);
+)(withStyles(styles)(TestableForm));
