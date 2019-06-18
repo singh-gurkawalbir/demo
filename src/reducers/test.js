@@ -8,6 +8,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   TILE_STATUS,
 } from '../utils/constants';
+import { COMM_STATES } from './comms';
 
 describe('global selectors', () => {
   describe(`isProfileDataReady`, () => {
@@ -135,14 +136,14 @@ describe('authentication selectors', () => {
     expect(selectors.isAuthInitialized(authFailedState)).toBe(true);
   });
 
-  test('isUserLoggedIn selector should be set to false when the user logs out and for any other state it should be set to true ', () => {
+  test('isUserLoggedOut selector should be set to true when the user logs out and for any other state it should be set to false ', () => {
     const initiaizedState = reducer(undefined, { type: null });
 
-    expect(selectors.isUserLoggedIn(initiaizedState)).toBe(true);
+    expect(selectors.isUserLoggedOut(initiaizedState)).toBe(false);
     // the user logout saga ultimately disptaches a clear store action
     const loggedOutState = reducer(initiaizedState, actions.auth.clearStore());
 
-    expect(selectors.isUserLoggedIn(loggedOutState)).toBe(false);
+    expect(selectors.isUserLoggedOut(loggedOutState)).toBe(true);
   });
 
   describe('shouldShowAppRouting selector', () => {
@@ -225,13 +226,20 @@ describe('authentication selectors', () => {
   });
 });
 describe('Reducers in the root reducer', () => {
-  test('should wipe out the redux store in a user logout action', () => {
+  test('should wipe out the redux store except for app and auth properties in a user logout action', () => {
     const someInitialState = {
       profile: { email: 'sds' },
     };
     const state = reducer(someInitialState, actions.auth.clearStore());
 
-    expect(state).toEqual({});
+    expect(state).toEqual({
+      app: { count: 1 },
+      auth: {
+        commStatus: COMM_STATES.LOADING,
+        initialized: false,
+        loggedOut: true,
+      },
+    });
   });
 });
 
