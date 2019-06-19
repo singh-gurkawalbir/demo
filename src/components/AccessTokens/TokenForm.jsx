@@ -92,7 +92,6 @@ class TokenForm extends Component {
         type: 'text',
         label: 'Description',
         defaultValue: data.description || '',
-        required: true,
         helpText:
           'Describe how your token is being used and be sure to mention exactly where your token is being stored externally.',
       },

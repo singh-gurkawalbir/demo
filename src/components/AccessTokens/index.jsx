@@ -19,17 +19,11 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { COMM_STATES } from '../../reducers/comms';
 
-const mapStateToProps = (state, { integrationId }) => {
-  const accessTokens = selectors.accessTokenList(state, integrationId);
-  const integrations = selectors.resourceList(state, { type: 'integrations' })
-    .resources;
-
-  return {
-    accessTokens,
-    integrations,
-  };
-};
-
+const mapStateToProps = (state, { integrationId }) => ({
+  accessTokens: selectors.accessTokenList(state, integrationId),
+  integrations: selectors.resourceList(state, { type: 'integrations' })
+    .resources,
+});
 const mapDispatchToProps = dispatch => ({
   requestAccessTokens: () => {
     dispatch(actions.resource.requestCollection('accesstokens'));
@@ -117,6 +111,7 @@ class AccessTokens extends Component {
         break;
       case 'edit':
         this.setState({
+          connectorId,
           showTokenDialog: true,
           selectedTokenId: tokenId,
         });

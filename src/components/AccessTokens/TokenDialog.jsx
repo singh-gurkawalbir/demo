@@ -44,6 +44,8 @@ class TokenDialog extends Component {
       _connectionIds: data._connectionIds || [],
       _exportIds: data._exportIds || [],
       _importIds: data._importIds || [],
+      _integrationId: integrationId,
+      _connectorId: connectorId,
     };
 
     if (data.scope === 'fullAccess') {
@@ -70,9 +72,6 @@ class TokenDialog extends Component {
         accessTokenData.autoPurgeAt = existingData.autoPurgeAt;
       }
     }
-
-    accessTokenData._integrationId = integrationId;
-    accessTokenData._connectorId = connectorId;
 
     saveAccessToken(accessTokenData);
   }

@@ -96,7 +96,7 @@ class TokenDetail extends Component {
       case 'delete':
         confirmDialog({
           title: 'Confirm',
-          message: 'Are you sure you want to delete this api token?',
+          message: 'Are you sure you want to delete this API token?',
           buttons: [
             {
               label: 'Cancel',
