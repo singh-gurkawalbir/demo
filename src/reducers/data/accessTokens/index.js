@@ -104,7 +104,8 @@ export function accessTokenList(state, integrationId) {
       revoke: !t.revoked,
       activate: !!t.revoked,
       edit: !isEmbeddedToken,
-      delete: !isEmbeddedToken && !!t.revoked,
+      /* deletion of connector tokens is not allowed by backend */
+      delete: !t._connectorId && !!t.revoked,
     };
     const permissionReasons = {
       displayToken: isEmbeddedToken ? 'Embedded Token' : '',
@@ -112,7 +113,7 @@ export function accessTokenList(state, integrationId) {
         'This api token is owned by a SmartConnector and cannot be regenerated.',
       edit:
         'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
-      delete: isEmbeddedToken
+      delete: t._connectorId
         ? 'This api token is owned by a SmartConnector and cannot be edited or deleted here.'
         : 'To delete this api token you need to revoke it first.',
     };
@@ -123,10 +124,22 @@ export function accessTokenList(state, integrationId) {
       }
     });
 
+    let fullAccess = !!t.fullAccess;
+
+    if (!fullAccess && t._connectorId && t.autoPurgeAt) {
+      if (
+        (!t._connectionIds || !t._connectionIds.length) &&
+        (!t._exportIds || !t._exportIds.length) &&
+        (!t._importIds || !t._importIds.length)
+      ) {
+        fullAccess = true;
+      }
+    }
+
     tokens.push({
       ...t,
       token: t.token === PASSWORD_MASK ? '' : t.token,
-      fullAccess: !!t.fullAccess,
+      fullAccess,
       revoked: !!t.revoked,
       isEmbeddedToken,
       permissions,

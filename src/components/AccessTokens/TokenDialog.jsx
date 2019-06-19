@@ -47,12 +47,12 @@ class TokenDialog extends Component {
     };
 
     if (data.scope === 'fullAccess') {
-      accessTokenData.fullAcess = true;
+      accessTokenData.fullAccess = true;
       accessTokenData._connectionIds = [];
       accessTokenData._exportIds = [];
       accessTokenData._importIds = [];
     } else {
-      accessTokenData.fullAcess = false;
+      accessTokenData.fullAccess = false;
     }
 
     if (data.autoPurge === 'never') {
@@ -74,10 +74,6 @@ class TokenDialog extends Component {
     accessTokenData._integrationId = integrationId;
     accessTokenData._connectorId = connectorId;
 
-    if (accessTokenData._integrationId) {
-      accessTokenData.fullAcess = false;
-    }
-
     saveAccessToken(accessTokenData);
   }
 
@@ -94,6 +90,7 @@ class TokenDialog extends Component {
                 ? actionTypes.ACCESSTOKEN_UPDATE
                 : actionTypes.ACCESSTOKEN_CREATE,
               resourceId: id,
+              integrationId,
             },
           }}
           actionsToClear={actionsToClear}
@@ -119,7 +116,6 @@ class TokenDialog extends Component {
                 stateToUpdate.errorMessage = objStatus.createOrUpdate.message;
               }
 
-              stateToUpdate.actionsToClear = ['createOrUpdate'];
               this.setState(stateToUpdate);
             }
           }}

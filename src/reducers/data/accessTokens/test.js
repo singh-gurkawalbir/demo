@@ -302,7 +302,8 @@ describe('accessTokenList selector', () => {
         delete: false,
       },
       permissionReasons: {
-        delete: 'To delete this api token you need to revoke it first.',
+        delete:
+          'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
       },
     },
     {
@@ -322,9 +323,12 @@ describe('accessTokenList selector', () => {
         revoke: false,
         activate: true,
         edit: true,
-        delete: true,
+        delete: false,
       },
-      permissionReasons: {},
+      permissionReasons: {
+        delete:
+          'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
+      },
     },
     {
       _id: 'id7',

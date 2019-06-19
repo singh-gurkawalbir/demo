@@ -13,6 +13,7 @@ const mapStateToProps = (state, { actionsToMonitor = {} }) => {
     const action = actionsToMonitor[actionName];
     const { path, opts } = getRequestOptions(action.action, {
       resourceId: action.resourceId,
+      integrationId: action.integrationId,
     });
 
     toMonitor[actionName] = selectors.commStatusByKey(
