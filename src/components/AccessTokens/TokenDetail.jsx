@@ -20,6 +20,7 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import AuditLogsDialog from '../AuditLog/AuditLogsDialog';
 import getAutoPurgeAtAsString from './util';
+import { confirmDialog } from '../ConfirmDialog';
 
 const mapDispatchToProps = dispatch => ({
   displayToken: id => {
@@ -93,7 +94,21 @@ class TokenDetail extends Component {
         reactivate(accessToken);
         break;
       case 'delete':
-        deleteAccessToken(accessToken._id);
+        confirmDialog({
+          title: 'Confirm',
+          message: 'Are you sure you want to delete this api token?',
+          buttons: [
+            {
+              label: 'Cancel',
+            },
+            {
+              label: 'Yes',
+              onClick: () => {
+                deleteAccessToken(accessToken._id);
+              },
+            },
+          ],
+        });
         break;
       default:
     }
@@ -101,7 +116,7 @@ class TokenDetail extends Component {
   getMessageForAction(action, commStatus, accessToken) {
     let message;
 
-    if (action === 'delete') {
+    if (action === 'deleteAccessToken') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
         message = `API token ${accessToken.name ||
           accessToken._id} deleted successfully`;
