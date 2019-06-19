@@ -3,19 +3,40 @@ export default {
   // it should only do that when the user selects another protocol type
   // as well
   // The optionsHandler handler runs for every field
+  preSubmit: formValues => {
+    const newValues = formValues;
+
+    if (newValues['/ftp/entryParser'] === '') {
+      delete newValues['/ftp/entryParser'];
+    }
+
+    return newValues;
+  },
   optionsHandler(fieldId, fields) {
     if (fieldId === 'ftp.port') {
       const ftpPortField = fields.find(field => field.fieldId === 'ftp.port');
 
-      if (!ftpPortField.value) {
+      if (!ftpPortField.value || [21, 22, 990].includes(ftpPortField.value)) {
         const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
 
         if (ftpTypeField.value === 'sftp') {
           return 22;
         }
 
+        if (ftpTypeField.value === 'ftps') {
+          const useImplicitFTPS = fields.find(
+            field => field.fieldId === 'ftp.useImplicitFtps'
+          );
+
+          if (useImplicitFTPS.value === true) {
+            return 990;
+          }
+        }
+
         return 21;
       }
+
+      return ftpPortField.value;
     }
 
     return null;
@@ -61,7 +82,13 @@ export default {
       fields: [
         {
           fieldId: 'ftp.port',
-          refreshOptionsOnChangesTo: ['ftp.type', 'ftp.port'],
+          refreshOptionsOnChangesTo: ['ftp.type', 'ftp.useImplicitFtps'],
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Must be a number.',
+            },
+          },
         },
         {
           fieldId: 'ftp.usePassiveMode',
@@ -76,7 +103,16 @@ export default {
         {
           fieldId: 'ftp.userDirectoryIsRoot',
         },
-        { fieldId: 'ftp.entryParser' },
+        {
+          fieldId: 'ftp.entryParser',
+          required: true,
+          validWhen: {
+            isNot: {
+              values: [''],
+              message: 'An option must be selected',
+            },
+          },
+        },
         {
           fieldId: 'ftp.requireSocketReUse',
 

@@ -248,6 +248,11 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
+  saveAndAuthorize: (resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
+      resourceId,
+      values,
+    }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),

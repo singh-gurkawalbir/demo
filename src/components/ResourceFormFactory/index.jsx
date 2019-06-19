@@ -2,9 +2,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
-import ConnectionForm from './ConnectionForm';
+import TestableForm from './Connections/TestableForm';
+import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
+import resourceConstants from '../../forms/constants/connection';
 
 const mapStateToProps = (state, { resourceType, resource }) => {
   const formState = selectors.resourceFormState(
@@ -49,7 +51,7 @@ class ResourceFormFactory extends Component {
   }
 
   render() {
-    const { resourceType, handleSubmitForm, formState } = this.props;
+    const { resourceType, handleSubmitForm, formState, resource } = this.props;
     const { intializing } = this.state;
 
     if (intializing) {
@@ -59,7 +61,13 @@ class ResourceFormFactory extends Component {
     let Form;
 
     if (resourceType === 'connections') {
-      Form = ConnectionForm;
+      const connectionType = (resource && resource.assistant) || resource.type;
+
+      if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+        Form = OAuthForm;
+      } else {
+        Form = TestableForm;
+      }
     } else {
       Form = GenericResourceForm;
     }
