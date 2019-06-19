@@ -25,6 +25,8 @@ function AppRoutingWithAuth(props) {
     const { initSession, isAuthInitialized, location, history } = props;
     const { pathname: currentRoute } = location;
 
+    // We want to skip the render prior to the initial mount of
+    // the component hence using this state componentMounted
     setComponentMounted(true);
 
     if (!isAuthInitialized) {
@@ -42,10 +44,10 @@ function AppRoutingWithAuth(props) {
     location,
     isSessionExpired,
   } = props;
-  // this selector is used by the UI to hold off rendering any routes
-  // till it determines the auth state
   const isSignInRoute = location.pathname === getRoutePath('signin');
 
+  // this selector is used by the UI to hold off rendering any routes
+  // till it determines the auth state
   if (!shouldShowAppRouting || !componentMounted) return null;
 
   if (isAuthenticated) {

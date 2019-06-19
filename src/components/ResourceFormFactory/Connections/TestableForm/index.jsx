@@ -11,7 +11,6 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers/index';
 import { COMM_STATES } from '../../../../reducers/comms';
 import ResourceForm from '../../GenericResourceForm';
-// fix the confirm dialog import
 import GenericConfirmDialog from '../../../ConfirmDialog';
 
 const mapStateToProps = state => ({

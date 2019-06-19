@@ -8,12 +8,6 @@ import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 
-export const PING_STATES = {
-  SUCCESS: 'success',
-  ERROR: 'error',
-  CANCELLED: 'cancelled',
-};
-Object.freeze(PING_STATES);
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
@@ -32,8 +26,6 @@ function* createPayload({ values, resourceId }) {
 }
 
 export function* pingConnection({ resourceId, values }) {
-  let pingCallStatus;
-
   try {
     const connectionPayload = yield call(createPayload, {
       values,
@@ -42,7 +34,7 @@ export function* pingConnection({ resourceId, values }) {
     });
     // Either apiResp or canelTask can race successfully
     // , both will never happen
-    const { apiResp, cancelTask } = yield race({
+    const { apiResp } = yield race({
       apiResp: call(apiCallWithRetry, {
         path: pingConnectionParams.path,
         opts: { body: connectionPayload, ...pingConnectionParams.opts },
@@ -60,10 +52,7 @@ export function* pingConnection({ resourceId, values }) {
           'Connection is working fine!'
         )
       );
-      pingCallStatus = PING_STATES.SUCCESS;
     }
-
-    if (cancelTask) pingCallStatus = PING_STATES.CANCELLED;
   } catch (e) {
     // The ping test gives back a 200 response if the ping connection has failed
     if (e.status === 200) {
@@ -79,11 +68,7 @@ export function* pingConnection({ resourceId, values }) {
         )
       );
     }
-
-    pingCallStatus = PING_STATES.ERROR;
   }
-
-  return pingCallStatus;
 }
 
 export function openOAuthWindowForConnection(resourceId) {
