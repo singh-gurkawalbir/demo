@@ -1,8 +1,11 @@
 /* global describe, test, expect */
+import each from 'jest-each';
 import getJsonPaths from './jsonPaths';
 import getRoutePath from './routePaths';
 import getExistingResourcePagePath from './resource';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import getRequestOptions from './requestOptions';
+import actionTypes from '../actions/types';
 
 const uiRoutePathPrefix = '/pg';
 
@@ -61,4 +64,106 @@ describe('getExistingResourcePagePath util method', () => {
       });
     });
   });
+});
+
+describe('getRequestOptions util method', () => {
+  const testCases = [
+    [
+      { path: '/invite', opts: { method: 'POST' } },
+      actionTypes.USER_CREATE,
+      {},
+    ],
+    [
+      { path: '/ashares/someId', opts: { method: 'PUT' } },
+      actionTypes.USER_UPDATE,
+      { resourceId: 'someId' },
+    ],
+    [
+      { path: '/ashares/someId', opts: { method: 'DELETE' } },
+      actionTypes.USER_DELETE,
+      { resourceId: 'someId' },
+    ],
+    [
+      { path: '/ashares/someId/disable', opts: { method: 'PUT' } },
+      actionTypes.USER_DISABLE,
+      { resourceId: 'someId' },
+    ],
+    [
+      { path: '/transfers/invite', opts: { method: 'POST' } },
+      actionTypes.USER_MAKE_OWNER,
+      {},
+    ],
+    [
+      { path: '/licenses/startTrial', opts: { method: 'POST' } },
+      actionTypes.LICENSE_TRIAL_REQUEST,
+      {},
+    ],
+    [
+      { path: '/licenses/upgradeRequest', opts: { method: 'POST' } },
+      actionTypes.LICENSE_UPGRADE_REQUEST,
+      {},
+    ],
+    [
+      { path: '/accesstokens', opts: { method: 'POST' } },
+      actionTypes.ACCESSTOKEN_CREATE,
+      {},
+    ],
+    [
+      {
+        path: '/integrations/someIntegrationId1/accesstokens',
+        opts: { method: 'POST' },
+      },
+      actionTypes.ACCESSTOKEN_CREATE,
+      { integrationId: 'someIntegrationId1' },
+    ],
+    [
+      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
+      actionTypes.ACCESSTOKEN_UPDATE,
+      {
+        resourceId: 'someId',
+      },
+    ],
+    [
+      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
+      actionTypes.ACCESSTOKEN_REVOKE,
+      {
+        resourceId: 'someId',
+      },
+    ],
+    [
+      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
+      actionTypes.ACCESSTOKEN_ACTIVATE,
+      {
+        resourceId: 'someId',
+      },
+    ],
+    [
+      { path: '/accesstokens/someId', opts: { method: 'DELETE' } },
+      actionTypes.ACCESSTOKEN_DELETE,
+      {
+        resourceId: 'someId',
+      },
+    ],
+    [
+      { path: '/accesstokens/someId/display', opts: { method: 'GET' } },
+      actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+      {
+        resourceId: 'someId',
+      },
+    ],
+    [
+      { path: '/accesstokens/someId/generate', opts: { method: 'POST' } },
+      actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+      {
+        resourceId: 'someId',
+      },
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o for %s action with options %o',
+    (expected, action, options) => {
+      expect(getRequestOptions(action, options)).toEqual(expected);
+    }
+  );
 });

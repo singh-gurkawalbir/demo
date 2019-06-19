@@ -249,6 +249,33 @@ const resourceForm = {
       formValues,
     }),
 };
+const accessToken = {
+  displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
+  generateToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
+  tokenReceived: accessToken =>
+    action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
+  maskToken: accessToken =>
+    action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
+  create: accessToken =>
+    action(actionTypes.ACCESSTOKEN_CREATE, { accessToken }),
+  created: accessToken =>
+    action(actionTypes.ACCESSTOKEN_CREATED, { accessToken }),
+  update: accessToken =>
+    action(actionTypes.ACCESSTOKEN_UPDATE, { accessToken }),
+  updated: accessToken =>
+    action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }),
+  revoke: accessToken =>
+    action(actionTypes.ACCESSTOKEN_UPDATE, {
+      accessToken: { ...accessToken, revoked: true },
+    }),
+  activate: accessToken =>
+    action(actionTypes.ACCESSTOKEN_UPDATE, {
+      accessToken: { ...accessToken, revoked: false },
+    }),
+  deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
+  deleted: id =>
+    action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
+};
 // #endregion
 
 export default {
@@ -267,4 +294,5 @@ export default {
   ashares,
   auth,
   auditLogs,
+  accessToken,
 };

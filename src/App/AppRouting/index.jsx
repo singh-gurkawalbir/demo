@@ -34,6 +34,9 @@ const MyAccount = loadable(() =>
 const IntegrationSettings = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings')
 );
+const AccessTokens = loadable(() =>
+  import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -52,6 +55,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/exports" component={Exports} />
         <Route path="/pg/imports" component={Imports} />
         <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/tokens" component={AccessTokens} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

@@ -1,6 +1,5 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -74,9 +73,6 @@ class AuditLog extends Component {
         resources="integrations, flows, exports, imports, connections">
         <Fragment>
           <div className={classes.root}>
-            <Typography className={classes.title} variant="h4">
-              Audit Log
-            </Typography>
             <Filters
               affectedResources={affectedResources}
               resourceDetails={resourceDetails}
