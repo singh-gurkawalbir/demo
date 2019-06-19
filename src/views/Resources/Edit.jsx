@@ -10,7 +10,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceFormFactory from '../../components/ResourceFormFactory';
-import ConflictAlertDialog from './ConflictAlertDialog';
+import ConflictAlertFactory from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 
@@ -51,16 +51,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
     },
     handleUndoChange: () => {
       dispatch(actions.resource.undoStaged(id));
-    },
-    // handleRevertChanges: () => {
-    //   dispatch(actions.resource.clearStaged(id));
-    // },
-    handleConflict: skipCommit => {
-      if (!skipCommit) {
-        dispatch(actions.resource.commitStaged(resourceType, id));
-      }
-
-      dispatch(actions.resource.clearConflict(id));
     },
   };
 };
@@ -141,7 +131,6 @@ class Edit extends Component {
       handlePatchFormMeta,
       handleUndoChange,
       // handleCommitChanges,
-      handleConflict,
     } = this.props;
     const { editMode, showEditor } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
@@ -251,14 +240,16 @@ class Edit extends Component {
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}
+            connectionType={type}
             connection={connection}
           />
 
           {conflict && (
-            <ConflictAlertDialog
+            <ConflictAlertFactory
               conflict={conflict}
-              handleCommit={() => handleConflict(false)}
-              handleCancel={() => handleConflict(true)}
+              connectionType={type}
+              resourceType={resourceType}
+              id={id}
             />
           )}
         </div>

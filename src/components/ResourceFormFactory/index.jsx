@@ -53,7 +53,7 @@ const ResourceFormFactory = props => {
     return handleClearResourceForm;
   }, [props.resource._id]);
 
-  const { resourceType, handleSubmitForm, formState, resource } = props;
+  const { resourceType, handleSubmitForm, formState, connectionType } = props;
 
   if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
@@ -69,8 +69,6 @@ const ResourceFormFactory = props => {
   const formProps = commonProps;
 
   if (resourceType === 'connections') {
-    const connectionType = (resource && resource.assistant) || resource.type;
-
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
       Form = OAuthForm;
     } else {

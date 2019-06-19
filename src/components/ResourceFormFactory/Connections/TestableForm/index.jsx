@@ -18,14 +18,12 @@ const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { resourceType, resource } = ownProps;
+  const { resource } = ownProps;
   const resourceId = resource._id;
 
   return {
     handleTestConnection: values => {
-      dispatch(
-        actions.resource.test.connection(resourceType, resourceId, values)
-      );
+      dispatch(actions.resource.connections.test(resourceId, values));
     },
     clearComms: () => {
       dispatch(actions.clearComms());

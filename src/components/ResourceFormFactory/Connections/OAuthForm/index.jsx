@@ -9,7 +9,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
   return {
     handleSaveAndAuthorizeConnection: values => {
-      dispatch(actions.resourceForm.saveAndAuthorize(resourceId, values));
+      dispatch(
+        actions.resource.connections.saveAndAuthorize(resourceId, values)
+      );
     },
   };
 };

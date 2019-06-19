@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
+import { commitStagedChanges } from '../../resources';
 
 export const PING_STATES = {
   SUCCESS: 'success',
@@ -13,7 +14,8 @@ export const PING_STATES = {
   CANCELLED: 'cancelled',
 };
 Object.freeze(PING_STATES);
-function* createPayload({ values, resourceType, resourceId }) {
+function* createPayload({ values, resourceId }) {
+  const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   const connectionResource = yield select(
     selectors.resource,
@@ -29,13 +31,13 @@ function* createPayload({ values, resourceType, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* pingConnection({ resourceType, resourceId, values }) {
+export function* pingConnection({ resourceId, values }) {
   let pingCallStatus;
 
   try {
     const connectionPayload = yield call(createPayload, {
       values,
-      resourceType,
+      resourceType: 'connections',
       resourceId,
     });
     // Either apiResp or canelTask can race successfully
@@ -84,8 +86,10 @@ export function* pingConnection({ resourceType, resourceId, values }) {
   return pingCallStatus;
 }
 
-function openOAuthWindow(dataIn) {
-  const win = window.open(dataIn.url, '_blank', dataIn.options);
+export function openOAuthWindowForConnection(resourceId) {
+  const options = 'scrollbars=1,height=600,width=800';
+  const url = `/connection/${resourceId}/oauth2`;
+  const win = window.open(url, '_blank', options);
 
   if (!win || win.closed || typeof win.closed === 'undefined') {
     // POPUP BLOCKED
@@ -116,13 +120,47 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     return;
   }
 
-  const url = `/connection/${resourceId}/oauth2`;
+  const { conflict } = yield select(
+    selectors.resourceData,
+    'connections',
+    resourceId
+  );
+
+  // if there is conflict let conflict dialog show up
+  // and oauth authorize be skipped
+  if (conflict) return;
 
   try {
-    openOAuthWindow({
-      url,
-      options: 'scrollbars=1,height=600,width=800',
+    openOAuthWindowForConnection(resourceId);
+  } catch (e) {
+    // could not close the window
+  }
+}
+
+function* commitAndAuthorizeConnection({ resourceId }) {
+  try {
+    yield call(commitStagedChanges, {
+      resourceType: 'connections',
+      id: resourceId,
     });
+  } catch (e) {
+    // could not save the resource...lets just return
+    return;
+  }
+
+  // check to see if there is still a conflict
+  const { conflict } = yield select(
+    selectors.resourceData,
+    'connections',
+    resourceId
+  );
+
+  // if there is conflict let conflict dialog show up
+  // and oauth authorize be skipped
+  if (conflict) return;
+
+  try {
+    openOAuthWindowForConnection(resourceId);
   } catch (e) {
     // could not close the window
   }
@@ -134,5 +172,10 @@ export default [
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection
+  ),
+
+  takeEvery(
+    actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
+    commitAndAuthorizeConnection
   ),
 ];
