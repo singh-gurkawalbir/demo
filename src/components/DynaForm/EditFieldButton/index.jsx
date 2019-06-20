@@ -50,7 +50,8 @@ class EditFieldButton extends Component {
     showEditor: false,
     insertField: false,
   };
-
+  handleMetaChangeOperation = () =>
+    this.setState({ showEditor: false, insertField: false });
   handleEditorChange = newMeta => {
     const { patchFormField, onChange } = this.props;
 
@@ -59,6 +60,8 @@ class EditFieldButton extends Component {
     if (typeof onChange === 'function') {
       onChange(newMeta);
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleInsertField = newMeta => {
@@ -70,6 +73,8 @@ class EditFieldButton extends Component {
     if (typeof onChange === 'function') {
       onChange(newMeta);
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleDelete = () => {
@@ -80,6 +85,8 @@ class EditFieldButton extends Component {
     if (typeof onChange === 'function') {
       onChange();
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleInsertFieldToggle = (mode = false) => {

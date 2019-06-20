@@ -53,7 +53,13 @@ const ResourceFormFactory = props => {
     return handleClearResourceForm;
   }, [props.resource._id]);
 
-  const { resourceType, handleSubmitForm, formState, connectionType } = props;
+  const {
+    resourceType,
+    handleSubmitForm,
+    formState,
+    connectionType,
+    handleInitForm,
+  } = props;
 
   if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
@@ -62,6 +68,7 @@ const ResourceFormFactory = props => {
   let Form;
   const { fieldMeta, optionsHandler } = formState;
   const commonProps = {
+    handleInitForm,
     fieldMeta,
     optionsHandler,
     handleSubmitForm,
