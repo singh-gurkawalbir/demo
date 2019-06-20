@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { FormContext } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
@@ -15,11 +16,16 @@ const FieldWrapper = withStyles({
   return (
     <Fragment>
       {editMode && (
-        <EditFieldButton
-          onChange={onMetaChange}
-          field={field}
-          className={classes.editIcon}
-        />
+        <FormContext>
+          {form => (
+            <EditFieldButton
+              onChange={onMetaChange}
+              formFields={form.fields}
+              field={field}
+              className={classes.editIcon}
+            />
+          )}
+        </FormContext>
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help

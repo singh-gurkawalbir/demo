@@ -49,6 +49,7 @@ class EditFieldButton extends Component {
   state = {
     showEditor: false,
     insertField: false,
+    existingFieldWarning: false,
   };
   handleMetaChangeOperation = () =>
     this.setState({ showEditor: false, insertField: false });
@@ -65,8 +66,19 @@ class EditFieldButton extends Component {
   };
 
   handleInsertField = newMeta => {
-    const { patchFormField, onChange } = this.props;
+    const { patchFormField, onChange, formFields } = this.props;
     const { insertField } = this.state;
+    // get meta from props
+    const existingField = formFields.filter(field => field.id === newMeta.id);
+
+    if (existingField.length > 0) {
+      // set some state with warning
+      this.setState({ existingFieldWarning: true });
+
+      return;
+    }
+
+    this.setState({ existingFieldWarning: false });
 
     patchFormField(newMeta, 'add', insertField === 'after' ? 1 : 0);
 
@@ -100,7 +112,7 @@ class EditFieldButton extends Component {
   };
 
   render() {
-    const { showEditor, insertField } = this.state;
+    const { showEditor, insertField, existingFieldWarning } = this.state;
     const { className, fieldMeta = {} } = this.props;
     const fieldId = fieldMeta.fieldId || 'new';
 
@@ -148,6 +160,7 @@ class EditFieldButton extends Component {
         </PopupState>
         {insertField && (
           <NewFieldDialog
+            existingFieldWarning={existingFieldWarning}
             title={`Insert this new field ${insertField} ${fieldId}`}
             onClose={() => this.handleInsertFieldToggle()}
             onSubmit={field => this.handleInsertField(field)}

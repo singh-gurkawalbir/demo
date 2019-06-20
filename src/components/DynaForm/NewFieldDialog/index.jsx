@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import FormDialog from '../../FormDialog';
 import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
@@ -140,7 +141,7 @@ export default class NewFieldDialog extends Component {
   }
 
   render() {
-    const { classes, onSubmit, ...rest } = this.props;
+    const { classes, onSubmit, existingFieldWarning, ...rest } = this.props;
     const { fieldType, error, value, meta } = this.state;
     const DynaField = fields[fieldType];
 
@@ -170,6 +171,14 @@ export default class NewFieldDialog extends Component {
           <div className={classes.fieldPreview}>
             <DynaField {...meta} />
           </div>
+          {existingFieldWarning && (
+            <div>
+              <FormHelperText error>
+                The field Id provided is an id for an existing field, Please
+                change it to a more unique id.
+              </FormHelperText>
+            </div>
+          )}
           <Typography variant="caption">Metadata</Typography>
           <div className={classes.editorContainer}>
             <CodeEditor
