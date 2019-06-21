@@ -20,6 +20,7 @@ const FieldWrapper = withStyles({
           {form => (
             <EditFieldButton
               onChange={onMetaChange}
+              registerField={form.registerField}
               formFields={form.fields}
               field={field}
               className={classes.editIcon}

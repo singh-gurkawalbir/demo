@@ -66,7 +66,7 @@ class EditFieldButton extends Component {
   };
 
   handleInsertField = newMeta => {
-    const { patchFormField, onChange, formFields } = this.props;
+    const { patchFormField, onChange, formFields, registerField } = this.props;
     const { insertField } = this.state;
     // get meta from props
     const existingField = formFields.filter(field => field.id === newMeta.id);
@@ -84,6 +84,7 @@ class EditFieldButton extends Component {
 
     if (typeof onChange === 'function') {
       onChange(newMeta);
+      registerField(newMeta);
     }
 
     this.handleMetaChangeOperation();
