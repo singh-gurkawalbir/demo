@@ -74,7 +74,6 @@ const JavaScriptPanel = props => {
     if (content === undefined) {
       requestScript(scriptId);
       // Shouldnt we update to the selected scriptId
-
       patchEditor({ scriptId });
       setRequestedContent(true);
     } else {
