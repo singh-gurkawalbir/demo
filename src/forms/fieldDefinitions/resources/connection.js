@@ -381,6 +381,7 @@ export default {
   'rest.bearerToken': {
     type: 'text',
     label: 'Rest bearer Token',
+    inputType: 'password',
   },
   'rest.tokenLocation': {
     type: 'radiogroup',
@@ -819,6 +820,9 @@ export default {
   'http.auth.token.token': {
     type: 'text',
     label: 'Http auth token token',
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'http.auth.token.location': {
     type: 'select',
@@ -948,6 +952,10 @@ export default {
     type: 'editor',
     valueType: 'editorExpression',
     label: 'Http encrypted',
+  },
+  'http.auth.oauth.scope': {
+    type: 'selectscopes',
+    label: 'Configure Scopes',
   },
   // #endregion http
   // #region ftp

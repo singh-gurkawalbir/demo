@@ -3,6 +3,7 @@ import authorizeNet from './authorizeNet';
 import recurly from './recurly';
 import cartrover from './cartrover';
 import practicepanther from './practicepanther';
+import outreach from './outreach';
 
 export default {
   activecampaign,
@@ -10,4 +11,5 @@ export default {
   recurly,
   cartrover,
   practicepanther,
+  outreach,
 };
