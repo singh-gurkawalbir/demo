@@ -19,6 +19,10 @@ export default {
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
   },
+  scope: {
+    type: 'selectscopes',
+    label: 'Configure Scopes',
+  },
   type: {
     type: 'select',
     label: 'Type',
@@ -394,13 +398,9 @@ export default {
     type: 'text',
     label: 'Rest token Param',
   },
-  'rest.scopes': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+  'rest.scope': {
+    type: 'selectscopes',
     label: 'Rest scope',
-    validWhen: [],
   },
   'rest.scopeDelimiter': {
     type: 'text',

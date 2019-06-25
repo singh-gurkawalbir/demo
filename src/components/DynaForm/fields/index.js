@@ -15,8 +15,10 @@ import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
+import DynaSelectScopes from './DynaSelectScopes';
 
 export default {
+  selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
   textarea: DynaText,

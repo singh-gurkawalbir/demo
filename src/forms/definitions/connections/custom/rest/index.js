@@ -14,6 +14,7 @@ import mailgun from './mailgun';
 import pulseway from './pulseway';
 import servicenow from './servicenow';
 import shipstation from './shipstation';
+import shopify from './shopify';
 import shipwire from './shipwire';
 import snapfulfil from './snapfulfil';
 import splunk from './splunk';
@@ -21,6 +22,7 @@ import twilio from './twilio';
 import woocommerce from './woocommerce';
 
 export default {
+  shopify,
   jira,
   zendesk,
   anaplan,
