@@ -122,7 +122,7 @@ class TokenDetail extends Component {
           accessToken._id} deleted successfully`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
         message = `Deleting API token ${accessToken.name ||
-          accessToken._id} is failed due to the error "${commStatus.message}"`;
+          accessToken._id} failed due to the error "${commStatus.message}"`;
       }
     } /* else if (action === 'update') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
@@ -324,15 +324,14 @@ class TokenDetail extends Component {
                 </Tooltip>
               )}
               <Divider />
-              {accessToken.permissions.edit && (
+              {accessToken.permissions.edit ? (
                 <MenuItem
                   onClick={() => {
                     this.handleActionClick('edit');
                   }}>
                   Edit token
                 </MenuItem>
-              )}
-              {!accessToken.permissions.edit && (
+              ) : (
                 <Tooltip
                   title={accessToken.permissionReasons.edit}
                   placement="top">
@@ -355,15 +354,14 @@ class TokenDetail extends Component {
                 View audit log
               </MenuItem>
               <Divider />
-              {accessToken.permissions.delete && (
+              {accessToken.permissions.delete ? (
                 <MenuItem
                   onClick={() => {
                     this.handleActionClick('delete');
                   }}>
                   Delete token
                 </MenuItem>
-              )}
-              {!accessToken.permissions.delete && (
+              ) : (
                 <Tooltip
                   title={accessToken.permissionReasons.delete}
                   placement="top">
