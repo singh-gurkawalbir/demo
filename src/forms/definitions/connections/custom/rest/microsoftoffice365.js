@@ -22,7 +22,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.scope',
-      scope: [
+      scopes: [
         'openid',
         'offline_access',
         'contacts.read',
