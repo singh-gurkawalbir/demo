@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import AppRouting from '../AppRouting';
@@ -18,16 +18,10 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-function AppRoutingWithAuth(props) {
-  const [componentMounted, setComponentMounted] = useState(false);
-
+export function AppRoutingWithAuth(props) {
   useEffect(() => {
     const { initSession, isAuthInitialized, location, history } = props;
     const { pathname: currentRoute } = location;
-
-    // We want to skip the render prior to the initial mount of
-    // the component hence using this state componentMounted
-    setComponentMounted(true);
 
     if (!isAuthInitialized) {
       if (currentRoute !== getRoutePath('signin'))
@@ -48,7 +42,7 @@ function AppRoutingWithAuth(props) {
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
-  if (!shouldShowAppRouting || !componentMounted) return null;
+  if (!shouldShowAppRouting) return null;
 
   if (isAuthenticated) {
     if (isSignInRoute) {

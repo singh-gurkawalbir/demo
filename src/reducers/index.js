@@ -72,11 +72,7 @@ export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
 }
 
-export function isCommsBelowNetworkThreshold(state) {
-  return fromComms.isCommsBelowNetworkThreshold(state.comms);
-}
-
-export function isAllLoadingCommsAboveThreshold(state) {
+export function isAllLoadingCommsAboveThresold(state) {
   const loadingOrErrored = allLoadingOrErrored(state);
 
   if (loadingOrErrored === null) return;
@@ -387,9 +383,6 @@ export function processors(state) {
   return fromData.processors(state.data);
 }
 
-export function scriptContent(state, id) {
-  return fromData.scriptContent(state.data, id);
-}
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

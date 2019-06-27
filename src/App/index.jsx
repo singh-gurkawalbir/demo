@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter } from 'react-router-dom';
-import AppRoutingWithAuth from './AppRoutingWithAuth';
+import ConnectedAppRoutingWithAuth from './AppRoutingWithAuth';
 import * as selectors from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
@@ -81,7 +81,7 @@ class App extends Component {
             <AppBar themeName={themeName} />
             <AuthDialog />
 
-            <AppRoutingWithAuth />
+            <ConnectedAppRoutingWithAuth />
           </Fragment>
         </BrowserRouter>
       </MuiThemeProvider>

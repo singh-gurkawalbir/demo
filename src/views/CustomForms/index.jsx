@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../../components/Help';
 import DynaForm from '../../components/DynaForm';
-import { createAppropriatePathAndOptions } from '../../sagas/api';
+import { normalizeUrlAndOptions } from '../../sagas/api';
 
 function optionsHandler() {
   return ['something1', 'something2'];
@@ -23,7 +23,7 @@ export const getOptions = async (fieldId, fields) => {
       },
     },
   };
-  const { options, req } = createAppropriatePathAndOptions(path, opts);
+  const { options, req } = normalizeUrlAndOptions(path, opts);
 
   options.body = JSON.stringify(options.body);
 
