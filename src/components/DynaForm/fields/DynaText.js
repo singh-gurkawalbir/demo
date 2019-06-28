@@ -38,7 +38,9 @@ class MaterialUiTextField extends React.Component {
       const { value } = event.target;
 
       if (!valueDelimiter) {
-        return onFieldChange(id, value);
+        onFieldChange(id, value);
+
+        return;
       }
 
       onFieldChange(id, value.split(valueDelimiter));

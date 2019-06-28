@@ -53,6 +53,7 @@ export default class GenericResourceForm extends Component {
         key={formKey}
         onMetaChange={() => {
           handleInitForm();
+          this.handleResetFormValues();
         }}
         {...rest}
         optionsHandler={optionsHandler}

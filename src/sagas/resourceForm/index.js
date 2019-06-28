@@ -29,10 +29,6 @@ export function* patchFormField({
 
   if (!merged) return; // nothing to do.
 
-  // what if the resource does not have a custom form
-  // is this custom form from the session?
-  // i guess when editiong a form it creates a custom form in
-  // the state?
   const meta = merged.customForm && merged.customForm.form;
 
   if (!meta) return; // nothing to do
@@ -47,10 +43,6 @@ export function* patchFormField({
       : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
   const patchSet = [{ op, path, value }];
 
-  // Fields is an array to insert in between
-  // ...is there a need to shift the elements
-  // Not sure if you can perform a replace of a non existent fields
-  // console.log('dispatching patch with: ', patchSet);
   // Apply the new patch to the session
   yield put(actions.resource.patchStaged(resourceId, patchSet));
 }
@@ -109,9 +101,6 @@ export function* createFormValuesPatchSet({
     resourceType,
     resourceId
   );
-  // if the data resource has a custom form?
-  // Are we applying patches to the custom session form?
-  // merged has a specific custom form?
   const { customForm } = resource;
   let finalValues = values;
 
@@ -129,8 +118,6 @@ export function* createFormValuesPatchSet({
   }
 
   // console.log('values before/after preSubmit: ', values, finalValues);
-
-  // just not the values patch set but fieldMeta patchSet as well
 
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
@@ -154,21 +141,13 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     // ideally we would like to ,when the endpoint comes up
     yield call(commitStagedChanges, { resourceType, id: resourceId });
   }
-  // are the computed finalValues after the hook
-  // Is it necessary to maintain in the resourceForm state
-  // it should be because the new formValues post hook should be
-  // in the state
 
   yield put(
     actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
   );
-
-  // Possible form reinitliazation should take place
 }
 
 export function* initFormValues({ resourceType, resourceId }) {
-  // each time you intialialize shouldnt you clear the session
-  // or better yet use the formValues
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
@@ -200,9 +179,9 @@ export function* initFormValues({ resourceType, resourceId }) {
   if (customForm && customForm.init) {
     // pre-save-resource
     // this resource has an embedded custom form.
-
-    // isnt it the fieldMeta of the customForm the intialization
-    // should run against?
+    // TODO: if there is an error here we should show that message
+    // in the UI.....and point them to the link to edit the
+    // script or maybe prevent them from saving the script
     finalFieldMeta = yield call(runHook, {
       hook: customForm.init,
       data: fieldMeta,
@@ -213,7 +192,6 @@ export function* initFormValues({ resourceType, resourceId }) {
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
-  // console.log('fieldMeta before/after init: ', fieldMeta, finalFieldMeta);
   yield put(
     actions.resourceForm.initComplete(
       resourceType,

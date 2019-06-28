@@ -12,6 +12,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
+import { getFieldById } from '../../../forms/utils';
 
 const mapStateToProps = (state, { field }) => {
   const { id, resourceId, resourceType } = field;
@@ -59,19 +60,24 @@ class EditFieldButton extends Component {
     patchFormField(newMeta);
 
     if (typeof onChange === 'function') {
-      onChange(newMeta);
+      onChange();
     }
 
     this.handleMetaChangeOperation();
   };
 
   handleInsertField = newMeta => {
-    const { patchFormField, onChange, formFields, registerField } = this.props;
+    const { patchFormField, onChange, formFieldsMeta } = this.props;
     const { insertField } = this.state;
     // get meta from props
-    const existingField = formFields.filter(field => field.id === newMeta.id);
+    const existingField = getFieldById({
+      meta: formFieldsMeta,
+      id: newMeta.id,
+    });
 
-    if (existingField.length > 0) {
+    console.log('existing ', formFieldsMeta);
+
+    if (existingField) {
       // set some state with warning
       this.setState({ existingFieldWarning: true });
 
@@ -83,8 +89,7 @@ class EditFieldButton extends Component {
     patchFormField(newMeta, 'add', insertField === 'after' ? 1 : 0);
 
     if (typeof onChange === 'function') {
-      onChange(newMeta);
-      registerField(newMeta);
+      onChange();
     }
 
     this.handleMetaChangeOperation();

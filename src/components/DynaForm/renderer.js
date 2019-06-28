@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { FormContext } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
@@ -10,23 +9,28 @@ const FieldWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 })(props => {
-  const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
+  const {
+    field,
+    editMode,
+    helpKey,
+    helpText,
+    classes,
+    onMetaChange,
+    formFieldsMeta,
+  } = props;
   const { type: fieldType } = field;
+
+  console.log('check ', formFieldsMeta);
 
   return (
     <Fragment>
       {editMode && (
-        <FormContext>
-          {form => (
-            <EditFieldButton
-              onChange={onMetaChange}
-              registerField={form.registerField}
-              formFields={form.fields}
-              field={field}
-              className={classes.editIcon}
-            />
-          )}
-        </FormContext>
+        <EditFieldButton
+          onChange={onMetaChange}
+          formFieldsMeta={formFieldsMeta}
+          field={field}
+          className={classes.editIcon}
+        />
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
@@ -40,7 +44,7 @@ const FieldWrapper = withStyles({
   );
 });
 
-function getRenderer(editMode = false, onMetaChange) {
+function getRenderer(editMode = false, onMetaChange, formFieldsMeta) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
@@ -59,6 +63,7 @@ function getRenderer(editMode = false, onMetaChange) {
         onMetaChange={onMetaChange}
         field={field}
         helpKey={helpKey}
+        formFieldsMeta={formFieldsMeta}
         helpText={helpText}>
         <DynaField {...field} />
       </FieldWrapper>
