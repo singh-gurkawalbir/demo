@@ -100,6 +100,7 @@ class Edit extends Component {
   state = {
     editMode: false,
     showEditor: false,
+    formKey: 1,
   };
 
   handleToggleEdit = () => {
@@ -120,6 +121,15 @@ class Edit extends Component {
   componentDidMount() {
     this.setState({ editMode: false, showEditor: false });
   }
+  handleRemountResourceComponent = () => {
+    // We need to re-mount the react-forms-processor component
+    // to reset the values back to defaults....
+    const formKey = this.state.formKey + 1;
+
+    this.setState({
+      formKey,
+    });
+  };
 
   render() {
     const {
@@ -132,7 +142,7 @@ class Edit extends Component {
       handleUndoChange,
       // handleCommitChanges,
     } = this.props;
-    const { editMode, showEditor } = this.state;
+    const { editMode, showEditor, formKey } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
     const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
       resourceType
@@ -202,7 +212,10 @@ class Edit extends Component {
                 className={classes.editButton}
                 size="small"
                 color="primary"
-                onClick={handleUndoChange}>
+                onClick={() => {
+                  handleUndoChange();
+                  this.handleRemountResourceComponent();
+                }}>
                 Undo({patchLength - 1})
               </Button>
             )}
@@ -237,6 +250,7 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceFormFactory
+            key={formKey}
             editMode={editMode}
             resourceType={resourceType}
             resource={merged}

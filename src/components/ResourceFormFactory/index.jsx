@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
@@ -34,6 +34,7 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
   },
 });
 const ResourceFormFactory = props => {
+  const [componentRemount, setComponentRemount] = useState(true);
   // This useEffect is executed right after any render
   // and the initial mount of the compount
   // you can restrict its execution to be depended on a second
@@ -46,6 +47,7 @@ const ResourceFormFactory = props => {
 
   // Note: i have removed the key
   useEffect(() => {
+    if (componentRemount) setComponentRemount(false);
     const { handleInitForm, handleClearResourceForm } = props;
 
     handleInitForm();
@@ -61,7 +63,7 @@ const ResourceFormFactory = props => {
     handleInitForm,
   } = props;
 
-  if (!formState.initComplete) {
+  if (!formState.initComplete || componentRemount) {
     return <Typography>Initializing Form</Typography>;
   }
 
