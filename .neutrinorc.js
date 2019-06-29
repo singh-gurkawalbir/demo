@@ -13,7 +13,7 @@ require('babel-register')({
   cache: false,
 });
 
-const themeProvider = require('./src/themeProvider').default;
+const themeProvider = require('./src/theme/themeProvider').default;
 const theme = themeProvider('light');
 const getProxyOpts = () => {
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
