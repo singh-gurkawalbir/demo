@@ -98,6 +98,7 @@ module.exports = {
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
+        pagePerSection: true,
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
