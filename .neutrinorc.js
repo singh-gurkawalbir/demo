@@ -13,7 +13,7 @@ require('babel-register')({
   cache: false,
 });
 
-const themeProvider = require('./src/themeProvider').default;
+const themeProvider = require('./src/theme/themeProvider').default;
 const theme = themeProvider('light');
 const getProxyOpts = () => {
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
@@ -98,16 +98,6 @@ module.exports = {
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
-        components: 'src/components/**/index.jsx',
-        theme: theme.styleguide,
-        styles: {
-          StyleGuide: theme.styleguide.StyleGuide,
-        },
-        editorConfig: {
-          theme: 'material',
-        },
-        showUsage: true,
-        skipComponentsWithoutExample: false,
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -115,6 +105,44 @@ module.exports = {
             'src/styleguide/StyleGuideRenderer.jsx'
           ),
         },
+
+        sections: [
+          {
+            name: 'Introduction',
+            content: 'docs/introduction.md'
+          },
+          {
+            name: 'Components',
+            sections: [
+              {
+                name: 'Typography',
+                content: 'docs/typography.md',
+                showUsage: false,
+              },
+              {
+                name: 'Buttons',
+                content: 'docs/buttons.md',
+                showUsage: false,
+              },              {
+                name: 'UI Components',
+                // content: 'docs/ui.md',
+                exampleMode: 'expand', // 'hide' | 'collapse' | 'expand'
+                usageMode: 'expand', // 'hide' | 'collapse' | 'expand'
+    
+                components: 'src/components/**/index.jsx',
+                theme: theme.styleguide,
+                styles: {
+                  StyleGuide: theme.styleguide.StyleGuide,
+                },
+                editorConfig: {
+                  theme: 'material',
+                },
+                showUsage: true,
+                skipComponentsWithoutExample: true,
+              }
+            ]
+          },
+        ]
       },
     ],
     [

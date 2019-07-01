@@ -9,14 +9,14 @@ import AppRoutingWithAuth from './AppRoutingWithAuth';
 import * as selectors from '../reducers';
 import FontStager from '../components/FontStager';
 import AppBar from './AppBar';
-import themeProvider from '../themeProvider';
+import themeProvider from '../theme/themeProvider';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import AuthDialog from '../components/AuthDialog';
 
 const mapStateToProps = state => ({
   reloadCount: selectors.reloadCount(state),
   themeName: selectors.themeName(state),
-  isAllLoadingCommsAboveThresold: selectors.isAllLoadingCommsAboveThresold(
+  isAllLoadingCommsAboveThreshold: selectors.isAllLoadingCommsAboveThreshold(
     state
   ),
 });
@@ -36,17 +36,17 @@ class App extends Component {
 
   shouldShowNetworkSnackBar = () => {
     // Should show failure
-    const { isAllLoadingCommsAboveThresold } = this.props;
+    const { isAllLoadingCommsAboveThreshold } = this.props;
     const { showSnackBar } = this.state;
     let shouldShow = true;
 
     // should show if all comm activities are below the threshold.
-    shouldShow = isAllLoadingCommsAboveThresold;
-    // Prevent calling a setstate all the time ...
-    // this would trigger a rerender unnecessarily.
+    shouldShow = isAllLoadingCommsAboveThreshold;
+    // Prevent calling a setState all the time ...
+    // this would trigger a re-render unnecessarily.
     // could be done through using shouldComponentUpdate
     // nextState but we have to define entire behavior
-    // of should rerender and might be an expensive operation
+    // of should re-render and might be an expensive operation
     // performing comparisons against other props
 
     if (showSnackBar !== shouldShow)
