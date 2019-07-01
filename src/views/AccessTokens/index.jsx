@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import AccessTokensView from '../../components/AccessTokens';
+import AccessTokenList from '../../components/AccessTokenList';
 
 export default class AccessTokens extends Component {
   render() {
-    return <AccessTokensView />;
+    return <AccessTokenList />;
   }
 }

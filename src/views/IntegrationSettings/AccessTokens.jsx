@@ -1,11 +1,8 @@
-import { Component } from 'react';
-import AccessTokens from '../../components/AccessTokens';
+import AccessTokenList from '../../components/AccessTokenList';
 
-export default class AuditLogs extends Component {
-  render() {
-    const { match } = this.props;
-    const { integrationId } = match.params;
+export default function AccessTokens(props) {
+  const { match } = props;
+  const { integrationId } = match.params;
 
-    return <AccessTokens integrationId={integrationId} />;
-  }
+  return <AccessTokenList integrationId={integrationId} />;
 }

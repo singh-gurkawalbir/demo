@@ -1,5 +1,5 @@
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -7,60 +7,55 @@ import { Typography } from '@material-ui/core';
 import moment from 'moment';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import TokenForm from './TokenForm';
+import AccessTokenForm from './AccessTokenForm';
 import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import * as selectors from '../../reducers';
+import LoadResources from '../LoadResources';
 
-const mapStateToProps = (state, { integrationId }) => ({
-  accessTokens: selectors.accessTokenList(state, integrationId),
-});
-const mapDispatchToProps = dispatch => ({
-  saveAccessToken: data => {
+export default function AccessTokenDialog(props) {
+  const {
+    id,
+    integrationId,
+    connectorId,
+    successHandler,
+    handleCancelClick,
+  } = props;
+  const dispatch = useDispatch();
+  const accessTokens = useSelector(state =>
+    selectors.accessTokenList(state, integrationId)
+  );
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  function saveAccessToken(data) {
     if (data._id) {
       dispatch(actions.accessToken.update(data));
     } else {
       dispatch(actions.accessToken.create(data));
     }
-  },
-});
+  }
 
-class TokenDialog extends Component {
-  state = {
-    errorMessage: undefined,
-  };
-  handleSaveClick(data) {
-    const {
-      saveAccessToken,
-      accessTokens,
-      id,
-      integrationId,
-      connectorId,
-    } = this.props;
+  function handleSaveClick(data) {
     const accessTokenData = {
-      _id: this.props.id,
-      name: data.name,
-      description: data.description,
-      _connectionIds: data._connectionIds || [],
-      _exportIds: data._exportIds || [],
-      _importIds: data._importIds || [],
+      ...data,
+      _id: id,
       _integrationId: integrationId,
       _connectorId: connectorId,
     };
 
-    if (data.scope === 'fullAccess') {
+    if (accessTokenData.scope === 'fullAccess') {
       accessTokenData.fullAccess = true;
-      accessTokenData._connectionIds = [];
-      accessTokenData._exportIds = [];
-      accessTokenData._importIds = [];
+      delete accessTokenData._connectionIds;
+      delete accessTokenData._exportIds;
+      delete accessTokenData._importIds;
     } else {
       accessTokenData.fullAccess = false;
     }
 
-    if (data.autoPurge === 'never') {
+    if (accessTokenData.autoPurgeAt === 'never') {
       accessTokenData.autoPurgeAt = '';
-    } else if (data.autoPurge) {
-      const autoPurgeParts = data.autoPurge.split('-');
+    } else if (accessTokenData.autoPurgeAt) {
+      const autoPurgeParts = accessTokenData.autoPurgeAt.split('-');
       const currDate = moment();
 
       currDate.add(autoPurgeParts[0], autoPurgeParts[1]);
@@ -73,14 +68,15 @@ class TokenDialog extends Component {
       }
     }
 
+    if (!accessTokenData.autoPurgeAt) {
+      delete accessTokenData.autoPurgeAt;
+    }
+
     saveAccessToken(accessTokenData);
   }
 
-  render() {
-    const { id, integrationId, onCancelClick, successHandler } = this.props;
-    const { errorMessage, actionsToClear } = this.state;
-
-    return (
+  return (
+    <LoadResources required resources="connections, exports, imports">
       <Fragment>
         <CommStatus
           actionsToMonitor={{
@@ -92,7 +88,6 @@ class TokenDialog extends Component {
               integrationId,
             },
           }}
-          actionsToClear={actionsToClear}
           commStatusHandler={objStatus => {
             if (
               objStatus &&
@@ -101,9 +96,8 @@ class TokenDialog extends Component {
                 objStatus.createOrUpdate.status
               )
             ) {
-              const stateToUpdate = {};
-
               if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
+                setErrorMessage(null);
                 successHandler(
                   id
                     ? 'Access token updated successfully'
@@ -112,10 +106,8 @@ class TokenDialog extends Component {
               } else if (
                 objStatus.createOrUpdate.status === COMM_STATES.ERROR
               ) {
-                stateToUpdate.errorMessage = objStatus.createOrUpdate.message;
+                setErrorMessage(objStatus.createOrUpdate.message);
               }
-
-              this.setState(stateToUpdate);
             }
           }}
         />
@@ -124,24 +116,19 @@ class TokenDialog extends Component {
           <DialogTitle>{id ? 'Edit API Token' : 'New API Token'}</DialogTitle>
           <DialogContent style={{ width: '30vw' }}>
             <Typography>{errorMessage}</Typography>
-            <TokenForm
+            <AccessTokenForm
               id={id}
               integrationId={integrationId}
               onSaveClick={data => {
-                this.handleSaveClick(data);
+                handleSaveClick(data);
               }}
               onCancelClick={() => {
-                onCancelClick();
+                handleCancelClick();
               }}
             />
           </DialogContent>
         </Dialog>
       </Fragment>
-    );
-  }
+    </LoadResources>
+  );
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TokenDialog);

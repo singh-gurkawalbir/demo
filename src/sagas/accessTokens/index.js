@@ -62,11 +62,6 @@ export function* create({ accessToken }) {
   const { path, opts } = requestOptions;
 
   opts.body = accessToken;
-
-  if (accessToken._integrationId) {
-    opts.body.fullAccess = false;
-  }
-
   let response;
 
   try {
@@ -89,11 +84,6 @@ export function* update({ accessToken }) {
   const { path, opts } = requestOptions;
 
   opts.body = accessToken;
-
-  if (accessToken._integrationId) {
-    opts.body.fullAccess = false;
-  }
-
   let response;
 
   try {
