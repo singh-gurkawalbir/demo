@@ -41,7 +41,6 @@ import jet from './jet';
 import jobvite from './jobvite';
 import liquidplanner from './liquidplanner';
 import magento from './magento';
-import paypal from './paypal';
 import mailchimp from './mailchimp';
 import smartsheet from './smartsheet';
 import linkedin from './linkedin';
@@ -148,7 +147,6 @@ export default {
   jobvite,
   liquidplanner,
   magento,
-  paypal,
   mailchimp,
   smartsheet,
   linkedin,
