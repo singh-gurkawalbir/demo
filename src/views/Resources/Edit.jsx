@@ -9,8 +9,8 @@ import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceFormFactory from '../../components/ResourceFormFactory';
-import ConflictAlertFactory from '../../components/ConflictAlertFactory';
+import ResourceForm from '../../components/ResourceFormFactory';
+import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 
@@ -249,7 +249,7 @@ class Edit extends Component {
         )}
 
         <div className={classes.editableFields}>
-          <ResourceFormFactory
+          <ResourceForm
             key={formKey}
             editMode={editMode}
             resourceType={resourceType}
@@ -259,7 +259,7 @@ class Edit extends Component {
           />
 
           {conflict && (
-            <ConflictAlertFactory
+            <ConflictAlert
               conflict={conflict}
               connectionType={type}
               resourceType={resourceType}

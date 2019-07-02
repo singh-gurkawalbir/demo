@@ -72,7 +72,7 @@ export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
 }
 
-export function isAllLoadingCommsAboveThresold(state) {
+export function isAllLoadingCommsAboveThreshold(state) {
   const loadingOrErrored = allLoadingOrErrored(state);
 
   if (loadingOrErrored === null) return;
