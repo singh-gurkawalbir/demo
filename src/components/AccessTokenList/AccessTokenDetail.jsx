@@ -15,7 +15,7 @@ import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import getAutoPurgeAtAsString from './util';
+import { isPurged, getAutoPurgeAtAsString } from './util';
 import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import { confirmDialog } from '../ConfirmDialog';
@@ -35,6 +35,7 @@ function TokenDetail(props) {
   );
   const [tokenStatus, setTokenStatus] = useState();
   const [showAuditLogsDialog, setShowAuditLogsDialog] = useState(false);
+  const isAccessTokenPurged = isPurged(accessToken.autoPurgeAt);
 
   /** Check and update purge status every minute until the token is purged */
   useEffect(() => {
@@ -201,47 +202,53 @@ function TokenDetail(props) {
               {accessToken.permissionReasons.displayToken}
             </Typography>
           )}
-          {accessToken.permissions.displayToken && (
+          {isAccessTokenPurged ? (
+            <Typography>Purged</Typography>
+          ) : (
             <Fragment>
-              {accessToken.token && (
+              {accessToken.permissions.displayToken && (
                 <Fragment>
-                  <Typography>{accessToken.token}</Typography>
-                  <CopyToClipboard
-                    text={accessToken.token}
-                    onCopy={() =>
-                      enqueueSnackbar('Token copied to clipboard.', {
-                        variant: 'success',
-                        anchorOrigin: {
-                          vertical: 'top',
-                          horizontal: 'center',
-                        },
-                        // eslint-disable-next-line react/display-name
-                        action: key => (
-                          <IconButton
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            onClick={() => {
-                              closeSnackbar(key);
-                            }}>
-                            <CloseIcon />
-                          </IconButton>
-                        ),
-                      })
-                    }>
-                    <Button>Click to Copy</Button>
-                  </CopyToClipboard>
+                  {accessToken.token && (
+                    <Fragment>
+                      <Typography>{accessToken.token}</Typography>
+                      <CopyToClipboard
+                        text={accessToken.token}
+                        onCopy={() =>
+                          enqueueSnackbar('Token copied to clipboard.', {
+                            variant: 'success',
+                            anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center',
+                            },
+                            // eslint-disable-next-line react/display-name
+                            action: key => (
+                              <IconButton
+                                key="close"
+                                aria-label="Close"
+                                color="inherit"
+                                onClick={() => {
+                                  closeSnackbar(key);
+                                }}>
+                                <CloseIcon />
+                              </IconButton>
+                            ),
+                          })
+                        }>
+                        <Button>Click to Copy</Button>
+                      </CopyToClipboard>
+                    </Fragment>
+                  )}
+                  {!accessToken.token &&
+                    (tokenStatus || (
+                      <Button
+                        onClick={() => {
+                          handleActionClick('display');
+                        }}>
+                        Click to Display
+                      </Button>
+                    ))}
                 </Fragment>
               )}
-              {!accessToken.token &&
-                (tokenStatus || (
-                  <Button
-                    onClick={() => {
-                      handleActionClick('display');
-                    }}>
-                    Click to Display
-                  </Button>
-                ))}
             </Fragment>
           )}
         </TableCell>
@@ -349,9 +356,11 @@ function TokenDetail(props) {
               </Tooltip>
             )}
           </Menu>
-          <IconButton onClick={handleActionsMenuClick}>
-            <MoreVertIcon />
-          </IconButton>
+          {!isAccessTokenPurged && (
+            <IconButton onClick={handleActionsMenuClick}>
+              <MoreVertIcon />
+            </IconButton>
+          )}
         </TableCell>
       </TableRow>
     </Fragment>
