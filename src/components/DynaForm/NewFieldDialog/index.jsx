@@ -175,15 +175,11 @@ export default class NewFieldDialog extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    const { classes, onSubmit, existingFieldWarning, ...rest } = this.props;
-    const { fieldType, error, value, meta } = this.state;
-    const DynaField = fields[fieldType];
-=======
     const {
       classes,
       onSubmit,
       resourceType,
+      existingFieldWarning,
       adaptorType,
       ...rest
     } = this.props;
@@ -191,7 +187,6 @@ export default class NewFieldDialog extends Component {
     const DynaField = fields[meta.type];
     // console.log('render:', fieldType, fieldId, meta);
     const resourceMeta = fieldDefinitions[resourceType] || {};
->>>>>>> c5b12aca10860d3d8e6204382b9c81cd00026ffd
 
     return (
       <FormDialog

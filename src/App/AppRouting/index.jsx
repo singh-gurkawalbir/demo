@@ -32,9 +32,7 @@ const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
 const IntegrationSettings = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings'
-  )
+  import(/* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings')
 );
 
 @hot(module)

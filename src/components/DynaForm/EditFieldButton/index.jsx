@@ -97,8 +97,6 @@ class EditFieldButton extends Component {
       id: newMeta.id,
     });
 
-    console.log('existing ', formFieldsMeta);
-
     if (existingField) {
       // set some state with warning
       this.setState({ existingFieldWarning: true });

@@ -20,8 +20,6 @@ const FieldWrapper = withStyles({
   } = props;
   const { type: fieldType } = field;
 
-  console.log('check ', formFieldsMeta);
-
   return (
     <Fragment>
       {editMode && (
