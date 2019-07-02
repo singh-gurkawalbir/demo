@@ -93,7 +93,7 @@ import signnow from './signnow';
 import zohomail from './zohomail';
 import zoom from './zoom';
 import myobessentials from './myobessentials';
-import exacterpp from './exacterpp';
+import exacterp from './exacterp';
 import nimble from './nimble';
 import bronto from './bronto';
 import powerbi from './powerbi';
@@ -217,7 +217,7 @@ export default {
   zohomail,
   zoom,
   myobessentials,
-  exacterpp,
+  exacterp,
   nimble,
   bronto,
   greenhouse,
