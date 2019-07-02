@@ -148,7 +148,10 @@ class EditFieldButton extends Component {
         <PopupState variant="popover" popupId="edit-field-menu">
           {popupState => (
             <Fragment>
-              <IconButton className={className} {...bindTrigger(popupState)}>
+              <IconButton
+                data-testid="edit-meta"
+                className={className}
+                {...bindTrigger(popupState)}>
                 <EditIcon fontSize="small" />
               </IconButton>
               <Menu {...bindMenu(popupState)}>

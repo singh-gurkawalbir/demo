@@ -33,7 +33,8 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
     dispatch(actions.resourceForm.clear(resourceType, resource._id));
   },
 });
-const ResourceFormFactory = props => {
+
+export const ResourceFormFactory = props => {
   const [componentRemount, setComponentRemount] = useState(true);
   // This useEffect is executed right after any render
   // and the initial mount of the compount
