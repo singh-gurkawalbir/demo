@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import ErrorPanel from '../components/ErrorPanel';
-import themeProvider from '../themeProvider';
+import themeProvider from '../theme/themeProvider';
 
 export default class ThemeWrapper extends Component {
   state = {

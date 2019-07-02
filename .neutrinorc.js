@@ -13,7 +13,7 @@ require('babel-register')({
   cache: false,
 });
 
-const themeProvider = require('./src/themeProvider').default;
+const themeProvider = require('./src/theme/themeProvider').default;
 const theme = themeProvider('light');
 const getProxyOpts = () => {
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
@@ -98,16 +98,7 @@ module.exports = {
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
-        components: 'src/components/**/index.jsx',
-        theme: theme.styleguide,
-        styles: {
-          StyleGuide: theme.styleguide.StyleGuide,
-        },
-        editorConfig: {
-          theme: 'material',
-        },
-        showUsage: true,
-        skipComponentsWithoutExample: false,
+        pagePerSection: true,
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -115,6 +106,41 @@ module.exports = {
             'src/styleguide/StyleGuideRenderer.jsx'
           ),
         },
+
+        sections: [
+          {
+            name: 'Introduction',
+            content: 'docs/introduction.md'
+          },
+          {
+            name: 'Components',
+            sections: [
+              {
+                name: 'Typography',
+                content: 'docs/typography.md',
+                showUsage: false,
+              },
+              {
+                name: 'Buttons',
+                content: 'docs/buttons.md',
+                showUsage: false,
+              },              
+              {
+                name: 'Celigo Components',
+                components: 'src/components/**/index.jsx',
+                theme: theme.styleguide,
+                styles: {
+                  StyleGuide: theme.styleguide.StyleGuide,
+                },
+                editorConfig: {
+                  theme: 'material',
+                },
+                showUsage: true,
+                skipComponentsWithoutExample: true,
+              }
+            ]
+          },
+        ]
       },
     ],
     [

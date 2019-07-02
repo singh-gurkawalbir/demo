@@ -76,7 +76,7 @@ export function isCommsBelowNetworkThreshold(state) {
   return fromComms.isCommsBelowNetworkThreshold(state.comms);
 }
 
-export function isAllLoadingCommsAboveThresold(state) {
+export function isAllLoadingCommsAboveThreshold(state) {
   const loadingOrErrored = allLoadingOrErrored(state);
 
   if (loadingOrErrored === null) return;

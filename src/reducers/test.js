@@ -254,11 +254,11 @@ describe('Comm selector to verify comms exceeding threshold', () => {
 
     advanceBy(5);
 
-    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
 
     advanceBy(20000); // advance sufficiently large time
 
-    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(true);
+    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(true);
     clear();
   });
   test('verify comm selector for multiple resources', () => {
@@ -270,13 +270,13 @@ describe('Comm selector to verify comms exceeding threshold', () => {
 
     advanceBy(50);
 
-    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
     state = reducer(state, actions.api.complete(path, method));
-    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(false);
+    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
 
     advanceBy(20000); // advance sufficiently large time
 
-    expect(selectors.isAllLoadingCommsAboveThresold(state)).toBe(true);
+    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(true);
     clear();
   });
 });

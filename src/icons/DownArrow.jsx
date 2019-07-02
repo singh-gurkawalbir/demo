@@ -1,6 +1,6 @@
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export default function WaffleIcon(props) {
+export default function DownArrow(props) {
   const { className } = props;
 
   return (
