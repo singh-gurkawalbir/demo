@@ -43,8 +43,7 @@ export function* patchFormField({
       : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
   const patchSet = [{ op, path, value }];
 
-  // console.log('dispatching patch with: ', patchSet);
-
+  // Apply the new patch to the session
   yield put(actions.resource.patchStaged(resourceId, patchSet));
 }
 
@@ -52,6 +51,9 @@ export function* runHook({ hook, data }) {
   const { entryFunction, scriptId } = hook;
   const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
 
+  // okay extracting script from the session
+  // if it isnt there make a call to receive the resource
+  // Arent we loading all the scripts?
   if (!merged) return; // nothing to do.
 
   let code = merged.content;
@@ -93,7 +95,7 @@ export function* createFormValuesPatchSet({
   );
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
-
+  // This has the fieldMeta
   const formState = yield select(
     selectors.resourceFormState,
     resourceType,
@@ -135,6 +137,8 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 
   if (patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
+    // we are commiting both the values but not the fieldmeta changes
+    // ideally we would like to ,when the endpoint comes up
     yield call(commitStagedChanges, { resourceType, id: resourceId });
   }
 
@@ -175,7 +179,9 @@ export function* initFormValues({ resourceType, resourceId }) {
   if (customForm && customForm.init) {
     // pre-save-resource
     // this resource has an embedded custom form.
-
+    // TODO: if there is an error here we should show that message
+    // in the UI.....and point them to the link to edit the
+    // script or maybe prevent them from saving the script
     finalFieldMeta = yield call(runHook, {
       hook: customForm.init,
       data: fieldMeta,
@@ -186,7 +192,6 @@ export function* initFormValues({ resourceType, resourceId }) {
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
-  // console.log('fieldMeta before/after init: ', fieldMeta, finalFieldMeta);
   yield put(
     actions.resourceForm.initComplete(
       resourceType,
@@ -198,6 +203,8 @@ export function* initFormValues({ resourceType, resourceId }) {
   );
 }
 
+// Maybe the session could be stale...and the presubmit values might
+// be excluded
 // we want to init the customForm metadata with a copy of the default metadata
 // we would normally send to the DynaForm component.
 export function* initCustomForm({ resourceType, resourceId }) {

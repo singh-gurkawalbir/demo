@@ -12,6 +12,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
+import { getFieldById } from '../../../forms/utils';
 
 const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
@@ -71,27 +72,47 @@ class EditFieldButton extends Component {
   state = {
     showEditor: false,
     insertField: false,
+    existingFieldWarning: false,
   };
-
+  handleMetaChangeOperation = () =>
+    this.setState({ showEditor: false, insertField: false });
   handleEditorChange = newMeta => {
     const { patchFormField, onChange } = this.props;
 
     patchFormField(newMeta);
 
     if (typeof onChange === 'function') {
-      onChange(newMeta);
+      onChange();
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleInsertField = newMeta => {
-    const { patchFormField, onChange } = this.props;
+    const { patchFormField, onChange, formFieldsMeta } = this.props;
     const { insertField } = this.state;
+    // get meta from props
+    const existingField = getFieldById({
+      meta: formFieldsMeta,
+      id: newMeta.id,
+    });
+
+    if (existingField) {
+      // set some state with warning
+      this.setState({ existingFieldWarning: true });
+
+      return;
+    }
+
+    this.setState({ existingFieldWarning: false });
 
     patchFormField(newMeta, 'add', insertField === 'after' ? 1 : 0);
 
     if (typeof onChange === 'function') {
-      onChange(newMeta);
+      onChange();
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleDelete = () => {
@@ -102,6 +123,8 @@ class EditFieldButton extends Component {
     if (typeof onChange === 'function') {
       onChange();
     }
+
+    this.handleMetaChangeOperation();
   };
 
   handleInsertFieldToggle = (mode = false) => {
@@ -115,7 +138,7 @@ class EditFieldButton extends Component {
   };
 
   render() {
-    const { showEditor, insertField } = this.state;
+    const { showEditor, insertField, existingFieldWarning } = this.state;
     const { className, fieldMeta = {}, adaptorType, resourceType } = this.props;
     const fieldId = fieldMeta.fieldId || 'new';
 
@@ -125,7 +148,10 @@ class EditFieldButton extends Component {
         <PopupState variant="popover" popupId="edit-field-menu">
           {popupState => (
             <Fragment>
-              <IconButton className={className} {...bindTrigger(popupState)}>
+              <IconButton
+                data-testid="edit-meta"
+                className={className}
+                {...bindTrigger(popupState)}>
                 <EditIcon fontSize="small" />
               </IconButton>
               <Menu {...bindMenu(popupState)}>
@@ -163,6 +189,7 @@ class EditFieldButton extends Component {
         </PopupState>
         {insertField && (
           <NewFieldDialog
+            existingFieldWarning={existingFieldWarning}
             resourceType={resourceType}
             adaptorType={adaptorType}
             title={`Insert this new field ${insertField} ${fieldId}`}

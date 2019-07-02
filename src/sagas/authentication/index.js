@@ -110,6 +110,7 @@ export function* auth({ email, password }) {
       path: authParams.path,
       opts: payload,
       message: 'Authenticating User',
+      hidden: true,
     });
     const isExpired = yield select(selectors.isSessionExpired);
 

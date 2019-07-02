@@ -19,7 +19,7 @@ export default class GenericResourceForm extends Component {
     formKey: 1,
   };
 
-  handleFormMetaChange = () => {
+  handleResetFormValues = () => {
     // We need to re-mount the react-forms-processor component
     // to reset the values back to defaults....
     const formKey = this.state.formKey + 1;
@@ -37,10 +37,12 @@ export default class GenericResourceForm extends Component {
       resourceType,
       resource,
       handleSubmitForm,
-      children,
+      handleInitForm,
+      children: actionButtons,
       connection,
       optionsHandler,
       fieldMeta,
+      disableButton,
       ...rest
     } = this.props;
 
@@ -49,21 +51,25 @@ export default class GenericResourceForm extends Component {
     return (
       <DynaForm
         key={formKey}
-        onMetaChange={this.handleFormMetaChange}
+        onMetaChange={() => {
+          handleInitForm();
+          this.handleResetFormValues();
+        }}
         {...rest}
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>
         <div className={classes.actions}>
-          {children}
+          {actionButtons}
 
           <Button
-            onClick={this.handleFormMetaChange}
+            onClick={this.handleResetFormValues}
             className={classes.actionButton}
             size="small"
             variant="contained">
             Cancel
           </Button>
           <DynaSubmit
+            disabled={disableButton}
             onClick={handleSubmitForm}
             className={classes.actionButton}>
             {saveButtonLabel}

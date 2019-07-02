@@ -1,4 +1,5 @@
-import { Component } from 'react';
+import { useEffect, useState, Fragment } from 'react';
+import { Typography } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +11,7 @@ import LoadResources from '../../../components/LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import Spinner from '../../Spinner';
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
@@ -44,8 +46,7 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     dispatch(actions.resource.request('scripts', id));
   },
 });
-
-@withStyles(theme => ({
+const styles = theme => ({
   container: {
     // padding: '10px',
     backgroundColor: theme.palette.background.default,
@@ -61,70 +62,90 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
   label: {
     paddingLeft: theme.spacing.unit,
   },
-}))
-class JavaScriptPanel extends Component {
-  setOrRequestContent(scriptId) {
-    const { getScriptContent, requestScript, patchEditor } = this.props;
+});
+const JavaScriptPanel = props => {
+  const [requestedContent, setRequestedContent] = useState(false);
+  const setOrRequestContent = scriptId => {
+    const { getScriptContent, requestScript, patchEditor } = props;
 
     if (!scriptId) return;
     const content = getScriptContent(scriptId);
 
     if (content === undefined) {
       requestScript(scriptId);
+      // Shouldnt we update to the selected scriptId
+      patchEditor({ scriptId });
+      setRequestedContent(true);
     } else {
       patchEditor({ code: content, scriptId });
     }
-  }
+  };
 
-  componentDidMount() {
-    const { editor } = this.props;
+  useEffect(() => {
+    const { editor } = props;
 
-    this.setOrRequestContent(editor.scriptId);
-  }
+    setOrRequestContent(editor.scriptId);
+  }, []);
 
-  render() {
-    const { editor, allScripts, patchEditor, classes } = this.props;
-    const { code = '', entryFunction = '', scriptId = '' } = editor;
+  const { editor, allScripts, patchEditor, classes, getScriptContent } = props;
+  const { code = '', entryFunction = '', scriptId = '' } = editor;
+  const requestedScriptContent = getScriptContent(scriptId);
 
-    return (
-      <LoadResources required resources={['scripts']}>
-        <div className={classes.container}>
-          <FormControl className={classes.textField}>
-            <InputLabel className={classes.label} htmlFor="scriptId">
-              Script
-            </InputLabel>
-            <Select
-              id="scriptId"
-              margin="dense"
-              value={scriptId}
-              onChange={event => this.setOrRequestContent(event.target.value)}>
-              {allScripts.map(s => (
-                <MenuItem key={s._id} value={s._id}>
-                  {s.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            id="entryFunction"
-            InputLabelProps={{ className: classes.label }}
-            className={classes.textField}
-            value={entryFunction}
-            onChange={event => patchEditor('entryFunction', event.target.value)}
-            label="Entry Function"
+  useEffect(() => {
+    // TODO: What if for the requested script is non existent...
+    // do we have a timeout for the spinner
+    if (requestedScriptContent) {
+      patchEditor({ code: requestedScriptContent });
+      setRequestedContent(false);
+    }
+  }, [requestedScriptContent]);
+
+  return (
+    <LoadResources required resources={['scripts']}>
+      <div className={classes.container}>
+        <FormControl className={classes.textField}>
+          <InputLabel className={classes.label} htmlFor="scriptId">
+            Script
+          </InputLabel>
+          <Select
+            id="scriptId"
             margin="dense"
-          />
+            value={scriptId}
+            onChange={event => setOrRequestContent(event.target.value)}>
+            {allScripts.map(s => (
+              <MenuItem key={s._id} value={s._id}>
+                {s.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          id="entryFunction"
+          InputLabelProps={{ className: classes.label }}
+          className={classes.textField}
+          value={entryFunction}
+          onChange={event => patchEditor('entryFunction', event.target.value)}
+          label="Entry Function"
+          margin="dense"
+        />
+        {requestedContent ? (
+          <Fragment>
+            <Typography>Retrieving your script</Typography>
+            <Spinner />
+          </Fragment>
+        ) : (
           <CodePanel
             name="code"
             value={code}
             mode="javascript"
             onChange={code => patchEditor('code', code)}
           />
-        </div>
-      </LoadResources>
-    );
-  }
-}
+        )}
+      </div>
+    </LoadResources>
+  );
+};
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(JavaScriptPanel);
+export default connect(mapStateToProps, mapDispatchToProps)
+(withStyles(styles)(JavaScriptPanel));

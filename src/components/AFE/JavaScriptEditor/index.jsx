@@ -29,6 +29,7 @@ const mapDispatchToProps = (
         scriptId,
         entryFunction,
         data,
+        autoEvaluate: true,
       })
     );
   },

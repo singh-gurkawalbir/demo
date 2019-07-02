@@ -9,7 +9,15 @@ const FieldWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 })(props => {
-  const { field, editMode, helpKey, helpText, classes, onMetaChange } = props;
+  const {
+    field,
+    editMode,
+    helpKey,
+    helpText,
+    classes,
+    onMetaChange,
+    formFieldsMeta,
+  } = props;
   const { type: fieldType } = field;
 
   return (
@@ -17,6 +25,7 @@ const FieldWrapper = withStyles({
       {editMode && (
         <EditFieldButton
           onChange={onMetaChange}
+          formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
         />
@@ -33,7 +42,7 @@ const FieldWrapper = withStyles({
   );
 });
 
-function getRenderer(editMode = false, onMetaChange) {
+function getRenderer(editMode = false, onMetaChange, formFieldsMeta) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
@@ -52,6 +61,7 @@ function getRenderer(editMode = false, onMetaChange) {
         onMetaChange={onMetaChange}
         field={field}
         helpKey={helpKey}
+        formFieldsMeta={formFieldsMeta}
         helpText={helpText}>
         <DynaField {...field} />
       </FieldWrapper>

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
@@ -25,63 +25,71 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
     // console.log(`request resource:`, resourceType, resource._id, connection);
     dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
   },
+
   handleInitForm: () => {
     dispatch(actions.resourceForm.init(resourceType, resource._id));
   },
+  handleClearResourceForm: () => {
+    dispatch(actions.resourceForm.clear(resourceType, resource._id));
+  },
 });
 
-class ResourceFormFactory extends Component {
-  state = {
-    intializing: true,
+export const ResourceFormFactory = props => {
+  const [componentRemount, setComponentRemount] = useState(true);
+  // This useEffect is executed right after any render
+  // and the initial mount of the compount
+  // you can restrict its execution to be depended on a second
+  // prop like the example below, the function you return from
+  // this useEffect is executed when the component unmounts
+  // Another possible use case is in the second argument you can
+  // pass an empty array. This indicates the useEffect is not
+  // depended on any prop and is executed when the component
+  // mounts and unmounts
+
+  // Note: i have removed the key
+  useEffect(() => {
+    if (componentRemount) setComponentRemount(false);
+    const { handleInitForm, handleClearResourceForm } = props;
+
+    handleInitForm();
+
+    return handleClearResourceForm;
+  }, [props.resource._id]);
+
+  const {
+    resourceType,
+    handleSubmitForm,
+    formState,
+    connectionType,
+    handleInitForm,
+  } = props;
+
+  if (!formState.initComplete || componentRemount) {
+    return <Typography>Initializing Form</Typography>;
+  }
+
+  let Form;
+  const { fieldMeta, optionsHandler } = formState;
+  const commonProps = {
+    handleInitForm,
+    fieldMeta,
+    optionsHandler,
+    handleSubmitForm,
   };
-  componentDidMount() {
-    this.setState({ intializing: true });
-    this.props.handleInitForm();
-  }
-  componentDidUpdate() {
-    const { formState } = this.props;
-    const { intializing } = this.state;
+  const formProps = commonProps;
 
-    if (intializing && formState && formState.initComplete) {
-      // documentation indicates componentDidUpdate a safe place
-      // to call setState
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ intializing: false });
-    }
-  }
-
-  render() {
-    const { resourceType, handleSubmitForm, formState, resource } = this.props;
-    const { intializing } = this.state;
-
-    if (intializing) {
-      return <Typography>Initializing Form</Typography>;
-    }
-
-    let Form;
-
-    if (resourceType === 'connections') {
-      const connectionType = (resource && resource.assistant) || resource.type;
-
-      if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-        Form = OAuthForm;
-      } else {
-        Form = TestableForm;
-      }
+  if (resourceType === 'connections') {
+    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+      Form = OAuthForm;
     } else {
-      Form = GenericResourceForm;
+      Form = TestableForm;
     }
-
-    return (
-      <Form
-        {...this.props}
-        fieldMeta={formState.fieldMeta}
-        optionsHandler={formState.optionsHandler}
-        handleSubmit={handleSubmitForm}
-      />
-    );
+  } else {
+    Form = GenericResourceForm;
   }
-}
+
+  return <Form {...props} {...formProps} />;
+};
 
 export default connect(
   mapStateToProps,

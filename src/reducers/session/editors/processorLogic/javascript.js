@@ -8,8 +8,11 @@ export default {
     },
     data: typeof data === 'string' ? JSON.parse(data) : data,
   }),
-  validate: ({ data }) => ({
+  validate: ({ data }) =>
     // ruleError: undefined //  no validation yet.
-    dataError: util.validateJsonString(data),
-  }),
+    // if data is a string we should validate if it is serializable
+    ({
+      dataError:
+        typeof data === 'string' ? util.validateJsonString(data) : null,
+    }),
 };
