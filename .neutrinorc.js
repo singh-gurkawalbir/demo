@@ -98,6 +98,7 @@ module.exports = {
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
+        pagePerSection: true,
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -123,12 +124,9 @@ module.exports = {
                 name: 'Buttons',
                 content: 'docs/buttons.md',
                 showUsage: false,
-              },              {
-                name: 'UI Components',
-                // content: 'docs/ui.md',
-                exampleMode: 'expand', // 'hide' | 'collapse' | 'expand'
-                usageMode: 'expand', // 'hide' | 'collapse' | 'expand'
-    
+              },              
+              {
+                name: 'Celigo Components',
                 components: 'src/components/**/index.jsx',
                 theme: theme.styleguide,
                 styles: {
