@@ -1,5 +1,6 @@
 /* global describe, test, expect */
-import { call, put, delay } from 'redux-saga/effects';
+import { call, put, delay, select } from 'redux-saga/effects';
+import each from 'jest-each';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -9,9 +10,12 @@ import {
   generateToken,
   create,
   update,
+  revoke,
   deleteAccessToken,
+  modifyTokenData,
 } from './';
 import { MASK_ACCESSTOKEN_TOKEN_DELAY } from '../../utils/constants';
+import * as selectors from '../../reducers/index';
 
 describe('access tokens sagas', () => {
   describe('displayToken saga', () => {
@@ -140,6 +144,101 @@ describe('access tokens sagas', () => {
     });
   });
 
+  describe('modifyTokenData saga', () => {
+    const testCases = [
+      [
+        { something: 'some thing', somethingElse: 'some thing else' },
+        { something: 'some thing', somethingElse: 'some thing else' },
+      ],
+      [
+        { something: 'some thing', somethingElse: 'some thing else' },
+        {
+          something: 'some thing',
+          somethingElse: 'some thing else',
+          fullAccess: false,
+        },
+      ],
+      [
+        { fullAccess: true },
+        {
+          fullAccess: true,
+          _connectionIds: ['c1'],
+          _exportIds: ['e1', 'e2'],
+          _importIds: ['i1'],
+        },
+      ],
+      [
+        {
+          something: 'some thing',
+          somethingElse: 'some thing else',
+          _integrationId: 'i1',
+          _connectorId: 'c1',
+        },
+        {
+          something: 'some thing',
+          somethingElse: 'some thing else',
+          fullAccess: false,
+          _integrationId: 'i1',
+        },
+      ],
+      [
+        { fullAccess: true, _integrationId: 'i2', _connectorId: 'c2' },
+        {
+          fullAccess: true,
+          _connectionIds: ['c1'],
+          _exportIds: ['e1', 'e2'],
+          _importIds: ['i1'],
+          _integrationId: 'i2',
+        },
+      ],
+      [
+        {
+          something: 'some thing',
+          somethingElse: 'some thing else',
+          _integrationId: 'i3',
+        },
+        {
+          something: 'some thing',
+          somethingElse: 'some thing else',
+          fullAccess: false,
+          _integrationId: 'i3',
+        },
+      ],
+      [
+        { fullAccess: true, _integrationId: 'something' },
+        {
+          fullAccess: true,
+          _connectionIds: ['c1'],
+          _exportIds: ['e1', 'e2'],
+          _importIds: ['i1'],
+          _integrationId: 'something',
+        },
+      ],
+    ];
+    const integrations = [
+      { _id: 'i1', _connectorId: 'c1' },
+      { _id: 'i2', _connectorId: 'c2' },
+      {
+        _id: 'i3',
+      },
+    ];
+
+    each(testCases).test('should return %o for %o', (expected, accessToken) => {
+      const saga = modifyTokenData(accessToken);
+
+      if (accessToken._integrationId) {
+        expect(saga.next().value).toEqual(
+          select(selectors.resourceList, { type: 'integrations' })
+        );
+        expect(saga.next({ resources: integrations }).value).toEqual(expected);
+      } else {
+        expect(saga.next().value).toEqual(expected);
+      }
+
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
   describe('create saga', () => {
     test('should create access token (diy) successfully', () => {
       const accessToken = {
@@ -150,7 +249,9 @@ describe('access tokens sagas', () => {
       const requestOptions = getRequestOptions(actionTypes.ACCESSTOKEN_CREATE);
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -179,7 +280,9 @@ describe('access tokens sagas', () => {
       });
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -205,7 +308,9 @@ describe('access tokens sagas', () => {
       const requestOptions = getRequestOptions(actionTypes.ACCESSTOKEN_CREATE);
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -233,7 +338,9 @@ describe('access tokens sagas', () => {
       });
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -263,7 +370,9 @@ describe('access tokens sagas', () => {
       });
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -292,7 +401,9 @@ describe('access tokens sagas', () => {
       });
       const { path, opts } = requestOptions;
 
-      opts.body = accessToken;
+      expect(saga.next(accessToken).value).toEqual(
+        call(modifyTokenData, accessToken)
+      );
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -303,6 +414,44 @@ describe('access tokens sagas', () => {
       );
       expect(saga.throw(new Error()).value).toEqual(true);
 
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('revoke saga', () => {
+    test('should revoke access token (diy) successfully', () => {
+      const accessToken = {
+        _id: 'someId',
+        something: 'something',
+        somethingElse: 'something else',
+      };
+      const saga = revoke({ id: accessToken._id });
+
+      expect(saga.next().value).toEqual(
+        select(selectors.accessTokenList, 'all')
+      );
+
+      expect(saga.next([accessToken]).value).toEqual(
+        call(update, { accessToken: { ...accessToken, revoked: true } })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should revoke connector integration access token successfully', () => {
+      const accessToken = {
+        _id: 'someId',
+        something: 'something',
+        somethingElse: 'something else',
+        _integrationId: 'integration1',
+      };
+      const saga = revoke({ id: accessToken._id });
+
+      expect(saga.next().value).toEqual(
+        select(selectors.accessTokenList, 'all')
+      );
+
+      expect(saga.next([accessToken]).value).toEqual(
+        call(update, { accessToken: { ...accessToken, revoked: true } })
+      );
       expect(saga.next().done).toEqual(true);
     });
   });

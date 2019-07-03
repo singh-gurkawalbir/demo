@@ -82,9 +82,9 @@ function TokenDetail(props) {
 
         return dispatch(actions.accessToken.generateToken(accessToken._id));
       case 'revoke':
-        return dispatch(actions.accessToken.revoke(accessToken));
+        return dispatch(actions.accessToken.revoke(accessToken._id));
       case 'reactivate':
-        return dispatch(actions.accessToken.activate(accessToken));
+        return dispatch(actions.accessToken.activate(accessToken._id));
       case 'delete':
         confirmDialog({
           title: 'Confirm',
@@ -150,6 +150,116 @@ function TokenDetail(props) {
         });
       }
     });
+  }
+
+  function actionsMenu() {
+    if (isAccessTokenPurged) {
+      return null;
+    }
+
+    return (
+      <Fragment>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleActionsMenuClose}>
+          {accessToken.permissions.activate && (
+            <MenuItem
+              onClick={() => {
+                handleActionClick('reactivate');
+              }}>
+              Reactivate token
+            </MenuItem>
+          )}
+          {accessToken.permissions.revoke && (
+            <MenuItem
+              onClick={() => {
+                handleActionClick('revoke');
+              }}>
+              Revoke token
+            </MenuItem>
+          )}
+          <Divider />
+          {accessToken.permissions.generateToken && (
+            <MenuItem
+              onClick={() => {
+                handleActionClick('generate');
+              }}>
+              Regenerate token
+            </MenuItem>
+          )}
+          {!accessToken.permissions.generateToken && (
+            <Tooltip
+              title={accessToken.permissionReasons.generateToken}
+              placement="top">
+              <div>
+                <MenuItem
+                  disabled
+                  onClick={() => {
+                    handleActionClick('generate');
+                  }}>
+                  Regenerate token
+                </MenuItem>
+              </div>
+            </Tooltip>
+          )}
+          <Divider />
+          {accessToken.permissions.edit ? (
+            <MenuItem
+              onClick={() => {
+                handleActionClick('edit');
+              }}>
+              Edit token
+            </MenuItem>
+          ) : (
+            <Tooltip title={accessToken.permissionReasons.edit} placement="top">
+              <div>
+                <MenuItem
+                  disabled
+                  onClick={() => {
+                    handleActionClick('edit');
+                  }}>
+                  Edit token
+                </MenuItem>
+              </div>
+            </Tooltip>
+          )}
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              handleActionClick('audit');
+            }}>
+            View audit log
+          </MenuItem>
+          <Divider />
+          {accessToken.permissions.delete ? (
+            <MenuItem
+              onClick={() => {
+                handleActionClick('delete');
+              }}>
+              Delete token
+            </MenuItem>
+          ) : (
+            <Tooltip
+              title={accessToken.permissionReasons.delete}
+              placement="top">
+              <div>
+                <MenuItem
+                  disabled
+                  onClick={() => {
+                    handleActionClick('delete');
+                  }}>
+                  Delete token
+                </MenuItem>
+              </div>
+            </Tooltip>
+          )}
+        </Menu>
+        <IconButton onClick={handleActionsMenuClick}>
+          <MoreVertIcon />
+        </IconButton>
+      </Fragment>
+    );
   }
 
   return (
@@ -253,111 +363,7 @@ function TokenDetail(props) {
           {accessToken.fullAccess ? 'Full Access' : 'Custom'}
         </TableCell>
         <TableCell>{autoPurge}</TableCell>
-        <TableCell>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleActionsMenuClose}>
-            {accessToken.permissions.activate && (
-              <MenuItem
-                onClick={() => {
-                  handleActionClick('reactivate');
-                }}>
-                Reactivate token
-              </MenuItem>
-            )}
-            {accessToken.permissions.revoke && (
-              <MenuItem
-                onClick={() => {
-                  handleActionClick('revoke');
-                }}>
-                Revoke token
-              </MenuItem>
-            )}
-            <Divider />
-            {accessToken.permissions.generateToken && (
-              <MenuItem
-                onClick={() => {
-                  handleActionClick('generate');
-                }}>
-                Regenerate token
-              </MenuItem>
-            )}
-            {!accessToken.permissions.generateToken && (
-              <Tooltip
-                title={accessToken.permissionReasons.generateToken}
-                placement="top">
-                <div>
-                  <MenuItem
-                    disabled
-                    onClick={() => {
-                      handleActionClick('generate');
-                    }}>
-                    Regenerate token
-                  </MenuItem>
-                </div>
-              </Tooltip>
-            )}
-            <Divider />
-            {accessToken.permissions.edit ? (
-              <MenuItem
-                onClick={() => {
-                  handleActionClick('edit');
-                }}>
-                Edit token
-              </MenuItem>
-            ) : (
-              <Tooltip
-                title={accessToken.permissionReasons.edit}
-                placement="top">
-                <div>
-                  <MenuItem
-                    disabled
-                    onClick={() => {
-                      handleActionClick('edit');
-                    }}>
-                    Edit token
-                  </MenuItem>
-                </div>
-              </Tooltip>
-            )}
-            <Divider />
-            <MenuItem
-              onClick={() => {
-                handleActionClick('audit');
-              }}>
-              View audit log
-            </MenuItem>
-            <Divider />
-            {accessToken.permissions.delete ? (
-              <MenuItem
-                onClick={() => {
-                  handleActionClick('delete');
-                }}>
-                Delete token
-              </MenuItem>
-            ) : (
-              <Tooltip
-                title={accessToken.permissionReasons.delete}
-                placement="top">
-                <div>
-                  <MenuItem
-                    disabled
-                    onClick={() => {
-                      handleActionClick('delete');
-                    }}>
-                    Delete token
-                  </MenuItem>
-                </div>
-              </Tooltip>
-            )}
-          </Menu>
-          {!isAccessTokenPurged && (
-            <IconButton onClick={handleActionsMenuClick}>
-              <MoreVertIcon />
-            </IconButton>
-          )}
-        </TableCell>
+        <TableCell>{actionsMenu()}</TableCell>
       </TableRow>
     </Fragment>
   );

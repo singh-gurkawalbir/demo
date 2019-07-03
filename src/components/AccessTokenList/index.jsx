@@ -40,15 +40,11 @@ const styles = theme => ({
 
 function AccessTokenList(props) {
   const { classes, integrationId } = props;
-  const [connectorId, setConnectorId] = useState(null);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
+  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const dispatch = useDispatch();
   const accessTokens = useSelector(state =>
     selectors.accessTokenList(state, integrationId)
-  );
-  const integrations = useSelector(
-    state => selectors.resourceList(state, { type: 'integrations' }).resources
   );
 
   useEffect(() => {
@@ -58,24 +54,12 @@ function AccessTokenList(props) {
   }, [accessTokens.length, dispatch]);
 
   function handleActionClick(action, tokenId) {
-    let connectorId;
-
     switch (action) {
       case 'create':
-        if (integrationId) {
-          const integration = integrations.find(i => i._id === integrationId);
-
-          if (integration._connectorId) {
-            connectorId = integration._connectorId;
-          }
-        }
-
-        setConnectorId(connectorId);
         setSelectedTokenId(null);
         setShowTokenDialog(true);
         break;
       case 'edit':
-        setConnectorId(connectorId);
         setSelectedTokenId(tokenId);
         setShowTokenDialog(true);
         break;
@@ -118,7 +102,6 @@ function AccessTokenList(props) {
         <AccessTokenDialog
           id={selectedTokenId}
           integrationId={integrationId}
-          connectorId={connectorId}
           handleCancelClick={() => {
             handleTokenDialogCancelClick();
           }}

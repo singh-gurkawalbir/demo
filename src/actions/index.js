@@ -274,14 +274,8 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_UPDATE, { accessToken }),
   updated: accessToken =>
     action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }),
-  revoke: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATE, {
-      accessToken: { ...accessToken, revoked: true },
-    }),
-  activate: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATE, {
-      accessToken: { ...accessToken, revoked: false },
-    }),
+  revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
+  activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
   deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
   deleted: id =>
     action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),

@@ -85,6 +85,10 @@ export function accessTokenList(state, integrationId) {
   }
 
   const filteredTokens = state.filter(t => {
+    if (integrationId === 'all') {
+      return true;
+    }
+
     if (integrationId) {
       return t._integrationId === integrationId;
     }

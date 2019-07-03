@@ -14,13 +14,7 @@ import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
 
 export default function AccessTokenDialog(props) {
-  const {
-    id,
-    integrationId,
-    connectorId,
-    successHandler,
-    handleCancelClick,
-  } = props;
+  const { id, integrationId, successHandler, handleCancelClick } = props;
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState(null);
   const accessTokens = useSelector(state =>
@@ -38,19 +32,10 @@ export default function AccessTokenDialog(props) {
   function handleSaveClick(data) {
     const accessTokenData = {
       ...data,
+      fullAccess: data.fullAccess === 'true',
       _id: id,
       _integrationId: integrationId,
-      _connectorId: connectorId,
     };
-
-    if (accessTokenData.scope === 'fullAccess') {
-      accessTokenData.fullAccess = true;
-      delete accessTokenData._connectionIds;
-      delete accessTokenData._exportIds;
-      delete accessTokenData._importIds;
-    } else {
-      accessTokenData.fullAccess = false;
-    }
 
     if (accessTokenData.autoPurgeAt === 'never') {
       accessTokenData.autoPurgeAt = '';
@@ -88,6 +73,7 @@ export default function AccessTokenDialog(props) {
               integrationId,
             },
           }}
+          autoClearOnComplete
           commStatusHandler={objStatus => {
             if (
               objStatus &&

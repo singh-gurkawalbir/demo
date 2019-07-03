@@ -98,16 +98,16 @@ function AccessTokenForm(props) {
       helpText: 'Access Level help text',
     },
     {
-      id: 'scope',
-      name: 'scope',
+      id: 'fullAccess',
+      name: 'fullAccess',
       type: 'radiogroup',
       label: 'Scope',
-      defaultValue: data.fullAccess ? 'fullAccess' : 'custom',
+      defaultValue: data.fullAccess ? 'true' : 'false',
       options: [
         {
           items: [
-            { label: 'Full Access', value: 'fullAccess' },
-            { label: 'Custom', value: 'custom' },
+            { label: 'Full Access', value: 'true' },
+            { label: 'Custom', value: 'false' },
           ],
         },
       ],
@@ -122,8 +122,8 @@ function AccessTokenForm(props) {
       defaultValue: data._connectionIds || [],
       visibleWhen: [
         {
-          field: 'scope',
-          is: ['custom'],
+          field: 'fullAccess',
+          is: ['false'],
         },
       ],
       options: [
@@ -145,8 +145,8 @@ function AccessTokenForm(props) {
       defaultValue: data._exportIds || [],
       visibleWhen: [
         {
-          field: 'scope',
-          is: ['custom'],
+          field: 'fullAccess',
+          is: ['false'],
         },
       ],
       options: [
@@ -167,8 +167,8 @@ function AccessTokenForm(props) {
       defaultValue: data._importIds || [],
       visibleWhen: [
         {
-          field: 'scope',
-          is: ['custom'],
+          field: 'fullAccess',
+          is: ['false'],
         },
       ],
       options: [
