@@ -1,6 +1,5 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { hot } from 'react-hot-loader';
 import { withRouter, Redirect } from 'react-router-dom';
 import AppRouting from '../AppRouting';
 import * as selectors from '../../reducers';
@@ -19,10 +18,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-@hot(module)
-class AppRoutingWithAuth extends Component {
-  componentWillMount() {
-    const { initSession, isAuthInitialized, location, history } = this.props;
+export function AppRoutingWithAuth(props) {
+  useEffect(() => {
+    const { initSession, isAuthInitialized, location, history } = props;
     const { pathname: currentRoute } = location;
 
     if (!isAuthInitialized) {
@@ -32,44 +30,29 @@ class AppRoutingWithAuth extends Component {
         });
       initSession();
     }
-  }
+  }, []);
 
-  render() {
-    const {
-      shouldShowAppRouting,
-      isAuthenticated,
-      location,
-      isSessionExpired,
-    } = this.props;
-    // this selector is used by the UI to hold off rendering any routes
-    // till it determines the auth state
-    const isSignInRoute = location.pathname === getRoutePath('signin');
+  const {
+    shouldShowAppRouting,
+    isAuthenticated,
+    location,
+    isSessionExpired,
+  } = props;
+  const isSignInRoute = location.pathname === getRoutePath('signin');
 
-    if (!shouldShowAppRouting) return null;
+  // this selector is used by the UI to hold off rendering any routes
+  // till it determines the auth state
+  if (!shouldShowAppRouting) return null;
 
-    if (isAuthenticated) {
-      if (isSignInRoute) {
-        const { state: routeState } = location;
-        const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
+  if (isAuthenticated) {
+    if (isSignInRoute) {
+      const { state: routeState } = location;
+      const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
 
-        return (
-          <Redirect
-            to={{
-              pathname: redirectedTo,
-            }}
-          />
-        );
-      }
-
-      return <AppRouting />;
-    }
-
-    if (!isSessionExpired && !isSignInRoute) {
       return (
         <Redirect
           to={{
-            pathname: getRoutePath('signin'),
-            state: location.state,
+            pathname: redirectedTo,
           }}
         />
       );
@@ -77,6 +60,19 @@ class AppRoutingWithAuth extends Component {
 
     return <AppRouting />;
   }
+
+  if (!isSessionExpired && !isSignInRoute) {
+    return (
+      <Redirect
+        to={{
+          pathname: getRoutePath('signin'),
+          state: location.state,
+        }}
+      />
+    );
+  }
+
+  return <AppRouting />;
 }
 
 // we need to create a HOC with withRouter otherwise the router context will

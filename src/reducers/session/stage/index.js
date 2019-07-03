@@ -1,18 +1,17 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, id, patch, conflict } = action;
-  let newState;
-  let newPatch;
+  const { type, id, patch: newPatch, conflict } = action;
+  const newState = { ...state };
 
   switch (type) {
     case actionTypes.RESOURCE.STAGE_CLEAR:
       // we can't clear if there is no staged data
-      if (!state[id] || !state[id].patch || !state[id].patch.length) {
-        return state;
+      if (!newState[id] || !newState[id].patch || !newState[id].patch.length) {
+        return newState;
       }
 
-      newState = { ...state };
+      newState[id] = { ...newState[id] };
 
       // drop all staged patches.
       delete newState[id].patch;
@@ -22,11 +21,11 @@ export default (state = {}, action) => {
 
     case actionTypes.RESOURCE.STAGE_UNDO:
       // we can't undo if there is no staged data
-      if (!state[id] || !state[id].patch) {
-        return state;
+      if (!newState[id] || !newState[id].patch) {
+        return newState;
       }
 
-      newState = { ...state };
+      newState[id] = { ...newState[id], patch: [...newState[id].patch] };
 
       // drop last patch.
       if (newState[id].patch.length > 1) {
@@ -37,42 +36,43 @@ export default (state = {}, action) => {
 
       return newState;
 
+    // eslint-disable-next-line no-case-declarations
     case actionTypes.RESOURCE.STAGE_PATCH:
-      newState = { ...state };
-      newState[id] = newState[id] || {};
-      newPatch = newState[id].patch || [];
-
-      // if the previous patch is modifying the same path as the prior patch,
-      // remove the prior patch so we dont accumulate single character patches.
-      if (
-        patch.length === 1 &&
-        newPatch.length > 0 &&
-        newPatch[newPatch.length - 1].path === patch[0].path
-      ) {
-        newPatch.pop(); // throw away partial patch.
-      }
-
       newState[id] = {
         ...newState[id],
         lastChange: Date.now(),
-        patch: [...newPatch, ...patch],
+        patch: [...((newState[id] && newState[id].patch) || [])],
       };
+
+      // TODO: Should I could make the code support several patches
+      // if the previous patch is modifying the same path as the prior patch,
+      // remove the prior patch so we dont accumulate single character patches.
+      if (
+        newPatch.length === 1 &&
+        newState[id].patch.length > 0 &&
+        newState[id].patch[newState[id].patch.length - 1].path ===
+          newPatch[0].path
+      ) {
+        newState[id].patch.pop(); // throw away partial patch.
+      }
+
+      newState[id].patch = [...newState[id].patch, ...newPatch];
 
       return newState;
 
     case actionTypes.RESOURCE.STAGE_CONFLICT:
-      newState = { ...state };
       newState[id] = newState[id] || {};
-      newState[id].conflict = conflict;
+      newState[id] = { ...newState[id], conflict };
 
       return newState;
 
     case actionTypes.RESOURCE.CLEAR_CONFLICT:
-      if (!state[id] || !state[id].conflict) {
-        return state;
+      if (!newState[id] || !newState[id].conflict) {
+        return newState;
       }
 
-      newState = { ...state };
+      newState[id] = { ...newState[id] };
+
       delete newState[id].conflict;
 
       return newState;

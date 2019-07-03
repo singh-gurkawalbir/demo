@@ -81,14 +81,6 @@ const resource = {
 
   clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
 
-  test: {
-    connection: (resourceType, resourceId, values) =>
-      action(actionTypes.TEST_CONNECTION, {
-        resourceType,
-        resourceId,
-        values,
-      }),
-  },
   initCustomForm: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, {
       resourceType,
@@ -104,6 +96,22 @@ const resource = {
       op,
       offset,
     }),
+  connections: {
+    test: (resourceId, values) =>
+      action(actionTypes.TEST_CONNECTION, {
+        resourceId,
+        values,
+      }),
+    saveAndAuthorize: (resourceId, values) =>
+      action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
+        resourceId,
+        values,
+      }),
+    commitAndAuthorize: resourceId =>
+      action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
+        resourceId,
+      }),
+  },
 };
 // #endregion
 const auditLogs = {
@@ -248,11 +256,8 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
-  saveAndAuthorize: (resourceId, values) =>
-    action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
-      resourceId,
-      values,
-    }),
+  clear: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),

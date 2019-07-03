@@ -106,7 +106,10 @@ export default [
     actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS,
     refreshHelperFunctions
   ),
-  takeEvery(actionTypes.EDITOR_INIT, autoEvaluateProcessor),
-  takeLatest(actionTypes.EDITOR_PATCH, autoEvaluateProcessor),
+
+  takeLatest(
+    [actionTypes.EDITOR_INIT, actionTypes.EDITOR_PATCH],
+    autoEvaluateProcessor
+  ),
   takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
 ];

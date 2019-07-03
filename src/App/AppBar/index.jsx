@@ -6,7 +6,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
-// import { isAuthenticated } from '../../reducers';
 import * as selectors from '../../reducers';
 import WaffleBox from './WaffleBox';
 import AccountList from './AccountList';

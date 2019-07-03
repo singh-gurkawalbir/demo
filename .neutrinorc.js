@@ -70,7 +70,6 @@ module.exports = {
     //     },
     //   },
     // ],
-
     [
       '@neutrinojs/jest',
       {
@@ -85,6 +84,8 @@ module.exports = {
           'src/sagas/**/*.{js,jsx}',
           // 'src/utils/**/*.{js,jsx}',
         ],
+
+        setupFiles: ['jest-date-mock'],
         coverageThreshold: {
           global: {
             statements: 75,
