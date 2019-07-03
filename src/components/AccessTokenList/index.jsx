@@ -52,10 +52,10 @@ function AccessTokenList(props) {
   );
 
   useEffect(() => {
-    if (!accessTokens || accessTokens.length === 0) {
+    if (!accessTokens.length) {
       dispatch(actions.resource.requestCollection('accesstokens'));
     }
-  }, []);
+  }, [accessTokens.length, dispatch]);
 
   function handleActionClick(action, tokenId) {
     let connectorId;

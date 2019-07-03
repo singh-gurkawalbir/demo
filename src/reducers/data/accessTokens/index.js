@@ -80,10 +80,8 @@ export default (state = [], action) => {
 
 // #region PUBLIC SELECTORS
 export function accessTokenList(state, integrationId) {
-  const tokens = [];
-
-  if (!state) {
-    return tokens;
+  if (state.length === 0) {
+    return state;
   }
 
   const filteredTokens = state.filter(t => {
@@ -94,8 +92,7 @@ export function accessTokenList(state, integrationId) {
     return !t._integrationId;
   });
   let isEmbeddedToken;
-
-  filteredTokens.forEach(t => {
+  const tokens = filteredTokens.map(t => {
     isEmbeddedToken = !!(t._connectorId && !t.autoPurgeAt);
 
     const permissions = {
@@ -136,7 +133,7 @@ export function accessTokenList(state, integrationId) {
       }
     }
 
-    tokens.push({
+    return {
       ...t,
       token: t.token === PASSWORD_MASK ? '' : t.token,
       fullAccess,
@@ -144,7 +141,7 @@ export function accessTokenList(state, integrationId) {
       isEmbeddedToken,
       permissions,
       permissionReasons,
-    });
+    };
   });
 
   return tokens;

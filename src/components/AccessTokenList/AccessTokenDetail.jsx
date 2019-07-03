@@ -30,15 +30,16 @@ function TokenDetail(props) {
   } = props;
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [autoPurge, setAutoPurge] = useState(
-    getAutoPurgeAtAsString(accessToken.autoPurgeAt)
-  );
-  const [tokenStatus, setTokenStatus] = useState();
+  const [autoPurge, setAutoPurge] = useState(null);
+  const [tokenStatus, setTokenStatus] = useState(null);
   const [showAuditLogsDialog, setShowAuditLogsDialog] = useState(false);
   const isAccessTokenPurged = isPurged(accessToken.autoPurgeAt);
 
-  /** Check and update purge status every minute until the token is purged */
+  /** Update purge status whenever autoPurgeAt changes */
   useEffect(() => {
+    setAutoPurge(getAutoPurgeAtAsString(accessToken.autoPurgeAt));
+
+    /** Check and update purge status every minute until the token is purged */
     if (accessToken.autoPurgeAt && moment().diff(accessToken.autoPurgeAt) < 0) {
       const updateAutoPurgeTimer = setInterval(() => {
         setAutoPurge(getAutoPurgeAtAsString(accessToken.autoPurgeAt));
@@ -48,11 +49,6 @@ function TokenDetail(props) {
         clearTimeout(updateAutoPurgeTimer);
       };
     }
-  });
-
-  /** Update purge status whenever autoPurgeAt changes */
-  useEffect(() => {
-    setAutoPurge(getAutoPurgeAtAsString(accessToken.autoPurgeAt));
   }, [accessToken.autoPurgeAt]);
 
   function handleActionsMenuClick(event) {
@@ -127,7 +123,7 @@ function TokenDetail(props) {
         objStatus[a] &&
         [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
       ) {
-        setTokenStatus('');
+        setTokenStatus(null);
 
         if (!messages[a] || !messages[a][objStatus[a].status]) {
           return;

@@ -22,10 +22,10 @@ export default function AccessTokenDialog(props) {
     handleCancelClick,
   } = props;
   const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState(null);
   const accessTokens = useSelector(state =>
     selectors.accessTokenList(state, integrationId)
   );
-  const [errorMessage, setErrorMessage] = useState(null);
 
   function saveAccessToken(data) {
     if (data._id) {
