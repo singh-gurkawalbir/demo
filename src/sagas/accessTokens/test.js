@@ -428,10 +428,10 @@ describe('access tokens sagas', () => {
       const saga = revoke({ id: accessToken._id });
 
       expect(saga.next().value).toEqual(
-        select(selectors.accessTokenList, 'all')
+        select(selectors.accessToken, accessToken._id)
       );
 
-      expect(saga.next([accessToken]).value).toEqual(
+      expect(saga.next(accessToken).value).toEqual(
         call(update, { accessToken: { ...accessToken, revoked: true } })
       );
       expect(saga.next().done).toEqual(true);
@@ -446,10 +446,10 @@ describe('access tokens sagas', () => {
       const saga = revoke({ id: accessToken._id });
 
       expect(saga.next().value).toEqual(
-        select(selectors.accessTokenList, 'all')
+        select(selectors.accessToken, accessToken._id)
       );
 
-      expect(saga.next([accessToken]).value).toEqual(
+      expect(saga.next(accessToken).value).toEqual(
         call(update, { accessToken: { ...accessToken, revoked: true } })
       );
       expect(saga.next().done).toEqual(true);

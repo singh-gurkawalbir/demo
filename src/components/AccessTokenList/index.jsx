@@ -143,8 +143,8 @@ function AccessTokenList(props) {
               <AccessTokenDetail
                 key={at._id}
                 accessToken={at}
-                editClickHandler={userId => {
-                  handleActionClick('edit', userId);
+                editClickHandler={tokenId => {
+                  handleActionClick('edit', tokenId);
                 }}
               />
             ))}

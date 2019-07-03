@@ -67,7 +67,7 @@ export function* modifyTokenData(accessToken) {
     delete data.fullAccess;
   }
 
-  if (data._integrationId) {
+  if (data._integrationId && !data._connectorId) {
     const integrations = yield select(selectors.resourceList, {
       type: 'integrations',
     });
@@ -128,23 +128,13 @@ export function* update({ accessToken }) {
 }
 
 export function* revoke({ id }) {
-  const accessTokens = yield select(selectors.accessTokenList, 'all');
-  const accessToken = accessTokens.find(at => at._id === id);
-
-  if (!accessToken) {
-    throw new Error('AccessToken not found');
-  }
+  const accessToken = yield select(selectors.accessToken, id);
 
   yield call(update, { accessToken: { ...accessToken, revoked: true } });
 }
 
 export function* activate({ id }) {
-  const accessTokens = yield select(selectors.accessTokenList, 'all');
-  const accessToken = accessTokens.find(at => at._id === id);
-
-  if (!accessToken) {
-    throw new Error('AccessToken not found');
-  }
+  const accessToken = yield select(selectors.accessToken, id);
 
   yield call(update, { accessToken: { ...accessToken, revoked: false } });
 }

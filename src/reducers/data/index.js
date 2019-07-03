@@ -138,3 +138,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
 export function accessTokenList(state, integrationId) {
   return fromAccessTokens.accessTokenList(state.accessTokens, integrationId);
 }
+
+export function accessToken(state, id) {
+  return fromAccessTokens.accessToken(state.accessTokens, id);
+}

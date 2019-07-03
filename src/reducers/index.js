@@ -792,3 +792,7 @@ export function commStatusByKey(state, key) {
 export function accessTokenList(state, integrationId) {
   return fromData.accessTokenList(state.data, integrationId);
 }
+
+export function accessToken(state, id) {
+  return fromData.accessToken(state.data, id);
+}
