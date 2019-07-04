@@ -19,7 +19,7 @@ import AuditLog from './index';
     top: theme.spacing,
   },
 }))
-export default class AuditLogsDialog extends Component {
+export default class AuditLogDialog extends Component {
   render() {
     const {
       classes,

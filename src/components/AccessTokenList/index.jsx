@@ -8,14 +8,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { withSnackbar } from 'notistack';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import AccessTokenDetail from './AccessTokenDetail';
 import AccessTokenDialog from './AccessTokenDialog';
 import { COMM_STATES } from '../../reducers/comms';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   root: {
@@ -46,6 +44,7 @@ function AccessTokenList(props) {
   const accessTokens = useSelector(state =>
     selectors.accessTokenList(state, integrationId)
   );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
     if (!accessTokens.length) {
@@ -72,27 +71,7 @@ function AccessTokenList(props) {
   }
 
   function statusHandler({ status, message }) {
-    const { enqueueSnackbar, closeSnackbar } = props;
-
-    enqueueSnackbar(message, {
-      variant: status,
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'center',
-      },
-      // eslint-disable-next-line react/display-name
-      action: key => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => {
-            closeSnackbar(key);
-          }}>
-          <CloseIcon />
-        </IconButton>
-      ),
-    });
+    enqueueSnackbar({ message, variant: status });
     setShowTokenDialog(false);
   }
 
@@ -155,4 +134,4 @@ function AccessTokenList(props) {
   );
 }
 
-export default withSnackbar(withStyles(styles)(AccessTokenList));
+export default withStyles(styles)(AccessTokenList);

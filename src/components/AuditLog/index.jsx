@@ -5,7 +5,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import Filters from './Filters';
-import AuditLogsTable from './AuditLogsTable';
+import AuditLogTable from './AuditLogTable';
 
 const mapStateToProps = state => {
   const resourceDetails = selectors.resourceDetailsMap(state);
@@ -81,7 +81,7 @@ class AuditLog extends Component {
               resourceType={resourceType}
               resourceId={resourceId}
             />
-            <AuditLogsTable
+            <AuditLogTable
               resourceType={resourceType}
               resourceId={resourceId}
               resourceDetails={resourceDetails}

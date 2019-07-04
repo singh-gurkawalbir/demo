@@ -2,11 +2,8 @@ import { Fragment, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -14,20 +11,17 @@ import { isPurged, getAutoPurgeAtAsString } from './util';
 import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import { confirmDialog } from '../ConfirmDialog';
-import AuditLogsDialog from '../AuditLog/AuditLogsDialog';
+import AuditLogDialog from '../AuditLog/AuditLogDialog';
 import AccessTokenActionsMenu from './AccessTokenActionsMenu';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
-function TokenDetail(props) {
-  const {
-    accessToken,
-    editClickHandler,
-    enqueueSnackbar,
-    closeSnackbar,
-  } = props;
+export default function TokenDetail(props) {
+  const { accessToken, editClickHandler } = props;
   const dispatch = useDispatch();
   const [autoPurge, setAutoPurge] = useState(null);
   const [tokenStatus, setTokenStatus] = useState(null);
-  const [showAuditLogsDialog, setShowAuditLogsDialog] = useState(false);
+  const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const isAccessTokenPurged = isPurged(accessToken.autoPurgeAt);
 
   /** Update purge status whenever autoPurgeAt changes */
@@ -46,8 +40,8 @@ function TokenDetail(props) {
     }
   }, [accessToken.autoPurgeAt]);
 
-  function handleAuditLogsDialogClose() {
-    setShowAuditLogsDialog(false);
+  function handleAuditLogDialogClose() {
+    setShowAuditLogDialog(false);
   }
 
   function handleActionClick(action) {
@@ -56,7 +50,7 @@ function TokenDetail(props) {
         editClickHandler(accessToken._id);
         break;
       case 'audit':
-        setShowAuditLogsDialog(true);
+        setShowAuditLogDialog(true);
         break;
       case 'display':
         setTokenStatus('Getting Token...');
@@ -114,24 +108,9 @@ function TokenDetail(props) {
           return;
         }
 
-        enqueueSnackbar(messages[a][objStatus[a].status], {
+        enqueueSnackbar({
+          message: messages[a][objStatus[a].status],
           variant: objStatus[a].status,
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center',
-          },
-          // eslint-disable-next-line react/display-name
-          action: key => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => {
-                closeSnackbar(key);
-              }}>
-              <CloseIcon />
-            </IconButton>
-          ),
         });
       }
     });
@@ -167,11 +146,11 @@ function TokenDetail(props) {
           commStatusHandler(objStatus);
         }}
       />
-      {showAuditLogsDialog && (
-        <AuditLogsDialog
+      {showAuditLogDialog && (
+        <AuditLogDialog
           resourceType="accesstokens"
           resourceId={accessToken._id}
-          onClose={handleAuditLogsDialogClose}
+          onClose={handleAuditLogDialogClose}
         />
       )}
       <TableRow>
@@ -195,24 +174,9 @@ function TokenDetail(props) {
                       <CopyToClipboard
                         text={accessToken.token}
                         onCopy={() =>
-                          enqueueSnackbar('Token copied to clipboard.', {
+                          enqueueSnackbar({
+                            message: 'Token copied to clipboard.',
                             variant: 'success',
-                            anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center',
-                            },
-                            // eslint-disable-next-line react/display-name
-                            action: key => (
-                              <IconButton
-                                key="close"
-                                aria-label="Close"
-                                color="inherit"
-                                onClick={() => {
-                                  closeSnackbar(key);
-                                }}>
-                                <CloseIcon />
-                              </IconButton>
-                            ),
                           })
                         }>
                         <Button>Click to Copy</Button>
@@ -250,5 +214,3 @@ function TokenDetail(props) {
     </Fragment>
   );
 }
-
-export default withSnackbar(TokenDetail);
