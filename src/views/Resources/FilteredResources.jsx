@@ -87,13 +87,13 @@ class FilteredResources extends Component {
               key={r._id}
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-              {['scripts', 'accesstokens'].includes(resourceType) ? (
-                <ResourceImage resource={r} resourceType={resourceType} />
-              ) : (
+              {['exports', 'imports', 'connections'].includes(resourceType) ? (
                 <ApplicationImg
                   assistant={r.assistant}
                   type={resourceType === 'connections' ? r.type : r.adaptorType}
                 />
+              ) : (
+                <ResourceImage resource={r} resourceType={resourceType} />
               )}
               <ListItemText
                 primary={r.name || r._id}
