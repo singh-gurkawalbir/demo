@@ -1,0 +1,38 @@
+export default {
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
+    '/type': 'rest',
+    '/assistant': 'smartsheet',
+    '/rest/baseURI': 'https://api.smartsheet.com',
+    '/rest/tokenLocation': 'header',
+    '/rest/authURI': 'https://app.smartsheet.com/b/authorize',
+    '/rest/oauthTokenURI': 'https://api.smartsheet.com/2.0/token',
+    '/rest/scopeDelimiter': ' ',
+  }),
+  fields: [
+    { fieldId: 'name' },
+    {
+      fieldId: 'rest.scope',
+      scopes: [
+        'ADMIN_SHEETS',
+        'ADMIN_SIGHTS',
+        'ADMIN_USERS',
+        'ADMIN_WEBHOOKS',
+        'ADMIN_WORKSPACES',
+        'CREATE_SHEETS',
+        'CREATE_SIGHTS',
+        'DELETE_SHEETS',
+        'DELETE_SIGHTS',
+        'READ_CONTACTS',
+        'READ_SHEETS',
+        'READ_SIGHTS',
+        'READ_USERS',
+        'SHARE_SHEETS',
+        'SHARE_SIGHTS',
+        'WRITE_SHEETS',
+      ],
+    },
+  ],
+};

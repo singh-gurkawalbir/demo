@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownArrow from '../../../icons/DownArrow';
+import DownArrow from '../../../components/icons/DownArrow';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 

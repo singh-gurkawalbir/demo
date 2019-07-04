@@ -83,7 +83,7 @@ class UserDetail extends Component {
           title: 'Transfer Account Ownership',
           message: [
             `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`,
-            'All owner privilages will be transfered to this user, and your account will be converted to Manager.',
+            'All owner privileges will be transferred to this user, and your account will be converted to Manager.',
             'Please click Confirm to proceed with this change.',
           ].join('<br/>'),
           buttons: [
@@ -135,7 +135,7 @@ class UserDetail extends Component {
       } else if (commStatus.status === COMM_STATES.ERROR) {
         message = `${user.disabled ? 'Enabling' : 'Disabling'} user ${user
           .sharedWithUser.name ||
-          user.sharedWithUser.email} is failed due to the erorr "${
+          user.sharedWithUser.email} failed due to the error "${
           commStatus.message
         }"`;
       }
@@ -152,11 +152,12 @@ class UserDetail extends Component {
     } else if (action === 'makeOwner') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
         message = `An Account Ownership invitation has been sent to 
-        ${user.sharedWithUser.name} (${user.sharedWithUser.email}).<br/>Once accepted, your account will be converted to a regular user account with Manager access.`;
+        ${user.sharedWithUser.name} (${user.sharedWithUser.email}).
+        <br/>Once accepted, your account will be converted to a regular user account with Manager access.`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
         message = `Request to make user ${user.sharedWithUser.name ||
           user.sharedWithUser
-            .email} as account owner is failed due to the erorr "${
+            .email} as account owner is failed due to the error "${
           commStatus.message
         }"`;
       }

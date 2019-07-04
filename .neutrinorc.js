@@ -100,6 +100,15 @@ module.exports = {
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
         pagePerSection: true,
+        theme: theme.styleguide,
+        showUsage: true,
+        skipComponentsWithoutExample: true,
+        styles: {
+          StyleGuide: theme.styleguide.StyleGuide,
+        },
+        editorConfig: {
+          theme: 'material',
+        },
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -119,25 +128,18 @@ module.exports = {
               {
                 name: 'Typography',
                 content: 'docs/typography.md',
-                showUsage: false,
               },
               {
                 name: 'Buttons',
                 content: 'docs/buttons.md',
-                showUsage: false,
+              },
+              {
+                name: 'Icons',
+                components: 'src/components/icons/**/index.jsx',
               },
               {
                 name: 'Celigo Components',
-                components: 'src/components/**/index.jsx',
-                theme: theme.styleguide,
-                styles: {
-                  StyleGuide: theme.styleguide.StyleGuide,
-                },
-                editorConfig: {
-                  theme: 'material',
-                },
-                showUsage: true,
-                skipComponentsWithoutExample: true,
+                components: 'src/components/*/index.jsx',
               },
             ],
           },
