@@ -389,3 +389,54 @@ describe('accessTokenList selector', () => {
     expect(selectors.accessTokenList(state)).toEqual(expectedResults);
   });
 });
+
+describe('accessToken selector', () => {
+  const accessTokens = [
+    {
+      _id: 'id1',
+      name: 'token1',
+      description: 'description1',
+      token: PASSWORD_MASK,
+      revoked: false,
+      fullAccess: true,
+      autoPurgeAt: 'autoPurgeAt1',
+    },
+    {
+      _id: 'id2',
+      name: 'token2',
+      description: 'description2',
+      token: 'something2',
+      fullAccess: true,
+      _integrationId: 'i1',
+      _connectorId: 'c1',
+    },
+  ];
+
+  test('should return undefined when the state is empty', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.accessToken(state, 'something')).toBe(undefined);
+  });
+
+  test('should return undefined when an invalid id is passed', () => {
+    const state = reducer(accessTokens, 'some action');
+
+    expect(selectors.accessToken(state, 'something')).toBe(undefined);
+  });
+
+  test('should return correct non-connector access token', () => {
+    const state = reducer(accessTokens, 'some action');
+
+    expect(selectors.accessToken(state, 'id1')).toEqual(
+      accessTokens.find(t => t._id === 'id1')
+    );
+  });
+
+  test('should return correct connector access token', () => {
+    const state = reducer(accessTokens, 'some action');
+
+    expect(selectors.accessToken(state, 'id2')).toEqual(
+      accessTokens.find(t => t._id === 'id2')
+    );
+  });
+});

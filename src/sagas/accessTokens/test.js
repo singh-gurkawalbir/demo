@@ -11,6 +11,7 @@ import {
   create,
   update,
   revoke,
+  activate,
   deleteAccessToken,
   modifyTokenData,
 } from './';
@@ -451,6 +452,44 @@ describe('access tokens sagas', () => {
 
       expect(saga.next(accessToken).value).toEqual(
         call(update, { accessToken: { ...accessToken, revoked: true } })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('activate saga', () => {
+    test('should activate access token (diy) successfully', () => {
+      const accessToken = {
+        _id: 'someId',
+        something: 'something',
+        somethingElse: 'something else',
+      };
+      const saga = activate({ id: accessToken._id });
+
+      expect(saga.next().value).toEqual(
+        select(selectors.accessToken, accessToken._id)
+      );
+
+      expect(saga.next(accessToken).value).toEqual(
+        call(update, { accessToken: { ...accessToken, revoked: false } })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should activate connector integration access token successfully', () => {
+      const accessToken = {
+        _id: 'someId',
+        something: 'something',
+        somethingElse: 'something else',
+        _integrationId: 'integration1',
+      };
+      const saga = activate({ id: accessToken._id });
+
+      expect(saga.next().value).toEqual(
+        select(selectors.accessToken, accessToken._id)
+      );
+
+      expect(saga.next(accessToken).value).toEqual(
+        call(update, { accessToken: { ...accessToken, revoked: false } })
       );
       expect(saga.next().done).toEqual(true);
     });
