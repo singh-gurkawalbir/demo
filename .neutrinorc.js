@@ -106,9 +106,6 @@ module.exports = {
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
-        editorConfig: {
-          theme: 'material',
-        },
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -136,10 +133,12 @@ module.exports = {
               {
                 name: 'Icons',
                 components: 'src/components/icons/**/index.jsx',
+                editorConfig: { theme: 'material' },
               },
               {
                 name: 'Celigo Components',
                 components: 'src/components/*/index.jsx',
+                editorConfig: { theme: 'material' },
               },
             ],
           },

@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 // import shortid from 'shortid';
 import ApplicationImg from '../../components/icons/ApplicationImg';
+import ResourceImage from '../../components/icons/ResourceImg';
 import actions from '../../actions';
 
 const mapDispatchToProps = (dispatch, { list }) => ({
@@ -18,30 +19,6 @@ const mapDispatchToProps = (dispatch, { list }) => ({
     dispatch(actions.patchFilter(list.type, { take }));
   },
 });
-
-// TODO: Azhar, this is quick an dirty code... we should move this
-// <ResourceImage> component to the /components/icons folder as well...
-// this seems to be something we would re-use elsewhere... it is also
-// not complete of very elegant... you can tweak it as you see fit..
-function ResourceImage(props) {
-  const { resourceType, resource } = props;
-
-  if (resourceType === 'scripts') {
-    return (
-      <img
-        style={{ height: 32 }}
-        alt={resourceType}
-        src={`${process.env.CDN_BASE_URI}io-icons/icon-scripts.svg`}
-      />
-    );
-  }
-
-  const type =
-    resourceType === 'connections' ? resource.type : resource.adaptorType;
-  const { assistant } = resource;
-
-  return <ApplicationImg type={type} assistant={assistant} />;
-}
 
 @hot(module)
 @withStyles(theme => ({
@@ -110,7 +87,14 @@ class FilteredResources extends Component {
               key={r._id}
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-              <ResourceImage resource={r} resourceType={resourceType} />
+              {['exports', 'imports', 'connections'].includes(resourceType) ? (
+                <ApplicationImg
+                  assistant={r.assistant}
+                  type={resourceType === 'connections' ? r.type : r.adaptorType}
+                />
+              ) : (
+                <ResourceImage resource={r} resourceType={resourceType} />
+              )}
               <ListItemText
                 primary={r.name || r._id}
                 secondary={daysOld(r.lastModified)}
