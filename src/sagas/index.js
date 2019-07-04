@@ -7,6 +7,7 @@ import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
+import { accessTokenSagas } from './accessTokens';
 import editorSagas from './editor';
 import {
   onRequestSaga,
@@ -79,5 +80,6 @@ export default function* rootSaga() {
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,
+    ...accessTokenSagas,
   ]);
 }

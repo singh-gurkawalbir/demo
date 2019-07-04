@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -28,6 +28,7 @@ const mapStateToProps = (state, { match }) => {
 
   return {
     integration,
+    permissions: selectors.userPermissions(state),
   };
 };
 
@@ -39,6 +40,11 @@ const Users = loadable(() =>
 );
 const AuditLog = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
+);
+const AccessTokens = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens'
+  )
 );
 
 @hot(module)
@@ -78,105 +84,121 @@ const AuditLog = loadable(() =>
 }))
 class IntegrationSettings extends Component {
   render() {
-    const { classes, integration } = this.props;
+    const { classes, integration, permissions } = this.props;
+    const showAPITokens =
+      integration._connectorId && permissions.accesstokens.view;
 
     return (
       <LoadResources required resources="integrations">
-        <Fragment>
-          <div className={classes.appFrame}>
-            <div className={classes.about}>
-              <Typography variant="h5">{integration.name}</Typography>
-            </div>
-            <Divider />
-            <div className={classes.root}>
-              <div className={classes.flex}>
-                <Drawer
-                  variant="permanent"
-                  anchor="left"
-                  classes={{
-                    paper: classes.leftElement,
-                  }}>
-                  <List>
+        <div className={classes.appFrame}>
+          <div className={classes.about}>
+            <Typography variant="h5">{integration.name}</Typography>
+          </div>
+          <Divider />
+          <div className={classes.root}>
+            <div className={classes.flex}>
+              <Drawer
+                variant="permanent"
+                anchor="left"
+                classes={{
+                  paper: classes.leftElement,
+                }}>
+                <List>
+                  {integration._id !== STANDALONE_INTEGRATION.id && (
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="general">
+                        General
+                      </NavLink>
+                    </ListItem>
+                  )}
+                  <ListItem>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to="flows">
+                      Integration Flows
+                    </NavLink>
+                  </ListItem>
+                  <ListItem>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to="connections">
+                      Connections
+                    </NavLink>
+                  </ListItem>
+                  <ListItem>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to="users">
+                      Users
+                    </NavLink>
+                  </ListItem>
+                  {showAPITokens && (
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="tokens">
+                        API Tokens
+                      </NavLink>
+                    </ListItem>
+                  )}
+                  <ListItem>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to="audit">
+                      Audit Log
+                    </NavLink>
+                  </ListItem>
+                  <ListItem>
                     {integration._id !== STANDALONE_INTEGRATION.id && (
-                      <ListItem>
-                        <NavLink
-                          activeClassName={classes.activeLink}
-                          className={classes.link}
-                          to="general">
-                          General
-                        </NavLink>
-                      </ListItem>
-                    )}
-                    <ListItem>
                       <NavLink
                         activeClassName={classes.activeLink}
                         className={classes.link}
-                        to="flows">
-                        Integration Flows
+                        to="delete">
+                        Delete
                       </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="connections">
-                        Connections
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="users">
-                        Users
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="audit">
-                        Audit Log
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      {integration._id !== STANDALONE_INTEGRATION.id && (
-                        <NavLink
-                          activeClassName={classes.activeLink}
-                          className={classes.link}
-                          to="delete">
-                          Delete
-                        </NavLink>
-                      )}
-                    </ListItem>
-                  </List>
-                </Drawer>
-              </div>
-              <div className={classes.rightElement}>
-                <Switch>
-                  <Route
-                    path={getRoutePath(
-                      `/integrations/:integrationId/settings/flows`
                     )}
-                    component={Flows}
-                  />
-                  <Route
-                    path={getRoutePath(
-                      `/integrations/:integrationId/settings/users`
-                    )}
-                    component={Users}
-                  />
-                  <Route
-                    path={getRoutePath(
-                      `/integrations/:integrationId/settings/audit`
-                    )}
-                    component={AuditLog}
-                  />
-                </Switch>
-              </div>
+                  </ListItem>
+                </List>
+              </Drawer>
+            </div>
+            <div className={classes.rightElement}>
+              <Switch>
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/flows`
+                  )}
+                  component={Flows}
+                />
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/users`
+                  )}
+                  component={Users}
+                />
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/audit`
+                  )}
+                  component={AuditLog}
+                />
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/tokens`
+                  )}
+                  component={AccessTokens}
+                />
+              </Switch>
             </div>
           </div>
-        </Fragment>
+        </div>
       </LoadResources>
     );
   }

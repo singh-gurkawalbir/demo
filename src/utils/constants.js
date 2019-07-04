@@ -137,3 +137,5 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   script: 'Script',
   stack: 'Stack',
 });
+export const PASSWORD_MASK = '******';
+export const MASK_ACCESSTOKEN_TOKEN_DELAY = 5000; // milliseconds

@@ -120,7 +120,7 @@ module.exports = {
         sections: [
           {
             name: 'Introduction',
-            content: 'docs/introduction.md'
+            content: 'docs/introduction.md',
           },
           {
             name: 'Components',
@@ -132,7 +132,7 @@ module.exports = {
               {
                 name: 'Buttons',
                 content: 'docs/buttons.md',
-              },              
+              },
               {
                 name: 'Icons',
                 components: 'src/components/icons/**/index.jsx',
@@ -140,10 +140,10 @@ module.exports = {
               {
                 name: 'Celigo Components',
                 components: 'src/components/*/index.jsx',
-              }
-            ]
+              },
+            ],
           },
-        ]
+        ],
       },
     ],
     [
@@ -167,7 +167,7 @@ module.exports = {
           //   expect: true,
           //   text: true,
           // },
-
+          plugins: ['react-hooks'],
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
@@ -177,6 +177,8 @@ module.exports = {
             ],
             'react/no-did-mount-set-state': 'off',
             'no-underscore-dangle': 'off',
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
           },
         },
       },

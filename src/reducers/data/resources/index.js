@@ -6,6 +6,7 @@ const resourceTypesToIgnore = [
   ...initializationResources,
   ...accountResources,
   'audit',
+  'accesstokens',
 ];
 
 function replaceOrInsertResource(state, type, resource) {
