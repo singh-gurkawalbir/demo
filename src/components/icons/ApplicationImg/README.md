@@ -16,6 +16,6 @@ Generic technology connector Images should use the type prop.
   <ApplicationImg type="http" />
   <ApplicationImg type="rest" />
   <ApplicationImg type="mysql" />
-  <ApplicationImg type="postgres" />
+  <ApplicationImg type="postgresql" />
 </div>
 ```
