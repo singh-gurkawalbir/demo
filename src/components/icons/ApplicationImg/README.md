@@ -2,22 +2,47 @@ This component is used to render an <img> tag for all
 supported assistants (connectors) and generic technology connectors.
 
 Generic technology connector Images should use the type prop.
+
+**Small generic connector images**
 ```js
 <div>
   <ApplicationImg type="ftp" />
   <ApplicationImg type="http" />
   <ApplicationImg type="rest" />
   <ApplicationImg type="mysql" />
+  <ApplicationImg type="mssql" />
   <ApplicationImg type="postgresql" />
   <ApplicationImg type="netsuite" />
   <ApplicationImg type="salesforce" />
 </div>
 ```
 
-Assistant images should use the assistant prop./
-Note that if both type and assistant props are supplied, the assistant prop is used and type is ignored.
+**Large generic connector images**
 ```js
+<div>
+  <ApplicationImg size="large" type="ftp" />
+  <ApplicationImg size="large" type="http" />
+  <ApplicationImg size="large" type="rest" />
+  <ApplicationImg size="large" type="mysql" />
+  <ApplicationImg size="large" type="mssql" />
+  <ApplicationImg size="large" type="postgresql" />
+  <ApplicationImg size="large" type="netsuite" />
+  <ApplicationImg size="large" type="salesforce" />
+</div>
+```
+
+**Specific connector images**
+
+Assistant images should use the assistant prop.  
+
+**Note:**
+1. If both type and assistant props are supplied, the assistant prop is used and type is ignored.
+2. Default size, if not specified is "small"
+```js
+<div>
   <ApplicationImg assistant="jira" />
+  <ApplicationImg size="large" assistant="jira" />
+</div>
 ```
 
 Here is a list of all current assistants
