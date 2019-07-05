@@ -7,6 +7,8 @@ export default class StyleGuideRenderer extends Component {
   render() {
     return (
       <Fragment>
+        <h1>ABC123</h1>
+
         <FontStager />
         <StyleGuide {...this.props} />
       </Fragment>

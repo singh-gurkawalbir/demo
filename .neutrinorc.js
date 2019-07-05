@@ -101,8 +101,6 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
-        showUsage: true,
-        skipComponentsWithoutExample: true,
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
@@ -120,7 +118,14 @@ module.exports = {
             content: 'docs/introduction.md',
           },
           {
+            name: 'Color Palette',
+            content: 'docs/colors.md',
+          },          {
             name: 'Components',
+
+            showUsage: true,
+            skipComponentsWithoutExample: true,
+    
             sections: [
               {
                 name: 'Typography',

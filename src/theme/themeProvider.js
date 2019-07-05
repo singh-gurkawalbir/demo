@@ -11,11 +11,7 @@ const themes = {
 };
 
 export default name => {
-  let themeName;
-
-  if (!name) themeName = DEFAULT_THEME;
-  else themeName = name;
-
+  const themeName = name || DEFAULT_THEME;
   const theme = createMuiTheme({
     ...defaults,
     ...themes[themeName].overrides,

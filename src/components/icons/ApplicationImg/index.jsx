@@ -19,6 +19,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('mysql')) return 'mysql';
 
+  if (type.toLowerCase().includes('postgresql')) return 'postgresql';
+
   if (type.toLowerCase().includes('netsuite')) return 'netsuite';
 
   if (type.toLowerCase().includes('salesforce')) return 'salesforce';
