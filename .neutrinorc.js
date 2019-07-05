@@ -120,7 +120,8 @@ module.exports = {
           {
             name: 'Color Palette',
             content: 'docs/colors.md',
-          },          {
+          },          
+          {
             name: 'Components',
 
             showUsage: true,
