@@ -31,7 +31,8 @@
     "test": "neutrino test --no-cache --require dotenv/config --verbose",
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --no-cache --require dotenv/config && neutrino stage",
-    "styleguide": "neutrino styleguide:start --require dotenv/config"
+    "styleguide": "neutrino styleguide:start --require dotenv/config",
+    "styleguide-build": "neutrino styleguide:build --require dotenv/config"
   },
   "dependencies": {
     "@material-ui/core": "3.9.1",
