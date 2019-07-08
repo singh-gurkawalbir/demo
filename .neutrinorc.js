@@ -101,13 +101,8 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
-        showUsage: true,
-        skipComponentsWithoutExample: true,
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
-        },
-        editorConfig: {
-          theme: 'material',
         },
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
@@ -123,7 +118,15 @@ module.exports = {
             content: 'docs/introduction.md',
           },
           {
+            name: 'Color Palette',
+            content: 'docs/colors.md',
+          },          
+          {
             name: 'Components',
+
+            showUsage: true,
+            skipComponentsWithoutExample: true,
+    
             sections: [
               {
                 name: 'Typography',
@@ -136,10 +139,12 @@ module.exports = {
               {
                 name: 'Icons',
                 components: 'src/components/icons/**/index.jsx',
+                editorConfig: { theme: 'material' },
               },
               {
                 name: 'Celigo Components',
                 components: 'src/components/*/index.jsx',
+                editorConfig: { theme: 'material' },
               },
             ],
           },

@@ -18,7 +18,7 @@ export default theme => ({
     link: theme.palette.text.primary,
     linkHover: theme.palette.text.primary,
     border: theme.palette.divider,
-    sidebarBackground: theme.palette.primary.main,
+    sidebarBackground: theme.palette.background.main,
     codeBackground: theme.palette.primary.main,
   },
   sidebarWidth: theme.drawerWidth,
