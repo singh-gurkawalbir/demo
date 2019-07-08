@@ -13,7 +13,8 @@ export default class ThemeWrapper extends Component {
   }
 
   render() {
-    const theme = themeProvider('light');
+    const { themeName = 'light' } = this.props;
+    const theme = themeProvider(themeName);
 
     return (
       <MuiThemeProvider theme={theme}>

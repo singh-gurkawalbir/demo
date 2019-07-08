@@ -6,7 +6,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
-// import { isAuthenticated } from '../../reducers';
 import * as selectors from '../../reducers';
 import WaffleBox from './WaffleBox';
 import AccountList from './AccountList';
@@ -49,9 +48,7 @@ const mapStateToProps = state => ({
     height: 55,
     width: 140,
     // marginLeft: theme.spacing.unit * 2,
-    background: `url(${
-      process.env.CDN_BASE_URI
-    }flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   navLink: {
     color: theme.appBar.contrast,

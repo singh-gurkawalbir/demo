@@ -61,7 +61,7 @@ const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
   columnNewValue: { minWidth: 330 },
   textAlignCenter: { textAlign: 'center' },
 }))
-class AuditLogsTable extends Component {
+class AuditLogTable extends Component {
   state = {
     selectedLog: undefined,
     showDiffDialog: false,
@@ -246,5 +246,5 @@ export default withSnackbar(
   connect(
     mapStateToProps,
     null
-  )(AuditLogsTable)
+  )(AuditLogTable)
 );

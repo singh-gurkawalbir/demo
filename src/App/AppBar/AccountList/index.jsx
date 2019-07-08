@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownArrow from '../../../icons/DownArrow';
+import DownArrow from '../../../components/icons/DownArrow';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 
@@ -134,9 +134,7 @@ class AccountList extends Component {
   handleAccountLeaveClick = account => {
     confirmDialog({
       title: 'Leave Account',
-      message: `By leaving the account "${
-        account.company
-      }", you will no longer have access to the account or any of the integrations within the account.`,
+      message: `By leaving the account "${account.company}", you will no longer have access to the account or any of the integrations within the account.`,
       buttons: [
         {
           label: 'Cancel',

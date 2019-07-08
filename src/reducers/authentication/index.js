@@ -12,6 +12,7 @@ export default function(
     case actionTypes.AUTH_REQUEST: {
       newState = { ...state, authenticated: false };
       newState.commStatus = COMM_STATES.LOADING;
+      delete newState.loggedOut;
 
       return newState;
     }
@@ -50,6 +51,16 @@ export default function(
       newState = {
         ...state,
         defaultAccountSet: true,
+      };
+
+      return newState;
+    }
+
+    case actionTypes.CLEAR_STORE: {
+      newState = {
+        initialized: false,
+        commStatus: COMM_STATES.LOADING,
+        loggedOut: true,
       };
 
       return newState;

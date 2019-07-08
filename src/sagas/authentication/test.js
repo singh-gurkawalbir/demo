@@ -223,6 +223,7 @@ describe('auth saga flow', () => {
         path: authParams.path,
         opts: payload,
         message: authMessage,
+        hidden: true,
       })
     );
 
@@ -261,6 +262,7 @@ describe('auth saga flow', () => {
         path: authParams.path,
         opts: payload,
         message: authMessage,
+        hidden: true,
       })
     );
     expect(saga.throw(status422).value).toEqual(
@@ -292,6 +294,7 @@ describe('auth saga flow', () => {
         path: authParams.path,
         opts: payload,
         message: authMessage,
+        hidden: true,
       })
     );
 
@@ -332,6 +335,7 @@ describe('auth saga flow', () => {
         path: authParams.path,
         opts: payload,
         message: authMessage,
+        hidden: true,
       })
     );
 

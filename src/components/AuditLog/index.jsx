@@ -1,12 +1,11 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import Filters from './Filters';
-import AuditLogsTable from './AuditLogsTable';
+import AuditLogTable from './AuditLogTable';
 
 const mapStateToProps = state => {
   const resourceDetails = selectors.resourceDetailsMap(state);
@@ -74,9 +73,6 @@ class AuditLog extends Component {
         resources="integrations, flows, exports, imports, connections">
         <Fragment>
           <div className={classes.root}>
-            <Typography className={classes.title} variant="h4">
-              Audit Log
-            </Typography>
             <Filters
               affectedResources={affectedResources}
               resourceDetails={resourceDetails}
@@ -85,7 +81,7 @@ class AuditLog extends Component {
               resourceType={resourceType}
               resourceId={resourceId}
             />
-            <AuditLogsTable
+            <AuditLogTable
               resourceType={resourceType}
               resourceId={resourceId}
               resourceDetails={resourceDetails}

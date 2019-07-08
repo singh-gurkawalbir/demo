@@ -31,6 +31,7 @@ export default class Spinner extends PureComponent {
       <CircularProgress color="primary" className={className} {...props} />
     );
 
+    // TODO:Something wrong here...both of them are the same
     return loading ? (
       <div className={classNames(classes.center, className)}>{progress}</div>
     ) : (

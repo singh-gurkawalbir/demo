@@ -70,7 +70,6 @@ module.exports = {
     //     },
     //   },
     // ],
-
     [
       '@neutrinojs/jest',
       {
@@ -85,6 +84,8 @@ module.exports = {
           'src/sagas/**/*.{js,jsx}',
           // 'src/utils/**/*.{js,jsx}',
         ],
+
+        setupFiles: ['jest-date-mock'],
         coverageThreshold: {
           global: {
             statements: 75,
@@ -98,6 +99,11 @@ module.exports = {
     [
       'neutrino-preset-mozilla-frontend-infra/styleguide',
       {
+        pagePerSection: true,
+        theme: theme.styleguide,
+        styles: {
+          StyleGuide: theme.styleguide.StyleGuide,
+        },
         styleguideComponents: {
           Wrapper: join(__dirname, 'src/styleguide/ThemeWrapper.jsx'),
           StyleGuideRenderer: join(
@@ -109,40 +115,40 @@ module.exports = {
         sections: [
           {
             name: 'Introduction',
-            content: 'docs/introduction.md'
+            content: 'docs/introduction.md',
           },
           {
+            name: 'Color Palette',
+            content: 'docs/colors.md',
+          },          
+          {
             name: 'Components',
+
+            showUsage: true,
+            skipComponentsWithoutExample: true,
+    
             sections: [
               {
                 name: 'Typography',
                 content: 'docs/typography.md',
-                showUsage: false,
               },
               {
                 name: 'Buttons',
                 content: 'docs/buttons.md',
-                showUsage: false,
-              },              {
-                name: 'UI Components',
-                // content: 'docs/ui.md',
-                exampleMode: 'expand', // 'hide' | 'collapse' | 'expand'
-                usageMode: 'expand', // 'hide' | 'collapse' | 'expand'
-    
-                components: 'src/components/**/index.jsx',
-                theme: theme.styleguide,
-                styles: {
-                  StyleGuide: theme.styleguide.StyleGuide,
-                },
-                editorConfig: {
-                  theme: 'material',
-                },
-                showUsage: true,
-                skipComponentsWithoutExample: true,
-              }
-            ]
+              },
+              {
+                name: 'Icons',
+                components: 'src/components/icons/**/index.jsx',
+                editorConfig: { theme: 'material' },
+              },
+              {
+                name: 'Celigo Components',
+                components: 'src/components/*/index.jsx',
+                editorConfig: { theme: 'material' },
+              },
+            ],
           },
-        ]
+        ],
       },
     ],
     [
@@ -166,7 +172,7 @@ module.exports = {
           //   expect: true,
           //   text: true,
           // },
-
+          plugins: ['react-hooks'],
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
@@ -176,6 +182,8 @@ module.exports = {
             ],
             'react/no-did-mount-set-state': 'off',
             'no-underscore-dangle': 'off',
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
           },
         },
       },

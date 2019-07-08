@@ -32,13 +32,15 @@ const combinedReducers = combineReducers({
   comms,
 });
 const rootReducer = (state, action) => {
-  if (action.type === actionTypes.CLEAR_STORE) {
-    const { app } = state;
+  const newState = combinedReducers(state, action);
 
-    return { app };
+  if (action.type === actionTypes.CLEAR_STORE) {
+    const { app, auth } = newState;
+
+    return { app, auth };
   }
 
-  return combinedReducers(state, action);
+  return newState;
 };
 
 export default rootReducer;
@@ -68,10 +70,6 @@ export function allLoadingOrErrored(state) {
 
 export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
-}
-
-export function isCommsBelowNetworkThreshold(state) {
-  return fromComms.isCommsBelowNetworkThreshold(state.comms);
 }
 
 export function isAllLoadingCommsAboveThreshold(state) {
@@ -197,12 +195,12 @@ export function isAuthLoading(state) {
   );
 }
 
-export function isUserLoggedIn(state) {
-  return !!(state && state.auth);
-}
-
 export function authenticationErrored(state) {
   return state && state.auth && state.auth.failure;
+}
+
+export function isUserLoggedOut(state) {
+  return !!(state && state.auth && state.auth.loggedOut);
 }
 
 export function isDefaultAccountSetAfterAuth(state) {
@@ -224,7 +222,7 @@ export function isDefaultAccountSetAfterAuth(state) {
 // For now only when the default account is set or user is logged out
 // show the appRouting component
 export function shouldShowAppRouting(state) {
-  return isDefaultAccountSetAfterAuth(state) || !isUserLoggedIn(state);
+  return isDefaultAccountSetAfterAuth(state) || isUserLoggedOut(state);
 }
 
 export function isSessionExpired(state) {
@@ -385,9 +383,6 @@ export function processors(state) {
   return fromData.processors(state.data);
 }
 
-export function scriptContent(state, id) {
-  return fromData.scriptContent(state.data, id);
-}
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
@@ -792,4 +787,12 @@ export function commStatusByKey(state, key) {
   const commStatus = state && state.comms && state.comms[key];
 
   return commStatus;
+}
+
+export function accessTokenList(state, integrationId) {
+  return fromData.accessTokenList(state.data, integrationId);
+}
+
+export function accessToken(state, id) {
+  return fromData.accessToken(state.data, id);
 }

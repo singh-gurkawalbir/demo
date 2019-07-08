@@ -33,7 +33,7 @@ export default class DynaForm extends Component {
       ...rest
     } = this.props;
     const { fields, fieldSets } = fieldMeta;
-    const renderer = getRenderer(editMode, onMetaChange);
+    const renderer = getRenderer(editMode, onMetaChange, fieldMeta);
 
     if (!fields && !fieldSets) {
       return null;

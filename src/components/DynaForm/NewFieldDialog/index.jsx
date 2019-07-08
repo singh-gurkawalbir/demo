@@ -10,6 +10,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import stringUtil from '../../../utils/string';
 import Select from '@material-ui/core/Select';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import FormDialog from '../../FormDialog';
 import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
@@ -178,6 +179,7 @@ export default class NewFieldDialog extends Component {
       classes,
       onSubmit,
       resourceType,
+      existingFieldWarning,
       adaptorType,
       ...rest
     } = this.props;
@@ -253,6 +255,14 @@ export default class NewFieldDialog extends Component {
           <div className={classes.fieldPreview}>
             {DynaField && <DynaField {...meta} />}
           </div>
+          {existingFieldWarning && (
+            <div>
+              <FormHelperText error>
+                The field Id provided is an id for an existing field, Please
+                change it to a more unique id.
+              </FormHelperText>
+            </div>
+          )}
           <Typography variant="caption">Metadata</Typography>
           <div className={classes.editorContainer}>
             <CodeEditor

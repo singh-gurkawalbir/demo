@@ -3,12 +3,14 @@ import * as _ from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
+import accessTokens, * as fromAccessTokens from './accessTokens';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../utils/constants';
 
 export default combineReducers({
   resources,
   integrationAShares,
   audit,
+  accessTokens,
 });
 
 // #region resource selectors
@@ -131,4 +133,12 @@ export function affectedResourcesAndUsersFromAuditLogs(
     affectedResources,
     users: Object.keys(users).map(id => users[id]),
   };
+}
+
+export function accessTokenList(state, integrationId) {
+  return fromAccessTokens.accessTokenList(state.accessTokens, integrationId);
+}
+
+export function accessToken(state, id) {
+  return fromAccessTokens.accessToken(state.accessTokens, id);
 }

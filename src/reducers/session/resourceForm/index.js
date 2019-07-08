@@ -49,7 +49,8 @@ export default function reducer(state = {}, action) {
         ...state,
         [key]: { ...state[key], submitComplete: true, formValues },
       };
-
+    case actionTypes.RESOURCE_FORM.CLEAR:
+      return { ...state, [key]: {} };
     default:
       return state;
   }

@@ -8,10 +8,10 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
 import Button from '@material-ui/core/Button';
 // import shortid from 'shortid';
+import ApplicationImg from '../../components/icons/ApplicationImg';
+import ResourceImage from '../../components/icons/ResourceImg';
 import actions from '../../actions';
 
 const mapDispatchToProps = (dispatch, { list }) => ({
@@ -87,9 +87,14 @@ class FilteredResources extends Component {
               key={r._id}
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-              <Avatar>
-                <ImageIcon />
-              </Avatar>
+              {['exports', 'imports', 'connections'].includes(resourceType) ? (
+                <ApplicationImg
+                  assistant={r.assistant}
+                  type={resourceType === 'connections' ? r.type : r.adaptorType}
+                />
+              ) : (
+                <ResourceImage resource={r} resourceType={resourceType} />
+              )}
               <ListItemText
                 primary={r.name || r._id}
                 secondary={daysOld(r.lastModified)}
