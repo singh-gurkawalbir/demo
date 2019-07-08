@@ -1,36 +1,32 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({
-      name: 'Authorization',
-      value: '{{{connection.rest.encrypted.apiKey}}}',
-    });
-    headers.push({
-      name: 'Secretkey',
-      value: '{{{connection.rest.encrypted.apiSecret}}}',
-    });
-    headers.push({
-      name: 'Content-Type',
-      value: 'application/json',
-    });
-    headers.push({ name: 'Accept', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'newegg',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://api.newegg.com/marketplace${
-        formValues['/accountType'] === 'neweggbusiness' ? '/b2b' : ''
-      }`,
-      '/rest/pingRelativeURI': `/sellermgmt/seller/industry?sellerid=${
-        formValues['/rest/unencrypted/sellerId']
-      }`,
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'newegg',
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://api.newegg.com/marketplace${
+      formValues['/accountType'] === 'neweggbusiness' ? '/b2b' : ''
+    }`,
+    '/rest/pingRelativeURI': `/sellermgmt/seller/industry?sellerid=${
+      formValues['/rest/unencrypted/sellerId']
+    }`,
+    '/rest/headers': [
+      {
+        name: 'Authorization',
+        value: '{{{connection.rest.encrypted.apiKey}}}',
+      },
+      {
+        name: 'Secretkey',
+        value: '{{{connection.rest.encrypted.apiSecret}}}',
+      },
+      {
+        name: 'Content-Type',
+        value: 'application/json',
+      },
+      { name: 'Accept', value: 'application/json' },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

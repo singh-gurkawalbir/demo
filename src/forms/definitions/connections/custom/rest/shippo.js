@@ -1,24 +1,21 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({
-      name: 'Authorization',
-      value: 'ShippoToken {{{connection.rest.encrypted.token}}}',
-    });
-    headers.push({ name: 'Content-Type', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'shippo',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://api.goshippo.com`,
-      '/rest/pingRelativeURI': '/addresses',
-      '/rest/pingMethod': 'GET',
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'shippo',
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://api.goshippo.com`,
+    '/rest/pingRelativeURI': '/addresses',
+    '/rest/pingMethod': 'GET',
+    '/rest/headers': [
+      {
+        name: 'Authorization',
+        value: 'ShippoToken {{{connection.rest.encrypted.token}}}',
+      },
+      { name: 'Content-Type', value: 'application/json' },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

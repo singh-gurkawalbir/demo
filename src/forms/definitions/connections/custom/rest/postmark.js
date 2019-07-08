@@ -1,24 +1,20 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({ name: 'Content-Type', value: 'application/json' });
-    headers.push({
-      name: 'X-Postmark-Account-Token',
-      value: '{{{connection.rest.encrypted.accountToken}}}',
-    });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'postmark',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://api.postmarkapp.com/`,
-      '/rest/pingRelativeURI': '/servers?count=1&offset=0',
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'postmark',
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://api.postmarkapp.com/`,
+    '/rest/pingRelativeURI': '/servers?count=1&offset=0',
+    '/rest/headers': [
+      { name: 'Content-Type', value: 'application/json' },
+      {
+        name: 'X-Postmark-Account-Token',
+        value: '{{{connection.rest.encrypted.accountToken}}}',
+      },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

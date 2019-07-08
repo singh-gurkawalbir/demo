@@ -1,26 +1,22 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({
-      name: 'Authorization',
-      value: `Bearer ${formValues['/integrator/token']}`,
-    });
-    headers.push({ name: 'Content-Type', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'integratorio',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://api${
-        formValues['/integrator/environment'] === 'staging' ? '.staging' : ''
-      }.integrator.io`,
-      '/rest/pingRelativeURI': '/v1/connections',
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'integratorio',
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://api${
+      formValues['/integrator/environment'] === 'staging' ? '.staging' : ''
+    }.integrator.io`,
+    '/rest/pingRelativeURI': '/v1/connections',
+    '/rest/headers': [
+      {
+        name: 'Authorization',
+        value: `Bearer ${formValues['/integrator/token']}`,
+      },
+      { name: 'Content-Type', value: 'application/json' },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

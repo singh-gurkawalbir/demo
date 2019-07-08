@@ -1,27 +1,22 @@
 export default {
-  preSubmit: formValues => {
-    const pingData = { sku_string: '1' };
-    const headers = [];
-
-    headers.push({ name: 'content-type', value: 'application/json' });
-    headers.push({
-      name: 'apikey',
-      value: '{{{connection.rest.encrypted.apiKey}}}',
-    });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'retailops',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://api.retailops.com`,
-      '/rest/pingRelativeURI': '/product/sku/get~1.json',
-      '/rest/pingMethod': 'POST',
-      '/rest/pingBody': JSON.stringify(pingData),
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'retailops',
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://api.retailops.com`,
+    '/rest/pingRelativeURI': '/product/sku/get~1.json',
+    '/rest/pingMethod': 'POST',
+    '/rest/pingBody': JSON.stringify({ sku_string: '1' }),
+    '/rest/headers': [
+      { name: 'content-type', value: 'application/json' },
+      {
+        name: 'apikey',
+        value: '{{{connection.rest.encrypted.apiKey}}}',
+      },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

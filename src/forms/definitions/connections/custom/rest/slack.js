@@ -1,22 +1,16 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({ name: 'Content-Type', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'slack',
-      '/rest/authType': 'token',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/baseURI': `https://slack.com/api`,
-      '/rest/pingRelativeURI': 'api.test',
-      '/rest/tokenLocation': 'url',
-      '/rest/tokenParam': 'token',
-      '/rest/pingSuccessPath': 'ok',
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'slack',
+    '/rest/authType': 'token',
+    '/rest/mediaType': 'urlencoded',
+    '/rest/baseURI': `https://slack.com/api`,
+    '/rest/pingRelativeURI': 'api.test',
+    '/rest/tokenLocation': 'url',
+    '/rest/tokenParam': 'token',
+    '/rest/pingSuccessPath': 'ok',
+  }),
   fields: [
     { fieldId: 'name' },
     {
