@@ -402,6 +402,8 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Rest scope',
+    helpText:
+      'OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token. For example, an access token issued to a client app may be granted READ and WRITE access to protected resources, or just READ access.',
   },
   'rest.scopeDelimiter': {
     type: 'text',

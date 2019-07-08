@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'anaplan',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '1/3/workspaces',
-    '/type': 'rest',
-    '/assistant': 'anaplan',
     '/rest/baseURI': 'https://api.anaplan.com/',
   }),
 

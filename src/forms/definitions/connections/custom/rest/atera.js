@@ -1,24 +1,20 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({
-      name: 'X-API-KEY',
-      value: '{{{connection.rest.encrypted.apiKey}}}',
-    });
-    headers.push({ name: 'Content-Type', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/v3/customers',
-      '/type': 'rest',
-      '/assistant': 'atera',
-      '/rest/baseURI': 'https://app.atera.com/api',
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/rest/authType': 'custom',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/v3/customers',
+    '/type': 'rest',
+    '/assistant': 'atera',
+    '/rest/baseURI': 'https://app.atera.com/api',
+    '/rest/headers': [
+      {
+        name: 'X-API-KEY',
+        value: '{{{connection.rest.encrypted.apiKey}}}',
+      },
+      { name: 'Content-Type', value: 'application/json' },
+    ],
+  }),
 
   fields: [
     { fieldId: 'name' },

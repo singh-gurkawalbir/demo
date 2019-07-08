@@ -40,7 +40,7 @@ export default {
       },
     },
     {
-      id: 'endpointName',
+      id: 'rest.unencrypted.endpointName',
       type: 'text',
       label: 'Endpoint Name:',
       helpText: 'Please enter endpoint name of your Acumatica account.',
@@ -54,7 +54,7 @@ export default {
         'Default',
     },
     {
-      id: 'endpointVersion',
+      id: 'rest.unencrypted.endpointVersion',
       type: 'text',
       label: 'Endpoint Version:',
       helpText: 'Please enter endpoint name of your Acumatica account.',
@@ -68,7 +68,7 @@ export default {
         '18.200.001',
     },
     {
-      id: 'username',
+      id: 'rest.unencrypted.username',
       type: 'text',
       label: 'Username:',
       required: true,
@@ -82,25 +82,20 @@ export default {
           r.rest.unencrypted.username) ||
         'Default',
     },
-    {
-      id: 'password',
-      type: 'text',
-      label: 'Password:',
-      required: true,
-      helpText: 'Please enter endpoint name of your Acumatica account.',
-    },
-    {
-      id: 'company',
-      required: true,
-      type: 'text',
-      label: 'Company:',
-      helpText: 'Please enter endpoint name of your Acumatica account.',
-      defaultValue: r =>
-        r &&
-        r.rest &&
-        r.rest.unencrypted &&
-        r.rest.unencrypted &&
-        r.rest.unencrypted.company,
-    },
+    // {
+    //   id: 'password',
+    //   type: 'text',
+    //   inputType: 'password',
+    //   label: 'Password:',
+    //   required: true,
+    //   helpText: 'Please enter endpoint name of your Acumatica account.',
+    // },
+    // {
+    //   id: 'rest.unencrypted.company',
+    //   required: true,
+    //   type: 'text',
+    //   label: 'Company:',
+    //   helpText: 'Please enter endpoint name of your Acumatica account.',
+    // },
   ],
 };

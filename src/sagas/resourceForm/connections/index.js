@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
-import { commitStagedChanges } from '../../resources';
+import { commitStagedChanges, getRequestOptions } from '../../resources';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -114,6 +114,12 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
   // if there is conflict let conflict dialog show up
   // and oauth authorize be skipped
   if (conflict) return;
+  let url = `/connection/${resourceId}/oauth2`;
+  const opts = yield call(getRequestOptions, { path: url });
+
+  if (opts && opts.headers && opts.headers['integrator-ashareid']) {
+    url += `?integrator-ashareid=${opts.headers['integrator-ashareid']}`;
+  }
 
   try {
     openOAuthWindowForConnection(resourceId);

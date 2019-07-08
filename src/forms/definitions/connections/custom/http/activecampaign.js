@@ -16,19 +16,18 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      type: 'text',
       id: 'http.activecampaignSubdomain',
+      type: 'text',
       startAdornment: 'https://',
       endAdornment: '.api-us1.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
         },
       },
-      helpText:
-        'Please enter your account here. This can be found in your account on the My Settings page under the "Developer" tab.',
+      helpText: 'Please enter your account subdomain here.',
       defaultValue: r => {
         const baseUri = r.http.baseURI;
         const subdomain = baseUri.substring(

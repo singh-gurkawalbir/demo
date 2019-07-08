@@ -11,7 +11,7 @@ export default {
     '/rest/tokenLocation': 'header',
     '/rest/authURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
-    }ß.skubana.com/oauth/authorize`,
+    }.skubana.com/oauth/authorize`,
     '/rest/oauthTokenURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
     }.skubana.com/oauth/token`,

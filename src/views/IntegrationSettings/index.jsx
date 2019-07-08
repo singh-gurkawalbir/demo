@@ -42,9 +42,7 @@ const AuditLog = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
 );
 const AccessTokens = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens'
-  )
+  import(/* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens')
 );
 
 @hot(module)
