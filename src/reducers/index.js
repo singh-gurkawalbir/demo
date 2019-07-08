@@ -17,10 +17,12 @@ import { getFieldById } from '../forms/utils';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
   USER_ACCESS_LEVELS,
+  INTEGRATION_ACCESS_LEVELS,
   TILE_STATUS,
   INTEGRATION_MODES,
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
+  SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
 
 const combinedReducers = combineReducers({
@@ -461,18 +463,216 @@ export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
 
+export function publishedConnectors(state) {
+  const ioConnectors = resourceList(state, {
+    type: 'published',
+  }).resources;
+
+  return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
+}
+
+export function userAccessLevelOnConnection(state, connectionId) {
+  const permissions = userPermissions(state);
+  let accessLevelOnConnection;
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+        i._registeredConnectionIds &&
+        i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
+  }
+
+  return accessLevelOnConnection;
+}
+
+export function suiteScriptLinkedConnectionIds(state) {
+  const preferences = userPreferences(state);
+  const connections = resourceList(state, {
+    type: 'connections',
+  }).resources;
+  const connectionIds = [];
+
+  if (
+    !preferences.ssConnectionIds ||
+    preferences.ssConnectionIds.length === 0
+  ) {
+    return connectionIds;
+  }
+
+  preferences.ssConnectionIds.forEach(connectionId => {
+    if (connections.find(connection => connection._id === connectionId)) {
+      connectionIds.push(connectionId);
+    }
+  });
+
+  return connectionIds;
+}
+
+export function suiteScriptIntegrations(state, connectionId) {
+  const accessLevelOnConnection = userAccessLevelOnConnection(
+    state,
+    connectionId
+  );
+  let ssIntegrations = [];
+
+  if (!accessLevelOnConnection) {
+    return ssIntegrations;
+  }
+
+  ssIntegrations = fromData.suiteScriptIntegrations(state.data, connectionId);
+
+  ssIntegrations = ssIntegrations.map(i => ({
+    ...i,
+    permissions: {
+      accessLevel: accessLevelOnConnection,
+      connections: {
+        edit: [
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          INTEGRATION_ACCESS_LEVELS.MANAGE,
+        ].includes(accessLevelOnConnection),
+      },
+    },
+  }));
+
+  return ssIntegrations;
+}
+
+export function suiteScriptTiles(state, connectionId) {
+  let tiles = fromData.suiteScriptTiles(state.data, connectionId);
+
+  if (tiles.length === 0) {
+    return tiles;
+  }
+
+  const integrations = suiteScriptIntegrations(state, connectionId);
+  const hasConnectorTiles = tiles.filter(t => t._connectorId).length;
+  let published;
+
+  if (hasConnectorTiles) {
+    published = publishedConnectors(state);
+  }
+
+  let integration;
+  let status;
+  let connector;
+
+  tiles = tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
+
+    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
+
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId);
+
+      return {
+        ...t,
+        status,
+        integration: {
+          mode: integration.mode,
+          permissions: integration.permissions,
+        },
+        connector: { owner: connector.user.company || connector.user.name },
+      };
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
+
+  return tiles;
+}
+
+export function linkedSuiteScriptTiles(state) {
+  const preferences = userPreferences(state);
+  let tiles = [];
+  let connection;
+  let connectionTiles;
+
+  if (!preferences.ssConnectionIds || !preferences.ssConnectionIds.length) {
+    return tiles;
+  }
+
+  const connections = resourceList(state, {
+    type: 'connections',
+  }).resources;
+
+  preferences.ssConnectionIds.forEach(connectionId => {
+    connection = connections.find(c => c._id === connectionId);
+
+    /* need to check if the connection belongs to current enviroment */
+    if (connection) {
+      connectionTiles = suiteScriptTiles(state, connectionId);
+      connectionTiles = connectionTiles.map(t => ({
+        ...t,
+        tag: connection.netsuite.account,
+      }));
+      tiles = tiles.concat(connectionTiles);
+    }
+  });
+
+  return tiles;
+}
+
 export function tiles(state) {
   const preferences = userPreferences(state);
   let tiles = resourceList(state, {
     type: 'tiles',
     sandbox: preferences.environment === 'sandbox',
   }).resources;
-  let integrations = resourceList(state, {
-    type: 'integrations',
-  }).resources;
-  const published = resourceList(state, {
-    type: 'published',
-  }).resources;
+  let integrations = [];
+
+  if (tiles.length > 0) {
+    integrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+  }
+
+  let published;
+  const hasConnectorTiles = tiles.filter(t => t._connectorId);
+
+  if (hasConnectorTiles) {
+    published = publishedConnectors(state);
+  }
+
   const permissions = userPermissions(state);
   const hasStandaloneTile = tiles.find(
     t => t._integrationId === STANDALONE_INTEGRATION.id
@@ -557,7 +757,7 @@ export function tiles(state) {
     };
   });
 
-  return tiles;
+  return tiles.concat(linkedSuiteScriptTiles(state));
 }
 // #endregion
 
