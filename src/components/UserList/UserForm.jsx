@@ -151,7 +151,7 @@ class UserForm extends Component {
     ];
 
     return (
-      <DynaForm fieldMeta={{ fields }} optionsHandler={this.optionsHandler}>
+      <DynaForm fieldMeta={{ fields }}>
         <div className={classes.actions}>
           <Button
             onClick={onCancelClick}
