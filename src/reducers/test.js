@@ -898,7 +898,7 @@ describe('commStatusByKey', () => {
   });
 });
 
-describe('publishedConnectors', () => {
+describe('publishedConnectors selector', () => {
   const published = [{ _id: 'c1' }, { _id: 'c2' }];
 
   test('should return suitescript connectors only, when state is undefined', () => {
@@ -933,7 +933,7 @@ describe('publishedConnectors', () => {
   });
 });
 
-describe('userAccessLevelOnConnection', () => {
+describe('userAccessLevelOnConnection selector', () => {
   test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
     const state = reducer(
       {
@@ -1051,5 +1051,194 @@ describe('userAccessLevelOnConnection', () => {
         ).toEqual(expected);
       }
     );
+  });
+});
+
+describe('suiteScriptLinkedConnections selector', () => {
+  const data = {
+    resources: {
+      integrations: [
+        { _id: 'i1', _registeredConnectionIds: ['c1'] },
+        { _id: 'i2', sandbox: false, _registeredConnectionIds: ['c2', 'c3'] },
+        { _id: 'i3_SB', sandbox: true, _registeredConnectionIds: ['c5'] },
+        { _id: 'i4' },
+        { _id: 'i5', sandbox: true },
+      ],
+      connections: [
+        { _id: 'c1' },
+        { _id: 'c2', sandbox: false },
+        { _id: 'c3', sandbox: false },
+        { _id: 'c4' },
+        { _id: 'c5_SB', sandbox: true },
+        { _id: 'c6_SB', sandbox: true },
+      ],
+    },
+  };
+  const ownerUser = {
+    preferences: {
+      defaultAShareId: ACCOUNT_IDS.OWN,
+      ssConnectionIds: ['c1', 'c2', 'c5_SB'],
+    },
+    org: {
+      accounts: [
+        {
+          _id: ACCOUNT_IDS.OWN,
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        },
+      ],
+    },
+  };
+  const orgUser = {
+    preferences: {
+      ssConnectionIds: ['c1'],
+    },
+    org: {
+      accounts: [
+        {
+          _id: 'aShare1',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        },
+        {
+          _id: 'aShare2',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        },
+        {
+          _id: 'aShare3',
+          accessLevel: USER_ACCESS_LEVELS.TILE,
+          integrationAccessLevel: [
+            {
+              _integrationId: 'i1',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+            },
+            {
+              _integrationId: 'i2',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+          ],
+        },
+        {
+          _id: 'aShare4',
+          accessLevel: USER_ACCESS_LEVELS.TILE,
+          integrationAccessLevel: [
+            {
+              _integrationId: 'i1',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+            {
+              _integrationId: 'i2',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+          ],
+        },
+        {
+          _id: 'aShare5',
+          accessLevel: USER_ACCESS_LEVELS.TILE,
+          integrationAccessLevel: [
+            {
+              _integrationId: 'i4',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+            },
+            {
+              _integrationId: 'i5_SB',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+          ],
+        },
+      ],
+    },
+  };
+  const testCases = [
+    ['should return [] when state is undefined', undefined, {}, []],
+    [
+      'should return correct results for account owner (in production environment)',
+      ownerUser,
+      {},
+      [
+        {
+          _id: 'c1',
+          permissions: { accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER },
+        },
+        {
+          _id: 'c2',
+          sandbox: false,
+          permissions: { accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER },
+        },
+      ],
+    ],
+    [
+      'should return correct results for account owner (in sandbox environment)',
+      ownerUser,
+      { environment: 'sandbox' },
+      [
+        {
+          _id: 'c5_SB',
+          sandbox: true,
+          permissions: { accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER },
+        },
+      ],
+    ],
+    [
+      'should return correct results for account level manage user',
+      orgUser,
+      { defaultAShareId: 'aShare1' },
+      [
+        {
+          _id: 'c1',
+          permissions: { accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE },
+        },
+      ],
+    ],
+    [
+      'should return correct results for account level monitor user',
+      orgUser,
+      { defaultAShareId: 'aShare2' },
+      [
+        {
+          _id: 'c1',
+          permissions: { accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR },
+        },
+      ],
+    ],
+    [
+      'should return correct results for tile level manage user',
+      orgUser,
+      { defaultAShareId: 'aShare3' },
+      [
+        {
+          _id: 'c1',
+          permissions: {
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          },
+        },
+      ],
+    ],
+    [
+      'should return correct results for tile level monitor user',
+      orgUser,
+      { defaultAShareId: 'aShare4' },
+      [
+        {
+          _id: 'c1',
+          permissions: {
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+          },
+        },
+      ],
+    ],
+    [
+      'should return [] for tile level user (when the linked connection is not registered on any integrations that the user has access to)',
+      orgUser,
+      { defaultAShareId: 'aShare5' },
+      [],
+    ],
+  ];
+
+  each(testCases).test('%s', (name, userState, preferences, expected) => {
+    const user = { ...userState };
+
+    user.preferences = { ...user.preferences, ...preferences };
+    const newState = reducer({ user, data }, 'some action');
+
+    expect(selectors.suiteScriptLinkedConnections(newState)).toEqual(expected);
   });
 });
