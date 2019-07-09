@@ -146,7 +146,7 @@ export function accessToken(state, id) {
 }
 
 export function suiteScriptTiles(state, connectionId) {
-  return fromSuiteScript.tileList(state.suiteScript, connectionId);
+  return fromSuiteScript.tiles(state.suiteScript, connectionId);
 }
 
 export function suiteScriptIntegrations(state, connectionId) {

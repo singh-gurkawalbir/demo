@@ -32,7 +32,7 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function tileList(state, connectionId) {
+export function tiles(state, connectionId) {
   if (
     !state ||
     !connectionId ||
@@ -73,15 +73,25 @@ export function tileList(state, connectionId) {
 }
 
 export function integrations(state, connectionId) {
-  let integrations = tileList(state, connectionId);
+  const tileList = tiles(state, connectionId);
+  let integration;
+  const integrations = tileList.map(t => {
+    integration = {
+      _ioConnectionId: t._ioConnectionId,
+      _id: t._integrationId,
+      name: t.name,
+    };
 
-  integrations = integrations.map(t => ({
-    _ioConnectionId: t._ioConnectionId,
-    _id: t._integrationId,
-    _connectorId: t._connectorId,
-    name: t.name,
-    mode: t.mode,
-  }));
+    if (t._connectorId) {
+      integration = {
+        ...integration,
+        _connectorId: t._connectorId,
+        mode: t.mode,
+      };
+    }
+
+    return integration;
+  });
 
   return integrations;
 }

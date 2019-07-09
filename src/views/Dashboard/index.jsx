@@ -26,14 +26,15 @@ function Dashboard(props) {
   const { classes } = props;
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userPreferences(state));
-  const ssLinkedConnectionIds = useSelector(state =>
-    selectors.suiteScriptLinkedConnectionIds(state)
+  const ssLinkedConnections = useSelector(state =>
+    selectors.suiteScriptLinkedConnections(state)
   );
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
   );
 
   useEffect(() => {
+    const ssLinkedConnectionIds = ssLinkedConnections.map(c => c._id);
     const newSuiteScriptResourcesToLoad = difference(
       ssLinkedConnectionIds,
       suiteScriptResourcesToLoad
@@ -44,12 +45,11 @@ function Dashboard(props) {
         suiteScriptResourcesToLoad.concat(newSuiteScriptResourcesToLoad)
       );
     }
-  }, [ssLinkedConnectionIds, suiteScriptResourcesToLoad]);
+  }, [ssLinkedConnections, suiteScriptResourcesToLoad]);
 
   useEffect(() => {
     dispatch(actions.resource.requestCollection('tiles'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     suiteScriptResourcesToLoad.forEach(connectionId =>
@@ -62,8 +62,11 @@ function Dashboard(props) {
   }, [dispatch, suiteScriptResourcesToLoad]);
 
   const tiles = useSelector(state => selectors.tiles(state));
+  const suiteScriptLinkedTiles = useSelector(state =>
+    selectors.suiteScriptLinkedTiles(state)
+  );
   const sortedTiles = sortTiles(
-    tiles,
+    tiles.concat(suiteScriptLinkedTiles),
     preferences.dashboard && preferences.dashboard.tilesOrder
   );
 

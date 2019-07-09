@@ -511,27 +511,31 @@ export function userAccessLevelOnConnection(state, connectionId) {
   return accessLevelOnConnection;
 }
 
-export function suiteScriptLinkedConnectionIds(state) {
+export function suiteScriptLinkedConnections(state) {
   const preferences = userPreferences(state);
   const connections = resourceList(state, {
     type: 'connections',
+    sandbox: preferences.environment === 'sandbox',
   }).resources;
-  const connectionIds = [];
+  const linkedConnections = [];
+  let connection;
 
   if (
     !preferences.ssConnectionIds ||
     preferences.ssConnectionIds.length === 0
   ) {
-    return connectionIds;
+    return linkedConnections;
   }
 
   preferences.ssConnectionIds.forEach(connectionId => {
-    if (connections.find(connection => connection._id === connectionId)) {
-      connectionIds.push(connectionId);
+    connection = connections.find(c => c._id === connectionId);
+
+    if (connection) {
+      linkedConnections.push(connection);
     }
   });
 
-  return connectionIds;
+  return linkedConnections;
 }
 
 export function suiteScriptIntegrations(state, connectionId) {
@@ -621,32 +625,18 @@ export function suiteScriptTiles(state, connectionId) {
   return tiles;
 }
 
-export function linkedSuiteScriptTiles(state) {
-  const preferences = userPreferences(state);
+export function suiteScriptLinkedTiles(state) {
+  const linkedConnections = suiteScriptLinkedConnections(state);
   let tiles = [];
-  let connection;
   let connectionTiles;
 
-  if (!preferences.ssConnectionIds || !preferences.ssConnectionIds.length) {
-    return tiles;
-  }
-
-  const connections = resourceList(state, {
-    type: 'connections',
-  }).resources;
-
-  preferences.ssConnectionIds.forEach(connectionId => {
-    connection = connections.find(c => c._id === connectionId);
-
-    /* need to check if the connection belongs to current enviroment */
-    if (connection) {
-      connectionTiles = suiteScriptTiles(state, connectionId);
-      connectionTiles = connectionTiles.map(t => ({
-        ...t,
-        tag: connection.netsuite.account,
-      }));
-      tiles = tiles.concat(connectionTiles);
-    }
+  linkedConnections.forEach(connection => {
+    connectionTiles = suiteScriptTiles(state, connection._id);
+    connectionTiles = connectionTiles.map(t => ({
+      ...t,
+      tag: connection.netsuite.account,
+    }));
+    tiles = tiles.concat(connectionTiles);
   });
 
   return tiles;
@@ -654,7 +644,7 @@ export function linkedSuiteScriptTiles(state) {
 
 export function tiles(state) {
   const preferences = userPreferences(state);
-  let tiles = resourceList(state, {
+  const tiles = resourceList(state, {
     type: 'tiles',
     sandbox: preferences.environment === 'sandbox',
   }).resources;
@@ -721,7 +711,7 @@ export function tiles(state) {
   let connector;
   let status;
 
-  tiles = tiles.map(t => {
+  return tiles.map(t => {
     integration = integrations.find(i => i._id === t._integrationId) || {};
 
     if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
@@ -756,8 +746,6 @@ export function tiles(state) {
       },
     };
   });
-
-  return tiles.concat(linkedSuiteScriptTiles(state));
 }
 // #endregion
 
