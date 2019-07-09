@@ -821,10 +821,11 @@ export default {
   },
   'http.auth.token.token': {
     type: 'text',
-    label: 'Http auth token token',
+    label: 'Token:',
     inputType: 'password',
     description:
       'Note: for security reasons this field must always be re-entered.',
+    helpText: `The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.`,
   },
   'http.auth.token.location': {
     type: 'select',

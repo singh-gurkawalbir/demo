@@ -40,13 +40,9 @@ export default {
     },
     {
       id: 'http.auth.token.token',
-      type: 'text',
-      inputType: 'password',
       label: 'API Key:',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
   ],

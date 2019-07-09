@@ -73,11 +73,7 @@ export default {
 
       helpText: 'Please enter endpoint name of your Acumatica account.',
       defaultValue: r =>
-        (r &&
-          r.rest &&
-          r.rest.unencrypted &&
-          r.rest.unencrypted &&
-          r.rest.unencrypted.username) ||
+        (r && r.rest && r.rest.unencrypted && r.rest.unencrypted.username) ||
         'Default',
     },
     {
