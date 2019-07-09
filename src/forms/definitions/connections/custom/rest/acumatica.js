@@ -49,7 +49,6 @@ export default {
         (r &&
           r.rest &&
           r.rest.unencrypted &&
-          r.rest.unencrypted &&
           r.rest.unencrypted.endpointName) ||
         'Default',
     },
@@ -62,7 +61,6 @@ export default {
       defaultValue: r =>
         (r &&
           r.rest &&
-          r.rest.unencrypted &&
           r.rest.unencrypted &&
           r.rest.unencrypted.endpointVersion) ||
         '18.200.001',
@@ -82,20 +80,20 @@ export default {
           r.rest.unencrypted.username) ||
         'Default',
     },
-    // {
-    //   id: 'password',
-    //   type: 'text',
-    //   inputType: 'password',
-    //   label: 'Password:',
-    //   required: true,
-    //   helpText: 'Please enter endpoint name of your Acumatica account.',
-    // },
-    // {
-    //   id: 'rest.unencrypted.company',
-    //   required: true,
-    //   type: 'text',
-    //   label: 'Company:',
-    //   helpText: 'Please enter endpoint name of your Acumatica account.',
-    // },
+    {
+      id: 'password',
+      type: 'text',
+      inputType: 'password',
+      label: 'Password:',
+      required: true,
+      helpText: 'Please enter endpoint name of your Acumatica account.',
+    },
+    {
+      id: 'rest.unencrypted.company',
+      required: true,
+      type: 'text',
+      label: 'Company:',
+      helpText: 'Please enter endpoint name of your Acumatica account.',
+    },
   ],
 };
