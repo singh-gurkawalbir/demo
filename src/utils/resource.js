@@ -1,5 +1,5 @@
 import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 /**
  * @param resourceDetails Details about the resource.

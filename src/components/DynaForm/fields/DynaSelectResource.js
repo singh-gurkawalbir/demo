@@ -11,21 +11,22 @@ import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 
 const mapStateToProps = (state, ownProps) => {
-  const { resourceType, filter, excludeFilter } = ownProps;
+  const { resourceType, filter, excludeFilter, options } = ownProps;
 
   if (!resourceType) return {};
 
+  const finalFilter = options.filter ? options.filter : filter;
   const { resources } = selectors.resourceList(state, { type: resourceType });
 
   return {
     resources: resources.filter(r => {
-      if (filter) {
-        const keys = Object.keys(filter);
+      if (finalFilter) {
+        const keys = Object.keys(finalFilter);
 
         for (let i = 0; i < keys.length; i += 1) {
           const key = keys[i];
 
-          if (r[key] !== filter[key]) return false;
+          if (r[key] !== finalFilter[key]) return false;
         }
       }
 

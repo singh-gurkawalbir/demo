@@ -3,6 +3,7 @@ import DynaRadioGroup from './DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectApplication from './DynaSelectApplication';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
@@ -25,6 +26,7 @@ export default {
   checkbox: DynaCheckbox,
   select: DynaSelect,
   selectresource: DynaSelectResource,
+  selectapplication: DynaSelectApplication,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,

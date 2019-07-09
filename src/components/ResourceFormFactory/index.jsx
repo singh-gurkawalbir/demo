@@ -37,14 +37,14 @@ const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
 export const ResourceFormFactory = props => {
   const [componentRemount, setComponentRemount] = useState(true);
   // This useEffect is executed right after any render
-  // and the initial mount of the compount
+  // and the initial mount of the component
   // you can restrict its execution to be depended on a second
   // prop like the example below, the function you return from
-  // this useEffect is executed when the component unmounts
+  // this useEffect is executed when the component remounts
   // Another possible use case is in the second argument you can
   // pass an empty array. This indicates the useEffect is not
   // depended on any prop and is executed when the component
-  // mounts and unmounts
+  // mounts and remounts
 
   // Note: i have removed the key
   useEffect(() => {

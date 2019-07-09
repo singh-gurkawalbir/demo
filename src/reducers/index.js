@@ -4,7 +4,6 @@ import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -657,31 +656,6 @@ export function resourceFormField(state, resourceType, resourceId, id) {
   if (!field) return;
 
   return field;
-}
-
-export function newResourceData(state, resourceType, id) {
-  const master = resourceDefaults[resourceType];
-  const { patch } = fromSession.stagedResource(state.session, id);
-  // console.log('patch:', patch);
-  let merged;
-
-  if (patch) {
-    const patchResult = jsonPatch.applyPatch(
-      jsonPatch.deepClone(master),
-      jsonPatch.deepClone(patch)
-    );
-
-    // console.log('patchResult', patchResult);
-    merged = patchResult.newDocument;
-  }
-
-  const data = {
-    master,
-    patch,
-    merged: merged || master,
-  };
-
-  return data;
 }
 
 export function orgUsers(state) {

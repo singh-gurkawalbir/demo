@@ -33,6 +33,7 @@ class MaterialUiTextField extends React.Component {
       startAdornment,
       endAdornment,
       inputType,
+      options,
     } = this.props;
     const handleFieldChange = event => {
       const { value } = event.target;
@@ -45,6 +46,8 @@ class MaterialUiTextField extends React.Component {
 
       onFieldChange(id, value.split(valueDelimiter));
     };
+
+    const finalValue = options || value;
 
     return (
       <TextField
@@ -69,7 +72,7 @@ class MaterialUiTextField extends React.Component {
         rowsMax={rowsMax}
         required={required}
         error={!isValid}
-        value={value}
+        value={finalValue}
         onChange={handleFieldChange}
       />
     );

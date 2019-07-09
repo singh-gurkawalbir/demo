@@ -9,7 +9,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
-// import shortid from 'shortid';
+import shortid from 'shortid';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import ResourceImage from '../../components/icons/ResourceImg';
 import actions from '../../actions';
@@ -61,21 +61,19 @@ class FilteredResources extends Component {
               path="/pg/resources/:resourceType/add/:id"
               render={() => null}
             />
-            {/*  Hide the "Add" until we have a good implementation for it.
-            <Route
-              render={() => (
-                <Button
-                  size="small"
-                  variant="contained"
-                  aria-label="Add"
-                  component={Link}
-                  to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
-                  className={classes.addResource}>
-                  Add
-                </Button>
-              )}
-            />
-          */}
+            {
+              <Route
+                render={() => (
+                  <Button
+                    aria-label="Add"
+                    component={Link}
+                    to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
+                    className={classes.addResource}>
+                    Add
+                  </Button>
+                )}
+              />
+            }
           </Switch>
         </Typography>
 
@@ -107,7 +105,7 @@ class FilteredResources extends Component {
             <Button
               onClick={handleMore(list.count + 2)}
               size="small"
-              variant="outlined">
+              variant="flat">
               Show more results ({list.filtered - list.count} left)
             </Button>
           )}

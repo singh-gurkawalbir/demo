@@ -4,7 +4,7 @@ import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
 import accessTokens, * as fromAccessTokens from './accessTokens';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../utils/constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 
 export default combineReducers({
   resources,
