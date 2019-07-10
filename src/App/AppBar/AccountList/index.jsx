@@ -193,7 +193,7 @@ class AccountList extends Component {
               <ListItem
                 button
                 onClick={() => {
-                  this.handleAccountChange(a.id, a.environment);
+                  !a.selected && this.handleAccountChange(a.id, a.environment);
                 }}
                 classes={{
                   root: classes.itemRoot,

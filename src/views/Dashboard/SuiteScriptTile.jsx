@@ -35,12 +35,18 @@ const styles = theme => ({
   },
 });
 
-function Tile({ classes, tile }) {
-  const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+function SuiteScriptTile({ classes, tile }) {
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
+
+  function handleLinkClick(event) {
+    event.preventDefault();
+    const { href } = event.target;
+
+    window.open(href.replace('/pg/', '/'), 'AmpersandApp');
+  }
 
   return (
     <Card className={classes.card}>
@@ -60,24 +66,27 @@ function Tile({ classes, tile }) {
         {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
           <Link
             className={classes.navLink}
+            onClick={handleLinkClick}
             to={getRoutePath(
-              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
-                tile._integrationId
-              }/settings/flows`
+              `/suitescript/connections/${tile._ioConnectionId}/${
+                tile._connectorId ? 'connectors' : 'integrations'
+              }/${tile._integrationId}/settings`
             )}>
             {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
               ? 'Monitor'
               : 'Manage'}
           </Link>
         )}
-        {tile.tag && (
-          <Chip label={tile.tag} color="secondary" className={classes.tag} />
-        )}
+        <Chip
+          label={`NS Account #${tile.tag}`}
+          color="secondary"
+          className={classes.tag}
+        />
       </CardActions>
       <Divider />
       <CardActions>
         <Typography>
-          {tile._connectorId ? 'SmartConnector' : numFlowsText}
+          {tile._connectorId ? 'SmartConnector' : 'Legacy'}
         </Typography>
         <Typography className={classes.connectorOwner}>
           {tile.connector && tile.connector.owner}
@@ -87,4 +96,4 @@ function Tile({ classes, tile }) {
   );
 }
 
-export default withStyles(styles)(Tile);
+export default withStyles(styles)(SuiteScriptTile);
