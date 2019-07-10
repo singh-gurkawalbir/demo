@@ -228,7 +228,7 @@ describe('authentication selectors', () => {
 describe('Reducers in the root reducer', () => {
   test('should wipe out the redux store except for app and auth properties in a user logout action', () => {
     const someInitialState = {
-      profile: { email: 'sds' },
+      user: { profile: { email: 'sds' } },
     };
     const state = reducer(someInitialState, actions.auth.clearStore());
 
