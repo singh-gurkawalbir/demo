@@ -591,6 +591,7 @@ export function suiteScriptTiles(state, connection) {
   let integration;
   let status;
   let connector;
+  let tile;
 
   tiles = tiles.map(t => {
     integration = integrations.find(i => i._id === t._integrationId) || {};
@@ -605,28 +606,21 @@ export function suiteScriptTiles(state, connection) {
       status = TILE_STATUS.SUCCESS;
     }
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId);
-
-      return {
-        ...t,
-        status,
-        integration: {
-          mode: integration.mode,
-          permissions: integration.permissions,
-        },
-        connector: { owner: connector.user.company || connector.user.name },
-        tag: connection.netsuite.account,
-      };
-    }
-
-    return {
+    tile = {
       ...t,
       status,
       integration: {
         permissions: integration.permissions,
       },
+      tag: connection.netsuite.account,
     };
+
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId);
+      tile.connector = { owner: connector.user.company || connector.user.name };
+    }
+
+    return tile;
   });
 
   return tiles;
