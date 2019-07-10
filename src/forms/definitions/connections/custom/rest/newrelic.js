@@ -24,7 +24,7 @@ export default {
       required: true,
       inputType: 'password',
       helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. From the account dropdown in the New Relic UI, select Account settings > Integrations > API keys to find it.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

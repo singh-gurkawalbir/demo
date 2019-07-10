@@ -1,14 +1,26 @@
 export default {
-  preSubmit: formValues => ({
-    ...formValues,
-    '/type': 'rest',
-    '/assistant': 'insightly',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/pingRelativeURI': '/v2.1/Contacts',
-    '/rest/pingMethod': 'GET',
-    '/rest/baseURI': `https://api.insight.ly`,
-  }),
+  preSubmit: formValues => {
+    const refreshTokenBody = {};
+
+    refreshTokenBody.pass = '{{{connection.rest.encrypted.password}}}';
+    refreshTokenBody.user = formValues['rest.refreshTokenBody.user'];
+
+    return {
+      ...formValues,
+      '/type': 'rest',
+      '/assistant': 'jet',
+      '/rest/authType': 'token',
+      '/rest/mediaType': 'json',
+      '/rest/pingRelativeURI': '/orders/created',
+      '/rest/pingMethod': 'GET',
+      '/rest/baseURI': `https://merchant-api.jet.com/api`,
+      '/rest/refreshTokenPath': `id_token`,
+      '/rest/refreshTokenMethod': `POST`,
+      '/rest/refreshTokenURI': `https://merchant-api.jet.com/api/token`,
+      '/rest/refreshTokenMediaType': `json`,
+      '/rest/refreshTokenBody': JSON.stringify(refreshTokenBody),
+    };
+  },
   fields: [
     { fieldId: 'name' },
     {

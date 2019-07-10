@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'skubana',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': `https://api.${
       formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
     }skubana.com`,
@@ -33,7 +33,7 @@ export default {
         },
       ],
       helpText:
-        'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
+        'Please select your environment here. Select Sandbox if the account is created on https://demo.skubana.com/login. Select Production if the account is created on https://app.skubana.com/login.',
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
 

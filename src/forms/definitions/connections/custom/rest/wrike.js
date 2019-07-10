@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'urlencoded',
     '/type': 'rest',
     '/assistant': 'wrike',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'urlencoded',
     '/rest/baseURI': 'https://www.wrike.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://www.wrike.com/oauth2/authorize',

@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'atera',
     '/rest/authType': 'custom',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/v3/customers',
-    '/type': 'rest',
-    '/assistant': 'atera',
     '/rest/baseURI': 'https://app.atera.com/api',
     '/rest/headers': [
       {

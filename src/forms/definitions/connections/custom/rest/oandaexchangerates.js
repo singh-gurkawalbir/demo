@@ -13,12 +13,8 @@ export default {
     { fieldId: 'name' },
     {
       id: 'rest.bearerToken',
-      inputType: 'password',
-      helpText:
-        'Secret Key available from Jet under API Section-> Get API Keys',
+      helpText: 'Please enter the API Key of your OANDA account.',
       label: 'API Key:',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
   ],

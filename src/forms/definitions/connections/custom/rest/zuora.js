@@ -1,6 +1,8 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'zuora',
     '/rest/authType': 'custom',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': 'v1/accounting-periods',
@@ -16,8 +18,6 @@ export default {
       },
       { name: 'Content-Type', value: 'application/json' },
     ],
-    '/type': 'rest',
-    '/assistant': 'zuora',
     '/rest/baseURI': `https://api${
       formValues['/rest/sandbox'] === 'sandbox' ? 'sandbox-api' : ''
     }.zuora.com/rest/`,
@@ -32,7 +32,9 @@ export default {
       type: 'text',
       label: 'Username:',
       inputType: 'password',
-      helpText: 'The API Key of your Certify account.',
+      helpText: 'Please enter Username of your Zuora account.',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
     },
     {
       id: 'rest.encrypted.apiSecretAccessKey',
@@ -40,7 +42,9 @@ export default {
       type: 'text',
       label: 'Password:',
       inputType: 'password',
-      helpText: 'The API Secret of your Certify account.',
+      helpText: 'Please enter Password of your Zuora account.',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
     },
     {
       id: 'rest.sandbox',
@@ -54,8 +58,7 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
+      helpText: 'The Zuora account type.',
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
 

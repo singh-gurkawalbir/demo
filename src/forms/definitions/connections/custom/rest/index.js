@@ -125,7 +125,7 @@ import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 
 export default {
-  threedcart,
+  '3dcart': threedcart,
   snapfulfil,
   tsheets,
   splunk,

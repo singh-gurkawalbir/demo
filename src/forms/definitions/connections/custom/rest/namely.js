@@ -27,8 +27,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.namely.com',
       label: 'Company Name:',
-      helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+      helpText: 'Your subdomain. For example, https://mysubdomain.namely.com',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -46,15 +45,10 @@ export default {
       },
     },
     {
-      id: 'rest.bearerToken',
-      type: 'text',
+      fieldId: 'rest.bearerToken',
       label: 'Personal Access Token:',
       required: true,
-      inputType: 'password',
-      helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
+      helpText: 'The personal access token of your account on namely.',
     },
   ],
 };

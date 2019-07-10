@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'yammer',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://www.yammer.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://www.yammer.com/oauth2/authorize',

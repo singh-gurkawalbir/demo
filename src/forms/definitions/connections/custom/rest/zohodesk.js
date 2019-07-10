@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'zohodesk',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://desk.zoho.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
@@ -24,6 +24,8 @@ export default {
       label: 'Organization Id:',
       required: true,
       type: 'text',
+      helpText:
+        'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
     },
     {
       fieldId: 'rest.scope',

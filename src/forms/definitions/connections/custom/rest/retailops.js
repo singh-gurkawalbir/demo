@@ -26,7 +26,7 @@ export default {
       type: 'text',
       inputType: 'password',
       helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+        'To create an API key, In RetailOps, go to Administration > User Manager. Select your user account. In the bottom-right of the User Details pane, press the [Add API Key] button. Your API key will appear in a separate window. Copy the API key from there. Please note: For security purposes, when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously).',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

@@ -17,11 +17,9 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.baseURI',
+      fieldId: 'rest.baseURI',
       endAdornment: '/home',
       label: 'Base URI:',
-      helpText:
-        'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
       defaultValue: r => {
         const baseUri = r.rest.baseURI;
         const subdomain =
@@ -34,7 +32,8 @@ export default {
       id: 'rest.unencrypted.userAccount',
       type: 'text',
       label: 'User Account:',
-      helpText: 'Please enter endpoint name of your Acumatica account.',
+      helpText:
+        'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
       required: true,
     },
   ],

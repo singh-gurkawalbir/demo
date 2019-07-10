@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'mailchimp',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': `https://${
       formValues['/toReturn.rest.mailchimpDataCenter']
     }.api.mailchimp.com`,
@@ -22,7 +22,7 @@ export default {
       endAdornment: '.api.mailchimp.com',
       label: 'Data Center:',
       helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+        'The Data Center name provided by Mailchimp. Click Save & Authorize to open up the Mailchimp login screen where you can enter your username and password to establish the connection with your Mailchimp account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

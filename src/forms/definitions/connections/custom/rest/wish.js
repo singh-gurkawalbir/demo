@@ -4,6 +4,8 @@ export default {
 
     return {
       ...formValues,
+      '/type': 'rest',
+      '/assistant': 'wish',
       '/rest/authType': 'oauth',
       '/rest/mediaType': 'urlencoded',
       '/rest/authHeader': 'Authorization',
@@ -23,8 +25,6 @@ export default {
           ? 'https://merchant.wish.com/api/v2/oauth/access_token'
           : 'https://sandbox.merchant.wish.com/api/v2/oauth/access_token'
       }`,
-      '/type': 'rest',
-      '/assistant': 'wish',
       '/rest/oauth/accessTokenPath': 'data.access_token',
       '/rest/refreshTokenPath': 'data.refresh_token',
     };

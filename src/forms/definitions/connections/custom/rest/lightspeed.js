@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'lightspeed',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.merchantos.com',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://cloud.merchantos.com/oauth/authorize.php',

@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'pulseway',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/v2/systems',
-    '/assistant': 'pulseway',
-    '/type': 'rest',
   }),
 
   fields: [

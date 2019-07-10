@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'zohobooks',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://www.zohoapis.com/crm',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://accounts.zoho.com/oauth/v2/auth',

@@ -22,9 +22,11 @@ import clio from './clio';
 import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
+import drift from './drift';
 
 export default {
   activecampaign,
+  drift,
   'authorize.net': authorizeNet,
   recurly,
   cartrover,

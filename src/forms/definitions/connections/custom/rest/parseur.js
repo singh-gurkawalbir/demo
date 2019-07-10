@@ -20,9 +20,9 @@ export default {
     {
       id: 'rest.encrypted.apiKey',
       inputType: 'password',
-      helpText:
-        'Secret Key available from Jet under API Section-> Get API Keys',
       label: 'API Token Key:',
+      helpText:
+        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,
