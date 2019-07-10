@@ -4,11 +4,7 @@ import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 export default (state = {}, action) => {
   const { type, resourceType, collection } = action;
 
-  if (!type) {
-    return state;
-  }
-
-  if (!resourceType) {
+  if (!type || !resourceType) {
     return state;
   }
 
@@ -42,11 +38,11 @@ export function tiles(state, connectionId) {
     return [];
   }
 
-  let list = state[connectionId].tiles;
+  const tileList = state[connectionId].tiles;
   let connector;
   let propsToAdd = {};
 
-  list = list.map(t => {
+  return tileList.map(t => {
     propsToAdd = {
       _ioConnectionId: connectionId,
     };
@@ -68,8 +64,6 @@ export function tiles(state, connectionId) {
       ...propsToAdd,
     };
   });
-
-  return list;
 }
 
 export function integrations(state, connectionId) {
