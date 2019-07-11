@@ -48,9 +48,8 @@ const mapStateToProps = state => ({
     height: 55,
     width: 140,
     // marginLeft: theme.spacing.unit * 2,
-    background: `url(${
-      process.env.CDN_BASE_URI
-    }flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    // eslint-disable-next-line prettier/prettier
+    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   navLink: {
     color: theme.appBar.contrast,

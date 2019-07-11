@@ -42,7 +42,8 @@ const AuditLog = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
 );
 const AccessTokens = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens')
+  import(// eslint-disable-next-line prettier/prettier
+    /* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens')
 );
 
 @hot(module)

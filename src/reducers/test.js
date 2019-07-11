@@ -934,9 +934,8 @@ describe('publishedConnectors selector', () => {
 });
 
 describe('userAccessLevelOnConnection selector', () => {
-  test(`should return ${
-    USER_ACCESS_LEVELS.ACCOUNT_OWNER
-  } access level for account owner`, () => {
+  // eslint-disable-next-line prettier/prettier
+  test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
     const state = reducer(
       {
         user: {

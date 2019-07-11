@@ -32,9 +32,8 @@ import { Typography } from '@material-ui/core';
     '&:hover::before': {
       // opacity: '1',
       backgroundColor: theme.palette.secondary.light,
-      backgroundImage: `url(${
-        process.env.CDN_BASE_URI
-      }icons/icon/flow-white.png)`,
+      // eslint-disable-next-line prettier/prettier
+      backgroundImage: `url(${process.env.CDN_BASE_URI}icons/icon/flow-white.png)`,
     },
   },
 }))
