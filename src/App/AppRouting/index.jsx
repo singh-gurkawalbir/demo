@@ -31,10 +31,9 @@ const Imports = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
+/* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
-  import(// eslint-disable-next-line prettier/prettier
-    /* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings'
-  )
+  import('../../views/IntegrationSettings')
 );
 const AccessTokens = loadable(() =>
   import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
