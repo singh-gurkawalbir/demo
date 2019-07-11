@@ -4,6 +4,7 @@ import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
 import accessTokens, * as fromAccessTokens from './accessTokens';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../utils/constants';
 
 export default combineReducers({
@@ -11,6 +12,7 @@ export default combineReducers({
   integrationAShares,
   audit,
   accessTokens,
+  suiteScript,
 });
 
 // #region resource selectors
@@ -141,4 +143,12 @@ export function accessTokenList(state, integrationId) {
 
 export function accessToken(state, id) {
   return fromAccessTokens.accessToken(state.accessTokens, id);
+}
+
+export function suiteScriptTiles(state, connectionId) {
+  return fromSuiteScript.tiles(state.suiteScript, connectionId);
+}
+
+export function suiteScriptIntegrations(state, connectionId) {
+  return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }

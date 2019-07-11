@@ -52,6 +52,11 @@ export default (state = {}, action) => {
     return state;
   }
 
+  // skip all SuiteScript unification resources
+  if (resourceType && resourceType.startsWith('suitescript/connections/')) {
+    return state;
+  }
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };

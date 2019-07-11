@@ -132,9 +132,6 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   };
 };
 
-// TODO: is this fn available in an existing package?
-// if so, use that instead, otherwise move this into a util file.
-
 const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // TODO: We are assuming this factory applies defaults to edit exports
   // no create export has been considered here
