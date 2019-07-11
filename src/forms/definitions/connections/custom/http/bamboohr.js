@@ -1,6 +1,8 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'http',
+    '/assistant': 'bamboohr',
     '/http/auth/type': 'custom',
     '/http/baseURI': `https://api.bamboohr.com/api/gateway.php/${
       formValues['/http/bamboohrSubdomain']
@@ -8,8 +10,6 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v1/employees/directory',
     '/http/ping/method': 'GET',
-    '/type': 'http',
-    '/assistant': 'bamboohr',
     '/http/headers': [
       { name: 'Accept', value: 'application/json' },
       {
