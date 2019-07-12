@@ -191,9 +191,8 @@ describe('stage selectors', () => {
 
       state = reducer(state, actions.resource.patchStaged(id, patch));
 
-      console.log('see state ', JSON.stringify(state));
       state = reducer(state, actions.resource.commitConflict(id, conflict));
-      console.log('see state new one ', JSON.stringify(state));
+
       expect(selectors.stagedResource(state, id)).toEqual({
         patch,
         conflict,

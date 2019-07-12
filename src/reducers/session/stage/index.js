@@ -54,8 +54,13 @@ export default (state = {}, action) => {
         // if there are no more patches matching the scope
         // lets update the timestamp to the last patch
         if (!lastChangeUpdated)
-          newState[id].lastChange =
-            newState[id].patch[newState[id].patch.length - 1].timestamp;
+          if (newState[id].patch.length > 0)
+            newState[id].lastChange =
+              newState[id].patch[newState[id].patch.length - 1].timestamp;
+          else {
+            delete newState[id].patch;
+            delete newState[id].lastChange;
+          }
 
         return newState;
       }
@@ -79,12 +84,17 @@ export default (state = {}, action) => {
         lastChange: timestamp,
         patch: [...((newState[id] && newState[id].patch) || [])],
       };
+      // inserting the same field twice causes the previous patch to be ignored
+      // TODO: a better way to deal with partial patches is required...
+      // perhaps apply partial patches to only editor changes
 
       // removing all partial patches
       newPatch.forEach(newPatch => {
-        newState[id].patch = newState[id].patch.filter(
-          patch => patch.path !== newPatch.path
-        );
+        // ignore the partial patch mechanism for metadata changes
+        if (!newPatch.path.startsWith('/customForm'))
+          newState[id].patch = newState[id].patch.filter(
+            patch => patch.path !== newPatch.path
+          );
       });
 
       const scopedPatchWithTimestamp = scope
@@ -145,10 +155,14 @@ export function stagedResource(state, id, scope) {
   let updatedPatches;
 
   if (scope)
-    updatedPatches = state[id].patch
-      .filter(patch => patch.scope === scope)
-      .map(deleteTimeStampScope);
-  else updatedPatches = state[id].patch.map(deleteTimeStampScope);
+    updatedPatches =
+      state[id].patch &&
+      state[id].patch
+        .filter(patch => patch.scope === scope)
+        .map(deleteTimeStampScope);
+  else
+    updatedPatches =
+      state[id].patch && state[id].patch.map(deleteTimeStampScope);
 
   return { ...state[id], patch: updatedPatches };
 }

@@ -798,7 +798,7 @@ export function resourceData(state, resourceType, id, scope) {
 
   if (!master) return {};
 
-  const { patch, conflict } = fromSession.stagedResource(
+  const { patch, lastChange, conflict } = fromSession.stagedResource(
     state.session,
     id,
     scope
@@ -821,6 +821,7 @@ export function resourceData(state, resourceType, id, scope) {
   const data = {
     master,
     patch,
+    lastChange,
     merged: merged || master,
   };
 

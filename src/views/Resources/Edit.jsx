@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
+import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -106,9 +107,6 @@ const prettyDate = dateString => {
   dates: {
     color: theme.palette.text.secondary,
   },
-  editButton: {
-    float: 'right',
-  },
 }))
 class Edit extends Component {
   state = {
@@ -160,7 +158,7 @@ class Edit extends Component {
       // handleCommitChanges,
     } = this.props;
     const { editMode, showEditor, formKey } = this.state;
-    const { /* master , */ merged, patch, conflict, scope } = metaChanges;
+    const { /* master , */ merged, lastChange, conflict, scope } = metaChanges;
     const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
       resourceType
     );
@@ -199,77 +197,80 @@ class Edit extends Component {
             }}
           />
         )}
-        {allowsCustomForm && (
-          <FormControlLabel
-            value="top"
-            onChange={this.handleToggleEdit}
-            control={<Switch color="primary" />}
-            label="Edit"
-            labelPlacement="top"
-          />
-        )}
-        {editMode && (
-          <div>
-            <Button
-              className={classes.editButton}
-              size="small"
-              color="primary"
-              disabled={metaPatches === 0}
-              onClick={handleCommitMetaChanges}>
-              Save form
-            </Button>
-            <Button
-              className={classes.editButton}
-              size="small"
-              color="primary"
-              onClick={() => {
-                handleUndoAllMetaChanges();
-                this.handleRemountResourceComponent();
-              }}>
-              Cancel Meta Changes
-            </Button>
-            <Button
-              className={classes.editButton}
-              size="small"
-              color="primary"
-              onClick={this.handleToggleEditor}>
-              JSON
-            </Button>
-            <HooksButton
-              resourceId={id}
-              resourceType={resourceType}
-              className={classes.editButton}
-            />
+
+        <Grid container>
+          <Grid item xs={6}>
+            <Typography variant="h5">
+              {type
+                ? `${toName(type, true)} ${toName(resourceType, false, -1)}`
+                : toName(resourceType, true, -1)}
+            </Typography>
+
+            <Typography variant="caption" className={classes.dates}>
+              Last Modified: {prettyDate(merged.lastModified)}
+            </Typography>
+
             {metaPatches > 0 && (
-              <Button
-                className={classes.editButton}
-                size="small"
-                color="primary"
-                onClick={() => {
-                  handleUndoChange();
-                  this.handleRemountResourceComponent();
-                }}>
-                Undo({metaPatches})
-              </Button>
+              <Typography variant="caption" className={classes.dates}>
+                Unsaved changes made <TimeAgo date={lastChange} />.
+              </Typography>
             )}
-          </div>
-        )}
-        <Typography variant="h5">
-          {type
-            ? `${toName(type, true)} ${toName(resourceType, false, -1)}`
-            : toName(resourceType, true, -1)}
-        </Typography>
-
-        <Typography variant="caption" className={classes.dates}>
-          Last Modified: {prettyDate(merged.lastModified)}
-        </Typography>
-
-        {metaPatches > 0 && (
-          <Typography variant="caption" className={classes.dates}>
-            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} />.
-          </Typography>
-        )}
-
+          </Grid>
+          <Grid item xs={6}>
+            {allowsCustomForm && (
+              <FormControlLabel
+                className={classes.simpleSpacing}
+                onChange={this.handleToggleEdit}
+                control={<Switch color="primary" />}
+                label="Edit"
+                labelPlacement="start"
+              />
+            )}
+            {editMode && (
+              <div>
+                {metaPatches > 0 && (
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => {
+                      handleUndoChange();
+                      this.handleRemountResourceComponent();
+                    }}>
+                    Undo({metaPatches})
+                  </Button>
+                )}
+                <HooksButton
+                  resourceId={id}
+                  resourceType={resourceType}
+                  className={classes.editButton}
+                />
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={this.handleToggleEditor}>
+                  JSON
+                </Button>
+                <Button
+                  size="small"
+                  color="primary"
+                  disabled={metaPatches === 0}
+                  onClick={handleCommitMetaChanges}>
+                  Save form
+                </Button>
+                <Button
+                  size="small"
+                  color="secondary"
+                  disabled={metaPatches === 0}
+                  onClick={() => {
+                    handleUndoAllMetaChanges();
+                    this.handleRemountResourceComponent();
+                  }}>
+                  Cancel Meta Changes
+                </Button>
+              </div>
+            )}
+          </Grid>
+        </Grid>
         {connection && (
           <Link
             key="conn"
