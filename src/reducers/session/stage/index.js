@@ -1,8 +1,9 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, id, patch: newPatch, conflict } = action;
+  const { type, id, patch: newPatch, conflict, scope } = action;
   const newState = { ...state };
+  const timestamp = Date.now();
 
   switch (type) {
     case actionTypes.RESOURCE.STAGE_CLEAR:
@@ -13,9 +14,15 @@ export default (state = {}, action) => {
 
       newState[id] = { ...newState[id] };
 
-      // drop all staged patches.
-      delete newState[id].patch;
-      delete newState[id].lastChange;
+      if (scope) {
+        newState[id].patch = newState[id].patch.filter(
+          patch => patch.scope !== scope
+        );
+      } else {
+        // drop all staged patches.
+        delete newState[id].patch;
+        delete newState[id].lastChange;
+      }
 
       return newState;
 
@@ -27,11 +34,40 @@ export default (state = {}, action) => {
 
       newState[id] = { ...newState[id], patch: [...newState[id].patch] };
 
+      if (scope) {
+        let elementFound = false;
+        let lastChangeUpdated = false;
+
+        for (let i = newState[id].patch.length - 1; i >= 0; i -= 1) {
+          if (newState[id].patch[i].scope === scope) {
+            if (!elementFound) {
+              newState[id].patch.splice(i, 1);
+              elementFound = true;
+            } else {
+              lastChangeUpdated = true;
+              newState[id].lastChange = newState[id].patch[i].timestamp;
+              break;
+            }
+          }
+        }
+
+        // if there are no more patches matching the scope
+        // lets update the timestamp to the last patch
+        if (!lastChangeUpdated)
+          newState[id].lastChange =
+            newState[id].patch[newState[id].patch.length - 1].timestamp;
+
+        return newState;
+      }
+
       // drop last patch.
       if (newState[id].patch.length > 1) {
         newState[id].patch.pop();
+        newState[id].lastChange =
+          newState[id].patch[newState[id].patch.length - 1].timestamp;
       } else {
         delete newState[id].patch;
+        delete newState[id].lastChange;
       }
 
       return newState;
@@ -40,29 +76,37 @@ export default (state = {}, action) => {
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState[id] = {
         ...newState[id],
-        lastChange: Date.now(),
+        lastChange: timestamp,
         patch: [...((newState[id] && newState[id].patch) || [])],
       };
 
-      // TODO: Should I could make the code support several patches
-      // if the previous patch is modifying the same path as the prior patch,
-      // remove the prior patch so we dont accumulate single character patches.
-      if (
-        newPatch.length === 1 &&
-        newState[id].patch.length > 0 &&
-        newState[id].patch[newState[id].patch.length - 1].path ===
-          newPatch[0].path
-      ) {
-        newState[id].patch.pop(); // throw away partial patch.
-      }
+      // removing all partial patches
+      newPatch.forEach(newPatch => {
+        newState[id].patch = newState[id].patch.filter(
+          patch => patch.path !== newPatch.path
+        );
+      });
 
-      newState[id].patch = [...newState[id].patch, ...newPatch];
+      const scopedPatchWithTimestamp = scope
+        ? newPatch.map(patch => ({
+            ...patch,
+            timestamp,
+            scope,
+          }))
+        : newPatch.map(patch => ({
+            ...patch,
+            timestamp,
+          }));
+
+      newState[id].patch = [...newState[id].patch, ...scopedPatchWithTimestamp];
 
       return newState;
 
     case actionTypes.RESOURCE.STAGE_CONFLICT:
       newState[id] = newState[id] || {};
       newState[id] = { ...newState[id], conflict };
+
+      if (scope) newState[id] = { ...newState[id], scope };
 
       return newState;
 
@@ -74,6 +118,7 @@ export default (state = {}, action) => {
       newState[id] = { ...newState[id] };
 
       delete newState[id].conflict;
+      delete newState[id].scope;
 
       return newState;
 
@@ -82,12 +127,29 @@ export default (state = {}, action) => {
   }
 };
 
+function deleteTimeStampScope(patch) {
+  const patchCopy = { ...patch };
+
+  delete patchCopy.timestamp;
+  delete patchCopy.scope;
+
+  return patchCopy;
+}
+
 // #region PUBLIC SELECTORS
-export function stagedResource(state, id) {
-  if (!state || !id) {
+export function stagedResource(state, id, scope) {
+  if (!state || !id || !state[id]) {
     return {};
   }
 
-  return state[id] || {};
+  let updatedPatches;
+
+  if (scope)
+    updatedPatches = state[id].patch
+      .filter(patch => patch.scope === scope)
+      .map(deleteTimeStampScope);
+  else updatedPatches = state[id].patch.map(deleteTimeStampScope);
+
+  return { ...state[id], patch: updatedPatches };
 }
 // #endregion

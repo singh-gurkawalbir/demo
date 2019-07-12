@@ -793,12 +793,16 @@ export function resourceStatus(
   };
 }
 
-export function resourceData(state, resourceType, id) {
+export function resourceData(state, resourceType, id, scope) {
   const master = resource(state, resourceType, id);
 
   if (!master) return {};
 
-  const { patch, conflict } = fromSession.stagedResource(state.session, id);
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
   // console.log('patch:', patch);
   let merged;
 

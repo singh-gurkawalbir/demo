@@ -57,7 +57,9 @@ describe('stage reducers', () => {
       expect(state[id].patch.length).toEqual(2);
 
       state = reducer(state, actions.resource.undoStaged(id));
-      expect(state[id].patch).toEqual([patch]);
+      expect(state[id].patch).toEqual([
+        { ...patch, timestamp: expect.any(Number) },
+      ]);
     });
   });
 
@@ -68,7 +70,7 @@ describe('stage reducers', () => {
       const state = reducer(undefined, actions.resource.patchStaged(id, patch));
 
       expect(state[id]).toEqual({
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         lastChange: expect.any(Number), // date is epoc date
       });
     });
@@ -83,7 +85,10 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.patchStaged(id, patch2));
 
       expect(state[id]).toEqual({
-        patch: [...patch1, ...patch2],
+        patch: [
+          { ...patch1[0], timestamp: expect.any(Number) },
+          { ...patch2[0], timestamp: expect.any(Number) },
+        ],
         lastChange: expect.any(Number), // date is epoc date
       });
     });
@@ -98,7 +103,14 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.patchStaged(id, patch2));
 
       expect(state[id]).toEqual({
-        patch: [{ op: 'replace', path: '/name', value: '123' }],
+        patch: [
+          {
+            op: 'replace',
+            path: '/name',
+            value: '123',
+            timestamp: expect.any(Number),
+          },
+        ],
         lastChange: expect.any(Number), // date is epoc date
       });
     });
@@ -126,7 +138,7 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.commitConflict(id, conflict));
 
       expect(state[id]).toEqual({
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
         lastChange: expect.any(Number), // date is epoc date
       });
@@ -178,8 +190,10 @@ describe('stage selectors', () => {
       let state;
 
       state = reducer(state, actions.resource.patchStaged(id, patch));
-      state = reducer(state, actions.resource.commitConflict(id, conflict));
 
+      console.log('see state ', JSON.stringify(state));
+      state = reducer(state, actions.resource.commitConflict(id, conflict));
+      console.log('see state new one ', JSON.stringify(state));
       expect(selectors.stagedResource(state, id)).toEqual({
         patch,
         conflict,

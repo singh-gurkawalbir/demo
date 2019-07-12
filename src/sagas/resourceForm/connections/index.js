@@ -4,7 +4,7 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
-import { createFormValuesPatchSet, submitFormValues } from '../index';
+import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 
@@ -127,6 +127,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
     yield call(commitStagedChanges, {
       resourceType: 'connections',
       id: resourceId,
+      scope: SCOPES.VALUE,
     });
   } catch (e) {
     // could not save the resource...lets just return
@@ -138,6 +139,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
     selectors.resourceData,
     'connections',
     resourceId
+    // A scope is not required for the conflict
   );
 
   // if there is conflict let conflict dialog show up

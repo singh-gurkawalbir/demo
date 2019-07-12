@@ -8,6 +8,7 @@ import TimeAgo from 'react-timeago';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import CodeEditor from '../../components/CodeEditor';
+import { SCOPES } from '../../sagas/resourceForm';
 
 const mapStateToProps = (state, ownProps) => {
   const { id, resourceType } = ownProps.match.params;
@@ -33,8 +34,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(id, patch));
-      dispatch(actions.resource.commitStaged(resourceType, id));
+      dispatch(actions.resource.patchStaged(id, patch, SCOPES.VALUE));
+      dispatch(actions.resource.commitStaged(resourceType, id, SCOPES.VALUE));
     },
   };
 };
