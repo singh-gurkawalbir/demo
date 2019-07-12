@@ -54,6 +54,8 @@ export const ResourceFormFactory = props => {
     handleInitForm();
 
     return handleClearResourceForm;
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.resource._id]);
 
   const {

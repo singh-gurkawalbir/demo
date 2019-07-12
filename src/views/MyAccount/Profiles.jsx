@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -66,13 +67,8 @@ const mapDispatchToProps = dispatch => ({
     height: '50%',
     width: '70%',
   },
-  editEmailButton: {
-    flex: 1,
-    display: 'inline-block',
-    height: '50%',
-    width: '50%',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+  emailField: {
+    flexGrow: 4,
   },
 }))
 class ProfilesComponent extends Component {
@@ -143,33 +139,37 @@ class ProfilesComponent extends Component {
             type="email"
             margin="normal"
             value={this.state.email}
-            className={classes.textField}
+            className={classNames(classes.textField, classes.emailField)}
             disabled
           />
-
-          <Button
-            color="secondary"
-            variant="contained"
-            className={classes.editEmailButton}
-            onClick={() => this.handleOpenModal('openEmailModal')}>
-            Edit Email
-          </Button>
+          <div>
+            <Button
+              color="secondary"
+              variant="contained"
+              className={classes.editEmailButton}
+              onClick={() => this.handleOpenModal('openEmailModal')}>
+              Edit Email
+            </Button>
+          </div>
         </div>
         <ChangeEmail
           show={this.state.openEmailModal}
           onhandleClose={() => this.handleCloseModal('openEmailModal')}
           handleChangePassword={handleChangePassword}
         />
-        <div className={classes.textField}>
-          <InputLabel>
-            Edit Password:
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={() => this.handleOpenModal('openPasswordModal')}>
-              Edit Password
-            </Button>
-          </InputLabel>
+        <div className={classes.editRowElement}>
+          <div>
+            <InputLabel>
+              Edit Password:
+              <Button
+                color="secondary"
+                variant="contained"
+                style={{ marginLeft: '10px' }}
+                onClick={() => this.handleOpenModal('openPasswordModal')}>
+                Edit Password
+              </Button>
+            </InputLabel>
+          </div>
         </div>
         <ChangePassword
           show={this.state.openPasswordModal}

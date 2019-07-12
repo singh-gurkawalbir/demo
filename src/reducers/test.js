@@ -1,5 +1,6 @@
 /* global describe, test, expect */
 import { advanceBy, advanceTo, clear } from 'jest-date-mock';
+import each from 'jest-each';
 import reducer, * as selectors from './';
 import actions from '../actions';
 import {
@@ -7,6 +8,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   TILE_STATUS,
+  SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
 import { COMM_STATES } from './comms';
 
@@ -250,7 +252,7 @@ describe('authentication selectors', () => {
 describe('Reducers in the root reducer', () => {
   test('should wipe out the redux store except for app and auth properties in a user logout action', () => {
     const someInitialState = {
-      profile: { email: 'sds' },
+      user: { profile: { email: 'sds' } },
     };
     const state = reducer(someInitialState, actions.auth.clearStore());
 
@@ -914,6 +916,162 @@ describe('commStatusByKey', () => {
 
     expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
       undefined
+    );
+  });
+});
+
+describe('publishedConnectors selector', () => {
+  const published = [{ _id: 'c1' }, { _id: 'c2' }];
+
+  test('should return suitescript connectors only, when state is undefined', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {},
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.publishedConnectors(state)).toEqual(
+      SUITESCRIPT_CONNECTORS
+    );
+  });
+  test('should return both suitescript and io connectors', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            published,
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.publishedConnectors(state)).toEqual(
+      published.concat(SUITESCRIPT_CONNECTORS)
+    );
+  });
+});
+
+describe('userAccessLevelOnConnection selector', () => {
+  test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
+    const state = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              },
+            ],
+            users: [],
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.userAccessLevelOnConnection(state, 'c1')).toEqual(
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER
+    );
+  });
+  describe('should return correct access level for org users', () => {
+    const accounts = [
+      {
+        _id: 'aShare1',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      },
+      {
+        _id: 'aShare2',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      },
+      {
+        _id: 'aShare3',
+        accessLevel: USER_ACCESS_LEVELS.TILE,
+        integrationAccessLevel: [
+          {
+            _integrationId: 'i1',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+          },
+          {
+            _integrationId: 'i2',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          },
+        ],
+      },
+    ];
+    const testCases = [];
+
+    testCases.push(
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        'any',
+        '',
+        'account level manage user',
+        'aShare1',
+      ],
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        'any',
+        '',
+        'account level monitor user',
+        'aShare2',
+      ],
+      [
+        INTEGRATION_ACCESS_LEVELS.MONITOR,
+        'c1',
+        ' (registed on an integration that user has monitor access)',
+        'tile level user',
+        'aShare3',
+      ],
+      [
+        INTEGRATION_ACCESS_LEVELS.MANAGE,
+        'c2',
+        ' (registed on an integration that user has manage access)',
+        'tile level user',
+        'aShare3',
+      ],
+      [
+        undefined,
+        'c4',
+        ' (not registed on any integration that user has access)',
+        'tile level user',
+        'aShare3',
+      ]
+    );
+    each(testCases).test(
+      'should return %s for %s%s connection for %s',
+      (expected, connectionId, description, userType, defaultAShareId) => {
+        const state = reducer(
+          {
+            user: {
+              profile: {},
+              preferences: { defaultAShareId },
+              org: {
+                accounts,
+              },
+            },
+            data: {
+              resources: {
+                integrations: [
+                  { _id: 'i1', _registeredConnectionIds: ['c1', 'c2'] },
+                  { _id: 'i2', _registeredConnectionIds: ['c2', 'c3'] },
+                ],
+              },
+            },
+          },
+          'some action'
+        );
+
+        expect(
+          selectors.userAccessLevelOnConnection(state, connectionId)
+        ).toEqual(expected);
+      }
     );
   });
 });

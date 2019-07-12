@@ -51,7 +51,12 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
 
-  useEffect(() => clearComms, []);
+  useEffect(
+    () => clearComms,
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return (
     <GenericConfirmDialog
@@ -92,6 +97,8 @@ const TestableForm = props => {
 
   useEffect(() => {
     clearComms();
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleSubmitAndShowConfirmDialog = values => {
     handleTestConnection(values);

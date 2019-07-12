@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from 'react';
+import { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import classNames from 'classnames';
 import { TILE_STATUS } from '../../utils/constants';
 
-@withStyles(() => ({
+const styles = () => ({
   default: {
     marginRight: 5,
     color: '#fff',
@@ -22,56 +22,56 @@ import { TILE_STATUS } from '../../utils/constants';
   offline_connections: {
     backgroundColor: '#F53D05',
   },
-}))
-export default class TileAction extends Component {
-  state = { hover: false };
-  handleOnMouseOver = () => {
-    this.setState({ hover: true });
-  };
-  handleOnMouseOut = () => {
-    this.setState({ hover: false });
-  };
-  render() {
-    const { classes, data } = this.props;
-    const { status, numError } = data;
-    const { hover } = this.state;
-    let label;
-    let statusClassName;
+});
 
-    switch (status) {
-      case TILE_STATUS.IS_PENDING_SETUP:
-        label = hover ? 'Continue Setup' : 'Pending Setup';
-        statusClassName = 'pending_setup';
-        break;
-      case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
-        label = hover ? 'Fix Connection' : 'Connection Down';
-        statusClassName = 'offline_connections';
-        break;
-      case TILE_STATUS.HAS_ERRORS:
-        label = hover
-          ? 'View Errors'
-          : `${numError} Error${numError > 0 ? 's' : ''}`;
-        statusClassName = 'errors';
-        break;
-      default:
-        label = hover ? 'View Dashboard' : 'Success';
-    }
+function TileAction({ classes, tile }) {
+  const [hover, setHover] = useState(false);
 
-    return (
-      <Fragment>
-        <Button
-          size="small"
-          color="primary"
-          onMouseOver={this.handleOnMouseOver}
-          onFocus={this.handleOnMouseOver}
-          onMouseOut={this.handleOnMouseOut}
-          onBlur={this.handleOnMouseOut}>
-          <Avatar
-            className={classNames(classes.default, classes[statusClassName])}
-          />
-          {label}
-        </Button>
-      </Fragment>
-    );
+  function handleOnMouseOver() {
+    setHover(true);
   }
+
+  function handleOnMouseOut() {
+    setHover(false);
+  }
+
+  const { status, numError } = tile;
+  let label;
+  let statusClassName;
+
+  switch (status) {
+    case TILE_STATUS.IS_PENDING_SETUP:
+      label = hover ? 'Continue Setup' : 'Pending Setup';
+      statusClassName = 'pending_setup';
+      break;
+    case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
+      label = hover ? 'Fix Connection' : 'Connection Down';
+      statusClassName = 'offline_connections';
+      break;
+    case TILE_STATUS.HAS_ERRORS:
+      label = hover
+        ? 'View Errors'
+        : `${numError} Error${numError > 0 ? 's' : ''}`;
+      statusClassName = 'errors';
+      break;
+    default:
+      label = hover ? 'View Dashboard' : 'Success';
+  }
+
+  return (
+    <Button
+      size="small"
+      color="primary"
+      onMouseOver={handleOnMouseOver}
+      onFocus={handleOnMouseOver}
+      onMouseOut={handleOnMouseOut}
+      onBlur={handleOnMouseOut}>
+      <Avatar
+        className={classNames(classes.default, classes[statusClassName])}
+      />
+      {label}
+    </Button>
+  );
 }
+
+export default withStyles(styles)(TileAction);
