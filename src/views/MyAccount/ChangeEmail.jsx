@@ -46,7 +46,12 @@ class ChangeEmail extends Component {
               <TextField id="newEmail" label="New Email" margin="normal" />
               <br />
 
-              <TextField id="password" label="Password" margin="normal" />
+              <TextField
+                id="password"
+                label="Password"
+                margin="normal"
+                type="password"
+              />
             </form>
             {`Note: we require your current password again to help safeguard your integrator.io account.`}
           </span>
