@@ -63,7 +63,7 @@ const ConnectedDynaEditor = connect(
 )(DynaScriptContent);
 const FieldWrappedDynaEditor = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaEditor {...props.fieldOpts} />
+    <ConnectedDynaEditor />
   </FieldWrapper>
 );
 

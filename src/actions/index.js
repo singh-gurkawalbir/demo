@@ -51,6 +51,8 @@ const api = {
 };
 // #region Resource Actions
 const resource = {
+  created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
+
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
 

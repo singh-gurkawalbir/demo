@@ -67,7 +67,7 @@ class FilteredResources extends Component {
                   <Button
                     aria-label="Add"
                     component={Link}
-                    to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
+                    to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}
                     className={classes.addResource}>
                     Add
                   </Button>
@@ -105,7 +105,7 @@ class FilteredResources extends Component {
             <Button
               onClick={handleMore(list.count + 2)}
               size="small"
-              variant="flat">
+              variant="text">
               Show more results ({list.filtered - list.count} left)
             </Button>
           )}

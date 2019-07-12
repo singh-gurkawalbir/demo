@@ -56,7 +56,7 @@ function DynaSelectApplication(props) {
 const SelectAppWithStyles = withStyles(styles)(DynaSelectApplication);
 const FieldWrappedDynaSelectApplication = props => (
   <FieldWrapper {...props}>
-    <SelectAppWithStyles {...props.fieldOpts} />
+    <SelectAppWithStyles />
   </FieldWrapper>
 );
 

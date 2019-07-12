@@ -110,7 +110,7 @@ const ConnectedDynaSelectResource = connect(
 )(DynaSelectResource);
 const FieldWrappedDynaSelectResource = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaSelectResource {...props.fieldOpts} />
+    <ConnectedDynaSelectResource />
   </FieldWrapper>
 );
 

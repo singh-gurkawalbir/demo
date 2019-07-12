@@ -610,19 +610,20 @@ export function resourceStatus(
 }
 
 export function resourceData(state, resourceType, id) {
+  if (!state) return {};
+
   const master = resource(state, resourceType, id);
-
-  if (!master) return {};
-
   const { patch, conflict } = fromSession.stagedResource(state.session, id);
-  // console.log('patch:', patch);
+
+  if (!master && !patch) return {};
+
   let merged;
 
   if (patch) {
     // If the patch is not deep cloned, its values are also mutated and
     // on some operations can corrupt the merged result.
     const patchResult = jsonPatch.applyPatch(
-      jsonPatch.deepClone(master),
+      master ? jsonPatch.deepClone(master) : {},
       jsonPatch.deepClone(patch)
     );
 
@@ -691,6 +692,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
 }
 
 // #endregion
+
 // #region Session metadata selectors
 export function optionsFromMetadata(
   state,
@@ -755,6 +757,11 @@ export function metadataOptionsAndResources(
     isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
   };
 }
+
+export function createdResourceId(state, tempId) {
+  return fromSession.createdResourceId(state && state.session, tempId);
+}
+
 // #endregion Session metadata selectors
 
 export function commStatusByKey(state, key) {

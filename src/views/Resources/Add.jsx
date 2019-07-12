@@ -1,12 +1,17 @@
+// import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import { useDispatch } from 'react-redux';
+// import Button from '@material-ui/core/Button';
 import actions from '../../actions';
+import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import applications from '../../constants/applications';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
+import { defaultPatchSetConverter } from '../../forms/utils';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   actions: {
@@ -23,11 +28,47 @@ function Add(props) {
   const { classes, match } = props;
   const { id, resourceType } = match.params;
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const createdId = useSelector(state =>
+    selectors.createdResourceId(state, id)
+  );
 
-  function handleSave(formValues) {
-    const patchSet = formValues;
+  // useEffect(() => {
+  //   if (createdId) {
+  //     enqueueSnackbar({ message: 'Resource Created' });
+  //   }
+  // }, [createdId, enqueueSnackbar]);
+
+  if (createdId) {
+    enqueueSnackbar({ message: 'Resource Created' });
+
+    return (
+      <Redirect
+        to={{
+          pathname: `/pg/resources/${resourceType}/edit/${createdId}`,
+        }}
+      />
+    );
+  }
+
+  function handleSave({ application, ...rest }) {
+    const app = applications.find(a => a.id === application) || {};
+    const adaptorType =
+      app.type.toUpperCase() +
+      resourceType[0].toUpperCase() +
+      RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType].slice(1);
+    const newValues = { ...rest, '/adaptorType': adaptorType };
+
+    if (app.assistant) {
+      newValues['/assistant'] = app.assistant;
+    }
+
+    const patchSet = defaultPatchSetConverter(newValues);
+
+    // console.log(newValues, patchSet);
 
     dispatch(actions.resource.patchStaged(id, patchSet));
+    dispatch(actions.resource.commitStaged(resourceType, id));
   }
 
   const visibleWhen = [
@@ -46,12 +87,8 @@ function Add(props) {
     required: true,
   };
   const name = {
-    // TODO: Create a custom "DynaField" called "DynaResourceName" that
-    // will check the options (set by the options handler below) to pre-set
-    // the resource name on app changes... alternatively use the DynaText
-    // and modify it to support "options" for the value...
     id: 'name',
-    name: 'name',
+    name: '/name',
     type: 'text',
     label: 'Name',
     defaultValue: '',
@@ -61,15 +98,17 @@ function Add(props) {
   };
   const description = {
     id: 'description',
-    name: 'description',
+    name: '/description',
     type: 'text',
+    multiline: true,
+    maxRows: 5,
     label: 'Description',
     defaultValue: '',
     visibleWhen,
   };
   const connection = {
     id: 'connection',
-    name: 'connectionId',
+    name: '/_connectionId',
     type: 'selectresource',
     resourceType: 'connections',
     label: 'Connection',
@@ -106,18 +145,11 @@ function Add(props) {
   return (
     <div key={id}>
       <Typography variant="h5">
-        New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR(resourceType)}`}
+        New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
       </Typography>
 
       <DynaForm fieldMeta={{ fields }} optionsHandler={optionsHandler}>
         <div className={classes.actions}>
-          <Button
-            // onClick={onCancelClick}
-            className={classes.actionButton}
-            size="small"
-            variant="contained">
-            Cancel
-          </Button>
           <DynaSubmit className={classes.actionButton} onClick={handleSave}>
             Save
           </DynaSubmit>

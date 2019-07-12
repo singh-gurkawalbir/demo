@@ -14,9 +14,9 @@ export default [
   { id: 'Webhook', name: 'Webhook', type: 'webhook' },
 
   // databases
-  { id: 'mongodb', name: 'mongodb', type: 'mongodb' },
+  { id: 'mongodb', name: 'MongoDB', type: 'mongodb' },
   { id: 'mssql', name: 'mssql', type: 'mssql' },
-  { id: 'mysql', name: 'mysql', type: 'mlsql' },
+  { id: 'mysql', name: 'MySql', type: 'mlsql' },
   { id: 'postgresql', name: 'postgresql', type: 'postgresql' },
 
   // Assistants
@@ -220,7 +220,7 @@ export default [
   },
   { id: 'intercom', name: 'intercom', type: 'http', assistant: 'intercom' },
   { id: 'jet', name: 'jet', type: 'http', assistant: 'jet' },
-  { id: 'jira', name: 'jira', type: 'http', assistant: 'jira' },
+  { id: 'jira', name: 'Jira', type: 'rest', assistant: 'jira' },
   { id: 'jobvite', name: 'jobvite', type: 'http', assistant: 'jobvite' },
   { id: 'klaviyo', name: 'klaviyo', type: 'http', assistant: 'klaviyo' },
   {

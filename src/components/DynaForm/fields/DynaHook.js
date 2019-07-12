@@ -136,7 +136,7 @@ const ConnectedDynaHook = connect(
 )(DynaHook);
 const FieldWrappedDynaHook = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaHook {...props.fieldOpts} />
+    <ConnectedDynaHook />
   </FieldWrapper>
 );
 
