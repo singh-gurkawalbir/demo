@@ -1,59 +1,10 @@
 /* global describe, test, expect */
 import { call, put, select } from 'redux-saga/effects';
 import actions, { availableResources } from '../../actions';
-import {
-  commitStagedChanges,
-  getResource,
-  getResourceCollection,
-  getRequestOptions,
-} from './';
+import { commitStagedChanges, getResource, getResourceCollection } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
 import * as selectors from '../../reducers';
-import { ACCOUNT_IDS } from '../../utils/constants';
-
-describe('getRequestOptions saga', () => {
-  describe('checks for org owner.', () => {
-    test('should not add integrator-ashareid header for paths that do not need it.', () => {
-      const saga = getRequestOptions('/licenses');
-
-      expect(saga.next().value).toEqual({
-        headers: {},
-      });
-      expect(saga.next().done).toEqual(true);
-    });
-    test('should not add integrator-ashareid header for paths that do need it for org users.', () => {
-      const saga = getRequestOptions('/exports');
-
-      expect(saga.next().value).toEqual(select(selectors.userPreferences));
-      expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual({
-        headers: {},
-      });
-      expect(saga.next().done).toEqual(true);
-    });
-  });
-  describe('checks for org users.', () => {
-    test('should not add integrator-ashareid header for paths that do not need it.', () => {
-      const saga = getRequestOptions('/licenses');
-
-      expect(saga.next().value).toEqual({
-        headers: {},
-      });
-      expect(saga.next().done).toEqual(true);
-    });
-    test('should add integrator-ashareid header for paths that need it.', () => {
-      const saga = getRequestOptions('/exports');
-
-      expect(saga.next().value).toEqual(select(selectors.userPreferences));
-      expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual({
-        headers: {
-          'integrator-ashareid': 'ashare1',
-        },
-      });
-      expect(saga.next().done).toEqual(true);
-    });
-  });
-});
 
 describe('commitStagedChanges saga', () => {
   const id = 1;
@@ -83,12 +34,9 @@ describe('commitStagedChanges saga', () => {
 
       expect(
         saga.next({ master: { lastModified: 50 }, patch: true }).value
-      ).toEqual(call(getRequestOptions, `/${resourceType}/${id}`));
-
-      expect(saga.next({ headers: {} }).value).toEqual(
+      ).toEqual(
         call(apiCallWithRetry, {
           path: `/${resourceType}/${id}`,
-          opts: { headers: {} },
         })
       );
 
@@ -126,21 +74,13 @@ describe('commitStagedChanges saga', () => {
       const origin = { id, lastModified: 100 };
       const merged = { id, lastModified: 100 };
       const path = `/${resourceType}/${id}`;
-      const requestOptions = {
-        headers: {
-          'integrator-ashareid': 'ashare1',
-        },
-      };
       const getCallEffect = saga.next({
         master: { lastModified: 100 },
         merged,
         patch: true,
       }).value;
 
-      expect(getCallEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next(requestOptions).value).toEqual(
-        call(apiCallWithRetry, { path, opts: requestOptions })
-      );
+      expect(getCallEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const putCallEffect = saga.next(merged, origin).value;
 
@@ -150,7 +90,6 @@ describe('commitStagedChanges saga', () => {
           opts: {
             method: 'put',
             body: merged,
-            headers: requestOptions.headers,
           },
         })
       );
@@ -181,24 +120,18 @@ describe('commitStagedChanges saga', () => {
         select(selectors.resourceData, resourceType, tempId)
       );
 
-      const getCallEffect = saga.next({
-        master: null,
-        merged: newResource,
-        patch: true,
-      }).value;
-      const requestOptions = {
-        headers: {
-          'integrator-ashareid': 'ashare1',
-        },
-      };
       const path = `/${resourceType}`;
 
-      expect(getCallEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next(requestOptions).value).toEqual(
+      expect(
+        saga.next({
+          master: null,
+          merged: newResource,
+          patch: true,
+        }).value
+      ).toEqual(
         call(apiCallWithRetry, {
           path,
           opts: {
-            ...requestOptions,
             method: 'post',
             body: newResource,
           },
@@ -240,8 +173,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const effect = saga.next(mockResource).value;
 
@@ -262,8 +194,7 @@ availableResources.forEach(type => {
       // act
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const final = saga.throw(status500);
 
@@ -283,8 +214,7 @@ availableResources.forEach(type => {
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const effect = saga.next(mockCollection).value;
 
@@ -305,8 +235,7 @@ availableResources.forEach(type => {
       const path = `/${type}`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(getRequestOptions, path));
-      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
       const final = saga.throw(status500);
 
