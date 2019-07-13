@@ -23,12 +23,14 @@ const mapStateToProps = (state, { match }) => {
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const formState = selectors.resourceFormState(state, resourceType, id);
+  const newResourceId = selectors.createdResourceId(state, id);
 
   return {
     resourceType,
     resourceData,
     connection,
     id,
+    newResourceId,
     fieldMeta: formState.fieldMeta,
   };
 };
@@ -140,8 +142,17 @@ class Edit extends Component {
       classes,
       handlePatchFormMeta,
       handleUndoChange,
+      newResourceId,
       // handleCommitChanges,
     } = this.props;
+
+    // once a new resource (id.startsWith('new-')), has been committed,
+    // we need to redirect to the resource using the correct id from
+    // the persistence layer...
+    if (newResourceId) {
+      this.props.history.push(`/pg/resources/exports/edit/${newResourceId}`);
+    }
+
     const { editMode, showEditor, formKey } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
     const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
