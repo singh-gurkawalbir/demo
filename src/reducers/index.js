@@ -873,10 +873,13 @@ export function affectedResourcesAndUsersFromAuditLogs(
     resourceId
   );
 }
-
 // #endregion
 
 // #region Session metadata selectors
+export function stagedResource(state, id) {
+  return fromSession.stagedResource(state && state.session, id);
+}
+
 export function optionsFromMetadata(
   state,
   connectionId,

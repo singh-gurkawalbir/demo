@@ -1,17 +1,16 @@
 // import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 // import Button from '@material-ui/core/Button';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+// import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import applications from '../../constants/applications';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import { defaultPatchSetConverter } from '../../forms/utils';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+// import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   actions: {
@@ -28,10 +27,10 @@ function Add(props) {
   const { classes, match } = props;
   const { id, resourceType } = match.params;
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const createdId = useSelector(state =>
-    selectors.createdResourceId(state, id)
-  );
+  // const [enqueueSnackbar] = useEnqueueSnackbar();
+  // const createdId = useSelector(state =>
+  //   selectors.createdResourceId(state, id)
+  // );
 
   // useEffect(() => {
   //   if (createdId) {
@@ -39,17 +38,17 @@ function Add(props) {
   //   }
   // }, [createdId, enqueueSnackbar]);
 
-  if (createdId) {
-    enqueueSnackbar({ message: 'Resource Created' });
-
-    return (
-      <Redirect
-        to={{
-          pathname: `/pg/resources/${resourceType}/edit/${createdId}`,
-        }}
-      />
-    );
-  }
+  // if (createdId) {
+  //   enqueueSnackbar({ message: 'Resource Created' });
+  //
+  //   return (
+  //     <Redirect
+  //       to={{
+  //         pathname: `/pg/resources/${resourceType}/edit/${createdId}`,
+  //       }}
+  //     />
+  //   );
+  // }
 
   function handleSave({ application, ...rest }) {
     const app = applications.find(a => a.id === application) || {};
@@ -57,7 +56,12 @@ function Add(props) {
       app.type.toUpperCase() +
       resourceType[0].toUpperCase() +
       RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType].slice(1);
-    const newValues = { ...rest, '/adaptorType': adaptorType };
+    const newValues = {
+      ...rest,
+      '/_id': id,
+      '/adaptorType': adaptorType,
+      // [`/${app.type}`]: { method: 'GET' },
+    };
 
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
@@ -68,7 +72,8 @@ function Add(props) {
     // console.log(newValues, patchSet);
 
     dispatch(actions.resource.patchStaged(id, patchSet));
-    dispatch(actions.resource.commitStaged(resourceType, id));
+    props.history.push(`/pg/resources/exports/edit/${id}`);
+    // dispatch(actions.resource.commitStaged(resourceType, id));
   }
 
   const visibleWhen = [

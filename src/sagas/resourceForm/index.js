@@ -52,8 +52,8 @@ export function* runHook({ hook, data }) {
   const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
 
   // okay extracting script from the session
-  // if it isnt there make a call to receive the resource
-  // Arent we loading all the scripts?
+  // if it isn't there, make a call to receive the resource
+  // Aren't we loading all the scripts?
   if (!merged) return; // nothing to do.
 
   let code = merged.content;
@@ -125,6 +125,8 @@ export function* createFormValuesPatchSet({
     resource,
   });
 
+  // console.log('patch set', patchSet);
+
   return { patchSet, finalValues };
 }
 
@@ -137,8 +139,16 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 
   if (patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
-    // we are commiting both the values but not the fieldmeta changes
-    // ideally we would like to ,when the endpoint comes up
+  }
+
+  const { patch } = yield select(selectors.stagedResource, resourceId);
+
+  // In most cases there would be no other pending staged changes, since most
+  // times a patch is followed by an immediate commit.  If however some
+  // component has staged some changes, even if the patchSet above is empty,
+  // we need to check the store for these un-committed ones and still call
+  // the commit saga.
+  if (patch.length) {
     yield call(commitStagedChanges, { resourceType, id: resourceId });
   }
 
@@ -153,6 +163,8 @@ export function* initFormValues({ resourceType, resourceId }) {
     resourceType,
     resourceId
   );
+
+  // console.log('initFormValues', resourceType, resourceId, resource);
 
   if (!resource) return; // nothing to do.
 
@@ -203,7 +215,7 @@ export function* initFormValues({ resourceType, resourceId }) {
   );
 }
 
-// Maybe the session could be stale...and the presubmit values might
+// Maybe the session could be stale...and the pre-submit values might
 // be excluded
 // we want to init the customForm metadata with a copy of the default metadata
 // we would normally send to the DynaForm component.
@@ -236,7 +248,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType
   );
   // I have fixed it with a flattened fields...but it does cascade
-  // form visibiilty rules to its childern
+  // form visibility rules to its children
   const patchSet = [
     {
       op: 'replace',

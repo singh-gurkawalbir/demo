@@ -131,7 +131,6 @@ export const getMissingPatchSet = (paths, resource) => {
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
   if (!patchSet) return patchSet;
-
   const sanitizedSet = patchSet.reduce((s, patch) => {
     if (patch.op === 'replace') {
       const field = getFieldByName({ name: patch.path, fieldMeta });
@@ -167,7 +166,7 @@ export const replaceField = ({ meta, field }) => {
         // already be dealing with a copy.
         meta.fields[i] = field; // eslint-disable-line
 
-        // break as soon as replacement occurres.
+        // break as soon as replacement occurs.
         return meta;
       }
     }
