@@ -203,10 +203,8 @@ describe('user reducers', () => {
       const state = reducer(undefined, receivedPreferences);
 
       expect(selectors.userPreferences(state)).toEqual({
-        defaultAShareId: '123',
-        timeFormat: 'something',
+        ...invitedUserAccountPreferences,
         dateFormat: defaultDateFormat,
-        themeName: 'fancy',
       });
     });
   });

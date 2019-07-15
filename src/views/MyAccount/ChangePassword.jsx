@@ -48,12 +48,14 @@ class ChangePassword extends Component {
                 id="currentPassword"
                 label="Current Password"
                 margin="normal"
+                type="password"
               />
               <br />
               <TextField
                 id="newPassword"
                 label="New Password"
                 margin="normal"
+                type="password"
               />
             </form>
           </span>
