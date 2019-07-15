@@ -136,8 +136,8 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
-export function userOrigPreferences(state) {
-  return (state && state.data && state.data.preferences) || {};
+export function userOwnPreferences(state) {
+  return fromUser.userOwnPreferences(state && state.user);
 }
 
 export function userProfilePreferencesProps(state) {

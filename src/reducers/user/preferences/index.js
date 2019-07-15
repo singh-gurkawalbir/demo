@@ -57,18 +57,7 @@ export default (state = { environment: 'production' }, action) => {
 export function userPreferences(state) {
   if (!state) return {};
 
-  const { defaultAShareId, accounts = {} } = state;
-  let mergedPreferences;
-
-  if (accounts && defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
-    mergedPreferences = { ...state, ...accounts[defaultAShareId] };
-  } else {
-    mergedPreferences = { ...state };
-  }
-
-  delete mergedPreferences.accounts;
-
-  return mergedPreferences;
+  return { ...state };
 }
 
 export function appTheme(state) {
