@@ -4,6 +4,7 @@ import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
 import accessTokens, * as fromAccessTokens from './accessTokens';
+import jobs, * as fromJobs from './jobs';
 import suiteScript, * as fromSuiteScript from './suiteScript';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../utils/constants';
 
@@ -12,6 +13,7 @@ export default combineReducers({
   integrationAShares,
   audit,
   accessTokens,
+  jobs,
   suiteScript,
 });
 
@@ -151,4 +153,12 @@ export function suiteScriptTiles(state, connectionId) {
 
 export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
+}
+
+export function jobList(state, integrationId, flowId) {
+  return fromJobs.jobList(state.jobs, integrationId, flowId);
+}
+
+export function inProgressJobIds(state, integrationId, flowId) {
+  return fromJobs.inProgressJobIds(state.jobs, integrationId, flowId);
 }

@@ -70,6 +70,17 @@ function Tile({ classes, tile }) {
               : 'Manage'}
           </Link>
         )}
+        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+          <Link
+            className={classes.navLink}
+            to={getRoutePath(
+              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                tile._integrationId
+              }/dashboard`
+            )}>
+            Dashboard
+          </Link>
+        )}
         {tile.tag && (
           <Chip label={tile.tag} color="secondary" className={classes.tag} />
         )}

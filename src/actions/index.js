@@ -280,6 +280,22 @@ const accessToken = {
   deleted: id =>
     action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
 };
+const job = {
+  requestCollection: ({ integrationId, flowId }) =>
+    action(actionTypes.JOB.REQUEST_COLLECTION, { integrationId, flowId }),
+  receivedCollection: (collection, { integrationId }) =>
+    action(actionTypes.JOB.RECEIVED_COLLECTION, {
+      collection,
+      integrationId,
+    }),
+  receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
+  getInProgressJobStatus: ({ integrationId, flowId }) =>
+    action(actionTypes.JOB.GET_IN_PROGRESS_JOBS_STATUS, {
+      integrationId,
+      flowId,
+    }),
+  clear: () => action(actionTypes.JOB.CLEAR),
+};
 // #endregion
 
 export default {
@@ -299,4 +315,5 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  job,
 };

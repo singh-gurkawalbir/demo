@@ -979,3 +979,11 @@ export function accessTokenList(state, integrationId) {
 export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
 }
+
+export function jobList(state, integrationId, flowId) {
+  return fromData.jobList(state.data, integrationId, flowId);
+}
+
+export function inProgressJobIds(state, integrationId, flowId) {
+  return fromData.inProgressJobIds(state.data, integrationId, flowId);
+}
