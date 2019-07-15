@@ -6,7 +6,8 @@ import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
-import { commitStagedChanges, getRequestOptions } from '../../resources';
+import { commitStagedChanges } from '../../resources';
+import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -32,9 +33,6 @@ export function* pingConnection({ resourceId, values }) {
       resourceType: 'connections',
       resourceId,
     });
-    const aShareIdOpts = yield call(getRequestOptions, {
-      path: pingConnectionParams.path,
-    });
     // Either apiResp or canelTask can race successfully
     // , both will never happen
     const { apiResp } = yield race({
@@ -43,7 +41,6 @@ export function* pingConnection({ resourceId, values }) {
         opts: {
           body: connectionPayload,
           ...pingConnectionParams.opts,
-          ...aShareIdOpts,
         },
         hidden: true,
       }),
@@ -81,10 +78,10 @@ export function* pingConnection({ resourceId, values }) {
 export function* openOAuthWindowForConnection(resourceId) {
   const options = 'scrollbars=1,height=600,width=800';
   let url = `/connection/${resourceId}/oauth2`;
-  const opts = yield call(getRequestOptions, { path: url });
+  const additionalHeaders = yield call(getAdditionalHeaders, url);
 
-  if (opts && opts.headers && opts.headers['integrator-ashareid']) {
-    url += `?integrator-ashareid=${opts.headers['integrator-ashareid']}`;
+  if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
   }
 
   const win = window.open(url, '_blank', options);
