@@ -25,8 +25,7 @@ export default {
     {
       id: 'http.bamboohrSubdomain',
       type: 'text',
-      startAdornment: 'https://',
-      endAdornment: '.bamboohr.com',
+      startAdornment: 'https://api.bamboohr.com/api/gateway.php/',
       label: 'Subdomain:',
       helpText:
         'Please enter your company name here which you configured while signing up for a new BambooHR account.',
@@ -38,9 +37,8 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r.http.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.bamboohr.com')
+        const subdomain = baseUri.substr(
+          'https://api.bamboohr.com/api/gateway.php/'.length
         );
 
         return subdomain;

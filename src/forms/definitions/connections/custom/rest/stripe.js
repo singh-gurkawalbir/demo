@@ -10,7 +10,6 @@ export default {
     '/rest/tokenLocation': 'header',
     '/rest/authHeader': 'Authorization',
     '/rest/authScheme': 'Bearer',
-    '/rest/pingSuccessPath': 'locations',
   }),
   fields: [
     { fieldId: 'name' },

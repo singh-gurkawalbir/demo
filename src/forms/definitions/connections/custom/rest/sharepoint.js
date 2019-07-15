@@ -5,9 +5,7 @@ export default {
     '/assistant': 'sharepoint',
     '/rest/authType': 'oauth',
     '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/subDomain']
-    } + '.sharepoint.com`,
+    '/rest/baseURI': `https://${formValues['/rest/subDomain']}.sharepoint.com`,
     '/rest/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/rest/oauthTokenURI':

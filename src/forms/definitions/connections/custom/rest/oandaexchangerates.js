@@ -12,7 +12,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.bearerToken',
+      fieldId: 'rest.bearerToken',
       helpText: 'Please enter the API Key of your OANDA account.',
       label: 'API Key:',
       required: true,

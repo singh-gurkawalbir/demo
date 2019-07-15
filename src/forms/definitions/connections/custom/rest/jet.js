@@ -25,6 +25,7 @@ export default {
     { fieldId: 'name' },
     {
       id: 'rest.refreshTokenBody.user',
+      type: 'text',
       helpText:
         'API User Key available from Jet under API Section-> Get API Keys', // Secret Key available from Jet under API Section-> Get API Keys
       label: 'API User:',
@@ -44,6 +45,7 @@ export default {
     },
     {
       id: 'rest.encrypted.password',
+      type: 'text',
       inputType: 'password',
       helpText:
         'Secret Key available from Jet under API Section-> Get API Keys',

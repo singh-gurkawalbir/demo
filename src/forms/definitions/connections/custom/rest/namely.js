@@ -7,12 +7,11 @@ export default {
     '/rest/authHeader': 'Authorization',
     '/rest/authScheme': 'Bearer',
     '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/namelyCompanyName']
-    }'.namely.com`,
-    '/rest/pingRelativeURI': '/api/v1/profiles/me.json',
+    '/rest/baseURI': `https://api.newrelic.com`,
+    '/rest/pingRelativeURI': '/v2/applications.json',
     '/rest/pingMethod': 'GET',
     '/rest/headers': [
+      { name: 'X-API-KEY', value: '{{{connection.rest.encrypted.apiKey}}}' },
       {
         name: 'Accept',
         value: 'application/json',

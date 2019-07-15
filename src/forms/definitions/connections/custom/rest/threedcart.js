@@ -13,7 +13,7 @@ export default {
     '/rest/headers': [
       {
         name: 'SecureUrl',
-        value: '{{{connection.rest.unencrypted.threedcartSecureUrl}}}',
+        value: formValues['/rest/threedcartSecureUrl'],
       },
       {
         name: 'PrivateKey',
@@ -24,17 +24,20 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.unencrypted.threedcartSecureUrl',
+      id: 'rest.threedcartSecureUrl',
       type: 'text',
       label: 'Secure URL:',
       required: true,
       helpText: `3dcart merchant's Secure URL.`,
+      defaultValue: r =>
+        r.rest.headers &&
+        r.rest.headers.find(header => header.name === 'SecureUrl') &&
+        r.rest.headers.find(header => header.name === 'SecureUrl').value,
     },
     {
       id: 'rest.encrypted.PrivateKey',
       type: 'text',
       label: 'Private Key:',
-      inputType: 'password',
       required: true,
       helpText: `Your application's private key.`,
       description:

@@ -7,18 +7,16 @@ export default {
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/FinancialPeriod',
     '/rest/baseURI': `${formValues['/instanceURI']}/entity/${
-      formValues['/endpointName']
-    }/${formValues['/endpointVersion']}`,
+      formValues['/rest/unencrypted/endpointName']
+    }/${formValues['/rest/unencrypted/endpointVersion']}`,
     '/rest/bearerToken': '',
     '/rest/cookieAuth/method': 'POST',
     '/rest/cookieAuth/successStatusCode': 204,
-    '/rest/cookieAuth/uri': `${formValues['/instanceURI']}/entity/${
-      formValues['/endpointName']
-    }/${formValues['/endpointVersion']}`,
+    '/rest/cookieAuth/uri': `${formValues['/instanceURI']}//entity/auth/login`,
     '/rest/cookieAuth/body': `{"name": "${
-      formValues[`/username`]
+      formValues[`/rest/unencrypted/username`]
     }","password": "${formValues[`/password`]}","company": "${
-      formValues[`/username`]
+      formValues[`/rest/unencrypted/company`]
     }"}`,
   }),
   fields: [
@@ -86,7 +84,6 @@ export default {
     },
     {
       id: 'rest.unencrypted.company',
-      required: true,
       type: 'text',
       label: 'Company:',
       helpText: 'Please enter endpoint name of your Acumatica account.',

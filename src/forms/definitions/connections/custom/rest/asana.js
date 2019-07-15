@@ -5,7 +5,7 @@ export default {
     '/assistant': 'asana',
     '/rest/authType': 'token',
     '/rest/mediaType': 'urlencoded',
-    '/rest/pingRelativeURI': '/v1/users',
+    '/rest/pingRelativeURI': '/1.0/users',
     '/rest/baseURI': 'https://app.asana.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authHeader': 'Authorization',

@@ -13,13 +13,5 @@ export default {
     '/rest/tokenLocation': 'header',
   }),
 
-  fields: [
-    { fieldId: 'name' },
-
-    {
-      fieldId: 'rest.bearerToken',
-      required: true,
-      label: 'API Key:',
-    },
-  ],
+  fields: [{ fieldId: 'name' }],
 };

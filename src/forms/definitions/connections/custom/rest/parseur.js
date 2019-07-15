@@ -19,6 +19,7 @@ export default {
     { fieldId: 'name' },
     {
       id: 'rest.encrypted.apiKey',
+      type: 'text',
       inputType: 'password',
       label: 'API Token Key:',
       helpText:
