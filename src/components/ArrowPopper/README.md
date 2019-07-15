@@ -30,7 +30,7 @@ const popperStyles = {
     <ArrowPopper open={!!state.anchorEl} anchorEl={state.anchorEl} placement={state.placement} >
         <div style = {popperStyles} >
             <Typography>
-            This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper</Typography>
+            This is the pure content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper</Typography>
         </div>
     </ArrowPopper>
 </div>
