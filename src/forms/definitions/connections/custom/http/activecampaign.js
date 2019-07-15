@@ -16,19 +16,18 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      type: 'text',
       id: 'http.activecampaignSubdomain',
+      type: 'text',
       startAdornment: 'https://',
       endAdornment: '.api-us1.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
         },
       },
-      helpText:
-        'Please enter your account here. This can be found in your account on the My Settings page under the "Developer" tab.',
+      helpText: 'Please enter your account subdomain here.',
       defaultValue: r => {
         const baseUri = r.http.baseURI;
         const subdomain = baseUri.substring(
@@ -40,14 +39,10 @@ export default {
       },
     },
     {
-      id: 'http.auth.token.token',
-      type: 'text',
-      inputType: 'password',
+      fieldId: 'http.auth.token.token',
       label: 'API Key:',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
   ],

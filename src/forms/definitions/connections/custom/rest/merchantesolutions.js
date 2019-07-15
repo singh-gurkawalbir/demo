@@ -33,6 +33,7 @@ export default {
       type: 'text',
       label: 'Profile ID:',
       required: true,
+      helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
     {
       id: 'rest.encrypted.profileKey',
@@ -40,8 +41,7 @@ export default {
       label: 'Profile Key:',
       required: true,
       inputType: 'password',
-      helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+      helpText: 'API password (Profile Key) assigned by Merchant e-Solutions.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -51,8 +51,7 @@ export default {
       label: 'Card Number:',
       required: true,
       inputType: 'password',
-      helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+      helpText: 'Payment card number.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

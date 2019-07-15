@@ -24,8 +24,7 @@ export default {
       required: true,
       type: 'text',
       inputType: 'password',
-      helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+      helpText: 'The subscription key of your Tesco account.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

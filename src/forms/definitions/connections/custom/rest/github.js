@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'github',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.github.com',
     '/rest/authURI': 'http://github.com/login/oauth/authorize',
     '/rest/oauthTokenURI': 'https://github.com/login/oauth/access_token',

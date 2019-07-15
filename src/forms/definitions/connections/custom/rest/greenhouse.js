@@ -1,28 +1,24 @@
 export default {
-  preSubmit: formValues => {
-    const headers = [];
-
-    headers.push({
-      name: 'On-Behalf-Of',
-      value: '{{{connection.rest.unencrypted.userID}}}',
-    });
-    headers.push({
-      name: 'Content-Type',
-      value: 'application/json',
-    });
-    headers.push({ name: 'Accept', value: 'application/json' });
-
-    return {
-      ...formValues,
-      '/type': 'rest',
-      '/assistant': 'greenhouse',
-      '/rest/authType': 'basic',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/candidates',
-      '/rest/baseURI': `https://harvest.greenhouse.io/v1`,
-      '/rest/headers': headers,
-    };
-  },
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'rest',
+    '/assistant': 'greenhouse',
+    '/rest/authType': 'basic',
+    '/rest/mediaType': 'json',
+    '/rest/pingRelativeURI': '/candidates',
+    '/rest/baseURI': `https://harvest.greenhouse.io/v1`,
+    '/rest/headers': [
+      {
+        name: 'On-Behalf-Of',
+        value: '{{{connection.rest.unencrypted.userID}}}',
+      },
+      {
+        name: 'Content-Type',
+        value: 'application/json',
+      },
+      { name: 'Accept', value: 'application/json' },
+    ],
+  }),
   fields: [
     { fieldId: 'name' },
     {

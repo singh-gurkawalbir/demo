@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'certify',
     '/rest/authType': 'custom',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/v1/expensereports',
-    '/type': 'rest',
-    '/assistant': 'certify',
     '/rest/baseURI': 'https://api.certify.com',
     '/rest/headers': [
       { name: 'x-api-key', value: '{{{connection.rest.encrypted.apiKey}}}' },

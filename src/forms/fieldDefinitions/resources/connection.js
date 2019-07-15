@@ -380,8 +380,12 @@ export default {
   },
   'rest.bearerToken': {
     type: 'text',
-    label: 'Rest bearer Token',
+    label: 'Token:',
     inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    helpText:
+      'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   },
   'rest.tokenLocation': {
     type: 'radiogroup',
@@ -402,6 +406,8 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Rest scope',
+    helpText:
+      'OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token. For example, an access token issued to a client app may be granted READ and WRITE access to protected resources, or just READ access.',
   },
   'rest.scopeDelimiter': {
     type: 'text',
@@ -819,10 +825,11 @@ export default {
   },
   'http.auth.token.token': {
     type: 'text',
-    label: 'Http auth token token',
+    label: 'Token:',
     inputType: 'password',
     description:
       'Note: for security reasons this field must always be re-entered.',
+    helpText: `The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.`,
   },
   'http.auth.token.location': {
     type: 'select',

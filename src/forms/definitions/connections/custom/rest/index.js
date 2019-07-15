@@ -59,7 +59,6 @@ import yammer from './yammer';
 import doubleclick from './doubleclick';
 import campaignmonitor from './campaignmonitor';
 import hubspot from './hubspot';
-import zoho from './zoho';
 import xcart from './xcart';
 import freshbooks from './freshbooks';
 import lightspeed from './lightspeed';
@@ -123,8 +122,10 @@ import parseur from './parseur';
 import skubana from './skubana';
 import merchantesolutions from './merchantesolutions';
 import dunandbradstreet from './dunandbradstreet';
+import threedcart from './threedcart';
 
 export default {
+  '3dcart': threedcart,
   snapfulfil,
   tsheets,
   splunk,
@@ -174,7 +175,6 @@ export default {
   campaignmonitor,
   atera,
   hubspot,
-  zoho,
   xcart,
   freshbooks,
   insightly,

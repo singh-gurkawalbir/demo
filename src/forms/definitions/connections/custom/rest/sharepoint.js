@@ -1,13 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'sharepoint',
-    '/rest/baseURI': `https://${
-      formValues['/rest/subDomain']
-    } + '.sharepoint.com`,
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
+    '/rest/baseURI': `https://${formValues['/rest/subDomain']}.sharepoint.com`,
     '/rest/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/rest/oauthTokenURI':
@@ -23,7 +21,7 @@ export default {
       endAdornment: '.sharepoint.com',
       label: 'Subdomain:',
       helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+        "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

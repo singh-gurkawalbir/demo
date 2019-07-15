@@ -23,7 +23,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.api.accelo.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       helpText:
         'Please enter your subdomain here which you configured in Deployment Information page while signing up for your new Accelo account.',
       validWhen: {
@@ -41,6 +41,10 @@ export default {
 
         return subdomain;
       },
+    },
+    {
+      fieldId: 'rest.scope',
+      scopes: ['read(all)', 'write(all)'],
     },
   ],
 };
