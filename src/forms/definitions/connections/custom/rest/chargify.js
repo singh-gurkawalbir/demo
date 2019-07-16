@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'chargify',
     '/rest/authType': 'custom',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': 'customers.json',
-    '/type': 'rest',
-    '/assistant': 'chargify',
     '/rest/baseURI': `https://${
       formValues['/rest/chargifySubdomain']
     }.chargify.com`,

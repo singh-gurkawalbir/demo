@@ -7,6 +7,7 @@ import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet, submitFormValues } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
+import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -37,7 +38,10 @@ export function* pingConnection({ resourceId, values }) {
     const { apiResp } = yield race({
       apiResp: call(apiCallWithRetry, {
         path: pingConnectionParams.path,
-        opts: { body: connectionPayload, ...pingConnectionParams.opts },
+        opts: {
+          body: connectionPayload,
+          ...pingConnectionParams.opts,
+        },
         hidden: true,
       }),
       cancelTask: take(actionTypes.CANCEL_TASK),
@@ -71,9 +75,15 @@ export function* pingConnection({ resourceId, values }) {
   }
 }
 
-export function openOAuthWindowForConnection(resourceId) {
+export function* openOAuthWindowForConnection(resourceId) {
   const options = 'scrollbars=1,height=600,width=800';
-  const url = `/connection/${resourceId}/oauth2`;
+  let url = `/connection/${resourceId}/oauth2`;
+  const additionalHeaders = yield call(getAdditionalHeaders, url);
+
+  if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
+  }
+
   const win = window.open(url, '_blank', options);
 
   if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -116,7 +126,7 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
   if (conflict) return;
 
   try {
-    openOAuthWindowForConnection(resourceId);
+    yield call(openOAuthWindowForConnection, [resourceId]);
   } catch (e) {
     // could not close the window
   }
@@ -145,7 +155,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   if (conflict) return;
 
   try {
-    openOAuthWindowForConnection(resourceId);
+    yield call(openOAuthWindowForConnection, [resourceId]);
   } catch (e) {
     // could not close the window
   }

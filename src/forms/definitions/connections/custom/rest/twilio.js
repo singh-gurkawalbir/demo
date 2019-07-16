@@ -1,12 +1,12 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'twilio',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'urlencoded',
     '/rest/baseURI': 'https://api.twilio.com',
     '/rest/pingRelativeURI': '/2010-04-01/Accounts',
-    '/type': 'rest',
-    '/assistant': 'twilio',
     '/rest/pingMethod': 'GET',
   }),
   fields: [

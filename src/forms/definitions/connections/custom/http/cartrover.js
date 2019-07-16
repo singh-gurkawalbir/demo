@@ -1,6 +1,8 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'http',
+    '/assistant': 'cartrover',
     '/http/auth/type': 'basic',
     '/http/baseURI': 'https://api.cartrover.com/',
     '/http/mediaType': 'json',
@@ -9,8 +11,6 @@ export default {
     '/http/ping/successPath': 'success_code',
     '/http/ping/successValues': ['true'],
     '/http/ping/errorPath': ['true'],
-    '/type': 'http',
-    '/assistant': 'cartrover',
   }),
 
   fields: [

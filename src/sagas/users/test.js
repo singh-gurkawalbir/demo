@@ -184,7 +184,7 @@ describe('all modal sagas', () => {
         const saga = updatePreferences({ preferences });
 
         expect(saga.next(preferences).value).toEqual(
-          select(selectors.userPreferences)
+          select(selectors.userOwnPreferences)
         );
         expect(saga.next(preferences).value).toEqual(
           call(apiCallWithRetry, {
@@ -201,7 +201,7 @@ describe('all modal sagas', () => {
         };
         const saga = updatePreferences();
 
-        expect(saga.next().value).toEqual(select(selectors.userPreferences));
+        expect(saga.next().value).toEqual(select(selectors.userOwnPreferences));
         const payload = {
           ...updatePreferencesParams.opts,
           body: preferences,

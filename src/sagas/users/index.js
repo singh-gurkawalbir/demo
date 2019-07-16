@@ -41,7 +41,7 @@ export function* changePassword({ updatedPassword }) {
 }
 
 export function* updatePreferences() {
-  const updatedPayload = yield select(selectors.userPreferences);
+  const updatedPayload = yield select(selectors.userOwnPreferences);
 
   try {
     const payload = {

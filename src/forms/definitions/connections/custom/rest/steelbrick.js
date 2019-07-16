@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'steelbrick',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://login.salesforce.com',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://login.salesforce.com/services/oauth2/authorize',

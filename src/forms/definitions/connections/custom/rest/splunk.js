@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'splunk',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'urlencoded',
     '/rest/pingRelativeURI': '/',
-    '/type': 'rest',
-    '/assistant': 'splunk',
     '/rest/pingMethod': 'GET',
     '/rest/disableStrictSSL': true,
   }),

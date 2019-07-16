@@ -36,10 +36,9 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
+/* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings' */ '../../views/IntegrationSettings'
-  )
+  import('../../views/IntegrationSettings')
 );
 const AccessTokens = loadable(() =>
   import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')

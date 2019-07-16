@@ -38,6 +38,47 @@ export function notifications(state) {
 
 // #region PREFERENCES
 export function userPreferences(state) {
+  const preferences = fromPreferences.userPreferences(
+    state && state.preferences
+  );
+
+  if (
+    !preferences.defaultAShareId ||
+    preferences.defaultAShareId === ACCOUNT_IDS.OWN
+  ) {
+    return preferences;
+  }
+
+  if (
+    !state ||
+    !state.org ||
+    !state.org.accounts ||
+    !state.org.accounts.length
+  ) {
+    return preferences;
+  }
+
+  // eslint-disable-next-line max-len
+  /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
+  const { accounts = {} } = state.org;
+  const currentAccount = accounts.find(
+    a => a._id === preferences.defaultAShareId
+  );
+  let mergedPreferences;
+
+  if (currentAccount && currentAccount.ownerUser) {
+    mergedPreferences = {
+      ...preferences,
+      ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
+    };
+  } else {
+    mergedPreferences = { ...preferences };
+  }
+
+  return mergedPreferences;
+}
+
+export function userOwnPreferences(state) {
   return fromPreferences.userPreferences(state && state.preferences);
 }
 
