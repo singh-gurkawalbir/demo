@@ -113,7 +113,11 @@ export const getMissingPatchSet = (paths, resource) => {
 
         path = `${path}/${segment}`;
 
-        if (r === undefined || r[segment] === undefined) {
+        if (
+          r === undefined ||
+          r[segment] === undefined ||
+          (typeof r[segment] === 'string' && segments.length - i - 1 >= 1)
+        ) {
           value = getStub(segments.slice(i + 1, segments.length));
           missing.push({ path, value, op: 'add' });
 
