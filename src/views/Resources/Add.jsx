@@ -60,7 +60,6 @@ function Add(props) {
       ...rest,
       '/_id': id,
       '/adaptorType': adaptorType,
-      // [`/${app.type}`]: { method: 'GET' },
     };
 
     if (app.assistant) {
@@ -156,7 +155,7 @@ function Add(props) {
       <DynaForm fieldMeta={{ fields }} optionsHandler={optionsHandler}>
         <div className={classes.actions}>
           <DynaSubmit className={classes.actionButton} onClick={handleSave}>
-            Save
+            Next
           </DynaSubmit>
         </div>
       </DynaForm>

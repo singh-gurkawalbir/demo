@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => {
 
   if (!resourceType) return {};
 
-  const finalFilter = options.filter ? options.filter : filter;
+  const finalFilter = options && options.filter ? options.filter : filter;
   const { resources } = selectors.resourceList(state, { type: resourceType });
 
   return {

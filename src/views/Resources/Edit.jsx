@@ -7,6 +7,8 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import actions from '../../actions';
+import prettyDate from '../../utils/date';
+import { MODEL_PLURAL_TO_LABEL } from '../../constants/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
@@ -55,24 +57,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
       dispatch(actions.resource.undoStaged(id));
     },
   };
-};
-
-const toName = (token, upper, trim) =>
-  upper
-    ? token.charAt(0).toUpperCase() + token.slice(1, trim)
-    : token.slice(0, trim);
-const prettyDate = dateString => {
-  const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  };
-
-  return new Date(dateString).toLocaleString(undefined, options);
 };
 
 @hot(module)
@@ -162,7 +146,7 @@ class Edit extends Component {
     if (!merged) {
       return (
         <Typography variant="h5">
-          No {toName(resourceType, true, -1)} found with id {id}.
+          No {MODEL_PLURAL_TO_LABEL[resourceType]} found with id {id}.
         </Typography>
       );
     }
@@ -233,9 +217,7 @@ class Edit extends Component {
           </Fragment>
         )}
         <Typography variant="h5">
-          {type
-            ? `${toName(type, true)} ${toName(resourceType, false, -1)}`
-            : toName(resourceType, true, -1)}
+          {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
         </Typography>
 
         <Typography variant="caption" className={classes.dates}>
