@@ -14,7 +14,7 @@ export default name => {
   const themeName = name || DEFAULT_THEME;
   const theme = createMuiTheme({
     ...defaults,
-    ...themes[themeName].overrides,
+    ...themes[themeName],
   });
 
   return {

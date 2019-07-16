@@ -124,12 +124,14 @@ class AppBar extends Component {
               />
             </Grid>
             <Grid item>
-              <Typography variant="h5">{name}</Typography>
-              <Typography variant="h6">{email}</Typography>
+              <Typography variant="h4">{name}</Typography>
+              <Typography variant="h5">{email}</Typography>
             </Grid>
           </Grid>
           <div>
-            <FormControl className={classes.formControl}>
+            <FormControl
+              className={classes.formControl}
+              style={{ width: '100%', margin: '10px 0px' }}>
               <Select
                 native
                 value={themeName}
@@ -143,7 +145,6 @@ class AppBar extends Component {
           <Button
             onClick={this.handleClose}
             variant="contained"
-            size="small"
             color="primary"
             className={classes.button}
             component={Link}
@@ -159,7 +160,6 @@ class AppBar extends Component {
           <Button
             onClick={handleUserLogout}
             variant="contained"
-            size="small"
             color="primary"
             className={classes.button}>
             Sign Out

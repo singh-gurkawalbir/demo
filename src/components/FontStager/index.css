@@ -23,6 +23,7 @@
   font-style: normal;
 }
 
+
 /*
   The purpose of defining class stages is to
   re-render once a stage has been met. We start
@@ -57,3 +58,10 @@ html, body {
 .font-stage-secondary .roboto500 {
   font-family: Roboto500, sans-serif;
 }
+a{
+  color: #00A1E1;
+  text-decoration: none;
+  font-weight: 500,
+}
+
+
