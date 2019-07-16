@@ -158,24 +158,22 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 }
 
 export function* initFormValues({ resourceType, resourceId }) {
-  const { merged: resource } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
+  let resource;
 
+  if (resourceId.startsWith('new')) {
+    resource = { _id: resourceId };
+  } else {
+    ({ merged: resource } = yield select(
+      selectors.resourceData,
+      resourceType,
+      resourceId
+    ));
+  }
   // console.log('initFormValues', resourceType, resourceId, resource);
 
   if (!resource) return; // nothing to do.
 
-  // TODO: skip this if resourceType === 'connections'
-  const { merged: connection } = yield select(
-    selectors.resourceData,
-    'connections',
-    resource._connectionId
-  );
   const defaultFormAssets = factory.getResourceFormAssets({
-    connection,
     resourceType,
     resource,
   });

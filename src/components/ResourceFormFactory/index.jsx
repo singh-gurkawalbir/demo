@@ -22,7 +22,7 @@ const mapStateToProps = (state, { resourceType, resource }) => {
 
 const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
   handleSubmitForm: values => {
-    // console.log(`request resource:`, resourceType, resource._id, connection);
+    // console.log(`request resource:`, resourceType, resource._id);
     dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
   },
 

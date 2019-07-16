@@ -87,7 +87,7 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
 
       if (meta) {
         if (isNew) {
-          meta = formMeta.connections.new;
+          meta = meta.new;
         } else {
           const { type } = getResourceSubType(resource);
 
