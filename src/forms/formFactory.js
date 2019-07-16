@@ -57,7 +57,7 @@ const getResourceFormAssets = ({ resourceType, resource }) => {
   let meta;
   const isNew = !resource || !resource._id || resource._id.startsWith('new');
 
-  console.log(isNew, resourceType, resource);
+  // console.log(isNew, resourceType, resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
