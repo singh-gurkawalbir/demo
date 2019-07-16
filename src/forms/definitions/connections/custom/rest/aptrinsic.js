@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'aptrinsic',
     '/rest/authType': 'custom',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/v1/users',
-    '/type': 'rest',
-    '/assistant': 'aptrinsic',
     '/rest/baseURI': 'https://api.aptrinsic.com/',
     '/rest/headers': [
       {

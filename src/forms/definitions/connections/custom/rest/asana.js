@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/pingRelativeURI': '/v1/users',
     '/type': 'rest',
     '/assistant': 'asana',
+    '/rest/authType': 'token',
+    '/rest/mediaType': 'urlencoded',
+    '/rest/pingRelativeURI': '/1.0/users',
     '/rest/baseURI': 'https://app.asana.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authHeader': 'Authorization',
@@ -19,7 +19,7 @@ export default {
       required: true,
       label: 'Personal Access Token:',
       helpText:
-        'Enter your personal access token.\n\n<b>Note:</b> There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+        'Enter your personal access token.\n\n Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
     },
   ],
 };

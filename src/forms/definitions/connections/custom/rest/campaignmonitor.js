@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'campaignmonitor',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.createsend.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://api.createsend.com/oauth',

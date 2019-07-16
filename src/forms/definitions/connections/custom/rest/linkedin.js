@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'linkedin',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.linkedin.com',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://www.linkedin.com/oauth/v2/authorization',
