@@ -1,3 +1,5 @@
+import jsonPatch from 'fast-json-patch';
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -157,8 +159,11 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
     resource
   );
   const newSet = [...missingPatchSet, ...sanitizedSet];
+  const error = jsonPatch.validate(newSet, resource);
 
-  // console.log(newSet);
+  if (error) {
+    throw new Error('Something wrong with the patchSet operations ', error);
+  }
 
   return newSet;
 };
