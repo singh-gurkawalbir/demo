@@ -24,6 +24,7 @@ export default {
       default: colors.celigoNeutral1,
       main: colors.celigoAccent3,
       sideBar: colors.celigoHelpText,
+      editorInner: colors.celigoNeutral2,
       // success:
       // warning: celigo.celigoWarning
       // error:
