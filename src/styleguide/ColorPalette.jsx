@@ -13,6 +13,8 @@ const styles = theme => ({
       // border: 'solid 1px black',
       padding: theme.spacing.unit,
       margin: theme.spacing.unit,
+      borderRadius: theme.radius.radius4,
+      overflow: 'hidden',
     },
   },
 });
@@ -23,16 +25,16 @@ function ColorPalette({ classes }) {
 
   return (
     <div className={classes.root}>
-      {Object.keys(colors).map(name => (
+      {Object.keys(colors).map(key => (
         <div
           style={{
-            color: contrastText(colors[name]),
-            backgroundColor: colors[name],
+            color: contrastText(colors[key]),
+            backgroundColor: colors[key],
           }}
-          key={name}>
-          {name}
+          key={key}>
+          <span>{key}</span>
           <br />
-          {colors[name]}
+          <span>HEX</span> {colors[key]}
         </div>
       ))}
     </div>
