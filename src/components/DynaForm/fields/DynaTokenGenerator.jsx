@@ -3,39 +3,23 @@ import { connect } from 'react-redux';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import DynaSubmit from '../DynaSubmit';
 
-const mapStateToProps = (state, ownProps) => {
-  const { connectionId, resourceType, mode } = ownProps;
-
-  selectors.commStatusByKey(`/${assistantType}/generate-token`);
-  const { isLoadingData, options } = selectors.metadataOptionsAndResources(
-    state,
-    connectionId,
-    mode,
-    resourceType
-  );
-
-  return {
-    isLoadingData,
-    options,
-  };
-};
-
-const mapDispatchToProps = (dispatch, { assistantType }) => ({
-  //  https://staging.integrator.io/api/pitneybowes/generate-token
-
-  onFetchToken: () =>
-    dispatch(
-      actions.api.request(
-        `/${assistantType}/generate-token`,
-        'POST',
-        'Retrieving token',
-        true
-      )
-    ),
+const mapStateToProps = (state, ownProps) => {};
+const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  handleGenerateToken: values =>
+    dispatch(actions.resource.connections.generateToken(resourceId, values)),
 });
 
-function DynaTokenGenerator(props) {}
+function DynaTokenGenerator(props) {
+  const { handleGenerateToken } = props;
+
+  return (
+    <DynaSubmit disabled={false} isValid onClick={handleGenerateToken}>
+      Generate Token
+    </DynaSubmit>
+  );
+}
 
 const ConnectedTokenGenerator = connect(
   mapStateToProps,

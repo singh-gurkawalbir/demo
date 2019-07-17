@@ -25,6 +25,49 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
+export function* generateToken({ resourceId, values }) {
+  const resourceType = 'connections';
+  const connectionResource = yield select(
+    selectors.resource,
+    resourceType,
+    resourceId
+  );
+  const { type } = connectionResource;
+  let assistant;
+
+  if (type && connectionResource[type]) {
+    assistant = connectionResource[type].type;
+  }
+
+  if (!assistant) throw new Error('Could not determine the assistant type');
+
+  const path = `${assistant}/generate-token`;
+  // get Assistant type
+  const apiKey = values[`${type}/unencrypted/apiKey`];
+  const apiSecret = values[`${type}/unencrypted/apiSecret`];
+  const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
+  const reqPayload = {
+    base64EncodedToken,
+    baseURI: connectionResource.rest.baseURI,
+  };
+  const resp = yield call(apiCallWithRetry, {
+    path,
+    opts: { body: reqPayload, method: 'POST' },
+    hidden: true,
+  });
+  const replaceValue = [
+    {
+      op: 'replace',
+      path: `/${type}/bearerToken`,
+      value: resp.token.access_token,
+    },
+  ];
+
+  yield put(
+    actions.resource.patchStaged(resourceId, replaceValue, SCOPES.META)
+  );
+}
+
 export function* pingConnection({ resourceId, values }) {
   try {
     const connectionPayload = yield call(createPayload, {
