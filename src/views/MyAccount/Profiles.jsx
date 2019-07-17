@@ -234,7 +234,7 @@ class ProfilesComponent extends Component {
           />
         </div>
         <Divider />
-
+        <br />
         <Button
           variant="contained"
           color="primary"

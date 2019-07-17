@@ -9,8 +9,8 @@ const styles = () => ({
   default: {
     marginRight: 5,
     color: '#fff',
-    width: 24,
-    height: 24,
+    width: 16,
+    height: 16,
     backgroundColor: '#6CC706',
   },
   errors: {
