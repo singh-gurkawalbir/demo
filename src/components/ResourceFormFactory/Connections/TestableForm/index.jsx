@@ -10,7 +10,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers/index';
 import { COMM_STATES } from '../../../../reducers/comms';
-import ResourceForm from '../../GenericResourceForm';
+import GenericResourceForm from '../../GenericResourceForm';
 import GenericConfirmDialog from '../../../ConfirmDialog';
 
 const mapStateToProps = state => ({
@@ -127,7 +127,7 @@ const TestableForm = props => {
           onHandleCancelTask={cancelProcess}
         />
       )}
-      <ResourceForm
+      <GenericResourceForm
         {...rest}
         disableButton={pingLoading}
         handleSubmitForm={handleSubmitAndShowConfirmDialog}>
@@ -140,7 +140,7 @@ const TestableForm = props => {
           color="secondary">
           Test
         </DynaSubmit>
-      </ResourceForm>
+      </GenericResourceForm>
     </Fragment>
   );
 };

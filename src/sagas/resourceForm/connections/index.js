@@ -33,7 +33,7 @@ export function* pingConnection({ resourceId, values }) {
       resourceType: 'connections',
       resourceId,
     });
-    // Either apiResp or canelTask can race successfully
+    // Either apiResp or cancelTask can race successfully
     // , both will never happen
     const { apiResp } = yield race({
       apiResp: call(apiCallWithRetry, {

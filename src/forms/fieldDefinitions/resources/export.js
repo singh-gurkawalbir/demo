@@ -40,7 +40,7 @@ export default {
   },
   apiIdentifier: {
     label: 'Invoke this Export [POST]:',
-    type: 'text',
+    type: 'apiidentifier',
   },
   configureAsyncHelper: {
     type: 'checkbox',
