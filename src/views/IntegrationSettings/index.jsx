@@ -41,11 +41,8 @@ const Users = loadable(() =>
 const AuditLog = loadable(() =>
   import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
 );
-const AccessTokens = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.AccessTokens' */ './AccessTokens'
-  )
-);
+/* webpackChunkName: 'IntegrationSettings.AccessTokens' */
+const AccessTokens = loadable(() => import('./AccessTokens'));
 
 @hot(module)
 @withStyles(theme => ({

@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'nimble',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.nimble.com/api',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://api.nimble.com/oauth/authorize',

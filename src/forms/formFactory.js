@@ -1,4 +1,5 @@
 import { deepClone } from 'fast-json-patch';
+import { get } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
 
@@ -131,36 +132,6 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
   };
 };
 
-// TODO: is this fn available in an existing package?
-// if so, use that instead, otherwise move this into a util file.
-const extractValue = (path, resource) => {
-  if (!resource) return;
-
-  if (!path) return resource;
-
-  if (typeof path !== 'string') return;
-
-  if (resource[path]) return resource[path];
-
-  const segments = path.split('.');
-  let value = resource;
-
-  // skip the first node since it is the resourceType and is not part of the
-  // resource field path. earlier resourceType used to be there but its excluded
-  for (let i = 0; i < segments.length; i += 1) {
-    // logger.info('segment: ' + segments[i])
-    // logger.info(value[segments[i]])
-    // if the last iteration resulted in no value, and yet the path indicates
-    // that there still should be another node in the object hierarchy, return.
-    // return if we have an object but no child object exists in the next path.
-    // otherwise set the value to the new node and iterate.
-    if (!value || value[segments[i]] === undefined) return;
-    value = value[segments[i]];
-  }
-
-  return value;
-};
-
 const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // TODO: We are assuming this factory applies defaults to edit exports
   // no create export has been considered here
@@ -204,6 +175,19 @@ const applyingMissedOutFieldMetaProperties = (
     }
   });
 
+  if (!field.id) {
+    field.id = field.fieldId;
+  }
+
+  if (!field.name) {
+    if (field.id) field.name = `/${field.id.replace(/\./g, '/')}`;
+  }
+
+  if (!Object.keys(field).includes('defaultValue')) {
+    // console.log(`default value for ${merged.fieldId} used`);
+    field.defaultValue = get(resource, field.id);
+  }
+
   if (!field.helpText && !field.helpKey) {
     // console.log(`default helpKey for ${merged.id} used`);
     let singularResourceType = resourceType;
@@ -213,24 +197,11 @@ const applyingMissedOutFieldMetaProperties = (
       singularResourceType = resourceType.substring(0, resourceType.length - 1);
     }
 
-    field.helpKey = `${singularResourceType}.${field.fieldId}`;
+    field.helpKey = `${singularResourceType}.${field.id}`;
   }
 
-  // Why can't we do a check for the property directly...
-  // merged['defaultValue']
-  if (!Object.keys(field).includes('defaultValue')) {
-    // console.log(`default value for ${merged.fieldId} used`);
-    field.defaultValue = extractValue(field.fieldId, resource);
-  }
-
-  // if name isn't there, fill it!
-  if (!field.name && field.fieldId) {
-    field.name = `/${field.fieldId.replace(/\./g, '/')}`;
-  }
-
-  if (!field.id) {
-    field.id = field.fieldId;
-  }
+  if (!field.id || !field.name)
+    throw new Error('Id and name must be provided for a field');
 
   return field;
 };

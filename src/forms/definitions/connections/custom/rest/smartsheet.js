@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'smartsheet',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.smartsheet.com',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://app.smartsheet.com/b/authorize',

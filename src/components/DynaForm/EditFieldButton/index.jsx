@@ -12,7 +12,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
-import { getFieldById } from '../../../forms/utils';
 
 const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
@@ -72,7 +71,6 @@ class EditFieldButton extends Component {
   state = {
     showEditor: false,
     insertField: false,
-    existingFieldWarning: false,
   };
   handleMetaChangeOperation = () =>
     this.setState({ showEditor: false, insertField: false });
@@ -89,22 +87,9 @@ class EditFieldButton extends Component {
   };
 
   handleInsertField = newMeta => {
-    const { patchFormField, onChange, formFieldsMeta } = this.props;
+    const { patchFormField, onChange } = this.props;
     const { insertField } = this.state;
     // get meta from props
-    const existingField = getFieldById({
-      meta: formFieldsMeta,
-      id: newMeta.id,
-    });
-
-    if (existingField) {
-      // set some state with warning
-      this.setState({ existingFieldWarning: true });
-
-      return;
-    }
-
-    this.setState({ existingFieldWarning: false });
 
     patchFormField(newMeta, 'add', insertField === 'after' ? 1 : 0);
 
@@ -138,8 +123,14 @@ class EditFieldButton extends Component {
   };
 
   render() {
-    const { showEditor, insertField, existingFieldWarning } = this.state;
-    const { className, fieldMeta = {}, adaptorType, resourceType } = this.props;
+    const { showEditor, insertField } = this.state;
+    const {
+      className,
+      fieldMeta = {},
+      adaptorType,
+      resourceType,
+      formFieldsMeta,
+    } = this.props;
     const fieldId = fieldMeta.fieldId || 'new';
 
     /* eslint-disable react/jsx-handler-names */
@@ -189,7 +180,7 @@ class EditFieldButton extends Component {
         </PopupState>
         {insertField && (
           <NewFieldDialog
-            existingFieldWarning={existingFieldWarning}
+            formFieldsMeta={formFieldsMeta}
             resourceType={resourceType}
             adaptorType={adaptorType}
             title={`Insert this new field ${insertField} ${fieldId}`}

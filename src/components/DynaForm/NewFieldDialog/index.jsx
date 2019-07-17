@@ -11,10 +11,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import stringUtil from '../../../utils/string';
 import Select from '@material-ui/core/Select';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { Form } from 'react-forms-processor/dist';
 import FormDialog from '../../FormDialog';
 import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
 import fieldDefinitions from '../../../forms/fieldDefinitions';
+import { getFieldById } from '../../../forms/utils';
 
 const fieldMeta = {
   text: { key: 'text', label: 'Text', props: {} },
@@ -110,8 +112,28 @@ export default class NewFieldDialog extends Component {
     fieldId: 'name',
     value: '',
     error: false,
+    count: 0,
     meta: {},
+    existingFieldWarning: false,
   };
+
+  remountDynaField() {
+    const count = this.state.count + 1;
+
+    this.setState({ count: count + 1 });
+  }
+  handleExistingFieldWarning(id) {
+    const { formFieldsMeta } = this.props;
+    const existingField = getFieldById({
+      meta: formFieldsMeta,
+      id,
+    });
+
+    if (existingField) {
+      // set some state with warning
+      this.setState({ existingFieldWarning: true, error: true });
+    } else this.setState({ existingFieldWarning: false, error: false });
+  }
 
   handleEditorChange(value) {
     const { resourceType } = this.props;
@@ -125,9 +147,9 @@ export default class NewFieldDialog extends Component {
         meta = { id: meta.fieldId, ...resourceMeta[meta.fieldId], ...meta };
       }
 
-      // console.log(meta);
-
-      this.setState({ meta, value, error: false });
+      this.handleExistingFieldWarning(meta.id);
+      this.setState({ meta, value });
+      this.remountDynaField();
     } catch (e) {
       this.setState({ value, error: true });
     }
@@ -152,6 +174,7 @@ export default class NewFieldDialog extends Component {
     // console.log('value: ', value);
 
     this.setState({ meta, value, fieldId, fieldType });
+    this.remountDynaField();
   }
 
   handleSubmit() {
@@ -171,7 +194,9 @@ export default class NewFieldDialog extends Component {
     const meta = getFieldProps(fieldType);
     const value = JSON.stringify(meta, null, 2);
 
-    this.setState({ fieldType, error: false, value, meta });
+    this.handleExistingFieldWarning(meta.id);
+
+    this.setState({ fieldType, value, meta });
   }
 
   render() {
@@ -179,11 +204,19 @@ export default class NewFieldDialog extends Component {
       classes,
       onSubmit,
       resourceType,
-      existingFieldWarning,
       adaptorType,
       ...rest
     } = this.props;
-    const { fieldId, fieldType, error, value, meta, mode } = this.state;
+    const {
+      fieldId,
+      fieldType,
+      error,
+      value,
+      meta,
+      mode,
+      count,
+      existingFieldWarning,
+    } = this.state;
     const DynaField = fields[meta.type];
     // console.log('render:', fieldType, fieldId, meta);
     const resourceMeta = fieldDefinitions[resourceType] || {};
@@ -253,7 +286,11 @@ export default class NewFieldDialog extends Component {
           </FormControl>
           <Typography variant="caption">Field Preview</Typography>
           <div className={classes.fieldPreview}>
-            {DynaField && <DynaField {...meta} />}
+            {DynaField && (
+              <Form key={count}>
+                <DynaField {...meta} />
+              </Form>
+            )}
           </div>
           {existingFieldWarning && (
             <div>

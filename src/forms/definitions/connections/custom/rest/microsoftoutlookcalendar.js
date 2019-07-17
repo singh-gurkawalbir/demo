@@ -3,10 +3,10 @@ import _ from 'lodash';
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'microsoftoutlookcalendar',
     '/rest/authType': 'oauth',
     '/rest/mediaType': 'json',
-    '/type': 'rest',
-    '/assistant': 'microsoftoffice365',
     '/rest/baseURI': `https://graph.microsoft.com/v1.0`,
     '/rest/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',

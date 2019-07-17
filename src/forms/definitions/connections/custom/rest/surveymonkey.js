@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'surveymonkey',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.surveymonkey.net',
     '/rest/tokenLocation': 'header',
     '/rest/authURI': 'https://api.surveymonkey.net/oauth/authorize',

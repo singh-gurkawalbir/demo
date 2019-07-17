@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -11,7 +10,7 @@ import TileAction from './TileAction';
 import getRoutePath from '../../utils/routePaths';
 import { INTEGRATION_ACCESS_LEVELS } from '../../utils/constants';
 
-@withStyles(theme => ({
+const styles = theme => ({
   card: {
     cursor: 'move',
   },
@@ -34,60 +33,58 @@ import { INTEGRATION_ACCESS_LEVELS } from '../../utils/constants';
     marginLeft: 'auto',
     maxWidth: '50%',
   },
-}))
-export default class Tile extends Component {
-  render() {
-    const { classes, data } = this.props;
-    const numFlowsText = `${data.numFlows} Flow${
-      data.numFlows === 1 ? '' : 's'
-    }`;
-    const accessLevel =
-      data.integration &&
-      data.integration.permissions &&
-      data.integration.permissions.accessLevel;
+});
 
-    return (
-      <Card className={classes.card}>
-        <CardActions>
-          <TileAction size="small" color="primary" data={data} />
-        </CardActions>
-        <CardContent>
-          <Typography variant="h5" component="h2">
-            {data.name}
-          </Typography>
-        </CardContent>
-        <Divider component="br" />
-        <CardActions>
-          {data.status === 'IS_PENDING_SETUP' && (
-            <Typography>Click to continue setup.</Typography>
-          )}
-          {data.status !== 'IS_PENDING_SETUP' && accessLevel && (
-            <Link
-              className={classes.navLink}
-              to={getRoutePath(
-                `/${data._connectorId ? 'integrations' : 'integrations'}/${
-                  data._integrationId
-                }/settings/flows`
-              )}>
-              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
-                ? 'Monitor'
-                : 'Manage'}
-            </Link>
-          )}
-          {data.tag && (
-            <Chip label={data.tag} color="secondary" className={classes.tag} />
-          )}
-        </CardActions>
-        <Divider />
-        <CardActions>
-          <Typography>
-            {data._connectorId ? 'SmartConnector' : numFlowsText}
-          </Typography>
-          <Typography className={classes.connectorOwner}>
-            {data.connector && data.connector.owner}
-          </Typography>
-        </CardActions>
-      </Card>
-    );
-  }
+function Tile({ classes, tile }) {
+  const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const accessLevel =
+    tile.integration &&
+    tile.integration.permissions &&
+    tile.integration.permissions.accessLevel;
+
+  return (
+    <Card className={classes.card}>
+      <CardActions>
+        <TileAction size="small" color="primary" tile={tile} />
+      </CardActions>
+      <CardContent>
+        <Typography variant="h5" component="h2">
+          {tile.name}
+        </Typography>
+      </CardContent>
+      <Divider component="br" />
+      <CardActions>
+        {tile.status === 'IS_PENDING_SETUP' && (
+          <Typography>Click to continue setup.</Typography>
+        )}
+        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+          <Link
+            className={classes.navLink}
+            to={getRoutePath(
+              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                tile._integrationId
+              }/settings/flows`
+            )}>
+            {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
+              ? 'Monitor'
+              : 'Manage'}
+          </Link>
+        )}
+        {tile.tag && (
+          <Chip label={tile.tag} color="secondary" className={classes.tag} />
+        )}
+      </CardActions>
+      <Divider />
+      <CardActions>
+        <Typography>
+          {tile._connectorId ? 'SmartConnector' : numFlowsText}
+        </Typography>
+        <Typography className={classes.connectorOwner}>
+          {tile.connector && tile.connector.owner}
+        </Typography>
+      </CardActions>
+    </Card>
+  );
 }
+
+export default withStyles(styles)(Tile);

@@ -7,18 +7,16 @@ export default {
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/FinancialPeriod',
     '/rest/baseURI': `${formValues['/instanceURI']}/entity/${
-      formValues['/endpointName']
-    }/${formValues['/endpointVersion']}`,
+      formValues['/rest/unencrypted/endpointName']
+    }/${formValues['/rest/unencrypted/endpointVersion']}`,
     '/rest/bearerToken': '',
     '/rest/cookieAuth/method': 'POST',
     '/rest/cookieAuth/successStatusCode': 204,
-    '/rest/cookieAuth/uri': `${formValues['/instanceURI']}/entity/${
-      formValues['/endpointName']
-    }/${formValues['/endpointVersion']}`,
+    '/rest/cookieAuth/uri': `${formValues['/instanceURI']}//entity/auth/login`,
     '/rest/cookieAuth/body': `{"name": "${
-      formValues[`/username`]
+      formValues[`/rest/unencrypted/username`]
     }","password": "${formValues[`/password`]}","company": "${
-      formValues[`/username`]
+      formValues[`/rest/unencrypted/company`]
     }"}`,
   }),
   fields: [
@@ -40,7 +38,7 @@ export default {
       },
     },
     {
-      id: 'endpointName',
+      id: 'rest.unencrypted.endpointName',
       type: 'text',
       label: 'Endpoint Name:',
       helpText: 'Please enter endpoint name of your Acumatica account.',
@@ -49,12 +47,11 @@ export default {
         (r &&
           r.rest &&
           r.rest.unencrypted &&
-          r.rest.unencrypted &&
           r.rest.unencrypted.endpointName) ||
         'Default',
     },
     {
-      id: 'endpointVersion',
+      id: 'rest.unencrypted.endpointVersion',
       type: 'text',
       label: 'Endpoint Version:',
       helpText: 'Please enter endpoint name of your Acumatica account.',
@@ -63,44 +60,33 @@ export default {
         (r &&
           r.rest &&
           r.rest.unencrypted &&
-          r.rest.unencrypted &&
           r.rest.unencrypted.endpointVersion) ||
         '18.200.001',
     },
     {
-      id: 'username',
+      id: 'rest.unencrypted.username',
       type: 'text',
       label: 'Username:',
       required: true,
 
       helpText: 'Please enter endpoint name of your Acumatica account.',
       defaultValue: r =>
-        (r &&
-          r.rest &&
-          r.rest.unencrypted &&
-          r.rest.unencrypted &&
-          r.rest.unencrypted.username) ||
+        (r && r.rest && r.rest.unencrypted && r.rest.unencrypted.username) ||
         'Default',
     },
     {
       id: 'password',
       type: 'text',
+      inputType: 'password',
       label: 'Password:',
       required: true,
       helpText: 'Please enter endpoint name of your Acumatica account.',
     },
     {
-      id: 'company',
-      required: true,
+      id: 'rest.unencrypted.company',
       type: 'text',
       label: 'Company:',
       helpText: 'Please enter endpoint name of your Acumatica account.',
-      defaultValue: r =>
-        r &&
-        r.rest &&
-        r.rest.unencrypted &&
-        r.rest.unencrypted &&
-        r.rest.unencrypted.company,
     },
   ],
 };

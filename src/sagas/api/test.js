@@ -2,10 +2,13 @@
 
 import { put, call, select, delay } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
+import each from 'jest-each';
 import {
   onRequestSaga,
   onSuccessSaga,
   onErrorSaga,
+  getAdditionalHeaders,
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
 } from './requestInterceptors';
 import {
   APIException,
@@ -16,11 +19,59 @@ import {
 import * as apiConsts from '../api/apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
 import actions from '../../actions';
-import { resourceStatus } from '../../reducers';
+import { resourceStatus, userPreferences } from '../../reducers';
+import { ACCOUNT_IDS } from '../../utils/constants';
 
 const status401 = new APIException({
   status: 401,
   message: 'Session Expired',
+});
+
+describe('getAdditionalHeaders saga', () => {
+  const testCases = [];
+
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.forEach(path => {
+    testCases.push([
+      {},
+      'account owner',
+      `/${path}`,
+      { defaultAShareId: ACCOUNT_IDS.OWN },
+    ]);
+  });
+  testCases.push([
+    {},
+    'account owner',
+    'any thing',
+    { defaultAShareId: ACCOUNT_IDS.OWN },
+  ]);
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.forEach(path => {
+    testCases.push([
+      {},
+      'org user',
+      `/${path}`,
+      { defaultAShareId: 'some thing' },
+    ]);
+  });
+
+  ['/tiles', '/exports', 'any thing'].forEach(path => {
+    testCases.push([
+      { 'integrator-ashareid': 'some thing' },
+      'org user',
+      path,
+      { defaultAShareId: 'some thing' },
+    ]);
+  });
+
+  each(testCases).test(
+    'should return %o for an %s when path is "%s"',
+    (expected, userType, path, preferences) => {
+      const saga = getAdditionalHeaders(path);
+
+      expect(saga.next().value).toEqual(select(userPreferences));
+      expect(saga.next(preferences).value).toEqual(expected);
+      expect(saga.next().done).toEqual(true);
+    }
+  );
 });
 
 describe('request interceptors...testing the various stages of an api request on how it is handled  ', () => {
@@ -104,6 +155,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(
         put(actions.api.request(path, 'GET', path, false))
       );
+      expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
@@ -117,6 +169,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
+      expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
 
       // All request types are text
@@ -131,6 +184,53 @@ describe('request interceptors...testing the various stages of an api request on
           header1: 'something',
           'Content-Type': 'application/json; charset=utf-8',
         },
+        meta: {
+          path,
+          method: 'POST',
+        },
+      };
+
+      expect(saga.next().value).toEqual(finalRequestPayload);
+    });
+
+    test(`should create a request payload which should have match the redux saga request specification and responseType being text and with additional headers`, () => {
+      const path = '/somePath';
+      const opts = {
+        headers: { header1: 'something' },
+        method: 'POST',
+        body: { name: 'something', description: 'something else' },
+      };
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const request = { url: path, args };
+      const saga = onRequestSaga(request);
+
+      expect(saga.next().value).toEqual(
+        put(actions.api.request(path, 'POST', path, false))
+      );
+      expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));
+      const additionalHeaders = {
+        'integrator-ashareid': 'some-ashare-id',
+        'integrator-something': 'something else',
+      };
+
+      expect(saga.next(additionalHeaders).value).toEqual(
+        call(introduceNetworkLatency)
+      );
+
+      // All request types are text
+      const finalRequestPayload = {
+        url: `/api${path}`,
+        method: 'POST',
+        responseType: 'text',
+        credentials: 'same-origin',
+
+        headers: {
+          'x-csrf-token': csrf,
+          header1: 'something',
+          'Content-Type': 'application/json; charset=utf-8',
+          ...additionalHeaders,
+        },
+        body: JSON.stringify(opts.body),
         meta: {
           path,
           method: 'POST',

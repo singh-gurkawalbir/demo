@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'tsheets',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': `https://${
       formValues['/rest/tsheetsSubdomain']
     }.tsheets.com/api`,
@@ -21,7 +21,7 @@ export default {
       endAdornment: '.tsheets.com/api',
       label: 'Subdomain:',
       helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+        'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
