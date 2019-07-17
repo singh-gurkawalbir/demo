@@ -71,7 +71,6 @@ describe('stage reducers', () => {
 
       expect(state[id]).toEqual({
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
 
@@ -89,7 +88,6 @@ describe('stage reducers', () => {
           { ...patch1[0], timestamp: expect.any(Number) },
           { ...patch2[0], timestamp: expect.any(Number) },
         ],
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
 
@@ -111,7 +109,6 @@ describe('stage reducers', () => {
             timestamp: expect.any(Number),
           },
         ],
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
   });
@@ -140,7 +137,6 @@ describe('stage reducers', () => {
       expect(state[id]).toEqual({
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
   });
@@ -194,9 +190,8 @@ describe('stage selectors', () => {
       state = reducer(state, actions.resource.commitConflict(id, conflict));
 
       expect(selectors.stagedResource(state, id)).toEqual({
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
   });

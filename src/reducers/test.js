@@ -65,7 +65,7 @@ describe('global selectors', () => {
       expect(selectors.resourceData(state, 'exports', 1)).toEqual({
         merged: { _id: 1, name: 'patch X' },
         lastChange: expect.any(Number),
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         master: exports[0],
       });
     });
