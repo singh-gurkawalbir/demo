@@ -34,13 +34,14 @@ function MaterialUiTextField(props) {
     endAdornment,
     inputType,
     options,
+    touched,
   } = props;
 
   useEffect(() => {
-    if (options && typeof options === 'string') {
+    if (!touched && options && typeof options === 'string') {
       onFieldChange(id, options);
     }
-  }, [id, onFieldChange, options]);
+  }, [id, onFieldChange, options, touched]);
 
   const handleFieldChange = event => {
     const { value } = event.target;

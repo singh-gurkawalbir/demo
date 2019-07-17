@@ -8,11 +8,11 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
 
-const mapStateToProps = (state, { resourceType, resource }) => {
+const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
     state,
     resourceType,
-    resource._id
+    resourceId
   );
 
   return {
@@ -20,17 +20,17 @@ const mapStateToProps = (state, { resourceType, resource }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
+const mapDispatchToProps = (dispatch, { resourceType, resourceId }) => ({
   handleSubmitForm: values => {
-    // console.log(`request resource:`, resourceType, resource._id);
-    dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
+    // console.log(`request resource:`, resourceType, resourceId);
+    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
   },
 
   handleInitForm: () => {
-    dispatch(actions.resourceForm.init(resourceType, resource._id));
+    dispatch(actions.resourceForm.init(resourceType, resourceId));
   },
   handleClearResourceForm: () => {
-    dispatch(actions.resourceForm.clear(resourceType, resource._id));
+    dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
 
@@ -56,7 +56,7 @@ export const ResourceFormFactory = props => {
     return handleClearResourceForm;
     // TODO: Surya
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.resource._id]);
+  }, [props.resourceId]);
 
   const {
     resourceType,

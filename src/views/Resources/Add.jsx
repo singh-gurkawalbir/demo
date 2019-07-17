@@ -13,7 +13,6 @@ function Add(props) {
   const { match } = props;
   const { id, resourceType } = match.params;
   // const dispatch = useDispatch();
-  const resource = { _id: id };
 
   // function handleSave({ application, ...rest }) {
   //   props.history.push(`/pg/resources/exports/edit/${id}`);
@@ -27,11 +26,7 @@ function Add(props) {
       </Typography>
 
       <LoadResources required resources={[resourceType]}>
-        <ResourceForm
-          key={id}
-          resourceType={resourceType}
-          resource={resource}
-        />
+        <ResourceForm key={id} resourceType={resourceType} resourceId={id} />
       </LoadResources>
     </div>
   );

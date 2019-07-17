@@ -246,7 +246,7 @@ class Edit extends Component {
             key={formKey}
             editMode={editMode}
             resourceType={resourceType}
-            resource={merged}
+            resourceId={id}
             connectionType={type}
             connection={connection}
           />
