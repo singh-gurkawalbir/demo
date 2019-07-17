@@ -114,6 +114,8 @@ const resource = {
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
       }),
+    generateToken: resourceId =>
+      action(actionTypes.GENERATE_TOKEN, { resourceId }),
   },
 };
 // #endregion
