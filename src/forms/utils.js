@@ -105,7 +105,7 @@ export const getMissingPatchSet = (paths, resource) => {
 
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
-    if (segments.length > 2) {
+    if (segments.length > 1) {
       let value = {};
       let r = resource;
       let path = '';

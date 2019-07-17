@@ -21,7 +21,6 @@ export default (state = {}, action) => {
       } else {
         // drop all staged patches.
         delete newState[id].patch;
-        delete newState[id].lastChange;
       }
 
       return newState;
@@ -35,32 +34,12 @@ export default (state = {}, action) => {
       newState[id] = { ...newState[id], patch: [...newState[id].patch] };
 
       if (scope) {
-        let elementFound = false;
-        let lastChangeUpdated = false;
-
         for (let i = newState[id].patch.length - 1; i >= 0; i -= 1) {
           if (newState[id].patch[i].scope === scope) {
-            if (!elementFound) {
-              newState[id].patch.splice(i, 1);
-              elementFound = true;
-            } else {
-              lastChangeUpdated = true;
-              newState[id].lastChange = newState[id].patch[i].timestamp;
-              break;
-            }
+            newState[id].patch.splice(i, 1);
+            break;
           }
         }
-
-        // if there are no more patches matching the scope
-        // lets update the timestamp to the last patch
-        if (!lastChangeUpdated)
-          if (newState[id].patch.length > 0)
-            newState[id].lastChange =
-              newState[id].patch[newState[id].patch.length - 1].timestamp;
-          else {
-            delete newState[id].patch;
-            delete newState[id].lastChange;
-          }
 
         return newState;
       }
@@ -68,11 +47,8 @@ export default (state = {}, action) => {
       // drop last patch.
       if (newState[id].patch.length > 1) {
         newState[id].patch.pop();
-        newState[id].lastChange =
-          newState[id].patch[newState[id].patch.length - 1].timestamp;
       } else {
         delete newState[id].patch;
-        delete newState[id].lastChange;
       }
 
       return newState;
@@ -81,7 +57,6 @@ export default (state = {}, action) => {
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState[id] = {
         ...newState[id],
-        lastChange: timestamp,
         patch: [...((newState[id] && newState[id].patch) || [])],
       };
       // inserting the same field twice causes the previous patch to be ignored
@@ -96,6 +71,19 @@ export default (state = {}, action) => {
             patch => patch.path !== newPatch.path
           );
       });
+
+      // scope shouldn't matter when removing partial patches
+      // is it operation check that
+      if (newPatch.length === 1 && newPatch[0].op === 'replace') {
+        if (
+          newState[id].patch.length > 0 &&
+          newPatch[0].path ===
+            newState[id].patch[newState[id].patch.length - 1].path &&
+          newPatch[0].op ===
+            newState[id].patch[newState[id].patch.length - 1].op
+        )
+          newState[id].patch.pop();
+      }
 
       const scopedPatchWithTimestamp = scope
         ? newPatch.map(patch => ({
@@ -137,15 +125,6 @@ export default (state = {}, action) => {
   }
 };
 
-function deleteTimeStampScope(patch) {
-  const patchCopy = { ...patch };
-
-  delete patchCopy.timestamp;
-  delete patchCopy.scope;
-
-  return patchCopy;
-}
-
 // #region PUBLIC SELECTORS
 export function stagedResource(state, id, scope) {
   if (!state || !id || !state[id]) {
@@ -156,13 +135,8 @@ export function stagedResource(state, id, scope) {
 
   if (scope)
     updatedPatches =
-      state[id].patch &&
-      state[id].patch
-        .filter(patch => patch.scope === scope)
-        .map(deleteTimeStampScope);
-  else
-    updatedPatches =
-      state[id].patch && state[id].patch.map(deleteTimeStampScope);
+      state[id].patch && state[id].patch.filter(patch => patch.scope === scope);
+  else updatedPatches = state[id].patch;
 
   return { ...state[id], patch: updatedPatches };
 }

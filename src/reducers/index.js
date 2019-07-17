@@ -798,13 +798,14 @@ export function resourceData(state, resourceType, id, scope) {
 
   if (!master) return {};
 
-  const { patch, lastChange, conflict } = fromSession.stagedResource(
+  const { patch, conflict } = fromSession.stagedResource(
     state.session,
     id,
     scope
   );
   // console.log('patch:', patch);
   let merged;
+  let lastChange;
 
   if (patch) {
     // If the patch is not deep cloned, its values are also mutated and
@@ -816,6 +817,8 @@ export function resourceData(state, resourceType, id, scope) {
 
     // console.log('patchResult', patchResult);
     merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
   }
 
   const data = {
