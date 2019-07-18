@@ -159,6 +159,10 @@ export function jobList(state, integrationId, flowId) {
   return fromJobs.jobList(state.jobs, integrationId, flowId);
 }
 
+export function flowJobList(state, integrationId, flowId) {
+  return fromJobs.flowJobList(state.jobs, integrationId, flowId);
+}
+
 export function inProgressJobIds(state, integrationId, flowId) {
   return fromJobs.inProgressJobIds(state.jobs, integrationId, flowId);
 }

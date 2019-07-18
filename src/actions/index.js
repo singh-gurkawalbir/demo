@@ -281,16 +281,28 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
 };
 const job = {
-  requestCollection: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.REQUEST_COLLECTION, { integrationId, flowId }),
-  receivedCollection: (collection, { integrationId }) =>
+  requestCollection: ({ integrationId, flowId, filters }) =>
+    action(actionTypes.JOB.REQUEST_COLLECTION, {
+      integrationId,
+      flowId,
+      filters,
+    }),
+  receivedCollection: ({ collection, integrationId, flowId }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
       integrationId,
+      flowId,
     }),
+  requestFamily: ({ jobId }) =>
+    action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
   getInProgressJobStatus: ({ integrationId, flowId }) =>
     action(actionTypes.JOB.GET_IN_PROGRESS_JOBS_STATUS, {
+      integrationId,
+      flowId,
+    }),
+  noInProgressJobs: ({ integrationId, flowId }) =>
+    action(actionTypes.JOB.NO_IN_PROGRESS_JOBS, {
       integrationId,
       flowId,
     }),

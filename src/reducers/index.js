@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
+import moment from 'moment';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -982,6 +983,76 @@ export function accessToken(state, id) {
 
 export function jobList(state, integrationId, flowId) {
   return fromData.jobList(state.data, integrationId, flowId);
+}
+
+export function flowJobList(state, integrationId, flowId) {
+  const jobs = fromData.flowJobList(state.data, integrationId, flowId);
+  const preferences = userPreferences(state);
+  const flowIdNameMap = resourceList(state, { type: 'flows' }).resources.reduce(
+    (prev, curr) => ({
+      ...prev,
+      [curr._id]: {
+        name: curr.name || curr._id,
+        numImports: curr.pageProcessors ? curr.pageProcessors.length : 1,
+      },
+    }),
+    {}
+  );
+  const exportIdNameMap = resourceList(state, {
+    type: 'exports',
+  }).resources.reduce(
+    (prev, curr) => ({ ...prev, [curr._id]: curr.name || curr._id }),
+    {}
+  );
+  const importIdNameMap = resourceList(state, {
+    type: 'imports',
+  }).resources.reduce(
+    (prev, curr) => ({ ...prev, [curr._id]: curr.name || curr._id }),
+    {}
+  );
+
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          endedAtAsString:
+            cJob.endedAt &&
+            moment(cJob.endedAt).format(
+              `${preferences.dateFormat} ${preferences.timeFormat}`
+            ),
+          name: cJob._exportId
+            ? exportIdNameMap[cJob._exportId]
+            : importIdNameMap[cJob._importId],
+        };
+
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
+
+    const additionalProps = {
+      endedAtAsString:
+        job.endedAt &&
+        moment(job.endedAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      name: flowIdNameMap[job._flowId] && flowIdNameMap[job._flowId].name,
+    };
+
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.__percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
+          (job.numPagesGenerated *
+            ((flowIdNameMap[job._flowId] &&
+              flowIdNameMap[job._flowId].numImports) ||
+              1))
+      );
+    } else {
+      additionalProps.__percentComplete = 0;
+    }
+
+    return { ...job, ...additionalProps };
+  });
 }
 
 export function inProgressJobIds(state, integrationId, flowId) {
