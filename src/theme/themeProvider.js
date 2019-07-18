@@ -17,7 +17,7 @@ export default name => {
     ...themes[themeName],
   });
 
-  console.log(theme);
+  // console.log(theme);
 
   return {
     ...theme,
