@@ -144,7 +144,7 @@ class ProfilesComponent extends Component {
           />
           <div>
             <Button
-              color="secondary"
+              color="primary"
               variant="contained"
               className={classes.editEmailButton}
               onClick={() => this.handleOpenModal('openEmailModal')}>
@@ -162,7 +162,7 @@ class ProfilesComponent extends Component {
             <InputLabel>
               Edit Password:
               <Button
-                color="secondary"
+                color="primary"
                 variant="contained"
                 style={{ marginLeft: '10px' }}
                 onClick={() => this.handleOpenModal('openPasswordModal')}>
@@ -237,7 +237,7 @@ class ProfilesComponent extends Component {
         <br />
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={this.handleOnSubmit}
           disabled={!saveButtonEnabled}>
           save

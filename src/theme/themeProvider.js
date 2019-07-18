@@ -17,6 +17,8 @@ export default name => {
     ...themes[themeName],
   });
 
+  // console.log(theme);
+
   return {
     ...theme,
     styleguide: styleguideTheme(theme),
