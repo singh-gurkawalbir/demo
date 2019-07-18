@@ -974,6 +974,16 @@ export function metadataOptionsAndResources(
 }
 // #endregion Session metadata selectors
 
+// #region Session token selectors
+
+export function connectionTokens(state, resourceId) {
+  if (!state) return {};
+
+  return fromSession.connectionTokens(state.session, resourceId);
+}
+
+// #endregion
+
 export function commStatusByKey(state, key) {
   const commStatus = state && state.comms && state.comms[key];
 

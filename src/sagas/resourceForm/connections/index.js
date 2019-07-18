@@ -33,39 +33,51 @@ export function* generateToken({ resourceId, values }) {
     resourceId
   );
   const { type } = connectionResource;
-  let assistant;
-
-  if (type && connectionResource[type]) {
-    assistant = connectionResource[type].type;
-  }
+  const { assistant } = connectionResource;
 
   if (!assistant) throw new Error('Could not determine the assistant type');
 
-  const path = `${assistant}/generate-token`;
-  // get Assistant type
-  const apiKey = values[`${type}/unencrypted/apiKey`];
-  const apiSecret = values[`${type}/unencrypted/apiSecret`];
+  const path = `/${assistant}/generate-token`;
+  // get Assistant type removed unencrypted
+  const apiKey = values[`/${type}/encrypted/apiKey`];
+  const apiSecret = values[`/${type}/encrypted/apiSecret`];
   const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
   const reqPayload = {
     base64EncodedToken,
-    baseURI: connectionResource.rest.baseURI,
+    baseURI: connectionResource[type].baseURI,
   };
-  const resp = yield call(apiCallWithRetry, {
-    path,
-    opts: { body: reqPayload, method: 'POST' },
-    hidden: true,
-  });
-  const replaceValue = [
-    {
-      op: 'replace',
-      path: `/${type}/bearerToken`,
-      value: resp.token.access_token,
-    },
-  ];
 
-  yield put(
-    actions.resource.patchStaged(resourceId, replaceValue, SCOPES.META)
-  );
+  try {
+    const resp = yield call(apiCallWithRetry, {
+      path,
+      opts: { body: reqPayload, method: 'POST' },
+      hidden: true,
+    });
+
+    yield put(
+      actions.resource.connections.saveToken(
+        resourceId,
+        resp.token.access_token
+      )
+    );
+  } catch (e) {
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
+    yield put(
+      actions.resource.connections.generateTokenFailed(
+        resourceId,
+        errors[0].message
+      )
+    );
+  }
+  // const replaceValue = [
+  //   {
+  //     op: 'replace',
+  //     path: `/${type}/bearerToken`,
+  //     value: resp.token.access_token,
+  //   },
+  // ];
 }
 
 export function* pingConnection({ resourceId, values }) {
@@ -198,7 +210,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 
 export default [
   takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
-
+  takeEvery(actionTypes.TOKEN.GENERATE, generateToken),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection

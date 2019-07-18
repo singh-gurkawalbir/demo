@@ -17,5 +17,15 @@ export default {
       inputType: 'password',
       helpText: 'The API Secret of your Certify account.',
     },
+
+    {
+      id: 'rest.bearerToken',
+      resourceId: r => r._id,
+      required: true,
+      type: 'tokengen',
+      label: 'Token',
+      inputType: 'password',
+      helpText: 'The API Secret of your Certify account.',
+    },
   ],
 };

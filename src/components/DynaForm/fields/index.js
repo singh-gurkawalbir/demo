@@ -16,6 +16,7 @@ import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaTokenGenerator from './DynaTokenGenerator';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -37,4 +38,5 @@ export default {
   labeltitle: DynaLabel,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
+  tokengen: DynaTokenGenerator,
 };

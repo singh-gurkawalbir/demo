@@ -131,7 +131,11 @@ export function* onErrorSaga(error, action) {
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
-    if (error.status === 401 || error.status === 403) {
+    // TODO:whitelist the generate token for now until the backend team fixes it
+    if (
+      !path.endsWith('generate-token') &&
+      (error.status === 401 || error.status === 403)
+    ) {
       yield call(unauthenticateAndDeleteProfile);
       const hidden = true;
 

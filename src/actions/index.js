@@ -114,8 +114,14 @@ const resource = {
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
       }),
-    generateToken: resourceId =>
-      action(actionTypes.GENERATE_TOKEN, { resourceId }),
+
+    generateToken: (resourceId, values) =>
+      action(actionTypes.TOKEN.GENERATE, { resourceId, values }),
+    saveToken: (resourceId, bearerToken) =>
+      action(actionTypes.TOKEN.SAVE, { resourceId, bearerToken }),
+    generateTokenFailed: (resourceId, message) =>
+      action(actionTypes.TOKEN.FAILED, { resourceId, message }),
+    clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
   },
 };
 // #endregion

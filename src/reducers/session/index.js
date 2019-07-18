@@ -4,16 +4,28 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import connectionToken, * as fromConnectionToken from './connectionToken';
 
 export default combineReducers({
   stage,
   filters,
   editors,
   metadata,
+  connectionToken,
   resourceForm,
 });
 
 // #region PUBLIC SELECTORS
+
+export function connectionTokens(state, resourceId) {
+  if (!state) return {};
+
+  return fromConnectionToken.connectionTokens(
+    state.connectionToken,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   if (!state) return {};
 
