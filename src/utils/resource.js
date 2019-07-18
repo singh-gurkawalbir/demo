@@ -72,13 +72,13 @@ export const adaptorTypeMap = {
 // what to call this "class" of resource. It could be confusing to simply
 // all this method "getResourceType"
 export function getResourceSubType(resource) {
-  if (!resource) return;
+  if (!resource) return {};
 
   const { adaptorType, assistant } = resource;
 
   // Since this function is intended to be used for only imp/exp/conn,
   // we should have an adaptorType... if not, we cant proceed.
-  if (!adaptorType) return;
+  if (!adaptorType) return {};
 
   return { type: adaptorTypeMap[adaptorType], assistant };
 }

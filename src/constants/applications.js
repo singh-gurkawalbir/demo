@@ -6,6 +6,7 @@
 // assistant: Optional - set if App is a variant (Assistant)
 // connections: Optional - if application supports multiple connection
 //   types, list them. Concur and Constant Contact are examples.
+
 export default [
   // generic connectors
   { id: 'HTTP', name: 'HTTP', type: 'http' },
@@ -16,7 +17,7 @@ export default [
   // databases
   { id: 'mongodb', name: 'MongoDB', type: 'mongodb' },
   { id: 'mssql', name: 'mssql', type: 'mssql' },
-  { id: 'mysql', name: 'MySql', type: 'mlsql' },
+  { id: 'mysql', name: 'MySQL', type: 'mysql' },
   { id: 'postgresql', name: 'postgresql', type: 'postgresql' },
 
   // Assistants
@@ -31,10 +32,11 @@ export default [
   { id: 'acton', name: 'acton', type: 'http', assistant: 'acton' },
   { id: 'acumatica', name: 'acumatica', type: 'http', assistant: 'acumatica' },
   { id: 'adp', name: 'adp', type: 'http', assistant: 'adp' },
-  { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
+  // is this supported? no image in CDN..
+  // { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'amazonmws', type: 'http', assistant: 'amazonmws' },
-  { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
+  // { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
   { id: 'aptrinsic', name: 'aptrinsic', type: 'http', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'asana', type: 'http', assistant: 'asana' },
@@ -61,7 +63,7 @@ export default [
     type: 'http',
     assistant: 'bigcommerce',
   },
-  { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
+  // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
   { id: 'box', name: 'box', type: 'http', assistant: 'box' },
   { id: 'braintree', name: 'braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'bronto', type: 'http', assistant: 'bronto' },
@@ -76,7 +78,7 @@ export default [
   { id: 'certify', name: 'certify', type: 'http', assistant: 'certify' },
   { id: 'chargebee', name: 'chargebee', type: 'http', assistant: 'chargebee' },
   { id: 'chargify', name: 'chargify', type: 'http', assistant: 'chargify' },
-  { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
+  // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'clover', type: 'http', assistant: 'clover' },
   { id: 'concur', name: 'concur', type: 'http', assistant: 'concur' },
   {
@@ -98,25 +100,26 @@ export default [
     name: 'constantcontactv2',
     type: 'http',
     assistant: 'constantcontactv2',
+    icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
     name: 'constantcontactv3',
     type: 'http',
     assistant: 'constantcontactv3',
-    icon: 'constantcontactv2',
+    icon: 'constantcontactv3',
   },
   { id: 'coupa', name: 'coupa', type: 'http', assistant: 'coupa' },
   { id: 'dcl', name: 'dcl', type: 'http', assistant: 'dcl' },
   { id: 'desk', name: 'desk', type: 'http', assistant: 'desk' },
-  { id: 'dnb', name: 'dnb', type: 'http', assistant: 'dnb' },
+  // { id: 'dnb', name: 'dnb', type: 'http', assistant: 'dnb' },
   { id: 'docusign', name: 'docusign', type: 'http', assistant: 'docusign' },
-  {
-    id: 'doubleclick',
-    name: 'doubleclick',
-    type: 'http',
-    assistant: 'doubleclick',
-  },
+  // {
+  //   id: 'doubleclick',
+  //   name: 'doubleclick',
+  //   type: 'http',
+  //   assistant: 'doubleclick',
+  // },
   { id: 'drift', name: 'drift', type: 'http', assistant: 'drift' },
   { id: 'dropbox', name: 'dropbox', type: 'http', assistant: 'dropbox' },
   {
@@ -129,7 +132,7 @@ export default [
   { id: 'easyship', name: 'easyship', type: 'http', assistant: 'easyship' },
   { id: 'ebay-xml', name: 'ebay-xml', type: 'http', assistant: 'ebay-xml' },
   { id: 'ebay', name: 'ebay', type: 'http', assistant: 'ebay' },
-  { id: 'eloquent', name: 'eloquent', type: 'http', assistant: 'eloquent' },
+  // { id: 'eloquent', name: 'eloquent', type: 'http', assistant: 'eloquent' },
   { id: 'etsy', name: 'etsy', type: 'http', assistant: 'etsy' },
   {
     id: 'eventbrite',
@@ -151,7 +154,8 @@ export default [
     type: 'http',
     assistant: 'fieldaware',
   },
-  { id: 'firstdata', name: 'firstdata', type: 'http', assistant: 'firstdata' },
+  // { id: 'firstdata', name: 'firstdata',
+  // type: 'http', assistant: 'firstdata' },
   {
     id: 'freshbooks',
     name: 'freshbooks',
@@ -161,7 +165,7 @@ export default [
   { id: 'freshdesk', name: 'freshdesk', type: 'http', assistant: 'freshdesk' },
   { id: 'ftp', name: 'ftp', type: 'http', assistant: 'ftp' },
   { id: 'github', name: 'github', type: 'http', assistant: 'github' },
-  { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
+  // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
   { id: 'google', name: 'google', type: 'http', assistant: 'google' },
   {
     id: 'googleanalytics',
@@ -175,12 +179,12 @@ export default [
     type: 'http',
     assistant: 'googlecontacts',
   },
-  {
-    id: 'googledrive',
-    name: 'googledrive',
-    type: 'http',
-    assistant: 'googledrive',
-  },
+  // {
+  //   id: 'googledrive',
+  //   name: 'googledrive',
+  //   type: 'http',
+  //   assistant: 'googledrive',
+  // },
   {
     id: 'googlemail',
     name: 'googlemail',
@@ -206,11 +210,11 @@ export default [
     assistant: 'greenhouse',
   },
   { id: 'grms', name: 'grms', type: 'http', assistant: 'grms' },
-  { id: 'gusto', name: 'gusto', type: 'http', assistant: 'gusto' },
+  // { id: 'gusto', name: 'gusto', type: 'http', assistant: 'gusto' },
   { id: 'harvest', name: 'harvest', type: 'http', assistant: 'harvest' },
-  { id: 'hoovers', name: 'hoovers', type: 'http', assistant: 'hoovers' },
+  // { id: 'hoovers', name: 'hoovers', type: 'http', assistant: 'hoovers' },
   { id: 'hubspot', name: 'hubspot', type: 'http', assistant: 'hubspot' },
-  { id: 'hybris', name: 'hybris', type: 'http', assistant: 'hybris' },
+  // { id: 'hybris', name: 'hybris', type: 'http', assistant: 'hybris' },
   { id: 'insightly', name: 'insightly', type: 'http', assistant: 'insightly' },
   {
     id: 'integratorio',
@@ -229,7 +233,7 @@ export default [
     type: 'http',
     assistant: 'lightspeed',
   },
-  { id: 'linkedin', name: 'linkedin', type: 'http', assistant: 'linkedin' },
+  // { id: 'linkedin', name: 'linkedin', type: 'http', assistant: 'linkedin' },
   {
     id: 'liquidplanner',
     name: 'liquidplanner',
@@ -240,12 +244,12 @@ export default [
   { id: 'mailchimp', name: 'mailchimp', type: 'http', assistant: 'mailchimp' },
   { id: 'mailgun', name: 'mailgun', type: 'http', assistant: 'mailgun' },
   { id: 'marketo', name: 'marketo', type: 'http', assistant: 'marketo' },
-  {
-    id: 'mediaocean',
-    name: 'mediaocean',
-    type: 'http',
-    assistant: 'mediaocean',
-  },
+  // {
+  //   id: 'mediaocean',
+  //   name: 'mediaocean',
+  //   type: 'http',
+  //   assistant: 'mediaocean',
+  // },
   {
     id: 'merchantesolutions',
     name: 'merchantesolutions',
@@ -270,12 +274,12 @@ export default [
     type: 'http',
     assistant: 'microsoftdynamics365',
   },
-  {
-    id: 'microsoftoffice365',
-    name: 'microsoftoffice365',
-    type: 'http',
-    assistant: 'microsoftoffice365',
-  },
+  // {
+  //   id: 'microsoftoffice365',
+  //   name: 'microsoftoffice365',
+  //   type: 'http',
+  //   assistant: 'microsoftoffice365',
+  // },
   {
     id: 'microsoftonenote',
     name: 'microsoftonenote',
@@ -340,7 +344,8 @@ export default [
   { id: 'parseur', name: 'parseur', type: 'http', assistant: 'parseur' },
   { id: 'paychex', name: 'paychex', type: 'http', assistant: 'paychex' },
   { id: 'paycor', name: 'paycor', type: 'http', assistant: 'paycor' },
-  { id: 'paylocity', name: 'paylocity', type: 'http', assistant: 'paylocity' },
+  // { id: 'paylocity', name: 'paylocity',
+  // type: 'http', assistant: 'paylocity' },
   { id: 'paypal', name: 'paypal', type: 'http', assistant: 'paypal' },
   { id: 'pdffiller', name: 'pdffiller', type: 'http', assistant: 'pdffiller' },
   {
@@ -375,7 +380,7 @@ export default [
   },
   { id: 'recharge', name: 'recharge', type: 'http', assistant: 'recharge' },
   { id: 'recurly', name: 'recurly', type: 'http', assistant: 'recurly' },
-  { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
+  // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'retailops', type: 'http', assistant: 'retailops' },
   { id: 'returnly', name: 'returnly', type: 'http', assistant: 'returnly' },
   { id: 's3', name: 's3', type: 'http', assistant: 's3' },
@@ -386,7 +391,7 @@ export default [
     type: 'http',
     assistant: 'salesforce',
   },
-  { id: 'segment', name: 'segment', type: 'http', assistant: 'segment' },
+  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment' },
   {
     id: 'servicenow',
     name: 'servicenow',
@@ -439,12 +444,12 @@ export default [
     assistant: 'spreecommerce',
   },
   { id: 'squareup', name: 'squareup', type: 'http', assistant: 'squareup' },
-  {
-    id: 'steelbrick',
-    name: 'steelbrick',
-    type: 'http',
-    assistant: 'steelbrick',
-  },
+  // {
+  //   id: 'steelbrick',
+  //   name: 'steelbrick',
+  //   type: 'http',
+  //   assistant: 'steelbrick',
+  // },
   { id: 'strata', name: 'strata', type: 'http', assistant: 'strata' },
   { id: 'stripe', name: 'stripe', type: 'http', assistant: 'stripe' },
   { id: 'sugarcrm', name: 'sugarcrm', type: 'http', assistant: 'sugarcrm' },

@@ -6,6 +6,7 @@ export default function reducer(state = {}, action) {
     resourceType,
     resourceId,
     isNew,
+    skipCommit,
     fieldMeta,
     optionsHandler,
     formValues,
@@ -29,6 +30,7 @@ export default function reducer(state = {}, action) {
         // easier as we dont need to lookup the preSubmit handler...
         [key]: {
           isNew,
+          skipCommit,
           initComplete: true,
           fieldMeta,
           optionsHandler,

@@ -16,9 +16,8 @@ function Add(props) {
   const dispatch = useDispatch();
 
   function handleSubmitComplete() {
-    props.history.push(`/pg/resources/exports/edit/${id}`);
+    props.history.push(`/pg/resources/${resourceType}/edit/${id}`);
     dispatch(actions.resourceForm.clear(resourceType, id));
-    // dispatch(actions.resource.patch(resourceType, id));
   }
 
   return (

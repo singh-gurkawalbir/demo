@@ -27,7 +27,12 @@ const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
   },
 
   handleInitForm: () => {
-    dispatch(actions.resourceForm.init(resourceType, resourceId, isNew));
+    const skipCommit =
+      isNew && ['imports', 'exports', 'connections'].includes(resourceType);
+
+    dispatch(
+      actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)
+    );
   },
 
   handleClearResourceForm: () => {

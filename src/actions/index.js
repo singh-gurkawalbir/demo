@@ -230,23 +230,30 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew) =>
-    action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId, isNew }),
+  init: (resourceType, resourceId, isNew, skipCommit) =>
+    action(actionTypes.RESOURCE_FORM.INIT, {
+      resourceType,
+      resourceId,
+      isNew,
+      skipCommit,
+    }),
   initComplete: (
-    isNew,
     resourceType,
     resourceId,
     fieldMeta,
     optionsHandler,
-    preSubmit
+    preSubmit,
+    isNew,
+    skipCommit
   ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
-      isNew,
       resourceId,
       resourceType,
       fieldMeta,
       optionsHandler,
       preSubmit,
+      isNew,
+      skipCommit,
     }),
   submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {

@@ -133,7 +133,9 @@ class Edit extends Component {
     // we need to redirect to the resource using the correct id from
     // the persistence layer...
     if (newResourceId) {
-      this.props.history.push(`/pg/resources/exports/edit/${newResourceId}`);
+      this.props.history.push(
+        `/pg/resources/${resourceType}/edit/${newResourceId}`
+      );
     }
 
     const { editMode, showEditor, formKey } = this.state;

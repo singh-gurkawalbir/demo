@@ -141,14 +141,14 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
   }
 
-  const { isNew } = yield select(
+  const { skipCommit } = yield select(
     selectors.resourceFormState,
     resourceType,
     resourceId
   );
 
-  if (!isNew) {
-    // fetch possible pending patches.
+  // fetch all possible pending patches.
+  if (!skipCommit) {
     const { patch } = yield select(selectors.stagedResource, resourceId);
 
     // In most cases there would be no other pending staged changes, since most
@@ -166,7 +166,12 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
-export function* initFormValues({ resourceType, resourceId, isNew }) {
+export function* initFormValues({
+  resourceType,
+  resourceId,
+  isNew,
+  skipCommit,
+}) {
   let resource;
 
   if (isNew) {
@@ -213,12 +218,13 @@ export function* initFormValues({ resourceType, resourceId, isNew }) {
 
   yield put(
     actions.resourceForm.initComplete(
-      isNew,
       resourceType,
       resourceId,
       finalFieldMeta,
       defaultFormAssets.optionsHandler,
-      defaultFormAssets.preSubmit
+      defaultFormAssets.preSubmit,
+      isNew,
+      skipCommit
     )
   );
 }
