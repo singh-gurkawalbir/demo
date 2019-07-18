@@ -166,10 +166,26 @@ export default {
         '&:hover': {
           backgroundColor: 'transparent',
           color: colors.celigoAccent3,
-          textDecoration: 'underline',
+          // textDecoration: 'underline',
+          '&:after': {
+            background: colors.celigoAccent3,
+            width: '100%',
+            left: '0px',
+          },
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
+        },
+        '&:after': {
+          background: 'none repeat scroll 0 0 transparent',
+          bottom: '0px',
+          content: '',
+          display: 'block',
+          height: '1px',
+          left: '50%',
+          position: 'absolute',
+          transition: 'width 0.3s ease 0s, left 0.3s ease 0s',
+          width: '0',
         },
       },
       // small size button
@@ -185,9 +201,9 @@ export default {
         minWidth: 200,
       },
 
-      // outlined: {},
+      outlined: {},
       outlinedPrimary: {
-        borderRadius: '18px',
+        borderRadius: '4px',
         letterSpacing: '1px',
         fontSize: '12px',
         lineHeight: '8px',
@@ -211,7 +227,7 @@ export default {
         },
       },
       outlinedSecondary: {
-        borderRadius: '18px',
+        borderRadius: '4px',
         letterSpacing: '1px',
         fontSize: '12px',
         lineHeight: '8px',

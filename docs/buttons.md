@@ -49,22 +49,29 @@ const Button = require('@material-ui/core/Button').default;
 const buttonGroup = {
   float: 'left',
 };
-const mr10 = {
-  marginRight: '10px',
+const ButtonsGroup = require('../src/components/icons/ButtonGroup').default;
+const tempStyle = {
+  marginBottom: '20px',
 };
 <div>
-    <div style={buttonGroup}>
-        <Button variant="contained" color="primary" style={mr10}>Save</Button>
+    <div style={tempStyle}>
+       <ButtonsGroup>
+        <Button variant="contained" color="primary" >Save</Button>
         <Button variant="text" color="primary">Cancel</Button>
+      </ButtonsGroup>
     </div>
-    <div  style={buttonGroup}>
+   <div style={tempStyle}>
+    <ButtonsGroup style={tempStyle}>
+       
         <Button variant="text" color="primary">Cancel</Button>
-        <Button variant="contained" color="primary" style={mr10}>Save</Button>
-    </div>
-    <div  style={buttonGroup}>
+         <Button variant="contained" color="primary" >Save</Button>
+    </ButtonsGroup>
+     </div>
+   
+    <ButtonsGroup>
         <Button variant="text" color="primary">Cancel</Button>
+        <span style={{color: '#677A89'}}> | </span>
           <Button variant="text" color="primary">Install</Button>
-      
-    </div>
+    </ButtonsGroup>
 </div>
 ```
