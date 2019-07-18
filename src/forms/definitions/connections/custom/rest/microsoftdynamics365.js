@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'microsoftdynamics365',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': `https://${
       formValues['/rest/microsoftDynamics365Subdomain']
     }.dynamics.com`,

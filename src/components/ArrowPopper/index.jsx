@@ -30,6 +30,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       height: '1em',
       '&::before': {
         borderWidth: '0 1em 1em 1em',
+        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
       },
     },
@@ -41,6 +42,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       height: '1em',
       '&::before': {
         borderWidth: '1em 1em 0 1em',
+        // eslint-disable-next-line prettier/prettier
         borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
       },
     },
@@ -51,6 +53,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       width: '1em',
       '&::before': {
         borderWidth: '1em 1em 1em 0',
+        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
       },
     },
@@ -61,6 +64,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       width: '1em',
       '&::before': {
         borderWidth: '1em 0 1em 1em',
+        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
       },
     },

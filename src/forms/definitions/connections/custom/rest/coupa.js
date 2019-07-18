@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'coupa',
     '/rest/authType': 'token',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/accounts',
-    '/type': 'rest',
-    '/assistant': 'coupa',
     '/rest/baseURI': `https://${
       formValues['/rest/coupaSubdomain']
     }.coupacloud.com/api`,

@@ -27,7 +27,7 @@ export default {
       endAdornment: '/rest',
       label: 'Subdomain:',
       helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+        "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktorest.com/rest/v1/activities/types.json '591-vse-736.mktorest.com' is the subdomain.",
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -49,6 +49,8 @@ export default {
       type: 'text',
       label: 'Client Id:',
       required: true,
+      helpText:
+        'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
     },
     {
       id: 'rest.encrypted.clientSecret',
@@ -57,7 +59,7 @@ export default {
       required: true,
       inputType: 'password',
       helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+        'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

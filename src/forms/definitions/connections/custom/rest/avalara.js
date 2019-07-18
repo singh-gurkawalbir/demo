@@ -1,11 +1,11 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'avalara',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': 'v2/companies',
-    '/type': 'rest',
-    '/assistant': 'avalara',
     '/rest/baseURI': `https://${
       formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
     }rest.avatax.com/api/`,

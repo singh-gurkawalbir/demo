@@ -1,10 +1,10 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
     '/type': 'rest',
     '/assistant': 'freshbooks',
+    '/rest/authType': 'oauth',
+    '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.freshbooks.com/',
     '/rest/authURI': 'https://my.freshbooks.com/service/auth/oauth/authorize',
     '/rest/oauthTokenURI': 'https://api.freshbooks.com/auth/oauth/token',
