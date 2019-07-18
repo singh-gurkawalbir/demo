@@ -3,7 +3,7 @@ import colors from './colors';
 export default {
   name: 'Celigo Dark Theme',
   appBar: {
-    background: colors.celigoNeutral7,
+    background: colors.celigoNeutral8,
     contrast: colors.celigoWhite,
     hover: colors.celigoWhite,
   },
@@ -21,7 +21,9 @@ export default {
     type: 'dark',
     background: {
       paper: colors.celigoNeutral8,
-      default: colors.celigoNeutral6,
+      // TODO Azhar
+      default: '#1d232a',
+      // default: colors.celigoNeutral6,
       editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
       // success:
