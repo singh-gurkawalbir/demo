@@ -74,16 +74,15 @@ export const adaptorTypeMap = {
 export function getResourceSubType(resource) {
   if (!resource) return;
 
-  const { adaptorType, type, assistant } = resource;
-
-  // connection resource has a type field which indicates sub-type.
-  if (type) {
-    return { type, assistant };
-  }
+  const { adaptorType, assistant } = resource;
 
   // Since this function is intended to be used for only imp/exp/conn,
-  // we should have an adaptorType... if now, we cant proceed.
+  // we should have an adaptorType... if not, we cant proceed.
   if (!adaptorType) return;
 
   return { type: adaptorTypeMap[adaptorType], assistant };
 }
+
+// fn to consolidate this simple expression in case we ever
+// change how we identify new resources..
+export const isNewId = id => id && id.startsWith('new');

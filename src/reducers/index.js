@@ -793,12 +793,12 @@ export function resourceStatus(
 }
 
 export function resourceData(state, resourceType, id) {
-  if (!state) return {};
+  if (!state || !resourceType || !id) return {};
 
   const master = resource(state, resourceType, id);
   const { patch, conflict } = fromSession.stagedResource(state.session, id);
 
-  if (!master && !patch) return {};
+  if (!master && !patch) return { merged: {} };
 
   let merged;
 

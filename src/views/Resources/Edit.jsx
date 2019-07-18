@@ -15,6 +15,7 @@ import ResourceForm from '../../components/ResourceFormFactory';
 import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
+import { isNewId } from '../../utils/resource';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -46,13 +47,11 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
       dispatch(actions.resource.patchStaged(id, patchSet));
     },
-    // handleCommitChanges: (a, b, c) => {
-    //   console.log(a, b, c);
-    //   dispatch(actions.resource.commitStaged(resourceType, id));
-    // },
+
     handleInitCustomResourceForm: () => {
       dispatch(actions.resource.initCustomForm(resourceType, id));
     },
+
     handleUndoChange: () => {
       dispatch(actions.resource.undoStaged(id));
     },
@@ -139,9 +138,9 @@ class Edit extends Component {
 
     const { editMode, showEditor, formKey } = this.state;
     const { /* master , */ merged, patch, conflict } = resourceData;
-    const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
-      resourceType
-    );
+    const allowsCustomForm =
+      !isNewId(id) &&
+      ['connections', 'imports', 'exports'].includes(resourceType);
 
     if (!merged) {
       return (

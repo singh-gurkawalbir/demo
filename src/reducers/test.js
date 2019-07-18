@@ -33,7 +33,6 @@ describe('global selectors', () => {
   describe('resourceData', () => {
     test('should return {} on bad state or args.', () => {
       expect(selectors.resourceData()).toEqual({});
-      // expect(selectors.resourceData({})).toEqual({});
       expect(selectors.resourceData({ data: {} })).toEqual({});
     });
 
@@ -48,6 +47,22 @@ describe('global selectors', () => {
         merged: exports[0],
         staged: undefined,
         master: exports[0],
+      });
+    });
+
+    test('should return correct data when no staged data or resource exists. (new resource)', () => {
+      const exports = [{ _id: 1, name: 'test A' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      expect(
+        selectors.resourceData(state, 'exports', 'new-resource-id')
+      ).toEqual({
+        merged: {},
+        staged: undefined,
+        master: undefined,
       });
     });
 

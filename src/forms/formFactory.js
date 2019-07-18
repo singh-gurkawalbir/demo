@@ -49,13 +49,12 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
   return optionsHandler;
 };
 
-const getResourceFormAssets = ({ resourceType, resource }) => {
+const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let fields;
   let fieldSets = [];
   let preSubmit;
   let init;
   let meta;
-  const isNew = !resource || !resource._id || resource._id.startsWith('new');
 
   // console.log(isNew, resourceType, resource);
 

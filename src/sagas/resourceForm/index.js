@@ -137,19 +137,28 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     values,
   });
 
-  if (patchSet.length > 0) {
+  if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet));
   }
 
-  const { patch } = yield select(selectors.stagedResource, resourceId);
+  const { isNew } = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
 
-  // In most cases there would be no other pending staged changes, since most
-  // times a patch is followed by an immediate commit.  If however some
-  // component has staged some changes, even if the patchSet above is empty,
-  // we need to check the store for these un-committed ones and still call
-  // the commit saga.
-  if (patch.length) {
-    yield call(commitStagedChanges, { resourceType, id: resourceId });
+  if (!isNew) {
+    // fetch possible pending patches.
+    const { patch } = yield select(selectors.stagedResource, resourceId);
+
+    // In most cases there would be no other pending staged changes, since most
+    // times a patch is followed by an immediate commit.  If however some
+    // component has staged some changes, even if the patchSet above is empty,
+    // we need to check the store for these un-committed ones and still call
+    // the commit saga.
+    if (patch && patch.length) {
+      yield call(commitStagedChanges, { resourceType, id: resourceId });
+    }
   }
 
   yield put(
@@ -157,10 +166,10 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
-export function* initFormValues({ resourceType, resourceId }) {
+export function* initFormValues({ resourceType, resourceId, isNew }) {
   let resource;
 
-  if (resourceId.startsWith('new')) {
+  if (isNew) {
     resource = { _id: resourceId };
   } else {
     ({ merged: resource } = yield select(
@@ -169,13 +178,13 @@ export function* initFormValues({ resourceType, resourceId }) {
       resourceId
     ));
   }
-  // console.log('initFormValues', resourceType, resourceId, resource);
 
   if (!resource) return; // nothing to do.
 
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
+    isNew,
   });
   const { customForm } = resource;
   const form =
@@ -204,6 +213,7 @@ export function* initFormValues({ resourceType, resourceId }) {
 
   yield put(
     actions.resourceForm.initComplete(
+      isNew,
       resourceType,
       resourceId,
       finalFieldMeta,
