@@ -57,7 +57,7 @@ export default class DynaForm extends Component {
               </ExpansionPanel>
             ))}
         </div>
-        <div>second column</div>
+        {/* The children are action buttons for the form */}
         {children}
       </Form>
     );
