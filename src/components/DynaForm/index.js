@@ -11,7 +11,7 @@ import getRenderer from './renderer';
 @withStyles(theme => ({
   fieldContainer: {
     border: 'solid 1px',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.editorInner,
     borderColor: 'rgb(0,0,0,0.1)',
     maxHeight: `60vh`,
     overflowY: 'auto',
