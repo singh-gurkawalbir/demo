@@ -25,9 +25,29 @@ export default {
       main: colors.celigoAccent3,
       sideBar: colors.celigoHelpText,
       editorInner: colors.celigoNeutral2,
+      arrowAfter: colors.celigoNeutral2,
       // success:
       // warning: celigo.celigoWarning
       // error:
+    },
+    celigoColors: {
+      celigoAccent1: colors.celigoAccent1,
+      celigoAccent2: colors.celigoAccent2,
+      celigoAccent3: colors.celigoAccent3,
+      celigoAccent4: colors.celigoAccent4,
+      celigoNeutral1: colors.celigoNeutral1,
+      celigoNeutral2: colors.celigoNeutral2,
+      celigoNeutral3: colors.celigoNeutral3,
+      celigoNeutral4: colors.celigoNeutral4,
+      celigoNeutral5: colors.celigoNeutral5,
+      celigoNeutral6: colors.celigoNeutral6,
+      celigoNeutral7: colors.celigoNeutral7,
+      celigoNeutra8: colors.celigoNeutral8,
+      celigoWhite: colors.celigoWhite,
+      celigoHelpText: colors.celigoHelpText,
+      celigoError: colors.celigoError,
+      celigoSuccess: colors.celigoSuccess,
+      celigoWarning: colors.celigoWarning,
     },
     // action: {[object]},
     // Spinner color changes below
