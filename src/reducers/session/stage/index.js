@@ -63,15 +63,6 @@ export default (state = {}, action) => {
       // TODO: a better way to deal with partial patches is required...
       // perhaps apply partial patches to only editor changes
 
-      // removing all partial patches
-      newPatch.forEach(newPatch => {
-        // ignore the partial patch mechanism for metadata changes
-        if (!newPatch.path.startsWith('/customForm'))
-          newState[id].patch = newState[id].patch.filter(
-            patch => patch.path !== newPatch.path
-          );
-      });
-
       // scope shouldn't matter when removing partial patches
       // is it operation check that
       if (newPatch.length === 1 && newPatch[0].op === 'replace') {
