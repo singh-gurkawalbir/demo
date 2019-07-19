@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -10,12 +10,21 @@ export default function JobDetail({
   parentJob,
   onSelectChange,
   parentJobSelected,
+  selectedJobIds,
 }) {
   const [isSelected, setIsSelected] = useState(false);
-  const isSelectable = job.retriable || job.numError;
+  const isSelectable = !!(job.retriable || job.numError);
+
+  useEffect(() => {
+    if (parentJobSelected && !selectedJobIds.includes(job._id)) {
+      onSelectChange(true, job._id);
+    }
+
+    setIsSelected(selectedJobIds.includes(job._id) || parentJobSelected);
+  }, [job._id, onSelectChange, parentJobSelected, selectedJobIds]);
 
   function handleSelectChange(event) {
-    setIsSelected(event.target.checked);
+    // setIsSelected(event.target.checked);
     onSelectChange(event.target.checked, job._id);
   }
 
@@ -25,7 +34,7 @@ export default function JobDetail({
       <TableCell padding="checkbox">
         <Checkbox
           disabled={!isSelectable}
-          checked={isSelectable && (parentJobSelected || isSelected)}
+          checked={isSelectable && isSelected}
           onChange={event => handleSelectChange(event)}
         />
       </TableCell>

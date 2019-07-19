@@ -40,6 +40,7 @@ function JobTable({
   flowId,
   filters,
   rowsPerPage = 10,
+  onSelectChange,
 }) {
   const dispatch = useDispatch();
   const jobs = useSelector(state =>
@@ -75,18 +76,21 @@ function JobTable({
   }
 
   function handleSelectChange(selected, jobId) {
+    let jobIds = [...selectedJobs];
+
     if (selected) {
-      setSelectedJobs(selectedJobs.concat(jobId));
+      jobIds.push(jobId);
     } else {
-      const index = selectedJobs.indexOf(jobId);
+      const index = jobIds.indexOf(jobId);
 
       if (index > -1) {
-        setSelectedJobs([
-          ...selectedJobs.slice(0, index),
-          ...selectedJobs.slice(index + 1),
-        ]);
+        jobIds = [...jobIds.slice(0, index), ...jobIds.slice(index + 1)];
       }
     }
+
+    setSelectedJobs(jobIds);
+
+    onSelectChange(jobIds);
   }
 
   return (

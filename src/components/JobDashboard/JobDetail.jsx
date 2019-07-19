@@ -23,6 +23,11 @@ function JobDetail({ job, onSelectChange }) {
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [selectedJobIds, setSelectedJobIds] = useState([]);
+  const allChildsSelected =
+    selectedJobIds.length > 0 &&
+    job.children &&
+    job.children.filter(j => j.numError > 0).length === selectedJobIds.length;
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
@@ -43,13 +48,32 @@ function JobDetail({ job, onSelectChange }) {
     onSelectChange(checked, job._id);
   }
 
+  function handleChildSelectChange(selected, jobId) {
+    let jobIds = [...selectedJobIds];
+
+    if (selected) {
+      jobIds.push(jobId);
+    } else {
+      const index = jobIds.indexOf(jobId);
+
+      if (index > -1) {
+        jobIds = [...jobIds.slice(0, index), ...jobIds.slice(index + 1)];
+      }
+
+      setIsSelected(false);
+    }
+
+    setSelectedJobIds(jobIds);
+    onSelectChange(selected, jobId);
+  }
+
   return (
     <Fragment>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
             disabled={!(job.retriable || job.numError)}
-            checked={isSelected}
+            checked={isSelected || allChildsSelected}
             onChange={event => handleSelectChange(event)}
           />
         </TableCell>
@@ -80,8 +104,9 @@ function JobDetail({ job, onSelectChange }) {
             key={cJob._id}
             job={cJob}
             parentJob={job}
-            onSelectChange={onSelectChange}
+            onSelectChange={handleChildSelectChange}
             parentJobSelected={isSelected}
+            selectedJobIds={selectedJobIds}
           />
         ))}
     </Fragment>

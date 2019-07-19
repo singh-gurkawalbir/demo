@@ -28,9 +28,14 @@ const styles = theme => ({
 
 function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
   const [filters, setFilters] = useState({});
+  const [selectedJobIds, setSelectedJobIds] = useState([]);
 
   function handleFiltersChange(newFilters) {
     setFilters(newFilters);
+  }
+
+  function handleSelectChange(jobIds) {
+    setSelectedJobIds(jobIds);
   }
 
   return (
@@ -39,12 +44,14 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         integrationId={integrationId}
         flowId={flowId}
         onFiltersChange={handleFiltersChange}
+        selectedJobIds={selectedJobIds}
       />
       <JobTable
         integrationId={integrationId}
         flowId={flowId}
         filters={filters}
         rowsPerPage={rowsPerPage}
+        onSelectChange={handleSelectChange}
       />
     </LoadResources>
   );
