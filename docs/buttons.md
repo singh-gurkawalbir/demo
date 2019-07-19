@@ -49,7 +49,7 @@ const Button = require('@material-ui/core/Button').default;
 const buttonGroup = {
   float: 'left',
 };
-const ButtonsGroup = require('../src/components/icons/ButtonGroup').default;
+const ButtonsGroup = require('../src/components/ButtonGroup').default;
 const tempStyle = {
   marginBottom: '20px',
 };

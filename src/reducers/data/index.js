@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import * as _ from 'lodash';
+import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
@@ -122,7 +122,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
   });
 
   Object.keys(affectedResources).forEach(resourceType => {
-    affectedResources[resourceType] = _.uniq(affectedResources[resourceType]);
+    affectedResources[resourceType] = uniq(affectedResources[resourceType]);
   });
 
   const users = {};
