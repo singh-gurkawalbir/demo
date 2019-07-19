@@ -55,8 +55,9 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let preSubmit;
   let init;
   let meta;
+  const { type } = getResourceSubType(resource);
 
-  // console.log(isNew, resourceType, resource);
+  // console.log(isNew, resourceType, type, resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
@@ -65,13 +66,13 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource && resource.assistant) {
-        meta = formMeta.connections.custom[resource.type];
+        meta = formMeta.connections.custom[type];
 
         if (meta) {
           meta = meta[resource.assistant];
         }
       } else {
-        meta = formMeta.connections[resource.type];
+        meta = formMeta.connections[type];
       }
 
       if (meta) {
@@ -88,8 +89,6 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         if (isNew) {
           meta = meta.new;
         } else {
-          const { type } = getResourceSubType(resource);
-
           meta = meta[type];
         }
 
@@ -101,6 +100,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       break;
 
     case 'scripts':
+    case 'stacks':
       meta = formMeta[resourceType];
       ({ fields } = meta);
 
