@@ -7,7 +7,7 @@ import { status500 } from '../test';
 import * as selectors from '../../reducers';
 
 describe('commitStagedChanges saga', () => {
-  const id = 1;
+  const id = '1';
   const resourceType = 'dogs';
 
   test('should do nothing if no staged changes exist.', () => {
@@ -15,7 +15,7 @@ describe('commitStagedChanges saga', () => {
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
+      select(selectors.resourceData, resourceType, id, undefined)
     );
 
     const effect = saga.next({});
@@ -29,7 +29,7 @@ describe('commitStagedChanges saga', () => {
       const selectEffect = saga.next().value;
 
       expect(selectEffect).toEqual(
-        select(selectors.resourceData, resourceType, id)
+        select(selectors.resourceData, resourceType, id, undefined)
       );
 
       expect(
@@ -46,7 +46,7 @@ describe('commitStagedChanges saga', () => {
         {
           op: 'add',
           path: '/id',
-          value: 1,
+          value: id,
         },
       ];
 
@@ -68,7 +68,7 @@ describe('commitStagedChanges saga', () => {
       const selectEffect = saga.next().value;
 
       expect(selectEffect).toEqual(
-        select(selectors.resourceData, resourceType, id)
+        select(selectors.resourceData, resourceType, id, undefined)
       );
 
       const origin = { id, lastModified: 100 };
@@ -117,7 +117,7 @@ describe('commitStagedChanges saga', () => {
       const selectEffect = saga.next().value;
 
       expect(selectEffect).toEqual(
-        select(selectors.resourceData, resourceType, tempId)
+        select(selectors.resourceData, resourceType, tempId, undefined)
       );
 
       const path = `/${resourceType}`;

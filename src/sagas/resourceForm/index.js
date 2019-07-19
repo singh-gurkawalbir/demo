@@ -13,6 +13,13 @@ import processorLogic from '../../reducers/session/editors/processorLogic/javasc
 import { getResource, commitStagedChanges } from '../resources';
 import pingConnectionSaga from '../resourceForm/connections';
 
+export const SCOPES = {
+  META: 'meta',
+  VALUE: 'value',
+  SCRIPT: 'script',
+};
+Object.freeze(SCOPES);
+
 export function* patchFormField({
   resourceType,
   resourceId,
@@ -44,7 +51,7 @@ export function* patchFormField({
   const patchSet = [{ op, path, value }];
 
   // Apply the new patch to the session
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
 }
 
 export function* runHook({ hook, data }) {
@@ -87,11 +94,13 @@ export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
   values,
+  scope,
 }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
-    resourceId
+    resourceId,
+    scope
   );
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
@@ -117,8 +126,6 @@ export function* createFormValuesPatchSet({
     finalValues = formState.preSubmit(values);
   }
 
-  // console.log('values before/after preSubmit: ', values, finalValues);
-
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
     fieldMeta: formState.fieldMeta,
@@ -135,10 +142,11 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     resourceType,
     resourceId,
     values,
+    scope: SCOPES.VALUE,
   });
 
   if (patchSet && patchSet.length > 0) {
-    yield put(actions.resource.patchStaged(resourceId, patchSet));
+    yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
   }
 
   const { skipCommit } = yield select(
@@ -149,7 +157,11 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
 
   // fetch all possible pending patches.
   if (!skipCommit) {
-    const { patch } = yield select(selectors.stagedResource, resourceId);
+    const { patch } = yield select(
+      selectors.stagedResource,
+      resourceId,
+      SCOPES.VALUE
+    );
 
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
@@ -157,7 +169,11 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     // we need to check the store for these un-committed ones and still call
     // the commit saga.
     if (patch && patch.length) {
-      yield call(commitStagedChanges, { resourceType, id: resourceId });
+      yield call(commitStagedChanges, {
+        resourceType,
+        id: resourceId,
+        scope: SCOPES.VALUE,
+      });
     }
   }
 
@@ -273,7 +289,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
 }
 
 export const resourceFormSagas = [

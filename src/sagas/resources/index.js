@@ -5,15 +5,17 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
+import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 
-export function* commitStagedChanges({ resourceType, id }) {
+export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
     selectors.resourceData,
     resourceType,
-    id
+    id,
+    scope
   );
-  const isNew = typeof id === 'string' && id.startsWith('new');
+  const isNew = isNewId(id);
 
   // console.log('commitStaged saga', resourceType, id, patch, merged, master);
 
@@ -30,7 +32,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 
       conflict = util.removeItem(conflict, p => p.path === '/lastModified');
 
-      yield put(actions.resource.commitConflict(id, conflict));
+      yield put(actions.resource.commitConflict(id, conflict, scope));
       yield put(actions.resource.received(resourceType, origin));
 
       return;
@@ -58,8 +60,7 @@ export function* commitStagedChanges({ resourceType, id }) {
     }
 
     yield put(actions.resource.received(resourceType, updated));
-
-    yield put(actions.resource.clearStaged(id));
+    yield put(actions.resource.clearStaged(id, scope));
 
     if (isNew) {
       yield put(actions.resource.created(updated._id, id));

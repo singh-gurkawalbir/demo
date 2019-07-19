@@ -14,6 +14,24 @@ describe('Form Utils', () => {
         { op: 'add', path: '/a/e', value: { f: {} } },
       ]);
     });
+
+    test('should create a patch to replace the parent node if it is a string it with an object', () => {
+      const resource = { a: 123, encrypted: '****' };
+      const paths = ['/encrypted/apikey'];
+      const patchResult = getMissingPatchSet(paths, resource);
+
+      expect(patchResult).toEqual([
+        { op: 'add', path: '/encrypted', value: { apikey: {} } },
+      ]);
+    });
+    // Here we are trying to replace a value it could be string
+    test('should not create any patch if the supplied paths does not exceed the object path', () => {
+      const resource = { a: 123, encrypted: { blah: '****' } };
+      const paths = ['/encrypted/blah'];
+      const patchResult = getMissingPatchSet(paths, resource);
+
+      expect(patchResult).toEqual([]);
+    });
   });
 
   describe('sanitizePatchSet', () => {

@@ -1,11 +1,13 @@
 import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Switch, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
+import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import prettyDate from '../../utils/date';
 import { MODEL_PLURAL_TO_LABEL } from '../../constants/resource';
@@ -16,21 +18,28 @@ import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 import { isNewId } from '../../utils/resource';
+import { SCOPES } from '../../sagas/resourceForm';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
-  const resourceData = selectors.resourceData(state, resourceType, id);
-  const { _connectionId } = resourceData.merged ? resourceData.merged : {};
+  const metaChanges = selectors.resourceData(state, resourceType, id, 'meta');
+  const { _connectionId } = metaChanges.merged ? metaChanges.merged : {};
   // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const formState = selectors.resourceFormState(state, resourceType, id);
   const newResourceId = selectors.createdResourceId(state, id);
+  const metaPatches =
+    (metaChanges.patch &&
+      metaChanges.patch.filter(patch => patch.path !== '/customForm').length) ||
+    0;
 
   return {
     resourceType,
-    resourceData,
+    // valueChanges,
+    metaPatches,
+    metaChanges,
     connection,
     id,
     newResourceId,
@@ -45,7 +54,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
     handlePatchFormMeta: value => {
       const patchSet = [{ op: 'replace', path: '/customForm/form', value }];
 
-      dispatch(actions.resource.patchStaged(id, patchSet));
+      dispatch(actions.resource.patchStaged(id, patchSet, SCOPES.META));
     },
 
     handleInitCustomResourceForm: () => {
@@ -53,7 +62,13 @@ const mapDispatchToProps = (dispatch, { match }) => {
     },
 
     handleUndoChange: () => {
-      dispatch(actions.resource.undoStaged(id));
+      dispatch(actions.resource.undoStaged(id, SCOPES.META));
+    },
+    handleUndoAllMetaChanges: () => {
+      dispatch(actions.resource.clearStaged(id, SCOPES.META));
+    },
+    handleCommitMetaChanges: () => {
+      dispatch(actions.resource.commitStaged(resourceType, id, SCOPES.META));
     },
   };
 };
@@ -77,9 +92,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
   dates: {
     color: theme.palette.text.secondary,
   },
-  editButton: {
-    float: 'right',
-  },
 }))
 class Edit extends Component {
   state = {
@@ -92,7 +104,7 @@ class Edit extends Component {
     const { handleInitCustomResourceForm } = this.props;
     const { editMode } = this.state;
 
-    if (!editMode) {
+    if (editMode) {
       handleInitCustomResourceForm();
     }
 
@@ -119,13 +131,16 @@ class Edit extends Component {
   render() {
     const {
       id,
-      resourceData,
+      metaChanges,
       connection,
       resourceType,
       classes,
+      metaPatches,
       handlePatchFormMeta,
       handleUndoChange,
       newResourceId,
+      handleCommitMetaChanges,
+      handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
 
@@ -139,7 +154,7 @@ class Edit extends Component {
     }
 
     const { editMode, showEditor, formKey } = this.state;
-    const { /* master , */ merged, patch, conflict } = resourceData;
+    const { merged, lastChange, conflict, scope } = metaChanges;
     const allowsCustomForm =
       !isNewId(id) &&
       ['connections', 'imports', 'exports'].includes(resourceType);
@@ -161,7 +176,7 @@ class Edit extends Component {
     }
 
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
-    const patchLength = (patch && patch.length) || 0;
+
     // console.log(patch, merged);
 
     return (
@@ -178,59 +193,78 @@ class Edit extends Component {
             }}
           />
         )}
-        {allowsCustomForm && (
-          <Button
-            className={classes.editButton}
-            size="small"
-            color="primary"
-            onClick={this.handleToggleEdit}>
-            {editMode ? 'Save form' : 'Edit form'}
-          </Button>
-        )}
-        {editMode && (
-          <Fragment>
-            <Button
-              className={classes.editButton}
-              size="small"
-              color="primary"
-              onClick={this.handleToggleEditor}>
-              JSON
-            </Button>
 
-            <HooksButton
-              resourceId={id}
-              resourceType={resourceType}
-              className={classes.editButton}
-            />
+        <Grid container>
+          <Grid item xs={6}>
+            <Typography variant="h5">
+              {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+            </Typography>
 
-            {patchLength > 1 && (
-              <Button
-                className={classes.editButton}
-                size="small"
-                color="primary"
-                onClick={() => {
-                  handleUndoChange();
-                  this.handleRemountResourceComponent();
-                }}>
-                Undo({patchLength - 1})
-              </Button>
+            <Typography variant="caption" className={classes.dates}>
+              Last Modified: {prettyDate(merged.lastModified)}
+            </Typography>
+
+            {metaPatches > 0 && (
+              <Typography variant="caption" className={classes.dates}>
+                Unsaved changes made <TimeAgo date={lastChange} />.
+              </Typography>
             )}
-          </Fragment>
-        )}
-        <Typography variant="h5">
-          {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
-        </Typography>
-
-        <Typography variant="caption" className={classes.dates}>
-          Last Modified: {prettyDate(merged.lastModified)}
-        </Typography>
-
-        {patchLength > 0 && (
-          <Typography variant="caption" className={classes.dates}>
-            Unsaved changes made <TimeAgo date={Date(patch.lastChange)} />.
-          </Typography>
-        )}
-
+          </Grid>
+          <Grid item xs={6}>
+            {allowsCustomForm && (
+              <FormControlLabel
+                className={classes.simpleSpacing}
+                onChange={this.handleToggleEdit}
+                control={<Switch color="primary" />}
+                label="Edit"
+                labelPlacement="start"
+              />
+            )}
+            {editMode && (
+              <div>
+                {metaPatches > 0 && (
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => {
+                      handleUndoChange();
+                      this.handleRemountResourceComponent();
+                    }}>
+                    Undo({metaPatches})
+                  </Button>
+                )}
+                <HooksButton
+                  resourceId={id}
+                  resourceType={resourceType}
+                  className={classes.editButton}
+                />
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={this.handleToggleEditor}>
+                  JSON
+                </Button>
+                <Button
+                  size="small"
+                  color="primary"
+                  disabled={metaPatches === 0}
+                  onClick={handleCommitMetaChanges}>
+                  Save form
+                </Button>
+                <Button
+                  size="small"
+                  color="secondary"
+                  disabled={metaPatches === 0}
+                  onClick={() => {
+                    handleUndoAllMetaChanges();
+                    this.handleRemountResourceComponent();
+                  }}>
+                  Cancel Meta Changes
+                </Button>
+              </div>
+            )}
+          </Grid>
+        </Grid>
         {connection && (
           <Link
             key="conn"
@@ -254,6 +288,7 @@ class Edit extends Component {
 
           {conflict && (
             <ConflictAlert
+              scope={scope}
               conflict={conflict}
               connectionType={type}
               resourceType={resourceType}

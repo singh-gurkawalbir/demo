@@ -12,7 +12,7 @@ const mapStateToProps = (state, { resourceId }) => {
   const data = selectors.resourceData(state, 'scripts', resourceId);
   let scriptContent;
 
-  if (data && data.merged && data.merged.content) {
+  if (data && data.merged && data.merged.content !== undefined) {
     scriptContent = data.merged && data.merged.content;
   } else if (isNewId(resourceId)) {
     scriptContent = '';
