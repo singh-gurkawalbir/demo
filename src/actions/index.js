@@ -51,6 +51,8 @@ const api = {
 };
 // #region Resource Actions
 const resource = {
+  created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
+
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
 
@@ -231,14 +233,21 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId }),
+  init: (resourceType, resourceId, isNew, skipCommit) =>
+    action(actionTypes.RESOURCE_FORM.INIT, {
+      resourceType,
+      resourceId,
+      isNew,
+      skipCommit,
+    }),
   initComplete: (
     resourceType,
     resourceId,
     fieldMeta,
     optionsHandler,
-    preSubmit
+    preSubmit,
+    isNew,
+    skipCommit
   ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
@@ -246,6 +255,8 @@ const resourceForm = {
       fieldMeta,
       optionsHandler,
       preSubmit,
+      isNew,
+      skipCommit,
     }),
   submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {

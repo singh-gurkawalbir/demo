@@ -8,11 +8,11 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
 
-const mapStateToProps = (state, { resourceType, resource }) => {
+const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
     state,
     resourceType,
-    resource._id
+    resourceId
   );
 
   return {
@@ -20,56 +20,71 @@ const mapStateToProps = (state, { resourceType, resource }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, { resourceType, resource }) => ({
+const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
   handleSubmitForm: values => {
-    // console.log(`request resource:`, resourceType, resource._id, connection);
-    dispatch(actions.resourceForm.submit(resourceType, resource._id, values));
+    // console.log(`request resource:`, resourceType, resourceId);
+    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
   },
 
   handleInitForm: () => {
-    dispatch(actions.resourceForm.init(resourceType, resource._id));
+    const skipCommit =
+      isNew && ['imports', 'exports', 'connections'].includes(resourceType);
+
+    dispatch(
+      actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)
+    );
   },
+
   handleClearResourceForm: () => {
-    dispatch(actions.resourceForm.clear(resourceType, resource._id));
+    dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
 
 export const ResourceFormFactory = props => {
-  const [componentRemount, setComponentRemount] = useState(true);
-  // This useEffect is executed right after any render
-  // and the initial mount of the compount
-  // you can restrict its execution to be depended on a second
-  // prop like the example below, the function you return from
-  // this useEffect is executed when the component unmounts
-  // Another possible use case is in the second argument you can
-  // pass an empty array. This indicates the useEffect is not
-  // depended on any prop and is executed when the component
-  // mounts and unmounts
-
-  // Note: i have removed the key
-  useEffect(() => {
-    if (componentRemount) setComponentRemount(false);
-    const { handleInitForm, handleClearResourceForm } = props;
-
-    handleInitForm();
-
-    return handleClearResourceForm;
-  }, [props.resource._id]);
-
   const {
     resourceType,
     handleSubmitForm,
     formState,
     connectionType,
     handleInitForm,
+    handleClearResourceForm,
+    onSubmitComplete,
   } = props;
+  const [componentRemount, setComponentRemount] = useState(true);
+
+  // This useEffect is executed right after any render
+  // and the initial mount of the component
+  // you can restrict its execution to be depended on a second
+  // prop like the example below, the function you return from
+  // this useEffect is executed when the component remounts
+  // Another possible use case is in the second argument you can
+  // pass an empty array. This indicates the useEffect is not
+  // depended on any prop and is executed when the component
+  // mounts and remounts
+  useEffect(() => {
+    if (componentRemount) setComponentRemount(false);
+
+    handleInitForm();
+
+    return handleClearResourceForm;
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.resourceId]);
+
+  // once the form successfully completes submission (could be async)
+  // we call the parents callback so it can perform some action.
+  useEffect(() => {
+    if (formState.submitComplete && onSubmitComplete) {
+      onSubmitComplete();
+    }
+  }, [formState.submitComplete, onSubmitComplete]);
 
   if (!formState.initComplete || componentRemount) {
     return <Typography>Initializing Form</Typography>;
   }
 
   let Form;
-  const { fieldMeta, optionsHandler } = formState;
+  const { fieldMeta, optionsHandler, isNew } = formState;
   const commonProps = {
     handleInitForm,
     fieldMeta,
@@ -78,7 +93,7 @@ export const ResourceFormFactory = props => {
   };
   const formProps = commonProps;
 
-  if (resourceType === 'connections') {
+  if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
       Form = OAuthForm;
     } else {

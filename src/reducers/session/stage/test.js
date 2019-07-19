@@ -179,7 +179,7 @@ describe('stage selectors', () => {
       expect(selectors.stagedResource({}, 'key')).toEqual({});
     });
 
-    test('should return staged respource when match found.', () => {
+    test('should return staged resource when match found.', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
       const conflict = [{ op: 'replace', path: '/desc', value: '123' }];

@@ -6,13 +6,16 @@ import { FieldWrapper } from 'react-forms-processor/dist';
 import { EditorField } from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import { isNewId } from '../../../utils/resource';
 
 const mapStateToProps = (state, { resourceId }) => {
   const data = selectors.resourceData(state, 'scripts', resourceId);
   let scriptContent;
 
-  if (data) {
+  if (data && data.merged && data.merged.content !== undefined) {
     scriptContent = data.merged && data.merged.content;
+  } else if (isNewId(resourceId)) {
+    scriptContent = '';
   }
 
   return { scriptContent };
@@ -63,7 +66,7 @@ const ConnectedDynaEditor = connect(
 )(DynaScriptContent);
 const FieldWrappedDynaEditor = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaEditor {...props.fieldOpts} />
+    <ConnectedDynaEditor />
   </FieldWrapper>
 );
 

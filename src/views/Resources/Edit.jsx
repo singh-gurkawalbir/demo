@@ -9,12 +9,15 @@ import Button from '@material-ui/core/Button';
 import TimeAgo from 'react-timeago';
 import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
+import prettyDate from '../../utils/date';
+import { MODEL_PLURAL_TO_LABEL } from '../../constants/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
 import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
+import { isNewId } from '../../utils/resource';
 import { SCOPES } from '../../sagas/resourceForm';
 
 const mapStateToProps = (state, { match }) => {
@@ -26,6 +29,7 @@ const mapStateToProps = (state, { match }) => {
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const formState = selectors.resourceFormState(state, resourceType, id);
+  const newResourceId = selectors.createdResourceId(state, id);
   const metaPatches =
     (metaChanges.patch &&
       metaChanges.patch.filter(patch => patch.path !== '/customForm').length) ||
@@ -38,6 +42,7 @@ const mapStateToProps = (state, { match }) => {
     metaChanges,
     connection,
     id,
+    newResourceId,
     fieldMeta: formState.fieldMeta,
   };
 };
@@ -51,13 +56,11 @@ const mapDispatchToProps = (dispatch, { match }) => {
 
       dispatch(actions.resource.patchStaged(id, patchSet, SCOPES.META));
     },
-    // handleCommitChanges: (a, b, c) => {
-    //   console.log(a, b, c);
-    //   dispatch(actions.resource.commitStaged(resourceType, id));
-    // },
+
     handleInitCustomResourceForm: () => {
       dispatch(actions.resource.initCustomForm(resourceType, id));
     },
+
     handleUndoChange: () => {
       dispatch(actions.resource.undoStaged(id, SCOPES.META));
     },
@@ -68,24 +71,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
       dispatch(actions.resource.commitStaged(resourceType, id, SCOPES.META));
     },
   };
-};
-
-const toName = (token, upper, trim) =>
-  upper
-    ? token.charAt(0).toUpperCase() + token.slice(1, trim)
-    : token.slice(0, trim);
-const prettyDate = dateString => {
-  const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  };
-
-  return new Date(dateString).toLocaleString(undefined, options);
 };
 
 @hot(module)
@@ -153,20 +138,31 @@ class Edit extends Component {
       metaPatches,
       handlePatchFormMeta,
       handleUndoChange,
+      newResourceId,
       handleCommitMetaChanges,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
+
+    // once a new resource (id.startsWith('new-')), has been committed,
+    // we need to redirect to the resource using the correct id from
+    // the persistence layer...
+    if (newResourceId) {
+      this.props.history.push(
+        `/pg/resources/${resourceType}/edit/${newResourceId}`
+      );
+    }
+
     const { editMode, showEditor, formKey } = this.state;
-    const { /* master , */ merged, lastChange, conflict, scope } = metaChanges;
-    const allowsCustomForm = ['connections', 'imports', 'exports'].includes(
-      resourceType
-    );
+    const { merged, lastChange, conflict, scope } = metaChanges;
+    const allowsCustomForm =
+      !isNewId(id) &&
+      ['connections', 'imports', 'exports'].includes(resourceType);
 
     if (!merged) {
       return (
         <Typography variant="h5">
-          No {toName(resourceType, true, -1)} found with id {id}.
+          No {MODEL_PLURAL_TO_LABEL[resourceType]} found with id {id}.
         </Typography>
       );
     }
@@ -201,9 +197,7 @@ class Edit extends Component {
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h5">
-              {type
-                ? `${toName(type, true)} ${toName(resourceType, false, -1)}`
-                : toName(resourceType, true, -1)}
+              {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
             </Typography>
 
             <Typography variant="caption" className={classes.dates}>
@@ -287,7 +281,7 @@ class Edit extends Component {
             key={formKey}
             editMode={editMode}
             resourceType={resourceType}
-            resource={merged}
+            resourceId={id}
             connectionType={type}
             connection={connection}
           />

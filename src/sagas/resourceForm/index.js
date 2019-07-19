@@ -59,8 +59,8 @@ export function* runHook({ hook, data }) {
   const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
 
   // okay extracting script from the session
-  // if it isnt there make a call to receive the resource
-  // Arent we loading all the scripts?
+  // if it isn't there, make a call to receive the resource
+  // Aren't we loading all the scripts?
   if (!merged) return; // nothing to do.
 
   let code = merged.content;
@@ -126,13 +126,13 @@ export function* createFormValuesPatchSet({
     finalValues = formState.preSubmit(values);
   }
 
-  // console.log('values before/after preSubmit: ', values, finalValues);
-
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
     fieldMeta: formState.fieldMeta,
     resource,
   });
+
+  // console.log('patch set', patchSet);
 
   return { patchSet, finalValues };
 }
@@ -145,15 +145,36 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     scope: SCOPES.VALUE,
   });
 
-  if (patchSet.length > 0) {
+  if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-    // we are commiting both the values but not the fieldmeta changes
-    // ideally we would like to ,when the endpoint comes up
-    yield call(commitStagedChanges, {
-      resourceType,
-      id: resourceId,
-      scope: SCOPES.VALUE,
-    });
+  }
+
+  const { skipCommit } = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
+
+  // fetch all possible pending patches.
+  if (!skipCommit) {
+    const { patch } = yield select(
+      selectors.stagedResource,
+      resourceId,
+      SCOPES.VALUE
+    );
+
+    // In most cases there would be no other pending staged changes, since most
+    // times a patch is followed by an immediate commit.  If however some
+    // component has staged some changes, even if the patchSet above is empty,
+    // we need to check the store for these un-committed ones and still call
+    // the commit saga.
+    if (patch && patch.length) {
+      yield call(commitStagedChanges, {
+        resourceType,
+        id: resourceId,
+        scope: SCOPES.VALUE,
+      });
+    }
   }
 
   yield put(
@@ -161,25 +182,30 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
-export function* initFormValues({ resourceType, resourceId }) {
-  const { merged: resource } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
+export function* initFormValues({
+  resourceType,
+  resourceId,
+  isNew,
+  skipCommit,
+}) {
+  let resource;
+
+  if (isNew) {
+    resource = { _id: resourceId };
+  } else {
+    ({ merged: resource } = yield select(
+      selectors.resourceData,
+      resourceType,
+      resourceId
+    ));
+  }
 
   if (!resource) return; // nothing to do.
 
-  // TODO: skip this if resourceType === 'connections'
-  const { merged: connection } = yield select(
-    selectors.resourceData,
-    'connections',
-    resource._connectionId
-  );
   const defaultFormAssets = factory.getResourceFormAssets({
-    connection,
     resourceType,
     resource,
+    isNew,
   });
   const { customForm } = resource;
   const form =
@@ -212,12 +238,14 @@ export function* initFormValues({ resourceType, resourceId }) {
       resourceId,
       finalFieldMeta,
       defaultFormAssets.optionsHandler,
-      defaultFormAssets.preSubmit
+      defaultFormAssets.preSubmit,
+      isNew,
+      skipCommit
     )
   );
 }
 
-// Maybe the session could be stale...and the presubmit values might
+// Maybe the session could be stale...and the pre-submit values might
 // be excluded
 // we want to init the customForm metadata with a copy of the default metadata
 // we would normally send to the DynaForm component.
@@ -250,7 +278,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType
   );
   // I have fixed it with a flattened fields...but it does cascade
-  // form visibility rules to its childern
+  // form visibility rules to its children
   const patchSet = [
     {
       op: 'replace',
