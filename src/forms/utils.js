@@ -1,3 +1,5 @@
+import jsonPatch from 'fast-json-patch';
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -103,7 +105,7 @@ export const getMissingPatchSet = (paths, resource) => {
 
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
-    if (segments.length > 2) {
+    if (segments.length > 1) {
       let value = {};
       let r = resource;
       let path = '';
@@ -113,7 +115,11 @@ export const getMissingPatchSet = (paths, resource) => {
 
         path = `${path}/${segment}`;
 
-        if (r === undefined || r[segment] === undefined) {
+        if (
+          r === undefined ||
+          r[segment] === undefined ||
+          (typeof r[segment] === 'string' && segments.length - i - 1 >= 1)
+        ) {
           value = getStub(segments.slice(i + 1, segments.length));
           missing.push({ path, value, op: 'add' });
 
@@ -153,8 +159,11 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
     resource
   );
   const newSet = [...missingPatchSet, ...sanitizedSet];
+  const error = jsonPatch.validate(newSet, resource);
 
-  // console.log(newSet);
+  if (error) {
+    throw new Error('Something wrong with the patchSet operations ', error);
+  }
 
   return newSet;
 };

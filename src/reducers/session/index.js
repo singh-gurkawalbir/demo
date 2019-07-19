@@ -32,10 +32,10 @@ export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state.editors, id);
 }
 
-export function stagedResource(state, id) {
+export function stagedResource(state, id, scope) {
   if (!state) return {};
 
-  return fromStage.stagedResource(state.stage, id);
+  return fromStage.stagedResource(state.stage, id, scope);
 }
 
 export function optionsFromMetadata(

@@ -15,7 +15,7 @@ describe('commitStagedChanges saga', () => {
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
+      select(selectors.resourceData, resourceType, id, undefined)
     );
 
     const effect = saga.next({});
@@ -28,7 +28,7 @@ describe('commitStagedChanges saga', () => {
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
+      select(selectors.resourceData, resourceType, id, undefined)
     );
 
     expect(
@@ -67,7 +67,7 @@ describe('commitStagedChanges saga', () => {
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
+      select(selectors.resourceData, resourceType, id, undefined)
     );
 
     const origin = { id, lastModified: 100 };

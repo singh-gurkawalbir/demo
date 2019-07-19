@@ -13,6 +13,13 @@ import processorLogic from '../../reducers/session/editors/processorLogic/javasc
 import { getResource, commitStagedChanges } from '../resources';
 import pingConnectionSaga from '../resourceForm/connections';
 
+export const SCOPES = {
+  META: 'meta',
+  VALUE: 'value',
+  SCRIPT: 'script',
+};
+Object.freeze(SCOPES);
+
 export function* patchFormField({
   resourceType,
   resourceId,
@@ -44,7 +51,7 @@ export function* patchFormField({
   const patchSet = [{ op, path, value }];
 
   // Apply the new patch to the session
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
 }
 
 export function* runHook({ hook, data }) {
@@ -87,11 +94,13 @@ export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
   values,
+  scope,
 }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
-    resourceId
+    resourceId,
+    scope
   );
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
@@ -133,13 +142,18 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
     resourceType,
     resourceId,
     values,
+    scope: SCOPES.VALUE,
   });
 
   if (patchSet.length > 0) {
-    yield put(actions.resource.patchStaged(resourceId, patchSet));
+    yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
     // we are commiting both the values but not the fieldmeta changes
     // ideally we would like to ,when the endpoint comes up
-    yield call(commitStagedChanges, { resourceType, id: resourceId });
+    yield call(commitStagedChanges, {
+      resourceType,
+      id: resourceId,
+      scope: SCOPES.VALUE,
+    });
   }
 
   yield put(
@@ -236,7 +250,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType
   );
   // I have fixed it with a flattened fields...but it does cascade
-  // form visibiilty rules to its childern
+  // form visibility rules to its childern
   const patchSet = [
     {
       op: 'replace',
@@ -247,7 +261,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(resourceId, patchSet));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
 }
 
 export const resourceFormSagas = [

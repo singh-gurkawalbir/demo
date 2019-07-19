@@ -7,11 +7,12 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import metadataSagas from './meta';
 
-export function* commitStagedChanges({ resourceType, id }) {
+export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
     selectors.resourceData,
     resourceType,
-    id
+    id,
+    scope
   );
 
   // console.log(merged, master);
@@ -26,7 +27,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 
     conflict = util.removeItem(conflict, p => p.path === '/lastModified');
 
-    yield put(actions.resource.commitConflict(id, conflict));
+    yield put(actions.resource.commitConflict(id, conflict, scope));
     yield put(actions.resource.received(resourceType, origin));
 
     return;
@@ -49,7 +50,7 @@ export function* commitStagedChanges({ resourceType, id }) {
 
     yield put(actions.resource.received(resourceType, updated));
 
-    yield put(actions.resource.clearStaged(id));
+    yield put(actions.resource.clearStaged(id, scope));
   } catch (error) {
     // Dave would handle this part
   }

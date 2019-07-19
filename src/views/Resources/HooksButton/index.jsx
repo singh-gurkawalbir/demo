@@ -7,6 +7,7 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
+import { SCOPES } from '../../../sagas/resourceForm';
 
 const mapStateToProps = (state, { resourceId, resourceType }) => {
   const resourceData = selectors.resourceData(state, resourceType, resourceId);
@@ -33,8 +34,8 @@ const mapDispatchToProps = (dispatch, { resourceId }) => ({
       },
     ];
 
-    dispatch(actions.resource.patchStaged(scriptId, patchSet));
-    dispatch(actions.resource.commitStaged('scripts', scriptId));
+    dispatch(actions.resource.patchStaged(scriptId, patchSet, SCOPES.SCRIPT));
+    dispatch(actions.resource.commitStaged('scripts', scriptId, SCOPES.SCRIPT));
   },
 
   patchHook: (hookName, value) => {
@@ -46,7 +47,7 @@ const mapDispatchToProps = (dispatch, { resourceId }) => ({
       },
     ];
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet));
+    dispatch(actions.resource.patchStaged(resourceId, patchSet, SCOPES.SCRIPT));
   },
 });
 

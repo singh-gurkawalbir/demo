@@ -1,8 +1,9 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, id, patch: newPatch, conflict } = action;
+  const { type, id, patch: newPatch, conflict, scope } = action;
   const newState = { ...state };
+  const timestamp = Date.now();
 
   switch (type) {
     case actionTypes.RESOURCE.STAGE_CLEAR:
@@ -13,9 +14,14 @@ export default (state = {}, action) => {
 
       newState[id] = { ...newState[id] };
 
-      // drop all staged patches.
-      delete newState[id].patch;
-      delete newState[id].lastChange;
+      if (scope) {
+        newState[id].patch = newState[id].patch.filter(
+          patch => patch.scope !== scope
+        );
+      } else {
+        // drop all staged patches.
+        delete newState[id].patch;
+      }
 
       return newState;
 
@@ -26,6 +32,17 @@ export default (state = {}, action) => {
       }
 
       newState[id] = { ...newState[id], patch: [...newState[id].patch] };
+
+      if (scope) {
+        for (let i = newState[id].patch.length - 1; i >= 0; i -= 1) {
+          if (newState[id].patch[i].scope === scope) {
+            newState[id].patch.splice(i, 1);
+            break;
+          }
+        }
+
+        return newState;
+      }
 
       // drop last patch.
       if (newState[id].patch.length > 1) {
@@ -40,29 +57,45 @@ export default (state = {}, action) => {
     case actionTypes.RESOURCE.STAGE_PATCH:
       newState[id] = {
         ...newState[id],
-        lastChange: Date.now(),
         patch: [...((newState[id] && newState[id].patch) || [])],
       };
+      // inserting the same field twice causes the previous patch to be ignored
+      // TODO: a better way to deal with partial patches is required...
+      // perhaps apply partial patches to only editor changes
 
-      // TODO: Should I could make the code support several patches
-      // if the previous patch is modifying the same path as the prior patch,
-      // remove the prior patch so we dont accumulate single character patches.
-      if (
-        newPatch.length === 1 &&
-        newState[id].patch.length > 0 &&
-        newState[id].patch[newState[id].patch.length - 1].path ===
-          newPatch[0].path
-      ) {
-        newState[id].patch.pop(); // throw away partial patch.
+      // scope shouldn't matter when removing partial patches
+      // is it operation check that
+      if (newPatch.length === 1 && newPatch[0].op === 'replace') {
+        if (
+          newState[id].patch.length > 0 &&
+          newPatch[0].path ===
+            newState[id].patch[newState[id].patch.length - 1].path &&
+          newPatch[0].op ===
+            newState[id].patch[newState[id].patch.length - 1].op
+        )
+          newState[id].patch.pop();
       }
 
-      newState[id].patch = [...newState[id].patch, ...newPatch];
+      const scopedPatchWithTimestamp = scope
+        ? newPatch.map(patch => ({
+            ...patch,
+            timestamp,
+            scope,
+          }))
+        : newPatch.map(patch => ({
+            ...patch,
+            timestamp,
+          }));
+
+      newState[id].patch = [...newState[id].patch, ...scopedPatchWithTimestamp];
 
       return newState;
 
     case actionTypes.RESOURCE.STAGE_CONFLICT:
       newState[id] = newState[id] || {};
       newState[id] = { ...newState[id], conflict };
+
+      if (scope) newState[id] = { ...newState[id], scope };
 
       return newState;
 
@@ -74,6 +107,7 @@ export default (state = {}, action) => {
       newState[id] = { ...newState[id] };
 
       delete newState[id].conflict;
+      delete newState[id].scope;
 
       return newState;
 
@@ -83,11 +117,18 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function stagedResource(state, id) {
-  if (!state || !id) {
+export function stagedResource(state, id, scope) {
+  if (!state || !id || !state[id]) {
     return {};
   }
 
-  return state[id] || {};
+  let updatedPatches;
+
+  if (scope)
+    updatedPatches =
+      state[id].patch && state[id].patch.filter(patch => patch.scope === scope);
+  else updatedPatches = state[id].patch;
+
+  return { ...state[id], patch: updatedPatches };
 }
 // #endregion
