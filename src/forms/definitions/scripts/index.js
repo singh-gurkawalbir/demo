@@ -6,6 +6,7 @@ export default {
       defaultValue: r => r.name,
       type: 'text',
       label: 'Name',
+      required: true,
     },
     {
       id: 'description',
@@ -20,7 +21,7 @@ export default {
       id: 'content',
       name: '/content',
       type: 'scriptcontent',
-      label: 'Edit Script',
+      label: 'Script Content',
     },
   ],
 };

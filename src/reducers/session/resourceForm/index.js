@@ -5,6 +5,8 @@ export default function reducer(state = {}, action) {
     type,
     resourceType,
     resourceId,
+    isNew,
+    skipCommit,
     fieldMeta,
     optionsHandler,
     formValues,
@@ -27,6 +29,8 @@ export default function reducer(state = {}, action) {
         // refreshing session? Doing this makes the submit resource saga
         // easier as we dont need to lookup the preSubmit handler...
         [key]: {
+          isNew,
+          skipCommit,
           initComplete: true,
           fieldMeta,
           optionsHandler,

@@ -2,6 +2,7 @@ import { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from '../forms/definitions';
+import { getResourceSubType } from '../utils/resource';
 
 const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
   fields.forEach(field => {
@@ -48,32 +49,30 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
   return optionsHandler;
 };
 
-// TODO: We are considering editing a resource...maybe we should pass in a prop
-// so that the getResourceFromAssets picks out the
-// correct meta data like an enum create, edit
-const getResourceFormAssets = ({ resourceType, resource, connection }) => {
+const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let fields;
   let fieldSets = [];
   let preSubmit;
   let init;
   let meta;
-  let typeOfConnection;
+  const { type } = getResourceSubType(resource);
 
-  // console.log(resourceType, connection, resource);
-  // FormMeta fromMeta[resourceType][connectionType]
+  // console.log(isNew, resourceType, type, resource);
 
-  // FormMeta fromMeta[resourceType].custom.[connectionType]
-  // optionsHandler comes in here
+  // FormMeta generic pattern: fromMeta[resourceType][sub-type]
+  // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
   switch (resourceType) {
     case 'connections':
-      if (resource && resource.assistant) {
-        meta = formMeta.connections.custom[resource.type];
+      if (isNew) {
+        meta = formMeta.connections.new;
+      } else if (resource && resource.assistant) {
+        meta = formMeta.connections.custom[type];
 
         if (meta) {
           meta = meta[resource.assistant];
         }
       } else {
-        meta = formMeta.connections[resource.type];
+        meta = formMeta.connections[type];
       }
 
       if (meta) {
@@ -87,21 +86,11 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       meta = formMeta[resourceType];
 
       if (meta) {
-        // We are only considering edits of exports
-        // //Vinay suggested using the connection to determine
-        // const connectionType =
-        //   exportAdaptorTypeToConnectionType[meta.adaptorType];
-
-        // meta = exportAdaptorTypeToConnectionType.edit[connectionType];
-
-        if (connection) {
-          typeOfConnection = connection.type;
+        if (isNew) {
+          meta = meta.new;
         } else {
-          // for simple, distributed, webhooks
-          typeOfConnection = resource.type;
+          meta = meta[type];
         }
-
-        meta = meta[typeOfConnection];
 
         if (meta) {
           ({ fields, fieldSets, init, preSubmit } = meta);
@@ -109,12 +98,16 @@ const getResourceFormAssets = ({ resourceType, resource, connection }) => {
       }
 
       break;
+
     case 'scripts':
+    case 'stacks':
       meta = formMeta[resourceType];
       ({ fields } = meta);
 
       break;
+
     default:
+      meta = formMeta.default;
       break;
   }
 

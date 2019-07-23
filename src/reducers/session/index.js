@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import resource, * as fromResource from './resource';
 
 export default combineReducers({
   stage,
@@ -11,6 +12,7 @@ export default combineReducers({
   editors,
   metadata,
   resourceForm,
+  resource,
 });
 
 // #region PUBLIC SELECTORS
@@ -32,10 +34,10 @@ export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state.editors, id);
 }
 
-export function stagedResource(state, id) {
+export function stagedResource(state, id, scope) {
   if (!state) return {};
 
-  return fromStage.stagedResource(state.stage, id);
+  return fromStage.stagedResource(state.stage, id, scope);
 }
 
 export function optionsFromMetadata(
@@ -60,5 +62,9 @@ export function resourceFormState(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
+}
+
+export function createdResourceId(state, tempId) {
+  return fromResource.createdResourceId(state && state.resource, tempId);
 }
 // #endregion

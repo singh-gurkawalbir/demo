@@ -51,6 +51,8 @@ const api = {
 };
 // #region Resource Actions
 const resource = {
+  created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
+
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
 
@@ -66,20 +68,23 @@ const resource = {
       collection,
     }),
 
-  clearStaged: id => action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
+  clearStaged: (id, scope) =>
+    action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
-  undoStaged: id => action(actionTypes.RESOURCE.STAGE_UNDO, { id }),
+  undoStaged: (id, scope) =>
+    action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
-  patchStaged: (id, patch) =>
-    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
+  patchStaged: (id, patch, scope) =>
+    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id }),
+  commitStaged: (resourceType, id, scope) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
 
-  commitConflict: (id, conflict) =>
-    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
+  commitConflict: (id, conflict, scope) =>
+    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
 
-  clearConflict: id => action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id }),
+  clearConflict: (id, scope) =>
+    action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   initCustomForm: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE.INIT_CUSTOM_FORM, {
@@ -228,14 +233,21 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.INIT, { resourceType, resourceId }),
+  init: (resourceType, resourceId, isNew, skipCommit) =>
+    action(actionTypes.RESOURCE_FORM.INIT, {
+      resourceType,
+      resourceId,
+      isNew,
+      skipCommit,
+    }),
   initComplete: (
     resourceType,
     resourceId,
     fieldMeta,
     optionsHandler,
-    preSubmit
+    preSubmit,
+    isNew,
+    skipCommit
   ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
@@ -243,6 +255,8 @@ const resourceForm = {
       fieldMeta,
       optionsHandler,
       preSubmit,
+      isNew,
+      skipCommit,
     }),
   submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {

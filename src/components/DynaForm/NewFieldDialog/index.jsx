@@ -72,6 +72,9 @@ const fieldMeta = {
     props: { label: 'Configure CSV parse options' },
   },
 };
+// TODO: Is the name required to be provided..
+// ..do we translate it to a path json fast patch would understand
+// it needs '/'
 const getFieldProps = type => ({
   id: `newFieldId-${type}`,
   type,

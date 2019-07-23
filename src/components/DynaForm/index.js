@@ -11,7 +11,7 @@ import getRenderer from './renderer';
 @withStyles(theme => ({
   fieldContainer: {
     border: 'solid 1px',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.editorInner,
     borderColor: 'rgb(0,0,0,0.1)',
     maxHeight: `60vh`,
     overflowY: 'auto',
@@ -57,6 +57,7 @@ export default class DynaForm extends Component {
               </ExpansionPanel>
             ))}
         </div>
+        {/* The children are action buttons for the form */}
         {children}
       </Form>
     );

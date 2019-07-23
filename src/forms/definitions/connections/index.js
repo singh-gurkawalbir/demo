@@ -10,8 +10,10 @@ import salesforce from './salesforce';
 import wrapper from './wrapper';
 import mongodb from './mongodb';
 import custom from './custom';
+import newImport from './new';
 
 export default {
+  new: newImport,
   rdbms,
   rest,
   http,

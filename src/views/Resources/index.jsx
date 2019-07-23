@@ -84,8 +84,8 @@ class Resources extends Component {
           The left sidebar lists all your resources organized by type.
         </Typography>
         <br />
-        <Typography variant="subtitle1">
-          Use the keyword search to help find the resoure you are looking for.
+        <Typography variant="h5">
+          Use the keyword search to help find the resource you are looking for.
         </Typography>
       </div>
     );

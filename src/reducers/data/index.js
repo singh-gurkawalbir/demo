@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-import * as _ from 'lodash';
+import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
 import accessTokens, * as fromAccessTokens from './accessTokens';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../utils/constants';
 
 export default combineReducers({
   resources,
@@ -122,7 +122,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
   });
 
   Object.keys(affectedResources).forEach(resourceType => {
-    affectedResources[resourceType] = _.uniq(affectedResources[resourceType]);
+    affectedResources[resourceType] = uniq(affectedResources[resourceType]);
   });
 
   const users = {};

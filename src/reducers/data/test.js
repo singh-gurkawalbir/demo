@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import each from 'jest-each';
 import reducer, * as selectors from './';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../utils/constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const allResources = {};
 let isConnector = false;

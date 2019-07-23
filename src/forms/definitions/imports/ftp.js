@@ -1,9 +1,10 @@
 export default {
   fields: [
-    { fieldId: 'ftp.directoryPath' },
+    { formId: 'common' },
+    { fieldId: 'ftp.importFrom' },
+    { fieldId: 'ftp.directoryPath1' },
+    { fieldId: 'file.type' },
     { fieldId: 'ftp.fileName' },
-    { fieldId: 'ftp.inProgressFileName' },
-    { fieldId: 'ftp.backupDirectoryPath' },
   ],
   fieldSets: [],
 };

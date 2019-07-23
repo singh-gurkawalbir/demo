@@ -1,3 +1,5 @@
+import jsonPatch from 'fast-json-patch';
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -103,7 +105,7 @@ export const getMissingPatchSet = (paths, resource) => {
 
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
-    if (segments.length > 2) {
+    if (segments.length > 1) {
       let value = {};
       let r = resource;
       let path = '';
@@ -113,7 +115,11 @@ export const getMissingPatchSet = (paths, resource) => {
 
         path = `${path}/${segment}`;
 
-        if (r === undefined || r[segment] === undefined) {
+        if (
+          r === undefined ||
+          r[segment] === undefined ||
+          (typeof r[segment] === 'string' && segments.length - i - 1 >= 1)
+        ) {
           value = getStub(segments.slice(i + 1, segments.length));
           missing.push({ path, value, op: 'add' });
 
@@ -131,7 +137,6 @@ export const getMissingPatchSet = (paths, resource) => {
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
   if (!patchSet) return patchSet;
-
   const sanitizedSet = patchSet.reduce((s, patch) => {
     if (patch.op === 'replace') {
       const field = getFieldByName({ name: patch.path, fieldMeta });
@@ -153,8 +158,17 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
     resource
   );
   const newSet = [...missingPatchSet, ...sanitizedSet];
+  const error = jsonPatch.validate(newSet, resource);
 
-  // console.log(newSet);
+  if (error) {
+    // TODO: resolve why the validate performs a more strict check than
+    // applying a patch... or possibly we are applying the patch to a
+    // different object which is why its not failing when applying patches.
+
+    // eslint-disable-next-line
+    console.log(error, newSet, resource);
+    // throw new Error('Something wrong with the patchSet operations ', error);
+  }
 
   return newSet;
 };
@@ -167,7 +181,7 @@ export const replaceField = ({ meta, field }) => {
         // already be dealing with a copy.
         meta.fields[i] = field; // eslint-disable-line
 
-        // break as soon as replacement occurres.
+        // break as soon as replacement occurs.
         return meta;
       }
     }

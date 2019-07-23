@@ -3,7 +3,7 @@ import each from 'jest-each';
 import getJsonPaths from './jsonPaths';
 import getRoutePath from './routePaths';
 import getExistingResourcePagePath from './resource';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import getRequestOptions from './requestOptions';
 import actionTypes from '../actions/types';
 

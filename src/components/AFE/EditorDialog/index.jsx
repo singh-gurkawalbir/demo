@@ -138,12 +138,15 @@ class EditorDialog extends Component {
           {showPreviewAction && (
             <Button onClick={handlePreview}>Preview</Button>
           )}
-          <Button variant="contained" onClick={() => this.handleClose()}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => this.handleClose()}>
             Cancel
           </Button>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             onClick={() => this.handleClose(true)}>
             Save
           </Button>

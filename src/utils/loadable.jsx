@@ -20,7 +20,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
     },
   },
   spinner: {
-    color: theme.palette.primary[50],
+    color: theme.palette.linkHover,
   },
   errorIcon: {
     fontSize: 48,

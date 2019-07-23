@@ -7,7 +7,7 @@ import { status500 } from '../test';
 import * as selectors from '../../reducers';
 
 describe('commitStagedChanges saga', () => {
-  const id = 1;
+  const id = '1';
   const resourceType = 'dogs';
 
   test('should do nothing if no staged changes exist.', () => {
@@ -15,7 +15,7 @@ describe('commitStagedChanges saga', () => {
     const selectEffect = saga.next().value;
 
     expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
+      select(selectors.resourceData, resourceType, id, undefined)
     );
 
     const effect = saga.next({});
@@ -23,88 +23,140 @@ describe('commitStagedChanges saga', () => {
     expect(effect.done).toEqual(true);
   });
 
-  test('should complete with dispatch of conflict and received actions when origin does not match master.', () => {
-    const saga = commitStagedChanges({ resourceType, id });
-    const selectEffect = saga.next().value;
+  describe('update existing resource', () => {
+    test('should complete with dispatch of conflict and received actions when origin does not match master.', () => {
+      const saga = commitStagedChanges({ resourceType, id });
+      const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
-    );
+      expect(selectEffect).toEqual(
+        select(selectors.resourceData, resourceType, id, undefined)
+      );
 
-    expect(
-      saga.next({ master: { lastModified: 50 }, patch: true }).value
-    ).toEqual(
-      call(apiCallWithRetry, {
-        path: `/${resourceType}/${id}`,
-      })
-    );
+      expect(
+        saga.next({ master: { lastModified: 50 }, patch: true }).value
+      ).toEqual(
+        call(apiCallWithRetry, {
+          path: `/${resourceType}/${id}`,
+        })
+      );
 
-    const origin = { id, lastModified: 100 };
-    const putEffect = saga.next(origin).value;
-    const conflict = [
-      {
-        op: 'add',
-        path: '/id',
-        value: 1,
-      },
-    ];
+      const origin = { id, lastModified: 100 };
+      const putEffect = saga.next(origin).value;
+      const conflict = [
+        {
+          op: 'add',
+          path: '/id',
+          value: id,
+        },
+      ];
 
-    expect(putEffect).toEqual(
-      put(actions.resource.commitConflict(id, conflict))
-    );
+      expect(putEffect).toEqual(
+        put(actions.resource.commitConflict(id, conflict))
+      );
 
-    expect(saga.next().value).toEqual(
-      put(actions.resource.received(resourceType, origin))
-    );
+      expect(saga.next().value).toEqual(
+        put(actions.resource.received(resourceType, origin))
+      );
 
-    const finalEffect = saga.next();
+      const finalEffect = saga.next();
 
-    expect(finalEffect).toEqual({ done: true, value: undefined });
+      expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
+
+    test('should complete with dispatch of received and clear stage actions when commit succeeds.', () => {
+      const saga = commitStagedChanges({ resourceType, id });
+      const selectEffect = saga.next().value;
+
+      expect(selectEffect).toEqual(
+        select(selectors.resourceData, resourceType, id, undefined)
+      );
+
+      const origin = { id, lastModified: 100 };
+      const merged = { id, lastModified: 100 };
+      const path = `/${resourceType}/${id}`;
+      const getCallEffect = saga.next({
+        master: { lastModified: 100 },
+        merged,
+        patch: true,
+      }).value;
+
+      expect(getCallEffect).toEqual(call(apiCallWithRetry, { path }));
+
+      const putCallEffect = saga.next(merged, origin).value;
+
+      expect(putCallEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+      );
+
+      const updated = { id: 1 };
+      const putEffect = saga.next(updated).value;
+
+      expect(putEffect).toEqual(
+        put(actions.resource.received(resourceType, updated))
+      );
+
+      expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
+
+      const finalEffect = saga.next();
+
+      expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
   });
 
-  test('should complete with dispatch of received and clear stage actions when commit succeeds.', () => {
-    const saga = commitStagedChanges({ resourceType, id });
-    const selectEffect = saga.next().value;
+  describe('create new resource', () => {
+    test('should complete with dispatch of received+created resource actions.', () => {
+      const tempId = 'new-123';
+      const newResource = { name: 'bob' };
+      const saga = commitStagedChanges({ resourceType, id: tempId });
+      const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
-      select(selectors.resourceData, resourceType, id)
-    );
+      expect(selectEffect).toEqual(
+        select(selectors.resourceData, resourceType, tempId, undefined)
+      );
 
-    const origin = { id, lastModified: 100 };
-    const merged = { id, lastModified: 100 };
-    const path = `/${resourceType}/${id}`;
-    const getCallEffect = saga.next({
-      master: { lastModified: 100 },
-      merged,
-      patch: true,
-    }).value;
+      const path = `/${resourceType}`;
 
-    expect(getCallEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(
+        saga.next({
+          master: null,
+          merged: newResource,
+          patch: true,
+        }).value
+      ).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'post',
+            body: newResource,
+          },
+        })
+      );
 
-    const putCallEffect = saga.next(merged, origin).value;
+      const updated = { _id: 1 };
+      const putEffect = saga.next(updated).value;
 
-    expect(putCallEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        opts: {
-          method: 'put',
-          body: merged,
-        },
-      })
-    );
+      expect(putEffect).toEqual(
+        put(actions.resource.received(resourceType, updated))
+      );
 
-    const updated = { id: 1 };
-    const putEffect = saga.next(updated).value;
+      expect(saga.next().value).toEqual(
+        put(actions.resource.clearStaged(tempId))
+      );
 
-    expect(putEffect).toEqual(
-      put(actions.resource.received(resourceType, updated))
-    );
+      expect(saga.next().value).toEqual(
+        put(actions.resource.created(updated._id, tempId))
+      );
 
-    expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
+      const finalEffect = saga.next();
 
-    const finalEffect = saga.next();
-
-    expect(finalEffect).toEqual({ done: true, value: undefined });
+      expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
   });
 });
 
@@ -112,7 +164,7 @@ availableResources.forEach(type => {
   describe(`getResource("${type}", id) saga`, () => {
     const id = 123;
 
-    test('should succeed on successfull api call', () => {
+    test('should succeed on successful api call', () => {
       // assign
 
       const saga = getResource(actions.resource.request(type, id));
@@ -152,7 +204,7 @@ availableResources.forEach(type => {
   });
 
   describe(`getResourceCollection("${type}") saga`, () => {
-    test('should succeed on successfull api call', () => {
+    test('should succeed on successful api call', () => {
       const saga = getResourceCollection(
         actions.resource.requestCollection(type)
       );
