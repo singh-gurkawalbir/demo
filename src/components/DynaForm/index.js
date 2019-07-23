@@ -13,7 +13,7 @@ import getRenderer from './renderer';
     border: 'solid 1px',
     backgroundColor: theme.palette.background.editorInner,
     borderColor: 'rgb(0,0,0,0.1)',
-    maxHeight: `60vh`,
+    maxHeight: `80vh`,
     overflowY: 'auto',
     padding: theme.spacing.unit,
   },
