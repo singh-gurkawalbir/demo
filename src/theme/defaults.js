@@ -95,6 +95,13 @@ export default {
       },
     },
     MuiButton: {
+      label: {
+        '& > svg': {
+          margin: '0px 6px',
+          lineHeight: '0px',
+          fontSize: '12px',
+        },
+      },
       textPrimary: {
         borderRadius: '18px',
         letterSpacing: '1px',
@@ -211,6 +218,10 @@ export default {
     MuiButtonBase: {
       // The default props to change
       // variant: 'contained',
+    },
+    MuiSvgIcon: {
+      viewBox: '0 0 32 32',
+      fontSize: 'inherit',
     },
   },
 };
