@@ -14,61 +14,22 @@ const ConnectionsIcon = require('../src/components/icons/ConnectionsIcon').defau
 const TransferOwnershipIcon = require('../src/components/icons/TransferOwnershipIcon').default;
 const UpIcon = require('../src/components/icons/UpIcon').default;
 const SearchIcon = require('../src/components/icons/SearchIcon').default;
-const font12 = {
-    fontSize: '12px',
+
+const sizes = [12, 16, 20, 24, 32, 64];
+const container = (size) => {
+  return {
+    fontSize: size,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
     flexWrap: 'wrap',
     marginBottom: '15px',
   };
-  const font16 = {
-    fontSize: '16px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-     marginBottom: '15px',
-  };
-
-const font20 = {
-    fontSize: '20px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-     marginBottom: '15px',
-  };
-
-const font24 = {
-    fontSize: '24px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-     marginBottom: '15px',
-  };
-
-const font32 = {
-    fontSize: '32px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-    marginBottom: '15px',
-  };
-  const font64 = {
-    fontSize: '64px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-  };
-
-
+};
 
 <div>
-    <div style={font12}>
+  {sizes.map(size => (
+    <div key={size} style={container(size)}>
       <SearchIcon />
       <AddIcon />
       <ArrowLeftIcon />
@@ -84,91 +45,8 @@ const font32 = {
       <ConnectionsIcon />
       <TransferOwnershipIcon />
       <UpIcon />
-    </div>
-    <div style={font16}>
-      <SearchIcon />
-      <AddIcon />
-      <ArrowLeftIcon />
-      <CloseIcon />
-      <DownIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <MenuBarsIcon />
-      <ScheduleIcon />
-      <ScriptsIcon />
-      <SettingsIcon />
-      <StacksIcon />
-      <ConnectionsIcon />
-      <TransferOwnershipIcon />
-      <UpIcon />
-    </div>
-    <div style={font20}>
-      <SearchIcon />
-      <AddIcon />
-      <ArrowLeftIcon />
-      <CloseIcon />
-      <DownIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <MenuBarsIcon />
-      <ScheduleIcon />
-      <ScriptsIcon />
-      <SettingsIcon />
-      <StacksIcon />
-      <ConnectionsIcon />
-      <TransferOwnershipIcon />
-      <UpIcon />
-    </div>
-    <div style={font24}>
-      <SearchIcon />
-      <AddIcon />
-      <ArrowLeftIcon />
-      <CloseIcon />
-      <DownIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <MenuBarsIcon />
-      <ScheduleIcon />
-      <ScriptsIcon />
-      <SettingsIcon />
-      <StacksIcon />
-      <ConnectionsIcon />
-      <TransferOwnershipIcon />
-      <UpIcon />
-    </div>
-    <div style={font32}>
-      <SearchIcon />
-      <AddIcon />
-      <ArrowLeftIcon />
-      <CloseIcon />
-      <DownIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <MenuBarsIcon />
-      <ScheduleIcon />
-      <ScriptsIcon />
-      <SettingsIcon />
-      <StacksIcon />
-      <ConnectionsIcon />
-      <TransferOwnershipIcon />
-      <UpIcon />
-    </div>
-    <div style={font64}>
-      <SearchIcon />
-      <AddIcon />
-      <ArrowLeftIcon />
-      <CloseIcon />
-      <DownIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <MenuBarsIcon />
-      <ScheduleIcon />
-      <ScriptsIcon />
-      <SettingsIcon />
-      <StacksIcon />
-      <ConnectionsIcon />
-      <TransferOwnershipIcon />
-      <UpIcon />
-    </div>
+    </div>    
+    ))
+  }
 </div>
 ```
