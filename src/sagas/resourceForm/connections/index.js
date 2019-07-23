@@ -26,7 +26,12 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* generateToken({ resourceId, values, formPayloadFn }) {
+export function* generateToken({
+  resourceId,
+  values,
+  formPayloadFn,
+  tokenSetForFieldsFn,
+}) {
   const resourceType = 'connections';
   const connectionResource = yield select(
     selectors.resource,
@@ -40,16 +45,30 @@ export function* generateToken({ resourceId, values, formPayloadFn }) {
   const path = `/${assistant}/generate-token`;
 
   if (!formPayloadFn) throw new Error('No Payload function provided');
-  const reqPayload = formPayloadFn(values);
+
+  let reqPayload;
 
   try {
-    const resp = yield call(apiCallWithRetry, {
+    reqPayload = formPayloadFn(values);
+  } catch (e) {
+    yield put(
+      actions.resource.connections.generateTokenFailed(
+        resourceId,
+        'Could not process payload, Please revist your form formPayloadFn'
+      )
+    );
+
+    return;
+  }
+
+  let resp;
+
+  try {
+    resp = yield call(apiCallWithRetry, {
       path,
       opts: { body: reqPayload, method: 'POST' },
       hidden: true,
     });
-
-    yield put(actions.resource.connections.saveToken(resourceId, resp.token));
   } catch (e) {
     const errorsJSON = JSON.parse(e.message);
     const { errors } = errorsJSON;
@@ -60,7 +79,28 @@ export function* generateToken({ resourceId, values, formPayloadFn }) {
         errors[0].message
       )
     );
+
+    return;
   }
+
+  try {
+    const fieldsToBeSetWithValues = tokenSetForFieldsFn(resp.token);
+
+    yield put(
+      actions.resource.connections.saveToken(
+        resourceId,
+        fieldsToBeSetWithValues
+      )
+    );
+  } catch (e) {
+    yield put(
+      actions.resource.connections.generateTokenFailed(
+        resourceId,
+        'Could not process token to field values, Please revisit your tokenSetForFieldsFn'
+      )
+    );
+  }
+
   // const replaceValue = [
   //   {
   //     op: 'replace',

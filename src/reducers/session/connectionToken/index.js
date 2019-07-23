@@ -1,7 +1,7 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, resourceId, token, message } = action;
+  const { type, resourceId, fieldsToBeSetWithValues, message } = action;
   const newState = { ...state };
 
   switch (type) {
@@ -12,7 +12,10 @@ export default (state = {}, action) => {
       return newState;
     case actionTypes.TOKEN.SAVE:
       if (!newState[resourceId]) newState[resourceId] = {};
-      newState[resourceId] = { ...newState[resourceId], token };
+      newState[resourceId] = {
+        ...newState[resourceId],
+        fieldsToBeSetWithValues,
+      };
 
       return newState;
     case actionTypes.TOKEN.FAILED:

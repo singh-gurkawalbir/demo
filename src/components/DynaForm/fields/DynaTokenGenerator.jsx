@@ -11,13 +11,17 @@ import { MaterialUiTextField } from './DynaText';
 const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
 });
-const mapDispatchToProps = (dispatch, { resourceId }) => ({
+const mapDispatchToProps = (
+  dispatch,
+  { resourceId, formPayloadFn, tokenSetForFieldsFn }
+) => ({
   handleGenerateToken: values =>
     dispatch(
       actions.resource.connections.generateToken(
         resourceId,
         values,
-        formPayloadFn
+        formPayloadFn,
+        tokenSetForFieldsFn
       )
     ),
   handleClearToken: () =>
@@ -59,29 +63,20 @@ function DynaTokenGenerator(props) {
     onFieldChange,
     connectionToken,
     handleClearToken,
-    fillTokenForAdditionalFields,
     classes,
   } = props;
-  const { bearerToken, message } = connectionToken || {};
+  const { fieldsToBeSetWithValues, message } = connectionToken || {};
   const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
-    if (bearerToken) {
-      onFieldChange(id, bearerToken);
+    if (fieldsToBeSetWithValues) {
+      Object.keys(fieldsToBeSetWithValues).forEach(key =>
+        onFieldChange(key, fieldsToBeSetWithValues[key])
+      );
 
-      if (fillTokenForAdditionalFields)
-        fillTokenForAdditionalFields.forEach(fieldId =>
-          onFieldChange(fieldId, bearerToken)
-        );
       handleClearToken();
     }
-  }, [
-    bearerToken,
-    fillTokenForAdditionalFields,
-    handleClearToken,
-    id,
-    onFieldChange,
-  ]);
+  }, [fieldsToBeSetWithValues, handleClearToken, id, onFieldChange]);
 
   useEffect(() => {
     if (message) {
@@ -114,10 +109,14 @@ const ConnectedTokenGenerator = connect(
   mapStateToProps,
   mapDispatchToProps
 )(withStyles(styles)(DynaTokenGenerator));
-const FieldWrappedTokenGenerator = props => (
-  <FieldWrapper {...props}>
-    <ConnectedTokenGenerator {...props.fieldOpts} />
-  </FieldWrapper>
-);
+const FieldWrappedTokenGenerator = props => {
+  console.log('check props ', props);
+
+  return (
+    <FieldWrapper {...props}>
+      <ConnectedTokenGenerator />
+    </FieldWrapper>
+  );
+};
 
 export default FieldWrappedTokenGenerator;

@@ -1,5083 +1,1847 @@
-{  
-  "_userId":{  
-     "path":"_userId",
-     "instance":"ObjectID",
-     "validators":[  
-        {  
-           "message":"Path `{PATH}` is required.",
-           "type":"required"
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "required":true,
-        "ref":"User",
-        "template":false
-     },
-     "_index":null,
-     "isRequired":true,
-     "originalRequiredValue":true
-  },
-  "_connectionId":{  
-     "path":"_connectionId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Connection"
-     },
-     "_index":null
-  },
-  "_integrationId":{  
-     "path":"_integrationId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Integration",
-        "template":false
-     },
-     "_index":null
-  },
-  "_connectorId":{  
-     "path":"_connectorId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Connector",
-        "template":false
-     },
-     "_index":null
-  },
-  "externalId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"externalId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "template":false
-     },
-     "_index":null
-  },
-  "createdAt":{  
-     "path":"createdAt",
-     "instance":"Date",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "lastModified":{  
-     "path":"lastModified",
-     "instance":"Date",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "index":true,
-        "template":false
-     },
-     "_index":true
-  },
-  "name":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"name",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":200
-     },
-     "_index":null
-  },
-  "description":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"description",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":10240
-     },
-     "_index":null
-  },
-  "apiIdentifier":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"apiIdentifier",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"Path `{PATH}` is required.",
-           "type":"required"
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "required":true,
-        "template":false
-     },
-     "_index":null,
-     "isRequired":true,
-     "originalRequiredValue":true
-  },
-  "sampleData":{  
-     "path":"sampleData",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "distributed":{  
-     "path":"distributed",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "maxAttempts":{  
-     "path":"maxAttempts",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "ignoreExisting":{  
-     "path":"ignoreExisting",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "ignoreMissing":{  
-     "path":"ignoreMissing",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "idLockTemplate":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"idLockTemplate",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "dataURITemplate":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"dataURITemplate",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "oneToMany":{  
-     "path":"oneToMany",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "pathToMany":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"pathToMany",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "blobKeyPath":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"blobKeyPath",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "assistant":{  
-     "enumValues":[  
-        "3dcart",
-        "accelo",
-        "adp",
-        "amazonaws",
-        "amazonmws",
-        "anaplan",
-        "ariba",
-        "asana",
-        "atera",
-        "authorize.net",
-        "avalara",
-        "banking",
-        "bigcommerce",
-        "bill.com",
-        "box",
-        "braintree",
-        "campaignmonitor",
-        "certify",
-        "chargebee",
-        "chargify",
-        "clover",
-        "dcl",
-        "desk",
-        "dnb",
-        "docusign",
-        "doubleclick",
-        "dropbox",
-        "ebay",
-        "ebay-xml",
-        "eloquent",
-        "etsy",
-        "eventbrite",
-        "exacterp",
-        "expensify",
-        "facebookads",
-        "fieldaware",
-        "freshbooks",
-        "freshdesk",
-        "ftp",
-        "github",
-        "gooddata",
-        "google",
-        "googleanalytics",
-        "googlecontacts",
-        "googledrive",
-        "googlemail",
-        "googlesheets",
-        "googleshopping",
-        "harvest",
-        "hoovers",
-        "hubspot",
-        "hybris",
-        "insightly",
-        "integratorio",
-        "jet",
-        "jira",
-        "jobvite",
-        "lightspeed",
-        "linkedin",
-        "liquidplanner",
-        "magento",
-        "mailchimp",
-        "mediaocean",
-        "namely",
-        "netsuite",
-        "newegg",
-        "newrelic",
-        "okta",
-        "openair",
-        "osn",
-        "other",
-        "paychex",
-        "paylocity",
-        "paypal",
-        "pulseway",
-        "quickbooks",
-        "recurly",
-        "replicon",
-        "s3",
-        "sageone",
-        "salesforce",
-        "servicenow",
-        "shiphawk",
-        "shipstation",
-        "shipwire",
-        "shopify",
-        "skubana",
-        "slack",
-        "smartsheet",
-        "snapfulfil",
-        "splunk",
-        "spreecommerce",
-        "squareup",
-        "steelbrick",
-        "stripe",
-        "surveymonkey",
-        "svb",
-        "tableau",
-        "tesco",
-        "travis",
-        "tsheets",
-        "twilio",
-        "walmart",
-        "wiser",
-        "woocommerce",
-        "wrike",
-        "xcart",
-        "yahoo",
-        "yammer",
-        "zendesk",
-        "zoho",
-        "zuora",
-        "coupa",
-        "taxjar",
-        "quip",
-        "allbound",
-        "zohocrm",
-        "zohodesk",
-        "microsoftoffice365",
-        "microsoftdynamics365",
-        "pitneybowes",
-        "mysql",
-        "postgresql",
-        "mssql",
-        "greenhouse",
-        "shippo",
-        "gusto",
-        "easypost",
-        "segment",
-        "zohobooks",
-        "microsoftbusinesscentral",
-        "microsoftoutlookcalendar",
-        "microsoftoutlookmail",
-        "microsoftoutlookcontacts",
-        "microsoftonenote",
-        "wish",
-        "pdffiller",
-        "signnow",
-        "acton",
-        "acumatica",
-        "mongodb",
-        "zohomail",
-        "zoom",
-        "myobessentials",
-        "nimble",
-        "bronto",
-        "strata",
-        "returnly",
-        "activecampaign",
-        "klaviyo",
-        "postmark",
-        "powerbi",
-        "procurify",
-        "mailgun",
-        "zimbra",
-        "merchantesolutions",
-        "aptrinsic",
-        "cardknox",
-        "skuvault",
-        "nextag",
-        "concur",
-        "oandav20fxtrade",
-        "oandaexchangerates",
-        "spreecommerce",
-        "tophatter",
-        "concurv4",
-        "sugarcrm",
-        "marketo",
-        "grms",
-        "retailops",
-        "sharepoint",
-        "parseur",
-        "authorize.net",
-        "firstdata",
-        "propack",
-        "outreach",
-        "ramplogistics",
-        "constantcontactv3",
-        "constantcontactv2",
-        "concurall",
-        "dunandbradstreet",
-        "trinet",
-        "pacejet",
-        "solidcommerce",
-        "intercom",
-        "bamboohr"
-     ],
-     "regExp":null,
-     "path":"assistant",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "3dcart",
-              "accelo",
-              "adp",
-              "amazonaws",
-              "amazonmws",
-              "anaplan",
-              "ariba",
-              "asana",
-              "atera",
-              "authorize.net",
-              "avalara",
-              "banking",
-              "bigcommerce",
-              "bill.com",
-              "box",
-              "braintree",
-              "campaignmonitor",
-              "certify",
-              "chargebee",
-              "chargify",
-              "clover",
-              "dcl",
-              "desk",
-              "dnb",
-              "docusign",
-              "doubleclick",
-              "dropbox",
-              "ebay",
-              "ebay-xml",
-              "eloquent",
-              "etsy",
-              "eventbrite",
-              "exacterp",
-              "expensify",
-              "facebookads",
-              "fieldaware",
-              "freshbooks",
-              "freshdesk",
-              "ftp",
-              "github",
-              "gooddata",
-              "google",
-              "googleanalytics",
-              "googlecontacts",
-              "googledrive",
-              "googlemail",
-              "googlesheets",
-              "googleshopping",
-              "harvest",
-              "hoovers",
-              "hubspot",
-              "hybris",
-              "insightly",
-              "integratorio",
-              "jet",
-              "jira",
-              "jobvite",
-              "lightspeed",
-              "linkedin",
-              "liquidplanner",
-              "magento",
-              "mailchimp",
-              "mediaocean",
-              "namely",
-              "netsuite",
-              "newegg",
-              "newrelic",
-              "okta",
-              "openair",
-              "osn",
-              "other",
-              "paychex",
-              "paylocity",
-              "paypal",
-              "pulseway",
-              "quickbooks",
-              "recurly",
-              "replicon",
-              "s3",
-              "sageone",
-              "salesforce",
-              "servicenow",
-              "shiphawk",
-              "shipstation",
-              "shipwire",
-              "shopify",
-              "skubana",
-              "slack",
-              "smartsheet",
-              "snapfulfil",
-              "splunk",
-              "spreecommerce",
-              "squareup",
-              "steelbrick",
-              "stripe",
-              "surveymonkey",
-              "svb",
-              "tableau",
-              "tesco",
-              "travis",
-              "tsheets",
-              "twilio",
-              "walmart",
-              "wiser",
-              "woocommerce",
-              "wrike",
-              "xcart",
-              "yahoo",
-              "yammer",
-              "zendesk",
-              "zoho",
-              "zuora",
-              "coupa",
-              "taxjar",
-              "quip",
-              "allbound",
-              "zohocrm",
-              "zohodesk",
-              "microsoftoffice365",
-              "microsoftdynamics365",
-              "pitneybowes",
-              "mysql",
-              "postgresql",
-              "mssql",
-              "greenhouse",
-              "shippo",
-              "gusto",
-              "easypost",
-              "segment",
-              "zohobooks",
-              "microsoftbusinesscentral",
-              "microsoftoutlookcalendar",
-              "microsoftoutlookmail",
-              "microsoftoutlookcontacts",
-              "microsoftonenote",
-              "wish",
-              "pdffiller",
-              "signnow",
-              "acton",
-              "acumatica",
-              "mongodb",
-              "zohomail",
-              "zoom",
-              "myobessentials",
-              "nimble",
-              "bronto",
-              "strata",
-              "returnly",
-              "activecampaign",
-              "klaviyo",
-              "postmark",
-              "powerbi",
-              "procurify",
-              "mailgun",
-              "zimbra",
-              "merchantesolutions",
-              "aptrinsic",
-              "cardknox",
-              "skuvault",
-              "nextag",
-              "concur",
-              "oandav20fxtrade",
-              "oandaexchangerates",
-              "spreecommerce",
-              "tophatter",
-              "concurv4",
-              "sugarcrm",
-              "marketo",
-              "grms",
-              "retailops",
-              "sharepoint",
-              "parseur",
-              "authorize.net",
-              "firstdata",
-              "propack",
-              "outreach",
-              "ramplogistics",
-              "constantcontactv3",
-              "constantcontactv2",
-              "concurall",
-              "dunandbradstreet",
-              "trinet",
-              "pacejet",
-              "solidcommerce",
-              "intercom",
-              "bamboohr"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "3dcart",
-           "accelo",
-           "adp",
-           "amazonaws",
-           "amazonmws",
-           "anaplan",
-           "ariba",
-           "asana",
-           "atera",
-           "authorize.net",
-           "avalara",
-           "banking",
-           "bigcommerce",
-           "bill.com",
-           "box",
-           "braintree",
-           "campaignmonitor",
-           "certify",
-           "chargebee",
-           "chargify",
-           "clover",
-           "dcl",
-           "desk",
-           "dnb",
-           "docusign",
-           "doubleclick",
-           "dropbox",
-           "ebay",
-           "ebay-xml",
-           "eloquent",
-           "etsy",
-           "eventbrite",
-           "exacterp",
-           "expensify",
-           "facebookads",
-           "fieldaware",
-           "freshbooks",
-           "freshdesk",
-           "ftp",
-           "github",
-           "gooddata",
-           "google",
-           "googleanalytics",
-           "googlecontacts",
-           "googledrive",
-           "googlemail",
-           "googlesheets",
-           "googleshopping",
-           "harvest",
-           "hoovers",
-           "hubspot",
-           "hybris",
-           "insightly",
-           "integratorio",
-           "jet",
-           "jira",
-           "jobvite",
-           "lightspeed",
-           "linkedin",
-           "liquidplanner",
-           "magento",
-           "mailchimp",
-           "mediaocean",
-           "namely",
-           "netsuite",
-           "newegg",
-           "newrelic",
-           "okta",
-           "openair",
-           "osn",
-           "other",
-           "paychex",
-           "paylocity",
-           "paypal",
-           "pulseway",
-           "quickbooks",
-           "recurly",
-           "replicon",
-           "s3",
-           "sageone",
-           "salesforce",
-           "servicenow",
-           "shiphawk",
-           "shipstation",
-           "shipwire",
-           "shopify",
-           "skubana",
-           "slack",
-           "smartsheet",
-           "snapfulfil",
-           "splunk",
-           "spreecommerce",
-           "squareup",
-           "steelbrick",
-           "stripe",
-           "surveymonkey",
-           "svb",
-           "tableau",
-           "tesco",
-           "travis",
-           "tsheets",
-           "twilio",
-           "walmart",
-           "wiser",
-           "woocommerce",
-           "wrike",
-           "xcart",
-           "yahoo",
-           "yammer",
-           "zendesk",
-           "zoho",
-           "zuora",
-           "coupa",
-           "taxjar",
-           "quip",
-           "allbound",
-           "zohocrm",
-           "zohodesk",
-           "microsoftoffice365",
-           "microsoftdynamics365",
-           "pitneybowes",
-           "mysql",
-           "postgresql",
-           "mssql",
-           "greenhouse",
-           "shippo",
-           "gusto",
-           "easypost",
-           "segment",
-           "zohobooks",
-           "microsoftbusinesscentral",
-           "microsoftoutlookcalendar",
-           "microsoftoutlookmail",
-           "microsoftoutlookcontacts",
-           "microsoftonenote",
-           "wish",
-           "pdffiller",
-           "signnow",
-           "acton",
-           "acumatica",
-           "mongodb",
-           "zohomail",
-           "zoom",
-           "myobessentials",
-           "nimble",
-           "bronto",
-           "strata",
-           "returnly",
-           "activecampaign",
-           "klaviyo",
-           "postmark",
-           "powerbi",
-           "procurify",
-           "mailgun",
-           "zimbra",
-           "merchantesolutions",
-           "aptrinsic",
-           "cardknox",
-           "skuvault",
-           "nextag",
-           "concur",
-           "oandav20fxtrade",
-           "oandaexchangerates",
-           "spreecommerce",
-           "tophatter",
-           "concurv4",
-           "sugarcrm",
-           "marketo",
-           "grms",
-           "retailops",
-           "sharepoint",
-           "parseur",
-           "authorize.net",
-           "firstdata",
-           "propack",
-           "outreach",
-           "ramplogistics",
-           "constantcontactv3",
-           "constantcontactv2",
-           "concurall",
-           "dunandbradstreet",
-           "trinet",
-           "pacejet",
-           "solidcommerce",
-           "intercom",
-           "bamboohr"
-        ]
-     },
-     "_index":null
-  },
-  "deleteAfterImport":{  
-     "path":"deleteAfterImport",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "sandbox":{  
-     "path":"sandbox",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false,
-        "template":false
-     },
-     "_index":null
-  },
-  "_templateId":{  
-     "path":"_templateId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Template",
-        "template":false
-     },
-     "_index":null
-  },
-  "assistantMetadata":{  
-     "path":"assistantMetadata",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false,
-        "patch":true
-     },
-     "_index":null
-  },
-  "deletedAt":{  
-     "path":"deletedAt",
-     "instance":"Date",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "useTechAdaptorForm":{  
-     "path":"useTechAdaptorForm",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "filter.type":{  
-     "enumValues":[  
-        "expression",
-        "script"
-     ],
-     "regExp":null,
-     "path":"filter.type",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "expression",
-              "script"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "expression",
-           "script"
-        ]
-     },
-     "_index":null
-  },
-  "filter.expression.version":{  
-     "enumValues":[  
-        "1"
-     ],
-     "regExp":null,
-     "path":"filter.expression.version",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "1"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "1"
-        ]
-     },
-     "_index":null
-  },
-  "filter.expression.rules":{  
-     "path":"filter.expression.rules",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "filter.script._scriptId":{  
-     "path":"filter.script._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "filter.script.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"filter.script.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "parsers[*].version":{  
-     "enum":[  
-        "1"
-     ]
-  },
-  "parsers[*].type":{  
-     "enum":[  
-        "xml"
-     ]
-  },
-  "parsers[*].rules":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "hooks.preMap.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"hooks.preMap.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.preMap._scriptId":{  
-     "path":"hooks.preMap._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "hooks.preMap._stackId":{  
-     "path":"hooks.preMap._stackId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Stack",
-        "template":false
-     },
-     "_index":null
-  },
-  "hooks.preMap.configuration":{  
-     "path":"hooks.preMap.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postMap.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"hooks.postMap.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postMap._scriptId":{  
-     "path":"hooks.postMap._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "hooks.postMap._stackId":{  
-     "path":"hooks.postMap._stackId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Stack",
-        "template":false
-     },
-     "_index":null
-  },
-  "hooks.postMap.configuration":{  
-     "path":"hooks.postMap.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postSubmit.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"hooks.postSubmit.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postSubmit._scriptId":{  
-     "path":"hooks.postSubmit._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "hooks.postSubmit._stackId":{  
-     "path":"hooks.postSubmit._stackId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Stack",
-        "template":false
-     },
-     "_index":null
-  },
-  "hooks.postSubmit.configuration":{  
-     "path":"hooks.postSubmit.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postAggregate.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"hooks.postAggregate.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "hooks.postAggregate._scriptId":{  
-     "path":"hooks.postAggregate._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "hooks.postAggregate._stackId":{  
-     "path":"hooks.postAggregate._stackId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Stack",
-        "template":false
-     },
-     "_index":null
-  },
-  "hooks.postAggregate.configuration":{  
-     "path":"hooks.postAggregate.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "sampleResponseData":{  
-     "path":"sampleResponseData",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false
-     },
-     "_index":null
-  },
-  "responseTransform.type":{  
-     "enumValues":[  
-        "expression",
-        "script"
-     ],
-     "regExp":null,
-     "path":"responseTransform.type",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "expression",
-              "script"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "expression",
-           "script"
-        ]
-     },
-     "_index":null
-  },
-  "responseTransform.expression.version":{  
-     "enumValues":[  
-        "1"
-     ],
-     "regExp":null,
-     "path":"responseTransform.expression.version",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "1"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "1"
-        ]
-     },
-     "_index":null
-  },
-  "responseTransform.expression.rules":{  
-     "path":"responseTransform.expression.rules",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "responseTransform.script._scriptId":{  
-     "path":"responseTransform.script._scriptId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"Script"
-     },
-     "_index":null
-  },
-  "responseTransform.script.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"responseTransform.script.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "modelMetadata":{  
-     "path":"modelMetadata",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false
-     },
-     "_index":null
-  },
-  "mapping.fields[*].extract":{  
-
-  },
-  "mapping.fields[*].extractDateFormat":{  
-
-  },
-  "mapping.fields[*].extractDateTimezone":{  
-
-  },
-  "mapping.fields[*].generate":{  
-
-  },
-  "mapping.fields[*].generateDateFormat":{  
-
-  },
-  "mapping.fields[*].generateDateTimezone":{  
-
-  },
-  "mapping.fields[*].hardCodedValue":{  
-
-  },
-  "mapping.fields[*].immutable":{  
-
-  },
-  "mapping.fields[*].lookupName":{  
-
-  },
-  "mapping.fields[*].dataType":{  
-     "enum":[  
-        "string",
-        "number",
-        "boolean",
-        "numberarray",
-        "stringarray"
-     ],
-     "lowercase":true
-  },
-  "mapping.fields[*].default":{  
-
-  },
-  "mapping.fields[*].conditional.lookupName":{  
-
-  },
-  "mapping.fields[*].conditional.when":{  
-     "enum":[  
-        "record_created",
-        "record_updated",
-        "extract_not_empty",
-        "lookup_not_empty",
-        "lookup_empty",
-        "expression"
-     ]
-  },
-  "mapping.fields[*].conditional.expression":{  
-
-  },
-  "mapping.fields[*].discardIfEmpty":{  
-
-  },
-  "mapping.lists[*].generate":{  
-
-  },
-  "mapping.lists[*].fields[*].extract":{  
-
-  },
-  "mapping.lists[*].fields[*].extractDateFormat":{  
-
-  },
-  "mapping.lists[*].fields[*].extractDateTimezone":{  
-
-  },
-  "mapping.lists[*].fields[*].generate":{  
-
-  },
-  "mapping.lists[*].fields[*].generateDateFormat":{  
-
-  },
-  "mapping.lists[*].fields[*].generateDateTimezone":{  
-
-  },
-  "mapping.lists[*].fields[*].hardCodedValue":{  
-
-  },
-  "mapping.lists[*].fields[*].immutable":{  
-
-  },
-  "mapping.lists[*].fields[*].lookupName":{  
-
-  },
-  "mapping.lists[*].fields[*].dataType":{  
-     "enum":[  
-        "string",
-        "number",
-        "boolean",
-        "numberarray",
-        "stringarray"
-     ],
-     "lowercase":true
-  },
-  "mapping.lists[*].fields[*].default":{  
-
-  },
-  "mapping.lists[*].fields[*].conditional.lookupName":{  
-
-  },
-  "mapping.lists[*].fields[*].conditional.when":{  
-     "enum":[  
-        "record_created",
-        "record_updated",
-        "extract_not_empty",
-        "lookup_not_empty",
-        "lookup_empty",
-        "expression"
-     ]
-  },
-  "mapping.lists[*].fields[*].conditional.expression":{  
-
-  },
-  "mapping.lists[*].fields[*].discardIfEmpty":{  
-
-  },
-  "lookups[*].name":{  
-
-  },
-  "lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "lookups[*].default":{  
-
-  },
-  "lookups[*].allowFailures":{  
-
-  },
-  "_id":{  
-     "path":"_id",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "auto":true
-     },
-     "_index":null
-  },
-  "file.delete":{  
-     "path":"file.delete",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.skipAggregation":{  
-     "path":"file.skipAggregation",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.type":{  
-     "enumValues":[  
-        "csv",
-        "xlsx",
-        "json",
-        "xml",
-        "filedefinition"
-     ],
-     "regExp":null,
-     "path":"file.type",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "csv",
-              "xlsx",
-              "json",
-              "xml",
-              "filedefinition"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "csv",
-           "xlsx",
-           "json",
-           "xml",
-           "filedefinition"
+export default {
+  // #region resource import
+  // #region netsuite
+  importNetsuiteAccount: {
+    type: 'text',
+    helpKey: 'import.netsuite.account',
+    name: '/netsuite/account',
+    id: 'importNetsuiteAccount',
+    defaultValue: '{{netsuite.account}}',
+  },
+  importNetsuiteTokenId: {
+    type: 'text',
+    helpKey: 'import.netsuite.tokenId',
+    name: '/netsuite/tokenId',
+    id: 'importNetsuiteTokenId',
+    defaultValue: '{{netsuite.tokenId}}',
+  },
+  importNetsuiteTokenSecret: {
+    type: 'text',
+    helpKey: 'import.netsuite.tokenSecret',
+    name: '/netsuite/tokenSecret',
+    id: 'importNetsuiteTokenSecret',
+    defaultValue: '{{netsuite.tokenSecret}}',
+  },
+  importNetsuiteEnvironment: {
+    type: 'radiogroup',
+    helpKey: 'import.netsuite.environment',
+    name: '/netsuite/environment',
+    id: 'importNetsuiteEnvironment',
+    defaultValue: '{{netsuite.environment}}',
+    options: [
+      {
+        items: [
+          { label: 'Production', value: 'production' },
+          { label: 'Sandbox', value: 'sandbox' },
+          { label: 'Beta', value: 'beta' },
+          { label: 'Sandbox2.0', value: 'sandbox2.0' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "file.compressionFormat":{  
-     "enumValues":[  
-        "gzip"
-     ],
-     "regExp":null,
-     "path":"file.compressionFormat",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "gzip"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "gzip"
+  importNetsuiteRoleId: {
+    type: 'text',
+    helpKey: 'import.netsuite.roleId',
+    name: '/netsuite/roleId',
+    id: 'importNetsuiteRoleId',
+    defaultValue: '{{netsuite.roleId}}',
+  },
+  importNetsuiteEmail: {
+    type: 'text',
+    helpKey: 'import.netsuite.email',
+    name: '/netsuite/email',
+    id: 'importNetsuiteEmail',
+    defaultValue: '{{netsuite.email}}',
+  },
+  importNetsuitePassword: {
+    type: 'text',
+    helpKey: 'import.netsuite.password',
+    name: '/netsuite/password',
+    id: 'importNetsuitePassword',
+    defaultValue: '{{netsuite.password}}',
+  },
+  importNetsuiteRequestLevelCredentials: {
+    type: 'checkbox',
+    helpKey: 'import.netsuite.requestLevelCredentials',
+    name: '/netsuite/requestLevelCredentials',
+    id: 'importNetsuiteRequestLevelCredentials',
+    defaultValue: false,
+  },
+  importNetsuiteDataCenterURLs: {
+    type: 'text',
+    helpKey: 'import.netsuite.dataCenterURLs',
+    name: '/netsuite/dataCenterURLs',
+    id: 'importNetsuiteDataCenterURLs',
+    defaultValue: '{{netsuite.dataCenterURLs}}',
+  },
+  importNetsuiteAccountName: {
+    type: 'text',
+    helpKey: 'import.netsuite.accountName',
+    name: '/netsuite/accountName',
+    id: 'importNetsuiteAccountName',
+    defaultValue: '{{netsuite.accountName}}',
+  },
+  importNetsuiteRoleName: {
+    type: 'text',
+    helpKey: 'import.netsuite.roleName',
+    name: '/netsuite/roleName',
+    id: 'importNetsuiteRoleName',
+    defaultValue: '{{netsuite.roleName}}',
+  },
+  importNetsuiteConcurrencyLevelRESTlet: {
+    type: 'text',
+    helpKey: 'import.netsuite.concurrencyLevelRESTlet',
+    name: '/netsuite/concurrencyLevelRESTlet',
+    id: 'importNetsuiteConcurrencyLevelRESTlet',
+    defaultValue: '{{netsuite.concurrencyLevelRESTlet}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importNetsuiteConcurrencyLevelWebServices: {
+    type: 'text',
+    helpKey: 'import.netsuite.concurrencyLevelWebServices',
+    name: '/netsuite/concurrencyLevelWebServices',
+    id: 'importNetsuiteConcurrencyLevelWebServices',
+    defaultValue: '{{netsuite.concurrencyLevelWebServices}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importNetsuiteConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.netsuite.concurrencyLevel',
+    name: '/netsuite/concurrencyLevel',
+    id: 'importNetsuiteConcurrencyLevel',
+    defaultValue: '{{netsuite.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importNetsuiteWsdlVersion: {
+    type: 'radiogroup',
+    helpKey: 'import.netsuite.wsdlVersion',
+    name: '/netsuite/wsdlVersion',
+    id: 'importNetsuiteWsdlVersion',
+    defaultValue: '{{netsuite.wsdlVersion}}',
+    options: [
+      {
+        items: [
+          { label: 'Current', value: 'current' },
+          { label: 'Next', value: 'next' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "file.purgeInternalBackup":{  
-     "path":"file.purgeInternalBackup",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importNetsuiteApplicationId: {
+    type: 'text',
+    helpKey: 'import.netsuite.applicationId',
+    name: '/netsuite/applicationId',
+    id: 'importNetsuiteApplicationId',
+    defaultValue: '{{netsuite.applicationId}}',
   },
-  "file.csv.rowDelimiter":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"file.csv.rowDelimiter",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  // #endregion netsuite
+  // #region salesforce
+  importSalesforceSandbox: {
+    type: 'checkbox',
+    helpKey: 'import.salesforce.sandbox',
+    name: '/salesforce/sandbox',
+    id: 'importSalesforceSandbox',
+    defaultValue: false,
   },
-  "file.csv.columnDelimiter":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"file.csv.columnDelimiter",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importSalesforceBaseURI: {
+    type: 'text',
+    helpKey: 'import.salesforce.baseURI',
+    name: '/salesforce/baseURI',
+    id: 'importSalesforceBaseURI',
+    defaultValue: '{{salesforce.baseURI}}',
   },
-  "file.csv.includeHeader":{  
-     "path":"file.csv.includeHeader",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.csv.wrapWithQuotes":{  
-     "path":"file.csv.wrapWithQuotes",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.csv.replaceTabWithSpace":{  
-     "path":"file.csv.replaceTabWithSpace",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.csv.replaceNewlineWithSpace":{  
-     "path":"file.csv.replaceNewlineWithSpace",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.csv.customHeaderRows[*]":{  
-     "maxSize":25600
-  },
-  "file.csv.headerRow":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"file.csv.headerRow",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":25600,
-        "cLocked":false
-     },
-     "_index":null
-  },
-  "file.xlsx.includeHeader":{  
-     "path":"file.xlsx.includeHeader",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.xlsx.headerRow":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"file.xlsx.headerRow",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":25600,
-        "cLocked":false
-     },
-     "_index":null
-  },
-  "file.json.prettyPrint":{  
-     "path":"file.json.prettyPrint",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "file.xml.body":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"file.xml.body",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":20480
-     },
-     "_index":null
-  },
-  "file.fileDefinition._fileDefinitionId":{  
-     "path":"file.fileDefinition._fileDefinitionId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"FileDefinition"
-     },
-     "_index":null
-  },
-  "file.lookups[*].name":{  
-
-  },
-  "file.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "file.lookups[*].default":{  
-
-  },
-  "file.lookups[*].allowFailures":{  
-
-  },
-  "__v":{  
-     "path":"__v",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "lookups[*].relativeURI":{  
-
-  },
-  "lookups[*].method":{  
-     "enum":[  
-        "GET",
-        "POST"
-     ],
-     "uppercase":true
-  },
-  "lookups[*].postBody":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "lookups[*].extract":{  
-
-  },
-  "rest.relativeURI[*]":{  
-
-  },
-  "rest.method[*]":{  
-     "enum":[  
-        "PUT",
-        "POST",
-        "DELETE",
-        "PATCH"
-     ],
-     "uppercase":true
-  },
-  "rest.requestType[*]":{  
-     "enum":[  
-        "CREATE",
-        "UPDATE"
-     ]
-  },
-  "rest.body[*]":{  
-     "maxSize":10240
-  },
-  "rest.headers[*].name":{  
-
-  },
-  "rest.headers[*].value":{  
-
-  },
-  "rest.responseIdPath[*]":{  
-
-  },
-  "rest.successPath[*]":{  
-
-  },
-  "rest.successValues[*]":{  
-
-  },
-  "rest.ignoreLookupName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rest.ignoreLookupName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rest.ignoreExtract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rest.ignoreExtract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rest.blobFormat":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rest.blobFormat",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rest.lookups[*].name":{  
-
-  },
-  "rest.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "rest.lookups[*].default":{  
-
-  },
-  "rest.lookups[*].relativeURI":{  
-
-  },
-  "rest.lookups[*].method":{  
-     "enum":[  
-        "GET",
-        "POST"
-     ],
-     "uppercase":true
-  },
-  "rest.lookups[*].postBody":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "rest.lookups[*].extract":{  
-
-  },
-  "rest.lookups[*].allowFailures":{  
-
-  },
-  "adaptorType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"adaptorType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "default":"RESTImport",
-        "select":true
-     },
-     "_index":null,
-     "defaultValue":"RESTImport",
-     "selected":true
-  },
-  "ftp.directoryPath":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"ftp.directoryPath",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "ftp.fileName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"ftp.fileName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "ftp.inProgressFileName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"ftp.inProgressFileName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "ftp.backupDirectoryPath":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"ftp.backupDirectoryPath",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "lookups[*].body":{  
-     "maxSize":10240
-  },
-  "http.requestMediaType":{  
-     "enumValues":[  
-        "xml",
-        "json",
-        "csv",
-        "urlencoded"
-     ],
-     "regExp":null,
-     "path":"http.requestMediaType",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "xml",
-              "json",
-              "csv",
-              "urlencoded"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "xml",
-           "json",
-           "csv",
-           "urlencoded"
+  importSalesforceOauth2FlowType: {
+    type: 'radiogroup',
+    helpKey: 'import.salesforce.oauth2FlowType',
+    name: '/salesforce/oauth2FlowType',
+    id: 'importSalesforceOauth2FlowType',
+    defaultValue: '{{salesforce.oauth2FlowType}}',
+    options: [
+      {
+        items: [
+          { label: 'JwtBearerToken', value: 'jwtBearerToken' },
+          { label: 'RefreshToken', value: 'refreshToken' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "http.successMediaType":{  
-     "enumValues":[  
-        "xml",
-        "json"
-     ],
-     "regExp":null,
-     "path":"http.successMediaType",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "xml",
-              "json"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "xml",
-           "json"
+  importSalesforceUsername: {
+    type: 'text',
+    helpKey: 'import.salesforce.username',
+    name: '/salesforce/username',
+    id: 'importSalesforceUsername',
+    defaultValue: '{{salesforce.username}}',
+  },
+  importSalesforceBearerToken: {
+    type: 'text',
+    helpKey: 'import.salesforce.bearerToken',
+    name: '/salesforce/bearerToken',
+    id: 'importSalesforceBearerToken',
+    defaultValue: '{{salesforce.bearerToken}}',
+  },
+  importSalesforceRefreshToken: {
+    type: 'text',
+    helpKey: 'import.salesforce.refreshToken',
+    name: '/salesforce/refreshToken',
+    id: 'importSalesforceRefreshToken',
+    defaultValue: '{{salesforce.refreshToken}}',
+  },
+  importSalesforcePackagedOAuth: {
+    type: 'checkbox',
+    helpKey: 'import.salesforce.packagedOAuth',
+    name: '/salesforce/packagedOAuth',
+    id: 'importSalesforcePackagedOAuth',
+    defaultValue: false,
+  },
+  importSalesforceScopes: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.salesforce.scopes',
+    name: '/salesforce/scopes',
+    id: 'importSalesforceScopes',
+    defaultValue: '{{salesforce.scope}}',
+    validWhen: [],
+  },
+  importSalesforceInfo: {
+    type: 'text',
+    helpKey: 'import.salesforce.info',
+    name: '/salesforce/info',
+    id: 'importSalesforceInfo',
+    defaultValue: '{{salesforce.info}}',
+  },
+  importSalesforceConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.salesforce.concurrencyLevel',
+    name: '/salesforce/concurrencyLevel',
+    id: 'importSalesforceConcurrencyLevel',
+    defaultValue: '{{salesforce.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  // #endregion salesforce
+  // #region ftp
+  importFtpHostURI: {
+    type: 'text',
+    helpKey: 'import.ftp.hostURI',
+    name: '/ftp/hostURI',
+    id: 'importFtpHostURI',
+    defaultValue: '{{ftp.hostURI}}',
+  },
+  importFtpUsername: {
+    type: 'text',
+    helpKey: 'import.ftp.username',
+    name: '/ftp/username',
+    id: 'importFtpUsername',
+    defaultValue: '{{ftp.username}}',
+  },
+  importFtpPassword: {
+    type: 'text',
+    helpKey: 'import.ftp.password',
+    name: '/ftp/password',
+    id: 'importFtpPassword',
+    defaultValue: '{{ftp.password}}',
+  },
+  importFtpAuthKey: {
+    type: 'text',
+    helpKey: 'import.ftp.authKey',
+    name: '/ftp/authKey',
+    id: 'importFtpAuthKey',
+    defaultValue: '{{ftp.authKey}}',
+  },
+  importFtpPort: {
+    type: 'text',
+    helpKey: 'import.ftp.port',
+    name: '/ftp/port',
+    id: 'importFtpPort',
+    defaultValue: '{{ftp.port}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importFtpUsePassiveMode: {
+    type: 'checkbox',
+    helpKey: 'import.ftp.usePassiveMode',
+    name: '/ftp/usePassiveMode',
+    id: 'importFtpUsePassiveMode',
+    defaultValue: false,
+  },
+  importFtpEntryParser: {
+    type: 'radiogroup',
+    helpKey: 'import.ftp.entryParser',
+    name: '/ftp/entryParser',
+    id: 'importFtpEntryParser',
+    defaultValue: '{{ftp.entryParser}}',
+    options: [
+      {
+        items: [
+          { label: 'UNIX', value: 'UNIX' },
+          { label: 'UNIX-TRIM', value: 'UNIX-TRIM' },
+          { label: 'VMS', value: 'VMS' },
+          { label: 'WINDOWS', value: 'WINDOWS' },
+          { label: 'OS/2', value: 'OS/2' },
+          { label: 'OS/400', value: 'OS/400' },
+          { label: 'AS/400', value: 'AS/400' },
+          { label: 'MVS', value: 'MVS' },
+          { label: 'UNKNOWN-TYPE', value: 'UNKNOWN-TYPE' },
+          { label: 'NETWARE', value: 'NETWARE' },
+          { label: 'MACOS-PETER', value: 'MACOS-PETER' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "http.requestType[*]":{  
-     "enum":[  
-        "CREATE",
-        "UPDATE"
-     ]
+  importFtpUserDirectoryIsRoot: {
+    type: 'checkbox',
+    helpKey: 'import.ftp.userDirectoryIsRoot',
+    name: '/ftp/userDirectoryIsRoot',
+    id: 'importFtpUserDirectoryIsRoot',
+    defaultValue: false,
   },
-  "http.errorMediaType":{  
-     "enumValues":[  
-        "xml",
-        "json"
-     ],
-     "regExp":null,
-     "path":"http.errorMediaType",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "xml",
-              "json"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "xml",
-           "json"
+  importFtpUseImplicitFtps: {
+    type: 'checkbox',
+    helpKey: 'import.ftp.useImplicitFtps',
+    name: '/ftp/useImplicitFtps',
+    id: 'importFtpUseImplicitFtps',
+    defaultValue: false,
+  },
+  importFtpRequireSocketReUse: {
+    type: 'checkbox',
+    helpKey: 'import.ftp.requireSocketReUse',
+    name: '/ftp/requireSocketReUse',
+    id: 'importFtpRequireSocketReUse',
+    defaultValue: false,
+  },
+  importFtpPgpEncryptKey: {
+    type: 'text',
+    helpKey: 'import.ftp.pgpEncryptKey',
+    name: '/ftp/pgpEncryptKey',
+    id: 'importFtpPgpEncryptKey',
+    defaultValue: '{{ftp.pgpEncryptKey}}',
+  },
+  importFtpPgpDecryptKey: {
+    type: 'text',
+    helpKey: 'import.ftp.pgpDecryptKey',
+    name: '/ftp/pgpDecryptKey',
+    id: 'importFtpPgpDecryptKey',
+    defaultValue: '{{ftp.pgpDecryptKey}}',
+  },
+  importFtpPgpPassphrase: {
+    type: 'text',
+    helpKey: 'import.ftp.pgpPassphrase',
+    name: '/ftp/pgpPassphrase',
+    id: 'importFtpPgpPassphrase',
+    defaultValue: '{{ftp.pgpPassphrase}}',
+  },
+  // #endregion ftp
+  // #region s3
+  importS3AccessKeyId: {
+    type: 'text',
+    helpKey: 'import.s3.accessKeyId',
+    name: '/s3/accessKeyId',
+    id: 'importS3AccessKeyId',
+    defaultValue: '{{s3.accessKeyId}}',
+  },
+  importS3SecretAccessKey: {
+    type: 'text',
+    helpKey: 'import.s3.secretAccessKey',
+    name: '/s3/secretAccessKey',
+    id: 'importS3SecretAccessKey',
+    defaultValue: '{{s3.secretAccessKey}}',
+  },
+  importS3PingBucket: {
+    type: 'text',
+    helpKey: 'import.s3.pingBucket',
+    name: '/s3/pingBucket',
+    id: 'importS3PingBucket',
+    defaultValue: '{{s3.pingBucket}}',
+  },
+  // #endregion s3
+  // #region rest
+  importRestMediaType: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.mediaType',
+    name: '/rest/mediaType',
+    id: 'importRestMediaType',
+    defaultValue: '{{rest.mediaType}}',
+    options: [
+      {
+        items: [
+          { label: 'Json', value: 'json' },
+          { label: 'Urlencoded', value: 'urlencoded' },
+          { label: 'Xml', value: 'xml' },
+          { label: 'Csv', value: 'csv' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "http.relativeURI[*]":{  
-     "maxSize":4096
+  importRestBaseURI: {
+    type: 'text',
+    helpKey: 'import.rest.baseURI',
+    name: '/rest/baseURI',
+    id: 'importRestBaseURI',
+    defaultValue: '{{rest.baseURI}}',
   },
-  "http.method[*]":{  
-     "enum":[  
-        "GET",
-        "PUT",
-        "POST",
-        "PATCH",
-        "DELETE"
-     ],
-     "uppercase":true
+  importRestBearerToken: {
+    type: 'text',
+    helpKey: 'import.rest.bearerToken',
+    name: '/rest/bearerToken',
+    id: 'importRestBearerToken',
+    defaultValue: '{{rest.bearerToken}}',
   },
-  "http.body[*]":{  
-     "maxSize":204800,
-     "saveToS3":true,
-     "s3MaxSize":1048576,
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "http.endPointBodyLimit":{  
-     "path":"http.endPointBodyLimit",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http.headers[*].name":{  
-
-  },
-  "http.headers[*].value":{  
-     "maxSize":4096
-  },
-  "http.response.resourcePath[*]":{  
-
-  },
-  "http.response.resourceIdPath[*]":{  
-
-  },
-  "http.response.successPath":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"http.response.successPath",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http.response.successValues[*]":{  
-
-  },
-  "http.response.errorPath":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"http.response.errorPath",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http._asyncHelperId":{  
-     "path":"http._asyncHelperId",
-     "instance":"ObjectID",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "ref":"AsyncHelper"
-     },
-     "_index":null
-  },
-  "http.batchSize":{  
-     "path":"http.batchSize",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http.ignoreLookupName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"http.ignoreLookupName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http.ignoreExtract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"http.ignoreExtract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "http.lookups[*].name":{  
-
-  },
-  "http.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "http.lookups[*].default":{  
-
-  },
-  "http.lookups[*].relativeURI":{  
-
-  },
-  "http.lookups[*].method":{  
-     "enum":[  
-        "GET",
-        "POST"
-     ],
-     "uppercase":true
-  },
-  "http.lookups[*].body":{  
-     "maxSize":10240
-  },
-  "http.lookups[*].extract":{  
-
-  },
-  "http.lookups[*].allowFailures":{  
-
-  },
-  "http.ignoreEmptyNodes":{  
-     "path":"http.ignoreEmptyNodes",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "lookups[*].useDefaultOnMultipleMatches":{  
-
-  },
-  "lookups[*].recordType":{  
-
-  },
-  "lookups[*].searchField":{  
-
-  },
-  "lookups[*].expression":{  
-     "maxSize":20480
-  },
-  "lookups[*].resultField":{  
-
-  },
-  "lookups[*].includeInactive":{  
-
-  },
-  "netsuite_da.rawOverride":{  
-     "path":"netsuite_da.rawOverride",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.useRawOverride":{  
-     "path":"netsuite_da.useRawOverride",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.isMigrated":{  
-     "path":"netsuite_da.isMigrated",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.recordIdentifier":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.recordIdentifier",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.batchSize":{  
-     "path":"netsuite_da.batchSize",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.recordType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.recordType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.operation":{  
-     "enumValues":[  
-        "add",
-        "update",
-        "addupdate"
-     ],
-     "regExp":null,
-     "path":"netsuite_da.operation",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "add",
-              "update",
-              "addupdate"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "add",
-           "update",
-           "addupdate"
+  importRestTokenLocation: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.tokenLocation',
+    name: '/rest/tokenLocation',
+    id: 'importRestTokenLocation',
+    defaultValue: '{{rest.tokenLocation}}',
+    options: [
+      {
+        items: [
+          { label: 'Header', value: 'header' },
+          { label: 'Url', value: 'url' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "netsuite_da.internalIdLookup.extract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.internalIdLookup.extract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false
-     },
-     "_index":null
+  importRestTokenParam: {
+    type: 'text',
+    helpKey: 'import.rest.tokenParam',
+    name: '/rest/tokenParam',
+    id: 'importRestTokenParam',
+    defaultValue: '{{rest.tokenParam}}',
   },
-  "netsuite_da.internalIdLookup.searchField":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.internalIdLookup.searchField",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false
-     },
-     "_index":null
+  importRestScopes: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.rest.scopes',
+    name: '/rest/scopes',
+    id: 'importRestScopes',
+    defaultValue: '{{rest.scope}}',
+    validWhen: [],
   },
-  "netsuite_da.internalIdLookup.operator":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.internalIdLookup.operator",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "cLocked":false
-     },
-     "_index":null
+  importRestScopeDelimiter: {
+    type: 'text',
+    helpKey: 'import.rest.scopeDelimiter',
+    name: '/rest/scopeDelimiter',
+    id: 'importRestScopeDelimiter',
+    defaultValue: '{{rest.scopeDelimiter}}',
   },
-  "netsuite_da.internalIdLookup.expression":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.internalIdLookup.expression",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":20480,
-        "cLocked":false
-     },
-     "_index":null
+  importRestRefreshToken: {
+    type: 'text',
+    helpKey: 'import.rest.refreshToken',
+    name: '/rest/refreshToken',
+    id: 'importRestRefreshToken',
+    defaultValue: '{{rest.refreshToken}}',
   },
-  "netsuite_da.hooks.preMap.fileInternalId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.preMap.fileInternalId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestOauthTokenURI: {
+    type: 'text',
+    helpKey: 'import.rest.oauthTokenURI',
+    name: '/rest/oauthTokenURI',
+    id: 'importRestOauthTokenURI',
+    defaultValue: '{{rest.oauthTokenURI}}',
   },
-  "netsuite_da.hooks.preMap.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.preMap.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestDisableStrictSSL: {
+    type: 'checkbox',
+    helpKey: 'import.rest.disableStrictSSL',
+    name: '/rest/disableStrictSSL',
+    id: 'importRestDisableStrictSSL',
+    defaultValue: false,
   },
-  "netsuite_da.hooks.preMap.configuration":{  
-     "path":"netsuite_da.hooks.preMap.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postMap.fileInternalId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.postMap.fileInternalId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postMap.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.postMap.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postMap.configuration":{  
-     "path":"netsuite_da.hooks.postMap.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postSubmit.fileInternalId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.postSubmit.fileInternalId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postSubmit.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite_da.hooks.postSubmit.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.hooks.postSubmit.configuration":{  
-     "path":"netsuite_da.hooks.postSubmit.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite_da.mapping.fields[*].extract":{  
-     "maxSize":20480
-  },
-  "netsuite_da.mapping.fields[*].extractDateFormat":{  
-
-  },
-  "netsuite_da.mapping.fields[*].extractDateTimezone":{  
-
-  },
-  "netsuite_da.mapping.fields[*].generate":{  
-
-  },
-  "netsuite_da.mapping.fields[*].hardCodedValue":{  
-
-  },
-  "netsuite_da.mapping.fields[*].immutable":{  
-
-  },
-  "netsuite_da.mapping.fields[*].lookupName":{  
-
-  },
-  "netsuite_da.mapping.fields[*].dataType":{  
-
-  },
-  "netsuite_da.mapping.fields[*].internalId":{  
-
-  },
-  "netsuite_da.mapping.fields[*].subRecordMapping":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "netsuite_da.mapping.fields[*].discardIfEmpty":{  
-
-  },
-  "netsuite_da.mapping.fields[*].conditional.lookupName":{  
-
-  },
-  "netsuite_da.mapping.fields[*].conditional.when":{  
-     "enum":[  
-        "record_created",
-        "record_updated",
-        "extract_not_empty",
-        "lookup_not_empty",
-        "lookup_empty",
-        "ignore_if_set"
-     ],
-     "lowercase":true
-  },
-  "netsuite_da.mapping.lists[*].generate":{  
-
-  },
-  "netsuite_da.mapping.lists[*].jsonPath":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].extract":{  
-     "maxSize":20480
-  },
-  "netsuite_da.mapping.lists[*].fields[*].extractDateFormat":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].extractDateTimezone":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].generate":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].hardCodedValue":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].immutable":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].lookupName":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].dataType":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].internalId":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].isKey":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].subRecordMapping":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "netsuite_da.mapping.lists[*].fields[*].discardIfEmpty":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].conditional.lookupName":{  
-
-  },
-  "netsuite_da.mapping.lists[*].fields[*].conditional.when":{  
-     "enum":[  
-        "record_created",
-        "record_updated",
-        "extract_not_empty",
-        "lookup_not_empty",
-        "lookup_empty",
-        "ignore_if_set"
-     ],
-     "lowercase":true
-  },
-  "netsuite_da.lookups[*].name":{  
-
-  },
-  "netsuite_da.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "netsuite_da.lookups[*].default":{  
-
-  },
-  "netsuite_da.lookups[*].useDefaultOnMultipleMatches":{  
-
-  },
-  "netsuite_da.lookups[*].recordType":{  
-
-  },
-  "netsuite_da.lookups[*].searchField":{  
-
-  },
-  "netsuite_da.lookups[*].expression":{  
-     "maxSize":20480
-  },
-  "netsuite_da.lookups[*].resultField":{  
-
-  },
-  "netsuite_da.lookups[*].includeInactive":{  
-
-  },
-  "netsuite_da.lookups[*].allowFailures":{  
-
-  },
-  "netsuite.operation":{  
-     "enumValues":[  
-        "add",
-        "update",
-        "addupdate",
-        "attach",
-        "detach",
-        "delete"
-     ],
-     "regExp":null,
-     "path":"netsuite.operation",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "add",
-              "update",
-              "addupdate",
-              "attach",
-              "detach",
-              "delete"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "add",
-           "update",
-           "addupdate",
-           "attach",
-           "detach",
-           "delete"
+  importRestAuthType: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.authType',
+    name: '/rest/authType',
+    id: 'importRestAuthType',
+    defaultValue: '{{rest.authType}}',
+    options: [
+      {
+        items: [
+          { label: 'Basic', value: 'basic' },
+          { label: 'Token', value: 'token' },
+          { label: 'Oauth', value: 'oauth' },
+          { label: 'Custom', value: 'custom' },
+          { label: 'Cookie', value: 'cookie' },
+          { label: 'Jwt', value: 'jwt' },
+          { label: 'Hmac', value: 'hmac' },
+          { label: 'Wsse', value: 'wsse' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "netsuite.customFieldMetadata":{  
-     "path":"netsuite.customFieldMetadata",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestAuthURI: {
+    type: 'text',
+    helpKey: 'import.rest.authURI',
+    name: '/rest/authURI',
+    id: 'importRestAuthURI',
+    defaultValue: '{{rest.authURI}}',
   },
-  "netsuite.recordType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.recordType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestAuthHeader: {
+    type: 'text',
+    helpKey: 'import.rest.authHeader',
+    name: '/rest/authHeader',
+    id: 'importRestAuthHeader',
+    defaultValue: '{{rest.authHeader}}',
   },
-  "netsuite.recordTypeId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.recordTypeId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestRetryHeader: {
+    type: 'text',
+    helpKey: 'import.rest.retryHeader',
+    name: '/rest/retryHeader',
+    id: 'importRestRetryHeader',
+    defaultValue: '{{rest.retryHeader}}',
   },
-  "netsuite.retryUpdateAsAdd":{  
-     "path":"netsuite.retryUpdateAsAdd",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.batchSize":{  
-     "path":"netsuite.batchSize",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.internalIdLookup.extract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.internalIdLookup.extract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.internalIdLookup.searchField":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.internalIdLookup.searchField",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.internalIdLookup.expression":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.internalIdLookup.expression",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.lookups[*].name":{  
-
-  },
-  "netsuite.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "netsuite.lookups[*].default":{  
-
-  },
-  "netsuite.lookups[*].recordType":{  
-
-  },
-  "netsuite.lookups[*].searchField":{  
-
-  },
-  "netsuite.lookups[*].expression":{  
-
-  },
-  "netsuite.lookups[*].resultField":{  
-
-  },
-  "netsuite.lookups[*].includeInactive":{  
-
-  },
-  "netsuite.lookups[*].allowFailures":{  
-
-  },
-  "netsuite.preferences.ignoreReadOnlyFields":{  
-     "path":"netsuite.preferences.ignoreReadOnlyFields",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.preferences.warningAsError":{  
-     "path":"netsuite.preferences.warningAsError",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.preferences.skipCustomMetadataRequests":{  
-     "path":"netsuite.preferences.skipCustomMetadataRequests",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.file.name":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.file.name",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.file.fileType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.file.fileType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.file.folder":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.file.folder",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "netsuite.file.internalId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"netsuite.file.internalId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "lookups[*].query":{  
-     "maxSize":32768
-  },
-  "rdbms.query[*]":{  
-     "maxSize":32768
-  },
-  "rdbms.queryType[*]":{  
-     "enum":[  
-        "INSERT",
-        "UPDATE"
-     ],
-     "uppercase":true
-  },
-  "rdbms.updateLookupName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rdbms.updateLookupName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rdbms.updateExtract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rdbms.updateExtract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rdbms.ignoreLookupName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rdbms.ignoreLookupName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rdbms.ignoreExtract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"rdbms.ignoreExtract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
-  },
-  "rdbms.lookups[*].name":{  
-
-  },
-  "rdbms.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
-  },
-  "rdbms.lookups[*].default":{  
-
-  },
-  "rdbms.lookups[*].query":{  
-     "maxSize":32768
-  },
-  "rdbms.lookups[*].extract":{  
-
-  },
-  "rdbms.lookups[*].allowFailures":{  
-
-  },
-  "s3.region":{  
-     "enumValues":[  
-        "us-east-1",
-        "us-east-2",
-        "us-west-1",
-        "us-west-2",
-        "ca-central-1",
-        "ap-south-1",
-        "ap-northeast-2",
-        "ap-southeast-1",
-        "ap-southeast-2",
-        "ap-northeast-1",
-        "eu-central-1",
-        "eu-west-1",
-        "eu-west-2",
-        "sa-east-1",
-        "cn-north-1"
-     ],
-     "regExp":null,
-     "path":"s3.region",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "us-east-1",
-              "us-east-2",
-              "us-west-1",
-              "us-west-2",
-              "ca-central-1",
-              "ap-south-1",
-              "ap-northeast-2",
-              "ap-southeast-1",
-              "ap-southeast-2",
-              "ap-northeast-1",
-              "eu-central-1",
-              "eu-west-1",
-              "eu-west-2",
-              "sa-east-1",
-              "cn-north-1"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "us-east-1",
-           "us-east-2",
-           "us-west-1",
-           "us-west-2",
-           "ca-central-1",
-           "ap-south-1",
-           "ap-northeast-2",
-           "ap-southeast-1",
-           "ap-southeast-2",
-           "ap-northeast-1",
-           "eu-central-1",
-           "eu-west-1",
-           "eu-west-2",
-           "sa-east-1",
-           "cn-north-1"
+  importRestAuthScheme: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.authScheme',
+    name: '/rest/authScheme',
+    id: 'importRestAuthScheme',
+    defaultValue: '{{rest.authScheme}}',
+    options: [
+      {
+        items: [
+          { label: 'MAC', value: 'MAC' },
+          { label: 'OAuth', value: 'OAuth' },
+          { label: 'Bearer', value: 'Bearer' },
+          { label: 'Hmac', value: 'Hmac' },
+          { label: ' ', value: ' ' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "s3.bucket":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"s3.bucket",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestBasicAuthUsername: {
+    type: 'text',
+    helpKey: 'import.rest.basicAuth.username',
+    name: '/rest/basicAuth/username',
+    id: 'importRestBasicAuthUsername',
+    defaultValue: '{{rest.basicAuth.username}}',
   },
-  "s3.fileKey":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"s3.fileKey",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestBasicAuthPassword: {
+    type: 'text',
+    helpKey: 'import.rest.basicAuth.password',
+    name: '/rest/basicAuth/password',
+    id: 'importRestBasicAuthPassword',
+    defaultValue: '{{rest.basicAuth.password}}',
   },
-  "s3.backupBucket":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"s3.backupBucket",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestCookieAuthUri: {
+    type: 'text',
+    helpKey: 'import.rest.cookieAuth.uri',
+    name: '/rest/cookieAuth/uri',
+    id: 'importRestCookieAuthUri',
+    defaultValue: '{{rest.cookieAuth.uri}}',
   },
-  "lookups[*].sObjectType":{  
-
+  importRestCookieAuthBody: {
+    type: 'text',
+    helpKey: 'import.rest.cookieAuth.body',
+    name: '/rest/cookieAuth/body',
+    id: 'importRestCookieAuthBody',
+    defaultValue: '{{rest.cookieAuth.body}}',
   },
-  "lookups[*].whereClause":{  
-
+  importRestCookieAuthMethod: {
+    type: 'text',
+    helpKey: 'import.rest.cookieAuth.method',
+    name: '/rest/cookieAuth/method',
+    id: 'importRestCookieAuthMethod',
+    defaultValue: '{{rest.cookieAuth.method}}',
   },
-  "salesforce.operation":{  
-     "enumValues":[  
-        "insert",
-        "update",
-        "upsert",
-        "upsertpicklistvalues",
-        "delete"
-     ],
-     "regExp":null,
-     "path":"salesforce.operation",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "insert",
-              "update",
-              "upsert",
-              "upsertpicklistvalues",
-              "delete"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "insert",
-           "update",
-           "upsert",
-           "upsertpicklistvalues",
-           "delete"
+  importRestCookieAuthSuccessStatusCode: {
+    type: 'text',
+    helpKey: 'import.rest.cookieAuth.successStatusCode',
+    name: '/rest/cookieAuth/successStatusCode',
+    id: 'importRestCookieAuthSuccessStatusCode',
+    defaultValue: '{{rest.cookieAuth.successStatusCode}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importRestHeaders: {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    helpKey: 'import.rest.headers',
+    name: '/rest/headers',
+    id: 'importRestHeaders',
+    defaultValue: '{{rest.headers}}',
+  },
+  importRestEncrypted: {
+    type: 'text',
+    helpKey: 'import.rest.encrypted',
+    name: '/rest/encrypted',
+    id: 'importRestEncrypted',
+    defaultValue: '{{rest.encrypted}}',
+  },
+  importRestEncrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.rest.encrypteds',
+    name: '/rest/encrypteds',
+    id: 'importRestEncrypteds',
+    defaultValue: '{{rest.encrypted}}',
+  },
+  importRestUnencrypted: {
+    type: 'text',
+    helpKey: 'import.rest.unencrypted',
+    name: '/rest/unencrypted',
+    id: 'importRestUnencrypted',
+    defaultValue: '{{rest.unencrypted}}',
+  },
+  importRestUnencrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.rest.unencrypteds',
+    name: '/rest/unencrypteds',
+    id: 'importRestUnencrypteds',
+    defaultValue: '{{rest.unencrypted}}',
+  },
+  importRestOauthAccessTokenPath: {
+    type: 'text',
+    helpKey: 'import.rest.oauth.accessTokenPath',
+    name: '/rest/oauth/accessTokenPath',
+    id: 'importRestOauthAccessTokenPath',
+    defaultValue: '{{rest.oauth.accessTokenPath}}',
+  },
+  importRestOauthGrantType: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.oauth.grantType',
+    name: '/rest/oauth/grantType',
+    id: 'importRestOauthGrantType',
+    defaultValue: '{{rest.oauth.grantType}}',
+    options: [
+      {
+        items: [
+          { label: 'Authorizecode', value: 'authorizecode' },
+          { label: 'Password', value: 'password' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "salesforce.api":{  
-     "enumValues":[  
-        "rest",
-        "soap",
-        "metadata",
-        "compositerecord"
-     ],
-     "regExp":null,
-     "path":"salesforce.api",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "rest",
-              "soap",
-              "metadata",
-              "compositerecord"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "rest",
-           "soap",
-           "metadata",
-           "compositerecord"
+  importRestOauthUsername: {
+    type: 'text',
+    helpKey: 'import.rest.oauth.username',
+    name: '/rest/oauth/username',
+    id: 'importRestOauthUsername',
+    defaultValue: '{{rest.oauth.username}}',
+  },
+  importRestOauthPassword: {
+    type: 'text',
+    helpKey: 'import.rest.oauth.password',
+    name: '/rest/oauth/password',
+    id: 'importRestOauthPassword',
+    defaultValue: '{{rest.oauth.password}}',
+  },
+  importRestRefreshTokenMethod: {
+    type: 'text',
+    helpKey: 'import.rest.refreshTokenMethod',
+    name: '/rest/refreshTokenMethod',
+    id: 'importRestRefreshTokenMethod',
+    defaultValue: '{{rest.refreshTokenMethod}}',
+  },
+  importRestRefreshTokenBody: {
+    type: 'text',
+    helpKey: 'import.rest.refreshTokenBody',
+    name: '/rest/refreshTokenBody',
+    id: 'importRestRefreshTokenBody',
+    defaultValue: '{{rest.refreshTokenBody}}',
+  },
+  importRestRefreshTokenURI: {
+    type: 'text',
+    helpKey: 'import.rest.refreshTokenURI',
+    name: '/rest/refreshTokenURI',
+    id: 'importRestRefreshTokenURI',
+    defaultValue: '{{rest.refreshTokenURI}}',
+  },
+  importRestRefreshTokenPath: {
+    type: 'text',
+    helpKey: 'import.rest.refreshTokenPath',
+    name: '/rest/refreshTokenPath',
+    id: 'importRestRefreshTokenPath',
+    defaultValue: '{{rest.refreshTokenPath}}',
+  },
+  importRestRefreshTokenMediaType: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.refreshTokenMediaType',
+    name: '/rest/refreshTokenMediaType',
+    id: 'importRestRefreshTokenMediaType',
+    defaultValue: '{{rest.refreshTokenMediaType}}',
+    options: [
+      {
+        items: [
+          { label: 'Json', value: 'json' },
+          { label: 'Urlencoded', value: 'urlencoded' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "salesforce.soap.headers.allOrNone":{  
-     "path":"salesforce.soap.headers.allOrNone",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestRefreshTokenHeaders: {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    helpKey: 'import.rest.refreshTokenHeaders',
+    name: '/rest/refreshTokenHeaders',
+    id: 'importRestRefreshTokenHeaders',
+    defaultValue: '{{rest.refreshTokenHeaders}}',
   },
-  "salesforce.soap.batchSize":{  
-     "path":"salesforce.soap.batchSize",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestInfo: {
+    type: 'text',
+    helpKey: 'import.rest.info',
+    name: '/rest/info',
+    id: 'importRestInfo',
+    defaultValue: '{{rest.info}}',
   },
-  "salesforce.sObjectType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.sObjectType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestPingRelativeURI: {
+    type: 'text',
+    helpKey: 'import.rest.pingRelativeURI',
+    name: '/rest/pingRelativeURI',
+    id: 'importRestPingRelativeURI',
+    defaultValue: '{{rest.pingRelativeURI}}',
   },
-  "salesforce.idLookup.extract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.idLookup.extract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestPingSuccessPath: {
+    type: 'text',
+    helpKey: 'import.rest.pingSuccessPath',
+    name: '/rest/pingSuccessPath',
+    id: 'importRestPingSuccessPath',
+    defaultValue: '{{rest.pingSuccessPath}}',
   },
-  "salesforce.idLookup.whereClause":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.idLookup.whereClause",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestPingSuccessValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.rest.pingSuccessValuess',
+    name: '/rest/pingSuccessValuess',
+    id: 'importRestPingSuccessValuess',
+    defaultValue: '{{rest.pingSuccessValues}}',
+    validWhen: [],
   },
-  "salesforce.upsert.externalIdField":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.upsert.externalIdField",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestPingFailurePath: {
+    type: 'text',
+    helpKey: 'import.rest.pingFailurePath',
+    name: '/rest/pingFailurePath',
+    id: 'importRestPingFailurePath',
+    defaultValue: '{{rest.pingFailurePath}}',
   },
-  "salesforce.upsertpicklistvalues.type":{  
-     "enumValues":[  
-        "picklist",
-        "multipicklist"
-     ],
-     "regExp":null,
-     "path":"salesforce.upsertpicklistvalues.type",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "picklist",
-              "multipicklist"
-           ]
-        }
-     ],
-     "setters":[  
-        null
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "picklist",
-           "multipicklist"
+  importRestPingFailureValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.rest.pingFailureValuess',
+    name: '/rest/pingFailureValuess',
+    id: 'importRestPingFailureValuess',
+    defaultValue: '{{rest.pingFailureValues}}',
+    validWhen: [],
+  },
+  importRestConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.rest.concurrencyLevel',
+    name: '/rest/concurrencyLevel',
+    id: 'importRestConcurrencyLevel',
+    defaultValue: '{{rest.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importRestPingMethod: {
+    type: 'radiogroup',
+    helpKey: 'import.rest.pingMethod',
+    name: '/rest/pingMethod',
+    id: 'importRestPingMethod',
+    defaultValue: '{{rest.pingMethod}}',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
         ],
-        "lowercase":true
-     },
-     "_index":null
+      },
+    ],
   },
-  "salesforce.upsertpicklistvalues.fullName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.upsertpicklistvalues.fullName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importRestPingBody: {
+    type: 'text',
+    helpKey: 'import.rest.pingBody',
+    name: '/rest/pingBody',
+    id: 'importRestPingBody',
+    defaultValue: '{{rest.pingBody}}',
   },
-  "salesforce.upsertpicklistvalues.label":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.upsertpicklistvalues.label",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  // #endregion rest
+  // #region wrapper
+  importWrapperUnencrypted: {
+    type: 'text',
+    helpKey: 'import.wrapper.unencrypted',
+    name: '/wrapper/unencrypted',
+    id: 'importWrapperUnencrypted',
+    defaultValue: '{{wrapper.unencrypted}}',
   },
-  "salesforce.upsertpicklistvalues.visibleLines":{  
-     "path":"salesforce.upsertpicklistvalues.visibleLines",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importWrapperUnencrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.wrapper.unencrypteds',
+    name: '/wrapper/unencrypteds',
+    id: 'importWrapperUnencrypteds',
+    defaultValue: '{{wrapper.unencrypted}}',
   },
-  "salesforce.removeNonSubmittableFields":{  
-     "path":"salesforce.removeNonSubmittableFields",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importWrapperEncrypted: {
+    type: 'text',
+    helpKey: 'import.wrapper.encrypted',
+    name: '/wrapper/encrypted',
+    id: 'importWrapperEncrypted',
+    defaultValue: '{{wrapper.encrypted}}',
   },
-  "salesforce.lookups[*].allowFailures":{  
-
+  importWrapperEncrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.wrapper.encrypteds',
+    name: '/wrapper/encrypteds',
+    id: 'importWrapperEncrypteds',
+    defaultValue: '{{wrapper.encrypted}}',
   },
-  "salesforce.lookups[*].name":{  
-
+  importWrapperPingFunction: {
+    type: 'text',
+    helpKey: 'import.wrapper.pingFunction',
+    name: '/wrapper/pingFunction',
+    id: 'importWrapperPingFunction',
+    defaultValue: '{{wrapper.pingFunction}}',
   },
-  "salesforce.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
+  importWrapper_stackId: {
+    type: 'text',
+    helpKey: 'import.wrapper._stackId',
+    name: '/wrapper/_stackId',
+    id: 'importWrapper_stackId',
+    defaultValue: '{{wrapper._stackId}}',
   },
-  "salesforce.lookups[*].default":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
+  importWrapperConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.wrapper.concurrencyLevel',
+    name: '/wrapper/concurrencyLevel',
+    id: 'importWrapperConcurrencyLevel',
+    defaultValue: '{{wrapper.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
   },
-  "salesforce.lookups[*].sObjectType":{  
-
+  // #endregion wrapper
+  // #region http
+  importHttpMediaType: {
+    type: 'radiogroup',
+    helpKey: 'import.http.mediaType',
+    name: '/http/mediaType',
+    id: 'importHttpMediaType',
+    defaultValue: '{{http.mediaType}}',
+    options: [
+      {
+        items: [
+          { label: 'Xml', value: 'xml' },
+          { label: 'Json', value: 'json' },
+        ],
+      },
+    ],
   },
-  "salesforce.lookups[*].resultField":{  
-
+  importHttpBaseURI: {
+    type: 'text',
+    helpKey: 'import.http.baseURI',
+    name: '/http/baseURI',
+    id: 'importHttpBaseURI',
+    defaultValue: '{{http.baseURI}}',
   },
-  "salesforce.lookups[*].whereClause":{  
-
+  importHttpDisableStrictSSL: {
+    type: 'checkbox',
+    helpKey: 'import.http.disableStrictSSL',
+    name: '/http/disableStrictSSL',
+    id: 'importHttpDisableStrictSSL',
+    defaultValue: false,
   },
-  "salesforce.document.id":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.document.id",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.http.concurrencyLevel',
+    name: '/http/concurrencyLevel',
+    id: 'importHttpConcurrencyLevel',
+    defaultValue: '{{http.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
   },
-  "salesforce.document.name":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.document.name",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpRetryHeader: {
+    type: 'text',
+    helpKey: 'import.http.retryHeader',
+    name: '/http/retryHeader',
+    id: 'importHttpRetryHeader',
+    defaultValue: '{{http.retryHeader}}',
   },
-  "salesforce.document.folderId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.document.folderId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingRelativeURI: {
+    type: 'text',
+    helpKey: 'import.http.ping.relativeURI',
+    name: '/http/ping/relativeURI',
+    id: 'importHttpPingRelativeURI',
+    defaultValue: '{{http.ping.relativeURI}}',
   },
-  "salesforce.document.contentType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.document.contentType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingMethod: {
+    type: 'radiogroup',
+    helpKey: 'import.http.ping.method',
+    name: '/http/ping/method',
+    id: 'importHttpPingMethod',
+    defaultValue: '{{http.ping.method}}',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'HEAD', value: 'HEAD' },
+        ],
+      },
+    ],
   },
-  "salesforce.document.developerName":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.document.developerName",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingBody: {
+    type: 'text',
+    helpKey: 'import.http.ping.body',
+    name: '/http/ping/body',
+    id: 'importHttpPingBody',
+    defaultValue: '{{http.ping.body}}',
   },
-  "salesforce.document.isInternalUseOnly":{  
-     "path":"salesforce.document.isInternalUseOnly",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingSuccessPath: {
+    type: 'text',
+    helpKey: 'import.http.ping.successPath',
+    name: '/http/ping/successPath',
+    id: 'importHttpPingSuccessPath',
+    defaultValue: '{{http.ping.successPath}}',
   },
-  "salesforce.document.isPublic":{  
-     "path":"salesforce.document.isPublic",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingSuccessValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.http.ping.successValuess',
+    name: '/http/ping/successValuess',
+    id: 'importHttpPingSuccessValuess',
+    defaultValue: '{{http.ping.successValues}}',
+    validWhen: [],
   },
-  "salesforce.attachment.id":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.attachment.id",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpPingErrorPath: {
+    type: 'text',
+    helpKey: 'import.http.ping.errorPath',
+    name: '/http/ping/errorPath',
+    id: 'importHttpPingErrorPath',
+    defaultValue: '{{http.ping.errorPath}}',
   },
-  "salesforce.attachment.name":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.attachment.name",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthFailStatusCode: {
+    type: 'text',
+    helpKey: 'import.http.auth.failStatusCode',
+    name: '/http/auth/failStatusCode',
+    id: 'importHttpAuthFailStatusCode',
+    defaultValue: '{{http.auth.failStatusCode}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
   },
-  "salesforce.attachment.parentId":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.attachment.parentId",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthFailPath: {
+    type: 'text',
+    helpKey: 'import.http.auth.failPath',
+    name: '/http/auth/failPath',
+    id: 'importHttpAuthFailPath',
+    defaultValue: '{{http.auth.failPath}}',
   },
-  "salesforce.attachment.contentType":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.attachment.contentType",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthFailValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.http.auth.failValuess',
+    name: '/http/auth/failValuess',
+    id: 'importHttpAuthFailValuess',
+    defaultValue: '{{http.auth.failValues}}',
+    validWhen: [],
   },
-  "salesforce.attachment.isPrivate":{  
-     "path":"salesforce.attachment.isPrivate",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthBasicUsername: {
+    type: 'text',
+    helpKey: 'import.http.auth.basic.username',
+    name: '/http/auth/basic/username',
+    id: 'importHttpAuthBasicUsername',
+    defaultValue: '{{http.auth.basic.username}}',
   },
-  "salesforce.attachment.description":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.attachment.description",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthBasicPassword: {
+    type: 'text',
+    helpKey: 'import.http.auth.basic.password',
+    name: '/http/auth/basic/password',
+    id: 'importHttpAuthBasicPassword',
+    defaultValue: '{{http.auth.basic.password}}',
   },
-  "salesforce.contentVersion.id":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.contentVersion.id",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthAuthURI: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.authURI',
+    name: '/http/auth/oauth/authURI',
+    id: 'importHttpAuthOauthAuthURI',
+    defaultValue: '{{http.auth.oauth.authURI}}',
   },
-  "salesforce.contentVersion.title":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.contentVersion.title",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthTokenURI: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.tokenURI',
+    name: '/http/auth/oauth/tokenURI',
+    id: 'importHttpAuthOauthTokenURI',
+    defaultValue: '{{http.auth.oauth.tokenURI}}',
   },
-  "salesforce.contentVersion.pathOnClient":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.contentVersion.pathOnClient",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthScopes: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.http.auth.oauth.scopes',
+    name: '/http/auth/oauth/scopes',
+    id: 'importHttpAuthOauthScopes',
+    defaultValue: '{{http.auth.oauth.scope}}',
+    validWhen: [],
   },
-  "salesforce.contentVersion.tagCsv":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.contentVersion.tagCsv",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthScopeDelimiter: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.scopeDelimiter',
+    name: '/http/auth/oauth/scopeDelimiter',
+    id: 'importHttpAuthOauthScopeDelimiter',
+    defaultValue: '{{http.auth.oauth.scopeDelimiter}}',
   },
-  "salesforce.contentVersion.contentLocation":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"salesforce.contentVersion.contentLocation",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthAccessTokenPath: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.accessTokenPath',
+    name: '/http/auth/oauth/accessTokenPath',
+    id: 'importHttpAuthOauthAccessTokenPath',
+    defaultValue: '{{http.auth.oauth.accessTokenPath}}',
   },
-  "wrapper.function":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"wrapper.function",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthGrantType: {
+    type: 'radiogroup',
+    helpKey: 'import.http.auth.oauth.grantType',
+    name: '/http/auth/oauth/grantType',
+    id: 'importHttpAuthOauthGrantType',
+    defaultValue: '{{http.auth.oauth.grantType}}',
+    options: [
+      {
+        items: [
+          { label: 'Authorizecode', value: 'authorizecode' },
+          { label: 'Password', value: 'password' },
+        ],
+      },
+    ],
   },
-  "wrapper.configuration":{  
-     "path":"wrapper.configuration",
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthOauthUsername: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.username',
+    name: '/http/auth/oauth/username',
+    id: 'importHttpAuthOauthUsername',
+    defaultValue: '{{http.auth.oauth.username}}',
   },
-  "wrapper.lookups[*].name":{  
-
+  importHttpAuthOauthPassword: {
+    type: 'text',
+    helpKey: 'import.http.auth.oauth.password',
+    name: '/http/auth/oauth/password',
+    id: 'importHttpAuthOauthPassword',
+    defaultValue: '{{http.auth.oauth.password}}',
   },
-  "wrapper.lookups[*].map":{  
-     "instance":"Mixed",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "_index":null
+  importHttpAuthTokenToken: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.token',
+    name: '/http/auth/token/token',
+    id: 'importHttpAuthTokenToken',
+    defaultValue: '{{http.auth.token.token}}',
   },
-  "wrapper.lookups[*].default":{  
-
+  importHttpAuthTokenLocation: {
+    type: 'radiogroup',
+    helpKey: 'import.http.auth.token.location',
+    name: '/http/auth/token/location',
+    id: 'importHttpAuthTokenLocation',
+    defaultValue: '{{http.auth.token.location}}',
+    options: [
+      {
+        items: [
+          { label: 'Url', value: 'url' },
+          { label: 'Header', value: 'header' },
+          { label: 'Body', value: 'body' },
+        ],
+      },
+    ],
   },
-  "wrapper.lookups[*].allowFailures":{  
-
+  importHttpAuthTokenHeaderName: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.headerName',
+    name: '/http/auth/token/headerName',
+    id: 'importHttpAuthTokenHeaderName',
+    defaultValue: '{{http.auth.token.headerName}}',
   },
-  "mongodb.method":{  
-     "enumValues":[  
-        "insertMany",
-        "updateOne"
-     ],
-     "regExp":null,
-     "path":"mongodb.method",
-     "instance":"String",
-     "validators":[  
-        {  
-           "message":"`{VALUE}` is not a valid enum value for path `{PATH}`.",
-           "type":"enum",
-           "enumValues":[  
-              "insertMany",
-              "updateOne"
-           ]
-        }
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "enum":[  
-           "insertMany",
-           "updateOne"
-        ]
-     },
-     "_index":null
+  importHttpAuthTokenScheme: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.scheme',
+    name: '/http/auth/token/scheme',
+    id: 'importHttpAuthTokenScheme',
+    defaultValue: '{{http.auth.token.scheme}}',
   },
-  "mongodb.collection":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.collection",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthTokenParamName: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.paramName',
+    name: '/http/auth/token/paramName',
+    id: 'importHttpAuthTokenParamName',
+    defaultValue: '{{http.auth.token.paramName}}',
   },
-  "mongodb.filter":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.filter",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":32768
-     },
-     "_index":null
+  importHttpAuthTokenRefreshMethod: {
+    type: 'radiogroup',
+    helpKey: 'import.http.auth.token.refreshMethod',
+    name: '/http/auth/token/refreshMethod',
+    id: 'importHttpAuthTokenRefreshMethod',
+    defaultValue: '{{http.auth.token.refreshMethod}}',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
   },
-  "mongodb.document":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.document",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":32768
-     },
-     "_index":null
+  importHttpAuthTokenRefreshRelativeURI: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.refreshRelativeURI',
+    name: '/http/auth/token/refreshRelativeURI',
+    id: 'importHttpAuthTokenRefreshRelativeURI',
+    defaultValue: '{{http.auth.token.refreshRelativeURI}}',
   },
-  "mongodb.update":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.update",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":32768
-     },
-     "_index":null
+  importHttpAuthTokenRefreshBody: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.refreshBody',
+    name: '/http/auth/token/refreshBody',
+    id: 'importHttpAuthTokenRefreshBody',
+    defaultValue: '{{http.auth.token.refreshBody}}',
   },
-  "mongodb.upsert":{  
-     "path":"mongodb.upsert",
-     "instance":"Boolean",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthTokenRefreshTokenPath: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.refreshTokenPath',
+    name: '/http/auth/token/refreshTokenPath',
+    id: 'importHttpAuthTokenRefreshTokenPath',
+    defaultValue: '{{http.auth.token.refreshTokenPath}}',
   },
-  "mongodb.ignoreExtract":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.ignoreExtract",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthTokenRefreshMediaType: {
+    type: 'radiogroup',
+    helpKey: 'import.http.auth.token.refreshMediaType',
+    name: '/http/auth/token/refreshMediaType',
+    id: 'importHttpAuthTokenRefreshMediaType',
+    defaultValue: '{{http.auth.token.refreshMediaType}}',
+    options: [
+      {
+        items: [
+          { label: 'Json', value: 'json' },
+          { label: 'Urlencoded', value: 'urlencoded' },
+          { label: 'Xml', value: 'xml' },
+        ],
+      },
+    ],
   },
-  "mongodb.ignoreLookupFilter":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"mongodb.ignoreLookupFilter",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-        "maxSize":32768
-     },
-     "_index":null
+  importHttpAuthTokenRefreshHeaders: {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    helpKey: 'import.http.auth.token.refreshHeaders',
+    name: '/http/auth/token/refreshHeaders',
+    id: 'importHttpAuthTokenRefreshHeaders',
+    defaultValue: '{{http.auth.token.refreshHeaders}}',
   },
-  "as2.fileNameTemplate":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"as2.fileNameTemplate",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpAuthTokenRefreshToken: {
+    type: 'text',
+    helpKey: 'import.http.auth.token.refreshToken',
+    name: '/http/auth/token/refreshToken',
+    id: 'importHttpAuthTokenRefreshToken',
+    defaultValue: '{{http.auth.token.refreshToken}}',
   },
-  "as2.messageIdTemplate":{  
-     "enumValues":[  
-
-     ],
-     "regExp":null,
-     "path":"as2.messageIdTemplate",
-     "instance":"String",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpRateLimitFailStatusCode: {
+    type: 'text',
+    helpKey: 'import.http.rateLimit.failStatusCode',
+    name: '/http/rateLimit/failStatusCode',
+    id: 'importHttpRateLimitFailStatusCode',
+    defaultValue: '{{http.rateLimit.failStatusCode}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
   },
-  "as2.maxRetries":{  
-     "path":"as2.maxRetries",
-     "instance":"Number",
-     "validators":[  
-
-     ],
-     "setters":[  
-
-     ],
-     "getters":[  
-
-     ],
-     "options":{  
-
-     },
-     "_index":null
+  importHttpRateLimitFailPath: {
+    type: 'text',
+    helpKey: 'import.http.rateLimit.failPath',
+    name: '/http/rateLimit/failPath',
+    id: 'importHttpRateLimitFailPath',
+    defaultValue: '{{http.rateLimit.failPath}}',
   },
-  "as2.headers[*].name":{  
-
+  importHttpRateLimitFailValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.http.rateLimit.failValuess',
+    name: '/http/rateLimit/failValuess',
+    id: 'importHttpRateLimitFailValuess',
+    defaultValue: '{{http.rateLimit.failValues}}',
+    validWhen: [],
   },
-  "as2.headers[*].value":{  
-     "maxSize":4096
-  }
-}
+  importHttpRateLimitLimit: {
+    type: 'text',
+    helpKey: 'import.http.rateLimit.limit',
+    name: '/http/rateLimit/limit',
+    id: 'importHttpRateLimitLimit',
+    defaultValue: '{{http.rateLimit.limit}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+      {
+        fallsWithinNumericalRange: {
+          message:
+            'The value must be greater than undefined and  lesser than undefined',
+        },
+      },
+    ],
+  },
+  importHttpHeaders: {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    helpKey: 'import.http.headers',
+    name: '/http/headers',
+    id: 'importHttpHeaders',
+    defaultValue: '{{http.headers}}',
+  },
+  importHttpUnencrypted: {
+    type: 'text',
+    helpKey: 'import.http.unencrypted',
+    name: '/http/unencrypted',
+    id: 'importHttpUnencrypted',
+    defaultValue: '{{http.unencrypted}}',
+  },
+  importHttpEncrypted: {
+    type: 'text',
+    helpKey: 'import.http.encrypted',
+    name: '/http/encrypted',
+    id: 'importHttpEncrypted',
+    defaultValue: '{{http.encrypted}}',
+  },
+  importHttpEncrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.http.encrypteds',
+    name: '/http/encrypteds',
+    id: 'importHttpEncrypteds',
+    defaultValue: '{{http.encrypted}}',
+  },
+  // #endregion http
+  // #region rdbms
+  importRdbmsHost: {
+    type: 'text',
+    helpKey: 'import.rdbms.host',
+    name: '/rdbms/host',
+    id: 'importRdbmsHost',
+    defaultValue: '{{rdbms.host}}',
+  },
+  importRdbmsPort: {
+    type: 'text',
+    helpKey: 'import.rdbms.port',
+    name: '/rdbms/port',
+    id: 'importRdbmsPort',
+    defaultValue: '{{rdbms.port}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importRdbmsDatabase: {
+    type: 'text',
+    helpKey: 'import.rdbms.database',
+    name: '/rdbms/database',
+    id: 'importRdbmsDatabase',
+    defaultValue: '{{rdbms.database}}',
+  },
+  importRdbmsInstanceName: {
+    type: 'text',
+    helpKey: 'import.rdbms.instanceName',
+    name: '/rdbms/instanceName',
+    id: 'importRdbmsInstanceName',
+    defaultValue: '{{rdbms.instanceName}}',
+  },
+  importRdbmsUser: {
+    type: 'text',
+    helpKey: 'import.rdbms.user',
+    name: '/rdbms/user',
+    id: 'importRdbmsUser',
+    defaultValue: '{{rdbms.user}}',
+  },
+  importRdbmsPassword: {
+    type: 'text',
+    helpKey: 'import.rdbms.password',
+    name: '/rdbms/password',
+    id: 'importRdbmsPassword',
+    defaultValue: '{{rdbms.password}}',
+  },
+  importRdbmsSslCa: {
+    type: 'text',
+    helpKey: 'import.rdbms.ssl.ca',
+    name: '/rdbms/ssl/ca',
+    id: 'importRdbmsSslCa',
+    defaultValue: '{{rdbms.ssl.ca}}',
+  },
+  importRdbmsSslKey: {
+    type: 'text',
+    helpKey: 'import.rdbms.ssl.key',
+    name: '/rdbms/ssl/key',
+    id: 'importRdbmsSslKey',
+    defaultValue: '{{rdbms.ssl.key}}',
+  },
+  importRdbmsSslPassphrase: {
+    type: 'text',
+    helpKey: 'import.rdbms.ssl.passphrase',
+    name: '/rdbms/ssl/passphrase',
+    id: 'importRdbmsSslPassphrase',
+    defaultValue: '{{rdbms.ssl.passphrase}}',
+  },
+  importRdbmsSslCert: {
+    type: 'text',
+    helpKey: 'import.rdbms.ssl.cert',
+    name: '/rdbms/ssl/cert',
+    id: 'importRdbmsSslCert',
+    defaultValue: '{{rdbms.ssl.cert}}',
+  },
+  importRdbmsConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.rdbms.concurrencyLevel',
+    name: '/rdbms/concurrencyLevel',
+    id: 'importRdbmsConcurrencyLevel',
+    defaultValue: '{{rdbms.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  // #endregion rdbms
+  // #region mongodb
+  importMongodbHosts: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.mongodb.hosts',
+    name: '/mongodb/hosts',
+    id: 'importMongodbHosts',
+    defaultValue: '{{mongodb.host}}',
+    validWhen: [],
+  },
+  importMongodbDatabase: {
+    type: 'text',
+    helpKey: 'import.mongodb.database',
+    name: '/mongodb/database',
+    id: 'importMongodbDatabase',
+    defaultValue: '{{mongodb.database}}',
+  },
+  importMongodbUsername: {
+    type: 'text',
+    helpKey: 'import.mongodb.username',
+    name: '/mongodb/username',
+    id: 'importMongodbUsername',
+    defaultValue: '{{mongodb.username}}',
+  },
+  importMongodbPassword: {
+    type: 'text',
+    helpKey: 'import.mongodb.password',
+    name: '/mongodb/password',
+    id: 'importMongodbPassword',
+    defaultValue: '{{mongodb.password}}',
+  },
+  importMongodbReplicaSet: {
+    type: 'text',
+    helpKey: 'import.mongodb.replicaSet',
+    name: '/mongodb/replicaSet',
+    id: 'importMongodbReplicaSet',
+    defaultValue: '{{mongodb.replicaSet}}',
+  },
+  // #endregion mongodb
+  // #region as2
+  importAs2As2Id: {
+    type: 'text',
+    helpKey: 'import.as2.as2Id',
+    name: '/as2/as2Id',
+    id: 'importAs2As2Id',
+    defaultValue: '{{as2.as2Id}}',
+  },
+  importAs2PartnerId: {
+    type: 'text',
+    helpKey: 'import.as2.partnerId',
+    name: '/as2/partnerId',
+    id: 'importAs2PartnerId',
+    defaultValue: '{{as2.partnerId}}',
+  },
+  importAs2ContentBasedFlowRouterFunction: {
+    type: 'text',
+    helpKey: 'import.as2.contentBasedFlowRouter.function',
+    name: '/as2/contentBasedFlowRouter/function',
+    id: 'importAs2ContentBasedFlowRouterFunction',
+    defaultValue: '{{as2.contentBasedFlowRouter.function}}',
+  },
+  importAs2ContentBasedFlowRouter_scriptId: {
+    type: 'text',
+    helpKey: 'import.as2.contentBasedFlowRouter._scriptId',
+    name: '/as2/contentBasedFlowRouter/_scriptId',
+    id: 'importAs2ContentBasedFlowRouter_scriptId',
+    defaultValue: '{{as2.contentBasedFlowRouter._scriptId}}',
+  },
+  importAs2PartnerStationInfoAs2URI: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.as2URI',
+    name: '/as2/partnerStationInfo/as2URI',
+    id: 'importAs2PartnerStationInfoAs2URI',
+    defaultValue: '{{as2.partnerStationInfo.as2URI}}',
+  },
+  importAs2PartnerStationInfoMdnMdnURL: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.mdn.mdnURL',
+    name: '/as2/partnerStationInfo/mdn/mdnURL',
+    id: 'importAs2PartnerStationInfoMdnMdnURL',
+    defaultValue: '{{as2.partnerStationInfo.mdn.mdnURL}}',
+  },
+  importAs2PartnerStationInfoMdnSignatureProtocol: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.mdn.signatureProtocol',
+    name: '/as2/partnerStationInfo/mdn/signatureProtocol',
+    id: 'importAs2PartnerStationInfoMdnSignatureProtocol',
+    defaultValue: '{{as2.partnerStationInfo.mdn.signatureProtocol}}',
+    options: [
+      { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
+    ],
+  },
+  importAs2PartnerStationInfoMdnMdnSigning: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.mdn.mdnSigning',
+    name: '/as2/partnerStationInfo/mdn/mdnSigning',
+    id: 'importAs2PartnerStationInfoMdnMdnSigning',
+    defaultValue: '{{as2.partnerStationInfo.mdn.mdnSigning}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'SHA1', value: 'SHA1' },
+          { label: 'MD5', value: 'MD5' },
+          { label: 'SHA256', value: 'SHA256' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoAuthFailStatusCode: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.failStatusCode',
+    name: '/as2/partnerStationInfo/auth/failStatusCode',
+    id: 'importAs2PartnerStationInfoAuthFailStatusCode',
+    defaultValue: '{{as2.partnerStationInfo.auth.failStatusCode}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importAs2PartnerStationInfoAuthFailPath: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.failPath',
+    name: '/as2/partnerStationInfo/auth/failPath',
+    id: 'importAs2PartnerStationInfoAuthFailPath',
+    defaultValue: '{{as2.partnerStationInfo.auth.failPath}}',
+  },
+  importAs2PartnerStationInfoAuthFailValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.as2.partnerStationInfo.auth.failValuess',
+    name: '/as2/partnerStationInfo/auth/failValuess',
+    id: 'importAs2PartnerStationInfoAuthFailValuess',
+    defaultValue: '{{as2.partnerStationInfo.auth.failValues}}',
+    validWhen: [],
+  },
+  importAs2PartnerStationInfoAuthBasicUsername: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.basic.username',
+    name: '/as2/partnerStationInfo/auth/basic/username',
+    id: 'importAs2PartnerStationInfoAuthBasicUsername',
+    defaultValue: '{{as2.partnerStationInfo.auth.basic.username}}',
+  },
+  importAs2PartnerStationInfoAuthBasicPassword: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.basic.password',
+    name: '/as2/partnerStationInfo/auth/basic/password',
+    id: 'importAs2PartnerStationInfoAuthBasicPassword',
+    defaultValue: '{{as2.partnerStationInfo.auth.basic.password}}',
+  },
+  importAs2PartnerStationInfoAuthTokenToken: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.token',
+    name: '/as2/partnerStationInfo/auth/token/token',
+    id: 'importAs2PartnerStationInfoAuthTokenToken',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.token}}',
+  },
+  importAs2PartnerStationInfoAuthTokenLocation: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.location',
+    name: '/as2/partnerStationInfo/auth/token/location',
+    id: 'importAs2PartnerStationInfoAuthTokenLocation',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.location}}',
+    options: [
+      {
+        items: [
+          { label: 'Url', value: 'url' },
+          { label: 'Header', value: 'header' },
+          { label: 'Body', value: 'body' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoAuthTokenHeaderName: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.headerName',
+    name: '/as2/partnerStationInfo/auth/token/headerName',
+    id: 'importAs2PartnerStationInfoAuthTokenHeaderName',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.headerName}}',
+  },
+  importAs2PartnerStationInfoAuthTokenScheme: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.scheme',
+    name: '/as2/partnerStationInfo/auth/token/scheme',
+    id: 'importAs2PartnerStationInfoAuthTokenScheme',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.scheme}}',
+  },
+  importAs2PartnerStationInfoAuthTokenParamName: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.paramName',
+    name: '/as2/partnerStationInfo/auth/token/paramName',
+    id: 'importAs2PartnerStationInfoAuthTokenParamName',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.paramName}}',
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshMethod: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshMethod',
+    name: '/as2/partnerStationInfo/auth/token/refreshMethod',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshMethod',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMethod}}',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshRelativeURI: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshRelativeURI',
+    name: '/as2/partnerStationInfo/auth/token/refreshRelativeURI',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshRelativeURI',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshRelativeURI}}',
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshBody: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshBody',
+    name: '/as2/partnerStationInfo/auth/token/refreshBody',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshBody',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshBody}}',
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshTokenPath: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshTokenPath',
+    name: '/as2/partnerStationInfo/auth/token/refreshTokenPath',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshTokenPath',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshTokenPath}}',
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshMediaType: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshMediaType',
+    name: '/as2/partnerStationInfo/auth/token/refreshMediaType',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshMediaType',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshMediaType}}',
+    options: [
+      {
+        items: [
+          { label: 'Json', value: 'json' },
+          { label: 'Urlencoded', value: 'urlencoded' },
+          { label: 'Xml', value: 'xml' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshHeaders: {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshHeaders',
+    name: '/as2/partnerStationInfo/auth/token/refreshHeaders',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshHeaders',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshHeaders}}',
+  },
+  importAs2PartnerStationInfoAuthTokenRefreshToken: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.auth.token.refreshToken',
+    name: '/as2/partnerStationInfo/auth/token/refreshToken',
+    id: 'importAs2PartnerStationInfoAuthTokenRefreshToken',
+    defaultValue: '{{as2.partnerStationInfo.auth.token.refreshToken}}',
+  },
+  importAs2PartnerStationInfoRateLimitFailStatusCode: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.rateLimit.failStatusCode',
+    name: '/as2/partnerStationInfo/rateLimit/failStatusCode',
+    id: 'importAs2PartnerStationInfoRateLimitFailStatusCode',
+    defaultValue: '{{as2.partnerStationInfo.rateLimit.failStatusCode}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importAs2PartnerStationInfoRateLimitFailPath: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.rateLimit.failPath',
+    name: '/as2/partnerStationInfo/rateLimit/failPath',
+    id: 'importAs2PartnerStationInfoRateLimitFailPath',
+    defaultValue: '{{as2.partnerStationInfo.rateLimit.failPath}}',
+  },
+  importAs2PartnerStationInfoRateLimitFailValuess: {
+    type: 'text',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'array',
+    helpKey: 'import.as2.partnerStationInfo.rateLimit.failValuess',
+    name: '/as2/partnerStationInfo/rateLimit/failValuess',
+    id: 'importAs2PartnerStationInfoRateLimitFailValuess',
+    defaultValue: '{{as2.partnerStationInfo.rateLimit.failValues}}',
+    validWhen: [],
+  },
+  importAs2PartnerStationInfoRateLimitLimit: {
+    type: 'text',
+    helpKey: 'import.as2.partnerStationInfo.rateLimit.limit',
+    name: '/as2/partnerStationInfo/rateLimit/limit',
+    id: 'importAs2PartnerStationInfoRateLimitLimit',
+    defaultValue: '{{as2.partnerStationInfo.rateLimit.limit}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+      {
+        fallsWithinNumericalRange: {
+          message:
+            'The value must be greater than undefined and  lesser than undefined',
+        },
+      },
+    ],
+  },
+  importAs2PartnerStationInfoSMIMEVersion: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.SMIMEVersion',
+    name: '/as2/partnerStationInfo/SMIMEVersion',
+    id: 'importAs2PartnerStationInfoSMIMEVersion',
+    defaultValue: '{{as2.partnerStationInfo.SMIMEVersion}}',
+    options: [
+      { items: [{ label: 'V2', value: 'v2' }, { label: 'V3', value: 'v3' }] },
+    ],
+  },
+  importAs2PartnerStationInfoEncryptionType: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.encryptionType',
+    name: '/as2/partnerStationInfo/encryptionType',
+    id: 'importAs2PartnerStationInfoEncryptionType',
+    defaultValue: '{{as2.partnerStationInfo.encryptionType}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'DES', value: 'DES' },
+          { label: 'RC2', value: 'RC2' },
+          { label: '3DES', value: '3DES' },
+          { label: 'AES128', value: 'AES128' },
+          { label: 'AES256', value: 'AES256' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoSigning: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.signing',
+    name: '/as2/partnerStationInfo/signing',
+    id: 'importAs2PartnerStationInfoSigning',
+    defaultValue: '{{as2.partnerStationInfo.signing}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'SHA1', value: 'SHA1' },
+          { label: 'MD5', value: 'MD5' },
+          { label: 'SHA256', value: 'SHA256' },
+        ],
+      },
+    ],
+  },
+  importAs2PartnerStationInfoEncoding: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.partnerStationInfo.encoding',
+    name: '/as2/partnerStationInfo/encoding',
+    id: 'importAs2PartnerStationInfoEncoding',
+    defaultValue: '{{as2.partnerStationInfo.encoding}}',
+    options: [
+      {
+        items: [
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+        ],
+      },
+    ],
+  },
+  importAs2UserStationInfoMdnMdnURL: {
+    type: 'text',
+    helpKey: 'import.as2.userStationInfo.mdn.mdnURL',
+    name: '/as2/userStationInfo/mdn/mdnURL',
+    id: 'importAs2UserStationInfoMdnMdnURL',
+    defaultValue: '{{as2.userStationInfo.mdn.mdnURL}}',
+  },
+  importAs2UserStationInfoMdnSignatureProtocol: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.userStationInfo.mdn.signatureProtocol',
+    name: '/as2/userStationInfo/mdn/signatureProtocol',
+    id: 'importAs2UserStationInfoMdnSignatureProtocol',
+    defaultValue: '{{as2.userStationInfo.mdn.signatureProtocol}}',
+    options: [
+      { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
+    ],
+  },
+  importAs2UserStationInfoMdnMdnSigning: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.userStationInfo.mdn.mdnSigning',
+    name: '/as2/userStationInfo/mdn/mdnSigning',
+    id: 'importAs2UserStationInfoMdnMdnSigning',
+    defaultValue: '{{as2.userStationInfo.mdn.mdnSigning}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'SHA1', value: 'SHA1' },
+          { label: 'MD5', value: 'MD5' },
+          { label: 'SHA256', value: 'SHA256' },
+        ],
+      },
+    ],
+  },
+  importAs2UserStationInfoEncryptionType: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.userStationInfo.encryptionType',
+    name: '/as2/userStationInfo/encryptionType',
+    id: 'importAs2UserStationInfoEncryptionType',
+    defaultValue: '{{as2.userStationInfo.encryptionType}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'DES', value: 'DES' },
+          { label: 'RC2', value: 'RC2' },
+          { label: '3DES', value: '3DES' },
+          { label: 'AES128', value: 'AES128' },
+          { label: 'AES256', value: 'AES256' },
+        ],
+      },
+    ],
+  },
+  importAs2UserStationInfoSigning: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.userStationInfo.signing',
+    name: '/as2/userStationInfo/signing',
+    id: 'importAs2UserStationInfoSigning',
+    defaultValue: '{{as2.userStationInfo.signing}}',
+    options: [
+      {
+        items: [
+          { label: 'NONE', value: 'NONE' },
+          { label: 'SHA1', value: 'SHA1' },
+          { label: 'MD5', value: 'MD5' },
+          { label: 'SHA256', value: 'SHA256' },
+        ],
+      },
+    ],
+  },
+  importAs2UserStationInfoEncoding: {
+    type: 'radiogroup',
+    helpKey: 'import.as2.userStationInfo.encoding',
+    name: '/as2/userStationInfo/encoding',
+    id: 'importAs2UserStationInfoEncoding',
+    defaultValue: '{{as2.userStationInfo.encoding}}',
+    options: [
+      {
+        items: [
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+        ],
+      },
+    ],
+  },
+  importAs2Encrypted: {
+    type: 'text',
+    helpKey: 'import.as2.encrypted',
+    name: '/as2/encrypted',
+    id: 'importAs2Encrypted',
+    defaultValue: '{{as2.encrypted}}',
+  },
+  importAs2ConcurrencyLevel: {
+    type: 'text',
+    helpKey: 'import.as2.concurrencyLevel',
+    name: '/as2/concurrencyLevel',
+    id: 'importAs2ConcurrencyLevel',
+    defaultValue: '{{as2.concurrencyLevel}}',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  importAs2Unencrypted: {
+    type: 'text',
+    helpKey: 'import.as2.unencrypted',
+    name: '/as2/unencrypted',
+    id: 'importAs2Unencrypted',
+    defaultValue: '{{as2.unencrypted}}',
+  },
+  importAs2Encrypteds: {
+    type: 'editor',
+    valueType: 'editorExpression',
+    helpKey: 'import.as2.encrypteds',
+    name: '/as2/encrypteds',
+    id: 'importAs2Encrypteds',
+    defaultValue: '{{as2.encrypted}}',
+  },
+  // #endregion as2
+  // #endregion resource import
+};

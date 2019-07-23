@@ -20,6 +20,7 @@ export default {
 
     {
       id: 'rest.bearerToken',
+      type: 'tokengen',
       resourceId: r => r._id,
       disabledWhen: [
         {
@@ -38,14 +39,15 @@ export default {
 
         return {
           base64EncodedToken,
+          baseURI: 'https://api.pitneybowes.com/',
         };
       },
 
-      type: 'tokengen',
       label: 'Token Generator',
 
-      tokenSetForFieldsFn: token => ({
-        'rest.bearerToken': token && token.access_token,
+      tokenSetForFieldsFn: resp => ({
+        'rest.bearerToken': resp && resp.access_token,
+        'rest.siteId': resp && resp.clientID,
       }),
 
       helpText: 'The API Secret of your Certify account.',
