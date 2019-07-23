@@ -95,13 +95,15 @@ export default {
       },
     },
     MuiButton: {
-      label: {
-        '& > svg': {
-          margin: '0px 6px',
-          lineHeight: '0px',
-          fontSize: '12px',
-        },
-      },
+      // Azhar, i dont think this is the right thing to do since we dont
+      // know if the icon is on the left or right...
+      // label: {
+      //   '& > svg': {
+      //     margin: '0px 6px',
+      //     lineHeight: '0px',
+      //     fontSize: '12px',
+      //   },
+      // },
       textPrimary: {
         borderRadius: '18px',
         letterSpacing: '1px',

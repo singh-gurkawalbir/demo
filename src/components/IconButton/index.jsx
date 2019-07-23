@@ -3,23 +3,32 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 const styles = () => ({
-  right: { marginRight: 6 },
-  left: { marginLeft: 6 },
+  left: { marginRight: 6 },
+  right: { marginLeft: 6 },
 });
+const styledChildren = (children, classes) => {
+  let position = 'left';
 
-// NOTE: This component expects a single child element that is an SvgIcon
-function IconButton(props) {
-  const { position = 'left', text, children, classes, ...rest } = props;
+  return React.Children.map(children, child => {
+    let element = child;
 
-  return (
-    <Button {...rest}>
-      {position === 'right' && text}
-      {React.cloneElement(props.children, {
+    if (typeof child !== 'string') {
+      element = React.cloneElement(child, {
+        key: 'icon',
         className: classes[position],
-      })}
-      {position === 'left' && text}
-    </Button>
-  );
+      });
+    }
+
+    position = 'right';
+
+    return element;
+  });
+};
+
+function IconButton(props) {
+  const { children, classes, ...rest } = props;
+
+  return <Button {...rest}>{styledChildren(props.children, classes)}</Button>;
 }
 
 export default withStyles(styles)(IconButton);
