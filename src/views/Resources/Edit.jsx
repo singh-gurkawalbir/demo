@@ -78,7 +78,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
   editableFields: {
     paddingTop: theme.spacing.unit,
     minHeight: '50%',
-    maxHeight: `calc(100vh - ${theme.spacing.unit * 27}px)`,
+    // maxHeight: `calc(100vh - ${theme.spacing.unit * 27}px)`,
     overflowY: 'hidden',
   },
   // textField: {
