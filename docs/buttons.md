@@ -2,8 +2,6 @@ Round button
 ```js
 const Button = require('@material-ui/core/Button').default;
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
-const DownIcon = require('../src/components/icons/DownIcon').default;
-const StacksIcon = require('../src/components/icons/StacksIcon').default;
 
 <SpacedContainer>
   <Button size="small" variant="contained" color="primary">Small</Button>
@@ -16,6 +14,7 @@ const StacksIcon = require('../src/components/icons/StacksIcon').default;
   <Button variant="contained" color="secondary" disabled >S Disabled</Button>
 </SpacedContainer>
 ```
+
 Rectangle Buttons
 ```js
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
@@ -23,31 +22,30 @@ const Button = require('@material-ui/core/Button').default;
 
 <SpacedContainer>
   <Button variant="outlined" color="primary">Primary</Button>
-  <Button variant="outlined"  color="secondary">Secondary</Button>
-  <Button variant="outlined"  color="primary" disabled>Disabled</Button>
-  <Button variant="outlined"  color="secondary" disabled>Secondary Disabled</Button>
+  <Button variant="outlined" color="secondary">Secondary</Button>
+  <Button variant="outlined" color="primary" disabled>Disabled</Button>
+  <Button variant="outlined" color="secondary" disabled>Secondary Disabled</Button>
 </SpacedContainer>
 ```
+
 Text Buttons
 ```js
+const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
-const mr10 = {
-marginRight: '10px',
-};
-<div>
+
+<SpacedContainer>
   <Button variant="text" color="primary">Primary Button</Button>
   <Button variant="text" color="secondary">Link Button</Button>
-  <Button variant="text"  color="primary" style={mr10} disabled>Disabled</Button>
-</div>
+  <Button variant="text" color="primary" disabled>Disabled</Button>
+</SpacedContainer>
 ```
+
 Button Groups
 ```js
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
-const buttonGroup = {
-float: 'left',
-};
 const ButtonsGroup = require('../src/components/ButtonGroup').default;
+
 <SpacedContainer>
   <div>
     <ButtonsGroup>
