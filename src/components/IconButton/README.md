@@ -16,12 +16,15 @@ const container = {
   </IconButton>
 
   <IconButton color="primary" variant="contained">
+    <CloseIcon /> Click Me Softly <MenuBarsIcon />
+  </IconButton>
+
+  <IconButton color="primary" variant="contained">
     Click Me <ScheduleIcon />
   </IconButton>
 
-<IconButton color="secondary" variant="outlined">
+  <IconButton color="secondary" variant="outlined">
     <CloseIcon /> Click Me <MenuBarsIcon />
   </IconButton>
-  
-</div>
+  </div>
 ```
