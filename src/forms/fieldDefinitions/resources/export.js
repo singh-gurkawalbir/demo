@@ -41,6 +41,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this Export [POST]:',
     type: 'text',
+    disabled: true,
   },
   configureAsyncHelper: {
     type: 'checkbox',
@@ -67,14 +68,10 @@ export default {
     options: [
       {
         items: [
-          { label: 'Webhook', value: 'webhook' },
-          { label: 'Distributed', value: 'distributed' },
+          { label: 'All', value: 'all' },
           { label: 'Test', value: 'test' },
           { label: 'Delta', value: 'delta' },
           { label: 'Once', value: 'once' },
-          { label: 'Tranlinedelta', value: 'tranlinedelta' },
-          { label: 'Simple', value: 'simple' }, // dataloader
-          { label: 'Blob', value: 'blob' }, // attachments
         ],
       },
     ],
@@ -367,6 +364,12 @@ export default {
   'delta.dateFormat': {
     type: 'text',
     label: 'Delta date Format',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
   },
   'delta.startDate': {
     type: 'text',
@@ -375,9 +378,10 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Delta lag Offset',
-    validWhen: [
+    visibleWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        field: 'type',
+        is: ['delta'],
       },
     ],
   },
@@ -390,6 +394,12 @@ export default {
   'once.booleanField': {
     type: 'text',
     label: 'Once boolean Field',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
   // #endregion once
   // #region valueDelta
@@ -533,7 +543,6 @@ export default {
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    placeholder: 'Please select a script',
     label: 'Hooks pre Save Page _script Id',
   },
   'hooks.preSavePage.configuration': {
@@ -768,6 +777,10 @@ export default {
     type: 'checkbox',
     label: 'Rest allow Undefined Resource',
   },
+  pagingData: {
+    type: 'labeltitle',
+    label: 'Does this API support paging?',
+  },
   'rest.pagingMethod': {
     type: 'select',
     label: 'Rest paging Method',
@@ -788,22 +801,52 @@ export default {
   'rest.nextPagePath': {
     type: 'text',
     label: 'Rest next Page Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['nextpageurl'],
+      },
+    ],
   },
   'rest.linkHeaderRelation': {
     type: 'text',
     label: 'Rest link Header Relation',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['linkheader'],
+      },
+    ],
   },
   'rest.nextPageRelativeURI': {
     type: 'text',
     label: 'Rest next Page Relative URI',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['relativeuri'],
+      },
+    ],
   },
   'rest.pageArgument': {
     type: 'text',
     label: 'Rest page Argument',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['pageargument'],
+      },
+    ],
   },
   'rest.pagingPostBody': {
     type: 'text',
     label: 'Rest paging Post Body',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['postbody'],
+      },
+    ],
   },
   'rest.maxPagePath': {
     type: 'text',
@@ -853,6 +896,12 @@ export default {
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Rest once relative URI',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
   'rest.once.method': {
     type: 'radiogroup',
@@ -865,10 +914,22 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
   'rest.once.postBody': {
     type: 'text',
     label: 'Rest once post Body',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
   // #endregion rest
   // #region ftp
@@ -900,9 +961,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Csv', value: 'csv' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
@@ -913,8 +974,8 @@ export default {
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
@@ -929,11 +990,10 @@ export default {
     options: [
       {
         items: [
+          { label: 'Please Select', value: 'Please_Select' },
           { label: 'GET', value: 'GET' },
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
-          { label: 'PATCH', value: 'PATCH' },
-          { label: 'DELETE', value: 'DELETE' },
         ],
       },
     ],
@@ -968,9 +1028,10 @@ export default {
   'http.paging.skip': {
     type: 'text',
     label: 'Http paging skip',
-    validWhen: [
+    visibleWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        field: 'http.paging.method',
+        is: ['skip'],
       },
     ],
   },
@@ -982,34 +1043,82 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['page'],
+      },
+    ],
   },
   'http.paging.token': {
     type: 'text',
     label: 'Http paging token',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.path': {
     type: 'text',
     label: 'Http paging path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['skip', 'page', 'relativeuri', 'linkheader'],
+      },
+    ],
   },
   'http.paging.relativeURI': {
     type: 'text',
     label: 'Http paging relative URI',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['skip', 'page', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
     label: 'Http paging path After First Request',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.resourcePath': {
     type: 'text',
     label: 'Http paging resource Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.maxPagePath': {
     type: 'text',
     label: 'Http paging max Page Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.maxCountPath': {
     type: 'text',
     label: 'Http paging max Count Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
@@ -1035,6 +1144,12 @@ export default {
   'http.paging.linkHeaderRelation': {
     type: 'text',
     label: 'Http paging link Header Relation',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['linkheader'],
+      },
+    ],
   },
   'http._asyncHelperId': {
     type: 'text',
