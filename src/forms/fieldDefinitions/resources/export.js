@@ -64,7 +64,7 @@ export default {
   },
   type: {
     type: 'select',
-    label: 'Type',
+    label: 'Export Type',
     options: [
       {
         items: [
@@ -87,7 +87,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Data URI Template',
   },
   oneToMany: {
     type: 'checkbox',
@@ -363,7 +363,7 @@ export default {
   },
   'delta.dateFormat': {
     type: 'text',
-    label: 'Delta date Format',
+    label: 'Date Format',
     visibleWhen: [
       {
         field: 'type',
@@ -377,7 +377,7 @@ export default {
   },
   'delta.lagOffset': {
     type: 'text',
-    label: 'Delta lag Offset',
+    label: 'Offset',
     visibleWhen: [
       {
         field: 'type',
@@ -393,7 +393,7 @@ export default {
   // #region once
   'once.booleanField': {
     type: 'text',
-    label: 'Once boolean Field',
+    label: 'Boolean Field',
     visibleWhen: [
       {
         field: 'type',
@@ -538,7 +538,7 @@ export default {
   },
   'hooks.preSavePage.function': {
     type: 'text',
-    label: 'Hooks pre Save Page function',
+    label: 'Pre Save Page',
   },
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
@@ -743,11 +743,11 @@ export default {
   // #region rest
   'rest.relativeURI': {
     type: 'text',
-    label: 'Rest relative URI',
+    label: 'Relative URI',
   },
   'rest.method': {
     type: 'select',
-    label: 'Rest method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
@@ -760,18 +760,18 @@ export default {
   },
   'rest.postBody': {
     type: 'text',
-    label: 'Rest post Body',
+    label: 'Build HTTP Request Body',
   },
   'rest.resourcePath': {
     type: 'text',
-    label: 'Rest resource Path',
+    label: 'Resource Path',
   },
   'rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Rest headers',
+    label: 'Configure HTTP headers',
   },
   'rest.allowUndefinedResource': {
     type: 'checkbox',
@@ -783,24 +783,24 @@ export default {
   },
   'rest.pagingMethod': {
     type: 'select',
-    label: 'Rest paging Method',
+    label: 'Paging Method',
     options: [
       {
         items: [
-          { label: 'Nextpageurl', value: 'nextpageurl' },
-          { label: 'Pageargument', value: 'pageargument' },
-          { label: 'Relativeuri', value: 'relativeuri' },
-          { label: 'Linkheader', value: 'linkheader' },
-          { label: 'Skipargument', value: 'skipargument' },
+          { label: 'Next Page URL', value: 'nextpageurl' },
+          { label: 'Page Argument', value: 'pageargument' },
+          { label: 'Relative URI', value: 'relativeuri' },
+          { label: 'Link Header', value: 'linkheader' },
+          { label: 'Skip Argument', value: 'skipargument' },
           { label: 'Token', value: 'token' },
-          { label: 'Postbody', value: 'postbody' },
+          { label: 'Post Body', value: 'postbody' },
         ],
       },
     ],
   },
   'rest.nextPagePath': {
     type: 'text',
-    label: 'Rest next Page Path',
+    label: 'Next Page Path',
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -810,7 +810,7 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    label: 'Rest link Header Relation',
+    label: 'Link Header Relation',
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -820,7 +820,7 @@ export default {
   },
   'rest.nextPageRelativeURI': {
     type: 'text',
-    label: 'Rest next Page Relative URI',
+    label: 'Next Page Relative URI',
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -830,7 +830,7 @@ export default {
   },
   'rest.pageArgument': {
     type: 'text',
-    label: 'Rest page Argument',
+    label: 'Page Argument',
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -840,7 +840,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'text',
-    label: 'Rest paging Post Body',
+    label: 'Build Paging Post Body',
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -850,15 +850,15 @@ export default {
   },
   'rest.maxPagePath': {
     type: 'text',
-    label: 'Rest max Page Path',
+    label: 'Max Page Path',
   },
   'rest.maxCountPath': {
     type: 'text',
-    label: 'Rest max Count Path',
+    label: 'Max Count Path',
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Rest skip Argument',
+    label: 'Skip Argument',
   },
   'rest.blobFormat': {
     type: 'text',
@@ -866,19 +866,19 @@ export default {
   },
   'rest.successPath': {
     type: 'text',
-    label: 'Rest success Path',
+    label: 'Success Path',
   },
   'rest.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Rest success Values',
+    label: 'Success Values',
     validWhen: [],
   },
   'rest.lastPageStatusCode': {
     type: 'text',
-    label: 'Rest last Page Status Code',
+    label: 'Last Page Status Code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -887,15 +887,15 @@ export default {
   },
   'rest.lastPagePath': {
     type: 'text',
-    label: 'Rest last Page Path',
+    label: 'Last Page Path',
   },
   'rest.lastPageValue': {
     type: 'text',
-    label: 'Rest last Page Value',
+    label: 'Last Page Value',
   },
   'rest.once.relativeURI': {
     type: 'text',
-    label: 'Rest once relative URI',
+    label: 'Relative URI',
     visibleWhen: [
       {
         field: 'type',
@@ -905,7 +905,7 @@ export default {
   },
   'rest.once.method': {
     type: 'radiogroup',
-    label: 'Rest once method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
@@ -923,7 +923,7 @@ export default {
   },
   'rest.once.postBody': {
     type: 'text',
-    label: 'Rest once post Body',
+    label: 'Build HTTP Request Body',
     visibleWhen: [
       {
         field: 'type',
@@ -951,13 +951,13 @@ export default {
   },
   exportData: {
     type: 'labeltitle',
-    label: 'What data would you like to Export?',
+    label: 'What would you like to export?',
   },
   // #endregion ftp
   // #region http
   'http.successMediaType': {
     type: 'select',
-    label: 'Http success Media Type',
+    label: 'Success Media Type',
     options: [
       {
         items: [
@@ -970,7 +970,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'radiogroup',
-    label: 'Http error Media Type',
+    label: 'Error Media Type',
     options: [
       {
         items: [
@@ -982,15 +982,14 @@ export default {
   },
   'http.relativeURI': {
     type: 'text',
-    label: 'Http relative URI',
+    label: 'Relative URI',
   },
   'http.method': {
     type: 'select',
-    label: 'Http method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
-          { label: 'Please Select', value: 'Please_Select' },
           { label: 'GET', value: 'GET' },
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
@@ -1000,34 +999,34 @@ export default {
   },
   'http.body': {
     type: 'text',
-    label: 'Http body',
+    label: 'Build HTTP Request Body',
   },
   'http.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Http headers',
+    label: 'Configure HTTP Headers',
   },
   'http.paging.method': {
     type: 'select',
-    label: 'Http paging method',
+    label: 'Paging Method',
     options: [
       {
         items: [
           { label: 'Token', value: 'token' },
           { label: 'Skip', value: 'skip' },
           { label: 'Page', value: 'page' },
-          { label: 'Url', value: 'url' },
-          { label: 'Linkheader', value: 'linkheader' },
-          { label: 'Relativeuri', value: 'relativeuri' },
+          { label: 'Next Page URL', value: 'url' },
+          { label: 'Link Header', value: 'linkheader' },
+          { label: 'Relative URI', value: 'relativeuri' },
         ],
       },
     ],
   },
   'http.paging.skip': {
     type: 'text',
-    label: 'Http paging skip',
+    label: 'Skip',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1037,7 +1036,7 @@ export default {
   },
   'http.paging.page': {
     type: 'text',
-    label: 'Http paging page',
+    label: 'Page',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1052,7 +1051,7 @@ export default {
   },
   'http.paging.token': {
     type: 'text',
-    label: 'Http paging token',
+    label: 'Token',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1062,7 +1061,7 @@ export default {
   },
   'http.paging.path': {
     type: 'text',
-    label: 'Http paging path',
+    label: 'Path',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1072,7 +1071,7 @@ export default {
   },
   'http.paging.relativeURI': {
     type: 'text',
-    label: 'Http paging relative URI',
+    label: 'Relative URI',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1082,7 +1081,7 @@ export default {
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
-    label: 'Http paging path After First Request',
+    label: 'Token Path After First Request',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1092,7 +1091,7 @@ export default {
   },
   'http.paging.resourcePath': {
     type: 'text',
-    label: 'Http paging resource Path',
+    label: 'Resource Path',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1102,7 +1101,7 @@ export default {
   },
   'http.paging.maxPagePath': {
     type: 'text',
-    label: 'Http paging max Page Path',
+    label: 'Max Page Path',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1112,7 +1111,7 @@ export default {
   },
   'http.paging.maxCountPath': {
     type: 'text',
-    label: 'Http paging max Count Path',
+    label: 'Max Count Path',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1122,7 +1121,7 @@ export default {
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
-    label: 'Http paging last Page Status Code',
+    label: 'Last Page Status Code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1131,19 +1130,19 @@ export default {
   },
   'http.paging.lastPagePath': {
     type: 'text',
-    label: 'Http paging last Page Path',
+    label: 'Last Page Path',
   },
   'http.paging.lastPageValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Http paging last Page Values',
+    label: 'Last Page Values',
     validWhen: [],
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
-    label: 'Http paging link Header Relation',
+    label: 'Link Header Relation',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -1180,7 +1179,7 @@ export default {
   },
   'http.response.resourcePath': {
     type: 'text',
-    label: 'Http response resource Path',
+    label: 'Resource Path',
   },
   'http.response.resourceIdPath': {
     type: 'text',
@@ -1188,19 +1187,19 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Http response success Path',
+    label: 'Success Path',
   },
   'http.response.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Http response success Values',
+    label: 'Success Values',
     validWhen: [],
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Http response error Path',
+    label: 'Error Path',
   },
   'http.response.blobFormat': {
     type: 'text',

@@ -1,6 +1,5 @@
 export default {
   fields: [
-    { fieldId: 'apiIdentifier' },
     { formId: 'common' },
     { fieldId: 'exportData' },
     { fieldId: 'http.method' },

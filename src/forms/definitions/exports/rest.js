@@ -28,10 +28,33 @@ export default {
     { fieldId: 'rest.pagingPostBody' },
     { fieldId: 'rest.maxPagePath' },
     { fieldId: 'rest.maxCountPath' },
-    { fieldId: 'rest.blobFormat' },
+    // { fieldId: 'rest.blobFormat' },
     { fieldId: 'rest.lastPageStatusCode' },
     { fieldId: 'rest.lastPagePath' },
     { fieldId: 'rest.lastPageValue' },
+    { fieldId: 'ftp.exportTransformRecords' },
+    { fieldId: 'transform.expression.rules' },
+    { fieldId: 'ftp.exportHooks' },
+    { formId: 'hooks' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: 'true',
+      fields: [
+        { fieldId: 'pageSize' },
+        { fieldId: 'dataURITemplate' },
+        { fieldId: 'configureAsyncHelper' },
+        {
+          fieldId: 'http._asyncHelperId',
+          visibleWhen: [
+            {
+              field: 'configureAsyncHelper',
+              is: [true],
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };

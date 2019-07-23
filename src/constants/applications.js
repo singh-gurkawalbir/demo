@@ -10,6 +10,7 @@
 export default [
   // generic connectors
   { id: 'HTTP', name: 'HTTP', type: 'http' },
+
   { id: 'REST', name: 'REST API', type: 'rest' },
   { id: 'FTP', name: 'FTP', type: 'ftp' },
   { id: 'Webhook', name: 'Webhook', type: 'webhook' },
