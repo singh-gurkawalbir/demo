@@ -119,7 +119,7 @@ class Edit extends Component {
     const { handleInitCustomResourceForm } = this.props;
     const { editMode } = this.state;
 
-    if (editMode) {
+    if (!editMode) {
       handleInitCustomResourceForm();
     }
 

@@ -162,6 +162,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   });
 };
 
+const skipExecutionOfFunction = ['formPayloadFn', 'tokenSetForFieldsFn'];
 const applyingMissedOutFieldMetaProperties = (
   incompleteField,
   resource,
@@ -170,7 +171,10 @@ const applyingMissedOutFieldMetaProperties = (
   const field = incompleteField;
 
   Object.keys(field).forEach(key => {
-    if (typeof field[key] === 'function') {
+    if (
+      typeof field[key] === 'function' &&
+      !skipExecutionOfFunction.includes(key)
+    ) {
       field[key] = field[key](resource);
     }
   });
@@ -179,13 +183,13 @@ const applyingMissedOutFieldMetaProperties = (
     field.id = field.fieldId;
   }
 
-  if (!field.name) {
+  if (!field.name && !field.ignoreName) {
     if (field.id) field.name = `/${field.id.replace(/\./g, '/')}`;
   }
 
   if (!Object.keys(field).includes('defaultValue')) {
     // console.log(`default value for ${merged.fieldId} used`);
-    field.defaultValue = get(resource, field.id);
+    field.defaultValue = get(resource, field.id, '');
   }
 
   if (!field.helpText && !field.helpKey) {

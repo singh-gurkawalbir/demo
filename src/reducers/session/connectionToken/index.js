@@ -1,7 +1,7 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, resourceId, bearerToken, message } = action;
+  const { type, resourceId, token, message } = action;
   const newState = { ...state };
 
   switch (type) {
@@ -12,12 +12,12 @@ export default (state = {}, action) => {
       return newState;
     case actionTypes.TOKEN.SAVE:
       if (!newState[resourceId]) newState[resourceId] = {};
-      newState[resourceId] = { ...newState[resourceId], bearerToken };
+      newState[resourceId] = { ...newState[resourceId], token };
 
       return newState;
     case actionTypes.TOKEN.FAILED:
       if (!newState[resourceId]) newState[resourceId] = {};
-      delete newState[resourceId].bearerToken;
+      delete newState[resourceId].token;
       newState[resourceId] = { ...newState[resourceId], message };
 
       return newState;

@@ -26,27 +26,21 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* generateToken({ resourceId, values }) {
+export function* generateToken({ resourceId, values, formPayloadFn }) {
   const resourceType = 'connections';
   const connectionResource = yield select(
     selectors.resource,
     resourceType,
     resourceId
   );
-  const { type } = connectionResource;
   const { assistant } = connectionResource;
 
   if (!assistant) throw new Error('Could not determine the assistant type');
 
   const path = `/${assistant}/generate-token`;
-  // get Assistant type removed unencrypted
-  const apiKey = values[`/${type}/encrypted/apiKey`];
-  const apiSecret = values[`/${type}/encrypted/apiSecret`];
-  const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
-  const reqPayload = {
-    base64EncodedToken,
-    baseURI: connectionResource[type].baseURI,
-  };
+
+  if (!formPayloadFn) throw new Error('No Payload function provided');
+  const reqPayload = formPayloadFn(values);
 
   try {
     const resp = yield call(apiCallWithRetry, {
@@ -55,12 +49,7 @@ export function* generateToken({ resourceId, values }) {
       hidden: true,
     });
 
-    yield put(
-      actions.resource.connections.saveToken(
-        resourceId,
-        resp.token.access_token
-      )
-    );
+    yield put(actions.resource.connections.saveToken(resourceId, resp.token));
   } catch (e) {
     const errorsJSON = JSON.parse(e.message);
     const { errors } = errorsJSON;

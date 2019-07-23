@@ -115,10 +115,10 @@ const resource = {
         resourceId,
       }),
 
-    generateToken: (resourceId, values) =>
-      action(actionTypes.TOKEN.GENERATE, { resourceId, values }),
-    saveToken: (resourceId, bearerToken) =>
-      action(actionTypes.TOKEN.SAVE, { resourceId, bearerToken }),
+    generateToken: (resourceId, values, formPayloadFn) =>
+      action(actionTypes.TOKEN.GENERATE, { resourceId, values, formPayloadFn }),
+    saveToken: (resourceId, token) =>
+      action(actionTypes.TOKEN.SAVE, { resourceId, token }),
     generateTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),

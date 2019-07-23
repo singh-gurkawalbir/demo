@@ -21,9 +21,41 @@ export default {
     {
       id: 'rest.bearerToken',
       resourceId: r => r._id,
-      required: true,
+      disabledWhen: [
+        {
+          field: 'rest.encrypted.apiKey',
+          is: [''],
+        },
+        {
+          field: 'rest.encrypted.apiSecret',
+          is: [''],
+        },
+      ],
+      formPayloadFn: form => {
+        const apiKey = form[`/rest/encrypted/apiKey`];
+        const apiSecret = form[`/rest/encrypted/apiSecret`];
+        const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
+
+        return {
+          base64EncodedToken,
+        };
+      },
+
       type: 'tokengen',
-      label: 'Token',
+      label: 'Token Generator',
+
+      tokenSetForFieldsFn: token => ({
+        'rest.bearerToken': token && token.access_token,
+      }),
+
+      helpText: 'The API Secret of your Certify account.',
+    },
+
+    {
+      id: 'rest.siteId',
+      required: true,
+      type: 'text',
+      label: 'Site Id',
       inputType: 'password',
       helpText: 'The API Secret of your Certify account.',
     },

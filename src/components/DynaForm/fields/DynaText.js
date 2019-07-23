@@ -1,21 +1,13 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import { InputAdornment } from '@material-ui/core';
 
-@withStyles(() => ({
-  textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    // minWidth: 120,
-  },
-}))
-class MaterialUiTextField extends React.Component {
+export class MaterialUiTextField extends React.Component {
   render() {
     const {
-      classes,
       description,
       disabled,
       errorMessages,
@@ -61,7 +53,6 @@ class MaterialUiTextField extends React.Component {
           ) : null,
         }}
         type={inputType}
-        className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
         disabled={disabled}
