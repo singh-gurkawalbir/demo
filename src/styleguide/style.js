@@ -4,6 +4,12 @@ export default theme => ({
       overflowY: 'scroll',
       minHeight: '100vh',
     },
+    content: {
+      maxWidth: 1260,
+      padding: [[15, 30]],
+      margin: [[0, 0]],
+      display: 'block',
+    },
   },
   fontFamily: {
     base: theme.typography.fontFamily,
@@ -23,5 +29,4 @@ export default theme => ({
     codeBackground: theme.palette.background.main,
   },
   sidebarWidth: theme.drawerWidth,
-  maxWidth: '100vw',
 });

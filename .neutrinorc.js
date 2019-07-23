@@ -138,6 +138,10 @@ module.exports = {
               },
               {
                 name: 'Icons',
+                content: 'docs/icons.md',
+              },
+              {
+                name: 'Icons',
                 components: 'src/components/icons/**/index.jsx',
                 editorConfig: { theme: 'material' },
               },
