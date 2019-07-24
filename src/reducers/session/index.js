@@ -5,6 +5,7 @@ import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import connectionToken, * as fromConnectionToken from './connectionToken';
+import resource, * as fromResource from './resource';
 
 export default combineReducers({
   stage,
@@ -13,6 +14,7 @@ export default combineReducers({
   metadata,
   connectionToken,
   resourceForm,
+  resource,
 });
 
 // #region PUBLIC SELECTORS
@@ -72,5 +74,9 @@ export function resourceFormState(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
+}
+
+export function createdResourceId(state, tempId) {
+  return fromResource.createdResourceId(state && state.resource, tempId);
 }
 // #endregion

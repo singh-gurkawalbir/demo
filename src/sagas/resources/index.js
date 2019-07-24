@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import util from '../../utils/array';
+import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
@@ -14,45 +15,59 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     id,
     scope
   );
+  const isNew = isNewId(id);
 
-  // console.log(merged, master);
+  // console.log('commitStaged saga', resourceType, id, patch, merged, master);
 
   if (!patch) return; // nothing to do.
 
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-  const origin = yield call(apiCallWithRetry, { path });
+  const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
-  if (origin.lastModified !== master.lastModified) {
-    let conflict = jsonPatch.compare(master, origin);
+  // only updates need to check for conflicts.
+  if (!isNew) {
+    const origin = yield call(apiCallWithRetry, { path });
 
-    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+    if (origin.lastModified !== master.lastModified) {
+      let conflict = jsonPatch.compare(master, origin);
 
-    yield put(actions.resource.commitConflict(id, conflict, scope));
-    yield put(actions.resource.received(resourceType, origin));
+      conflict = util.removeItem(conflict, p => p.path === '/lastModified');
 
-    return;
+      yield put(actions.resource.commitConflict(id, conflict, scope));
+      yield put(actions.resource.received(resourceType, origin));
+
+      return;
+    }
   }
 
   try {
     const updated = yield call(apiCallWithRetry, {
       path,
       opts: {
-        method: 'put',
+        method: isNew ? 'post' : 'put',
         body: merged,
       },
     });
 
     // HACK! when updating scripts, since content is stored in s3, it
-    // seems the PUT API response does not contain the content.
-    if (merged.content && updated.content === undefined) {
+    // seems the PUT API response does not contain the content. We need to
+    // insert it to prevent unwanted GET requests.
+    if (
+      resourceType === 'scripts' &&
+      merged.content &&
+      updated.content === undefined
+    ) {
       updated.content = merged.content;
     }
 
     yield put(actions.resource.received(resourceType, updated));
-
     yield put(actions.resource.clearStaged(id, scope));
+
+    if (isNew) {
+      yield put(actions.resource.created(updated._id, id));
+    }
   } catch (error) {
-    // Dave would handle this part
+    // TODO: What should we do for 4xx errors? where the resource to put/post
+    // violates some API business rules?
   }
 }
 

@@ -85,6 +85,8 @@ const JavaScriptPanel = props => {
     const { editor } = props;
 
     setOrRequestContent(editor.scriptId);
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { editor, allScripts, patchEditor, classes, getScriptContent } = props;
@@ -98,6 +100,8 @@ const JavaScriptPanel = props => {
       patchEditor({ code: requestedScriptContent });
       setRequestedContent(false);
     }
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestedScriptContent]);
 
   return (

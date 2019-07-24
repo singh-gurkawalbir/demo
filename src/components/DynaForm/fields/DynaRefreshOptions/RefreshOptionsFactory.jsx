@@ -49,7 +49,7 @@ const ConnectedSelectOptionsGenerator = connect(
 )(DynaSelectOptionsGenerator);
 const FieldWrappedSelectedOptionsGenerator = props => (
   <FieldWrapper {...props}>
-    <ConnectedSelectOptionsGenerator {...props.fieldOpts} />
+    <ConnectedSelectOptionsGenerator />
   </FieldWrapper>
 );
 

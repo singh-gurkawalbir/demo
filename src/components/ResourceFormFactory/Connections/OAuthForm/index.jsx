@@ -3,18 +3,11 @@ import { connect } from 'react-redux';
 import actions from '../../../../actions';
 import ResourceForm from '../../GenericResourceForm';
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { resource } = ownProps;
-  const resourceId = resource._id;
-
-  return {
-    handleSaveAndAuthorizeConnection: values => {
-      dispatch(
-        actions.resource.connections.saveAndAuthorize(resourceId, values)
-      );
-    },
-  };
-};
+const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  handleSaveAndAuthorizeConnection: values => {
+    dispatch(actions.resource.connections.saveAndAuthorize(resourceId, values));
+  },
+});
 
 class OAuthForm extends Component {
   render() {

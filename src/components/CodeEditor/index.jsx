@@ -10,6 +10,8 @@ import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/mode/sql';
 import 'brace/ext/language_tools';
+import 'brace/ext/searchbox';
+import 'brace/ext/beautify';
 import * as selectors from '../../reducers/user';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 

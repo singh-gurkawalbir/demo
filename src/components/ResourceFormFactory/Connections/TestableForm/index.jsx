@@ -10,29 +10,23 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers/index';
 import { COMM_STATES } from '../../../../reducers/comms';
-import ResourceForm from '../../GenericResourceForm';
+import GenericResourceForm from '../../GenericResourceForm';
 import GenericConfirmDialog from '../../../ConfirmDialog';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { resource } = ownProps;
-  const resourceId = resource._id;
-
-  return {
-    handleTestConnection: values => {
-      dispatch(actions.resource.connections.test(resourceId, values));
-    },
-    clearComms: () => {
-      dispatch(actions.clearComms());
-    },
-    cancelProcess: () => {
-      dispatch(actions.cancelTask());
-    },
-  };
-};
-
+const mapDispatchToProps = (dispatch, { resourceId }) => ({
+  handleTestConnection: values => {
+    dispatch(actions.resource.connections.test(resourceId, values));
+  },
+  clearComms: () => {
+    dispatch(actions.clearComms());
+  },
+  cancelProcess: () => {
+    dispatch(actions.cancelTask());
+  },
+});
 const styles = theme => ({
   actions: {
     textAlign: 'right',
@@ -51,7 +45,12 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
 
-  useEffect(() => clearComms, []);
+  useEffect(
+    () => clearComms,
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return (
     <GenericConfirmDialog
@@ -92,6 +91,8 @@ const TestableForm = props => {
 
   useEffect(() => {
     clearComms();
+    // TODO: Surya
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleSubmitAndShowConfirmDialog = values => {
     handleTestConnection(values);
@@ -120,7 +121,7 @@ const TestableForm = props => {
           onHandleCancelTask={cancelProcess}
         />
       )}
-      <ResourceForm
+      <GenericResourceForm
         {...rest}
         disableButton={pingLoading}
         handleSubmitForm={handleSubmitAndShowConfirmDialog}>
@@ -133,7 +134,7 @@ const TestableForm = props => {
           color="secondary">
           Test
         </DynaSubmit>
-      </ResourceForm>
+      </GenericResourceForm>
     </Fragment>
   );
 };

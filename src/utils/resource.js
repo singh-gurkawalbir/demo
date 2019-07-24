@@ -1,5 +1,5 @@
 import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 /**
  * @param resourceDetails Details about the resource.
@@ -49,3 +49,40 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 
   return getRoutePath(path);
 }
+
+export const adaptorTypeMap = {
+  NetSuiteExport: 'netsuite',
+  NetSuiteImport: 'netsuite',
+  NetSuiteConnection: 'netsuite',
+  XMLImport: 'xml',
+  XMLExport: 'xml',
+  XMLConnection: 'xml',
+  FTPExport: 'ftp',
+  FTPImport: 'ftp',
+  FTPConnection: 'ftp',
+  HTTPExport: 'http',
+  HTTPImport: 'http',
+  HTTPConnection: 'http',
+  RESTImport: 'rest',
+  RESTExport: 'rest',
+  RESTConnection: 'rest',
+};
+
+// This method is used for only import/export/connection. Im not sure
+// what to call this "class" of resource. It could be confusing to simply
+// all this method "getResourceType"
+export function getResourceSubType(resource) {
+  if (!resource) return {};
+
+  const { adaptorType, assistant } = resource;
+
+  // Since this function is intended to be used for only imp/exp/conn,
+  // we should have an adaptorType... if not, we cant proceed.
+  if (!adaptorType) return {};
+
+  return { type: adaptorTypeMap[adaptorType], assistant };
+}
+
+// fn to consolidate this simple expression in case we ever
+// change how we identify new resources..
+export const isNewId = id => id && id.startsWith('new');

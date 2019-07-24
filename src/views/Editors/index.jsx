@@ -168,7 +168,7 @@ export default class Editors extends Component {
         name: 'CsvParseEditor',
         label: 'CSV Parser',
         description:
-          'This processor converts comma seperated values into JSON.',
+          'This processor converts comma separated values into JSON.',
       },
       {
         name: 'XmlParseEditor',

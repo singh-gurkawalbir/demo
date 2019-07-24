@@ -9,7 +9,7 @@ import { sortBy } from 'lodash';
 import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../../utils/constants';
+} from '../../constants/resource';
 import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
 import * as selectors from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';

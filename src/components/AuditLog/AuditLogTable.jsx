@@ -16,7 +16,7 @@ import DiffDialog from './DiffDialog';
 import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../../utils/constants';
+} from '../../constants/resource';
 import {
   AUDIT_LOG_SOURCE_LABELS,
   AUDIT_LOG_EVENT_LABELS,

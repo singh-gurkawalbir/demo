@@ -30,7 +30,7 @@ const mapDispatchToProps = (dispatch, { id }) => ({
   },
   toolbarContainer: {
     margin: `0 ${theme.spacing.unit}px`,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    padding: theme.spacing.double,
     display: 'flex',
   },
   toolbarItem: {

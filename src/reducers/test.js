@@ -33,7 +33,6 @@ describe('global selectors', () => {
   describe('resourceData', () => {
     test('should return {} on bad state or args.', () => {
       expect(selectors.resourceData()).toEqual({});
-      // expect(selectors.resourceData({})).toEqual({});
       expect(selectors.resourceData({ data: {} })).toEqual({});
     });
 
@@ -48,6 +47,22 @@ describe('global selectors', () => {
         merged: exports[0],
         staged: undefined,
         master: exports[0],
+      });
+    });
+
+    test('should return correct data when no staged data or resource exists. (new resource)', () => {
+      const exports = [{ _id: 1, name: 'test A' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      expect(
+        selectors.resourceData(state, 'exports', 'new-resource-id')
+      ).toEqual({
+        merged: {},
+        staged: undefined,
+        master: undefined,
       });
     });
 
@@ -69,7 +84,27 @@ describe('global selectors', () => {
         master: exports[0],
       });
     });
+
+    test('should return correct data when staged data exists but no master.', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged('new-id', patch));
+
+      expect(selectors.resourceData(state, 'exports', 'new-id')).toEqual({
+        merged: { name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: null,
+      });
+    });
   });
+
   describe('resourceStatus ', () => {
     describe('GET resource calls ', () => {
       const method = 'GET';
@@ -123,48 +158,51 @@ describe('global selectors', () => {
   });
 });
 describe('authentication selectors', () => {
-  test('isAuthInitialized selector should be false when the app loads for the very first time and subsequently should be sucessfully set to true for auth failure or success', () => {
-    const initiaizedState = reducer(undefined, { type: null });
+  test('isAuthInitialized selector should be false when the app loads for the very first time and subsequently should be successfully set to true for auth failure or success', () => {
+    const initializedState = reducer(undefined, { type: null });
 
-    expect(selectors.isAuthInitialized(initiaizedState)).toBe(false);
+    expect(selectors.isAuthInitialized(initializedState)).toBe(false);
 
     const authSucceededState = reducer(
-      initiaizedState,
+      initializedState,
       actions.auth.complete()
     );
 
     expect(selectors.isAuthInitialized(authSucceededState)).toBe(true);
-    const authFailedState = reducer(initiaizedState, actions.auth.failure());
+    const authFailedState = reducer(initializedState, actions.auth.failure());
 
     expect(selectors.isAuthInitialized(authFailedState)).toBe(true);
   });
 
   test('isUserLoggedOut selector should be set to true when the user logs out and for any other state it should be set to false ', () => {
-    const initiaizedState = reducer(undefined, { type: null });
+    const initializedState = reducer(undefined, { type: null });
 
-    expect(selectors.isUserLoggedOut(initiaizedState)).toBe(false);
-    // the user logout saga ultimately disptaches a clear store action
-    const loggedOutState = reducer(initiaizedState, actions.auth.clearStore());
+    expect(selectors.isUserLoggedOut(initializedState)).toBe(false);
+    // the user logout saga ultimately dispatches a clear store action
+    const loggedOutState = reducer(initializedState, actions.auth.clearStore());
 
     expect(selectors.isUserLoggedOut(loggedOutState)).toBe(true);
   });
 
   describe('shouldShowAppRouting selector', () => {
-    //  when the app is intializing shouldShowAppRouting selctor
+    //  when the app is initalizing shouldShowAppRouting selector
     // should be set to false but ultimately set to
     // true when authentication cookie test succeeds or fails
-    test('should be false during app initialization but set to true after a successfult auth test success and after user account being set', () => {
-      const initiaizedState = reducer(undefined, { type: null });
+    test('should be false during app initialization but set to true after a successful auth test success and after user account being set', () => {
+      const initializedState = reducer(undefined, { type: null });
 
-      expect(selectors.shouldShowAppRouting(initiaizedState)).toBe(false);
+      expect(selectors.shouldShowAppRouting(initializedState)).toBe(false);
       // let the app make auth request test
-      const authStateLoading = reducer(initiaizedState, actions.auth.request());
+      const authStateLoading = reducer(
+        initializedState,
+        actions.auth.request()
+      );
 
       // we are loading so lets hold of on rendering
       expect(selectors.shouldShowAppRouting(authStateLoading)).toBe(false);
 
       const authStateSucceeded = reducer(
-        initiaizedState,
+        initializedState,
         actions.auth.complete()
       );
 
@@ -180,12 +218,12 @@ describe('authentication selectors', () => {
       expect(selectors.shouldShowAppRouting(defaultAccountSet)).toBe(true);
     });
 
-    test('should be true after autherntication failure test irrespective if account set or not', () => {
-      const initiaizedState = reducer(undefined, { type: null });
+    test('should be true after authentication failure test irrespective if account set or not', () => {
+      const initializedState = reducer(undefined, { type: null });
 
-      expect(selectors.shouldShowAppRouting(initiaizedState)).toBe(false);
+      expect(selectors.shouldShowAppRouting(initializedState)).toBe(false);
 
-      const authStateFailed = reducer(initiaizedState, actions.auth.failure());
+      const authStateFailed = reducer(initializedState, actions.auth.failure());
 
       expect(selectors.shouldShowAppRouting(authStateFailed)).toBe(true);
       // the state can never occur because of how it is sequenced in the saga
@@ -201,12 +239,12 @@ describe('authentication selectors', () => {
     // state hence signin route will never show up, so shouldShowAppRouting
     // should be true
     test('should be true whe the user is logged out', () => {
-      const initiaizedState = reducer(undefined, { type: null });
+      const initializedState = reducer(undefined, { type: null });
 
-      expect(selectors.shouldShowAppRouting(initiaizedState)).toBe(false);
+      expect(selectors.shouldShowAppRouting(initializedState)).toBe(false);
 
       const authStateSucceeded = reducer(
-        initiaizedState,
+        initializedState,
         actions.auth.complete()
       );
       const defaultAccountSet = reducer(
