@@ -1,6 +1,5 @@
 export default {
   fields: [
-    { fieldId: 'apiIdentifier' },
     { formId: 'common' },
     { fieldId: 'exportData' },
     { fieldId: 'http.method' },
@@ -16,8 +15,20 @@ export default {
     { fieldId: 'http.response.successValuess' },
     { fieldId: 'http.response.errorPath' },
     { fieldId: 'type' },
-    { fieldId: 'configureAsyncHelper' },
+    { fieldId: 'delta.dateFormat' },
+    { fieldId: 'delta.lagOffset' },
+    { fieldId: 'pagingData' },
     { fieldId: 'http.paging.method' },
+    { fieldId: 'http.paging.skip' },
+    { fieldId: 'http.paging.page' },
+    { fieldId: 'http.paging.token' },
+    { fieldId: 'http.paging.path' },
+    { fieldId: 'http.paging.relativeURI' },
+    { fieldId: 'http.paging.linkHeaderRelation' },
+    { fieldId: 'http.paging.pathAfterFirstRequest' },
+    { fieldId: 'http.paging.resourcePath' },
+    { fieldId: 'http.paging.maxPagePath' },
+    { fieldId: 'http.paging.maxCountPath' },
     { fieldId: 'http.paging.lastPageStatusCode' },
     { fieldId: 'http.paging.lastPagePath' },
     { fieldId: 'http.paging.lastPageValuess' },
@@ -27,22 +38,11 @@ export default {
     { fieldId: 'ftp.exportHooks' },
     { formId: 'hooks' },
 
-    /*
-    { fieldId: 'http.paging.skip' },
-    { fieldId: 'http.paging.page' },
-    { fieldId: 'http.paging.token' },
-    { fieldId: 'http.paging.path' },
-    { fieldId: 'http.paging.relativeURI' },
-    { fieldId: 'http.paging.pathAfterFirstRequest' },
-    { fieldId: 'http.paging.resourcePath' },
-    { fieldId: 'http.paging.maxPagePath' },
-    { fieldId: 'http.paging.maxCountPath' },
-    { fieldId: 'http.paging.linkHeaderRelation' },
-    { fieldId: 'http.once.relativeURI' },
+    /* { fieldId: 'http.once.relativeURI' },
     { fieldId: 'http.once.method' },
     { fieldId: 'http.once.body' },
     { fieldId: 'http.response.resourceIdPath' },
-    { fieldId: 'http.response.blobFormat' }, */
+    { fieldId: 'http.response.blobFormat' } */
   ],
   fieldSets: [
     {

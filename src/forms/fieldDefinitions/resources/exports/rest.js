@@ -1,11 +1,45 @@
 export default {
+  type: {
+    type: 'select',
+    label: 'Export Type',
+    options: [
+      {
+        items: [
+          { label: 'All', value: 'all' },
+          { label: 'Test', value: 'test' },
+          { label: 'Delta', value: 'delta' },
+          { label: 'Once', value: 'once' },
+        ],
+      },
+    ],
+  },
+  'delta.dateFormat': {
+    type: 'text',
+    label: 'Date Format',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
+  },
+  'delta.lagOffset': {
+    type: 'text',
+    label: 'Offset',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
+  },
   'rest.relativeURI': {
     type: 'text',
-    label: 'Rest relative URI',
+    label: 'Relative URI',
   },
   'rest.method': {
     type: 'select',
-    label: 'Rest method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
@@ -18,91 +52,172 @@ export default {
   },
   'rest.postBody': {
     type: 'text',
-    label: 'Rest post Body',
+    label: 'Build HTTP Request Body',
   },
   'rest.resourcePath': {
     type: 'text',
-    label: 'Rest resource Path',
+    label: 'Resource Path',
   },
   'rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Rest headers',
+    label: 'Configure HTTP headers',
   },
   'rest.allowUndefinedResource': {
     type: 'checkbox',
     label: 'Rest allow Undefined Resource',
   },
+  pagingData: {
+    type: 'labeltitle',
+    label: 'Does this API support paging?',
+  },
   'rest.pagingMethod': {
     type: 'select',
-    label: 'Rest paging Method',
+    label: 'Paging Method',
     options: [
       {
         items: [
-          { label: 'Nextpageurl', value: 'nextpageurl' },
-          { label: 'Pageargument', value: 'pageargument' },
-          { label: 'Relativeuri', value: 'relativeuri' },
-          { label: 'Linkheader', value: 'linkheader' },
-          { label: 'Skipargument', value: 'skipargument' },
+          { label: 'Next Page URL', value: 'nextpageurl' },
+          { label: 'Page Argument', value: 'pageargument' },
+          { label: 'Relative URI', value: 'relativeuri' },
+          { label: 'Link Header', value: 'linkheader' },
+          { label: 'Skip Argument', value: 'skipargument' },
           { label: 'Token', value: 'token' },
-          { label: 'Postbody', value: 'postbody' },
+          { label: 'Post Body', value: 'postbody' },
         ],
       },
     ],
   },
   'rest.nextPagePath': {
     type: 'text',
-    label: 'Rest next Page Path',
+    label: 'Next Page Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'skipargument',
+          'pageargument',
+          'relativeuri',
+          'linkheader',
+          'postbody',
+        ],
+      },
+    ],
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    label: 'Rest link Header Relation',
+    label: 'Link Header Relation',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['linkheader'],
+      },
+    ],
   },
   'rest.nextPageRelativeURI': {
     type: 'text',
-    label: 'Rest next Page Relative URI',
+    label: 'Next Page Relative URI',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'skipargument',
+          'pageargument',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'token',
+        ],
+      },
+    ],
   },
   'rest.pageArgument': {
     type: 'text',
-    label: 'Rest page Argument',
+    label: 'Page Argument',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'skipargument',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+        ],
+      },
+    ],
   },
   'rest.pagingPostBody': {
     type: 'text',
-    label: 'Rest paging Post Body',
+    label: 'Build Paging Post Body',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['postbody'],
+      },
+    ],
   },
   'rest.maxPagePath': {
     type: 'text',
-    label: 'Rest max Page Path',
+    label: 'Max Page Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'token',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'skipargument',
+        ],
+      },
+    ],
   },
   'rest.maxCountPath': {
     type: 'text',
-    label: 'Rest max Count Path',
+    label: 'Max Count Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'token',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'skipargument',
+        ],
+      },
+    ],
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Rest skip Argument',
-  },
-  'rest.blobFormat': {
-    type: 'text',
-    label: 'Rest blob Format',
+    label: 'Skip Argument',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['skipargument'],
+      },
+    ],
   },
   'rest.successPath': {
     type: 'text',
-    label: 'Rest success Path',
+    label: 'Success Path',
   },
   'rest.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Rest success Values',
+    label: 'Success Values',
     validWhen: [],
   },
   'rest.lastPageStatusCode': {
     type: 'text',
-    label: 'Rest last Page Status Code',
+    label: 'Last Page Status Code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -111,19 +226,37 @@ export default {
   },
   'rest.lastPagePath': {
     type: 'text',
-    label: 'Rest last Page Path',
+    label: 'Last Page Path',
   },
   'rest.lastPageValue': {
     type: 'text',
-    label: 'Rest last Page Value',
+    label: 'Last Page Value',
   },
+  // #region once
+  'once.booleanField': {
+    type: 'text',
+    label: 'Boolean Field',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
+  },
+  // #endregion once
   'rest.once.relativeURI': {
     type: 'text',
-    label: 'Rest once relative URI',
+    label: 'Relative URI',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
   'rest.once.method': {
     type: 'radiogroup',
-    label: 'Rest once method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
@@ -132,9 +265,34 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
+  },
+  pageSize: {
+    type: 'text',
+    label: 'Page Size',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  dataURITemplate: {
+    type: 'relativeuri',
+    label: 'Data URI Template',
   },
   'rest.once.postBody': {
     type: 'text',
-    label: 'Rest once post Body',
+    label: 'Build HTTP Request Body',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
 };
