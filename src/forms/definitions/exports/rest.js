@@ -10,7 +10,6 @@ export default {
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
     { fieldId: 'type' },
-
     { fieldId: 'delta.dateFormat' },
     { fieldId: 'delta.lagOffset' },
     { fieldId: 'rest.once.once.booleanField' },
@@ -19,6 +18,8 @@ export default {
     { fieldId: 'rest.once.postBody' },
 
     // { fieldId: 'rest.allowUndefinedResource' },
+
+    { fieldId: 'pagingData' },
     { fieldId: 'rest.pagingMethod' },
     { fieldId: 'rest.nextPagePath' },
     { fieldId: 'rest.linkHeaderRelation' },
@@ -41,20 +42,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: 'true',
-      fields: [
-        { fieldId: 'pageSize' },
-        { fieldId: 'dataURITemplate' },
-        { fieldId: 'configureAsyncHelper' },
-        {
-          fieldId: 'http._asyncHelperId',
-          visibleWhen: [
-            {
-              field: 'configureAsyncHelper',
-              is: [true],
-            },
-          ],
-        },
-      ],
+      fields: [{ fieldId: 'pageSize' }, { fieldId: 'dataURITemplate' }],
     },
   ],
 };

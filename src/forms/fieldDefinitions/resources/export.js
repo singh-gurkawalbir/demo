@@ -804,7 +804,13 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['nextpageurl'],
+        isNot: [
+          'skipargument',
+          'pageargument',
+          'relativeuri',
+          'linkheader',
+          'postbody',
+        ],
       },
     ],
   },
@@ -824,7 +830,14 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['relativeuri'],
+        isNot: [
+          'skipargument',
+          'pageargument',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'token',
+        ],
       },
     ],
   },
@@ -834,7 +847,13 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['pageargument'],
+        isNot: [
+          'skipargument',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+        ],
       },
     ],
   },
@@ -851,14 +870,46 @@ export default {
   'rest.maxPagePath': {
     type: 'text',
     label: 'Max Page Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'token',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'skipargument',
+        ],
+      },
+    ],
   },
   'rest.maxCountPath': {
     type: 'text',
     label: 'Max Count Path',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        isNot: [
+          'token',
+          'relativeuri',
+          'linkheader',
+          'nextpageurl',
+          'postbody',
+          'skipargument',
+        ],
+      },
+    ],
   },
   'rest.skipArgument': {
     type: 'text',
     label: 'Skip Argument',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['skipargument'],
+      },
+    ],
   },
   'rest.blobFormat': {
     type: 'text',
