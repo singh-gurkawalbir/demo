@@ -30,7 +30,6 @@ export default {
   drawerWidth: 300,
 
   overrides: {
-    // Name of the component ⚛️ / style sheet
     MuiTypography: {
       body2: {
         fontSize: '15px',
@@ -92,6 +91,11 @@ export default {
         fontWeight: '400',
         lineHeight: '20px',
         letterSpacing: '1px',
+      },
+    },
+    MuiBackdrop: {
+      root: {
+        backgroundColor: 'rgba(106, 123, 137, .7)',
       },
     },
     MuiButton: {

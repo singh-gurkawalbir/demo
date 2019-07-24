@@ -3,8 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 const styles = () => ({
-  left: { marginRight: 6 },
-  right: { marginLeft: 6 },
+  left: { marginRight: 8 },
+  right: { marginLeft: 8 },
 });
 const styledChildren = (children, classes) => {
   let position = 'left';
