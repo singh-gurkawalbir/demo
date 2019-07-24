@@ -109,14 +109,10 @@ const ConnectedTokenGenerator = connect(
   mapStateToProps,
   mapDispatchToProps
 )(withStyles(styles)(DynaTokenGenerator));
-const FieldWrappedTokenGenerator = props => {
-  console.log('check props ', props);
-
-  return (
-    <FieldWrapper {...props}>
-      <ConnectedTokenGenerator />
-    </FieldWrapper>
-  );
-};
+const FieldWrappedTokenGenerator = props => (
+  <FieldWrapper {...props}>
+    <ConnectedTokenGenerator />
+  </FieldWrapper>
+);
 
 export default FieldWrappedTokenGenerator;
