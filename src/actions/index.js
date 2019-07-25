@@ -251,21 +251,11 @@ const resourceForm = {
       isNew,
       skipCommit,
     }),
-  initComplete: (
-    resourceType,
-    resourceId,
-    fieldMeta,
-    optionsHandler,
-    preSubmit,
-    isNew,
-    skipCommit
-  ) =>
+  initComplete: (resourceType, resourceId, fieldMeta, isNew, skipCommit) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
       resourceType,
       fieldMeta,
-      optionsHandler,
-      preSubmit,
       isNew,
       skipCommit,
     }),

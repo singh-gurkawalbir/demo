@@ -8,9 +8,7 @@ export default function reducer(state = {}, action) {
     isNew,
     skipCommit,
     fieldMeta,
-    optionsHandler,
     formValues,
-    preSubmit,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -33,8 +31,6 @@ export default function reducer(state = {}, action) {
           skipCommit,
           initComplete: true,
           fieldMeta,
-          optionsHandler,
-          preSubmit,
         },
       };
 

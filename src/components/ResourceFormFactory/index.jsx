@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
@@ -7,6 +7,7 @@ import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
+import formFactory from '../../forms/formFactory';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
@@ -14,9 +15,15 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     resourceType,
     resourceId
   );
+  const { merged: resource } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
 
   return {
     formState,
+    resource,
   };
 };
 
@@ -49,6 +56,7 @@ export const ResourceFormFactory = props => {
     handleInitForm,
     handleClearResourceForm,
     onSubmitComplete,
+    resource,
   } = props;
   const [componentRemount, setComponentRemount] = useState(true);
 
@@ -79,12 +87,17 @@ export const ResourceFormFactory = props => {
     }
   }, [formState.submitComplete, onSubmitComplete]);
 
+  const { optionsHandler } = useMemo(
+    () => formFactory.getResourceFormAssets({ resourceType, resource }),
+    [resource, resourceType]
+  );
+
   if (!formState.initComplete || componentRemount) {
     return <Typography>Initializing Form</Typography>;
   }
 
   let Form;
-  const { fieldMeta, optionsHandler, isNew } = formState;
+  const { fieldMeta, isNew } = formState;
   const commonProps = {
     handleInitForm,
     fieldMeta,
