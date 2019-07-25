@@ -102,7 +102,6 @@ export const getMissingPatchSet = (paths, resource) => {
     const segments = p.split('/');
 
     // console.log(segments);
-
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
     if (segments.length > 1) {

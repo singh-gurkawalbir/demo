@@ -17,7 +17,7 @@ import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
-import DynaTokenGenerator from './DynaTokenGenerator';
+import DynaTokenGenerator from './DynaTokenGenerator/index';
 import DynaApiIdentifier from './DynaApiIdentifier';
 
 export default {

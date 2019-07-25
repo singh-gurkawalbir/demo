@@ -28,7 +28,6 @@ const mapStateToProps = (state, { match }) => {
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
-  const formState = selectors.resourceFormState(state, resourceType, id);
   const newResourceId = selectors.createdResourceId(state, id);
   const metaPatches =
     (metaChanges.patch &&
@@ -43,7 +42,6 @@ const mapStateToProps = (state, { match }) => {
     connection,
     id,
     newResourceId,
-    fieldMeta: formState.fieldMeta,
   };
 };
 

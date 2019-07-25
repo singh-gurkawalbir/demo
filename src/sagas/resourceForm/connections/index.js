@@ -8,6 +8,7 @@ import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
+import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -26,12 +27,7 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* generateToken({
-  resourceId,
-  values,
-  formPayloadFn,
-  tokenSetForFieldsFn,
-}) {
+export function* generateToken({ resourceId, values }) {
   const resourceType = 'connections';
   const connectionResource = yield select(
     selectors.resource,
@@ -43,8 +39,14 @@ export function* generateToken({
   if (!assistant) throw new Error('Could not determine the assistant type');
 
   const path = `/${assistant}/generate-token`;
+  const { formPayloadFn, tokenSetForFieldsFn } = functionsTransformerMap[
+    assistant
+  ];
 
-  if (!formPayloadFn) throw new Error('No Payload function provided');
+  if (!formPayloadFn || !tokenSetForFieldsFn)
+    throw new Error(
+      'No Payload transform function or token transform function provided'
+    );
 
   let reqPayload;
 

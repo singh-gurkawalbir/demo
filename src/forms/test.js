@@ -15,7 +15,7 @@ describe('Form Utils', () => {
       ]);
     });
 
-    test('should create a patch to replace the parent node if it is a string it with an object', () => {
+    test('should create a patch to replace the parent node with an object if it`s a string', () => {
       const resource = { a: 123, encrypted: '****' };
       const paths = ['/encrypted/apikey'];
       const patchResult = getMissingPatchSet(paths, resource);

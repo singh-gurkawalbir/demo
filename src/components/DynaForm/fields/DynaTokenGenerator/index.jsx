@@ -2,28 +2,18 @@ import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { FieldWrapper, FormContext } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import { FormButton } from '../DynaSubmit';
-import { MaterialUiTextField } from './DynaText';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import { FormButton } from '../../DynaSubmit';
+import { MaterialUiTextField } from '../DynaText';
 
 const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
 });
-const mapDispatchToProps = (
-  dispatch,
-  { resourceId, formPayloadFn, tokenSetForFieldsFn }
-) => ({
+const mapDispatchToProps = (dispatch, { resourceId }) => ({
   handleGenerateToken: values =>
-    dispatch(
-      actions.resource.connections.generateToken(
-        resourceId,
-        values,
-        formPayloadFn,
-        tokenSetForFieldsFn
-      )
-    ),
+    dispatch(actions.resource.connections.generateToken(resourceId, values)),
   handleClearToken: () =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });

@@ -117,12 +117,10 @@ const resource = {
         resourceId,
       }),
 
-    generateToken: (resourceId, values, formPayloadFn, tokenSetForFieldsFn) =>
+    generateToken: (resourceId, values) =>
       action(actionTypes.TOKEN.GENERATE, {
         resourceId,
         values,
-        formPayloadFn,
-        tokenSetForFieldsFn,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
       action(actionTypes.TOKEN.SAVE, { resourceId, fieldsToBeSetWithValues }),
