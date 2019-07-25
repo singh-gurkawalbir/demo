@@ -42,7 +42,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: 'true',
-      fields: [{ fieldId: 'pageSize' }, { fieldId: 'dataURITemplate' }],
+      fields: [{ formId: 'advancedSettings' }],
     },
   ],
 };

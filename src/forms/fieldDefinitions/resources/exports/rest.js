@@ -53,6 +53,16 @@ export default {
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST'],
+      },
+      {
+        field: 'rest.method',
+        is: ['PUT'],
+      },
+    ],
   },
   'rest.resourcePath': {
     type: 'text',
@@ -96,13 +106,11 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'pageargument',
-          'relativeuri',
-          'linkheader',
-          'postbody',
-        ],
+        is: ['nextpageurl'],
+      },
+      {
+        field: 'rest.pagingMethod',
+        is: ['token'],
       },
     ],
   },
@@ -122,14 +130,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'pageargument',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'token',
-        ],
+        is: ['nextpageurl'],
       },
     ],
   },
@@ -139,13 +140,11 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-        ],
+        is: ['pageargument'],
+      },
+      {
+        field: 'rest.pagingMethod',
+        is: ['token'],
       },
     ],
   },
@@ -165,14 +164,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'token',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'skipargument',
-        ],
+        is: ['pageargument'],
       },
     ],
   },
@@ -182,14 +174,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'token',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'skipargument',
-        ],
+        is: ['pageargument'],
       },
     ],
   },
@@ -255,7 +240,7 @@ export default {
     ],
   },
   'rest.once.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'HTTP Method',
     options: [
       {

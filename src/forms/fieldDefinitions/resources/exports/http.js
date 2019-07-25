@@ -50,7 +50,7 @@ export default {
     ],
   },
   'http.errorMediaType': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Error Media Type',
     options: [
       {
@@ -130,6 +130,10 @@ export default {
       },
     ],
   },
+  configureAsyncHelper: {
+    type: 'checkbox',
+    label: 'Configure Async Helper',
+  },
   'http.paging.token': {
     type: 'text',
     label: 'Token',
@@ -146,7 +150,11 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['skip', 'page', 'relativeuri', 'linkheader'],
+        is: ['token'],
+      },
+      {
+        field: 'http.paging.method',
+        is: ['url'],
       },
     ],
   },
@@ -156,7 +164,11 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['skip', 'page', 'linkheader', 'url'],
+        is: ['token'],
+      },
+      {
+        field: 'http.paging.method',
+        is: ['relativeuri'],
       },
     ],
   },
@@ -186,7 +198,11 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+        is: ['skip'],
+      },
+      {
+        field: 'http.paging.method',
+        is: ['page'],
       },
     ],
   },
@@ -196,7 +212,11 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+        is: ['skip'],
+      },
+      {
+        field: 'http.paging.method',
+        is: ['page'],
       },
     ],
   },
@@ -316,12 +336,12 @@ export default {
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    label: 'Hooks pre Save Page _script Id',
+    label: 'Pre Save Page _script Id',
   },
   'hooks.preSavePage._stackId': {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Hooks pre Save Page _stack Id',
+    label: 'Pre Save Page _stack Id',
   },
 };

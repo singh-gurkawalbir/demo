@@ -49,8 +49,7 @@ export default {
       header: 'Advanced Settings',
       collapsed: 'true',
       fields: [
-        { fieldId: 'pageSize' },
-        { fieldId: 'dataURITemplate' },
+        { formId: 'advancedSettings' },
         { fieldId: 'configureAsyncHelper' },
         {
           fieldId: 'http._asyncHelperId',
