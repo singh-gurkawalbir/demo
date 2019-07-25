@@ -53,19 +53,14 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',
-  NetSuiteConnection: 'netsuite',
   XMLImport: 'xml',
   XMLExport: 'xml',
-  XMLConnection: 'xml',
   FTPExport: 'ftp',
   FTPImport: 'ftp',
-  FTPConnection: 'ftp',
   HTTPExport: 'http',
   HTTPImport: 'http',
-  HTTPConnection: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
-  RESTConnection: 'rest',
 };
 
 // This method is used for only import/export/connection. Im not sure
@@ -74,13 +69,13 @@ export const adaptorTypeMap = {
 export function getResourceSubType(resource) {
   if (!resource) return {};
 
-  const { adaptorType, assistant } = resource;
+  const { adaptorType, assistant, type } = resource;
 
   // Since this function is intended to be used for only imp/exp/conn,
   // we should have an adaptorType... if not, we cant proceed.
   if (!adaptorType) return {};
 
-  return { type: adaptorTypeMap[adaptorType], assistant };
+  return { type: adaptorTypeMap[adaptorType] || type, assistant };
 }
 
 // fn to consolidate this simple expression in case we ever

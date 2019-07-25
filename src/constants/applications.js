@@ -318,7 +318,7 @@ export default [
     assistant: 'myobessentials',
   },
   { id: 'namely', name: 'namely', type: 'http', assistant: 'namely' },
-  { id: 'netsuite', name: 'netsuite', type: 'http', assistant: 'netsuite' },
+  { id: 'netsuite', name: 'netsuite', type: 'netsuite' },
   { id: 'newegg', name: 'newegg', type: 'http', assistant: 'newegg' },
   { id: 'newrelic', name: 'newrelic', type: 'http', assistant: 'newrelic' },
   { id: 'nextag', name: 'nextag', type: 'http', assistant: 'nextag' },

@@ -1,7 +1,7 @@
 export default {
   type: {
     type: 'select',
-    label: 'Export Type',
+    label: 'Export Type1234',
     options: [
       {
         items: [
@@ -14,7 +14,7 @@ export default {
   },
   pagingData: {
     type: 'labeltitle',
-    label: 'Does this API support paging?',
+    label: 'Does this API support paging?HTTP!!!',
   },
   'delta.dateFormat': {
     type: 'text',
