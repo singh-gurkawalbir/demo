@@ -32,18 +32,3 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   script: 'Script',
   stack: 'Stack',
 });
-
-export const MODEL_PLURAL_TO_LABEL = Object.freeze({
-  accesstokens: 'API Token',
-  asynchelpers: 'Async Helper',
-  connections: 'Connection',
-  connectors: 'Connector',
-  exports: 'Export',
-  filedefinitions: 'File Definition',
-  flows: 'Flow',
-  iclients: 'IClient',
-  imports: 'Import',
-  integrations: 'Integration',
-  scripts: 'Script',
-  stacks: 'Stack',
-});

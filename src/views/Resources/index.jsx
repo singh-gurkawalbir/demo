@@ -18,6 +18,7 @@ export const availableResources = [
   'imports',
   'connections',
   'scripts',
+  'agents',
   // 'integrations',
   // 'tiles',
 ];
