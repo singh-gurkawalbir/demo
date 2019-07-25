@@ -1,7 +1,7 @@
 import { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
-import formMeta from '../forms/definitions';
+import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 
 const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
