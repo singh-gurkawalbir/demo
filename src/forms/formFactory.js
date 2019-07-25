@@ -100,6 +100,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
 
       break;
 
+    case 'agents':
     case 'scripts':
     case 'stacks':
       meta = formMeta[resourceType];
@@ -218,10 +219,13 @@ const setDefaults = (fields, resourceType, resource) => {
         );
       }
 
+      const masterFields = masterFieldHash[resourceType]
+        ? masterFieldHash[resourceType][f.fieldId]
+        : {};
       const merged = {
         resourceId: resource._id,
         resourceType,
-        ...masterFieldHash[resourceType][f.fieldId],
+        ...masterFields,
         ...f,
       };
 

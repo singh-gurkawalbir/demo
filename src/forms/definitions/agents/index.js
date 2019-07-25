@@ -1,7 +1,12 @@
 export default {
   fields: [
     {
-      fieldId: 'name',
+      id: 'name',
+      name: '/name',
+      defaultValue: r => r.name,
+      type: 'text',
+      label: 'Name',
+      required: true,
     },
     {
       id: 'description',
@@ -11,12 +16,6 @@ export default {
       multiline: true,
       maxRows: 5,
       label: 'Description',
-    },
-    {
-      id: 'content',
-      name: '/content',
-      type: 'scriptcontent',
-      label: 'Script Content',
     },
   ],
 };

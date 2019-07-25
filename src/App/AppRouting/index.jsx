@@ -25,6 +25,9 @@ const CustomForms = loadable(() =>
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
+const Agent = loadable(() =>
+  import(/* webpackChunkName: 'Agent' */ '../../views/Agents/Details')
+);
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
@@ -57,6 +60,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/imports" component={Imports} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
+        <Route path="/pg/agents/:id" component={Agent} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

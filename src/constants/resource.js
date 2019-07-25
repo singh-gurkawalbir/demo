@@ -34,6 +34,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
 });
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
+  agents: 'Agents',
   accesstokens: 'API Token',
   asynchelpers: 'Async Helper',
   connections: 'Connection',
