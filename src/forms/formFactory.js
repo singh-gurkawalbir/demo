@@ -89,6 +89,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         if (isNew) {
           meta = meta.new;
         } else {
+          // get edit form meta branch
           meta = meta[type];
         }
 

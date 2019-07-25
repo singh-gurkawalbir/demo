@@ -86,16 +86,10 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
-  const getStub = segments => {
-    const o = {};
-    let cur = o;
-
-    segments.forEach(s => {
-      cur[s] = {};
-      cur = cur[s];
-    });
-
-    return o;
+  const addMissing = missingPath => {
+    if (!missing.find(path => path === missingPath)) {
+      missing.push(missingPath);
+    }
   };
 
   paths.forEach(p => {
@@ -105,12 +99,11 @@ export const getMissingPatchSet = (paths, resource) => {
 
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
-    if (segments.length > 1) {
-      let value = {};
+    if (segments.length > 2) {
       let r = resource;
       let path = '';
 
-      for (let i = 1; i <= segments.length - 1; i += 1) {
+      for (let i = 1; i <= segments.length - 2; i += 1) {
         const segment = segments[i];
 
         path = `${path}/${segment}`;
@@ -118,10 +111,17 @@ export const getMissingPatchSet = (paths, resource) => {
         if (
           r === undefined ||
           r[segment] === undefined ||
-          (typeof r[segment] === 'string' && segments.length - i - 1 >= 1)
+          typeof r[segment] !== 'object'
         ) {
-          value = getStub(segments.slice(i + 1, segments.length));
-          missing.push({ path, value, op: 'add' });
+          addMissing(path);
+
+          const missingSegments = segments.slice(i + 1, segments.length);
+          let missingPath = `${path}/${missingSegments[0]}`;
+
+          for (let j = 1; j <= missingSegments.length; j += 1) {
+            addMissing(missingPath);
+            missingPath = `${missingPath}/${missingSegments[j]}`;
+          }
 
           break;
         }
@@ -130,9 +130,9 @@ export const getMissingPatchSet = (paths, resource) => {
       }
     }
   });
-  // console.log(missing);
+  // console.log(missing.sort());
 
-  return missing;
+  return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
