@@ -73,7 +73,7 @@ export function getResourceSubType(resource) {
 
   // Since this function is intended to be used for only imp/exp/conn,
   // we should have an adaptorType... if not, we cant proceed.
-  if (!adaptorType) return {};
+  if (!adaptorType && !type) return {};
 
   return { type: adaptorTypeMap[adaptorType] || type, assistant };
 }
