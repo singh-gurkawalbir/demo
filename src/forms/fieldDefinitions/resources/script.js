@@ -1,8 +1,10 @@
 export default {
   name: {
+    name: '/name',
     defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
+    required: true,
   },
   description: {
     defaultValue: r => r.description,
