@@ -42,9 +42,14 @@ function StandaloneResource(props) {
     });
 
     if (isNew) {
-      props.history.push(`/pg/${resourceType}/edit/${id}`);
+      props.history.replace(`/pg/${resourceType}/edit/${id}`);
     }
   }
+
+  const submitButtonLabel =
+    isNew && ['imports', 'exports', 'connections'].includes(resourceType)
+      ? 'Next'
+      : 'Save';
 
   return (
     <main className={classes.content}>
@@ -59,6 +64,7 @@ function StandaloneResource(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
             cancelButtonLabel="Back"
             onCancel={() => props.history.goBack()}

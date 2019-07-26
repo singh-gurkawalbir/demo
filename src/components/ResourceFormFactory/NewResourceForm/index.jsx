@@ -15,7 +15,7 @@ const styles = theme => ({
 
 function NewResourceForm(props) {
   const {
-    saveButtonLabel = 'Next',
+    submitButtonLabel = 'Next',
     classes,
     resourceType,
     handleSubmitForm,
@@ -38,7 +38,7 @@ function NewResourceForm(props) {
           disabled={disableButton}
           onClick={handleSubmitForm}
           className={classes.actionButton}>
-          {saveButtonLabel}
+          {submitButtonLabel}
         </DynaSubmit>
       </div>
     </DynaForm>
