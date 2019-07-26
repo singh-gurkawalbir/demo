@@ -118,12 +118,15 @@ const resource = {
       }),
 
     generateToken: (resourceId, values) =>
-      action(actionTypes.TOKEN.GENERATE, {
+      action(actionTypes.TOKEN.REQUEST, {
         resourceId,
         values,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
-      action(actionTypes.TOKEN.SAVE, { resourceId, fieldsToBeSetWithValues }),
+      action(actionTypes.TOKEN.RECEIVED, {
+        resourceId,
+        fieldsToBeSetWithValues,
+      }),
     generateTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),

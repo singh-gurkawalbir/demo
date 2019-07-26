@@ -31,7 +31,7 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* generateToken({ resourceId, values }) {
+export function* requestToken({ resourceId, values }) {
   const resourceType = 'connections';
   const connectionResource = yield select(
     selectors.resource,
@@ -43,11 +43,11 @@ export function* generateToken({ resourceId, values }) {
   if (!assistant) throw new Error('Could not determine the assistant type');
 
   const path = `/${assistant}/generate-token`;
-  const { formPayloadFn, tokenSetForFieldsFn } = functionsTransformerMap[
+  const { payloadTransformer, responseParser } = functionsTransformerMap[
     assistant
   ];
 
-  if (!formPayloadFn || !tokenSetForFieldsFn)
+  if (!payloadTransformer || !responseParser)
     throw new Error(
       'No Payload transform function or token transform function provided'
     );
@@ -55,13 +55,12 @@ export function* generateToken({ resourceId, values }) {
   let reqPayload;
 
   try {
-    reqPayload = formPayloadFn(values);
+    reqPayload = payloadTransformer(values);
   } catch (e) {
-    yield put(
-      actions.resource.connections.generateTokenFailed(
-        resourceId,
-        'Could not process payload, Please revist your form formPayloadFn'
-      )
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Could not process payload, Please revist your form payloadTransformer',
+      e
     );
 
     return;
@@ -90,7 +89,7 @@ export function* generateToken({ resourceId, values }) {
   }
 
   try {
-    const fieldsToBeSetWithValues = tokenSetForFieldsFn(resp.token);
+    const fieldsToBeSetWithValues = responseParser(resp.token);
 
     yield put(
       actions.resource.connections.saveToken(
@@ -99,21 +98,12 @@ export function* generateToken({ resourceId, values }) {
       )
     );
   } catch (e) {
-    yield put(
-      actions.resource.connections.generateTokenFailed(
-        resourceId,
-        'Could not process token to field values, Please revisit your tokenSetForFieldsFn'
-      )
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Could not process token to field values, Please revisit your responseParser',
+      e
     );
   }
-
-  // const replaceValue = [
-  //   {
-  //     op: 'replace',
-  //     path: `/${type}/bearerToken`,
-  //     value: resp.token.access_token,
-  //   },
-  // ];
 }
 
 export function* pingConnection({ resourceId, values }) {
@@ -255,7 +245,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 
 export default [
   takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
-  takeEvery(actionTypes.TOKEN.GENERATE, generateToken),
+  takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection

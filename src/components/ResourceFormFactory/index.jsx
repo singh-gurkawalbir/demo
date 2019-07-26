@@ -20,13 +20,15 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     resourceType,
     resourceId
   );
-  const { patch: allPatches } = selectors.resourceData(
+  const { patch: allPatches } = selectors.stagedResource(
     state,
-    resourceType,
     resourceId,
     'meta'
   );
-  const lastPatchtimestamp = allPatches && allPatches[allPatches.length - 1];
+  const lastPatchtimestamp =
+    allPatches &&
+    allPatches[allPatches.length - 1] &&
+    allPatches[allPatches.length - 1].timestamp;
 
   return {
     formState,
@@ -100,8 +102,8 @@ export const ResourceFormFactory = props => {
 
   // Pass in isNew
   const { optionsHandler } = useMemo(
-    () => formFactory.getResourceFormAssets({ resourceType, resource }),
-    [resource, resourceType]
+    () => formFactory.getResourceFormAssets({ resourceType, resource, isNew }),
+    [isNew, resource, resourceType]
   );
   const { fieldMeta, isNew: isNewForm } = formState;
 

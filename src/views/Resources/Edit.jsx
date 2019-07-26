@@ -213,9 +213,7 @@ class Edit extends Component {
                   <Button
                     size="small"
                     color="secondary"
-                    onClick={() => {
-                      handleUndoChange();
-                    }}>
+                    onClick={handleUndoChange}>
                     Undo({metaPatches})
                   </Button>
                 )}
@@ -241,9 +239,7 @@ class Edit extends Component {
                   size="small"
                   color="secondary"
                   disabled={metaPatches === 0}
-                  onClick={() => {
-                    handleUndoAllMetaChanges();
-                  }}>
+                  onClick={handleUndoAllMetaChanges}>
                   Cancel Meta Changes
                 </Button>
               </div>

@@ -20,10 +20,8 @@ export default combineReducers({
 // #region PUBLIC SELECTORS
 
 export function connectionTokens(state, resourceId) {
-  if (!state) return {};
-
   return fromConnectionToken.connectionTokens(
-    state.connectionToken,
+    (state && state.connectionToken) || null,
     resourceId
   );
 }

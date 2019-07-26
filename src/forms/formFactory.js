@@ -157,7 +157,6 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   });
 };
 
-const skipExecutionOfFunction = ['formPayloadFn', 'tokenSetForFieldsFn'];
 const applyingMissedOutFieldMetaProperties = (
   incompleteField,
   resource,
@@ -166,10 +165,7 @@ const applyingMissedOutFieldMetaProperties = (
   const field = incompleteField;
 
   Object.keys(field).forEach(key => {
-    if (
-      typeof field[key] === 'function' &&
-      !skipExecutionOfFunction.includes(key)
-    ) {
+    if (typeof field[key] === 'function') {
       field[key] = field[key](resource);
     }
   });

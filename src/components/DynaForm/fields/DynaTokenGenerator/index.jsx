@@ -1,20 +1,20 @@
 import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FieldWrapper, FormContext } from 'react-forms-processor/dist';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import { FormButton } from '../../DynaSubmit';
+import DynaSubmit from '../../DynaSubmit';
 import { MaterialUiTextField } from '../DynaText';
 
 const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
 });
-const mapDispatchToProps = (dispatch, { resourceId }) => ({
-  handleGenerateToken: values =>
+const mapDispatchToProps = dispatch => ({
+  handleGenerateToken: resourceId => values =>
     dispatch(actions.resource.connections.generateToken(resourceId, values)),
-  handleClearToken: () =>
+  handleClearToken: resourceId =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });
 const styles = () => ({
@@ -29,30 +29,24 @@ const styles = () => ({
 });
 
 function GenerateTokenButton(props) {
-  const { handleGenerateToken, disabled, label } = props;
+  const { handleGenerateToken, disabled, label, resourceId } = props;
 
   return (
-    <FormContext.Consumer>
-      {form => (
-        <FormButton
-          disabled={disabled}
-          isValid
-          onClick={() => {
-            handleGenerateToken(form.value);
-          }}>
-          {label}
-        </FormButton>
-      )}
-    </FormContext.Consumer>
+    <DynaSubmit
+      disabled={disabled}
+      isValid
+      onClick={handleGenerateToken(resourceId)}>
+      {label}
+    </DynaSubmit>
   );
 }
 
 function DynaTokenGenerator(props) {
   const {
-    id,
     onFieldChange,
     connectionToken,
     handleClearToken,
+    resourceId,
     classes,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
@@ -64,16 +58,16 @@ function DynaTokenGenerator(props) {
         onFieldChange(key, fieldsToBeSetWithValues[key])
       );
 
-      handleClearToken();
+      handleClearToken(resourceId);
     }
-  }, [fieldsToBeSetWithValues, handleClearToken, id, onFieldChange]);
+  }, [fieldsToBeSetWithValues, handleClearToken, onFieldChange, resourceId]);
 
   useEffect(() => {
     if (message) {
       enquesnackbar({ message, variant: 'error' });
-      handleClearToken();
+      handleClearToken(resourceId);
     }
-  }, [enquesnackbar, handleClearToken, message]);
+  }, [enquesnackbar, handleClearToken, message, resourceId]);
 
   return (
     <Fragment>

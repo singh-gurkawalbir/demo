@@ -6,11 +6,11 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.TOKEN.CLEAR:
-    case actionTypes.TOKEN.GENERATE:
+    case actionTypes.TOKEN.REQUEST:
       newState[resourceId] = {};
 
       return newState;
-    case actionTypes.TOKEN.SAVE:
+    case actionTypes.TOKEN.RECEIVED:
       if (!newState[resourceId]) newState[resourceId] = {};
       newState[resourceId] = {
         ...newState[resourceId],

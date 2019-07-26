@@ -885,8 +885,8 @@ export function affectedResourcesAndUsersFromAuditLogs(
 // #endregion
 
 // #region Session metadata selectors
-export function stagedResource(state, id) {
-  return fromSession.stagedResource(state && state.session, id);
+export function stagedResource(state, id, scope) {
+  return fromSession.stagedResource(state && state.session, id, scope);
 }
 
 export function optionsFromMetadata(
@@ -962,9 +962,10 @@ export function createdResourceId(state, tempId) {
 // #region Session token selectors
 
 export function connectionTokens(state, resourceId) {
-  if (!state) return {};
-
-  return fromSession.connectionTokens(state.session, resourceId);
+  return fromSession.connectionTokens(
+    (state && state.session) || null,
+    resourceId
+  );
 }
 
 // #endregion
