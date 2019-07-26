@@ -35,6 +35,10 @@ import sampleData from './sampleData';
   },
 }))
 export default class WorkArea extends Component {
+  state = {
+    sampleType: 'json2',
+  };
+
   componentDidMount() {
     const { sampleType } = this.state;
     const { onChange } = this.props;
