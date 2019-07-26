@@ -14,8 +14,9 @@ import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
 import { adaptorTypeMap } from '../../../utils/resource';
 
-const mapStateToProps = (state, { field }) => {
-  const { id, resourceId, resourceType } = field;
+const mapStateToProps = (state, { resourceContext = {}, field }) => {
+  const { id } = field;
+  const { resourceId, resourceType } = resourceContext;
   const resource =
     selectors.resourceData(state, resourceType, resourceId) || {};
   const { adaptorType } = resource.merged || {};

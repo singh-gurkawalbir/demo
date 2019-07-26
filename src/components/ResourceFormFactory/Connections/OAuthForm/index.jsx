@@ -17,7 +17,7 @@ class OAuthForm extends Component {
       <Fragment>
         <ResourceForm
           {...rest}
-          saveButtonLabel="Save & Authorize"
+          submitButtonLabel="Save & Authorize"
           handleSubmitForm={handleSaveAndAuthorizeConnection}
         />
       </Fragment>
