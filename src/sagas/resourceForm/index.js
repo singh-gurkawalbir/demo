@@ -125,6 +125,7 @@ export function* createFormValuesPatchSet({
     const { preSubmit } = factory.getResourceFormAssets({
       resourceType,
       resource,
+      isNew: formState.isNew,
     });
 
     if (typeof preSubmit === 'function') {

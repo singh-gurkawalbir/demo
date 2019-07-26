@@ -37,7 +37,6 @@ export default class GenericResourceForm extends Component {
       resourceType,
       resource,
       handleSubmitForm,
-      handleInitForm,
       children: actionButtons,
       connection,
       optionsHandler,
@@ -51,10 +50,6 @@ export default class GenericResourceForm extends Component {
     return (
       <DynaForm
         key={formKey}
-        onMetaChange={() => {
-          handleInitForm();
-          this.handleResetFormValues();
-        }}
         {...rest}
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>

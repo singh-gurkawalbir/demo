@@ -9,22 +9,13 @@ const FieldWrapper = withStyles({
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 })(props => {
-  const {
-    field,
-    editMode,
-    helpKey,
-    helpText,
-    classes,
-    onMetaChange,
-    formFieldsMeta,
-  } = props;
+  const { field, editMode, helpKey, helpText, classes, formFieldsMeta } = props;
   const { type: fieldType } = field;
 
   return (
     <Fragment>
       {editMode && (
         <EditFieldButton
-          onChange={onMetaChange}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
@@ -42,7 +33,7 @@ const FieldWrapper = withStyles({
   );
 });
 
-function getRenderer(editMode = false, onMetaChange, formFieldsMeta) {
+function getRenderer(editMode = false, formFieldsMeta) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
@@ -58,7 +49,6 @@ function getRenderer(editMode = false, onMetaChange, formFieldsMeta) {
       <FieldWrapper
         key={fid}
         editMode={editMode}
-        onMetaChange={onMetaChange}
         field={field}
         helpKey={helpKey}
         formFieldsMeta={formFieldsMeta}

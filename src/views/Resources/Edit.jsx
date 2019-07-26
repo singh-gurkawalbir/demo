@@ -95,7 +95,6 @@ class Edit extends Component {
   state = {
     editMode: false,
     showEditor: false,
-    formKey: 1,
   };
 
   handleToggleEdit = () => {
@@ -116,15 +115,6 @@ class Edit extends Component {
   componentDidMount() {
     this.setState({ editMode: false, showEditor: false });
   }
-  handleRemountResourceComponent = () => {
-    // We need to re-mount the react-forms-processor component
-    // to reset the values back to defaults....
-    const formKey = this.state.formKey + 1;
-
-    this.setState({
-      formKey,
-    });
-  };
 
   render() {
     const {
@@ -151,7 +141,7 @@ class Edit extends Component {
       );
     }
 
-    const { editMode, showEditor, formKey } = this.state;
+    const { editMode, showEditor } = this.state;
     const { merged, lastChange, conflict, scope } = metaChanges;
     const allowsCustomForm =
       !isNewId(id) &&
@@ -226,7 +216,6 @@ class Edit extends Component {
                     color="secondary"
                     onClick={() => {
                       handleUndoChange();
-                      this.handleRemountResourceComponent();
                     }}>
                     Undo({metaPatches})
                   </Button>
@@ -255,7 +244,6 @@ class Edit extends Component {
                   disabled={metaPatches === 0}
                   onClick={() => {
                     handleUndoAllMetaChanges();
-                    this.handleRemountResourceComponent();
                   }}>
                   Cancel Meta Changes
                 </Button>
@@ -276,7 +264,6 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceForm
-            key={formKey}
             editMode={editMode}
             resourceType={resourceType}
             resourceId={id}

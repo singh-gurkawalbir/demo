@@ -24,16 +24,9 @@ import getRenderer from './renderer';
 }))
 export default class DynaForm extends Component {
   render() {
-    const {
-      classes,
-      children,
-      editMode,
-      onMetaChange,
-      fieldMeta,
-      ...rest
-    } = this.props;
+    const { classes, children, editMode, fieldMeta, ...rest } = this.props;
     const { fields, fieldSets } = fieldMeta;
-    const renderer = getRenderer(editMode, onMetaChange, fieldMeta);
+    const renderer = getRenderer(editMode, fieldMeta);
 
     if (!fields && !fieldSets) {
       return null;

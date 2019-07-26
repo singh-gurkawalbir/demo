@@ -306,9 +306,6 @@ describe('request interceptors...testing the various stages of an api request on
         sessionError200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, method));
-
-      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       expect(saga.next().value).toEqual(
         call(checkToThrowSessionValidationException, sessionError200Response)
@@ -316,6 +313,9 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.throw(status401).value).toEqual(
         call(unauthenticateAndDeleteProfile)
       );
+      const apiCompleteEffect = put(actions.api.complete(path, method));
+
+      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       try {
         // after this effect an exception is thrown
@@ -338,13 +338,13 @@ describe('request interceptors...testing the various stages of an api request on
         regular204Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, method));
-
-      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       expect(saga.next().value).toEqual(
         call(checkToThrowSessionValidationException, regular204Response)
       );
+      const apiCompleteEffect = put(actions.api.complete(path, method));
+
+      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       expect(saga.next().value).toEqual({ data: undefined, status: 204 });
     });
@@ -358,13 +358,13 @@ describe('request interceptors...testing the various stages of an api request on
         regular200Response,
         actionWithMetaProxiedFromRequestAction
       );
-      const apiCompleteEffect = put(actions.api.complete(path, method));
-
-      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       expect(saga.next().value).toEqual(
         call(checkToThrowSessionValidationException, regular200Response)
       );
+      const apiCompleteEffect = put(actions.api.complete(path, method));
+
+      expect(saga.next().value).toEqual(apiCompleteEffect);
 
       expect(saga.next().value).toEqual({ data: jsonRespBody, status: 200 });
     });
