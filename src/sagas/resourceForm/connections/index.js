@@ -13,7 +13,7 @@ import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTok
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
-  const connectionResource = yield select(
+  let connectionResource = yield select(
     selectors.resource,
     resourceType,
     resourceId
@@ -23,6 +23,10 @@ function* createPayload({ values, resourceId }) {
     resourceId,
     values,
   });
+
+  if (!connectionResource) {
+    connectionResource = {};
+  }
 
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }

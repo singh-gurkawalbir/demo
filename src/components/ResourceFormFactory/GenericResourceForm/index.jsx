@@ -42,6 +42,8 @@ export default class GenericResourceForm extends Component {
       optionsHandler,
       fieldMeta,
       disableButton,
+      cancelButtonLabel = 'Cancel',
+      onCancel,
       ...rest
     } = this.props;
 
@@ -57,11 +59,11 @@ export default class GenericResourceForm extends Component {
           {actionButtons}
 
           <Button
-            onClick={this.handleResetFormValues}
+            onClick={onCancel || this.handleResetFormValues}
             className={classes.actionButton}
             size="small"
             variant="contained">
-            Cancel
+            {cancelButtonLabel}
           </Button>
           <DynaSubmit
             disabled={disableButton}

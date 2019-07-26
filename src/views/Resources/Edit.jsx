@@ -10,14 +10,13 @@ import TimeAgo from 'react-timeago';
 import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import prettyDate from '../../utils/date';
-import { MODEL_PLURAL_TO_LABEL } from '../../constants/resource';
+import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../utils/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
 import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
-import { isNewId } from '../../utils/resource';
 import { SCOPES } from '../../sagas/resourceForm';
 
 const mapStateToProps = (state, { match }) => {

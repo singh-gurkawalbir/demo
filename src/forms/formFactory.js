@@ -1,7 +1,7 @@
 import { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
-import formMeta from '../forms/definitions';
+import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 
 const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
@@ -89,6 +89,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         if (isNew) {
           meta = meta.new;
         } else {
+          // get edit form meta branch
           meta = meta[type];
         }
 
@@ -99,6 +100,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
 
       break;
 
+    case 'agents':
     case 'scripts':
     case 'stacks':
       meta = formMeta[resourceType];
@@ -221,10 +223,13 @@ const setDefaults = (fields, resourceType, resource) => {
         );
       }
 
+      const masterFields = masterFieldHash[resourceType]
+        ? masterFieldHash[resourceType][f.fieldId]
+        : {};
       const merged = {
         resourceId: resource._id,
         resourceType,
-        ...masterFieldHash[resourceType][f.fieldId],
+        ...masterFields,
         ...f,
       };
 

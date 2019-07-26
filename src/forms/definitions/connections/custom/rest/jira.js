@@ -4,23 +4,25 @@ export default {
   // TODO: I think we need to also pass in the current resource.
   // Some default values could take some parsing or other such custom logic?
   // Lets wait for some assistants to be made and we will see...
-  init: fieldMeta => ({
-    fields: [
-      {
-        id: 'injected',
-        type: 'text',
-        label: 'Injected field',
-        placeholder: 'using init hook',
-      },
-      ...fieldMeta.fields,
-    ],
-  }),
+  // init: fieldMeta => ({
+  //   fields: [
+  //     {
+  //       id: 'injected',
+  //       type: 'text',
+  //       label: 'Injected field',
+  //       placeholder: 'using init hook',
+  //     },
+  //     ...fieldMeta.fields,
+  //   ],
+  // }),
   // This handler is called just before the form values are
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
   preSubmit: formValues => ({
     ...formValues,
+    '/type': 'rest',
+    '/assistant': 'jira',
     '/rest/authType': 'basic',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/',

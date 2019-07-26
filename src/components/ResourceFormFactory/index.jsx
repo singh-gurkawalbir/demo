@@ -86,11 +86,17 @@ export const ResourceFormFactory = props => {
 
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
+
+  // TODO: This handler fired every render when i include the
+  // onSubmitComplete fn as a dependency... how do i solve this
+  // the right way? linter fails if i dont add it...
   useEffect(() => {
     if (formState.submitComplete && onSubmitComplete) {
+      // console.log('fired onSubmitComplete');
       onSubmitComplete();
     }
-  }, [formState.submitComplete, onSubmitComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formState.submitComplete /* onSubmitComplete */]);
 
   // Pass in isNew
   const { optionsHandler } = useMemo(

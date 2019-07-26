@@ -1,6 +1,22 @@
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
+export const MODEL_PLURAL_TO_LABEL = Object.freeze({
+  agents: 'Agents',
+  accesstokens: 'API Token',
+  asynchelpers: 'Async Helper',
+  connections: 'Connection',
+  connectors: 'Connector',
+  exports: 'Export',
+  filedefinitions: 'File Definition',
+  flows: 'Flow',
+  iclients: 'IClient',
+  imports: 'Import',
+  integrations: 'Integration',
+  scripts: 'Script',
+  stacks: 'Stack',
+});
+
 /**
  * @param resourceDetails Details about the resource.
  * @param resourceDetails.type The type of the resource.
@@ -53,19 +69,14 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',
-  NetSuiteConnection: 'netsuite',
   XMLImport: 'xml',
   XMLExport: 'xml',
-  XMLConnection: 'xml',
   FTPExport: 'ftp',
   FTPImport: 'ftp',
-  FTPConnection: 'ftp',
   HTTPExport: 'http',
   HTTPImport: 'http',
-  HTTPConnection: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
-  RESTConnection: 'rest',
 };
 
 // This method is used for only import/export/connection. Im not sure
