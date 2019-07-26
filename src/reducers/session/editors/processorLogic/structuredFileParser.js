@@ -7,6 +7,7 @@ export default {
   }),
   validate: editor => ({
     ruleError: util.validateJsonString(editor.rule),
-    dataError: !editor.data && !editor.data.length && 'Must provide some sample data.',
+    dataError:
+      !editor.data && !editor.data.length && 'Must provide some sample data.',
   }),
 };

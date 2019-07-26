@@ -146,7 +146,7 @@ export default class Editors extends Component {
             data={rawData}
             onClose={this.handleClose}
           />
-        );  
+        );
       default:
         return null;
     }

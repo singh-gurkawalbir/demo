@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
-import sampleFileDef from './sampleFileDef'
 
 const mapStateToProps = (state, { editorId }) => {
   const editor = selectors.editor(state, editorId);
@@ -19,8 +18,6 @@ const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
     dispatch(actions.editor.patch(editorId, { data }));
   },
   handleInit: () => {
-   rule = sampleFileDef
-  
     dispatch(
       actions.editor.init(editorId, 'structuredFileParser', {
         rule,
@@ -52,4 +49,5 @@ class FileDefinitionEditor extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(FileDefinitionEditor);
+export default connect(mapStateToProps, 
+    mapDispatchToProps)(FileDefinitionEditor);
