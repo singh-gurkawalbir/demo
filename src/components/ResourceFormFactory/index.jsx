@@ -43,7 +43,6 @@ const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
 export const ResourceFormFactory = props => {
   const {
     resourceType,
-    handleSubmitForm,
     formState,
     connectionType,
     handleInitForm,
@@ -83,7 +82,7 @@ export const ResourceFormFactory = props => {
       onSubmitComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* onSubmitComplete */]);
+  }, [formState.submitComplete /* , onSubmitComplete */]);
 
   if (!formState.initComplete || componentRemount) {
     return <Typography>Initializing Form</Typography>;
@@ -91,13 +90,6 @@ export const ResourceFormFactory = props => {
 
   let Form;
   const { fieldMeta, optionsHandler, isNew } = formState;
-  const commonProps = {
-    handleInitForm,
-    fieldMeta,
-    optionsHandler,
-    handleSubmitForm,
-  };
-  const formProps = commonProps;
 
   if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
@@ -109,7 +101,9 @@ export const ResourceFormFactory = props => {
     Form = GenericResourceForm;
   }
 
-  return <Form {...props} {...formProps} />;
+  return (
+    <Form {...props} fieldMeta={fieldMeta} optionsHandler={optionsHandler} />
+  );
 };
 
 export default connect(

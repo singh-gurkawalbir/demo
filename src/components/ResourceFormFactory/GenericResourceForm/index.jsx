@@ -35,11 +35,10 @@ export default class GenericResourceForm extends Component {
       submitButtonLabel = 'Save',
       classes,
       resourceType,
-      resource,
+      resource = {},
       handleSubmitForm,
       handleInitForm,
       children: actionButtons,
-      connection,
       optionsHandler,
       fieldMeta,
       disableButton,
@@ -53,6 +52,8 @@ export default class GenericResourceForm extends Component {
     return (
       <DynaForm
         key={formKey}
+        resourceId={resource._id}
+        resourceType={resourceType}
         onMetaChange={() => {
           handleInitForm();
           this.handleResetFormValues();
