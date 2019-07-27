@@ -16,16 +16,12 @@ import GenericConfirmDialog from '../../../ConfirmDialog';
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
-const mapDispatchToProps = (dispatch, { resourceId }) => ({
-  handleTestConnection: values => {
-    dispatch(actions.resource.connections.test(resourceId, values));
-  },
-  clearComms: () => {
-    dispatch(actions.clearComms());
-  },
-  cancelProcess: () => {
-    dispatch(actions.cancelTask());
-  },
+const mapDispatchToProps = dispatch => ({
+  handleTestConnection: resourceId => values =>
+    dispatch(actions.resource.connections.test(resourceId, values)),
+  clearComms: () => dispatch(actions.clearComms()),
+
+  cancelProcess: () => dispatch(actions.cancelTask()),
 });
 const styles = theme => ({
   actions: {
@@ -45,12 +41,7 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
 
-  useEffect(
-    () => clearComms,
-    // TODO: Surya
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  useEffect(() => clearComms, [clearComms]);
 
   return (
     <GenericConfirmDialog
@@ -83,6 +74,7 @@ const TestableForm = props => {
     handleTestConnection,
     handleSubmitForm,
     cancelProcess,
+    resourceId,
     clearComms,
     ...rest
   } = props;
@@ -91,22 +83,41 @@ const TestableForm = props => {
 
   useEffect(() => {
     clearComms();
-    // TODO: Surya
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clearComms]);
+
+  const handleTestCallAndClearFormValues = values => {
+    handleTestConnection(resourceId)(values);
+    setFormValues(null);
+  };
+
   const handleSubmitAndShowConfirmDialog = values => {
-    handleTestConnection(values);
-    setShowConfirmDialog(true);
+    handleTestConnection(resourceId)(values);
     setFormValues(deepClone(values));
   };
+
+  const testCommState =
+    testConnectionCommState && testConnectionCommState.commState;
+
+  useEffect(() => {
+    // when form values are present indicates that we are
+    // performing a submit after the save
+    if (formValues) {
+      if (testCommState === COMM_STATES.SUCCESS) {
+        clearComms();
+        handleSubmitForm(formValues);
+        setShowConfirmDialog(false);
+      } else if (testCommState === COMM_STATES.ERROR) {
+        setShowConfirmDialog(true);
+      }
+    }
+  }, [clearComms, formValues, handleSubmitForm, testCommState]);
 
   const { message } = testConnectionCommState;
   const pingLoading = testConnectionCommState.commState === COMM_STATES.LOADING;
 
   return (
     <Fragment>
-      {showConfirmDialog &&
-      testConnectionCommState.commState === COMM_STATES.ERROR ? (
+      {showConfirmDialog && (
         <ConfirmDialog
           commErrorMessage={message}
           formValues={formValues}
@@ -114,7 +125,8 @@ const TestableForm = props => {
           clearComms={clearComms}
           handleSubmit={handleSubmitForm}
         />
-      ) : (
+      )}
+      {!formValues && (
         <PingSnackbar
           commStatus={testConnectionCommState}
           onHandleClose={clearComms}
@@ -127,7 +139,7 @@ const TestableForm = props => {
         handleSubmitForm={handleSubmitAndShowConfirmDialog}>
         <DynaSubmit
           disabled={pingLoading}
-          onClick={handleTestConnection}
+          onClick={handleTestCallAndClearFormValues}
           className={classes.actionButton}
           size="small"
           variant="contained"

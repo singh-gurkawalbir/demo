@@ -16,7 +16,6 @@ const FieldWrapper = withStyles(styles)(props => {
     helpKey,
     helpText,
     classes,
-    onMetaChange,
     formFieldsMeta,
     resourceContext,
   } = props;
@@ -26,7 +25,6 @@ const FieldWrapper = withStyles(styles)(props => {
     <Fragment>
       {editMode && (
         <EditFieldButton
-          onChange={onMetaChange}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
@@ -47,7 +45,6 @@ const FieldWrapper = withStyles(styles)(props => {
 
 function getRenderer(
   editMode = false,
-  onMetaChange,
   formFieldsMeta,
   resourceId,
   resourceType
@@ -68,7 +65,6 @@ function getRenderer(
       <FieldWrapper
         key={fid}
         editMode={editMode}
-        onMetaChange={onMetaChange}
         field={field}
         helpKey={helpKey}
         formFieldsMeta={formFieldsMeta}

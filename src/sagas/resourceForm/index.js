@@ -121,9 +121,18 @@ export function* createFormValuesPatchSet({
       hook: customForm.preSubmit,
       data: values,
     });
-  } else if (typeof formState.preSubmit === 'function') {
-    // stock preSubmit handler present...
-    finalValues = formState.preSubmit(values);
+  } else {
+    const { preSubmit } = factory.getResourceFormAssets({
+      resourceType,
+      resource,
+      isNew: formState.isNew,
+    });
+
+    if (typeof preSubmit === 'function') {
+      // stock preSubmit handler present...
+
+      finalValues = preSubmit(values);
+    }
   }
 
   const patchSet = sanitizePatchSet({
@@ -237,8 +246,6 @@ export function* initFormValues({
       resourceType,
       resourceId,
       finalFieldMeta,
-      defaultFormAssets.optionsHandler,
-      defaultFormAssets.preSubmit,
       isNew,
       skipCommit
     )

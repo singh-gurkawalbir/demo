@@ -37,7 +37,6 @@ export default class GenericResourceForm extends Component {
       resourceType,
       resource = {},
       handleSubmitForm,
-      handleInitForm,
       children: actionButtons,
       optionsHandler,
       fieldMeta,
@@ -54,16 +53,11 @@ export default class GenericResourceForm extends Component {
         key={formKey}
         resourceId={resource._id}
         resourceType={resourceType}
-        onMetaChange={() => {
-          handleInitForm();
-          this.handleResetFormValues();
-        }}
         {...rest}
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>
         <div className={classes.actions}>
           {actionButtons}
-
           <Button
             onClick={onCancel || this.handleResetFormValues}
             className={classes.actionButton}
