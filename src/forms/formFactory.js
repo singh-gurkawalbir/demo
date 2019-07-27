@@ -174,7 +174,7 @@ const applyingMissedOutFieldMetaProperties = (
     field.id = field.fieldId;
   }
 
-  if (!field.name && !field.ignoreName) {
+  if (!field.name) {
     if (field.id) field.name = `/${field.id.replace(/\./g, '/')}`;
   }
 

@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 
-export class FormButton extends Component {
+class FormButton extends Component {
   render() {
     const {
       disabled,

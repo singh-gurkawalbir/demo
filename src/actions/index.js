@@ -117,7 +117,7 @@ const resource = {
         resourceId,
       }),
 
-    generateToken: (resourceId, values) =>
+    requestToken: (resourceId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
         values,
@@ -127,7 +127,7 @@ const resource = {
         resourceId,
         fieldsToBeSetWithValues,
       }),
-    generateTokenFailed: (resourceId, message) =>
+    requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
   },

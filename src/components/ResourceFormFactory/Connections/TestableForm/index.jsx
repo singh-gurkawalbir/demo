@@ -41,11 +41,7 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
 
-  useEffect(
-    () => clearComms,
-    // TODO: Surya
-    [clearComms]
-  );
+  useEffect(() => clearComms, [clearComms]);
 
   return (
     <GenericConfirmDialog
@@ -104,7 +100,7 @@ const TestableForm = props => {
 
   useEffect(() => {
     // when form values are present indicates that we are
-    // /performing a submit after the save
+    // performing a submit after the save
     if (formValues) {
       if (testCommState === COMM_STATES.SUCCESS) {
         clearComms();

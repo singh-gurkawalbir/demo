@@ -100,12 +100,11 @@ export const ResourceFormFactory = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.submitComplete /* , onSubmitComplete */]);
 
-  // Pass in isNew
   const { optionsHandler } = useMemo(
     () => formFactory.getResourceFormAssets({ resourceType, resource, isNew }),
     [isNew, resource, resourceType]
   );
-  const { fieldMeta, isNew: isNewForm } = formState;
+  const { fieldMeta } = formState;
 
   useEffect(() => {
     setCount(count => count + 1);
@@ -123,7 +122,7 @@ export const ResourceFormFactory = props => {
   };
   const formProps = commonProps;
 
-  if (resourceType === 'connections' && !isNewForm) {
+  if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
       Form = OAuthForm;
     } else {

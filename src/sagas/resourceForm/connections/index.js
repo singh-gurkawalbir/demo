@@ -79,7 +79,7 @@ export function* requestToken({ resourceId, values }) {
     const { errors } = errorsJSON;
 
     yield put(
-      actions.resource.connections.generateTokenFailed(
+      actions.resource.connections.requestTokenFailed(
         resourceId,
         errors[0].message
       )

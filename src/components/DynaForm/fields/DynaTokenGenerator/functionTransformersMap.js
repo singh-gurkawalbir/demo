@@ -1,7 +1,7 @@
 /*
 This file consists of assistant specific definitions
- which are part of the token generation functionality.
-Each assistant encompasses of two have functions the responseParser
+ which are essential for the token generation functionality.
+Each assistant encompasses of two functions the responseParser
  and payloadTransformer that have to be implemented.
 
 payloadTransformer: This function is intended to fabricate the request
