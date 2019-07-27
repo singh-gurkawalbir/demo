@@ -15,7 +15,6 @@ export class FormButton extends Component {
 
     return (
       <Button
-        size="small"
         variant="contained"
         color="secondary"
         className={className}

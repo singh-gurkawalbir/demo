@@ -150,8 +150,9 @@ export default {
       },
       // small size button
       sizeSmall: {
-        padding: '10px 20px',
-        fontSize: '14px',
+        padding: '10px 15px',
+        fontSize: '12px',
+        minWidth: 60,
       },
       // large Size Button
       sizeLarge: {

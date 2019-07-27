@@ -264,6 +264,7 @@ class Edit extends Component {
             resourceId={id}
             connectionType={type}
             connection={connection}
+            cancelButtonLabel="Reset"
           />
 
           {conflict && (

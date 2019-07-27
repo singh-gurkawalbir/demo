@@ -17,6 +17,12 @@ export default function Add(props) {
     dispatch(actions.resourceForm.clear(resourceType, id));
   }
 
+  const submitButtonLabel = ['imports', 'exports', 'connections'].includes(
+    resourceType
+  )
+    ? 'Next'
+    : 'Save';
+
   return (
     <div>
       <Typography variant="h5">
@@ -29,6 +35,7 @@ export default function Add(props) {
           resourceId={id}
           isNew
           onSubmitComplete={handleSubmitComplete}
+          submitButtonLabel={submitButtonLabel}
         />
       </LoadResources>
     </div>

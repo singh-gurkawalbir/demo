@@ -4,12 +4,21 @@ import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 
-const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldWrapper = withStyles({
+const styles = {
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
-})(props => {
-  const { field, editMode, helpKey, helpText, classes, formFieldsMeta } = props;
+};
+const fieldsToSkipHelpPopper = ['labeltitle'];
+const FieldWrapper = withStyles(styles)(props => {
+  const {
+    field,
+    editMode,
+    helpKey,
+    helpText,
+    classes,
+    formFieldsMeta,
+    resourceContext,
+  } = props;
   const { type: fieldType } = field;
 
   return (
@@ -19,6 +28,7 @@ const FieldWrapper = withStyles({
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
+          resourceContext={resourceContext}
         />
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
@@ -33,13 +43,19 @@ const FieldWrapper = withStyles({
   );
 });
 
-function getRenderer(editMode = false, formFieldsMeta) {
+function getRenderer(
+  editMode = false,
+  formFieldsMeta,
+  resourceId,
+  resourceType
+) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
 
     const { id, fieldId, type, helpKey, helpText } = field;
     const DynaField = fields[type];
     const fid = id || fieldId;
+    const context = { resourceId, resourceType };
 
     if (!DynaField) {
       return <div>No mapped field for type: [{type}]</div>;
@@ -52,6 +68,7 @@ function getRenderer(editMode = false, formFieldsMeta) {
         field={field}
         helpKey={helpKey}
         formFieldsMeta={formFieldsMeta}
+        resourceContext={context}
         helpText={helpText}>
         <DynaField {...field} />
       </FieldWrapper>

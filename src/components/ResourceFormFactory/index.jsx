@@ -98,7 +98,7 @@ export const ResourceFormFactory = props => {
       onSubmitComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* onSubmitComplete */]);
+  }, [formState.submitComplete /* , onSubmitComplete */]);
 
   // Pass in isNew
   const { optionsHandler } = useMemo(
