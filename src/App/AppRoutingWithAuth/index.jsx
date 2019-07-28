@@ -21,10 +21,10 @@ const mapDispatchToProps = dispatch => ({
 export function AppRoutingWithAuth(props) {
   const { initSession, isAuthInitialized, location, history } = props;
   const { pathname: currentRoute } = location;
-  const [componentMounted, setComponentMounted] = useState(false);
+  const [hasPageReloaded, setHasPageReloaded] = useState(false);
 
   useEffect(() => {
-    if (!isAuthInitialized && !componentMounted) {
+    if (!isAuthInitialized && !hasPageReloaded) {
       if (currentRoute !== getRoutePath('signin'))
         history.push({
           state: { attemptedRoute: currentRoute },
@@ -32,8 +32,8 @@ export function AppRoutingWithAuth(props) {
       initSession();
     }
 
-    setComponentMounted(true);
-  }, [componentMounted, currentRoute, history, initSession, isAuthInitialized]);
+    setHasPageReloaded(true);
+  }, [hasPageReloaded, currentRoute, history, initSession, isAuthInitialized]);
 
   const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
   const isSignInRoute = location.pathname === getRoutePath('signin');
