@@ -57,6 +57,12 @@ export function* requestToken({ resourceId, values }) {
   try {
     reqPayload = payloadTransformer(values);
   } catch (e) {
+    yield put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        'An error occurred when we tried to generate your token request. Please try again later, or contact our customer support team.'
+      )
+    );
     // eslint-disable-next-line no-console
     console.warn(
       'Could not process payload, Please revist your form payloadTransformer',
@@ -98,6 +104,13 @@ export function* requestToken({ resourceId, values }) {
       )
     );
   } catch (e) {
+    yield put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        'An error occurred when we tried to extract your token from the response. Please try again later, or contact our customer support team.'
+      )
+    );
+
     // eslint-disable-next-line no-console
     console.warn(
       'Could not process token to field values, Please revisit your responseParser',

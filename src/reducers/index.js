@@ -897,7 +897,7 @@ export function optionsFromMetadata(
   mode
 ) {
   return fromSession.optionsFromMetadata(
-    (state && state.session) || null,
+    state && state.session,
     connectionId,
     applicationType,
     metadataType,
@@ -962,10 +962,7 @@ export function createdResourceId(state, tempId) {
 // #region Session token selectors
 
 export function connectionTokens(state, resourceId) {
-  return fromSession.connectionTokens(
-    (state && state.session) || null,
-    resourceId
-  );
+  return fromSession.connectionTokens(state && state.session, resourceId);
 }
 
 // #endregion
