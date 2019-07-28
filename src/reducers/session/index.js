@@ -21,7 +21,7 @@ export default combineReducers({
 
 export function connectionTokens(state, resourceId) {
   return fromConnectionToken.connectionTokens(
-    (state && state.connectionToken) || null,
+    state && state.connectionToken,
     resourceId
   );
 }
@@ -58,7 +58,7 @@ export function optionsFromMetadata(
   mode
 ) {
   return fromMetadata.optionsFromMetadata(
-    (state && state.metadata) || null,
+    state && state.metadata,
     connectionId,
     applicationType,
     metadataType,

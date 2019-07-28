@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import AppRouting from '../AppRouting';
@@ -19,27 +19,23 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export function AppRoutingWithAuth(props) {
-  useEffect(() => {
-    const { initSession, isAuthInitialized, location, history } = props;
-    const { pathname: currentRoute } = location;
+  const { initSession, isAuthInitialized, location, history } = props;
+  const { pathname: currentRoute } = location;
+  const [componentMounted, setComponentMounted] = useState(false);
 
-    if (!isAuthInitialized) {
+  useEffect(() => {
+    if (!isAuthInitialized && !componentMounted) {
       if (currentRoute !== getRoutePath('signin'))
         history.push({
           state: { attemptedRoute: currentRoute },
         });
       initSession();
     }
-    // TODO: Surya
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  const {
-    shouldShowAppRouting,
-    isAuthenticated,
-    location,
-    isSessionExpired,
-  } = props;
+    setComponentMounted(true);
+  }, [componentMounted, currentRoute, history, initSession, isAuthInitialized]);
+
+  const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
   const isSignInRoute = location.pathname === getRoutePath('signin');
 
   // this selector is used by the UI to hold off rendering any routes
