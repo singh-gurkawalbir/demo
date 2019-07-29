@@ -18,6 +18,7 @@ export const availableResources = [
   'imports',
   'connections',
   'scripts',
+  'agents',
   // 'integrations',
   // 'tiles',
 ];
@@ -85,7 +86,7 @@ class Resources extends Component {
         </Typography>
         <br />
         <Typography variant="h5">
-          Use the keyword search to help find the resoure you are looking for.
+          Use the keyword search to help find the resource you are looking for.
         </Typography>
       </div>
     );

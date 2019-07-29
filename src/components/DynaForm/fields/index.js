@@ -3,6 +3,7 @@ import DynaRadioGroup from './DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectApplication from './DynaSelectApplication';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
@@ -16,6 +17,8 @@ import DynaUploadFile from './CustomComponents/DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaTokenGenerator from './DynaTokenGenerator';
+import DynaApiIdentifier from './DynaApiIdentifier';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -25,6 +28,7 @@ export default {
   checkbox: DynaCheckbox,
   select: DynaSelect,
   selectresource: DynaSelectResource,
+  selectapplication: DynaSelectApplication,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
@@ -37,4 +41,6 @@ export default {
   labeltitle: DynaLabel,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
+  tokengen: DynaTokenGenerator,
+  apiidentifier: DynaApiIdentifier,
 };

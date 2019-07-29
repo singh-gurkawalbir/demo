@@ -28,8 +28,12 @@ export default class Imports extends Component {
         <Typography className={classes.exportDetails}>
           Created on {new Date(item.lastModified).toLocaleDateString()}
           <br />
-          Using a {item.connection.type.toUpperCase()} connection named:
-          {item.connection.name}
+          {item.connection && (
+            <Fragment>
+              Using a {item.connection.type} connection named:
+              {item.connection.name || item.connection._id}
+            </Fragment>
+          )}
         </Typography>
         <Typography className={classes.secondaryHeading}>
           <Link className={classes.link} to={`/pg/imports/preview/${item._id}`}>

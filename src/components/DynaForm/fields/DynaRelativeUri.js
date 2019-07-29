@@ -134,7 +134,7 @@ const ConnectedDynaRelativeUri = connect(
 )(DynaRelativeUri);
 const FieldWrappedDynaRelativeUri = props => (
   <FieldWrapper {...props}>
-    <ConnectedDynaRelativeUri {...props.fieldOpts} />
+    <ConnectedDynaRelativeUri />
   </FieldWrapper>
 );
 

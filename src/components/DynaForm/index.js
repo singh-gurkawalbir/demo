@@ -28,12 +28,13 @@ export default class DynaForm extends Component {
       classes,
       children,
       editMode,
-      onMetaChange,
       fieldMeta,
+      resourceId,
+      resourceType,
       ...rest
     } = this.props;
     const { fields, fieldSets } = fieldMeta;
-    const renderer = getRenderer(editMode, onMetaChange, fieldMeta);
+    const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
 
     if (!fields && !fieldSets) {
       return null;
@@ -57,6 +58,7 @@ export default class DynaForm extends Component {
               </ExpansionPanel>
             ))}
         </div>
+        {/* The children are action buttons for the form */}
         {children}
       </Form>
     );

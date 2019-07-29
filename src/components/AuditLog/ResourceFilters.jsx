@@ -6,7 +6,7 @@ import { sortBy } from 'lodash';
 import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../../utils/constants';
+} from '../../constants/resource';
 import { OPTION_ALL } from './util';
 
 export function ResourceTypeFilter(props) {

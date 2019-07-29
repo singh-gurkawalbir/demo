@@ -1,5 +1,3 @@
-import { invert } from 'lodash';
-
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
@@ -105,38 +103,6 @@ export const PERMISSIONS = Object.freeze({
   },
 });
 
-export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
-  accesstoken: 'accesstokens',
-  agent: 'agents',
-  asynchelper: 'asynchelpers',
-  connection: 'connections',
-  connector: 'connectors',
-  export: 'exports',
-  filedefinition: 'filedefinitions',
-  flow: 'flows',
-  iclient: 'iclients',
-  import: 'imports',
-  integration: 'integrations',
-  script: 'scripts',
-  stack: 'stacks',
-});
-export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
-  invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
-);
-export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
-  accesstoken: 'API Token',
-  asynchelper: 'Async Helper',
-  connection: 'Connection',
-  connector: 'Connector',
-  export: 'Export',
-  filedefinition: 'File Definition',
-  flow: 'Flow',
-  iclient: 'IClient',
-  import: 'Import',
-  integration: 'Integration',
-  script: 'Script',
-  stack: 'Stack',
-});
 export const PASSWORD_MASK = '******';
 export const MASK_ACCESSTOKEN_TOKEN_DELAY = 5000; // milliseconds
 export const SUITESCRIPT_CONNECTORS = Object.freeze([

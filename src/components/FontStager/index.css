@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: Roboto400;
   src:
@@ -49,6 +50,8 @@ html, body {
 .font-stage-primary html,
 .font-stage-primary body {
   font-family: Roboto400, sans-serif;
+  color: #677A89;
+
 }
 
 /* Prevent the secondary fonts from being tree-shaken away */

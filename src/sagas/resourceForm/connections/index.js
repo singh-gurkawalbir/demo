@@ -4,15 +4,16 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
-import { createFormValuesPatchSet, submitFormValues } from '../index';
+import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
+import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
-  const connectionResource = yield select(
+  let connectionResource = yield select(
     selectors.resource,
     resourceType,
     resourceId
@@ -23,7 +24,99 @@ function* createPayload({ values, resourceId }) {
     values,
   });
 
+  if (!connectionResource) {
+    connectionResource = {};
+  }
+
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
+}
+
+export function* requestToken({ resourceId, values }) {
+  const resourceType = 'connections';
+  const connectionResource = yield select(
+    selectors.resource,
+    resourceType,
+    resourceId
+  );
+  const { assistant } = connectionResource;
+
+  if (!assistant) throw new Error('Could not determine the assistant type');
+
+  const path = `/${assistant}/generate-token`;
+  const { payloadTransformer, responseParser } = functionsTransformerMap[
+    assistant
+  ];
+
+  if (!payloadTransformer || !responseParser)
+    throw new Error(
+      'No Payload transform function or token transform function provided'
+    );
+
+  let reqPayload;
+
+  try {
+    reqPayload = payloadTransformer(values);
+  } catch (e) {
+    yield put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        'An error occurred when we tried to generate your token request. Please try again later, or contact our customer support team.'
+      )
+    );
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Could not process payload, Please revist your form payloadTransformer',
+      e
+    );
+
+    return;
+  }
+
+  let resp;
+
+  try {
+    resp = yield call(apiCallWithRetry, {
+      path,
+      opts: { body: reqPayload, method: 'POST' },
+      hidden: true,
+    });
+  } catch (e) {
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
+    yield put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        errors[0].message
+      )
+    );
+
+    return;
+  }
+
+  try {
+    const fieldsToBeSetWithValues = responseParser(resp.token);
+
+    yield put(
+      actions.resource.connections.saveToken(
+        resourceId,
+        fieldsToBeSetWithValues
+      )
+    );
+  } catch (e) {
+    yield put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        'An error occurred when we tried to extract your token from the response. Please try again later, or contact our customer support team.'
+      )
+    );
+
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Could not process token to field values, Please revisit your responseParser',
+      e
+    );
+  }
 }
 
 export function* pingConnection({ resourceId, values }) {
@@ -33,7 +126,7 @@ export function* pingConnection({ resourceId, values }) {
       resourceType: 'connections',
       resourceId,
     });
-    // Either apiResp or canelTask can race successfully
+    // Either apiResp or cancelTask can race successfully
     // , both will never happen
     const { apiResp } = yield race({
       apiResp: call(apiCallWithRetry, {
@@ -137,6 +230,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
     yield call(commitStagedChanges, {
       resourceType: 'connections',
       id: resourceId,
+      scope: SCOPES.VALUE,
     });
   } catch (e) {
     // could not save the resource...lets just return
@@ -148,6 +242,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
     selectors.resourceData,
     'connections',
     resourceId
+    // A scope is not required for the conflict
   );
 
   // if there is conflict let conflict dialog show up
@@ -163,7 +258,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 
 export default [
   takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
-
+  takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection

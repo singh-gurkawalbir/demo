@@ -1,4 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles';
+import { cloneDeep, merge } from 'lodash';
 import { DEFAULT_THEME } from '../reducers/user/preferences';
 import styleguideTheme from '../styleguide/style';
 import defaults from './defaults';
@@ -12,10 +13,7 @@ const themes = {
 
 export default name => {
   const themeName = name || DEFAULT_THEME;
-  const theme = createMuiTheme({
-    ...defaults,
-    ...themes[themeName],
-  });
+  const theme = createMuiTheme(merge(cloneDeep(defaults), themes[themeName]));
 
   // console.log(theme);
 

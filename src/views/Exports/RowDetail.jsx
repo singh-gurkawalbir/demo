@@ -30,10 +30,10 @@ export default class Exports extends Component {
           Created on {new Date(item.lastModified).toLocaleDateString()}
           <br />
           {item.connection && (
-            <span>
+            <Fragment>
               Using a {item.connection.type} connection named:
               {item.connection.name || item.connection._id}
-            </span>
+            </Fragment>
           )}
         </Typography>
         <Typography className={classes.secondaryHeading}>

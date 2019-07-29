@@ -21,8 +21,10 @@ import wrapper from './wrapper';
 import mongodb from './mongodb';
 import as2 from './as2';
 import common from './common';
+import newExport from './new';
 
 export default {
+  new: newExport,
   common,
   inputFilter,
   test,

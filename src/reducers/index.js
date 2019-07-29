@@ -5,7 +5,6 @@ import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import resourceDefaults from './resourceDefaults';
 import auth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -814,30 +813,40 @@ export function resourceStatus(
   };
 }
 
-export function resourceData(state, resourceType, id) {
+export function resourceData(state, resourceType, id, scope) {
+  if (!state || !resourceType || !id) return {};
+
   const master = resource(state, resourceType, id);
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
 
-  if (!master) return {};
+  if (!master && !patch) return { merged: {} };
 
-  const { patch, conflict } = fromSession.stagedResource(state.session, id);
   // console.log('patch:', patch);
   let merged;
+  let lastChange;
 
   if (patch) {
     // If the patch is not deep cloned, its values are also mutated and
     // on some operations can corrupt the merged result.
     const patchResult = jsonPatch.applyPatch(
-      jsonPatch.deepClone(master),
+      master ? jsonPatch.deepClone(master) : {},
       jsonPatch.deepClone(patch)
     );
 
     // console.log('patchResult', patchResult);
     merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
   }
 
   const data = {
     master,
     patch,
+    lastChange,
     merged: merged || master,
   };
 
@@ -861,31 +870,6 @@ export function resourceFormField(state, resourceType, resourceId, id) {
   if (!field) return;
 
   return field;
-}
-
-export function newResourceData(state, resourceType, id) {
-  const master = resourceDefaults[resourceType];
-  const { patch } = fromSession.stagedResource(state.session, id);
-  // console.log('patch:', patch);
-  let merged;
-
-  if (patch) {
-    const patchResult = jsonPatch.applyPatch(
-      jsonPatch.deepClone(master),
-      jsonPatch.deepClone(patch)
-    );
-
-    // console.log('patchResult', patchResult);
-    merged = patchResult.newDocument;
-  }
-
-  const data = {
-    master,
-    patch,
-    merged: merged || master,
-  };
-
-  return data;
 }
 
 export function orgUsers(state) {
@@ -919,9 +903,13 @@ export function affectedResourcesAndUsersFromAuditLogs(
     resourceId
   );
 }
-
 // #endregion
+
 // #region Session metadata selectors
+export function stagedResource(state, id, scope) {
+  return fromSession.stagedResource(state && state.session, id, scope);
+}
+
 export function optionsFromMetadata(
   state,
   connectionId,
@@ -930,7 +918,7 @@ export function optionsFromMetadata(
   mode
 ) {
   return fromSession.optionsFromMetadata(
-    (state && state.session) || null,
+    state && state.session,
     connectionId,
     applicationType,
     metadataType,
@@ -985,7 +973,20 @@ export function metadataOptionsAndResources(
     isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
   };
 }
+
+export function createdResourceId(state, tempId) {
+  return fromSession.createdResourceId(state && state.session, tempId);
+}
+
 // #endregion Session metadata selectors
+
+// #region Session token selectors
+
+export function connectionTokens(state, resourceId) {
+  return fromSession.connectionTokens(state && state.session, resourceId);
+}
+
+// #endregion
 
 export function commStatusByKey(state, key) {
   const commStatus = state && state.comms && state.comms[key];

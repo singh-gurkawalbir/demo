@@ -59,7 +59,7 @@ export default class CustomForms extends Component {
           validWhen: {
             lengthIsGreaterThan: {
               length: 3,
-              message: 'The value must have more than 3 characterrs',
+              message: 'The value must have more than 3 characters',
             },
             lengthIsLessThan: {
               length: 6,

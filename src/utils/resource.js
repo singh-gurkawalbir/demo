@@ -1,5 +1,21 @@
 import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+
+export const MODEL_PLURAL_TO_LABEL = Object.freeze({
+  agents: 'Agents',
+  accesstokens: 'API Token',
+  asynchelpers: 'Async Helper',
+  connections: 'Connection',
+  connectors: 'Connector',
+  exports: 'Export',
+  filedefinitions: 'File Definition',
+  flows: 'Flow',
+  iclients: 'IClient',
+  imports: 'Import',
+  integrations: 'Integration',
+  scripts: 'Script',
+  stacks: 'Stack',
+});
 
 /**
  * @param resourceDetails Details about the resource.
@@ -49,3 +65,35 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 
   return getRoutePath(path);
 }
+
+export const adaptorTypeMap = {
+  NetSuiteExport: 'netsuite',
+  NetSuiteImport: 'netsuite',
+  XMLImport: 'xml',
+  XMLExport: 'xml',
+  FTPExport: 'ftp',
+  FTPImport: 'ftp',
+  HTTPExport: 'http',
+  HTTPImport: 'http',
+  RESTImport: 'rest',
+  RESTExport: 'rest',
+};
+
+// This method is used for only import/export/connection. Im not sure
+// what to call this "class" of resource. It could be confusing to simply
+// all this method "getResourceType"
+export function getResourceSubType(resource) {
+  if (!resource) return {};
+
+  const { adaptorType, assistant, type } = resource;
+
+  // Since this function is intended to be used for only imp/exp/conn,
+  // we should have an adaptorType... if not, we cant proceed.
+  if (!adaptorType && !type) return {};
+
+  return { type: adaptorTypeMap[adaptorType] || type, assistant };
+}
+
+// fn to consolidate this simple expression in case we ever
+// change how we identify new resources..
+export const isNewId = id => id && id.startsWith('new');
