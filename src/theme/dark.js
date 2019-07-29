@@ -15,8 +15,6 @@ export default {
     type: 'dark',
     background: {
       paper: colors.celigoNeutral8,
-      // TODO Azhar
-      // default: '#1d232a',
       default: colors.celigoNeutral6,
       editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
@@ -25,9 +23,6 @@ export default {
       // warning: celigo.celigoWarning
       // error:
     },
-
-    // action: {[object]},
-    // Spinner color changes below
     primary: {
       backgroundColor: colors.celigoAccent1,
       color: colors.celigoWhite,
@@ -38,7 +33,7 @@ export default {
       main: colors.celigoAccent1,
     },
     text: {
-      primary: colors.celigoHelpText,
+      primary: colors.celigoNeutral1,
       link: colors.celigoNeutral6,
       linkHover: colors.celigoAccent1,
       secondary: colors.celigoNeutral4,
@@ -55,9 +50,9 @@ export default {
       h3: { color: colors.celigoWhite },
       h4: { color: colors.celigoWhite },
       h5: { color: colors.celigoWhite },
-      h6: { color: colors.celigoHelpText },
-      subtitle1: { color: colors.celigoHelpText },
-      subtitle2: { color: colors.celigoHelpText },
+      h6: { color: colors.celigoNeutral1 },
+      subtitle1: { color: colors.celigoNeutral1 },
+      subtitle2: { color: colors.celigoNeutral1 },
       overline: { color: colors.celigoWhite },
     },
     MuiButton: {
@@ -75,6 +70,9 @@ export default {
       },
       textSecondary: {
         color: colors.celigoAccent2,
+        '&::after': {
+          backgroundColor: colors.celigoAccent3,
+        },
         '&:focus': {
           color: colors.celigoAccent1,
         },
@@ -120,7 +118,7 @@ export default {
       // rounded buttons styles
       contained: {
         backgroundColor: colors.celigoNeutral2,
-        border: `1px solid ${colors.celigoNeutral2}`,
+        border: colors.celigoNeutral2,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -134,7 +132,7 @@ export default {
       },
       containedPrimary: {
         backgroundColor: colors.celigoAccent3,
-        border: `1px solid ${colors.celigoAccent3}`,
+        borderColor: colors.celigoAccent3,
         color: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
@@ -152,7 +150,7 @@ export default {
         },
       },
       containedSecondary: {
-        border: `1px solid ${colors.celigoNeutral6}`,
+        border: colors.celigoNeutral6,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -167,7 +165,7 @@ export default {
     },
     MuiAvatar: {
       colorDefault: {
-        color: colors.celigoHelpText,
+        color: colors.celigoNeutral1,
         backgroundColor: colors.celigoNeutral6,
       },
     },
