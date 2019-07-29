@@ -2,7 +2,7 @@ Round button
 ```js
 const Button = require('@material-ui/core/Button').default;
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
-const IconButton =  require('../src/components/iconButton').default;
+const IconButton =  require('../src/components/IconButton').default;
 const DownIcon = require('../src/components/icons/DownIcon').default;
 const StacksIcon = require('../src/components/icons/StacksIcon').default;
 
@@ -29,7 +29,7 @@ Rectangle Buttons
 ```js
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
-const IconButton =  require('../src/components/iconButton').default;
+const IconButton =  require('../src/components/IconButton').default;
 const DownIcon = require('../src/components/icons/DownIcon').default;
 
 <SpacedContainer>
@@ -49,7 +49,7 @@ Text Buttons
 ```js
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
-const IconButton =  require('../src/components/iconButton').default;
+const IconButton =  require('../src/components/IconButton').default;
 const DownIcon = require('../src/components/icons/DownIcon').default;
 
 <SpacedContainer>
