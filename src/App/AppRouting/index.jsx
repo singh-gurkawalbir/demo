@@ -26,9 +26,7 @@ const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
 const StandaloneResource = loadable(() =>
-  import(
-    /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'
-  )
+  import(/* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource')
 );
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
