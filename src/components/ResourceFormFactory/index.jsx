@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import GenericResourceForm from './GenericResourceForm';
@@ -7,6 +7,7 @@ import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
+import formFactory from '../../forms/formFactory';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
@@ -14,19 +15,34 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     resourceType,
     resourceId
   );
+  const { merged: resource } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  const { patch: allPatches } = selectors.stagedResource(
+    state,
+    resourceId,
+    'meta'
+  );
+  const lastPatchtimestamp =
+    allPatches &&
+    allPatches[allPatches.length - 1] &&
+    allPatches[allPatches.length - 1].timestamp;
 
   return {
     formState,
+    resource,
+    lastPatchtimestamp,
   };
 };
 
-const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
-  handleSubmitForm: values => {
-    // console.log(`request resource:`, resourceType, resourceId);
+const mapDispatchToProps = dispatch => ({
+  handleSubmitForm: (resourceType, resourceId) => values => {
     dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
   },
 
-  handleInitForm: () => {
+  handleInitForm: (resourceType, resourceId, isNew) => {
     const skipCommit =
       isNew && ['imports', 'exports', 'connections'].includes(resourceType);
 
@@ -35,7 +51,7 @@ const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
     );
   },
 
-  handleClearResourceForm: () => {
+  handleClearResourceForm: (resourceType, resourceId) => {
     dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
@@ -43,33 +59,32 @@ const mapDispatchToProps = (dispatch, { resourceType, resourceId, isNew }) => ({
 export const ResourceFormFactory = props => {
   const {
     resourceType,
-    handleSubmitForm,
+    handleSubmitForm: submitForm,
     formState,
     connectionType,
     handleInitForm,
     handleClearResourceForm,
     onSubmitComplete,
+    resource,
+    resourceId,
+    isNew,
+    lastPatchtimestamp,
   } = props;
-  const [componentRemount, setComponentRemount] = useState(true);
+  const [count, setCount] = useState(0);
+  const handleSubmitForm = submitForm(resourceType, resourceId);
 
-  // This useEffect is executed right after any render
-  // and the initial mount of the component
-  // you can restrict its execution to be depended on a second
-  // prop like the example below, the function you return from
-  // this useEffect is executed when the component remounts
-  // Another possible use case is in the second argument you can
-  // pass an empty array. This indicates the useEffect is not
-  // depended on any prop and is executed when the component
-  // mounts and remounts
   useEffect(() => {
-    if (componentRemount) setComponentRemount(false);
+    handleInitForm(resourceType, resourceId, isNew);
 
-    handleInitForm();
-
-    return handleClearResourceForm;
-    // TODO: Surya
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.resourceId]);
+    return () => handleClearResourceForm(resourceType, resourceId);
+  }, [
+    handleClearResourceForm,
+    handleInitForm,
+    isNew,
+    lastPatchtimestamp,
+    resourceId,
+    resourceType,
+  ]);
 
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
@@ -83,16 +98,24 @@ export const ResourceFormFactory = props => {
       onSubmitComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* onSubmitComplete */]);
+  }, [formState.submitComplete /* , onSubmitComplete */]);
 
-  if (!formState.initComplete || componentRemount) {
+  const { optionsHandler } = useMemo(
+    () => formFactory.getResourceFormAssets({ resourceType, resource, isNew }),
+    [isNew, resource, resourceType]
+  );
+  const { fieldMeta } = formState;
+
+  useEffect(() => {
+    setCount(count => count + 1);
+  }, [fieldMeta]);
+
+  if (!formState.initComplete) {
     return <Typography>Initializing Form</Typography>;
   }
 
   let Form;
-  const { fieldMeta, optionsHandler, isNew } = formState;
   const commonProps = {
-    handleInitForm,
     fieldMeta,
     optionsHandler,
     handleSubmitForm,
@@ -109,7 +132,7 @@ export const ResourceFormFactory = props => {
     Form = GenericResourceForm;
   }
 
-  return <Form {...props} {...formProps} />;
+  return <Form key={count} {...props} {...formProps} />;
 };
 
 export default connect(

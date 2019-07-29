@@ -116,6 +116,20 @@ const resource = {
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
       }),
+
+    requestToken: (resourceId, values) =>
+      action(actionTypes.TOKEN.REQUEST, {
+        resourceId,
+        values,
+      }),
+    saveToken: (resourceId, fieldsToBeSetWithValues) =>
+      action(actionTypes.TOKEN.RECEIVED, {
+        resourceId,
+        fieldsToBeSetWithValues,
+      }),
+    requestTokenFailed: (resourceId, message) =>
+      action(actionTypes.TOKEN.FAILED, { resourceId, message }),
+    clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
   },
 };
 // #endregion
@@ -240,21 +254,11 @@ const resourceForm = {
       isNew,
       skipCommit,
     }),
-  initComplete: (
-    resourceType,
-    resourceId,
-    fieldMeta,
-    optionsHandler,
-    preSubmit,
-    isNew,
-    skipCommit
-  ) =>
+  initComplete: (resourceType, resourceId, fieldMeta, isNew, skipCommit) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
       resourceType,
       fieldMeta,
-      optionsHandler,
-      preSubmit,
       isNew,
       skipCommit,
     }),

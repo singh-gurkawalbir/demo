@@ -13,7 +13,7 @@ const styles = () => ({
   },
 });
 
-function MaterialUiTextField(props) {
+export function MaterialUiTextField(props) {
   const {
     classes,
     description,

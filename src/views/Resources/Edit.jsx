@@ -27,7 +27,6 @@ const mapStateToProps = (state, { match }) => {
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
-  const formState = selectors.resourceFormState(state, resourceType, id);
   const newResourceId = selectors.createdResourceId(state, id);
   const metaPatches =
     (metaChanges.patch &&
@@ -42,7 +41,6 @@ const mapStateToProps = (state, { match }) => {
     connection,
     id,
     newResourceId,
-    fieldMeta: formState.fieldMeta,
   };
 };
 
@@ -96,14 +94,13 @@ class Edit extends Component {
   state = {
     editMode: false,
     showEditor: false,
-    formKey: 1,
   };
 
   handleToggleEdit = () => {
     const { handleInitCustomResourceForm } = this.props;
     const { editMode } = this.state;
 
-    if (editMode) {
+    if (!editMode) {
       handleInitCustomResourceForm();
     }
 
@@ -117,15 +114,6 @@ class Edit extends Component {
   componentDidMount() {
     this.setState({ editMode: false, showEditor: false });
   }
-  handleRemountResourceComponent = () => {
-    // We need to re-mount the react-forms-processor component
-    // to reset the values back to defaults....
-    const formKey = this.state.formKey + 1;
-
-    this.setState({
-      formKey,
-    });
-  };
 
   render() {
     const {
@@ -152,7 +140,7 @@ class Edit extends Component {
       );
     }
 
-    const { editMode, showEditor, formKey } = this.state;
+    const { editMode, showEditor } = this.state;
     const { merged, lastChange, conflict, scope } = metaChanges;
     const allowsCustomForm =
       !isNewId(id) &&
@@ -225,10 +213,7 @@ class Edit extends Component {
                   <Button
                     size="small"
                     color="secondary"
-                    onClick={() => {
-                      handleUndoChange();
-                      this.handleRemountResourceComponent();
-                    }}>
+                    onClick={handleUndoChange}>
                     Undo({metaPatches})
                   </Button>
                 )}
@@ -254,10 +239,7 @@ class Edit extends Component {
                   size="small"
                   color="secondary"
                   disabled={metaPatches === 0}
-                  onClick={() => {
-                    handleUndoAllMetaChanges();
-                    this.handleRemountResourceComponent();
-                  }}>
+                  onClick={handleUndoAllMetaChanges}>
                   Cancel Meta Changes
                 </Button>
               </div>
@@ -277,12 +259,12 @@ class Edit extends Component {
 
         <div className={classes.editableFields}>
           <ResourceForm
-            key={formKey}
             editMode={editMode}
             resourceType={resourceType}
             resourceId={id}
             connectionType={type}
             connection={connection}
+            cancelButtonLabel="Reset"
           />
 
           {conflict && (

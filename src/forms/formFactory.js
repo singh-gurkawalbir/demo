@@ -180,7 +180,7 @@ const applyingMissedOutFieldMetaProperties = (
 
   if (!Object.keys(field).includes('defaultValue')) {
     // console.log(`default value for ${merged.fieldId} used`);
-    field.defaultValue = get(resource, field.id);
+    field.defaultValue = get(resource, field.id, '');
   }
 
   if (!field.helpText && !field.helpKey) {

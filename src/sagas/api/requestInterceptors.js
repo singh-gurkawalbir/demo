@@ -89,8 +89,6 @@ export function* onSuccessSaga(response, action) {
   // we could use the uri but some of them have api prefixed some dont
   const { path, method } = action.request.meta;
 
-  yield put(actions.api.complete(path, method));
-
   // if error in response
 
   // This api does not support 204 very well so
@@ -100,11 +98,14 @@ export function* onSuccessSaga(response, action) {
     yield call(checkToThrowSessionValidationException, response);
   } catch (e) {
     yield call(unauthenticateAndDeleteProfile);
+    yield put(actions.api.complete(path, method));
+
     throw e;
   }
 
   if (response.data === '') {
     response.data = undefined;
+    yield put(actions.api.complete(path, method));
 
     return response;
   }
@@ -122,6 +123,8 @@ export function* onSuccessSaga(response, action) {
     if (errors) yield call(throwExceptionUsingTheResponse, response);
   }
 
+  yield put(actions.api.complete(path, method));
+
   return response;
 }
 
@@ -131,7 +134,11 @@ export function* onErrorSaga(error, action) {
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
-    if (error.status === 401 || error.status === 403) {
+    // TODO:whitelist the generate token for now until the backend team fixes it
+    if (
+      !path.endsWith('generate-token') &&
+      (error.status === 401 || error.status === 403)
+    ) {
       yield call(unauthenticateAndDeleteProfile);
       const hidden = true;
 

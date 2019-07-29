@@ -32,14 +32,12 @@ export default class GenericResourceForm extends Component {
   render() {
     const { formKey } = this.state;
     const {
-      saveButtonLabel = 'Save',
+      submitButtonLabel = 'Save',
       classes,
       resourceType,
-      resource,
+      resource = {},
       handleSubmitForm,
-      handleInitForm,
       children: actionButtons,
-      connection,
       optionsHandler,
       fieldMeta,
       disableButton,
@@ -53,20 +51,16 @@ export default class GenericResourceForm extends Component {
     return (
       <DynaForm
         key={formKey}
-        onMetaChange={() => {
-          handleInitForm();
-          this.handleResetFormValues();
-        }}
+        resourceId={resource._id}
+        resourceType={resourceType}
         {...rest}
         optionsHandler={optionsHandler}
         fieldMeta={fieldMeta}>
         <div className={classes.actions}>
           {actionButtons}
-
           <Button
             onClick={onCancel || this.handleResetFormValues}
             className={classes.actionButton}
-            size="small"
             variant="contained">
             {cancelButtonLabel}
           </Button>
@@ -74,7 +68,7 @@ export default class GenericResourceForm extends Component {
             disabled={disableButton}
             onClick={handleSubmitForm}
             className={classes.actionButton}>
-            {saveButtonLabel}
+            {submitButtonLabel}
           </DynaSubmit>
         </div>
       </DynaForm>
