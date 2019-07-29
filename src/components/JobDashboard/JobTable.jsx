@@ -1,5 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,9 +7,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Checkbox from '@material-ui/core/Checkbox';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
+import { difference } from 'lodash';
 import JobDetail from './JobDetail';
+import { JOB_STATUS } from '../../utils/constants';
 
 const styles = theme => ({
   root: {
@@ -36,60 +35,59 @@ const styles = theme => ({
 
 function JobTable({
   classes,
-  integrationId,
-  flowId,
-  filters,
   rowsPerPage = 10,
   onSelectChange,
+  jobs,
+  selectedJobs,
+  userPermissionsOnIntegration,
 }) {
-  const dispatch = useDispatch();
-  const jobs = useSelector(state =>
-    selectors.flowJobList(state, integrationId, flowId)
-  );
-
-  window.JOBS = jobs;
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedJobs, setSelectedJobs] = useState([]);
-
-  useEffect(
-    () => () => {
-      dispatch(actions.job.clear());
-    },
-    [dispatch, filters]
-  );
-
-  useEffect(() => {
-    if (!jobs.length) {
-      dispatch(
-        actions.job.requestCollection({ integrationId, flowId, filters })
-      );
-    }
-  }, [dispatch, filters, flowId, integrationId, jobs.length]);
-
   const jobsInCurrentPage = jobs.slice(
     currentPage * rowsPerPage,
     (currentPage + 1) * rowsPerPage
   );
+  const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
+    j =>
+      [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+        j.uiStatus
+      ) &&
+      (j.retriable || j.numError > 0)
+  );
+  const selectableJobIdsInCurrentPage = selectableJobsInCurrentPage.map(
+    j => j._id
+  );
+  const selectedJobIds = Object.keys(selectedJobs).filter(
+    jobId => selectedJobs[jobId] && selectedJobs[jobId].selected
+  );
+  const isSelectAllChecked =
+    selectableJobIdsInCurrentPage.length > 0 &&
+    difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
   }
 
-  function handleSelectChange(selected, jobId) {
-    let jobIds = [...selectedJobs];
+  function handleSelectChange(job, jobId) {
+    const jobIds = { ...selectedJobs, [jobId]: job };
 
-    if (selected) {
-      jobIds.push(jobId);
-    } else {
-      const index = jobIds.indexOf(jobId);
+    onSelectChange(jobIds);
+  }
 
-      if (index > -1) {
-        jobIds = [...jobIds.slice(0, index), ...jobIds.slice(index + 1)];
+  function handleSelectAllChange(event) {
+    const { checked } = event.target;
+    const jobIds = { ...selectedJobs };
+
+    selectableJobIdsInCurrentPage.forEach(jobId => {
+      const job = jobIds[jobId] || {};
+
+      job.selected = checked;
+
+      if (!checked) {
+        job.selectedChildJobIds = [];
       }
-    }
 
-    setSelectedJobs(jobIds);
-
+      jobIds[jobId] = job;
+    });
     onSelectChange(jobIds);
   }
 
@@ -117,9 +115,9 @@ function JobTable({
           <TableRow>
             <TableCell padding="checkbox">
               <Checkbox
-                // indeterminate={numSelected > 0 && numSelected < rowCount}
-                // checked={numSelected === rowCount}
-                // onChange={onSelectAllClick}
+                disabled={jobs.length === 0}
+                checked={isSelectAllChecked}
+                onChange={handleSelectAllChange}
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>
@@ -142,6 +140,8 @@ function JobTable({
               key={job._id}
               job={job}
               onSelectChange={handleSelectChange}
+              selectedJobs={selectedJobs}
+              userPermissionsOnIntegration={userPermissionsOnIntegration}
             />
           ))}
         </TableBody>

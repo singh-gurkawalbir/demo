@@ -1,30 +1,37 @@
-import { useState, useEffect } from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
+import JobActionsMenu from './JobActionsMenu';
 
-export default function JobDetail({
+export default function ChildJobDetail({
   job,
   parentJob,
   onSelectChange,
-  parentJobSelected,
-  selectedJobIds,
+  selectedJobs,
+  userPermissionsOnIntegration,
 }) {
-  const [isSelected, setIsSelected] = useState(false);
   const isSelectable = !!(job.retriable || job.numError);
+  const parentSelectionInfo = selectedJobs[parentJob._id] || {
+    selected: false,
+    selectedChildJobIds: [],
+  };
+  const isSelected =
+    parentSelectionInfo.selected ||
+    (parentSelectionInfo.selectedChildJobIds &&
+      parentSelectionInfo.selectedChildJobIds.includes(job._id));
 
-  useEffect(() => {
-    if (parentJobSelected && !selectedJobIds.includes(job._id)) {
-      onSelectChange(true, job._id);
-    }
-
-    setIsSelected(selectedJobIds.includes(job._id) || parentJobSelected);
-  }, [job._id, onSelectChange, parentJobSelected, selectedJobIds]);
+  if (
+    isSelectable &&
+    isSelected &&
+    (!parentSelectionInfo.selectedChildJobIds ||
+      !parentSelectionInfo.selectedChildJobIds.includes(job._id))
+  ) {
+    onSelectChange(true, job._id, true);
+  }
 
   function handleSelectChange(event) {
-    // setIsSelected(event.target.checked);
     onSelectChange(event.target.checked, job._id);
   }
 
@@ -49,7 +56,12 @@ export default function JobDetail({
       <TableCell>{getPages(job, parentJob)}</TableCell>
       <TableCell>{job.duration}</TableCell>
       <TableCell>{job.endedAtAsString}</TableCell>
-      <TableCell>Actions</TableCell>
+      <TableCell>
+        <JobActionsMenu
+          job={job}
+          userPermissionsOnIntegration={userPermissionsOnIntegration}
+        />
+      </TableCell>
     </TableRow>
   );
 }

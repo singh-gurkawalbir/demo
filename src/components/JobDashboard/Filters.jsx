@@ -27,7 +27,7 @@ function Filters({
   classes,
   integrationId,
   onFiltersChange,
-  selectedJobIds = [],
+  numJobsSelected = 0,
 }) {
   const [_flowId, setFlowId] = useState('all');
   const [status, setStatus] = useState('all');
@@ -82,13 +82,13 @@ function Filters({
         Retry All Jobs
       </Button>
       <Button variant="contained" color="primary">
-        Retry Selected {selectedJobIds.length} Jobs
+        Retry Selected {numJobsSelected} Jobs
       </Button>
       <Button variant="contained" color="primary">
         Resolve All Jobs
       </Button>
       <Button variant="contained" color="primary">
-        Resolve Selected {selectedJobIds.length} Jobs
+        Resolve Selected {numJobsSelected} Jobs
       </Button>
 
       <form className={classes.root} autoComplete="off">

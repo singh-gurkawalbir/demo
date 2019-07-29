@@ -13,12 +13,17 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
+import getRequestOptions from '../../utils/requestOptions';
+import openExternalUrl from '../../utils/util';
 
 export function* getJobFamily({ jobId }) {
-  const path = `/jobs/${jobId}/family`;
+  const requestOptions = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
 
   try {
-    const job = yield call(apiCallWithRetry, { path });
+    const job = yield call(apiCallWithRetry, { path, opts });
 
     yield put(actions.job.receivedFamily({ job }));
 
@@ -64,7 +69,8 @@ export function* requestJobCollection({
   flowId = undefined,
   filters = {},
 }) {
-  let path = '/jobs';
+  const requestOptions = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION);
+  const { path, opts } = requestOptions;
   let queryString = '';
   const jobFilters = { ...filters, integrationId };
 
@@ -92,15 +98,20 @@ export function* requestJobCollection({
     queryString += `type_in[${idx}]=${encodeURIComponent(val)}`;
   });
 
-  if (queryString) {
-    path = `${path}?${queryString}`;
-  }
-
   try {
-    const collection = yield call(apiCallWithRetry, { path });
+    const collection = yield call(apiCallWithRetry, {
+      path: `${path}?${queryString}`,
+      opts,
+    });
 
     yield put(
       actions.job.receivedCollection({ collection, integrationId, flowId })
+    );
+    yield put(
+      actions.job.getInProgressJobStatus({
+        integrationId,
+        flowId,
+      })
     );
   } catch (error) {
     // generic message to the user that the
@@ -116,8 +127,86 @@ export function* getJobCollection(options) {
   yield cancel(watcher);
 }
 
+export function* downloadDiagnosticsFile({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+    openExternalUrl({ url: response.signedURL });
+  } catch (e) {
+    return true;
+  }
+}
+
+export function* cancelJob({ jobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    const job = yield call(apiCallWithRetry, { path, opts });
+
+    yield put(actions.job.receivedFamily({ job }));
+
+    return job;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* resolveCommit({ jobId, parentJobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+
+    yield call(getJobFamily, { jobId: parentJobId || jobId });
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* resolve({ jobId, parentJobId }) {
+  yield put(actions.job.resolveAllPending());
+  yield put(actions.job.resolveInit({ jobId, parentJobId }));
+  const undoOrCommitAction = yield take([
+    actionTypes.JOB.RESOLVE_COMMIT,
+    actionTypes.JOB.RESOLVE_UNDO,
+    actionTypes.JOB.RESOLVE_ALL_PENDING,
+  ]);
+
+  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_COMMIT) {
+    if (undoOrCommitAction.jobId === jobId) {
+      yield call(resolveCommit, { jobId, parentJobId });
+    }
+  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
+    yield call(resolveCommit, { jobId, parentJobId });
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
-  takeEvery(actionTypes.JOB.RECEIVED_COLLECTION, startPollingForInProgressJobs),
+  takeEvery(
+    actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
+    startPollingForInProgressJobs
+  ),
+  takeEvery(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, downloadDiagnosticsFile),
+  takeEvery(actionTypes.JOB.CANCEL, cancelJob),
+  // takeEvery(actionTypes.JOB.RESOLVE_COMMIT, resolve),
+  takeEvery(actionTypes.JOB.RESOLVE, resolve),
 ];

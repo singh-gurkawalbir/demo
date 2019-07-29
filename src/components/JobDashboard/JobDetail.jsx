@@ -7,11 +7,13 @@ import ChevronRight from '@material-ui/icons/ChevronRight';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { difference } from 'lodash';
 import actions from '../../actions';
 import ChildJobDetail from './ChildJobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from './util';
+import JobActionsMenu from './JobActionsMenu';
 
 const styles = theme => ({
   icon: {
@@ -19,21 +21,38 @@ const styles = theme => ({
   },
 });
 
-function JobDetail({ job, onSelectChange }) {
+function JobDetail({
+  job,
+  selectedJobs,
+  onSelectChange,
+  userPermissionsOnIntegration,
+}) {
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
-  const [selectedJobIds, setSelectedJobIds] = useState([]);
-  const allChildsSelected =
-    selectedJobIds.length > 0 &&
-    job.children &&
-    job.children.filter(j => j.numError > 0).length === selectedJobIds.length;
+  const isSelected = !!(
+    selectedJobs[job._id] && selectedJobs[job._id].selected
+  );
+  const childJobIds = job.children
+    .filter(
+      cJob =>
+        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+          cJob.uiStatus
+        ) &&
+        (cJob.retriable || cJob.numError > 0)
+    )
+    .map(cJob => cJob._id);
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
 
     if (!expanded && (!job.children || !job.children.length)) {
       dispatch(actions.job.requestFamily({ jobId: job._id }));
+    }
+  }
+
+  if (isSelected) {
+    if (!expanded && (!job.children || !job.children.length)) {
+      handleExpandCollapseClick();
     }
   }
 
@@ -44,27 +63,61 @@ function JobDetail({ job, onSelectChange }) {
       handleExpandCollapseClick();
     }
 
-    setIsSelected(checked);
-    onSelectChange(checked, job._id);
-  }
+    const jobIds = { ...selectedJobs };
+    const currJob = jobIds[job._id] || {};
 
-  function handleChildSelectChange(selected, jobId) {
-    let jobIds = [...selectedJobIds];
+    currJob.selected = checked;
 
-    if (selected) {
-      jobIds.push(jobId);
+    if (checked) {
+      currJob.selectedChildJobIds = childJobIds;
     } else {
-      const index = jobIds.indexOf(jobId);
-
-      if (index > -1) {
-        jobIds = [...jobIds.slice(0, index), ...jobIds.slice(index + 1)];
-      }
-
-      setIsSelected(false);
+      currJob.selectedChildJobIds = [];
     }
 
-    setSelectedJobIds(jobIds);
-    onSelectChange(selected, jobId);
+    onSelectChange(currJob, job._id);
+  }
+
+  function handleChildSelectChange(
+    selected,
+    jobId,
+    ignoreUpdatingParentStatus
+  ) {
+    const jobIds = { ...selectedJobs };
+    const currJob = jobIds[job._id] || {};
+
+    if (!currJob.selectedChildJobIds) {
+      currJob.selectedChildJobIds = [];
+    }
+
+    const index = currJob.selectedChildJobIds.indexOf(jobId);
+
+    if (selected) {
+      if (index === -1) {
+        currJob.selectedChildJobIds.push(jobId);
+      }
+
+      const notSelectedChildJobIds = difference(
+        childJobIds,
+        currJob.selectedChildJobIds
+      );
+
+      if (!ignoreUpdatingParentStatus) {
+        currJob.selected = notSelectedChildJobIds.length === 0;
+      }
+    } else {
+      if (index > -1) {
+        currJob.selectedChildJobIds = [
+          ...currJob.selectedChildJobIds.slice(0, index),
+          ...currJob.selectedChildJobIds.slice(index + 1),
+        ];
+      }
+
+      if (!ignoreUpdatingParentStatus) {
+        currJob.selected = false;
+      }
+    }
+
+    onSelectChange(currJob, job._id);
   }
 
   return (
@@ -73,7 +126,7 @@ function JobDetail({ job, onSelectChange }) {
         <TableCell padding="checkbox">
           <Checkbox
             disabled={!(job.retriable || job.numError)}
-            checked={isSelected || allChildsSelected}
+            checked={isSelected}
             onChange={event => handleSelectChange(event)}
           />
         </TableCell>
@@ -95,7 +148,12 @@ function JobDetail({ job, onSelectChange }) {
         <TableCell>{getPages(job)}</TableCell>
         <TableCell>{job.duration}</TableCell>
         <TableCell>{job.endedAtAsString}</TableCell>
-        <TableCell>Actions</TableCell>
+        <TableCell>
+          <JobActionsMenu
+            job={job}
+            userPermissionsOnIntegration={userPermissionsOnIntegration}
+          />
+        </TableCell>
       </TableRow>
       {expanded &&
         job.children &&
@@ -105,8 +163,8 @@ function JobDetail({ job, onSelectChange }) {
             job={cJob}
             parentJob={job}
             onSelectChange={handleChildSelectChange}
-            parentJobSelected={isSelected}
-            selectedJobIds={selectedJobIds}
+            selectedJobs={selectedJobs}
+            userPermissionsOnIntegration={userPermissionsOnIntegration}
           />
         ))}
     </Fragment>

@@ -57,6 +57,36 @@ export default function getRequestOptions(
         path: `/accesstokens/${resourceId}/generate`,
         opts: { method: 'POST' },
       };
+    case actionTypes.JOB.REQUEST_COLLECTION:
+      return {
+        path: '/jobs',
+        opts: { method: 'GET' },
+      };
+    case actionTypes.JOB.REQUEST_FAMILY:
+      return {
+        path: `/jobs/${resourceId}/family`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL:
+      return {
+        path: `/jobs/${resourceId}/diagnostics`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.JOB.CANCEL:
+      return {
+        path: `/jobs/${resourceId}/cancel`,
+        opts: { method: 'PUT' },
+      };
+    case actionTypes.JOB.RESOLVE_COMMIT:
+      return {
+        path: `/jobs/${resourceId}/resolve`,
+        opts: { method: 'PUT' },
+      };
+    case actionTypes.FLOW.RUN:
+      return {
+        path: `/flows/${resourceId}/run`,
+        opts: { method: 'POST' },
+      };
     default:
       return {};
   }

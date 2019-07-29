@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
 
@@ -27,15 +31,58 @@ const styles = theme => ({
 });
 
 function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
+  const dispatch = useDispatch();
+  const userPermissionsOnIntegration = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId)
+  );
+  const jobs = useSelector(state =>
+    selectors.flowJobList(state, integrationId, flowId)
+  );
   const [filters, setFilters] = useState({});
-  const [selectedJobIds, setSelectedJobIds] = useState([]);
+  const [selectedJobs, setSelectedJobs] = useState({});
+  const [numJobsSelected, setNumJobsSelected] = useState(0);
+
+  useEffect(
+    () => () => {
+      dispatch(actions.job.clear());
+    },
+    [dispatch, filters]
+  );
+
+  useEffect(() => {
+    if (!jobs.length) {
+      dispatch(
+        actions.job.requestCollection({ integrationId, flowId, filters })
+      );
+    }
+  }, [dispatch, filters, flowId, integrationId, jobs.length]);
+
+  useEffect(() => {
+    let jobsSelected = 0;
+
+    Object.keys(selectedJobs).forEach(jobId => {
+      if (selectedJobs[jobId].selected) {
+        jobsSelected += 1;
+      }
+
+      if (selectedJobs[jobId].selectedChildJobIds) {
+        jobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
+      }
+    });
+
+    if (jobsSelected !== numJobsSelected) {
+      setNumJobsSelected(jobsSelected);
+    }
+  }, [selectedJobs, numJobsSelected]);
 
   function handleFiltersChange(newFilters) {
-    setFilters(newFilters);
+    if (!isEqual(filters, newFilters)) {
+      setFilters(newFilters);
+    }
   }
 
-  function handleSelectChange(jobIds) {
-    setSelectedJobIds(jobIds);
+  function handleSelectChange(selJobs) {
+    setSelectedJobs(selJobs);
   }
 
   return (
@@ -44,7 +91,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         integrationId={integrationId}
         flowId={flowId}
         onFiltersChange={handleFiltersChange}
-        selectedJobIds={selectedJobIds}
+        numJobsSelected={numJobsSelected}
       />
       <JobTable
         integrationId={integrationId}
@@ -52,6 +99,9 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         filters={filters}
         rowsPerPage={rowsPerPage}
         onSelectChange={handleSelectChange}
+        jobs={jobs}
+        selectedJobs={selectedJobs}
+        userPermissionsOnIntegration={userPermissionsOnIntegration}
       />
     </LoadResources>
   );

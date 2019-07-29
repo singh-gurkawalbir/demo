@@ -12,65 +12,221 @@ function parseJobs(jobs) {
   return { flowJobs, bulkRetryJobs };
 }
 
-export default (state = {}, action) => {
-  const { type, collection, job, integrationId, flowId } = action;
+const defaultState = { flowJobs: [], bulkRetryJobs: [] };
+
+export default (state = defaultState, action) => {
+  const { type, collection, job, jobId, parentJobId } = action;
 
   if (!type) {
     return state;
   }
 
   if (type === actionTypes.JOB.CLEAR) {
-    return {};
+    return defaultState;
   }
 
   if (type === actionTypes.JOB.RECEIVED_COLLECTION) {
     const { flowJobs, bulkRetryJobs } = parseJobs(collection || []);
 
     return {
-      [[`${integrationId}_${flowId || 'all'}`]]: {
-        flowJobs,
-        bulkRetryJobs,
-      },
+      flowJobs,
+      bulkRetryJobs,
     };
   } else if (type === actionTypes.JOB.RECEIVED_FAMILY) {
-    let key = [`${job._integrationId}_${job._flowId}`];
-
-    if (!state[key]) {
-      key = [`${job._integrationId}_all`];
-    }
-
-    if (!state[key]) {
-      return state;
-    }
-
     if (job.type === JOB_TYPES.FLOW) {
-      const index = state[key].flowJobs.findIndex(j => j._id === job._id);
+      const index = state.flowJobs.findIndex(j => j._id === job._id);
 
       if (index > -1) {
         const newCollection = [
-          ...state[key].flowJobs.slice(0, index),
+          ...state.flowJobs.slice(0, index),
           {
+            ...state.flowJobs[index],
             ...job,
           },
-          ...state[key].flowJobs.slice(index + 1),
+          ...state.flowJobs.slice(index + 1),
         ];
 
-        return { [key]: { ...state[key], flowJobs: newCollection } };
+        return { ...state, flowJobs: newCollection };
+      } else if (job.status === JOB_STATUS.QUEUED) {
+        return { ...state, flowJobs: [job, ...state.flowJobs] };
       }
     } else if (job.type === JOB_TYPES.BULK_RETRY) {
-      const index = state[key].bulkRetryJobs.findIndex(j => j._id === job._id);
+      const index = state.bulkRetryJobs.findIndex(j => j._id === job._id);
 
       if (index > -1) {
         const newCollection = [
-          ...state[key].bulkRetryJobs.slice(0, index),
+          ...state.bulkRetryJobs.slice(0, index),
           {
             ...job,
           },
-          ...state[key].bulkRetryJobs.slice(index + 1),
+          ...state.bulkRetryJobs.slice(index + 1),
         ];
 
-        return { [key]: { ...state[key], bulkRetryJobs: newCollection } };
+        return { ...state, bulkRetryJobs: newCollection };
       }
+    }
+  } else if (type === actionTypes.JOB.RESOLVE_INIT) {
+    let childJobIndex;
+    let childJob;
+    let parentJobIndex;
+    let parentJob;
+
+    if (parentJobId) {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+
+        if (parentJob.children.length > 0) {
+          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+
+          if (childJobIndex > -1) {
+            childJob = parentJob.children[childJobIndex];
+
+            parentJob = {
+              ...parentJob,
+              numError: parentJob.numError - childJob.numError,
+              numResolved: parentJob.numResolved + childJob.numError,
+              __original: {
+                numError: parentJob.numError,
+                numResolved: parentJob.numResolved,
+              },
+              children: [
+                ...parentJob.children.slice(0, childJobIndex),
+                {
+                  ...childJob,
+                  numError: 0,
+                  numResolved: childJob.numResolved + childJob.numError,
+                  __original: {
+                    numError: childJob.numError,
+                    numResolved: childJob.numResolved,
+                  },
+                },
+                ...parentJob.children.slice(childJobIndex + 1),
+              ],
+            };
+          }
+        }
+      }
+    } else {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+        let children = [];
+
+        if (parentJob.children && parentJob.children.length) {
+          children = parentJob.children.map(cJob => {
+            if (!cJob.numError) {
+              return cJob;
+            }
+
+            return {
+              ...cJob,
+              __original: {
+                numError: cJob.numError,
+                numResolved: cJob.numResolved,
+              },
+              numError: 0,
+              numResolved: cJob.numResolved + cJob.numError,
+            };
+          });
+        }
+
+        parentJob = {
+          ...parentJob,
+          numError: 0,
+          numResolved: (parentJob.numResolved || 0) + (parentJob.numError || 0),
+          __original: {
+            numError: parentJob.numError,
+            numResolved: parentJob.numResolved,
+          },
+          children,
+        };
+      }
+    }
+
+    if (parentJobIndex > -1) {
+      const newCollection = [
+        ...state.flowJobs.slice(0, parentJobIndex),
+        parentJob,
+        ...state.flowJobs.slice(parentJobIndex + 1),
+      ];
+
+      return { ...state, flowJobs: newCollection };
+    }
+  } else if (type === actionTypes.JOB.RESOLVE_UNDO) {
+    let childJobIndex;
+    let childJob;
+    let parentJobIndex;
+    let parentJob;
+
+    if (parentJobId) {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+        childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+
+        if (childJobIndex > -1) {
+          childJob = parentJob.children[childJobIndex];
+          childJob = {
+            ...childJob,
+            numError: childJob.__original.numError,
+            numResolved: childJob.__original.numResolved,
+            __original: {},
+          };
+
+          parentJob = {
+            ...parentJob,
+            numError: parentJob.numError + childJob.numError,
+            numResolved: parentJob.numResolved - childJob.numError,
+            children: [
+              ...parentJob.children.slice(0, childJobIndex),
+              childJob,
+              ...parentJob.children.slice(childJobIndex + 1),
+            ],
+          };
+        }
+      }
+    } else {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+        const children = parentJob.children.map(cJob => {
+          if (!cJob.__original || !cJob.__original.numError) {
+            return cJob;
+          }
+
+          return {
+            ...cJob,
+            numError: cJob.__original.numError,
+            numResolved: cJob.__original.numResolved,
+            __original: {},
+          };
+        });
+
+        parentJob = {
+          ...parentJob,
+          ...{
+            numError: parentJob.__original.numError,
+            numResolved: parentJob.__original.numResolved,
+          },
+          __original: {},
+          children,
+        };
+      }
+    }
+
+    if (parentJobIndex > -1) {
+      const newCollection = [
+        ...state.flowJobs.slice(0, parentJobIndex),
+        parentJob,
+        ...state.flowJobs.slice(parentJobIndex + 1),
+      ];
+
+      return { ...state, flowJobs: newCollection };
     }
   }
 
@@ -78,30 +234,23 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function jobList(state, integrationId, flowId) {
-  const key = [`${integrationId}_${flowId || 'all'}`];
-
-  if (!state || !state[key]) {
-    return {
-      flowJobs: [],
-      bulkRetryJobs: [],
-    };
+export function jobList(state) {
+  if (!state) {
+    return defaultState;
   }
 
-  return state[key];
+  return state;
 }
 
-export function flowJobList(state, integrationId, flowId) {
-  const key = [`${integrationId}_${flowId || 'all'}`];
-
-  if (!state || !state[key]) {
-    return [];
+export function flowJobList(state) {
+  if (!state) {
+    return defaultState.flowJobs;
   }
 
-  const { flowJobs } = state[key];
+  const { flowJobs, bulkRetryJobs } = state;
   const flowJobIds = getFlowJobIdsThatArePartOfBulkRetryJobs(
     flowJobs,
-    state[key].bulkRetryJobs
+    bulkRetryJobs
   );
 
   return flowJobs.map(job => {
@@ -111,6 +260,7 @@ export function flowJobList(state, integrationId, flowId) {
       numSuccess: job.numSuccess || 0,
       numIgnore: job.numIgnore || 0,
       numError: job.numError || 0,
+      numResolved: job.numResolved || 0,
       numPagesGenerated: job.numPagesGenerated || 0,
       numPagesProcessed: 0,
       doneExporting: job.doneExporting,
@@ -136,6 +286,8 @@ export function flowJobList(state, integrationId, flowId) {
         const additionalChildProps = {
           uiStatus: cJob.status,
           duration: getJobDuration(cJob),
+          numError: cJob.numError || 0,
+          numResolved: cJob.numResolved || 0,
         };
 
         if (cJob.type === 'import') {
@@ -162,23 +314,32 @@ export function flowJobList(state, integrationId, flowId) {
 
         return { ...cJob, ...additionalChildProps };
       });
+    } else {
+      additionalProps.children = [];
     }
 
     return { ...job, ...additionalProps };
   });
 }
 
-export function inProgressJobIds(state, integrationId, flowId) {
-  const key = [`${integrationId}_${flowId || 'all'}`];
+export function inProgressJobIds(state) {
   const jobIds = [];
 
-  if (!state || !state[key]) {
+  if (!state) {
     return jobIds;
   }
 
-  state[key].flowJobs.forEach(job => {
+  state.flowJobs.forEach(job => {
     if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)) {
       jobIds.push(job._id);
+    } else if (job.children) {
+      const inProgressChildren = job.children.filter(cJob =>
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(cJob.status)
+      );
+
+      if (inProgressChildren.length > 0) {
+        jobIds.push(job._id);
+      }
     }
   });
 

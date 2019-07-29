@@ -296,8 +296,9 @@ const job = {
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
+
   getInProgressJobStatus: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.GET_IN_PROGRESS_JOBS_STATUS, {
+    action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS, {
       integrationId,
       flowId,
     }),
@@ -306,7 +307,23 @@ const job = {
       integrationId,
       flowId,
     }),
+  downloadDiagnosticsFile: ({ jobId }) =>
+    action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
+  cancel: ({ jobId }) => action(actionTypes.JOB.CANCEL, { jobId }),
+
+  resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING, {}),
+  resolve: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
+  resolveInit: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RESOLVE_INIT, { jobId, parentJobId }),
+  resolveUndo: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RESOLVE_UNDO, { jobId, parentJobId }),
+  resolveCommit: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RESOLVE_COMMIT, { jobId, parentJobId }),
+};
+const flow = {
+  run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
 };
 // #endregion
 
@@ -328,4 +345,5 @@ export default {
   auditLogs,
   accessToken,
   job,
+  flow,
 };
