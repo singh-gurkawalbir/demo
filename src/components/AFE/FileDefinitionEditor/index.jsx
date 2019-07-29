@@ -1,53 +1,45 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
 
-const mapStateToProps = (state, { editorId }) => {
-  const editor = selectors.editor(state, editorId);
-
-  return { ...editor };
-};
-
-const mapDispatchToProps = (dispatch, { editorId, rule, data }) => ({
-  handleRuleChange: rule => {
+export default function FileDefinitionEditor(props) {
+  const { rule, data, editorId, result, ...other } = props;
+  const parsedData = result && result.data;
+  const { ...editor } = useSelector(state => selectors.editor(state, editorId));
+  const dispatch = useDispatch();
+  const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { rule }));
-  },
-  handleDataChange: data => {
+  };
+
+  const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
-  },
-  handleInit: () => {
+  };
+
+  const handleInit = () => {
     dispatch(
-      actions.editor.init(editorId, 'structuredFileParser', {
+      actions.editor.init(props.editorId, 'structuredFileParser', {
         rule,
         data,
       })
     );
-  },
-});
+  };
 
-class FileDefinitionEditor extends Component {
-  render() {
-    const { result, ...other } = this.props;
-    const parsedData = result && result.data;
-
-    return (
-      <Editor
-        result={parsedData}
-        {...other}
-        processor="structuredFileParser"
-        ruleMode="json"
-        dataMode="text"
-        resultMode="json"
-        ruleTitle="File definition rules"
-        dataTitle="Available resources"
-        resultTitle="Generated export"
-      />
-    );
-  }
+  return (
+    <Editor
+      result={parsedData}
+      handleInit={handleInit}
+      handleDataChange={handleDataChange}
+      handleRuleChange={handleRuleChange}
+      {...editor}
+      {...other}
+      processor="structuredFileParser"
+      ruleMode="json"
+      dataMode="text"
+      resultMode="json"
+      ruleTitle="File definition rules"
+      dataTitle="Available resources"
+      resultTitle="Generated export"
+    />
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, 
-    mapDispatchToProps)(FileDefinitionEditor);
