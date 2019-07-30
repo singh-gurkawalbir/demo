@@ -2,7 +2,7 @@ Default ArrowPopper
 ```js
 const Typography = require('@material-ui/core/Typography').default;
 const Button = require('@material-ui/core/Button').default;
-
+const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 
 initialState = { 
     anchorEl: null, 
@@ -20,7 +20,7 @@ const popperStyles = {
     maxWidth: '250px',
 };
 
-<div>
+<SpacedContainer>
     <Button onClick={e => handleClick(e, 'top')}>Open Popper on TOP</Button>
     <Button onClick={e => handleClick(e, 'bottom')}>Open Popper on BOTTOM</Button>
     <br/>
@@ -33,5 +33,5 @@ const popperStyles = {
             This is the pure content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper</Typography>
         </div>
     </ArrowPopper>
-</div>
+</SpacedContainer>
 ```

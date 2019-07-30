@@ -29,7 +29,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
     },
   },
   popper: {
-    zIndex: 1,
+    zIndex: 2,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,

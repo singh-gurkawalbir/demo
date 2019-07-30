@@ -8,8 +8,8 @@ export default {
     hover: colors.celigoWhite,
   },
   editor: {
-    panelBackground: colors.celigoNeutral2,
-    panelBorder: colors.celigoNeutral2,
+    panelBackground: colors.celigoNeutral7,
+    panelBorder: colors.celigoNeutral6,
   },
   palette: {
     type: 'dark',
@@ -57,7 +57,7 @@ export default {
     },
     MuiButton: {
       textPrimary: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral1,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
@@ -65,7 +65,7 @@ export default {
           color: colors.celigoAccent2,
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral6,
         },
       },
       textSecondary: {
@@ -80,7 +80,7 @@ export default {
           color: colors.celigoAccent3,
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral5,
         },
       },
       outlinedPrimary: {
@@ -118,7 +118,7 @@ export default {
       // rounded buttons styles
       contained: {
         backgroundColor: colors.celigoNeutral2,
-        border: colors.celigoNeutral2,
+        borderColor: colors.celigoNeutral2,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -150,16 +150,18 @@ export default {
         },
       },
       containedSecondary: {
-        border: colors.celigoNeutral6,
+        borderColor: colors.celigoNeutral6,
         color: colors.celigoNeutral6,
+        backgroundColor: 'transparent',
         '&:hover': {
-          color: colors.celigoNeutral7,
-          backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          color: colors.celigoNeutral3,
+          backgroundColor: 'transparent',
+          borderColor: colors.celigoNeutral3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
           borderColor: colors.celigoNeutral4,
+          backgroundColor: colors.celigoNeutral7,
         },
       },
     },
