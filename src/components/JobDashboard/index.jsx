@@ -127,7 +127,6 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
       );
       enqueueSnackbar({
         message: `${numberOfJobsToResolve} jobs marked as resolved.`,
-        action,
         showUndo: true,
         autoHideDuration: 4000,
         handleClose(event, reason) {
@@ -170,10 +169,9 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
 
       setSelectedJobs({});
       closeSnackbar();
-      dispatch(actions.job.resolveMultiple({ jobs: jobsToResolve }));
+      dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
       enqueueSnackbar({
         message: `${numJobsSelected} jobs marked as resolved.`,
-        action,
         showUndo: true,
         autoHideDuration: 4000,
         handleClose(event, reason) {
@@ -193,6 +191,54 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
           dispatch(
             actions.job.resolveCommit({
               jobs: jobsToResolve,
+            })
+          );
+        },
+      });
+    } else if (action === 'retrySelected') {
+      const jobsToRetry = [];
+
+      Object.keys(selectedJobs).forEach(jobId => {
+        if (
+          selectedJobs[jobId].selectedChildJobIds &&
+          selectedJobs[jobId].selectedChildJobIds.length > 0
+        ) {
+          selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
+            jobsToRetry.push({ _flowJobId: jobId, _id: cJobId });
+          });
+        } else if (selectedJobs[jobId].selected) {
+          jobsToRetry.push({ _id: jobId });
+        }
+      });
+
+      if (jobsToRetry.length === 0) {
+        return false;
+      }
+
+      setSelectedJobs({});
+      closeSnackbar();
+      dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
+      enqueueSnackbar({
+        message: `${numJobsSelected} jobs retried.`,
+        showUndo: true,
+        autoHideDuration: 4000,
+        handleClose(event, reason) {
+          if (reason === 'undo') {
+            jobsToRetry.forEach(job =>
+              dispatch(
+                actions.job.retryUndo({
+                  jobId: job._id,
+                  parentJobId: job._flowJobId,
+                })
+              )
+            );
+
+            return false;
+          }
+
+          dispatch(
+            actions.job.retryCommit({
+              jobs: jobsToRetry,
             })
           );
         },

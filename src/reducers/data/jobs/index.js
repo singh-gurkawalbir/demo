@@ -309,6 +309,160 @@ export default (state = defaultState, action) => {
 
       return { ...state, flowJobs: newCollection };
     }
+  } else if (type === actionTypes.JOB.RETRY_INIT) {
+    let childJobIndex;
+    let childJob;
+    let parentJobIndex;
+    let parentJob;
+
+    if (parentJobId) {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+
+        if (parentJob.children.length > 0) {
+          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+
+          if (childJobIndex > -1) {
+            childJob = parentJob.children[childJobIndex];
+
+            parentJob = {
+              ...parentJob,
+              children: [
+                ...parentJob.children.slice(0, childJobIndex),
+                {
+                  ...childJob,
+                  retries: [
+                    ...(childJob.retries || []),
+                    { type: JOB_TYPES.RETRY },
+                  ],
+                },
+                ...parentJob.children.slice(childJobIndex + 1),
+              ],
+            };
+          }
+        }
+      }
+    } else {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+        let children = [];
+
+        if (parentJob.children && parentJob.children.length) {
+          children = parentJob.children.map(cJob => {
+            if (!cJob.retriable) {
+              return cJob;
+            }
+
+            return {
+              ...cJob,
+              retries: [...(cJob.retries || []), { type: JOB_TYPES.RETRY }],
+            };
+          });
+        }
+
+        parentJob = { ...parentJob, children };
+      }
+    }
+
+    if (parentJobIndex > -1) {
+      const newCollection = [
+        ...state.flowJobs.slice(0, parentJobIndex),
+        parentJob,
+        ...state.flowJobs.slice(parentJobIndex + 1),
+      ];
+
+      return { ...state, flowJobs: newCollection };
+    }
+  } else if (type === actionTypes.JOB.RETRY_UNDO) {
+    let childJobIndex;
+    let childJob;
+    let parentJobIndex;
+    let parentJob;
+
+    if (parentJobId) {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+
+        if (parentJob.children.length > 0) {
+          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+
+          if (childJobIndex > -1) {
+            childJob = parentJob.children[childJobIndex];
+
+            const retryIndex = childJob.retries.findIndex(
+              r => !r._id && r.type === JOB_TYPES.RETRY
+            );
+
+            parentJob = {
+              ...parentJob,
+              children: [
+                ...parentJob.children.slice(0, childJobIndex),
+                {
+                  ...childJob,
+                  retries:
+                    retryIndex > -1
+                      ? [
+                          ...childJob.retries.slice(0, retryIndex),
+                          ...childJob.retries.slice(retryIndex + 1),
+                        ]
+                      : [...childJob.retries],
+                },
+                ...parentJob.children.slice(childJobIndex + 1),
+              ],
+            };
+          }
+        }
+      }
+    } else {
+      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
+
+      if (parentJobIndex > -1) {
+        parentJob = state.flowJobs[parentJobIndex];
+        let children = [];
+
+        if (parentJob.children && parentJob.children.length) {
+          children = parentJob.children.map(cJob => {
+            if (!cJob.retries || cJob.retries.length === 0) {
+              return cJob;
+            }
+
+            const retryIndex = cJob.retries.findIndex(
+              r => !r._id && r.type === JOB_TYPES.RETRY
+            );
+
+            if (retryIndex === -1) {
+              return cJob;
+            }
+
+            return {
+              ...cJob,
+              retries: [
+                ...cJob.retries.slice(0, retryIndex),
+                ...cJob.retries.slice(retryIndex + 1),
+              ],
+            };
+          });
+        }
+
+        parentJob = { ...parentJob, children };
+      }
+    }
+
+    if (parentJobIndex > -1) {
+      const newCollection = [
+        ...state.flowJobs.slice(0, parentJobIndex),
+        parentJob,
+        ...state.flowJobs.slice(parentJobIndex + 1),
+      ];
+
+      return { ...state, flowJobs: newCollection };
+    }
   }
 
   return state;
@@ -391,6 +545,18 @@ export function flowJobList(state) {
           if (cJob.retriable) {
             additionalProps.retriable = true;
           }
+
+          if (
+            cJob.retries &&
+            cJob.retries.filter(
+              r =>
+                !r.status ||
+                [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
+            ).length > 0
+          ) {
+            additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+            additionalProps.uiStatus = JOB_STATUS.RETRYING;
+          }
         }
 
         return { ...cJob, ...additionalChildProps };
@@ -411,11 +577,17 @@ export function inProgressJobIds(state) {
   }
 
   state.flowJobs.forEach(job => {
-    if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)) {
+    if (
+      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
+        job.status
+      )
+    ) {
       jobIds.push(job._id);
     } else if (job.children) {
       const inProgressChildren = job.children.filter(cJob =>
-        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(cJob.status)
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
+          cJob.status
+        )
       );
 
       if (inProgressChildren.length > 0) {

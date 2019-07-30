@@ -90,12 +90,19 @@ function Filters({
     onActionClick('resolveAll');
   }
 
+  function handleRetrySelectedJobsClick() {
+    onActionClick('retrySelected');
+  }
+
   return (
     <Fragment>
       <Button variant="contained" color="primary">
         Retry All Jobs
       </Button>
-      <Button variant="contained" color="primary">
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleRetrySelectedJobsClick}>
         Retry Selected {numJobsSelected} Jobs
       </Button>
       <Button

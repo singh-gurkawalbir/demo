@@ -347,6 +347,12 @@ const job = {
   resolveCommit: ({ jobs }) => action(actionTypes.JOB.RESOLVE_COMMIT, { jobs }),
   resolveAllCommit: ({ flowId, integrationId }) =>
     action(actionTypes.JOB.RESOLVE_ALL_COMMIT, { flowId, integrationId }),
+  retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
+  retryInit: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RETRY_INIT, { jobId, parentJobId }),
+  retryUndo: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RETRY_UNDO, { jobId, parentJobId }),
+  retryCommit: ({ jobs }) => action(actionTypes.JOB.RETRY_COMMIT, { jobs }),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

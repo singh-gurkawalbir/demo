@@ -92,6 +92,11 @@ export default function getRequestOptions(
         path: `/integrations/${resourceId}/jobs/resolve`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.RETRY_COMMIT:
+      return {
+        path: resourceId ? `/jobs/${resourceId}/retry` : `/jobs/retry`,
+        opts: { method: resourceId ? 'POST' : 'PUT' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
