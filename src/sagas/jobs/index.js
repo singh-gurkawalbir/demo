@@ -222,27 +222,7 @@ export function* resolveAllCommit({ flowId, integrationId }) {
   }
 }
 
-export function* resolve({ jobId, parentJobId }) {
-  yield put(actions.job.resolveAllPending());
-  yield put(actions.job.resolveInit({ jobId, parentJobId }));
-  const undoOrCommitAction = yield take([
-    actionTypes.JOB.RESOLVE_COMMIT,
-    actionTypes.JOB.RESOLVE_UNDO,
-    actionTypes.JOB.RESOLVE_ALL_PENDING,
-  ]);
-
-  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_COMMIT) {
-    if (undoOrCommitAction.jobId === jobId) {
-      yield call(resolveCommit, {
-        jobs: [{ _id: jobId, _flowJobId: parentJobId }],
-      });
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
-    yield call(resolveCommit, { jobId, parentJobId });
-  }
-}
-
-export function* resolveMultiple({ jobs }) {
+export function* resolveSelected({ jobs }) {
   yield put(actions.job.resolveAllPending());
 
   yield all(
@@ -304,8 +284,6 @@ export const jobSagas = [
   ),
   takeEvery(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, downloadDiagnosticsFile),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
-  // takeEvery(actionTypes.JOB.RESOLVE_COMMIT, resolve),
-  takeEvery(actionTypes.JOB.RESOLVE, resolve),
-  takeEvery(actionTypes.JOB.RESOLVE_MULTIPLE, resolveMultiple),
+  takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
 ];

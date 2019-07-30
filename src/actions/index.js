@@ -333,8 +333,8 @@ const job = {
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING, {}),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
-  resolveMultiple: ({ jobs }) =>
-    action(actionTypes.JOB.RESOLVE_MULTIPLE, { jobs }),
+  resolveSelected: ({ jobs }) =>
+    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
   resolveAll: ({ flowId, integrationId }) =>
     action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
   resolveInit: ({ jobId, parentJobId }) =>

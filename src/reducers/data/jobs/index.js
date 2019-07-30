@@ -37,11 +37,20 @@ export default (state = defaultState, action) => {
       const index = state.flowJobs.findIndex(j => j._id === job._id);
 
       if (index > -1) {
+        const existingJob = state.flowJobs[index];
+        const propsToOverwrite = {};
+
+        if (existingJob.__original && existingJob.__original.numError) {
+          propsToOverwrite.numError = existingJob.numError;
+          propsToOverwrite.numResolved = existingJob.numResolved;
+        }
+
         const newCollection = [
           ...state.flowJobs.slice(0, index),
           {
-            ...state.flowJobs[index],
+            ...existingJob,
             ...job,
+            ...propsToOverwrite,
           },
           ...state.flowJobs.slice(index + 1),
         ];
