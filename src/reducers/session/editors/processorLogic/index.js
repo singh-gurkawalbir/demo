@@ -4,6 +4,7 @@ import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
+import structuredFileParser from './structuredFileParser';
 
 const logicMap = {
   xmlParser,
@@ -12,6 +13,7 @@ const logicMap = {
   transform,
   handlebars,
   javascript,
+  structuredFileParser,
 };
 
 function getLogic(editor) {
