@@ -1,3 +1,4 @@
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
 const unit = 8;
@@ -17,6 +18,11 @@ export default {
   drawerWidth: 300,
 
   overrides: {
+    MuiBackdrop: {
+      root: {
+        backgroundColor: fade(colors.celigoNeutral6, 0.7),
+      },
+    },
     // Name of the component ⚛️ / style sheet
     MuiTypography: {
       body1: {
