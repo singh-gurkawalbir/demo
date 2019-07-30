@@ -25,10 +25,10 @@ const CustomForms = loadable(() =>
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
-// eslint-disable-next-line prettier/prettier
 const StandaloneResource = loadable(() =>
-    import(/* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource')
-  // eslint-disable-last-line prettier/prettier
+  import(
+    /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'
+  )
 );
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
