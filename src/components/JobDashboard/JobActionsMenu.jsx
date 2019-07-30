@@ -117,10 +117,12 @@ export default function AccessTokenActionsMenu({
     } else if (action === 'resolveJob') {
       closeSnackbar();
       dispatch(
-        actions.job.resolve({ jobId: job._id, parentJobId: job._flowJobId })
+        actions.job.resolveMultiple({
+          jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+        })
       );
       enqueueSnackbar({
-        message: `${job.numError} errors marked as resolved`,
+        message: `${job.numError} errors marked as resolved.`,
         action,
         showUndo: true,
         autoHideDuration: 4000,
@@ -136,8 +138,7 @@ export default function AccessTokenActionsMenu({
 
           dispatch(
             actions.job.resolveCommit({
-              jobId: job._id,
-              parentJobId: job._flowJobId,
+              jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
             })
           );
         },

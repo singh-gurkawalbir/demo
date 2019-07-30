@@ -9,6 +9,7 @@ import {
   all,
   fork,
 } from 'redux-saga/effects';
+import { difference } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -165,16 +166,57 @@ export function* cancelJob({ jobId }) {
   }
 }
 
-export function* resolveCommit({ jobId, parentJobId }) {
-  const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT, {
-    resourceId: jobId,
-  });
+export function* resolveCommit({ jobs = [] }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT);
+  const { path, opts } = requestOptions;
+
+  opts.body = jobs.map(job => job._id);
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+    const uniqueParentJobIds = [];
+
+    jobs.forEach(job => {
+      const pJobId = job._flowJobId || job._id;
+
+      if (!uniqueParentJobIds.includes(pJobId)) {
+        uniqueParentJobIds.push(pJobId);
+      }
+    });
+
+    yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
+  } catch (error) {
+    return undefined;
+  }
+  /* else {
+    const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT, {
+      resourceId: jobId,
+    });
+    const { path, opts } = requestOptions;
+
+    try {
+      yield call(apiCallWithRetry, { path, opts });
+
+      yield call(getJobFamily, { jobId: parentJobId || jobId });
+    } catch (error) {
+      return undefined;
+    }
+  } */
+}
+
+export function* resolveAllCommit({ flowId, integrationId }) {
+  const requestOptions = getRequestOptions(
+    flowId
+      ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
+      : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
+    {
+      resourceId: flowId || integrationId,
+    }
+  );
   const { path, opts } = requestOptions;
 
   try {
     yield call(apiCallWithRetry, { path, opts });
-
-    yield call(getJobFamily, { jobId: parentJobId || jobId });
   } catch (error) {
     return undefined;
   }
@@ -191,10 +233,65 @@ export function* resolve({ jobId, parentJobId }) {
 
   if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_COMMIT) {
     if (undoOrCommitAction.jobId === jobId) {
-      yield call(resolveCommit, { jobId, parentJobId });
+      yield call(resolveCommit, {
+        jobs: [{ _id: jobId, _flowJobId: parentJobId }],
+      });
     }
   } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
     yield call(resolveCommit, { jobId, parentJobId });
+  }
+}
+
+export function* resolveMultiple({ jobs }) {
+  yield put(actions.job.resolveAllPending());
+
+  yield all(
+    jobs.map(job =>
+      put(
+        actions.job.resolveInit({ jobId: job._id, parentJobId: job._flowJobId })
+      )
+    )
+  );
+  const undoOrCommitAction = yield take([
+    actionTypes.JOB.RESOLVE_COMMIT,
+    actionTypes.JOB.RESOLVE_UNDO,
+    actionTypes.JOB.RESOLVE_ALL_PENDING,
+  ]);
+
+  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_COMMIT) {
+    const areSameJobs =
+      difference(
+        undoOrCommitAction.jobs.map(job => job._id),
+        jobs.map(job => job._id)
+      ).length === 0;
+
+    if (areSameJobs) {
+      yield call(resolveCommit, { jobs });
+    }
+  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
+    yield call(resolveCommit, { jobs });
+  }
+}
+
+export function* resolveAll({ flowId, integrationId }) {
+  yield put(actions.job.resolveAllPending());
+
+  yield put(actions.job.resolveAllInit());
+  const undoOrCommitAction = yield take([
+    actionTypes.JOB.RESOLVE_ALL_COMMIT,
+    actionTypes.JOB.RESOLVE_ALL_UNDO,
+    actionTypes.JOB.RESOLVE_ALL_PENDING,
+  ]);
+
+  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_COMMIT) {
+    if (
+      undoOrCommitAction.flowId === flowId &&
+      undoOrCommitAction.integrationId === integrationId
+    ) {
+      yield call(resolveAllCommit, { flowId, integrationId });
+    }
+  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
+    yield call(resolveAllCommit, { flowId, integrationId });
   }
 }
 
@@ -209,4 +306,6 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
   // takeEvery(actionTypes.JOB.RESOLVE_COMMIT, resolve),
   takeEvery(actionTypes.JOB.RESOLVE, resolve),
+  takeEvery(actionTypes.JOB.RESOLVE_MULTIPLE, resolveMultiple),
+  takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
 ];

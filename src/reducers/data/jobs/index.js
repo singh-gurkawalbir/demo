@@ -65,6 +65,78 @@ export default (state = defaultState, action) => {
         return { ...state, bulkRetryJobs: newCollection };
       }
     }
+  } else if (type === actionTypes.JOB.RESOLVE_ALL_INIT) {
+    const newCollection = state.flowJobs.map(job => {
+      if (!job.numError) {
+        return job;
+      }
+
+      let children = [];
+
+      if (job.children && job.children.length) {
+        children = job.children.map(cJob => {
+          if (!cJob.numError) {
+            return cJob;
+          }
+
+          return {
+            ...cJob,
+            __original: {
+              numError: cJob.numError,
+              numResolved: cJob.numResolved,
+            },
+            numError: 0,
+            numResolved: cJob.numResolved + cJob.numError,
+          };
+        });
+      }
+
+      return {
+        ...job,
+        numError: 0,
+        numResolved: (job.numResolved || 0) + (job.numError || 0),
+        __original: {
+          numError: job.numError,
+          numResolved: job.numResolved,
+        },
+        children,
+      };
+    });
+
+    return { ...state, flowJobs: newCollection };
+  } else if (type === actionTypes.JOB.RESOLVE_ALL_UNDO) {
+    const newCollection = state.flowJobs.map(job => {
+      if (!job.__original || !job.__original.numError) {
+        return job;
+      }
+
+      let children = [];
+
+      if (job.children && job.children.length) {
+        children = job.children.map(cJob => {
+          if (!cJob.__original || !cJob.__original.numError) {
+            return cJob;
+          }
+
+          return {
+            ...cJob,
+            numError: cJob.__original.numError,
+            numResolved: cJob.numResolved - cJob.__original.numError,
+            __original: {},
+          };
+        });
+      }
+
+      return {
+        ...job,
+        numError: job.__original.numError,
+        numResolved: job.numResolved - job.__original.numError,
+        __original: {},
+        children,
+      };
+    });
+
+    return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RESOLVE_INIT) {
     let childJobIndex;
     let childJob;

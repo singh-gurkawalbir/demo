@@ -35,6 +35,8 @@ export default function ChildJobDetail({
     onSelectChange(event.target.checked, job._id);
   }
 
+  const jobType = job.type === 'export' ? 'Export' : 'Import';
+
   return (
     <TableRow>
       <TableCell />
@@ -45,7 +47,7 @@ export default function ChildJobDetail({
           onChange={event => handleSelectChange(event)}
         />
       </TableCell>
-      <TableCell>{job.name}</TableCell>
+      <TableCell>{job.name || jobType}</TableCell>
       <TableCell>
         <JobStatus job={job} />
       </TableCell>

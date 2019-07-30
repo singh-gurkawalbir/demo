@@ -1022,8 +1022,8 @@ export function flowJobList(state, integrationId, flowId) {
               `${preferences.dateFormat} ${preferences.timeFormat}`
             ),
           name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId]
-            : resourceMap.imports[cJob._importId],
+            ? resourceMap.exports[cJob._exportId].name
+            : resourceMap.imports[cJob._importId].name,
         };
 
         return { ...cJob, ...additionalChildProps };

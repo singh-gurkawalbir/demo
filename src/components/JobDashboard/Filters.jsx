@@ -26,7 +26,9 @@ const styles = theme => ({
 function Filters({
   classes,
   integrationId,
+  flowId,
   onFiltersChange,
+  onActionClick,
   numJobsSelected = 0,
 }) {
   const [_flowId, setFlowId] = useState('all');
@@ -64,7 +66,11 @@ function Filters({
       ...changedFilters,
     };
 
-    newFilters.flowId = newFilters._flowId === 'all' ? '' : newFilters._flowId;
+    if (!flowId) {
+      newFilters.flowId =
+        newFilters._flowId === 'all' ? '' : newFilters._flowId;
+    }
+
     delete newFilters._flowId;
 
     newFilters.numError_gte = newFilters.status === 'error' ? 1 : 0;
@@ -76,6 +82,14 @@ function Filters({
     onFiltersChange(newFilters);
   }
 
+  function handleResolveSelectedJobsClick() {
+    onActionClick('resolveSelected');
+  }
+
+  function handleResolveAllJobsClick() {
+    onActionClick('resolveAll');
+  }
+
   return (
     <Fragment>
       <Button variant="contained" color="primary">
@@ -84,32 +98,40 @@ function Filters({
       <Button variant="contained" color="primary">
         Retry Selected {numJobsSelected} Jobs
       </Button>
-      <Button variant="contained" color="primary">
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleResolveAllJobsClick}>
         Resolve All Jobs
       </Button>
-      <Button variant="contained" color="primary">
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleResolveSelectedJobsClick}>
         Resolve Selected {numJobsSelected} Jobs
       </Button>
 
       <form className={classes.root} autoComplete="off">
-        <FormControl className={classes.formControl}>
-          <Select
-            inputProps={{
-              name: '_flowId',
-              id: '_flowId',
-            }}
-            onChange={handleChange}
-            value={_flowId}>
-            <MenuItem key="all" value="all">
-              Select a Flow
-            </MenuItem>
-            {filteredFlows.map(opt => (
-              <MenuItem key={opt._id} value={opt._id}>
-                {opt.name || opt._id}
+        {!flowId && (
+          <FormControl className={classes.formControl}>
+            <Select
+              inputProps={{
+                name: '_flowId',
+                id: '_flowId',
+              }}
+              onChange={handleChange}
+              value={_flowId}>
+              <MenuItem key="all" value="all">
+                Select a Flow
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+              {filteredFlows.map(opt => (
+                <MenuItem key={opt._id} value={opt._id}>
+                  {opt.name || opt._id}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <FormControl className={classes.formControl}>
           <Select
             inputProps={{

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   root: {
@@ -32,8 +34,12 @@ const styles = theme => ({
 
 function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
   const dispatch = useDispatch();
+  const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const userPermissionsOnIntegration = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId)
+  );
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
   );
   const jobs = useSelector(state =>
     selectors.flowJobList(state, integrationId, flowId)
@@ -85,13 +91,124 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
     setSelectedJobs(selJobs);
   }
 
+  function handleActionClick(action) {
+    if (action === 'resolveAll') {
+      const selectedFlowId = flowId || filters.flowId;
+      const numberOfJobsToResolve = jobs
+        .filter(job => {
+          if (!selectedFlowId) {
+            return true;
+          }
+
+          return job._flowId === selectedFlowId;
+        })
+        .reduce((total, job) => {
+          if (job.numError) {
+            // eslint-disable-next-line no-param-reassign
+            total += 1;
+          }
+
+          if (job.children && job.children.length > 0) {
+            job.children.forEach(cJob => {
+              if (cJob.numError) {
+                // eslint-disable-next-line no-param-reassign
+                total += 1;
+              }
+            });
+          }
+
+          return total;
+        }, 0);
+
+      setSelectedJobs({});
+      closeSnackbar();
+      dispatch(
+        actions.job.resolveAll({ flowId: selectedFlowId, integrationId })
+      );
+      enqueueSnackbar({
+        message: `${numberOfJobsToResolve} jobs marked as resolved.`,
+        action,
+        showUndo: true,
+        autoHideDuration: 4000,
+        handleClose(event, reason) {
+          if (reason === 'undo') {
+            return dispatch(
+              actions.job.resolveAllUndo({
+                flowId: selectedFlowId,
+                integrationId,
+              })
+            );
+          }
+
+          dispatch(
+            actions.job.resolveAllCommit({
+              flowId: selectedFlowId,
+              integrationId,
+            })
+          );
+        },
+      });
+    } else if (action === 'resolveSelected') {
+      const jobsToResolve = [];
+
+      Object.keys(selectedJobs).forEach(jobId => {
+        if (
+          selectedJobs[jobId].selectedChildJobIds &&
+          selectedJobs[jobId].selectedChildJobIds.length > 0
+        ) {
+          selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
+            jobsToResolve.push({ _flowJobId: jobId, _id: cJobId });
+          });
+        } else if (selectedJobs[jobId].selected) {
+          jobsToResolve.push({ _id: jobId });
+        }
+      });
+
+      if (jobsToResolve.length === 0) {
+        return false;
+      }
+
+      setSelectedJobs({});
+      closeSnackbar();
+      dispatch(actions.job.resolveMultiple({ jobs: jobsToResolve }));
+      enqueueSnackbar({
+        message: `${numJobsSelected} jobs marked as resolved.`,
+        action,
+        showUndo: true,
+        autoHideDuration: 4000,
+        handleClose(event, reason) {
+          if (reason === 'undo') {
+            jobsToResolve.forEach(job =>
+              dispatch(
+                actions.job.resolveUndo({
+                  jobId: job._id,
+                  parentJobId: job._flowJobId,
+                })
+              )
+            );
+
+            return false;
+          }
+
+          dispatch(
+            actions.job.resolveCommit({
+              jobs: jobsToResolve,
+            })
+          );
+        },
+      });
+    }
+  }
+
   return (
     <LoadResources required resources="flows,exports,imports">
+      {!flowId && integration && <Typography>{integration.name}</Typography>}
       <Filters
         integrationId={integrationId}
         flowId={flowId}
         onFiltersChange={handleFiltersChange}
         numJobsSelected={numJobsSelected}
+        onActionClick={handleActionClick}
       />
       <JobTable
         integrationId={integrationId}

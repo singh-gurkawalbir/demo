@@ -333,12 +333,20 @@ const job = {
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING, {}),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
+  resolveMultiple: ({ jobs }) =>
+    action(actionTypes.JOB.RESOLVE_MULTIPLE, { jobs }),
+  resolveAll: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
   resolveInit: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { jobId, parentJobId }),
+  resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
   resolveUndo: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE_UNDO, { jobId, parentJobId }),
-  resolveCommit: ({ jobId, parentJobId }) =>
-    action(actionTypes.JOB.RESOLVE_COMMIT, { jobId, parentJobId }),
+  resolveAllUndo: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RESOLVE_ALL_UNDO, { flowId, integrationId }),
+  resolveCommit: ({ jobs }) => action(actionTypes.JOB.RESOLVE_COMMIT, { jobs }),
+  resolveAllCommit: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RESOLVE_ALL_COMMIT, { flowId, integrationId }),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
