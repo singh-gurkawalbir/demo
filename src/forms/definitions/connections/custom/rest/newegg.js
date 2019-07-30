@@ -44,7 +44,7 @@ export default {
       helpText:
         'Select "Newegg Business" if your account is created on https://www.neweggbusiness.com. \n Select "Newegg" if your account is created on https://www.newegg.com.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('b2b') !== -1) {

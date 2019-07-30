@@ -28,7 +28,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('beta') === -1) {

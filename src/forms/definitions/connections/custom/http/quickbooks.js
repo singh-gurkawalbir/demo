@@ -68,7 +68,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           switch (baseUri) {

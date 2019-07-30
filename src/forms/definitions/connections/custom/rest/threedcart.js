@@ -30,6 +30,7 @@ export default {
       required: true,
       helpText: `3dcart merchant's Secure URL.`,
       defaultValue: r =>
+        r &&
         r.rest &&
         r.rest.headers &&
         r.rest.headers.find(header => header.name === 'SecureUrl') &&

@@ -42,7 +42,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
@@ -60,7 +60,8 @@ export default {
       type: 'text',
       label: 'API Site ID:',
       defaultValue: r =>
-        (r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) || '0',
+        (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
+        '0',
       options: [
         {
           items: [

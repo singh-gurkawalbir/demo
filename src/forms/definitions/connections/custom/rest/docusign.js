@@ -31,7 +31,7 @@ export default {
       helpText:
         'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
       defaultValue: r => {
-        const authUri = r.rest.authURI;
+        const authUri = r && r.rest && r.rest.authURI;
 
         if (authUri) {
           if (authUri.indexOf('account-d.docusign.com') > -1) {

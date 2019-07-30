@@ -30,7 +30,7 @@ export default {
       helpText:
         'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 

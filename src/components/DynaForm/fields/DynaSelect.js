@@ -74,9 +74,13 @@ function MaterialUiSelect(props) {
         value={finalTextValue}
         displayEmpty
         onChange={evt => {
-          const { value } = evt.target;
+          const { value: evtValue } = evt.target;
 
-          onFieldChange(id, value);
+          if (value === evtValue) {
+            return onFieldChange(id, '');
+          }
+
+          onFieldChange(id, evtValue);
         }}
         input={<Input name={name} id={id} />}>
         {items}

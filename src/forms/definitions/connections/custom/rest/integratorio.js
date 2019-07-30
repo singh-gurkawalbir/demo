@@ -23,6 +23,7 @@ export default {
       id: 'integrator.environment',
       type: 'select',
       label: 'Environment:',
+      required: true,
       options: [
         {
           items: [
@@ -34,7 +35,7 @@ export default {
       helpText:
         'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('staging') !== -1) {

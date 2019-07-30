@@ -29,7 +29,7 @@ export default {
       },
       helpText: 'Please enter your account subdomain here.',
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain = baseUri.substring(
           baseUri.indexOf('https://') + 8,
           baseUri.indexOf('.api-us1.com')

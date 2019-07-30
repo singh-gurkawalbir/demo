@@ -21,7 +21,7 @@ export default {
       endAdornment: '/home',
       label: 'Base URI:',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/home'));
 

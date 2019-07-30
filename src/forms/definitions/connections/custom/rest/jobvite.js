@@ -28,7 +28,7 @@ export default {
       helpText:
         'Select either Production or Sandbox based on your requirement.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('api-stg.') !== -1) {

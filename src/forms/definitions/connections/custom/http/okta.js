@@ -29,7 +29,7 @@ export default {
       helpText:
         'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain = baseUri.substring(
           baseUri.indexOf('https://') + 8,
           baseUri.indexOf('.okta.com')
