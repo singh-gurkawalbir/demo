@@ -11,6 +11,7 @@ import { confirmDialog } from '../ConfirmDialog';
 import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import { UNDO_TIME } from './util';
 
 export default function AccessTokenActionsMenu({
   job,
@@ -32,26 +33,30 @@ export default function AccessTokenActionsMenu({
   const isFlowJob = job.type === JOB_TYPES.FLOW;
   const menuOptions = [];
 
-  if (isJobInProgress) {
+  if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
     menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
+  }
 
-    if (isFlowJob) {
-      if (
-        userPermissionsOnIntegration.flows &&
-        userPermissionsOnIntegration.flows.edit
-      ) {
-        menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
-      } else {
-        menuOptions.push({ label: 'View flow', action: 'viewFlow' });
-      }
+  if (isJobCompleted) {
+    if (job.retries && job.retries.length > 0) {
+      menuOptions.push({
+        label: 'View retries',
+        action: 'viewRetries',
+      });
     }
-  } else if (isJobCompleted) {
+
     if (job.numError > 0) {
+      menuOptions.push({
+        label: isFlowJob ? 'Retry All' : 'Retry',
+        action: 'retryJob',
+      });
       menuOptions.push({ label: 'Mark resolved', action: 'resolveJob' });
     }
+  }
 
-    if (isFlowJob) {
-      if (job.type === JOB_TYPES.FLOW) {
+  if (isFlowJob) {
+    if (!isJobInProgress) {
+      if (job.type === JOB_TYPES.FLOW && job.status !== JOB_STATUS.RETRYING) {
         menuOptions.push({ label: 'Run flow', action: 'runFlow' });
       }
 
@@ -63,15 +68,15 @@ export default function AccessTokenActionsMenu({
         label: 'Download Diagnostics',
         action: 'downloadDiagnostics',
       });
+    }
 
-      if (
-        userPermissionsOnIntegration.flows &&
-        userPermissionsOnIntegration.flows.edit
-      ) {
-        menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
-      } else {
-        menuOptions.push({ label: 'View flow', action: 'viewFlow' });
-      }
+    if (
+      userPermissionsOnIntegration.flows &&
+      userPermissionsOnIntegration.flows.edit
+    ) {
+      menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
+    } else {
+      menuOptions.push({ label: 'View flow', action: 'viewFlow' });
     }
   }
 
@@ -109,6 +114,46 @@ export default function AccessTokenActionsMenu({
           {
             label: 'Yes',
             onClick: () => {
+              if (job.status === JOB_STATUS.RETRYING) {
+                if (isFlowJob) {
+                  if (job.children && job.children.length > 0) {
+                    job.children.forEach(cJob => {
+                      if (cJob.status === JOB_STATUS.RETRYING && cJob.retries) {
+                        cJob.retries.forEach(rJob => {
+                          if (
+                            [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
+                              rJob.status
+                            )
+                          ) {
+                            dispatch(
+                              actions.job.cancel({
+                                jobId: rJob._id,
+                                flowJobId: job._id,
+                              })
+                            );
+                          }
+                        });
+                      }
+                    });
+
+                    return false;
+                  }
+                } else {
+                  const retryJob = job.retries.find(r =>
+                    [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
+                  );
+
+                  if (retryJob) {
+                    return dispatch(
+                      actions.job.cancel({
+                        jobId: retryJob._id,
+                        flowJobId: job._flowJobId,
+                      })
+                    );
+                  }
+                }
+              }
+
               dispatch(actions.job.cancel({ jobId: job._id }));
             },
           },
@@ -117,7 +162,7 @@ export default function AccessTokenActionsMenu({
     } else if (action === 'resolveJob') {
       closeSnackbar();
       dispatch(
-        actions.job.resolveMultiple({
+        actions.job.resolveSelected({
           jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
         })
       );
@@ -125,7 +170,7 @@ export default function AccessTokenActionsMenu({
         message: `${job.numError} errors marked as resolved.`,
         action,
         showUndo: true,
-        autoHideDuration: 4000,
+        autoHideDuration: UNDO_TIME.RESOLVE,
         handleClose(event, reason) {
           if (reason === 'undo') {
             return dispatch(
@@ -141,6 +186,55 @@ export default function AccessTokenActionsMenu({
               jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
             })
           );
+        },
+      });
+    } else if (action === 'retryJob') {
+      closeSnackbar();
+
+      if (isFlowJob) {
+        dispatch(
+          actions.job.retryFlowJob({
+            jobId: job._id,
+          })
+        );
+      } else {
+        dispatch(
+          actions.job.retrySelected({
+            jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+          })
+        );
+      }
+
+      enqueueSnackbar({
+        message: `${job.numError} errors retried.`,
+        action,
+        showUndo: true,
+        autoHideDuration: UNDO_TIME.RETRY,
+        handleClose(event, reason) {
+          window.JOB = job;
+
+          if (reason === 'undo') {
+            return dispatch(
+              actions.job.retryUndo({
+                jobId: job._id,
+                parentJobId: job._flowJobId,
+              })
+            );
+          }
+
+          if (isFlowJob) {
+            dispatch(
+              actions.job.retryFlowJobCommit({
+                jobId: job._id,
+              })
+            );
+          } else {
+            dispatch(
+              actions.job.retryCommit({
+                jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+              })
+            );
+          }
         },
       });
     } else {

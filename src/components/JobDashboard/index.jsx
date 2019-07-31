@@ -9,6 +9,7 @@ import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import { UNDO_TIME } from './util';
 
 const styles = theme => ({
   root: {
@@ -128,7 +129,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
       enqueueSnackbar({
         message: `${numberOfJobsToResolve} jobs marked as resolved.`,
         showUndo: true,
-        autoHideDuration: 4000,
+        autoHideDuration: UNDO_TIME.RESOLVE,
         handleClose(event, reason) {
           if (reason === 'undo') {
             return dispatch(
@@ -173,7 +174,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
       enqueueSnackbar({
         message: `${numJobsSelected} jobs marked as resolved.`,
         showUndo: true,
-        autoHideDuration: 4000,
+        autoHideDuration: UNDO_TIME.RESOLVE,
         handleClose(event, reason) {
           if (reason === 'undo') {
             jobsToResolve.forEach(job =>
@@ -191,6 +192,59 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
           dispatch(
             actions.job.resolveCommit({
               jobs: jobsToResolve,
+            })
+          );
+        },
+      });
+    } else if (action === 'retryAll') {
+      const selectedFlowId = flowId || filters.flowId;
+      const numberOfJobsToRetry = jobs
+        .filter(job => {
+          if (!selectedFlowId) {
+            return true;
+          }
+
+          return job._flowId === selectedFlowId;
+        })
+        .reduce((total, job) => {
+          if (job.numError > 0) {
+            // eslint-disable-next-line no-param-reassign
+            total += 1;
+          }
+
+          if (job.children && job.children.length > 0) {
+            job.children.forEach(cJob => {
+              if (cJob.retriable) {
+                // eslint-disable-next-line no-param-reassign
+                total += 1;
+              }
+            });
+          }
+
+          return total;
+        }, 0);
+
+      setSelectedJobs({});
+      closeSnackbar();
+      dispatch(actions.job.retryAll({ flowId: selectedFlowId, integrationId }));
+      enqueueSnackbar({
+        message: `${numberOfJobsToRetry} jobs retried.`,
+        showUndo: true,
+        autoHideDuration: UNDO_TIME.RETRY,
+        handleClose(event, reason) {
+          if (reason === 'undo') {
+            return dispatch(
+              actions.job.retryAllUndo({
+                flowId: selectedFlowId,
+                integrationId,
+              })
+            );
+          }
+
+          dispatch(
+            actions.job.retryAllCommit({
+              flowId: selectedFlowId,
+              integrationId,
             })
           );
         },
@@ -221,7 +275,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
       enqueueSnackbar({
         message: `${numJobsSelected} jobs retried.`,
         showUndo: true,
-        autoHideDuration: 4000,
+        autoHideDuration: UNDO_TIME.RETRY,
         handleClose(event, reason) {
           if (reason === 'undo') {
             jobsToRetry.forEach(job =>

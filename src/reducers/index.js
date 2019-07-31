@@ -1059,3 +1059,7 @@ export function flowJobList(state, integrationId, flowId) {
 export function inProgressJobIds(state, integrationId, flowId) {
   return fromData.inProgressJobIds(state.data, integrationId, flowId);
 }
+
+export function job(state, type, jobId) {
+  return fromData.job(state.data, type, jobId);
+}

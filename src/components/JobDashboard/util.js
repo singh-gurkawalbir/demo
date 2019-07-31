@@ -10,6 +10,11 @@ export const JOB_UI_STATUS = Object.freeze({
   COMPLETING: 'Completing...',
 });
 
+export const UNDO_TIME = Object.freeze({
+  RETRY: 4000,
+  RESOLVE: 4000,
+});
+
 export function getStatus(job) {
   if (job.type === JOB_TYPES.FLOW) {
     if (

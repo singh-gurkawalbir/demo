@@ -67,6 +67,11 @@ export default function getRequestOptions(
         path: `/jobs/${resourceId}/family`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.REQUEST:
+      return {
+        path: `/jobs/${resourceId}`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL:
       return {
         path: `/jobs/${resourceId}/diagnostics`,
@@ -96,6 +101,16 @@ export default function getRequestOptions(
       return {
         path: resourceId ? `/jobs/${resourceId}/retry` : `/jobs/retry`,
         opts: { method: resourceId ? 'POST' : 'PUT' },
+      };
+    case actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT:
+      return {
+        path: `/flows/${resourceId}/jobs/retry`,
+        opts: { method: 'PUT' },
+      };
+    case actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT:
+      return {
+        path: `/integrations/${resourceId}/jobs/retry`,
+        opts: { method: 'PUT' },
       };
     case actionTypes.FLOW.RUN:
       return {

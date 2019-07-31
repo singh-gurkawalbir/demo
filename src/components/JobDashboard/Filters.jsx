@@ -94,9 +94,16 @@ function Filters({
     onActionClick('retrySelected');
   }
 
+  function handleRetryAllJobsClick() {
+    onActionClick('retryAll');
+  }
+
   return (
     <Fragment>
-      <Button variant="contained" color="primary">
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleRetryAllJobsClick}>
         Retry All Jobs
       </Button>
       <Button

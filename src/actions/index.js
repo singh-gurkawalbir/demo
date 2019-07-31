@@ -328,7 +328,8 @@ const job = {
   downloadDiagnosticsFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
-  cancel: ({ jobId }) => action(actionTypes.JOB.CANCEL, { jobId }),
+  cancel: ({ jobId, flowJobId }) =>
+    action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
 
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING, {}),
   resolve: ({ jobId, parentJobId }) =>
@@ -348,11 +349,22 @@ const job = {
   resolveAllCommit: ({ flowId, integrationId }) =>
     action(actionTypes.JOB.RESOLVE_ALL_COMMIT, { flowId, integrationId }),
   retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
+  retryFlowJob: ({ jobId }) =>
+    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
   retryInit: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { jobId, parentJobId }),
+  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
   retryUndo: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { jobId, parentJobId }),
   retryCommit: ({ jobs }) => action(actionTypes.JOB.RETRY_COMMIT, { jobs }),
+  retryFlowJobCommit: ({ jobId }) =>
+    action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT, { jobId }),
+  retryAll: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAllUndo: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL_UNDO, { flowId, integrationId }),
+  retryAllCommit: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL_COMMIT, { flowId, integrationId }),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

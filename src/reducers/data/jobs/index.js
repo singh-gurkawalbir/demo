@@ -1,5 +1,9 @@
 import actionTypes from '../../../actions/types';
-import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
+import {
+  JOB_TYPES,
+  JOB_STATUS,
+  STANDALONE_INTEGRATION,
+} from '../../../utils/constants';
 import {
   getFlowJobIdsThatArePartOfBulkRetryJobs,
   getJobDuration,
@@ -60,7 +64,13 @@ export default (state = defaultState, action) => {
         return { ...state, flowJobs: [job, ...state.flowJobs] };
       }
     } else if (job.type === JOB_TYPES.BULK_RETRY) {
-      const index = state.bulkRetryJobs.findIndex(j => j._id === job._id);
+      let index = state.bulkRetryJobs.findIndex(j => j._id === job._id);
+
+      if (index === -1) {
+        if (job.status === JOB_STATUS.QUEUED) {
+          index = state.bulkRetryJobs.findIndex(j => !j._id);
+        }
+      }
 
       if (index > -1) {
         const newCollection = [
@@ -463,6 +473,28 @@ export default (state = defaultState, action) => {
 
       return { ...state, flowJobs: newCollection };
     }
+  } else if (type === actionTypes.JOB.RETRY_ALL_INIT) {
+    const { bulkRetryJobs } = state;
+
+    return {
+      ...state,
+      bulkRetryJobs: [
+        ...bulkRetryJobs,
+        { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+      ],
+    };
+  } else if (type === actionTypes.JOB.RETRY_ALL_UNDO) {
+    const bulkRetryJobIndex = state.bulkRetryJobs.findIndex(j => !j._id);
+
+    if (bulkRetryJobIndex > -1) {
+      return {
+        ...state,
+        bulkRetryJobs: [
+          ...state.bulkRetryJobs.slice(0, bulkRetryJobIndex),
+          ...state.bulkRetryJobs.slice(bulkRetryJobIndex + 1),
+        ],
+      };
+    }
   }
 
   return state;
@@ -570,11 +602,32 @@ export function flowJobList(state) {
 }
 
 export function inProgressJobIds(state) {
-  const jobIds = [];
+  const jobIds = { flowJobs: [], bulkRetryJobs: [] };
 
   if (!state) {
     return jobIds;
   }
+
+  const runningBulkRetryJobs = {};
+
+  // eslint-disable-next-line max-len
+  /** Build a map of running bulk retry jobs with _integrationId & _flowId as the key and _id as value */
+  state.bulkRetryJobs.forEach(job => {
+    if ([JOB_STATUS.QUEUED].includes(job.status)) {
+      jobIds.bulkRetryJobs.push(job._id);
+    }
+
+    if (job.status === JOB_STATUS.RUNNING) {
+      runningBulkRetryJobs[
+        [
+          job._integrationId || STANDALONE_INTEGRATION.id,
+          job._flowId || '',
+        ].join('')
+      ] = job._id;
+    }
+  });
+
+  let hasJobsInRetryingState = false;
 
   state.flowJobs.forEach(job => {
     if (
@@ -582,7 +635,11 @@ export function inProgressJobIds(state) {
         job.status
       )
     ) {
-      jobIds.push(job._id);
+      jobIds.flowJobs.push(job._id);
+
+      if (job.status === JOB_STATUS.RETRYING) {
+        hasJobsInRetryingState = true;
+      }
     } else if (job.children) {
       const inProgressChildren = job.children.filter(cJob =>
         [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
@@ -591,12 +648,69 @@ export function inProgressJobIds(state) {
       );
 
       if (inProgressChildren.length > 0) {
-        jobIds.push(job._id);
+        jobIds.flowJobs.push(job._id);
       }
     }
   });
 
+  // eslint-disable-next-line max-len
+  /** Find jobs that are part of a running bulk retry but the status is not 'retrying' */
+  if (Object.keys(runningBulkRetryJobs).length > 0 && !hasJobsInRetryingState) {
+    state.flowJobs.forEach(job => {
+      if (
+        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+          job.status
+        )
+      ) {
+        if (!job.children || job.children.length === 0) {
+          if (
+            runningBulkRetryJobs[
+              job._integrationId || STANDALONE_INTEGRATION.id
+            ] ||
+            runningBulkRetryJobs[
+              [
+                job._integrationId || STANDALONE_INTEGRATION.id,
+                job._flowId,
+              ].join('')
+            ]
+          ) {
+            jobIds.flowJobs.push(job._id);
+          }
+        } else {
+          const hasJobsOfBulkRetry = job.children.filter(
+            cJob =>
+              cJob.retries &&
+              cJob.retries.filter(r => !!runningBulkRetryJobs[r._bulkJobId])
+                .length > 0
+          );
+
+          if (!hasJobsOfBulkRetry) {
+            jobIds.flowJobs.push(job._id);
+          }
+        }
+      }
+    });
+  }
+
   return jobIds;
+}
+
+export function job(state, type, jobId) {
+  if (!state) {
+    return undefined;
+  }
+
+  const keyMap = {
+    flow: 'flowJobs',
+    bulk_retry: 'bulkRetryJobs',
+  };
+  const jobs = state[keyMap[type]];
+
+  if (!jobs) {
+    return undefined;
+  }
+
+  return jobs.find(j => j._id === jobId);
 }
 
 // #endregion
