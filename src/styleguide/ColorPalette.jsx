@@ -54,7 +54,6 @@ const styles = theme => ({
 });
 const other = {
   celigoWhite: colors.celigoWhite,
-  celigoHelpText: colors.celigoHelpText,
   celigoError: colors.celigoError,
   celigoSuccess: colors.celigoSuccess,
   celigoWarning: colors.celigoWarning,

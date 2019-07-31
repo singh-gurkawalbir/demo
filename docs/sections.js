@@ -24,12 +24,21 @@ module.exports.sections = [
       },
       {
         name: 'Icons',
-        content: 'docs/icons.md',
+        components: [
+          'src/components/icons/ResourceImg/index.jsx',
+          'src/components/icons/ApplicationImg/index.jsx',
+        ],
+        sections: [
+          {
+            name: 'System',
+            content: 'docs/icons/system.md',
+          },
+        ],
       },
       {
         name: 'Celigo Components',
         components: 'src/components/*/index.jsx',
-        editorConfig: { theme: 'material' },
+        // editorConfig: { theme: 'material' },
       },
     ],
   },

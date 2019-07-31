@@ -25,6 +25,11 @@ const CustomForms = loadable(() =>
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
+const StandaloneResource = loadable(() =>
+  import(
+    /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'
+  )
+);
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
@@ -53,6 +58,10 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/forms" component={CustomForms} />
         <Route path="/pg/permissions" component={Permissions} />
+        <Route
+          path="/pg/:resourceType/:operation/:id"
+          component={StandaloneResource}
+        />
         <Route path="/pg/exports" component={Exports} />
         <Route path="/pg/imports" component={Imports} />
         <Route path="/pg/myAccount" component={MyAccount} />

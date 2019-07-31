@@ -3,15 +3,14 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
   wrapper: {
-    listStyle: 'none',
     margin: '0px',
     padding: '0px',
+    display: 'inline-flex',
     '& Button': {
       marginRight: '10px',
     },
-    '& lastChild': {
+    '& Button:last-child': {
       marginRight: '0px',
-      background: '#000',
     },
   },
 };

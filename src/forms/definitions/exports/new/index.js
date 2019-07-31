@@ -11,9 +11,16 @@ const visibleWhen = [
 export default {
   preSubmit: ({ application, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
+    // TODO: Raghu, the below logic should move to a proper fn that uses a map.
+    // This will only work for a select few adaptorTypes as others probably
+    // dont follow the uppercase rule. we have a /utils/resource file that
+    // should hold the map fn.
     const newValues = {
       ...rest,
-      '/adaptorType': `${app.type.toUpperCase()}Export`,
+      '/adaptorType':
+        app.type === 'netsuite'
+          ? 'NetSuiteExport'
+          : `${app.type.toUpperCase()}Export`,
     };
 
     if (app.assistant) {

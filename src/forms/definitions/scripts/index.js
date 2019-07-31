@@ -1,12 +1,7 @@
 export default {
   fields: [
     {
-      id: 'name',
-      name: '/name',
-      defaultValue: r => r.name,
-      type: 'text',
-      label: 'Name',
-      required: true,
+      fieldId: 'name',
     },
     {
       id: 'description',

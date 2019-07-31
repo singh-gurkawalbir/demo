@@ -1,124 +1,208 @@
 export default {
-  'http.successMediaType': {
+  type: {
     type: 'select',
-    label: 'Http success Media Type',
+    label: 'Export Type',
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Csv', value: 'csv' },
-          { label: 'Json', value: 'json' },
+          { label: 'All', value: 'all' },
+          { label: 'Test', value: 'test' },
+          { label: 'Delta', value: 'delta' },
+        ],
+      },
+    ],
+  },
+  pagingData: {
+    type: 'labeltitle',
+    label: 'Does this API support paging?',
+  },
+  'delta.dateFormat': {
+    type: 'text',
+    label: 'Date Format',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
+  },
+  'delta.lagOffset': {
+    type: 'text',
+    label: 'Offset',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
+  },
+  'http.successMediaType': {
+    type: 'select',
+    label: 'Success Media Type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
   },
   'http.errorMediaType': {
     type: 'radiogroup',
-    label: 'Http error Media Type',
+    label: 'Error Media Type',
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
   },
   'http.relativeURI': {
     type: 'text',
-    label: 'Http relative URI',
+    label: 'Relative URI',
   },
   'http.method': {
     type: 'select',
-    label: 'Http method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
-          { label: 'PATCH', value: 'PATCH' },
-          { label: 'DELETE', value: 'DELETE' },
         ],
       },
     ],
   },
   'http.body': {
     type: 'text',
-    label: 'Http body',
+    label: 'Build HTTP Request Body',
   },
   'http.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Http headers',
+    label: 'Configure HTTP Headers',
   },
   'http.paging.method': {
     type: 'select',
-    label: 'Http paging method',
+    label: 'Paging Method',
     options: [
       {
         items: [
           { label: 'Token', value: 'token' },
           { label: 'Skip', value: 'skip' },
           { label: 'Page', value: 'page' },
-          { label: 'Url', value: 'url' },
-          { label: 'Linkheader', value: 'linkheader' },
-          { label: 'Relativeuri', value: 'relativeuri' },
+          { label: 'Next Page URL', value: 'url' },
+          { label: 'Link Header', value: 'linkheader' },
+          { label: 'Relative URI', value: 'relativeuri' },
         ],
       },
     ],
   },
   'http.paging.skip': {
     type: 'text',
-    label: 'Http paging skip',
-    validWhen: [
+    label: 'Skip',
+    visibleWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        field: 'http.paging.method',
+        is: ['skip'],
       },
     ],
   },
   'http.paging.page': {
     type: 'text',
-    label: 'Http paging page',
+    label: 'Page',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['page'],
+      },
+    ],
   },
   'http.paging.token': {
     type: 'text',
-    label: 'Http paging token',
+    label: 'Token',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.path': {
     type: 'text',
-    label: 'Http paging path',
+    label: 'Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['skip', 'page', 'relativeuri', 'linkheader'],
+      },
+    ],
   },
   'http.paging.relativeURI': {
     type: 'text',
-    label: 'Http paging relative URI',
+    label: 'Relative URI',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['skip', 'page', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
-    label: 'Http paging path After First Request',
+    label: 'Token Path After First Request',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.resourcePath': {
     type: 'text',
-    label: 'Http paging resource Path',
+    label: 'Resource Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['token'],
+      },
+    ],
   },
   'http.paging.maxPagePath': {
     type: 'text',
-    label: 'Http paging max Page Path',
+    label: 'Max Page Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.maxCountPath': {
     type: 'text',
-    label: 'Http paging max Count Path',
+    label: 'Max Count Path',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+      },
+    ],
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
-    label: 'Http paging last Page Status Code',
+    label: 'Last Page Status Code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -127,50 +211,33 @@ export default {
   },
   'http.paging.lastPagePath': {
     type: 'text',
-    label: 'Http paging last Page Path',
+    label: 'Last Page Path',
   },
   'http.paging.lastPageValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Http paging last Page Values',
+    label: 'Last Page Values',
     validWhen: [],
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
-    label: 'Http paging link Header Relation',
+    label: 'Link Header Relation',
+    visibleWhen: [
+      {
+        field: 'http.paging.method',
+        is: ['linkheader'],
+      },
+    ],
   },
   'http._asyncHelperId': {
     type: 'text',
     label: 'Http _async Helper Id',
   },
-  'http.once.relativeURI': {
-    type: 'text',
-    label: 'Http once relative URI',
-  },
-  'http.once.method': {
-    type: 'select',
-    label: 'Http once method',
-    options: [
-      {
-        items: [
-          { label: 'GET', value: 'GET' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'POST', value: 'POST' },
-          { label: 'PATCH', value: 'PATCH' },
-          { label: 'DELETE', value: 'DELETE' },
-        ],
-      },
-    ],
-  },
-  'http.once.body': {
-    type: 'text',
-    label: 'Http once body',
-  },
   'http.response.resourcePath': {
     type: 'text',
-    label: 'Http response resource Path',
+    label: 'Resource Path',
   },
   'http.response.resourceIdPath': {
     type: 'text',
@@ -178,22 +245,83 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Http response success Path',
+    label: 'Success Path',
   },
   'http.response.successValuess': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Http response success Values',
+    label: 'Success Values',
     validWhen: [],
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Http response error Path',
+    label: 'Error Path',
+  },
+  pageSize: {
+    type: 'text',
+    label: 'Page Size',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  dataURITemplate: {
+    type: 'relativeuri',
+    label: 'Data URI Template',
   },
   'http.response.blobFormat': {
     type: 'text',
     label: 'Http response blob Format',
+  },
+  // #region transform
+  'ftp.exportTransformRecords': {
+    label: 'Would you like to transform the records?',
+    type: 'labeltitle',
+  },
+  'transform.expression.rules': {
+    type: 'transformeditor',
+    label: 'Transform expression rules',
+    sampleData: r => r.sampleData,
+    rules: r => r && r.transform && r.transform.rules,
+  },
+  'transform.script._scriptId': {
+    type: 'text',
+    label: 'Transform script _script Id',
+  },
+  'transform.script.function': {
+    type: 'text',
+    label: 'Transform script function',
+  },
+  // #endregion transform
+  hookType: {
+    type: 'radiogroup',
+    label: 'Hook Type',
+    defaultValue: 'script',
+    options: [
+      {
+        items: [
+          { label: 'Script', value: 'script' },
+          { label: 'Stack', value: 'stack' },
+        ],
+      },
+    ],
+  },
+  'hooks.preSavePage.function': {
+    type: 'text',
+    label: 'Pre Save Page',
+  },
+  'hooks.preSavePage._scriptId': {
+    type: 'selectresource',
+    resourceType: 'scripts',
+    label: 'Hooks pre Save Page _script Id',
+  },
+  'hooks.preSavePage._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Hooks pre Save Page _stack Id',
   },
 };

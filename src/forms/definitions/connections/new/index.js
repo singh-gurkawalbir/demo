@@ -6,6 +6,7 @@ export default {
     const newValues = {
       ...rest,
       '/adaptorType': `${app.type.toUpperCase()}Connection`,
+      '/type': app.type,
     };
 
     if (app.assistant) {

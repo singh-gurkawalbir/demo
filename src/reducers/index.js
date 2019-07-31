@@ -885,8 +885,8 @@ export function affectedResourcesAndUsersFromAuditLogs(
 // #endregion
 
 // #region Session metadata selectors
-export function stagedResource(state, id) {
-  return fromSession.stagedResource(state && state.session, id);
+export function stagedResource(state, id, scope) {
+  return fromSession.stagedResource(state && state.session, id, scope);
 }
 
 export function optionsFromMetadata(
@@ -897,7 +897,7 @@ export function optionsFromMetadata(
   mode
 ) {
   return fromSession.optionsFromMetadata(
-    (state && state.session) || null,
+    state && state.session,
     connectionId,
     applicationType,
     metadataType,
@@ -958,6 +958,14 @@ export function createdResourceId(state, tempId) {
 }
 
 // #endregion Session metadata selectors
+
+// #region Session token selectors
+
+export function connectionTokens(state, resourceId) {
+  return fromSession.connectionTokens(state && state.session, resourceId);
+}
+
+// #endregion
 
 export function commStatusByKey(state, key) {
   const commStatus = state && state.comms && state.comms[key];

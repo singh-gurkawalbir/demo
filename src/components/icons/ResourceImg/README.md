@@ -3,7 +3,9 @@ resource type.
 
 Examples:
 ```js
-<div>
+const SpacedContainer = require('../../../../src/styleguide/SpacedContainer').default;
+
+<SpacedContainer>
   <ResourceImg resourceType="connections" />
   <ResourceImg resourceType="exports" />
   <ResourceImg resourceType="imports" />
@@ -11,5 +13,5 @@ Examples:
   <ResourceImg resourceType="scripts" />
   <ResourceImg resourceType="accesstokens" />
   <ResourceImg resourceType="integrations" />
-</div>
+</SpacedContainer>
 ```
