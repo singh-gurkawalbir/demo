@@ -1,22 +1,17 @@
 ```js
+const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 const AddIcon = require('../icons/AddIcon').default;
 const ScheduleIcon = require('../icons/ScheduleIcon').default;
 const CloseIcon = require('../icons/CloseIcon').default;
 const MenuBarsIcon = require('../icons/MenuBarsIcon').default;
 
-const container = {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  };
-
-<div style={container}>
+<SpacedContainer>
   <IconButton variant="contained">
     <AddIcon /> Click Me
   </IconButton>
 
   <IconButton color="primary" variant="contained">
-    <CloseIcon /> Click Me Softly <MenuBarsIcon />
+    <CloseIcon /> Click Me Again <MenuBarsIcon />
   </IconButton>
 
   <IconButton color="primary" variant="contained">
@@ -26,5 +21,5 @@ const container = {
   <IconButton color="secondary" variant="outlined">
     <CloseIcon /> Click Me <MenuBarsIcon />
   </IconButton>
-  </div>
+</SpacedContainer>
 ```
