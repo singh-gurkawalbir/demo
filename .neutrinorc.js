@@ -114,6 +114,9 @@ module.exports = {
         },
 
         sections: sections,
+        require: [
+          join(__dirname, 'docs/styles.css')
+        ]
       },
     ],
     [
