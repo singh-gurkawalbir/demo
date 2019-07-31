@@ -37,5 +37,7 @@ export default {
         return subdomain;
       },
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

@@ -18,5 +18,9 @@ export default {
     ],
   }),
 
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

@@ -26,5 +26,8 @@ export default {
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

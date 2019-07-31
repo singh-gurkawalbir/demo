@@ -11,5 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://api.nimble.com/oauth/token',
     '/rest/scopeDelimiter': ',',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

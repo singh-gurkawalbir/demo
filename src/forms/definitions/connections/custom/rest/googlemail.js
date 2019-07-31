@@ -28,5 +28,7 @@ export default {
         'https://www.googleapis.com/auth/gmail.metadata',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

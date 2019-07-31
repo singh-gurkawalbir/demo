@@ -34,5 +34,7 @@ export default {
         'WRITE_SHEETS',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

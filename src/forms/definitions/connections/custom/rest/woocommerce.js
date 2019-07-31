@@ -25,5 +25,7 @@ export default {
       helpText: 'The consumer secret of your WooCommerce account.',
       label: 'Consumer Secret:',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

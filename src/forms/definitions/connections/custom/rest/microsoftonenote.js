@@ -31,5 +31,7 @@ export default {
         'MailboxSettings.ReadWrite',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

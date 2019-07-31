@@ -30,10 +30,12 @@ export default {
       helpText: 'Please enter your account subdomain here.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.api-us1.com')
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.api-us1.com')
+          );
 
         return subdomain;
       },
@@ -45,5 +47,8 @@ export default {
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
       required: true,
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

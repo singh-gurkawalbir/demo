@@ -23,5 +23,7 @@ export default {
         'https://www.googleapis.com/auth/ddmconversions',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

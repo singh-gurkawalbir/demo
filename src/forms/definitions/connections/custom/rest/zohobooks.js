@@ -79,5 +79,7 @@ export default {
         'ZohoBooks.settings.DELETE',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

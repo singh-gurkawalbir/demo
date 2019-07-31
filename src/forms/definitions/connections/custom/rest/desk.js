@@ -43,5 +43,7 @@ export default {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your Desk account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

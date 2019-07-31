@@ -11,5 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://login.salesforce.com/services/oauth2/token',
     '/rest/scopeDelimiter': ' ',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

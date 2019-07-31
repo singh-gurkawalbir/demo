@@ -29,5 +29,9 @@ export default {
       '/rest/refreshTokenPath': 'data.refresh_token',
     };
   },
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

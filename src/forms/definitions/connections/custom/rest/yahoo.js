@@ -11,5 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://api.login.yahoo.com/oauth2/get_token',
     '/rest/scopeDelimiter': ' ',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

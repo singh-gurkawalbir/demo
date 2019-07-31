@@ -42,5 +42,7 @@ export default {
         'admin:gpg_key',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

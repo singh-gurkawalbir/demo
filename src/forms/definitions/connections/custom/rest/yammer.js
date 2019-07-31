@@ -12,5 +12,9 @@ export default {
     '/rest/scopeDelimiter': ' ',
     '/rest/oauth/accessTokenPath': 'access_token.token',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

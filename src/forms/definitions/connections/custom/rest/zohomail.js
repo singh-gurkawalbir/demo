@@ -52,5 +52,7 @@ export default {
         'VirtualOffice.organization.domains.DELETE',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

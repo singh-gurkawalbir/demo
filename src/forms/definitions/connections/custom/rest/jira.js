@@ -47,5 +47,7 @@ export default {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your JIRA account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

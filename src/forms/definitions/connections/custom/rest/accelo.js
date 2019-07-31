@@ -46,5 +46,7 @@ export default {
       fieldId: 'rest.scope',
       scopes: ['read(all)', 'write(all)'],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

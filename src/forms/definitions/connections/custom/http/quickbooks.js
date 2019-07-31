@@ -88,5 +88,8 @@ export default {
         return 'paapi';
       },
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

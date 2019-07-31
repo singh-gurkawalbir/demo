@@ -50,5 +50,7 @@ export default {
       required: true,
       helpText: `The 3dcart merchant's token.`,
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

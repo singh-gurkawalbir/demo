@@ -33,5 +33,7 @@ export default {
         'employee:customers_credit_limit',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

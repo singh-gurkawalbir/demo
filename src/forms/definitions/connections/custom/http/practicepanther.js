@@ -12,6 +12,11 @@ export default {
     '/http/auth/oauth/accessTokenPath': 'access_token',
   }),
 
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
+  ],
   fieldSets: [],
 };

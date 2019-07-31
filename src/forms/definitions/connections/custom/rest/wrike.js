@@ -29,5 +29,7 @@ export default {
         'amReadWriteWorkflow',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

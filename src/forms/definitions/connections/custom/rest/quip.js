@@ -15,5 +15,7 @@ export default {
       label: 'API Access Token:',
       required: true,
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

@@ -42,5 +42,7 @@ export default {
         return 'production';
       },
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

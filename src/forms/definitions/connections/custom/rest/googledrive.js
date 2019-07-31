@@ -27,5 +27,7 @@ export default {
         'https://www.googleapis.com/auth/drive.scripts',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

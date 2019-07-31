@@ -49,5 +49,7 @@ export default {
       required: true,
       helpText: 'The personal access token of your account on namely.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

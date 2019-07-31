@@ -44,5 +44,8 @@ export default {
     {
       fieldId: 'http.auth.basic.password',
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

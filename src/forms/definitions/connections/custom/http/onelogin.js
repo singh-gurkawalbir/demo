@@ -91,5 +91,8 @@ export default {
       label: 'refresh Token',
       visible: false,
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

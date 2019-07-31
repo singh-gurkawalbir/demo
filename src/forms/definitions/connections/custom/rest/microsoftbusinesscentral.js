@@ -11,5 +11,9 @@ export default {
     '/rest/oauthTokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

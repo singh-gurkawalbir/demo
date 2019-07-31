@@ -53,5 +53,7 @@ export default {
       inputType: 'password',
       helpText: 'The API key of your Chargify account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

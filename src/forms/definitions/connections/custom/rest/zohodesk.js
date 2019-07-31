@@ -58,5 +58,7 @@ export default {
         'Desk.search.READ',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

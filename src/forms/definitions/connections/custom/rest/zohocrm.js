@@ -185,5 +185,7 @@ export default {
         'ZohoCRM.modules.notes.DELETE',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

@@ -13,5 +13,9 @@ export default {
     '/rest/scopeDelimiter': ' ',
   }),
 
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

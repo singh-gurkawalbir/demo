@@ -55,5 +55,7 @@ export default {
       helpText:
         'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. A token can be created from the API Keys section of the Administration tab by an admin user. The token is a 40-character long case-sensitive alphanumeric code.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

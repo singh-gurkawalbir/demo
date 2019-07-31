@@ -106,5 +106,7 @@ export default {
       defaultValue: '',
       helpText: 'The access token of your Pitney Bowes account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

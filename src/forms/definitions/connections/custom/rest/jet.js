@@ -54,5 +54,7 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

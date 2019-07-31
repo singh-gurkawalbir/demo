@@ -43,5 +43,7 @@ export default {
       label: 'API Key:',
       helpText: 'The API Key of your Chargebee account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

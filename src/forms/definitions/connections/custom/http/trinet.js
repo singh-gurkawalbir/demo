@@ -29,5 +29,8 @@ export default {
         'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       required: true,
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

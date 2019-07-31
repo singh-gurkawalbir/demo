@@ -21,5 +21,8 @@ export default {
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To get an API key for your Autopilot account, login to your Autopilot account and go to Settings and to Autopilot API.',
       required: true,
     },
+    { fieldId: 'http.disableStrictSSL' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'http.concurrencyLevel' },
   ],
 };

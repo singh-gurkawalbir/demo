@@ -21,5 +21,7 @@ export default {
     {
       fieldId: 'rest.basicAuth.password',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

@@ -36,5 +36,7 @@ export default {
       inputType: 'password',
       helpText: 'The API Secret of your Certify account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

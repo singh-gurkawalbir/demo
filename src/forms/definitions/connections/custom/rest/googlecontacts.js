@@ -20,5 +20,7 @@ export default {
         'https://www.googleapis.com/auth/contacts.readonly',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

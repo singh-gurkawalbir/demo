@@ -13,5 +13,9 @@ export default {
     '/rest/pingRelativeURI': '/v3/users/me',
     '/rest/pingMethod': 'GET',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

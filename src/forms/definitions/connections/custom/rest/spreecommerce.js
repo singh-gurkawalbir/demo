@@ -28,5 +28,7 @@ export default {
       fieldId: 'rest.bearerToken',
       required: true,
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

@@ -93,7 +93,13 @@ class DynaSelectResource extends React.Component {
         <Select
           value={value}
           onChange={evt => {
-            onFieldChange(id, evt.target.value);
+            const { value: evtValue } = evt.target;
+
+            if (value === evtValue) {
+              return onFieldChange(id, '');
+            }
+
+            onFieldChange(id, evtValue);
           }}
           input={<Input name={name} id={id} />}>
           {availableResourceOptions}

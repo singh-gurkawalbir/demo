@@ -57,5 +57,7 @@ export default {
         'user.readwrite.all',
       ],
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

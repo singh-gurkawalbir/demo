@@ -11,5 +11,9 @@ export default {
     '/rest/oauthTokenURI': `https://api.dropboxapi.com/1/oauth2/token`,
     '/rest/rest/scopeDelimiter': ' ',
   }),
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

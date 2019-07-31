@@ -42,5 +42,7 @@ export default {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your ServiceNow account.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

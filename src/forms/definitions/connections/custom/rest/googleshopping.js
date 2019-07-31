@@ -12,5 +12,9 @@ export default {
     '/rest/scope': ['https://www.googleapis.com/auth/content'],
   }),
 
-  fields: [{ fieldId: 'name' }],
+  fields: [
+    { fieldId: 'name' },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
+  ],
 };

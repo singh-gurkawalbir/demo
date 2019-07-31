@@ -21,5 +21,7 @@ export default {
       helpText: 'The token of your Twilio account.',
       label: 'Auth Token:',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };

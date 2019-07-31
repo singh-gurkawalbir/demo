@@ -21,5 +21,7 @@ export default {
       helpText:
         'Enter your personal access token.\n\n Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
     },
+    { fieldId: '_borrowConcurrencyFromConnectionId' },
+    { fieldId: 'rest.concurrencyLevel' },
   ],
 };
