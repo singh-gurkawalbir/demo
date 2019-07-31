@@ -27,7 +27,7 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
-      label: 'Application',
+      placeholder: 'Select application',
       defaultValue: '',
       required: true,
     },
