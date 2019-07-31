@@ -19,7 +19,7 @@ export default {
       main: colors.celigoAccent3,
       sideBar: colors.celigoNeutral1,
       editorInner: colors.celigoNeutral2,
-      arrowAfter: colors.celigoNeutral2,
+      arrowAfter: colors.celigoNeutral3,
       // success:
       // warning: celigo.celigoWarning
       // error:
