@@ -3,22 +3,23 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = {
   root: {
-    padding: '5px',
+    padding: '3px 5px',
     textAlign: 'center',
     minWidth: '120px',
     maxWidth: '240px',
   },
   content: {
     textTransform: 'capitalize',
+    lineHeight: 'inherit',
   },
 };
 
 function TooltipContent(props) {
-  const { classes, title } = props;
+  const { classes, children } = props;
 
   return (
     <div className={classes.root}>
-      <Typography className={classes.content}>{title}</Typography>
+      <Typography className={classes.content}>{children}</Typography>
     </div>
   );
 }

@@ -1,11 +1,11 @@
-import { Component } from 'react';
+import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-@withStyles(theme => ({
+const styles = theme => ({
   arrow: {
     position: 'absolute',
     fontSize: 7,
@@ -118,57 +118,51 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       },
     },
   },
-}))
-export default class HoverTooltip extends Component {
-  state = {
-    arrowEl: null,
-  };
-  handleArrowEl = node => {
-    this.setState({ arrowEl: node });
-  };
+});
 
-  render() {
-    const {
-      id,
-      open,
-      anchorEl,
-      placement = 'bottom-end',
-      classes,
-      children,
-      onClose = () => {}, // default to noop.
-      className,
-    } = this.props;
-    const { arrowEl } = this.state;
+function Tooltip(props) {
+  const {
+    id,
+    open,
+    anchorEl,
+    placement = 'bottom-end',
+    classes,
+    children,
+    onClose = () => {}, // default to noop.
+    className,
+  } = props;
+  const arrowEl = useRef(null);
 
-    return (
-      <Popper
-        id={id}
-        anchorEl={anchorEl}
-        placement={placement}
-        disablePortal={false}
-        open={open}
-        className={classes.popper}
-        onClose={onClose}
-        modifiers={{
-          flip: {
-            enabled: true,
-          },
-          preventOverflow: {
-            enabled: true,
-            boundariesElement: 'scrollParent',
-          },
-          arrow: {
-            enabled: true,
-            element: arrowEl,
-          },
-        }}>
-        <span className={classes.arrow} ref={this.handleArrowEl} />
-        <ClickAwayListener onClickAway={onClose}>
-          <Paper className={classNames(classes.paper, className)} elevation={1}>
-            {children}
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
-    );
-  }
+  return (
+    <Popper
+      id={id}
+      anchorEl={anchorEl}
+      placement={placement}
+      disablePortal={false}
+      open={open}
+      className={classes.popper}
+      onClose={onClose}
+      modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
+        arrow: {
+          enabled: true,
+          element: arrowEl.current,
+        },
+      }}>
+      <span className={classes.arrow} ref={arrowEl} />
+      <ClickAwayListener onClickAway={onClose}>
+        <Paper className={classNames(classes.paper, className)} elevation={1}>
+          {children}
+        </Paper>
+      </ClickAwayListener>
+    </Popper>
+  );
 }
+
+export default withStyles(styles)(Tooltip);
