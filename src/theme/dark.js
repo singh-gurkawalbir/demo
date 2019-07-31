@@ -8,15 +8,13 @@ export default {
     hover: colors.celigoWhite,
   },
   editor: {
-    panelBackground: colors.celigoNeutral2,
-    panelBorder: colors.celigoNeutral2,
+    panelBackground: colors.celigoNeutral7,
+    panelBorder: colors.celigoNeutral6,
   },
   palette: {
     type: 'dark',
     background: {
       paper: colors.celigoNeutral8,
-      // TODO Azhar
-      // default: '#1d232a',
       default: colors.celigoNeutral6,
       editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
@@ -25,9 +23,6 @@ export default {
       // warning: celigo.celigoWarning
       // error:
     },
-
-    // action: {[object]},
-    // Spinner color changes below
     primary: {
       backgroundColor: colors.celigoAccent1,
       color: colors.celigoWhite,
@@ -38,7 +33,7 @@ export default {
       main: colors.celigoAccent1,
     },
     text: {
-      primary: colors.celigoHelpText,
+      primary: colors.celigoNeutral1,
       link: colors.celigoNeutral6,
       linkHover: colors.celigoAccent1,
       secondary: colors.celigoNeutral4,
@@ -55,14 +50,14 @@ export default {
       h3: { color: colors.celigoWhite },
       h4: { color: colors.celigoWhite },
       h5: { color: colors.celigoWhite },
-      h6: { color: colors.celigoHelpText },
-      subtitle1: { color: colors.celigoHelpText },
-      subtitle2: { color: colors.celigoHelpText },
+      h6: { color: colors.celigoNeutral1 },
+      subtitle1: { color: colors.celigoNeutral1 },
+      subtitle2: { color: colors.celigoNeutral1 },
       overline: { color: colors.celigoWhite },
     },
     MuiButton: {
       textPrimary: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral1,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
@@ -70,11 +65,14 @@ export default {
           color: colors.celigoAccent2,
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral6,
         },
       },
       textSecondary: {
         color: colors.celigoAccent2,
+        '&::after': {
+          backgroundColor: colors.celigoAccent3,
+        },
         '&:focus': {
           color: colors.celigoAccent1,
         },
@@ -82,7 +80,7 @@ export default {
           color: colors.celigoAccent3,
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral5,
         },
       },
       outlinedPrimary: {
@@ -120,7 +118,7 @@ export default {
       // rounded buttons styles
       contained: {
         backgroundColor: colors.celigoNeutral2,
-        border: `1px solid ${colors.celigoNeutral2}`,
+        borderColor: colors.celigoNeutral2,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -134,7 +132,7 @@ export default {
       },
       containedPrimary: {
         backgroundColor: colors.celigoAccent3,
-        border: `1px solid ${colors.celigoAccent3}`,
+        borderColor: colors.celigoAccent3,
         color: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
@@ -152,22 +150,24 @@ export default {
         },
       },
       containedSecondary: {
-        border: `1px solid ${colors.celigoNeutral6}`,
+        borderColor: colors.celigoNeutral6,
         color: colors.celigoNeutral6,
+        backgroundColor: 'transparent',
         '&:hover': {
-          color: colors.celigoNeutral7,
-          backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          color: colors.celigoNeutral3,
+          backgroundColor: 'transparent',
+          borderColor: colors.celigoNeutral3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
           borderColor: colors.celigoNeutral4,
+          backgroundColor: colors.celigoNeutral7,
         },
       },
     },
     MuiAvatar: {
       colorDefault: {
-        color: colors.celigoHelpText,
+        color: colors.celigoNeutral1,
         backgroundColor: colors.celigoNeutral6,
       },
     },
