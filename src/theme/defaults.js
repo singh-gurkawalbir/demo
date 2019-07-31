@@ -6,8 +6,7 @@ const unit = 8;
 export default {
   typography: {
     useNextVariants: true,
-    htmlFontSize: 16,
-    fontSize: 16,
+    fontFamily: 'Roboto, sans-serif',
   },
   spacing: {
     unit,
