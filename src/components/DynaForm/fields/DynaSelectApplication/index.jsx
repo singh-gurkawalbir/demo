@@ -29,7 +29,10 @@ export const SelectApplication = withStyles(styles)(props => {
     onFieldChange,
     classes,
   } = props;
-  // TODO: refactor to use this component:
+  // TODO: use the documentation below to customize this component:
+  // we are missing "grouping" of applications.
+  // we may need to also refactor the applications metadata file
+  // accordingly.
   // https://react-select.com/components#replacing-components
   const options = applications.map(app => ({
     value: app.id,
