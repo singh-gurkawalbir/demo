@@ -50,6 +50,10 @@ export default {
       },
     ],
   },
+  exportHooks: {
+    label: 'Hooks (Optional, Developers Only)',
+    type: 'labeltitle',
+  },
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
@@ -75,10 +79,7 @@ export default {
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
   },
-  'rest.allowUndefinedResource': {
-    type: 'checkbox',
-    label: 'Rest allow Undefined Resource',
-  },
+  // #region paging
   pagingData: {
     type: 'labeltitle',
     label: 'Does this API support paging?',
@@ -192,11 +193,8 @@ export default {
     type: 'text',
     label: 'Success Path',
   },
-  'rest.successValuess': {
+  'rest.successValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'Success Values',
     validWhen: [],
   },
@@ -217,6 +215,27 @@ export default {
     type: 'text',
     label: 'Last Page Value',
   },
+  // #endregion paging
+  // #region transform
+  exportTransformRecords: {
+    label: 'Would you like to transform the records?',
+    type: 'labeltitle',
+  },
+  'transform.expression.rules': {
+    type: 'transformeditor',
+    label: 'Transform expression rules',
+    sampleData: r => r.sampleData,
+    rules: r => r && r.transform && r.transform.rules,
+  },
+  'transform.script._scriptId': {
+    type: 'text',
+    label: 'Transform script _script Id',
+  },
+  'transform.script.function': {
+    type: 'text',
+    label: 'Transform script function',
+  },
+  // #endregion transform
   // #region once
   'once.booleanField': {
     type: 'text',
@@ -228,7 +247,6 @@ export default {
       },
     ],
   },
-  // #endregion once
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',
@@ -257,6 +275,7 @@ export default {
       },
     ],
   },
+  // #endregion once
   pageSize: {
     type: 'text',
     label: 'Page Size',

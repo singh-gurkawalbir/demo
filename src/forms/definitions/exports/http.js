@@ -4,17 +4,28 @@ export default {
     { fieldId: 'exportData' },
     { fieldId: 'http.method' },
     { fieldId: 'http.headers' },
-
     { fieldId: 'http.relativeURI' },
     { fieldId: 'http.body' },
-
     { fieldId: 'http.successMediaType' },
     { fieldId: 'http.errorMediaType' },
     { fieldId: 'http.response.resourcePath' },
     { fieldId: 'http.response.successPath' },
     { fieldId: 'http.response.successValuess' },
     { fieldId: 'http.response.errorPath' },
-    { fieldId: 'type' },
+    {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+          ],
+        },
+      ],
+    },
     { fieldId: 'delta.dateFormat' },
     { fieldId: 'delta.lagOffset' },
     { fieldId: 'pagingData' },
@@ -31,18 +42,12 @@ export default {
     { fieldId: 'http.paging.maxCountPath' },
     { fieldId: 'http.paging.lastPageStatusCode' },
     { fieldId: 'http.paging.lastPagePath' },
-    { fieldId: 'http.paging.lastPageValuess' },
+    { fieldId: 'http.paging.lastPageValues' },
 
-    { fieldId: 'ftp.exportTransformRecords' },
+    { fieldId: 'exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
-    { fieldId: 'ftp.exportHooks' },
+    { fieldId: 'exportHooks' },
     { formId: 'hooks' },
-
-    /* { fieldId: 'http.once.relativeURI' },
-    { fieldId: 'http.once.method' },
-    { fieldId: 'http.once.body' },
-    { fieldId: 'http.response.resourceIdPath' },
-    { fieldId: 'http.response.blobFormat' } */
   ],
   fieldSets: [
     {

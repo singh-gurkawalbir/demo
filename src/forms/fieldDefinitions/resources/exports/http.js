@@ -1,20 +1,7 @@
 export default {
-  type: {
-    type: 'select',
-    label: 'Export Type1234',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-        ],
-      },
-    ],
-  },
   pagingData: {
     type: 'labeltitle',
-    label: 'Does this API support paging?HTTP!!!',
+    label: 'Does this API support paging?',
   },
   'delta.dateFormat': {
     type: 'text',
@@ -84,9 +71,6 @@ export default {
   },
   'http.headers': {
     type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
     label: 'Configure HTTP Headers',
   },
   'http.paging.method': {
@@ -233,12 +217,10 @@ export default {
     type: 'text',
     label: 'Last Page Path',
   },
-  'http.paging.lastPageValuess': {
+  'http.paging.lastPageValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'Last Page Values',
+    valueDelimiter: ',',
     validWhen: [],
   },
   'http.paging.linkHeaderRelation': {
@@ -269,9 +251,7 @@ export default {
   },
   'http.response.successValuess': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    valueDelimiter: ',',
     label: 'Success Values',
     validWhen: [],
   },
@@ -297,7 +277,7 @@ export default {
     label: 'Http response blob Format',
   },
   // #region transform
-  'ftp.exportTransformRecords': {
+  exportTransformRecords: {
     label: 'Would you like to transform the records?',
     type: 'labeltitle',
   },
@@ -328,6 +308,10 @@ export default {
         ],
       },
     ],
+  },
+  exportHooks: {
+    label: 'Hooks (Optional, Developers Only)',
+    type: 'labeltitle',
   },
   'hooks.preSavePage.function': {
     type: 'text',
