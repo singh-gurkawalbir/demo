@@ -1,8 +1,4 @@
 export default {
-  pagingData: {
-    type: 'labeltitle',
-    label: 'Does this API support paging?',
-  },
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
@@ -134,11 +130,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        is: ['token'],
-      },
-      {
-        field: 'http.paging.method',
-        is: ['url'],
+        is: ['token', 'url'],
       },
     ],
   },
@@ -148,11 +140,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        is: ['token'],
-      },
-      {
-        field: 'http.paging.method',
-        is: ['relativeuri'],
+        is: ['token', 'relativeuri'],
       },
     ],
   },
@@ -182,11 +170,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        is: ['skip'],
-      },
-      {
-        field: 'http.paging.method',
-        is: ['page'],
+        is: ['skip', 'page'],
       },
     ],
   },
@@ -196,11 +180,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        is: ['skip'],
-      },
-      {
-        field: 'http.paging.method',
-        is: ['page'],
+        is: ['skip', 'page'],
       },
     ],
   },
@@ -221,7 +201,6 @@ export default {
     type: 'text',
     label: 'Last Page Values',
     valueDelimiter: ',',
-    validWhen: [],
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
@@ -253,7 +232,6 @@ export default {
     type: 'text',
     valueDelimiter: ',',
     label: 'Success Values',
-    validWhen: [],
   },
   'http.response.errorPath': {
     type: 'text',
@@ -277,10 +255,6 @@ export default {
     label: 'Http response blob Format',
   },
   // #region transform
-  exportTransformRecords: {
-    label: 'Would you like to transform the records?',
-    type: 'labeltitle',
-  },
   'transform.expression.rules': {
     type: 'transformeditor',
     label: 'Transform expression rules',
@@ -308,10 +282,6 @@ export default {
         ],
       },
     ],
-  },
-  exportHooks: {
-    label: 'Hooks (Optional, Developers Only)',
-    type: 'labeltitle',
   },
   'hooks.preSavePage.function': {
     type: 'text',

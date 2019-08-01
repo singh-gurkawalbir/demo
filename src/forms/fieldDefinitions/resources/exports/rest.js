@@ -33,10 +33,6 @@ export default {
       },
     ],
   },
-  'rest.relativeURI': {
-    type: 'text',
-    label: 'Relative URI',
-  },
   'rest.method': {
     type: 'select',
     label: 'HTTP Method',
@@ -44,29 +40,15 @@ export default {
       {
         items: [
           { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
           { label: 'PUT', value: 'PUT' },
+          { label: 'POST', value: 'POST' },
         ],
       },
     ],
   },
-  exportHooks: {
-    label: 'Hooks (Optional, Developers Only)',
-    type: 'labeltitle',
-  },
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
-    visibleWhen: [
-      {
-        field: 'rest.method',
-        is: ['POST'],
-      },
-      {
-        field: 'rest.method',
-        is: ['PUT'],
-      },
-    ],
   },
   'rest.resourcePath': {
     type: 'text',
@@ -80,10 +62,6 @@ export default {
     label: 'Configure HTTP headers',
   },
   // #region paging
-  pagingData: {
-    type: 'labeltitle',
-    label: 'Does this API support paging?',
-  },
   'rest.pagingMethod': {
     type: 'select',
     label: 'Paging Method',
@@ -107,11 +85,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['nextpageurl'],
-      },
-      {
-        field: 'rest.pagingMethod',
-        is: ['token'],
+        is: ['nextpageurl', 'token'],
       },
     ],
   },
@@ -131,7 +105,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['nextpageurl'],
+        is: ['relativeuri'],
       },
     ],
   },
@@ -141,11 +115,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        is: ['pageargument'],
-      },
-      {
-        field: 'rest.pagingMethod',
-        is: ['token'],
+        is: ['pageargument', 'token'],
       },
     ],
   },
@@ -189,6 +159,16 @@ export default {
       },
     ],
   },
+  'rest.relativeuri': {
+    type: 'text',
+    label: 'Relative URI',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['relativeuri'],
+      },
+    ],
+  },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
@@ -196,7 +176,6 @@ export default {
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
-    validWhen: [],
   },
   'rest.lastPageStatusCode': {
     type: 'text',
@@ -217,10 +196,6 @@ export default {
   },
   // #endregion paging
   // #region transform
-  exportTransformRecords: {
-    label: 'Would you like to transform the records?',
-    type: 'labeltitle',
-  },
   'transform.expression.rules': {
     type: 'transformeditor',
     label: 'Transform expression rules',
