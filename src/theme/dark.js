@@ -59,7 +59,7 @@ export default {
       textPrimary: {
         color: colors.celigoNeutral1,
         '&:focus': {
-          color: colors.celigoNeutral7,
+          color: colors.celigoAccent2,
         },
         '&:hover': {
           color: colors.celigoAccent2,

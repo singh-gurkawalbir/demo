@@ -135,7 +135,8 @@ class AccountList extends Component {
     confirmDialog({
       title: 'Leave Account',
       // eslint-disable-next-line prettier/prettier
-      message: `By leaving the account "${account.company}", you will no longer have access to the account or any of the integrations within the account.`,
+      message: `By leaving the account "${account.company}", 
+        you will no longer have access to the account or any of the integrations within the account.`,
       buttons: [
         {
           label: 'Cancel',
