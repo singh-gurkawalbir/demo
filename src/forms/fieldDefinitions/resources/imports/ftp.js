@@ -3,7 +3,6 @@ export default {
     type: 'text',
     label: 'Ftp directory Path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
-    defaultValue: '',
     required: true,
   },
   'ftp.fileType': {
@@ -18,9 +17,9 @@ export default {
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
-          { label: 'EDIX12', value: 'edi' },
-          { label: 'Fixed Width', value: 'fixedwidth' },
-          { label: 'EDIFACT', value: 'edifact' },
+          { label: 'EDIX12', value: 'filedefinition' },
+          { label: 'Fixed Width', value: 'fixed' },
+          { label: 'EDIFACT', value: 'delimited/edifact' },
         ],
       },
     ],
@@ -28,7 +27,6 @@ export default {
   'ftp.fileName': {
     type: 'text',
     label: 'Ftp File Name',
-    defaultValue: '',
     required: true,
   },
   'ftp.sampleFile': {
@@ -39,15 +37,7 @@ export default {
     visibleWhen: [
       {
         field: 'ftp.fileType',
-        is: ['csv'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['json'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['xlsx'],
+        is: ['csv', 'json', 'xlsx'],
       },
     ],
   },
@@ -57,11 +47,11 @@ export default {
     options: [
       {
         items: [
-          { label: 'Comma', value: 'comma' },
-          { label: 'Pipe', value: 'pipe' },
-          { label: 'Semicolon', value: 'semicolon' },
-          { label: 'Space', value: 'space' },
-          { label: 'Tab', value: 'tab' },
+          { label: 'Comma', value: ',' },
+          { label: 'Pipe', value: '|' },
+          { label: 'Semicolon', value: ';' },
+          { label: 'Space', value: '' },
+          { label: 'Tab', value: '\t' },
         ],
       },
     ],
@@ -78,29 +68,7 @@ export default {
     visibleWhen: [
       {
         field: 'ftp.fileType',
-        is: ['csv'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['xlsx'],
-      },
-    ],
-  },
-  'ftp.fileDefinitionRules': {
-    type: 'button',
-    label: '',
-    visibleWhen: [
-      {
-        field: 'ftp.fileType',
-        is: ['edi'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['fixedwidth'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['edifact'],
+        is: ['csv', 'xlsx'],
       },
     ],
   },
@@ -170,19 +138,7 @@ export default {
     visibleWhen: [
       {
         field: 'ftp.fileType',
-        is: ['csv'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['json'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['xlsx'],
-      },
-      {
-        field: 'ftp.fileType',
-        is: ['xml'],
+        is: ['csv', 'json', 'xlsx', 'xml'],
       },
     ],
   },
