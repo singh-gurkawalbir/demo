@@ -9,7 +9,6 @@ import {
   all,
   fork,
 } from 'redux-saga/effects';
-import { difference } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -246,17 +245,12 @@ export function* resolveSelected({ jobs }) {
     actionTypes.JOB.RESOLVE_ALL_PENDING,
   ]);
 
-  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_COMMIT) {
-    const areSameJobs =
-      difference(
-        undoOrCommitAction.jobs.map(job => job._id),
-        jobs.map(job => job._id)
-      ).length === 0;
-
-    if (areSameJobs) {
-      yield call(resolveCommit, { jobs });
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
+  if (
+    [
+      actionTypes.JOB.RESOLVE_COMMIT,
+      actionTypes.JOB.RESOLVE_ALL_PENDING,
+    ].includes(undoOrCommitAction.type)
+  ) {
     yield call(resolveCommit, { jobs });
   }
 }
@@ -271,14 +265,12 @@ export function* resolveAll({ flowId, integrationId }) {
     actionTypes.JOB.RESOLVE_ALL_PENDING,
   ]);
 
-  if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_COMMIT) {
-    if (
-      undoOrCommitAction.flowId === flowId &&
-      undoOrCommitAction.integrationId === integrationId
-    ) {
-      yield call(resolveAllCommit, { flowId, integrationId });
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RESOLVE_ALL_PENDING) {
+  if (
+    [
+      actionTypes.JOB.RESOLVE_ALL_COMMIT,
+      actionTypes.JOB.RESOLVE_ALL_PENDING,
+    ].includes(undoOrCommitAction.type)
+  ) {
     yield call(resolveAllCommit, { flowId, integrationId });
   }
 }
@@ -335,34 +327,13 @@ export function* retrySelected({ jobs }) {
     actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
   ]);
 
-  if (undoOrCommitAction.type === actionTypes.JOB.RETRY_FLOW_JOB_COMMIT) {
-    const flowJob = yield select(
-      selectors.job,
-      JOB_TYPES.FLOW,
-      undoOrCommitAction.jobId
-    );
-
-    if (flowJob && flowJob.children && flowJob.children.length > 0) {
-      const jobsToRetry = flowJob.children.filter(cJob => !!cJob.retriable);
-      const areSameJobs =
-        difference(jobs.map(job => job._id), jobsToRetry.map(job => job._id))
-          .length === 0;
-
-      if (areSameJobs) {
-        yield call(retryCommit, { jobs });
-      }
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RETRY_COMMIT) {
-    const areSameJobs =
-      difference(
-        jobs.map(job => job._id),
-        undoOrCommitAction.jobs.map(job => job._id)
-      ).length === 0;
-
-    if (areSameJobs) {
-      yield call(retryCommit, { jobs });
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RETRY_ALL_PENDING) {
+  if (
+    [
+      actionTypes.JOB.RETRY_COMMIT,
+      actionTypes.JOB.RETRY_ALL_PENDING,
+      actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
+    ].includes(undoOrCommitAction.type)
+  ) {
     yield call(retryCommit, { jobs });
   }
 }
@@ -424,16 +395,16 @@ export function* retryAll({ flowId, integrationId }) {
     actionTypes.JOB.RETRY_ALL_COMMIT,
     actionTypes.JOB.RETRY_ALL_UNDO,
     actionTypes.JOB.RETRY_ALL_PENDING,
+    actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
   ]);
 
-  if (undoOrCommitAction.type === actionTypes.JOB.RETRY_ALL_COMMIT) {
-    if (
-      undoOrCommitAction.flowId === flowId &&
-      undoOrCommitAction.integrationId === integrationId
-    ) {
-      yield call(retryAllCommit, { flowId, integrationId });
-    }
-  } else if (undoOrCommitAction.type === actionTypes.JOB.RETRY_ALL_PENDING) {
+  if (
+    [
+      actionTypes.JOB.RETRY_ALL_COMMIT,
+      actionTypes.JOB.RETRY_ALL_PENDING,
+      actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
+    ].includes(undoOrCommitAction.type)
+  ) {
     yield call(retryAllCommit, { flowId, integrationId });
   }
 }

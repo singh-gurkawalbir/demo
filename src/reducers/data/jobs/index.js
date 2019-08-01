@@ -613,7 +613,7 @@ export function inProgressJobIds(state) {
   // eslint-disable-next-line max-len
   /** Build a map of running bulk retry jobs with _integrationId & _flowId as the key and _id as value */
   state.bulkRetryJobs.forEach(job => {
-    if ([JOB_STATUS.QUEUED].includes(job.status)) {
+    if (job._id && [JOB_STATUS.QUEUED].includes(job.status)) {
       jobIds.bulkRetryJobs.push(job._id);
     }
 
@@ -711,6 +711,18 @@ export function job(state, type, jobId) {
   }
 
   return jobs.find(j => j._id === jobId);
+}
+
+export function isBulkRetryInProgress(state) {
+  if (!state) {
+    return false;
+  }
+
+  return (
+    state.bulkRetryJobs.filter(job =>
+      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
+    ).length > 0
+  );
 }
 
 // #endregion

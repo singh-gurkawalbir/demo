@@ -168,7 +168,6 @@ export default function AccessTokenActionsMenu({
       );
       enqueueSnackbar({
         message: `${job.numError} errors marked as resolved.`,
-        action,
         showUndo: true,
         autoHideDuration: UNDO_TIME.RESOLVE,
         handleClose(event, reason) {

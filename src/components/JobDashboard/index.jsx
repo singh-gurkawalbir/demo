@@ -8,6 +8,9 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
+import actionTypes from '../../actions/types';
+import { COMM_STATES } from '../../reducers/comms';
+import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 
@@ -45,9 +48,14 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
   const jobs = useSelector(state =>
     selectors.flowJobList(state, integrationId, flowId)
   );
+  const isBulkRetryInProgress = useSelector(state =>
+    selectors.isBulkRetryInProgress(state)
+  );
   const [filters, setFilters] = useState({});
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
+  const [disableButtons, setDisableButtons] = useState(true);
+  const [actionsToMonitor, setActionsToMonitor] = useState({});
 
   useEffect(
     () => () => {
@@ -63,6 +71,10 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
       );
     }
   }, [dispatch, filters, flowId, integrationId, jobs.length]);
+
+  useEffect(() => {
+    setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
+  }, [isBulkRetryInProgress, jobs.length]);
 
   useEffect(() => {
     let jobsSelected = 0;
@@ -146,6 +158,14 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
               integrationId,
             })
           );
+          setActionsToMonitor({
+            resolveAll: {
+              action: flowId
+                ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
+                : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
+              resourceId: flowId || integrationId,
+            },
+          });
         },
       });
     } else if (action === 'resolveSelected') {
@@ -247,6 +267,14 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
               integrationId,
             })
           );
+          setActionsToMonitor({
+            retryAll: {
+              action: flowId
+                ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
+                : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
+              resourceId: flowId || integrationId,
+            },
+          });
         },
       });
     } else if (action === 'retrySelected') {
@@ -302,6 +330,34 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
 
   return (
     <LoadResources required resources="flows,exports,imports">
+      <CommStatus
+        actionsToMonitor={actionsToMonitor}
+        autoClearOnComplete
+        commStatusHandler={objStatus => {
+          const messages = {
+            retryAll: {
+              [COMM_STATES.ERROR]: `${objStatus.retryAll &&
+                objStatus.retryAll.message}`,
+            },
+          };
+
+          ['retryAll'].forEach(a => {
+            if (
+              objStatus[a] &&
+              [COMM_STATES.ERROR].includes(objStatus[a].status)
+            ) {
+              if (!messages[a] || !messages[a][objStatus[a].status]) {
+                return;
+              }
+
+              enqueueSnackbar({
+                message: messages[a][objStatus[a].status],
+                variant: objStatus[a].status,
+              });
+            }
+          });
+        }}
+      />
       {!flowId && integration && <Typography>{integration.name}</Typography>}
       <Filters
         integrationId={integrationId}
@@ -309,6 +365,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         onFiltersChange={handleFiltersChange}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
+        disableButtons={disableButtons}
       />
       <JobTable
         integrationId={integrationId}

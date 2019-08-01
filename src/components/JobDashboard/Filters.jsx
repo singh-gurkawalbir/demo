@@ -30,6 +30,7 @@ function Filters({
   onFiltersChange,
   onActionClick,
   numJobsSelected = 0,
+  disableButtons = true,
 }) {
   const [_flowId, setFlowId] = useState('all');
   const [status, setStatus] = useState('all');
@@ -103,25 +104,29 @@ function Filters({
       <Button
         variant="contained"
         color="primary"
-        onClick={handleRetryAllJobsClick}>
+        onClick={handleRetryAllJobsClick}
+        disabled={disableButtons}>
         Retry All Jobs
       </Button>
       <Button
         variant="contained"
         color="primary"
-        onClick={handleRetrySelectedJobsClick}>
+        onClick={handleRetrySelectedJobsClick}
+        disabled={disableButtons}>
         Retry Selected {numJobsSelected} Jobs
       </Button>
       <Button
         variant="contained"
         color="primary"
-        onClick={handleResolveAllJobsClick}>
+        onClick={handleResolveAllJobsClick}
+        disabled={disableButtons}>
         Resolve All Jobs
       </Button>
       <Button
         variant="contained"
         color="primary"
-        onClick={handleResolveSelectedJobsClick}>
+        onClick={handleResolveSelectedJobsClick}
+        disabled={disableButtons}>
         Resolve Selected {numJobsSelected} Jobs
       </Button>
 
