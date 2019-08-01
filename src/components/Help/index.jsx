@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { useState, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -7,57 +7,53 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 
-@withStyles(theme => ({
+const styles = theme => ({
   helpPopper: {
     maxWidth: '350px',
     maxHeight: '300px',
     padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
     overflow: 'auto',
   },
-}))
-export default class Help extends Component {
-  state = {
-    anchorEl: null,
-  };
+});
 
-  handleMenu = event => {
-    if (this.state.anchorEl) {
-      this.setState({ anchorEl: null });
+function Help(props) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleMenu = event => {
+    if (anchorEl) {
+      setAnchorEl(null);
     } else {
-      this.setState({ anchorEl: event.currentTarget });
+      setAnchorEl(event.currentTarget);
     }
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  helpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
+  const getHelpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
+  const { classes, className, helpKey, helpText } = props;
+  const open = !!anchorEl;
+  const helpTextValue = getHelpText(helpText, helpKey);
 
-  render() {
-    const { anchorEl } = this.state;
-    const { classes, className, helpKey, helpText } = this.props;
-    const open = !!anchorEl;
-    const helpTextValue = this.helpText(helpText, helpKey);
+  if (!helpTextValue) return null;
 
-    if (!helpTextValue) return null;
-
-    return (
-      <Fragment>
-        <ClickAwayListener onClickAway={this.handleClose}>
-          <IconButton className={className} onClick={this.handleMenu}>
-            <HelpIcon fontSize="small" />
-          </IconButton>
-        </ClickAwayListener>
-        <ArrowPopper
-          placement="left"
-          className={classes.helpPopper}
-          id="helpBubble"
-          open={open}
-          anchorEl={anchorEl}>
-          <Typography variant="caption">{helpTextValue}</Typography>
-        </ArrowPopper>
-      </Fragment>
-    );
-  }
+  return (
+    <Fragment>
+      <ClickAwayListener onClickAway={handleClose}>
+        <IconButton className={className} onClick={handleMenu}>
+          <HelpIcon fontSize="small" />
+        </IconButton>
+      </ClickAwayListener>
+      <ArrowPopper
+        placement="left"
+        className={classes.helpPopper}
+        id="helpBubble"
+        open={open}
+        anchorEl={anchorEl}>
+        <Typography variant="caption">{helpTextValue}</Typography>
+      </ArrowPopper>
+    </Fragment>
+  );
 }
+
+export default withStyles(styles)(Help);

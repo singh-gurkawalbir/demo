@@ -1,4 +1,3 @@
-Default Tooltip
 ```js
 const Typography = require('@material-ui/core/Typography').default;
 const Button = require('@material-ui/core/Button').default;
@@ -22,8 +21,8 @@ const handleClick =
     <Button onClick={e => handleClick(e, 'left')} variant="contained">Open Tooltip on LEFT</Button>
     <Button onClick={e => handleClick(e, 'right')} variant="contained">Open Tooltip on RIGHT</Button>
 
-    <HoverTooltip open={!!state.anchorEl} anchorEl={state.anchorEl} placement={state.placement} >
-        <TooltipContent title="Some info here" />
-    </HoverTooltip>
+    <Tooltip open={!!state.anchorEl} anchorEl={state.anchorEl} placement={state.placement} >
+        <TooltipContent>some tooltip text here.</TooltipContent>
+    </Tooltip>
 </SpacedContainer>
 ```

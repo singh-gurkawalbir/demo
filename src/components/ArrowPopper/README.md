@@ -9,6 +9,8 @@ initialState = {
     placement: 'bottom' 
 };
 
+const handleClose = () => setState({ anchorEl: null });
+
 const handleClick = 
     (event, placement) => setState({ 
         anchorEl: state.anchorEl === event.currentTarget ? null : event.currentTarget,
@@ -27,8 +29,12 @@ const popperStyles = {
     <Button onClick={e => handleClick(e, 'left')}>Open Popper on LEFT</Button>
     <Button onClick={e => handleClick(e, 'right')}>Open Popper on RIGHT</Button>
 
-    <ArrowPopper open={!!state.anchorEl} anchorEl={state.anchorEl} placement={state.placement} >
-        <div style = {popperStyles} >
+    <ArrowPopper 
+        open={!!state.anchorEl} 
+        anchorEl={state.anchorEl} 
+        placement={state.placement} 
+        onClose={handleClose}>
+        <div style={popperStyles}>
             <Typography>
             This is the pure content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper This is the content within the popper</Typography>
         </div>

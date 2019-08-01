@@ -19,6 +19,7 @@ export const availableResources = [
   'connections',
   'scripts',
   'agents',
+  'asynchelpers',
   // 'integrations',
   // 'tiles',
 ];

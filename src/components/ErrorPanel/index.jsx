@@ -1,5 +1,3 @@
-import { Component } from 'react';
-import { func, instanceOf, oneOfType, string } from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -11,7 +9,7 @@ import ChevronDownIcon from 'mdi-react/ChevronDownIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import ErrorBox from './ErrorBox';
 
-@withStyles(theme => ({
+const styles = theme => ({
   panel: {
     marginBottom: theme.spacing.triple,
   },
@@ -38,55 +36,45 @@ import ErrorBox from './ErrorBox';
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
-}))
+});
+
 /**
  * Render an error in a panel. Will be expandable display stack traces
  * when in development
  */
-export default class ErrorPanel extends Component {
-  static propTypes = {
-    /**
-     * Error to display
-     */
-    error: oneOfType([string, instanceOf(Error)]).isRequired,
-    /**
-     * Execute a function to make the panel controlled-closeable.
-     */
-    onClose: func,
-  };
+function ErrorPanel(props) {
+  const { classes, error, onClose } = props;
+  const showStack =
+    process.env.NODE_ENV === 'development' && error instanceof Error;
 
-  render() {
-    const { classes, error, onClose } = this.props;
-    const showStack =
-      process.env.NODE_ENV === 'development' && error instanceof Error;
-
-    if (!showStack) {
-      return (
-        <Paper
-          className={classNames(classes.panel, classes.paper, classes.error)}>
-          {typeof error === 'string' ? error : error.message}
-          {onClose && (
-            <IconButton onClick={onClose}>
-              <CloseIcon />
-            </IconButton>
-          )}
-        </Paper>
-      );
-    }
-
+  if (!showStack) {
     return (
-      <ExpansionPanel
-        className={classNames(classes.panel, classes.error)}
-        disabled={!showStack}>
-        <ExpansionPanelSummary
-          classes={{ disabled: classes.disabled }}
-          expandIcon={<ChevronDownIcon />}>
-          {typeof error === 'string' ? error : error.message}
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <ErrorBox error={error} />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      <Paper
+        className={classNames(classes.panel, classes.paper, classes.error)}>
+        {typeof error === 'string' ? error : error.message}
+        {onClose && (
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        )}
+      </Paper>
     );
   }
+
+  return (
+    <ExpansionPanel
+      className={classNames(classes.panel, classes.error)}
+      disabled={!showStack}>
+      <ExpansionPanelSummary
+        classes={{ disabled: classes.disabled }}
+        expandIcon={<ChevronDownIcon />}>
+        {typeof error === 'string' ? error : error.message}
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <ErrorBox error={error} />
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
+  );
 }
+
+export default withStyles(styles)(ErrorPanel);
