@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
@@ -131,7 +131,7 @@ function Tooltip(props) {
     onClose = () => {}, // default to noop.
     className,
   } = props;
-  const arrowEl = useRef(null);
+  const [arrowEl, setArrowEl] = useState(null);
 
   return (
     <Popper
@@ -152,10 +152,10 @@ function Tooltip(props) {
         },
         arrow: {
           enabled: true,
-          element: arrowEl.current,
+          element: arrowEl,
         },
       }}>
-      <span className={classes.arrow} ref={arrowEl} />
+      <span className={classes.arrow} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose}>
         <Paper className={classNames(classes.paper, className)} elevation={1}>
           {children}
