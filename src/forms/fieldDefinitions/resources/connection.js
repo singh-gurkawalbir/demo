@@ -680,8 +680,22 @@ export default {
   },
   // #endregion rest
   // #region http
+  'http.auth.type': {
+    type: 'select',
+    label: 'Authentication Type:',
+    helpText: `The HTTP adaptors currently support 3 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called. Finally, choose 'custom' for all other types. If you select the 'custom' auth method integrator.io will not perform any special auth processing. It is up to the user to configure the HTTP request fields (method, relativeUri, headers and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in the 'encrypted' and 'unencrypted' fields of this connection.`,
+    options: [
+      {
+        items: [
+          { label: 'Basic', value: 'basic' },
+          { label: 'Token', value: 'token' },
+          { label: 'Custom', value: 'custom' },
+        ],
+      },
+    ],
+  },
   'http.mediaType': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Http media Type',
     options: [
       {
@@ -692,9 +706,15 @@ export default {
       },
     ],
   },
+  configureApiRateLimits: {
+    label: 'Configure API Rate Limits:',
+    type: 'checkbox',
+    defaultValue: r =>
+      r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
+  },
   'http.baseURI': {
     type: 'text',
-    label: 'Http base URI',
+    label: 'Base URI:',
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
@@ -744,45 +764,46 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Http retry Header',
+    label: 'Retry Header:',
+  },
+  'http.pingHeader': {
+    type: 'labeltitle',
+    label: 'How to test connection?',
   },
   'http.ping.relativeURI': {
     type: 'text',
-    label: 'Http ping relative URI',
+    label: 'Ping Relative URI:',
+    description: 'Relative to Base URI',
   },
   'http.ping.method': {
     type: 'select',
-    label: 'Http ping method',
+    label: 'Ping Method:',
     options: [
       {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
           { label: 'PUT', value: 'PUT' },
-          { label: 'HEAD', value: 'HEAD' },
         ],
       },
     ],
   },
   'http.ping.body': {
     type: 'text',
-    label: 'Http ping body',
+    label: 'Ping Body:',
   },
   'http.ping.successPath': {
     type: 'text',
-    label: 'Http ping success Path',
+    label: 'Ping Success Path:',
   },
-  'http.ping.successValuess': {
+  'http.ping.successValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Http ping success Values',
-    validWhen: [],
+    label: 'Ping Success Values:',
+    valueDelimiter: ',',
   },
   'http.ping.errorPath': {
     type: 'text',
-    label: 'Http ping error Path',
+    label: 'Ping Error Path:',
   },
   'http.auth.failStatusCode': {
     type: 'text',
@@ -814,6 +835,7 @@ export default {
     type: 'text',
     label: 'Password',
     inputType: 'password',
+    defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
@@ -872,11 +894,11 @@ export default {
   },
   'http.auth.token.location': {
     type: 'select',
-    label: 'Http auth token location',
+    label: 'Location:',
     options: [
       {
         items: [
-          { label: 'Url', value: 'url' },
+          { label: 'URL Parameter', value: 'url' },
           { label: 'Header', value: 'header' },
           { label: 'Body', value: 'body' },
         ],
@@ -885,43 +907,54 @@ export default {
   },
   'http.auth.token.headerName': {
     type: 'text',
-    label: 'Http auth token header Name',
+    label: 'Header Name:',
   },
   'http.auth.token.scheme': {
-    type: 'text',
-    label: 'Http auth token scheme',
+    type: 'select',
+    label: 'Scheme',
+    options: [
+      {
+        items: [
+          { label: 'Bearer', value: 'Bearer' },
+          { label: 'MAC', value: 'MAC' },
+          { label: 'None', value: ' ' },
+          { label: 'Custom', value: 'Custom' },
+        ],
+      },
+    ],
   },
   'http.auth.token.paramName': {
     type: 'text',
-    label: 'Http auth token param Name',
+    label: 'Parameter Name:',
   },
   'http.auth.token.refreshMethod': {
-    type: 'radiogroup',
-    label: 'Http auth token refresh Method',
+    type: 'select',
+    label: 'Refresh Method:',
     options: [
       {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
         ],
       },
     ],
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Http auth token refresh Relative URI',
+    label: 'Refresh Relative URI:',
   },
   'http.auth.token.refreshBody': {
     type: 'text',
-    label: 'Http auth token refresh Body',
+    label: 'Refresh Body:',
   },
   'http.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'Http auth token refresh Token Path',
+    label: 'Refresh Token Path:',
   },
   'http.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'Http auth token refresh Media Type',
+    label: 'Refresh Media Type:',
     options: [
       {
         items: [
@@ -943,9 +976,13 @@ export default {
     type: 'text',
     label: 'Http auth token refresh Token',
   },
+  'http.rateLimits': {
+    type: 'labeltitle',
+    label: 'API Rate Limits',
+  },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Http rate Limit fail Status Code',
+    label: 'Fail Status Code:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -954,28 +991,19 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Http rate Limit fail Path',
+    label: 'Fail Path:',
   },
-  'http.rateLimit.failValuess': {
+  'http.rateLimit.failValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Http rate Limit fail Values',
-    validWhen: [],
+    label: 'Fail Values:',
+    valueDelimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Http rate Limit limit',
+    label: 'Limit:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-      {
-        fallsWithinNumericalRange: {
-          message:
-            'The value must be greater than undefined and  lesser than undefined',
-        },
       },
     ],
   },
@@ -987,12 +1015,12 @@ export default {
     label: 'Http headers',
   },
   'http.unencrypted': {
-    type: 'text',
-    label: 'Http unencrypted',
+    type: 'textarea',
+    label: 'Unencrypted:',
   },
   'http.encrypted': {
-    type: 'text',
-    label: 'Http encrypted',
+    type: 'textarea',
+    label: 'Encrypted:',
   },
   'http.encrypteds': {
     type: 'editor',
