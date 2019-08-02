@@ -33,10 +33,6 @@ export default {
       },
     ],
   },
-  'rest.relativeURI': {
-    type: 'text',
-    label: 'Relative URI',
-  },
   'rest.method': {
     type: 'select',
     label: 'HTTP Method',
@@ -44,8 +40,8 @@ export default {
       {
         items: [
           { label: 'GET', value: 'GET' },
-          { label: 'POST', value: 'POST' },
           { label: 'PUT', value: 'PUT' },
+          { label: 'POST', value: 'POST' },
         ],
       },
     ],
@@ -65,14 +61,7 @@ export default {
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
   },
-  'rest.allowUndefinedResource': {
-    type: 'checkbox',
-    label: 'Rest allow Undefined Resource',
-  },
-  pagingData: {
-    type: 'labeltitle',
-    label: 'Does this API support paging?',
-  },
+  // #region paging
   'rest.pagingMethod': {
     type: 'select',
     label: 'Paging Method',
@@ -96,13 +85,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'pageargument',
-          'relativeuri',
-          'linkheader',
-          'postbody',
-        ],
+        is: ['nextpageurl', 'token'],
       },
     ],
   },
@@ -122,14 +105,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'pageargument',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'token',
-        ],
+        is: ['relativeuri'],
       },
     ],
   },
@@ -139,13 +115,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'skipargument',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-        ],
+        is: ['pageargument', 'token'],
       },
     ],
   },
@@ -165,14 +135,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'token',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'skipargument',
-        ],
+        is: ['pageargument'],
       },
     ],
   },
@@ -182,14 +145,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
-        isNot: [
-          'token',
-          'relativeuri',
-          'linkheader',
-          'nextpageurl',
-          'postbody',
-          'skipargument',
-        ],
+        is: ['pageargument'],
       },
     ],
   },
@@ -203,17 +159,23 @@ export default {
       },
     ],
   },
+  'rest.relativeuri': {
+    type: 'text',
+    label: 'Relative URI',
+    visibleWhen: [
+      {
+        field: 'rest.pagingMethod',
+        is: ['relativeuri'],
+      },
+    ],
+  },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
   },
-  'rest.successValuess': {
+  'rest.successValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'Success Values',
-    validWhen: [],
   },
   'rest.lastPageStatusCode': {
     type: 'text',
@@ -232,6 +194,23 @@ export default {
     type: 'text',
     label: 'Last Page Value',
   },
+  // #endregion paging
+  // #region transform
+  'transform.expression.rules': {
+    type: 'transformeditor',
+    label: 'Transform expression rules',
+    sampleData: r => r.sampleData,
+    rules: r => r && r.transform && r.transform.rules,
+  },
+  'transform.script._scriptId': {
+    type: 'text',
+    label: 'Transform script _script Id',
+  },
+  'transform.script.function': {
+    type: 'text',
+    label: 'Transform script function',
+  },
+  // #endregion transform
   // #region once
   'once.booleanField': {
     type: 'text',
@@ -243,7 +222,6 @@ export default {
       },
     ],
   },
-  // #endregion once
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',
@@ -255,7 +233,7 @@ export default {
     ],
   },
   'rest.once.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'HTTP Method',
     options: [
       {
@@ -272,6 +250,7 @@ export default {
       },
     ],
   },
+  // #endregion once
   pageSize: {
     type: 'text',
     label: 'Page Size',
