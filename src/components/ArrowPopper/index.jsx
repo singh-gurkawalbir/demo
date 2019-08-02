@@ -150,8 +150,8 @@ function ArrowPopper(props) {
           element: arrowEl,
         },
       }}>
+      <span className={classes.arrow} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose}>
-        <span className={classes.arrow} ref={setArrowEl} />
         <Paper className={classNames(classes.paper, className)} elevation={1}>
           {children}
         </Paper>
