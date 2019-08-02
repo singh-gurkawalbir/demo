@@ -102,6 +102,7 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
+        editorConfig: { theme: 'material' },
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
