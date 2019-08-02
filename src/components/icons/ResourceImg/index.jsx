@@ -16,6 +16,8 @@ const mapTypes = type => {
       return 'export';
     case 'imports':
       return 'import';
+    case 'asynchelpers':
+      return 'export';
     default:
       return type;
   }

@@ -1,6 +1,5 @@
 export default {
   celigoWhite: '#FFFFFF',
-  celigoHelpText: '#F8FAFC',
   celigoError: '#c23934',
   celigoSuccess: '#4CBB02',
   celigoWarning: '#FFA10C',

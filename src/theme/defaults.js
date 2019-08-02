@@ -1,25 +1,12 @@
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
-const Roboto300 = { fontFamily: 'Roboto300, sans-serif' };
-const Roboto400 = { fontFamily: 'Roboto400, sans-serif' };
-const Roboto500 = { fontFamily: 'Roboto500, sans-serif' };
 const unit = 8;
 
 export default {
   typography: {
     useNextVariants: true,
-    ...Roboto400,
-    display4: Roboto300,
-    display3: Roboto400,
-    display2: Roboto400,
-    display1: Roboto400,
-    headline: Roboto400,
-    title: Roboto500,
-    subheading: Roboto400,
-    caption: Roboto400,
-    button: Roboto500,
-    htmlFontSize: 16,
-    fontSize: 16,
+    fontFamily: 'Roboto, sans-serif',
   },
   spacing: {
     unit,
@@ -30,36 +17,44 @@ export default {
   drawerWidth: 300,
 
   overrides: {
-    MuiTypography: {
-      body2: {
-        fontSize: '15px',
-        fontWeight: '400',
-        lineHeight: '20px',
-        letterSpacing: 'normal',
+    MuiBackdrop: {
+      root: {
+        backgroundColor: fade(colors.celigoNeutral6, 0.7),
       },
+    },
+    // Name of the component ⚛️ / style sheet
+    MuiTypography: {
       body1: {
         fontSize: '18px',
         fontWeight: '400',
-        lineHeight: '24px',
+        lineHeight: '27px',
         letterSpacing: 'normal',
+        fontFamily: 'source sans pro',
+      },
+      body2: {
+        fontSize: '15px',
+        fontWeight: '400',
+        lineHeight: '22px',
+        letterSpacing: 'normal',
+        fontFamily: 'source sans pro',
       },
       h1: {
         fontSize: '48px',
         fontWeight: '300',
         lineHeight: '50px',
-        letterSpacing: '0.7px',
+        letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
-        fontWeight: '400',
-        lineHeight: '23px',
-        letterSpacing: '0.5px',
+        fontWeight: '300',
+        lineHeight: '40px',
+        letterSpacing: '-0.5px',
       },
 
       h3: {
         fontSize: '24px',
         fontWeight: '300',
-        lineHeight: '20px',
+        lineHeight: '26px',
         letterSpacing: 'normal',
       },
       h4: {
@@ -69,21 +64,27 @@ export default {
         letterSpacing: 'normal',
       },
       h5: {
-        fontSize: '20px',
-        fontWeight: '300',
+        fontSize: '18px',
+        fontWeight: '400',
+        lineHeight: '16px',
+        letterSpacing: 'normal',
+      },
+      h6: {
+        fontSize: '16px',
+        fontWeight: '400',
         lineHeight: '20px',
         letterSpacing: 'normal',
       },
       subtitle1: {
-        fontSize: '14px',
-        fontWeight: '300',
-        lineHeight: '18px',
+        fontSize: '22px',
+        fontWeight: '400',
+        lineHeight: '30px',
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '12px',
-        fontWeight: '300',
-        lineHeight: '18px',
+        fontSize: '16px',
+        fontWeight: '400',
+        lineHeight: '24px',
         letterSpacing: 'normal',
       },
       overline: {
@@ -93,53 +94,18 @@ export default {
         letterSpacing: '1px',
       },
     },
-    MuiBackdrop: {
-      root: {
-        backgroundColor: 'rgba(106, 123, 137, .7)',
-      },
-    },
     MuiButton: {
-      // Azhar, i dont think this is the right thing to do since we dont
-      // know if the icon is on the left or right...
-      // label: {
-      //   '& > svg': {
-      //     margin: '0px 6px',
-      //     lineHeight: '0px',
-      //     fontSize: '12px',
-      //   },
-      // },
-      textPrimary: {
-        borderRadius: '18px',
+      // text Buttons
+      text: {
         letterSpacing: '1px',
         minWidth: '100px',
         fontSize: '12px',
         lineHeight: '8px',
-        padding: '10px 20px',
-        '&:hover': {
-          background: 'none',
-        },
-      },
-      textSecondary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        minWidth: '100px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        padding: '10px 20px',
-        '&:focus': {
-          background: 'none',
-        },
-        '&:hover': {
-          backgroundColor: 'transparent',
-          '&:after': {
-            width: '100%',
-            left: '0px',
-          },
-        },
-        '&:after': {
+        padding: '10px 0px',
+        '&::after': {
           background: 'none repeat scroll 0 0 transparent',
-          bottom: '0px',
-          content: '',
+          bottom: '0',
+          content: " '' ",
           display: 'block',
           height: '1px',
           left: '50%',
@@ -148,21 +114,44 @@ export default {
           width: '0',
         },
       },
+      textPrimary: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+        },
+      },
+      textSecondary: {
+        color: colors.celigoNeutral6,
+        '&:focus': {
+          background: 'none',
+        },
+        '&::after': {
+          backgroundColor: colors.celigoError,
+        },
+        '&:hover': {
+          backgroundColor: 'transparent',
+          '&::after': {
+            width: '100%',
+            left: '0',
+          },
+        },
+      },
       // small size button
       sizeSmall: {
-        padding: '10px 15px',
-        fontSize: '12px',
-        minWidth: 60,
+        padding: '10px 20px',
+        fontSize: '14px',
+        textTransform: 'lowercase',
+        minWidth: 100,
+        letterSpacing: 'normal',
       },
       // large Size Button
       sizeLarge: {
         padding: '10px 20px',
         lineHeight: 'normal',
-        fontSize: '20px',
+        fontSize: '24px',
+        borderRadius: '36px',
         minWidth: 200,
       },
-      outlined: {},
-      outlinedPrimary: {
+      outlined: {
         borderRadius: '4px',
         letterSpacing: '1px',
         fontSize: '12px',
@@ -170,14 +159,13 @@ export default {
         minWidth: '100px',
         padding: '10px 20px',
       },
+      outlinedPrimary: {
+        backgroundColor: colors.celigoAccent3,
+        border: '1px solid',
+      },
       outlinedSecondary: {
-        borderRadius: '4px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
         backgroundColor: 'transparent',
-        padding: '10px 20px',
+        border: '1px solid',
       },
 
       // rounded buttons styles
@@ -187,7 +175,7 @@ export default {
         fontSize: '12px',
         lineHeight: '8px',
         minWidth: '100px',
-        border: `1px solid ${colors.celigoNeutral2}`,
+        border: '1px solid',
         boxShadow: 'none',
         padding: '10px 20px',
         '&:disabled': {
@@ -195,28 +183,10 @@ export default {
         },
       },
       containedPrimary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
-        border: `1px solid ${colors.celigoAccent3}`,
-        padding: '10px 20px',
-        boxShadow: 'none',
+        borderColor: colors.celigoAccent3,
       },
       containedSecondary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
         backgroundColor: 'transparent',
-        border: `1px solid ${colors.celigoNeutral6}`,
-        boxShadow: 'none',
-        padding: '10px 20px',
-        '&:disabled': {
-          background: 'none',
-        },
       },
     },
   },
