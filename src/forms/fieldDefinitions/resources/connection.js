@@ -8,6 +8,7 @@ export default {
     excludeFilter: r => ({ _id: r._id }),
     type: 'selectresource',
     label: 'Borrow Concurrency From',
+    defaultItemValue: 'Please Select',
   },
   _agentId: {
     type: 'selectresource',

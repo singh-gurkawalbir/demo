@@ -95,7 +95,10 @@ class DynaSelectResource extends React.Component {
           onChange={evt => {
             const { value: evtValue } = evt.target;
 
-            if (value === evtValue) {
+            if (
+              evtValue === defaultItemValue ||
+              evtValue === defaultItemLabel
+            ) {
               return onFieldChange(id, '');
             }
 
