@@ -23,7 +23,7 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
-    label: 'Invoke this Export [POST]:',
+    label: 'Invoke this Export [POST]',
     type: 'apiidentifier',
   },
   configureAsyncHelper: {

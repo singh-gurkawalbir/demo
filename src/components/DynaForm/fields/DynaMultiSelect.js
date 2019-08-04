@@ -69,6 +69,20 @@ class MaterialUiMultiSelect extends React.Component {
       processedValue = [processedValue];
     }
 
+    const createChip = value => {
+      const fieldOption = options[0].items.find(
+        option => option.value === value
+      );
+
+      return (
+        <Chip
+          key={value}
+          label={fieldOption.label || value}
+          className={classes.chip}
+        />
+      );
+    };
+
     return (
       <div key={id}>
         <FormControl
@@ -80,16 +94,16 @@ class MaterialUiMultiSelect extends React.Component {
             multiple
             value={processedValue}
             onChange={evt => {
+              console.log('changed', evt.target.value);
               onFieldChange(id, evt.target.value);
             }}
+            className={classes.selectElement}
             input={<Input name={name} id={id} />}
             renderValue={selected => (
               <div className={classes.chips}>
                 {selected &&
                   typeof selected.map === 'function' &&
-                  selected.map(value => (
-                    <Chip key={value} label={value} className={classes.chip} />
-                  ))}
+                  selected.map(createChip)}
               </div>
             )}>
             {items}

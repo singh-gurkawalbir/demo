@@ -1,18 +1,18 @@
 export default {
-  type: {
-    type: 'select',
-    label: 'Export Type',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-        ],
-      },
-    ],
-  },
+  // type: {
+  //   type: 'select',
+  //   label: 'Export Type',
+  //   options: [
+  //     {
+  //       items: [
+  //         { label: 'All', value: 'all' },
+  //         { label: 'Test', value: 'test' },
+  //         { label: 'Delta', value: 'delta' },
+  //         { label: 'Once', value: 'once' },
+  //       ],
+  //     },
+  //   ],
+  // },
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
@@ -211,17 +211,18 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-  // #region once
-  'once.booleanField': {
-    type: 'text',
-    label: 'Boolean Field',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
-  },
+  // #region once Commenting it as it over rides the one in NetSuite
+  // 'once.booleanField': {
+  //   type: 'text',
+  //   label: 'Boolean Field',
+  //   visibleWhen: [
+  //     {
+  //       field: 'type',
+  //       is: ['once'],
+  //     },
+  //   ],
+  // },
+  // #endregion once
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',
