@@ -94,10 +94,8 @@ class MaterialUiMultiSelect extends React.Component {
             multiple
             value={processedValue}
             onChange={evt => {
-              console.log('changed', evt.target.value);
               onFieldChange(id, evt.target.value);
             }}
-            className={classes.selectElement}
             input={<Input name={name} id={id} />}
             renderValue={selected => (
               <div className={classes.chips}>

@@ -119,7 +119,6 @@ export default (
         key = `${key}-${filterKey}`;
       }
 
-      console.log('res are', filterKey);
       specificMode[connectionId] = {
         ...specificMode[connectionId],
         [key]: options,

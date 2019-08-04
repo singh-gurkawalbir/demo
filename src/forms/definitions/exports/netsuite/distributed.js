@@ -1,9 +1,5 @@
 export default {
-  preSubmit: formValues => {
-    console.log(formValues);
-
-    return formValues;
-  },
+  preSubmit: formValues => formValues,
   fields: [
     { formId: 'common' },
     {

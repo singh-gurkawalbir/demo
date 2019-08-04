@@ -46,7 +46,6 @@ function RefreshGenericResource(props) {
   } = props;
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
 
-  console.log('valoue is ', value);
   useEffect(() => {
     if (!fieldOptions) {
       onFetchResource();
