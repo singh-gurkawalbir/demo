@@ -1,4 +1,4 @@
-import TestAndSaveCombined from '../Connections/TestableForm/TestAndSaveButtonCombined';
+import TestAndSaveCombined from './TestAndSaveButtonCombined';
 
 const TestButton = props => <TestAndSaveCombined {...props} isTestOnly />;
 
