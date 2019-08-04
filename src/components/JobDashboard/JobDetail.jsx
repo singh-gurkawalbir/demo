@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import { Button } from '@material-ui/core';
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
@@ -26,9 +27,11 @@ function JobDetail({
   selectedJobs,
   onSelectChange,
   userPermissionsOnIntegration,
+  onViewErrorsClick,
 }) {
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
+  const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
   const isSelected = !!(
     selectedJobs[job._id] && selectedJobs[job._id].selected
   );
@@ -120,6 +123,14 @@ function JobDetail({
     onSelectChange(currJob, job._id);
   }
 
+  function handleViewErrorsClick() {
+    if (!expanded) {
+      handleExpandCollapseClick();
+    }
+
+    onViewErrorsClick({ jobId: job._id });
+  }
+
   return (
     <Fragment>
       <TableRow>
@@ -143,7 +154,24 @@ function JobDetail({
         </TableCell>
         <TableCell>{getSuccess(job)}</TableCell>
         <TableCell>{job.numIgnore}</TableCell>
-        <TableCell>{job.numError}</TableCell>
+        <TableCell
+          onMouseEnter={() => {
+            setShowViewErrorsLink(true);
+          }}
+          onMouseLeave={() => {
+            setShowViewErrorsLink(false);
+          }}>
+          {showViewErrorsLink ? (
+            <Button
+              variant="text"
+              color="primary"
+              onClick={handleViewErrorsClick}>
+              {job.numError} View
+            </Button>
+          ) : (
+            job.numError
+          )}
+        </TableCell>
         <TableCell>{job.numResolved}</TableCell>
         <TableCell>{getPages(job)}</TableCell>
         <TableCell>{job.duration}</TableCell>

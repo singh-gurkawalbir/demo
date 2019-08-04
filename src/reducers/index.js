@@ -1060,10 +1060,30 @@ export function inProgressJobIds(state, integrationId, flowId) {
   return fromData.inProgressJobIds(state.data, integrationId, flowId);
 }
 
-export function job(state, type, jobId) {
-  return fromData.job(state.data, type, jobId);
+export function flowJob(state, { jobId }) {
+  const jobList = flowJobList(state);
+
+  return jobList.find(j => j._id === jobId);
+}
+
+export function job(state, { type, jobId, parentJobId }) {
+  const resourceMap = resourceDetailsMap(state);
+  const j = fromData.job(state.data, { type, jobId, parentJobId });
+
+  if (!j) {
+    return j;
+  }
+
+  return {
+    ...j,
+    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+  };
 }
 
 export function isBulkRetryInProgress(state) {
   return fromData.isBulkRetryInProgress(state.data);
+}
+
+export function jobErrors(state, jobId) {
+  return fromData.jobErrors(state.data, jobId);
 }

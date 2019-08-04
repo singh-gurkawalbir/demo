@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { difference } from 'lodash';
 import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
+import JobErrorDialog from './JobErrorDialog';
 
 const styles = theme => ({
   root: {
@@ -21,11 +22,6 @@ const styles = theme => ({
   title: {
     marginBottom: theme.spacing.unit * 2,
     float: 'left',
-  },
-  createAPITokenButton: {
-    margin: theme.spacing.unit,
-    textAlign: 'center',
-    float: 'right',
   },
   table: {
     minWidth: 700,
@@ -40,7 +36,9 @@ function JobTable({
   jobs,
   selectedJobs,
   userPermissionsOnIntegration,
+  integrationName,
 }) {
+  const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
   const jobsInCurrentPage = jobs.slice(
     currentPage * rowsPerPage,
@@ -89,6 +87,14 @@ function JobTable({
       jobIds[jobId] = job;
     });
     onSelectChange(jobIds);
+  }
+
+  function handleViewErrorsClick({ jobId, parentJobId }) {
+    setShowErrorDialogFor({ jobId, parentJobId });
+  }
+
+  function handleJobErrorDialogCloseClick() {
+    setShowErrorDialogFor({});
   }
 
   return (
@@ -142,10 +148,19 @@ function JobTable({
               onSelectChange={handleSelectChange}
               selectedJobs={selectedJobs}
               userPermissionsOnIntegration={userPermissionsOnIntegration}
+              onViewErrorsClick={handleViewErrorsClick}
             />
           ))}
         </TableBody>
       </Table>
+      {showErrorDialogFor.jobId && (
+        <JobErrorDialog
+          jobId={showErrorDialogFor.jobId}
+          parentJobId={showErrorDialogFor.parentJobId}
+          onCloseClick={handleJobErrorDialogCloseClick}
+          integrationName={integrationName}
+        />
+      )}
     </Fragment>
   );
 }

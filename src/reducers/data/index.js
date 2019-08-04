@@ -167,10 +167,14 @@ export function inProgressJobIds(state, integrationId, flowId) {
   return fromJobs.inProgressJobIds(state.jobs, integrationId, flowId);
 }
 
-export function job(state, type, jobId) {
-  return fromJobs.job(state.jobs, type, jobId);
+export function job(state, { type, jobId, parentJobId }) {
+  return fromJobs.job(state.jobs, { type, jobId, parentJobId });
 }
 
 export function isBulkRetryInProgress(state) {
   return fromJobs.isBulkRetryInProgress(state.jobs);
+}
+
+export function jobErrors(state, jobId) {
+  return fromJobs.jobErrors(state.jobs, jobId);
 }

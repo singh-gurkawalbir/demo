@@ -365,6 +365,21 @@ const job = {
     action(actionTypes.JOB.RETRY_ALL_UNDO, { flowId, integrationId }),
   retryAllCommit: ({ flowId, integrationId }) =>
     action(actionTypes.JOB.RETRY_ALL_COMMIT, { flowId, integrationId }),
+  requestRetryObjects: ({ jobId }) =>
+    action(actionTypes.JOB.REQUEST_RETRY_OBJECTS, { jobId }),
+  receivedRetryObjects: ({ collection, jobId }) =>
+    action(actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION, {
+      collection,
+      jobId,
+    }),
+  requestErrors: ({ jobType, jobId, parentJobId }) =>
+    action(actionTypes.JOB.ERROR.REQUEST_COLLECTION, {
+      jobType,
+      jobId,
+      parentJobId,
+    }),
+  receivedErrors: ({ collection, jobId }) =>
+    action(actionTypes.JOB.ERROR.RECEIVED_COLLECTION, { collection, jobId }),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

@@ -339,7 +339,7 @@ export function* retrySelected({ jobs }) {
 }
 
 export function* retryFlowJob({ jobId }) {
-  let job = yield select(selectors.job, JOB_TYPES.FLOW, jobId);
+  let job = yield select(selectors.job, { type: JOB_TYPES.FLOW, jobId });
 
   if (!job) {
     return false;
@@ -347,7 +347,7 @@ export function* retryFlowJob({ jobId }) {
 
   if (!job.children || job.children.length === 0) {
     yield call(getJobFamily, { jobId });
-    job = yield select(selectors.job, JOB_TYPES.FLOW, jobId);
+    job = yield select(selectors.job, { type: JOB_TYPES.FLOW, jobId });
   }
 
   const jobsToRetry = [];
@@ -409,6 +409,58 @@ export function* retryAll({ flowId, integrationId }) {
   }
 }
 
+export function* requestRetryObjectCollection({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.REQUEST_RETRY_OBJECT_COLLECTION,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const collection = yield call(apiCallWithRetry, { path, opts });
+
+    yield put(actions.job.receivedRetryObjects({ collection, jobId }));
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* requestJobErrorCollection({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.ERROR.REQUEST_COLLECTION,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const collection = yield call(apiCallWithRetry, { path, opts });
+
+    yield put(actions.job.receivedErrors({ collection, jobId }));
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* requestRetryObjectAndJobErrorCollection({ jobId }) {
+  yield call(requestRetryObjectCollection, { jobId });
+  yield call(requestJobErrorCollection, { jobId });
+}
+
+export function* getJobErrors({ jobType, jobId, parentJobId }) {
+  const watcher = yield fork(requestRetryObjectAndJobErrorCollection, {
+    jobType,
+    jobId,
+    parentJobId,
+  });
+
+  yield take(actionTypes.JOB.ERROR.CLEAR);
+  yield cancel(watcher);
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
@@ -423,4 +475,5 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.RETRY_SELECTED, retrySelected),
   takeEvery(actionTypes.JOB.RETRY_FLOW_JOB, retryFlowJob),
   takeEvery(actionTypes.JOB.RETRY_ALL, retryAll),
+  takeEvery(actionTypes.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
 ];

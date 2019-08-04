@@ -376,6 +376,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         jobs={jobs}
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
+        integrationName={integration && integration.name}
       />
     </LoadResources>
   );

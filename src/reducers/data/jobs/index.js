@@ -16,7 +16,12 @@ function parseJobs(jobs) {
   return { flowJobs, bulkRetryJobs };
 }
 
-const defaultState = { flowJobs: [], bulkRetryJobs: [] };
+const defaultState = {
+  flowJobs: [],
+  bulkRetryJobs: [],
+  errors: {},
+  retryObjects: {},
+};
 
 export default (state = defaultState, action) => {
   const { type, collection, job, jobId, parentJobId } = action;
@@ -495,6 +500,16 @@ export default (state = defaultState, action) => {
         ],
       };
     }
+  } else if (type === actionTypes.JOB.ERROR.RECEIVED_COLLECTION) {
+    return { ...state, errors: { [jobId]: collection } };
+  } else if (type === actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION) {
+    const retryObjectsMap = {};
+
+    collection.forEach(rt => {
+      retryObjectsMap[rt._id] = rt;
+    });
+
+    return { ...state, retryObjects: { [jobId]: retryObjectsMap } };
   }
 
   return state;
@@ -695,22 +710,29 @@ export function inProgressJobIds(state) {
   return jobIds;
 }
 
-export function job(state, type, jobId) {
+export function job(state, { type, jobId, parentJobId }) {
   if (!state) {
     return undefined;
   }
 
-  const keyMap = {
-    flow: 'flowJobs',
-    bulk_retry: 'bulkRetryJobs',
-  };
-  const jobs = state[keyMap[type]];
+  const jobs =
+    state[type === JOB_TYPES.BULK_RETRY ? 'bulkRetryJobs' : 'flowJobs'];
 
   if (!jobs) {
     return undefined;
   }
 
-  return jobs.find(j => j._id === jobId);
+  if (!parentJobId) {
+    return jobs.find(j => j._id === jobId);
+  }
+
+  const parentJob = jobs.find(j => j._id === parentJobId);
+
+  if (!parentJob || !parentJob.children || parentJob.children.length === 0) {
+    return undefined;
+  }
+
+  return parentJob.children.find(j => j._id === jobId);
 }
 
 export function isBulkRetryInProgress(state) {
@@ -723,6 +745,28 @@ export function isBulkRetryInProgress(state) {
       [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
     ).length > 0
   );
+}
+
+export function jobErrors(state, jobId) {
+  if (!state || !state.errors || !state.errors[jobId]) {
+    return [];
+  }
+
+  const errors = state.errors[jobId];
+  const retryObjects = state.retryObjects[jobId] || {};
+
+  return errors.map(e => {
+    const retryObject = (e._retryId && retryObjects[e._retryId]) || {};
+
+    return {
+      ...e,
+      retryObject: {
+        ...retryObject,
+        isDataEditable: ['object', 'page'].includes(retryObject.type),
+        isRetriable: ['file', 'object', 'page'].includes(retryObject.type),
+      },
+    };
+  });
 }
 
 // #endregion

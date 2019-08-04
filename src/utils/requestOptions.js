@@ -112,6 +112,16 @@ export default function getRequestOptions(
         path: `/integrations/${resourceId}/jobs/retry`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.REQUEST_RETRY_OBJECT_COLLECTION:
+      return {
+        path: `/retries?_jobId=${resourceId}`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.JOB.ERROR.REQUEST_COLLECTION:
+      return {
+        path: `/jobs/${resourceId}/joberrors`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
