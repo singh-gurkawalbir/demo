@@ -141,6 +141,7 @@ module.exports = {
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
+            'max-len':'off',
             'react/jsx-filename-extension': [
               1,
               { extensions: ['.js', '.jsx'] },

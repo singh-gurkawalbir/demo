@@ -31,6 +31,71 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
+export function* netsuiteUserRoles({ resourceId, values }) {
+  // '/netsuite/alluserroles'
+  let reqPayload = {};
+  const connectionResource = yield select(
+    selectors.resource,
+    'connections',
+    resourceId
+  );
+  let connectionId;
+
+  if (connectionResource) {
+    connectionId = connectionResource._id;
+  }
+
+  if (!values && !connectionId) return;
+
+  if (!values) {
+    // retrieving existing userRoles for a connection
+
+    reqPayload = { _connectionId: connectionId };
+  } else {
+    // retrieving userRoles for a new connection
+    const { '/netsuite/email': email, '/netsuite/password': password } = values;
+
+    reqPayload = { email, password };
+  }
+
+  try {
+    const resp = yield call(apiCallWithRetry, {
+      path: '/netsuite/alluserroles',
+      opts: { body: reqPayload, method: 'POST' },
+      hidden: true,
+    });
+
+    if (resp && resp.production && !resp.production.success)
+      yield put(
+        actions.resource.connections.netsuite.requestUserRolesFailed(
+          resourceId,
+          resp.production.error.message
+        )
+      );
+    else
+      yield put(
+        actions.resource.connections.netsuite.receivedUserRoles(
+          resourceId,
+          resp
+        )
+      );
+  } catch (e) {
+    if (e.status === 403 || e.status === 401) {
+      return;
+    }
+
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
+    yield put(
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        resourceId,
+        errors[0].message
+      )
+    );
+  }
+}
+
 export function* requestToken({ resourceId, values }) {
   const resourceType = 'connections';
   const connectionResource = yield select(
@@ -128,7 +193,7 @@ export function* pingConnection({ resourceId, values }) {
     });
     // Either apiResp or cancelTask can race successfully
     // , both will never happen
-    const { apiResp } = yield race({
+    const { apiResp, cancelTask } = yield race({
       apiResp: call(apiCallWithRetry, {
         path: pingConnectionParams.path,
         opts: {
@@ -147,6 +212,16 @@ export function* pingConnection({ resourceId, values }) {
           pingConnectionParams.path,
           pingConnectionParams.opts.method,
           'Connection is working fine!'
+        )
+      );
+    }
+
+    if (cancelTask) {
+      yield put(
+        actions.api.failure(
+          pingConnectionParams.path,
+          pingConnectionParams.opts.method,
+          'Request Cancelled'
         )
       );
     }
@@ -263,7 +338,7 @@ export default [
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection
   ),
-
+  takeEvery(actionTypes.NETSUITE_USER_ROLES.REQUEST, netsuiteUserRoles),
   takeEvery(
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection

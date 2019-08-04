@@ -5,6 +5,7 @@ import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import connectionToken, * as fromConnectionToken from './connectionToken';
+import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -15,9 +16,26 @@ export default combineReducers({
   connectionToken,
   resourceForm,
   resource,
+  netsuiteUserRole,
 });
 
 // #region PUBLIC SELECTORS
+
+export function netsuiteUserRoles(
+  state,
+  resourceId,
+  netsuiteResourceType,
+  env,
+  acc
+) {
+  return fromNetsuiteUserRoles.netsuiteUserRoles(
+    state && state.netsuiteUserRole,
+    resourceId,
+    netsuiteResourceType,
+    env,
+    acc
+  );
+}
 
 export function connectionTokens(state, resourceId) {
   return fromConnectionToken.connectionTokens(

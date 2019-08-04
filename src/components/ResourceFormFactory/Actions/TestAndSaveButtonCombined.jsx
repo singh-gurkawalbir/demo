@@ -2,21 +2,22 @@ import { Fragment, useState, useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import DoneIcon from '@material-ui/icons/Done';
 import { connect } from 'react-redux';
-import { deepClone } from 'fast-json-patch';
 // import Chip from '@material-ui/core/Chip';
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import PingSnackbar from '../../../PingSnackbar';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
-import actions from '../../../../actions';
-import * as selectors from '../../../../reducers/index';
-import { COMM_STATES } from '../../../../reducers/comms';
-import GenericResourceForm from '../../GenericResourceForm';
-import GenericConfirmDialog from '../../../ConfirmDialog';
+import PingSnackbar from '../../PingSnackbar';
+import actions from '../../../actions';
+import * as selectors from '../../../reducers/index';
+import { COMM_STATES } from '../../../reducers/comms';
+import GenericConfirmDialog from '../../ConfirmDialog';
+import DynaAction from '../../DynaForm/DynaAction';
 
 const mapStateToProps = state => ({
   testConnectionCommState: selectors.testConnectionCommState(state),
 });
 const mapDispatchToProps = dispatch => ({
+  handleSubmitForm: (resourceType, resourceId) => values => {
+    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
+  },
   handleTestConnection: resourceId => values =>
     dispatch(actions.resource.connections.test(resourceId, values)),
   clearComms: () => dispatch(actions.clearComms()),
@@ -35,7 +36,7 @@ const styles = theme => ({
 const ConfirmDialog = props => {
   const {
     formValues,
-    setShowConfirmDialog,
+    handleCloseAndClearForm,
     clearComms,
     handleSubmit,
     commErrorMessage,
@@ -51,14 +52,14 @@ const ConfirmDialog = props => {
         {
           label: 'No',
           onClick: () => {
-            setShowConfirmDialog(false);
+            handleCloseAndClearForm();
           },
         },
         {
           label: 'Yes',
           onClick: () => {
             handleSubmit(formValues);
-            setShowConfirmDialog(false);
+            handleCloseAndClearForm();
           },
         },
       ]}
@@ -70,83 +71,107 @@ const TestableForm = props => {
   const {
     classes,
     testConnectionCommState,
-    converter,
     handleTestConnection,
     handleSubmitForm,
+    resourceType,
     cancelProcess,
     resourceId,
     clearComms,
-    ...rest
+    label,
+    isTestOnly,
   } = props;
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [formValues, setFormValues] = useState(null);
+  const handleSubmit = handleSubmitForm(resourceType, resourceId);
 
   useEffect(() => {
     clearComms();
   }, [clearComms]);
 
+  const handleCloseAndClearForm = () => {
+    setFormValues(null);
+    setErrorMessage(null);
+  };
+
   const handleTestCallAndClearFormValues = values => {
     handleTestConnection(resourceId)(values);
-    setFormValues(null);
+    handleCloseAndClearForm();
   };
 
   const handleSubmitAndShowConfirmDialog = values => {
+    handleCloseAndClearForm();
     handleTestConnection(resourceId)(values);
-    setFormValues(deepClone(values));
+    setFormValues(values);
   };
 
   const testCommState =
     testConnectionCommState && testConnectionCommState.commState;
+  const { message } = testConnectionCommState;
 
   useEffect(() => {
     // when form values are present indicates that we are
     // performing a submit after the save
-    if (formValues) {
+    if (formValues && !isTestOnly) {
       if (testCommState === COMM_STATES.SUCCESS) {
         clearComms();
-        handleSubmitForm(formValues);
-        setShowConfirmDialog(false);
-      } else if (testCommState === COMM_STATES.ERROR) {
-        setShowConfirmDialog(true);
+        handleSubmit(formValues);
+      } else if (message && testCommState === COMM_STATES.ERROR) {
+        setErrorMessage(message);
+        clearComms();
       }
     }
-  }, [clearComms, formValues, handleSubmitForm, testCommState]);
+  }, [
+    clearComms,
+    formValues,
+    handleSubmit,
+    isTestOnly,
+    message,
+    testCommState,
+  ]);
 
-  const { message } = testConnectionCommState;
   const pingLoading = testConnectionCommState.commState === COMM_STATES.LOADING;
 
   return (
     <Fragment>
-      {showConfirmDialog && (
+      {errorMessage && (
         <ConfirmDialog
-          commErrorMessage={message}
+          commErrorMessage={errorMessage}
           formValues={formValues}
-          setShowConfirmDialog={setShowConfirmDialog}
+          handleCloseAndClearForm={handleCloseAndClearForm}
           clearComms={clearComms}
-          handleSubmit={handleSubmitForm}
+          handleSubmit={handleSubmit}
         />
       )}
-      {!formValues && (
-        <PingSnackbar
-          commStatus={testConnectionCommState}
-          onHandleClose={clearComms}
-          onHandleCancelTask={cancelProcess}
-        />
-      )}
-      <GenericResourceForm
-        {...rest}
-        disableButton={pingLoading}
-        handleSubmitForm={handleSubmitAndShowConfirmDialog}>
-        <DynaSubmit
+
+      <PingSnackbar
+        commStatus={testConnectionCommState}
+        onHandleClose={clearComms}
+        onHandleCancelTask={cancelProcess}
+      />
+
+      {isTestOnly ? (
+        <DynaAction
+          {...props}
           disabled={pingLoading}
           onClick={handleTestCallAndClearFormValues}
           className={classes.actionButton}
           size="small"
           variant="contained"
           color="secondary">
-          Test
-        </DynaSubmit>
-      </GenericResourceForm>
+          {label || 'Test'}
+        </DynaAction>
+      ) : (
+        <DynaAction
+          {...props}
+          disableButton={pingLoading}
+          onClick={handleSubmitAndShowConfirmDialog}
+          className={classes.actionButton}
+          size="small"
+          variant="contained"
+          color="secondary">
+          {label || 'Test and Save'}
+        </DynaAction>
+      )}
     </Fragment>
   );
 };

@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import GenericResourceForm from './GenericResourceForm';
-import TestableForm from './Connections/TestableForm';
-import OAuthForm from './Connections/OAuthForm';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
+import DynaForm from '../DynaForm';
+import consolidatedActions from './Actions';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
@@ -38,10 +37,6 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleSubmitForm: (resourceType, resourceId) => values => {
-    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
-  },
-
   handleInitForm: (resourceType, resourceId, isNew) => {
     const skipCommit =
       isNew && ['imports', 'exports', 'connections'].includes(resourceType);
@@ -55,11 +50,49 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
+const actionButtonsCreator = props => actions =>
+  actions.map(id => {
+    const Action = consolidatedActions[id];
+
+    return <Action key={id} {...props} />;
+  });
+
+function ActionsFactory(props) {
+  const { resourceType, isNew, connectionType } = props;
+  const { actions } = props.fieldMeta;
+
+  if (actions) {
+    const ActionButtons = actions.map(action => {
+      const Action = consolidatedActions[action.id];
+
+      return <Action key={action.id} {...props} {...action} />;
+    });
+
+    return <DynaForm {...props}>{ActionButtons}</DynaForm>;
+  }
+
+  let ActionButtons;
+
+  if (resourceType === 'connections' && !isNew) {
+    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+      ActionButtons = actionButtonsCreator(props)(['cancel', 'oauth']);
+    } else {
+      ActionButtons = actionButtonsCreator(props)([
+        'test',
+        'cancel',
+        'testandsave',
+      ]);
+    }
+  } else {
+    ActionButtons = actionButtonsCreator(props)(['cancel', 'save']);
+  }
+
+  return <DynaForm {...props}>{ActionButtons}</DynaForm>;
+}
 
 export const ResourceFormFactory = props => {
   const {
     resourceType,
-    handleSubmitForm: submitForm,
     formState,
     connectionType,
     handleInitForm,
@@ -71,7 +104,6 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
   } = props;
   const [count, setCount] = useState(0);
-  const handleSubmitForm = submitForm(resourceType, resourceId);
 
   useEffect(() => {
     handleInitForm(resourceType, resourceId, isNew);
@@ -114,25 +146,17 @@ export const ResourceFormFactory = props => {
     return <Typography>Initializing Form</Typography>;
   }
 
-  let Form;
-  const commonProps = {
-    fieldMeta,
-    optionsHandler,
-    handleSubmitForm,
-  };
-  const formProps = commonProps;
-
-  if (resourceType === 'connections' && !isNew) {
-    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      Form = OAuthForm;
-    } else {
-      Form = TestableForm;
-    }
-  } else {
-    Form = GenericResourceForm;
-  }
-
-  return <Form key={count} {...props} {...formProps} />;
+  // let Form;
+  return (
+    <ActionsFactory
+      {...props}
+      {...formState}
+      connectionType={connectionType}
+      optionsHandler={optionsHandler}
+      onCancel={() => setCount(count => count + 1)}
+      key={count}
+    />
+  );
 };
 
 export default connect(

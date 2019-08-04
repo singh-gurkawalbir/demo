@@ -52,6 +52,13 @@ class KeyValueTable extends Component {
     onFieldChange(id, rule);
   }
 
+  // TODO: verify this works throgh a rest connection
+  componentDidMount() {
+    const { value } = this.props;
+
+    this.setState({ rule: value });
+  }
+
   render() {
     const {
       classes,
