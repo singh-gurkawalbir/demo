@@ -1,11 +1,24 @@
 import util from '../../../../utils/json';
 
+const _ = require('lodash');
+
 export default {
   requestBody: editor => ({
     rules: { strict: !!editor.strict, template: editor.template },
-    data: JSON.parse(editor.data),
+    data:
+      editor.editorId !== 'SQLQueryBuilderEditor'
+        ? JSON.parse(editor.data)
+        : _.merge(
+            {},
+            JSON.parse(editor.defaultData || {}),
+            JSON.parse(editor.sampleData || {})
+          ),
   }),
   validate: editor => ({
-    dataError: util.validateJsonString(editor.data),
+    dataError:
+      editor.editorId !== 'SQLQueryBuilderEditor'
+        ? util.validateJsonString(editor.data)
+        : util.validateJsonString(editor.sampleData) ||
+          util.validateJsonString(editor.defaultData),
   }),
 };

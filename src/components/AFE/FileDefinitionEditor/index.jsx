@@ -18,7 +18,7 @@ export default function FileDefinitionEditor(props) {
 
   const handleInit = () => {
     dispatch(
-      actions.editor.init(props.editorId, 'structuredFileParser', {
+      actions.editor.init(editorId, 'structuredFileParser', {
         rule,
         data,
       })

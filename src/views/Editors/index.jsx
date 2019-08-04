@@ -14,6 +14,7 @@ import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
+import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -147,6 +148,18 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'SQLQueryBuilderEditor':
+        return (
+          <SqlQueryBuilderEditorDialog
+            title="SQL Query Builder"
+            id={editorName}
+            sampleData={rawData}
+            rule="Select * from {{orderId}}"
+            data={rawData}
+            defaultData={JSON.stringify({}, null, 2)}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -205,6 +218,12 @@ export default class Editors extends Component {
         label: 'File-Definition Parser',
         description:
           'This processor allows a user to parse junk data into readable json format by applying file definition sturcture on it',
+      },
+      {
+        name: 'SQLQueryBuilderEditor',
+        label: 'SQL Query Builder Editor',
+        description:
+          'This processor allows user to build Sql Query using handlerbars and json as input to it',
       },
     ];
 
