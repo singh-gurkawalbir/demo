@@ -9,10 +9,6 @@ import Chip from '@material-ui/core/Chip';
 import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   formControl: {
     // margin: theme.spacing.unit,
     minWidth: 120,

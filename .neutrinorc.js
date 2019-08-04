@@ -102,6 +102,7 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
+        editorConfig: { theme: 'material' },
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
@@ -114,6 +115,9 @@ module.exports = {
         },
 
         sections: sections,
+        require: [
+          join(__dirname, 'docs/styles.css')
+        ]
       },
     ],
     [

@@ -25,6 +25,7 @@ const CustomForms = loadable(() =>
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
+// eslint-disable-next-line prettier/prettier
 const StandaloneResource = loadable(() =>
   import(
     /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'

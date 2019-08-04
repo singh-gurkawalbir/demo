@@ -56,7 +56,7 @@ class FilteredResources extends Component {
       </span>
     );
 
-    if (!list.count) return null;
+    // if (!list.count) return null;
 
     return (
       <div className={classes.root}>
