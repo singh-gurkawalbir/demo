@@ -32,7 +32,7 @@ export default function AgentDetailActionsMenu(props) {
         onClose={handleMenuClose}>
         <MenuItem
           component={Link}
-          to={getRoutePath(`resources/agents/edit/${agent._id}`)}>
+          to={getRoutePath(`agents/edit/${agent._id}`)}>
           {/* onClick={() => {
             handleActionClick('edit');
           }}> */}

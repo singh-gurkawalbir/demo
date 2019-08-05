@@ -91,7 +91,7 @@ class AgentDetail extends Component {
       <Fragment>
         <TableRow key={agent._id}>
           <TableCell>
-            <Link to={getRoutePath(`resources/agents/edit/${agent._id}`)}>
+            <Link to={getRoutePath(`agents/edit/${agent._id}`)}>
               <div>{agent.name}</div>
             </Link>
           </TableCell>

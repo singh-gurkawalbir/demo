@@ -1,17 +1,22 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import AgentDetail from './AgentDetail';
-import ResourceForm from '../../components/ResourceFormFactory/GenericResourceForm';
 
 const mapStateToProps = state => {
   const agents = selectors.resourceList(state, {
@@ -46,48 +51,49 @@ const mapStateToProps = state => {
 @hot(module)
 class AgentList extends Component {
   state = {
-    selectedUserId: undefined,
-    showUserDialog: false,
     showReferences: false,
     agentReferences: null,
   };
-  viewResourcesClickHandler(references) {
+  viewReferencesClickHandler(references) {
     this.setState({ showReferences: true });
     this.setState({ agentReferences: references });
   }
-  editAgentClickHandler(action, userId) {
-    switch (action) {
-      case 'create':
-        this.setState({
-          showUserDialog: true,
-          selectedUserId: undefined,
-        });
-        break;
-      case 'edit':
-        this.setState({
-          showUserDialog: true,
-          selectedUserId: userId,
-        });
-        break;
-      default:
-    }
-  }
+  handleClose = () => {
+    this.setState({ showReferences: false });
+  };
   render() {
-    const {
-      showUserDialog,
-      selectedUserId,
-      showReferences,
-      agentReferences,
-    } = this.state;
+    const { showReferences, agentReferences } = this.state;
     const { classes } = this.props;
     const { resources } = this.props.agents;
 
-    console.log('resources ', resources);
-
     return (
       <LoadResources resources={['agents']}>
+        <Dialog
+          onClose={this.handleClose}
+          aria-labelledby="simple-dialog-title"
+          open={showReferences}>
+          <DialogTitle id="simple-dialog-title">Agent References:</DialogTitle>
+          <List>
+            {Object.keys(agentReferences).map(key => (
+              <ListItem key={key}>
+                <ListItemText primary={`${key}:`} />
+                <List>
+                  {agentReferences[key].map(val => (
+                    <ListItem key={val.name}>
+                      <ListItemText primary={val.name} />
+                      <Divider />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+              </ListItem>
+            ))}
+          </List>
+          <Button onClick={this.handleClose} color="primary">
+            Close
+          </Button>
+        </Dialog>
         <Fragment>
-          {showUserDialog && <ResourceForm resourceType="agents" />}
           <div className={classes.root}>
             <Table className={classes.table}>
               <TableHead>
@@ -106,9 +112,6 @@ class AgentList extends Component {
                     <AgentDetail
                       key={agent._id}
                       agent={agent}
-                      // editAgentClickHandler={agentId => {
-                      //   this.editAgentClickHandler('edit', agentId);
-                      // }}
                       viewReferencesClickHandler={references => {
                         this.viewReferencesClickHandler(references);
                       }}
