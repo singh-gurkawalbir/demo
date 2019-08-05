@@ -1,14 +1,12 @@
 import { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
-import getRoutePath from '../../utils/routePaths';
 
-export default function AgentDetailActionsMenu(props) {
-  const { onActionClick, agent } = props;
+export default function AgentDownloadInstaller(props) {
+  const { onInstallerClick } = props;
   const [anchorEl, setAnchorEl] = useState(null);
 
   function handleMenuClose() {
@@ -19,9 +17,9 @@ export default function AgentDetailActionsMenu(props) {
     setAnchorEl(event.currentTarget);
   }
 
-  function handleActionClick(action) {
+  function handleInstallerClick(osType) {
     handleMenuClose();
-    onActionClick(action);
+    onInstallerClick(osType);
   }
 
   return (
@@ -31,25 +29,26 @@ export default function AgentDetailActionsMenu(props) {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
         <MenuItem
-          component={Link}
-          to={getRoutePath(`agents/edit/${agent._id}`)}>
-          Edit Agent
+          onClick={() => {
+            handleInstallerClick('windows');
+          }}>
+          Windows
         </MenuItem>
 
         <Divider />
         <MenuItem
           onClick={() => {
-            handleActionClick('viewReferences');
+            handleInstallerClick('linux');
           }}>
-          View References
+          Linux (BETA)
         </MenuItem>
         <Divider />
 
         <MenuItem
           onClick={() => {
-            handleActionClick('delete');
+            handleInstallerClick('macOS');
           }}>
-          Delete Agent
+          Mac OS (BETA)
         </MenuItem>
       </Menu>
       <IconButton onClick={handleMenuClick}>

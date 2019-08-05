@@ -189,12 +189,14 @@ const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
-const agentToken = {
+const agent = {
   displayToken: id => action(actionTypes.AGENT_TOKEN_DISPLAY, { id }),
   changeToken: id => action(actionTypes.AGENT_TOKEN_CHANGE, { id }),
   tokenReceived: agentToken =>
     action(actionTypes.AGENT_TOKEN_RECEIVED, { agentToken }),
   maskToken: agentToken => action(actionTypes.AGENT_TOKEN_MASK, { agentToken }),
+  downloadInstaller: (osType, id) =>
+    action(actionTypes.AGENT_DOWNLOAD_INSTALLER, { osType, id }),
 };
 const user = {
   profile: {
@@ -343,5 +345,5 @@ export default {
   auth,
   auditLogs,
   accessToken,
-  agentToken,
+  agent,
 };

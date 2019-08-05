@@ -17,7 +17,7 @@ import {
 } from './api/requestInterceptors';
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
-import { agentTokenSagas } from './agentToken';
+import { agentSagas } from './agent';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -82,6 +82,6 @@ export default function* rootSaga() {
     ...authenticationSagas,
     ...resourceFormSagas,
     ...accessTokenSagas,
-    ...agentTokenSagas,
+    ...agentSagas,
   ]);
 }

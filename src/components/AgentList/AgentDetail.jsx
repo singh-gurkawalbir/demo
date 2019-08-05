@@ -6,7 +6,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import { Typography, Button } from '@material-ui/core';
 import actions from '../../actions';
-import AgentTokenActionsMenu from './AgentDetailActionsMenu';
+import AgentDetailActionsMenu from './AgentDetailActionsMenu';
+import AgentDownloadInstaller from './AgentDownloadInstaller';
 import { confirmDialog } from '../ConfirmDialog';
 import * as selectors from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
@@ -24,10 +25,10 @@ const mapStateToProps = (state = [], { agent }) => {
 
 const mapDispatchToProps = dispatch => ({
   displayAgentToken: id => {
-    dispatch(actions.agentToken.displayToken(id));
+    dispatch(actions.agent.displayToken(id));
   },
   changeAgentToken: id => {
-    dispatch(actions.agentToken.changeToken(id));
+    dispatch(actions.agent.changeToken(id));
   },
   deleteAgent: id => {
     dispatch(actions.resource.delete('agents', id));
@@ -35,10 +36,18 @@ const mapDispatchToProps = dispatch => ({
   getAgentReferences: id => {
     dispatch(actions.resource.fetchResourceReferences('agents', id));
   },
+  downloadAgentInstaller: (osType, id) => {
+    dispatch(actions.agent.downloadInstaller(osType, id));
+  },
 });
 
 @hot(module)
 class AgentDetail extends Component {
+  handleInstallerClick = osType => {
+    const { agent, downloadAgentInstaller } = this.props;
+
+    downloadAgentInstaller(osType, agent._id);
+  };
   handleActionClick = action => {
     const {
       agent,
@@ -48,9 +57,6 @@ class AgentDetail extends Component {
     } = this.props;
 
     switch (action) {
-      case 'edit':
-        // editClickHandler(agent._id);
-        break;
       case 'viewReferences':
         getAgentReferences(agent._id);
         viewReferencesClickHandler(this.props.agentReferences);
@@ -77,15 +83,8 @@ class AgentDetail extends Component {
   };
 
   render() {
-    const {
-      agent,
-      displayAgentToken,
-      changeAgentToken,
-      agentReferences,
-    } = this.props;
+    const { agent, displayAgentToken, changeAgentToken } = this.props;
     const { accessToken } = this.props.agentToken;
-
-    console.log('rrrrrrrrrrr ', agentReferences);
 
     return (
       <Fragment>
@@ -119,10 +118,15 @@ class AgentDetail extends Component {
               )}
             </Fragment>
           </TableCell>
-          <TableCell>download installer</TableCell>
-          <TableCell>status</TableCell>
           <TableCell>
-            <AgentTokenActionsMenu
+            <AgentDownloadInstaller
+              onInstallerClick={this.handleInstallerClick}
+              agent={agent}
+            />
+          </TableCell>
+          <TableCell>Offline</TableCell>
+          <TableCell>
+            <AgentDetailActionsMenu
               onActionClick={this.handleActionClick}
               agent={agent}
             />

@@ -1,6 +1,7 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -14,9 +15,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import AgentDetail from './AgentDetail';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = state => {
   const agents = selectors.resourceList(state, {
@@ -37,6 +40,8 @@ const mapStateToProps = state => {
   },
   title: {
     marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 3,
+    marginLeft: theme.spacing.unit,
     float: 'left',
   },
   inviteUserButton: {
@@ -46,6 +51,11 @@ const mapStateToProps = state => {
   },
   table: {
     minWidth: 700,
+  },
+  createAgentButton: {
+    margin: theme.spacing.unit,
+    marginTop: theme.spacing.unit * 3,
+    float: 'right',
   },
 }))
 @hot(module)
@@ -74,26 +84,37 @@ class AgentList extends Component {
           open={showReferences}>
           <DialogTitle id="simple-dialog-title">Agent References:</DialogTitle>
           <List>
-            {Object.keys(agentReferences).map(key => (
-              <ListItem key={key}>
-                <ListItemText primary={`${key}:`} />
-                <List>
-                  {agentReferences[key].map(val => (
-                    <ListItem key={val.name}>
-                      <ListItemText primary={val.name} />
-                      <Divider />
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider />
-              </ListItem>
-            ))}
+            {agentReferences &&
+              Object.keys(agentReferences).map(key => (
+                <ListItem key={key}>
+                  <ListItemText primary={`${key}:`} />
+                  <List>
+                    {agentReferences[key].map(val => (
+                      <ListItem key={val.name}>
+                        <ListItemText primary={val.name} />
+                        <Divider />
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Divider />
+                </ListItem>
+              ))}
           </List>
           <Button onClick={this.handleClose} color="primary">
             Close
           </Button>
         </Dialog>
         <Fragment>
+          <Typography variant="h2" component="h2" className={classes.title}>
+            Agents
+          </Typography>
+          <Button
+            component={Link}
+            to={getRoutePath('agents/add/new-gX_XRD3wbxD')}
+            color="primary"
+            className={classes.createAgentButton}>
+            Create Agent
+          </Button>
           <div className={classes.root}>
             <Table className={classes.table}>
               <TableHead>

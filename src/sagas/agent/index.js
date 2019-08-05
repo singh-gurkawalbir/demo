@@ -22,9 +22,9 @@ export function* displayToken({ id }) {
     return true;
   }
 
-  yield put(actions.agentToken.tokenReceived({ ...response, _id: id }));
+  yield put(actions.agent.tokenReceived({ ...response, _id: id }));
   yield delay(MASK_AGENT_TOKEN_DELAY);
-  yield put(actions.agentToken.maskToken({ _id: id }));
+  yield put(actions.agent.maskToken({ _id: id }));
 }
 
 export function* changeToken({ id }) {
@@ -44,12 +44,15 @@ export function* changeToken({ id }) {
     return true;
   }
 
-  yield put(actions.agentToken.tokenReceived({ ...response, _id: id }));
+  yield put(actions.agent.tokenReceived({ ...response, _id: id }));
   yield delay(MASK_AGENT_TOKEN_DELAY);
-  yield put(actions.agentToken.maskToken({ _id: id }));
+  yield put(actions.agent.maskToken({ _id: id }));
 }
 
-export const agentTokenSagas = [
+export function* downloadInstaller({ osType, id }) {}
+
+export const agentSagas = [
   takeEvery(actionTypes.AGENT_TOKEN_DISPLAY, displayToken),
   takeEvery(actionTypes.AGENT_TOKEN_CHANGE, changeToken),
+  takeEvery(actionTypes.AGENT_DOWNLOAD_INSTALLER, downloadInstaller),
 ];
