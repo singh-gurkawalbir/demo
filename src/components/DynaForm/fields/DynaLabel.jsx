@@ -60,8 +60,13 @@ class LabelElement extends React.Component {
   }
 }
 
+// This is necessary for this field to be excluded from the form
+// submit. Since im not setting this field in this form,
+// Im assuming the value on this field is either undefined or ''(This is
+// through the defaultValue metadata set in the formFactory) .
+const omitWhenValueIs = [undefined, ''];
 const WrappedDynaLabel = props => (
-  <FieldWrapper {...props}>
+  <FieldWrapper {...props} omitWhenValueIs={omitWhenValueIs}>
     <LabelElement />
   </FieldWrapper>
 );

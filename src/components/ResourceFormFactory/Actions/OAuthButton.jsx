@@ -1,4 +1,4 @@
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
@@ -9,27 +9,23 @@ const styles = theme => ({
     marginLeft: theme.spacing.double,
   },
 });
-const mapDispatchToProps = (dispatch, { resourceId }) => ({
-  handleSaveAndAuthorizeConnection: values => {
-    dispatch(actions.resource.connections.saveAndAuthorize(resourceId, values));
-  },
-});
 
 function OAuthButton(props) {
-  const { handleSaveAndAuthorizeConnection, label, classes, ...rest } = props;
+  const { label, classes, ...rest } = props;
   // action id
+  const { resourceId } = rest;
+  const dispatch = useDispatch();
+  const handleSaveAndAuthorizeConnection = resourceId => values =>
+    dispatch(actions.resource.connections.saveAndAuthorize(resourceId, values));
 
   return (
     <DynaAction
       {...rest}
       className={classes.actionButton}
-      onClick={handleSaveAndAuthorizeConnection}>
+      onClick={handleSaveAndAuthorizeConnection(resourceId)}>
       {label || 'Save & Authorize'}
     </DynaAction>
   );
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(withStyles(styles)(OAuthButton));
+export default withStyles(styles)(OAuthButton);

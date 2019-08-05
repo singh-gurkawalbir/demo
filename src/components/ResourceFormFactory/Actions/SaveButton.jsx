@@ -1,13 +1,8 @@
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 
-const mapDispatchToProps = dispatch => ({
-  handleSubmitForm: (resourceType, resourceId) => values => {
-    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
-  },
-});
 const styles = theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
@@ -15,13 +10,11 @@ const styles = theme => ({
   },
 });
 const SaveButton = props => {
-  const {
-    label = 'Submit',
-    handleSubmitForm,
-    resourceType,
-    resourceId,
-    classes,
-  } = props;
+  const { label = 'Submit', resourceType, resourceId, classes } = props;
+  const dispatch = useDispatch();
+  const handleSubmitForm = (resourceType, resourceId) => values => {
+    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
+  };
 
   return (
     <DynaAction
@@ -33,7 +26,4 @@ const SaveButton = props => {
   );
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(withStyles(styles)(SaveButton));
+export default withStyles(styles)(SaveButton);
