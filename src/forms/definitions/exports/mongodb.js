@@ -1,5 +1,7 @@
 export default {
   fields: [
+    { formId: 'common' },
+    { fieldId: 'exportData' },
     { fieldId: 'mongodb.collection' },
     { fieldId: 'mongodb.filter' },
     { fieldId: 'mongodb.projection' },

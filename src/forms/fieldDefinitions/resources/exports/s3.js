@@ -278,7 +278,7 @@ export default {
   },
   exportData: {
     type: 'labeltitle',
-    label: 'What data would you like to Export?',
+    label: 'What would you like to Export?',
   },
   'ftp.exportTransformRecords': {
     label: 'Would you like to transform the records?',

@@ -57,7 +57,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let meta;
   const { type } = getResourceSubType(resource);
 
-  // console.log(isNew, resourceType, type, resource);
+  // console.log('resource', resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
@@ -84,6 +84,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'imports':
     case 'exports':
       meta = formMeta[resourceType];
+      // console.log('type', type);
 
       if (meta) {
         if (isNew) {

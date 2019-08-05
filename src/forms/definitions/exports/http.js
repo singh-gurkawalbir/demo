@@ -10,7 +10,7 @@ export default {
     { fieldId: 'http.errorMediaType' },
     { fieldId: 'http.response.resourcePath' },
     { fieldId: 'http.response.successPath' },
-    { fieldId: 'http.response.successValuess' },
+    { fieldId: 'http.response.successValues' },
     { fieldId: 'http.response.errorPath' },
     {
       id: 'type',

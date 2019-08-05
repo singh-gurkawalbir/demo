@@ -1,14 +1,12 @@
 export default {
   fields: [
     { formId: 'common' },
-    { fieldId: 'ftp.exportFrom' },
+    { fieldId: 'exportData' },
     { fieldId: 'ftp.directoryPath' },
     { fieldId: 'file.output' },
     { fieldId: 'ftp.fileNameStartsWith' },
-
     { fieldId: 'ftp.fileNameEndsWith' },
     { fieldId: 'ftp.type' },
-
     { fieldId: 'uploadFile' },
     { fieldId: 'ftp.csv.columnDelimiter' },
     { fieldId: 'file.json.resourcePath' },

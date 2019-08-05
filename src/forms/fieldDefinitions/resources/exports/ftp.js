@@ -14,10 +14,6 @@ export default {
     // excludeFilter: r => ({ _
     //
   },
-  'ftp.exportFrom': {
-    type: 'labeltitle',
-    label: 'What would you like to export?',
-  },
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave File On Server',
@@ -270,7 +266,7 @@ export default {
   },
   exportData: {
     type: 'labeltitle',
-    label: 'What data would you like to Export?',
+    label: 'What would you like to Export?',
   },
   // #region transform
   'transform.expression.rules': {

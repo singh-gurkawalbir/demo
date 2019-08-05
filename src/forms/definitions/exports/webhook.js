@@ -1,5 +1,6 @@
 export default {
   fields: [
+    { formId: 'common' },
     { fieldId: 'security' },
     { fieldId: 'webhook.provider' },
     { fieldId: 'webhook.verify' },
@@ -24,15 +25,9 @@ export default {
       fields: [{ formId: 'hooks' }],
     },
     {
-      header: 'Advanced Settings',
+      header: 'Advanced',
       collapsed: true,
-      fields: [
-        {
-          fieldId: 'dataURITemplate',
-          type: 'relativeuri',
-          label: 'Data URITemplate',
-        },
-      ],
+      fields: [{ formId: 'advancedSettings' }],
     },
   ],
 };

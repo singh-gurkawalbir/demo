@@ -20,6 +20,10 @@ export default {
       },
     ],
   },
+  exportData: {
+    type: 'labeltitle',
+    label: 'What would you like to export from MongoDB?',
+  },
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',

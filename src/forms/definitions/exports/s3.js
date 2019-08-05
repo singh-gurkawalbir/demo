@@ -1,16 +1,14 @@
 export default {
   fields: [
     { formId: 'common' },
-
+    { fieldId: 'exportData' },
     { fieldId: 's3.region' },
     { fieldId: 's3.bucket' },
     { fieldId: 'file.output' },
     { fieldId: 's3.keyStartsWith' },
     { fieldId: 's3.keyEndsWith' },
-
     { fieldId: 'ftp.type' },
     { fieldId: 'uploadFile' },
-
     { fieldId: 'ftp.csv.columnDelimiter' },
     { fieldId: 'ftp.csv.trimSpaces' },
     { fieldId: 'ftp.csv.hasHeaderRow' },
@@ -18,9 +16,7 @@ export default {
     { fieldId: 'ftp.csv.rowsPerRecord' },
     { fieldId: 'ftp.csv.keyColumns' },
     { fieldId: 'file.json.resourcePath' },
-
     { fieldId: 'file.xlsx.hasHeaderRow' },
-
     { fieldId: 'file.xlsx.rowsPerRecord' },
     { fieldId: 'ftp.xlsx.keyColumns' },
     { fieldId: 'file.xml.resourcePath' },

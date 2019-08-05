@@ -9,6 +9,10 @@ export default {
       },
     ],
   },
+  exportData: {
+    type: 'labeltitle',
+    label: 'What would you like to Export?',
+  },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
@@ -228,7 +232,7 @@ export default {
     type: 'text',
     label: 'Success Path',
   },
-  'http.response.successValuess': {
+  'http.response.successValues': {
     type: 'text',
     valueDelimiter: ',',
     label: 'Success Values',
