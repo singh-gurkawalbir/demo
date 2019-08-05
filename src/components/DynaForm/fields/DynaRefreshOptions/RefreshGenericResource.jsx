@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -45,6 +45,14 @@ function RefreshGenericResource(props) {
     placeholder,
   } = props;
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
+  // Resets field's value to value provided as argument
+  // TODO - Add onFieldChange as a dependency
+  const resetResource = useCallback(
+    value => {
+      onFieldChange(id, value);
+    },
+    [id]
+  );
 
   useEffect(() => {
     if (!fieldOptions) {
@@ -56,12 +64,12 @@ function RefreshGenericResource(props) {
     // Reset selected values on change of resourceToFetch
     if (resourceToFetch) {
       if (resetValue) {
-        onFieldChange(id, multiselect ? [] : '');
+        resetResource(multiselect ? [] : '');
       } else {
-        onFieldChange(id, defaultValue);
+        resetResource(defaultValue);
       }
     }
-  }, [resourceToFetch, id, defaultValue, resetValue]);
+  }, [resourceToFetch, resetValue, defaultValue, multiselect, resetResource]);
 
   if (!fieldOptions) return <Spinner />;
   let optionMenuItems = fieldOptions.map(options => {
