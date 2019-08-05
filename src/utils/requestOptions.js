@@ -11,6 +11,16 @@ export default function getRequestOptions(
       return { path: `/ashares/${resourceId}`, opts: { method: 'PUT' } };
     case actionTypes.USER_DELETE:
       return { path: `/ashares/${resourceId}`, opts: { method: 'DELETE' } };
+    case actionTypes.AGENT_TOKEN_DISPLAY:
+      return {
+        path: `/agents/${resourceId}/display-token`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.AGENT_TOKEN_CHANGE:
+      return {
+        path: `/agents/${resourceId}/change-token`,
+        opts: { method: 'PUT' },
+      };
     case actionTypes.USER_DISABLE:
       return {
         path: `/ashares/${resourceId}/disable`,

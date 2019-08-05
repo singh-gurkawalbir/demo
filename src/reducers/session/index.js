@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 
 export default combineReducers({
   stage,
@@ -11,6 +12,7 @@ export default combineReducers({
   editors,
   metadata,
   resourceForm,
+  agentAccessTokens,
 });
 
 // #region PUBLIC SELECTORS
@@ -58,6 +60,13 @@ export function resourceFormState(state, resourceType, resourceId) {
   return fromResourceForm.resourceFormState(
     state && state.resourceForm,
     resourceType,
+    resourceId
+  );
+}
+
+export function agentAccessToken(state, resourceId) {
+  return fromAgentAccessTokens.agentAccessToken(
+    state && state.agentAccessTokens,
     resourceId
   );
 }

@@ -103,6 +103,12 @@ export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }
 
+export function agentAccessToken(state, id) {
+  if (!state) return {};
+
+  return fromSession.agentAccessToken(state.session, id);
+}
+
 export function editor(state, id) {
   if (!state) return {};
 
@@ -375,6 +381,10 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
+}
+
+export function resourceReferences(state, resourceType, id) {
+  return fromData.resourceReferences(state.data, resourceType, id);
 }
 
 export function resourceDetailsMap(state) {

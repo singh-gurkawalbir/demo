@@ -66,6 +66,25 @@ const resource = {
       collection,
     }),
 
+  delete: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
+
+  deleted: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
+
+  fetchResourceReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.FETCH_RESOURCE_REFERENCES, {
+      resourceType,
+      id,
+    }),
+
+  receivedResourceReferences: (resourceType, id, resourceReferences) =>
+    action(actionTypes.RESOURCE.RECEIVED_RESOURCE_REFERENCES, {
+      resourceType,
+      id,
+      resourceReferences,
+    }),
+
   clearStaged: id => action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
 
   undoStaged: id => action(actionTypes.RESOURCE.STAGE_UNDO, { id }),
@@ -150,6 +169,13 @@ const metadata = {
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
+};
+const agentToken = {
+  displayToken: id => action(actionTypes.AGENT_TOKEN_DISPLAY, { id }),
+  changeToken: id => action(actionTypes.AGENT_TOKEN_CHANGE, { id }),
+  tokenReceived: agentToken =>
+    action(actionTypes.AGENT_TOKEN_RECEIVED, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT_TOKEN_MASK, { agentToken }),
 };
 const user = {
   profile: {
@@ -299,4 +325,5 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  agentToken,
 };
