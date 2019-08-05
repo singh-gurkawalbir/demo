@@ -1087,19 +1087,13 @@ export function isBulkRetryInProgress(state) {
 export function jobErrors(state, jobId) {
   const jErrors = fromData.jobErrors(state.data, jobId);
   const preferences = userPreferences(state);
-  let id = 0;
 
-  return jErrors.map(je => {
-    id += 1;
-
-    return {
-      ...je,
-      _id: id,
-      createdAtAsString:
-        je.createdAt &&
-        moment(je.createdAt).format(
-          `${preferences.dateFormat} ${preferences.timeFormat}`
-        ),
-    };
-  });
+  return jErrors.map(je => ({
+    ...je,
+    createdAtAsString:
+      je.createdAt &&
+      moment(je.createdAt).format(
+        `${preferences.dateFormat} ${preferences.timeFormat}`
+      ),
+  }));
 }

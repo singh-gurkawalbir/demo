@@ -502,7 +502,17 @@ export default (state = defaultState, action) => {
       };
     }
   } else if (type === actionTypes.JOB.ERROR.RECEIVED_COLLECTION) {
-    return { ...state, errors: { [jobId]: collection } };
+    let _id = 0;
+    const errors = collection.map(je => {
+      _id += 1;
+
+      return {
+        _id: _id.toString(),
+        ...je,
+      };
+    });
+
+    return { ...state, errors: { [jobId]: errors } };
   } else if (type === actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION) {
     const retryObjectsMap = {};
 
@@ -511,6 +521,26 @@ export default (state = defaultState, action) => {
     });
 
     return { ...state, retryObjects: { [jobId]: retryObjectsMap } };
+  } else if (type === actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT) {
+    if (!state || !state.errors || !state.errors[jobId]) {
+      return [];
+    }
+
+    const errors = state.errors[jobId];
+    const { selectedErrorIds } = action;
+
+    return {
+      ...state,
+      errors: {
+        [jobId]: errors.map(je => {
+          if (selectedErrorIds.includes(je._id)) {
+            return { ...je, resolved: true };
+          }
+
+          return { ...je };
+        }),
+      },
+    };
   }
 
   return state;

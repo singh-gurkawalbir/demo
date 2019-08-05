@@ -158,6 +158,18 @@ function JobErrorTable({
         },
       });
       onCloseClick();
+    } else {
+      const selectedErrorIds = Object.keys(selectedErrors).filter(
+        jobErrorId => selectedErrors[jobErrorId]
+      );
+
+      dispatch(
+        actions.job.resolveSelectedErrors({
+          jobId: job._id,
+          flowJobId: job._flowJobId,
+          selectedErrorIds,
+        })
+      );
     }
   }
 

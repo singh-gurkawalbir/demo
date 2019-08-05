@@ -482,6 +482,40 @@ export function* downloaErrorFile({ jobId }) {
   }
 }
 
+export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.RESOLVE_SELECTED,
+    {
+      resourceId: jobId,
+    }
+  );
+
+  yield put(
+    actions.job.resolveSelectedErrorsInit({
+      jobId,
+      flowJobId,
+      selectedErrorIds,
+    })
+  );
+  const jobErrors = yield select(selectors.jobErrors, jobId);
+
+  opts.body = jobErrors.map(je => {
+    const { _id, createdAtAsString, ...rest } = je;
+
+    return { ...rest };
+  });
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+    yield call(getJobFamily, { jobId: flowJobId });
+  } catch (e) {
+    return true;
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
@@ -498,4 +532,5 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.RETRY_ALL, retryAll),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
   takeEvery(actionTypes.JOB.DOWNLOAD_ERROR_FILE, downloaErrorFile),
+  takeEvery(actionTypes.JOB.ERROR.RESOLVE_SELECTED, resolveSelectedErrors),
 ];

@@ -380,6 +380,18 @@ const job = {
     }),
   receivedErrors: ({ collection, jobId }) =>
     action(actionTypes.JOB.ERROR.RECEIVED_COLLECTION, { collection, jobId }),
+  resolveSelectedErrorsInit: ({ jobId, flowJobId, selectedErrorIds }) =>
+    action(actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT, {
+      jobId,
+      flowJobId,
+      selectedErrorIds,
+    }),
+  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+    action(actionTypes.JOB.ERROR.RESOLVE_SELECTED, {
+      jobId,
+      flowJobId,
+      selectedErrorIds,
+    }),
   downloadErrorFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
 };

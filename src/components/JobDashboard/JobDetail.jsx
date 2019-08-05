@@ -15,14 +15,36 @@ import { JOB_STATUS } from '../../utils/constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';
+import Spinner from '../Spinner';
 
 const styles = theme => ({
   icon: {
     margin: theme.spacing.double,
   },
+  spinner: {
+    left: '0px',
+    right: '0px',
+    background: 'rgba(0,0,0,0.7)',
+    width: '100%',
+    position: 'absolute',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 'inherit',
+    '& div': {
+      width: '20px !important',
+      height: '20px !important',
+    },
+    '& span': {
+      marginLeft: '10px',
+      color: '#fff',
+    },
+  },
 });
 
 function JobDetail({
+  classes,
   job,
   selectedJobs,
   onSelectChange,
@@ -199,6 +221,11 @@ function JobDetail({
             userPermissionsOnIntegration={userPermissionsOnIntegration}
           />
         </TableCell>
+        {expanded && (!job.children || !job.children.length) && (
+          <div className={classes.spinner}>
+            <Spinner /> <span>Loading child jobs...</span>
+          </div>
+        )}
       </TableRow>
       {expanded &&
         job.children &&

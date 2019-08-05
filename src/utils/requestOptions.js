@@ -127,6 +127,11 @@ export default function getRequestOptions(
         path: `/jobs/${resourceId}/joberrors`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.ERROR.RESOLVE_SELECTED:
+      return {
+        path: `/jobs/${resourceId}/joberrors/resolve`,
+        opts: { method: 'PUT' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
