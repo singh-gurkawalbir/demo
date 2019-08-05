@@ -9,6 +9,7 @@ export default {
     type: 'refreshoptions',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
+    helpKey: 'export.netsuite.recordType',
     connectionId: r => r._connectionId,
   },
   'netsuite.restlet.recordType': {
@@ -32,6 +33,7 @@ export default {
     type: 'refreshoptions',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
+    helpKey: 'export.netsuite.searches.recordType',
     connectionId: r => r._connectionId,
   },
   // execution context
@@ -100,6 +102,7 @@ export default {
     mode: 'suitescript',
     multiselect: true,
     placeholder: 'Please select Sublists',
+    helpKey: 'export.netsuite.sublists',
     defaultValue: r =>
       r.netsuite.distributed && r.netsuite.distributed.sublists,
     connectionId: r => r._connectionId,
@@ -118,20 +121,10 @@ export default {
     ],
     defaultValue: 'public',
   },
+  // search id
   'netsuite.restlet.searchId': {
     type: 'savedsearch',
     label: 'Saved Searches',
-    mode: 'suitescript',
-    defaultValue: r => r.netsuite.restlet && r.netsuite.restlet.searchId,
-    resourceType: 'savedSearches',
-    required: true,
-    placeholder: 'Please select a saved search',
-    connectionId: r => r._connectionId,
-  },
-  // search id
-  'netsuite.restlet.searchId1': {
-    label: 'Saved Searches',
-    type: 'refreshoptions',
     mode: 'suitescript',
     defaultValue: r => r.netsuite.restlet && r.netsuite.restlet.searchId,
     resourceType: 'savedSearches',
@@ -147,6 +140,7 @@ export default {
     placeholder: 'Please select a saved search',
     mode: 'webservices',
     filterKey: 'savedSearches',
+    helpKey: 'export.netsuite.searches.searchId',
     defaultValue: r =>
       r.netsuite.searches &&
       r.netsuite.searches[0] &&
