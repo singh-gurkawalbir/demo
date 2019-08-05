@@ -117,6 +117,11 @@ export default function getRequestOptions(
         path: `/retries?_jobId=${resourceId}`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.REQUEST_ERROR_FILE_URL:
+      return {
+        path: `/jobs/${resourceId}/errorFile/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.JOB.ERROR.REQUEST_COLLECTION:
       return {
         path: `/jobs/${resourceId}/joberrors`,

@@ -124,8 +124,8 @@ function JobDetail({
   }
 
   function handleViewErrorsClick() {
-    if (!expanded) {
-      handleExpandCollapseClick();
+    if (!job.children || job.children.length === 0) {
+      dispatch(actions.job.requestFamily({ jobId: job._id }));
     }
 
     onViewErrorsClick({ jobId: job._id });
@@ -161,7 +161,7 @@ function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}>
-          {showViewErrorsLink ? (
+          {showViewErrorsLink && job.numError > 0 ? (
             <Button
               variant="text"
               color="primary"
@@ -172,7 +172,24 @@ function JobDetail({
             job.numError
           )}
         </TableCell>
-        <TableCell>{job.numResolved}</TableCell>
+        <TableCell
+          onMouseEnter={() => {
+            setShowViewErrorsLink(true);
+          }}
+          onMouseLeave={() => {
+            setShowViewErrorsLink(false);
+          }}>
+          {showViewErrorsLink && job.numResolved > 0 ? (
+            <Button
+              variant="text"
+              color="primary"
+              onClick={handleViewErrorsClick}>
+              {job.numResolved} View
+            </Button>
+          ) : (
+            job.numResolved
+          )}
+        </TableCell>
         <TableCell>{getPages(job)}</TableCell>
         <TableCell>{job.duration}</TableCell>
         <TableCell>{job.endedAtAsString}</TableCell>
@@ -193,6 +210,7 @@ function JobDetail({
             onSelectChange={handleChildSelectChange}
             selectedJobs={selectedJobs}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
+            onViewErrorsClick={onViewErrorsClick}
           />
         ))}
     </Fragment>

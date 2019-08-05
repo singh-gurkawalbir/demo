@@ -71,28 +71,27 @@ function JobErrorDialog({
 
   return (
     <Fragment>
-      {job && (
-        <Dialog open maxWidth={false}>
-          <DialogTitle>
-            <Typography>
-              {`${integrationName} > ${flowJob && flowJob.name}`}
-            </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={handleCloseClick}>
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent style={{ width: '70vw' }}>
-            <Typography>
-              Success: {job.numSuccess} Ignore: {job.numIgnore} Error:{' '}
-              {job.numError} Duration: {job.duration} Completed:{' '}
-              {job.endedAtAsString}
-            </Typography>
-            <JobErrorTable jobErrors={jobErrors} />
-          </DialogContent>
-        </Dialog>
-      )}
+      <Dialog open maxWidth={false}>
+        <DialogTitle>
+          <Typography>
+            {`${integrationName} > ${flowJob && flowJob.name}`}
+          </Typography>
+          <IconButton
+            className={classes.closeButton}
+            onClick={handleCloseClick}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent style={{ width: '70vw' }}>
+          {job && (
+            <JobErrorTable
+              jobErrors={jobErrors}
+              job={job}
+              onCloseClick={onCloseClick}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Fragment>
   );
 }

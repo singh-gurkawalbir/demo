@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
 import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
@@ -11,6 +13,7 @@ export default function ChildJobDetail({
   onSelectChange,
   selectedJobs,
   userPermissionsOnIntegration,
+  onViewErrorsClick,
 }) {
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
@@ -31,8 +34,14 @@ export default function ChildJobDetail({
     onSelectChange(true, job._id, true);
   }
 
+  const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
+
   function handleSelectChange(event) {
     onSelectChange(event.target.checked, job._id);
+  }
+
+  function handleViewErrorsClick() {
+    onViewErrorsClick({ jobId: job._id, parentJobId: parentJob._id });
   }
 
   const jobType = job.type === 'export' ? 'Export' : 'Import';
@@ -53,8 +62,42 @@ export default function ChildJobDetail({
       </TableCell>
       <TableCell>{getSuccess(job)}</TableCell>
       <TableCell>{job.numIgnore}</TableCell>
-      <TableCell>{job.numError}</TableCell>
-      <TableCell>{job.numResolved}</TableCell>
+      <TableCell
+        onMouseEnter={() => {
+          setShowViewErrorsLink(true);
+        }}
+        onMouseLeave={() => {
+          setShowViewErrorsLink(false);
+        }}>
+        {showViewErrorsLink && job.numError > 0 ? (
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleViewErrorsClick}>
+            {job.numError} View
+          </Button>
+        ) : (
+          job.numError
+        )}
+      </TableCell>
+      <TableCell
+        onMouseEnter={() => {
+          setShowViewErrorsLink(true);
+        }}
+        onMouseLeave={() => {
+          setShowViewErrorsLink(false);
+        }}>
+        {showViewErrorsLink && job.numResolved > 0 ? (
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleViewErrorsClick}>
+            {job.numResolved} View
+          </Button>
+        ) : (
+          job.numResolved
+        )}
+      </TableCell>
       <TableCell>{getPages(job, parentJob)}</TableCell>
       <TableCell>{job.duration}</TableCell>
       <TableCell>{job.endedAtAsString}</TableCell>

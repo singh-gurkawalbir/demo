@@ -38,6 +38,7 @@ export default (state = defaultState, action) => {
     const { flowJobs, bulkRetryJobs } = parseJobs(collection || []);
 
     return {
+      ...state,
       flowJobs,
       bulkRetryJobs,
     };

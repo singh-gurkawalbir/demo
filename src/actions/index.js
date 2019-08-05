@@ -380,6 +380,8 @@ const job = {
     }),
   receivedErrors: ({ collection, jobId }) =>
     action(actionTypes.JOB.ERROR.RECEIVED_COLLECTION, { collection, jobId }),
+  downloadErrorFile: ({ jobId }) =>
+    action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

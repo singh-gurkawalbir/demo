@@ -461,6 +461,27 @@ export function* getJobErrors({ jobType, jobId, parentJobId }) {
   yield cancel(watcher);
 }
 
+export function* downloaErrorFile({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.REQUEST_ERROR_FILE_URL,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+    openExternalUrl({ url: response.signedURL });
+  } catch (e) {
+    return true;
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
@@ -476,4 +497,5 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.RETRY_FLOW_JOB, retryFlowJob),
   takeEvery(actionTypes.JOB.RETRY_ALL, retryAll),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
+  takeEvery(actionTypes.JOB.DOWNLOAD_ERROR_FILE, downloaErrorFile),
 ];
