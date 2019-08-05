@@ -1,18 +1,18 @@
-import { combineReducers } from "redux";
-import * as _ from "lodash";
-import resources, * as fromResources from "./resources";
-import integrationAShares, * as fromIntegrationAShares from "./integrationAShares";
-import audit, * as fromAudit from "./audit";
-import accessTokens, * as fromAccessTokens from "./accessTokens";
-import suiteScript, * as fromSuiteScript from "./suiteScript";
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from "../../utils/constants";
+import { combineReducers } from 'redux';
+import { uniq } from 'lodash';
+import resources, * as fromResources from './resources';
+import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
+import audit, * as fromAudit from './audit';
+import accessTokens, * as fromAccessTokens from './accessTokens';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 
 export default combineReducers({
   resources,
   integrationAShares,
   audit,
   accessTokens,
-  suiteScript
+  suiteScript,
 });
 
 // #region resource selectors
@@ -72,7 +72,7 @@ export function auditLogs(state, resourceType, resourceId, filters) {
 
     if (resourceDetails && resourceDetails._connectorId) {
       if (
-        ["integrations", "flows", "connections"].includes(resourceTypePlural)
+        ['integrations', 'flows', 'connections'].includes(resourceTypePlural)
       ) {
         return true;
       }
@@ -82,8 +82,8 @@ export function auditLogs(state, resourceType, resourceId, filters) {
         log.fieldChanges = log.fieldChanges.filter(
           fc =>
             fc.fieldPath &&
-            (fc.fieldPath.includes("mapping") ||
-              fc.fieldPath.includes("lookups"))
+            (fc.fieldPath.includes('mapping') ||
+              fc.fieldPath.includes('lookups'))
         );
 
         return log.fieldChanges.length > 0;
@@ -126,7 +126,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
   });
 
   Object.keys(affectedResources).forEach(resourceType => {
-    affectedResources[resourceType] = _.uniq(affectedResources[resourceType]);
+    affectedResources[resourceType] = uniq(affectedResources[resourceType]);
   });
 
   const users = {};
@@ -137,7 +137,7 @@ export function affectedResourcesAndUsersFromAuditLogs(
 
   return {
     affectedResources,
-    users: Object.keys(users).map(id => users[id])
+    users: Object.keys(users).map(id => users[id]),
   };
 }
 

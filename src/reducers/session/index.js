@@ -5,17 +5,29 @@ import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
+import connectionToken, * as fromConnectionToken from './connectionToken';
+import resource, * as fromResource from './resource';
 
 export default combineReducers({
   stage,
   filters,
   editors,
   metadata,
+  connectionToken,
   resourceForm,
   agentAccessTokens,
+  resource,
 });
 
 // #region PUBLIC SELECTORS
+
+export function connectionTokens(state, resourceId) {
+  return fromConnectionToken.connectionTokens(
+    state && state.connectionToken,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   if (!state) return {};
 
@@ -34,10 +46,10 @@ export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state.editors, id);
 }
 
-export function stagedResource(state, id) {
+export function stagedResource(state, id, scope) {
   if (!state) return {};
 
-  return fromStage.stagedResource(state.stage, id);
+  return fromStage.stagedResource(state.stage, id, scope);
 }
 
 export function optionsFromMetadata(
@@ -48,7 +60,7 @@ export function optionsFromMetadata(
   mode
 ) {
   return fromMetadata.optionsFromMetadata(
-    (state && state.metadata) || null,
+    state && state.metadata,
     connectionId,
     applicationType,
     metadataType,
@@ -69,5 +81,9 @@ export function agentAccessToken(state, resourceId) {
     state && state.agentAccessTokens,
     resourceId
   );
+}
+
+export function createdResourceId(state, tempId) {
+  return fromResource.createdResourceId(state && state.resource, tempId);
 }
 // #endregion

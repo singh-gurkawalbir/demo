@@ -12,26 +12,11 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
+import { adaptorTypeMap } from '../../../utils/resource';
 
-const adaptorTypeMap = {
-  NetSuiteExport: 'netsuite',
-  NetSuiteImport: 'netsuite',
-  NetSuiteConnection: 'netsuite',
-  XMLImport: 'xml',
-  XMLExport: 'xml',
-  XMLConnection: 'xml',
-  FTPExport: 'ftp',
-  FTPImport: 'ftp',
-  FTPConnection: 'ftp',
-  HTTPExport: 'http',
-  HTTPImport: 'http',
-  HTTPConnection: 'http',
-  RESTImport: 'rest',
-  RESTExport: 'rest',
-  RESTConnection: 'rest',
-};
-const mapStateToProps = (state, { field }) => {
-  const { id, resourceId, resourceType } = field;
+const mapStateToProps = (state, { resourceContext = {}, field }) => {
+  const { id } = field;
+  const { resourceId, resourceType } = resourceContext;
   const resource =
     selectors.resourceData(state, resourceType, resourceId) || {};
   const { adaptorType } = resource.merged || {};

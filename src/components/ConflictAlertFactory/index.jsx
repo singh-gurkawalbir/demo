@@ -3,17 +3,17 @@ import ConflictAlertDialog from '../../views/Resources/ConflictAlertDialog';
 import resourceConstants from '../../forms/constants/connection';
 import actions from '../../actions';
 
-const mapDispatchToProps = (dispatch, { resourceType, id }) => ({
+const mapDispatchToProps = (dispatch, { resourceType, id, scope }) => ({
   handleCommitAndAuthorizeOAuth: () => {
     dispatch(actions.resource.connections.commitAndAuthorize(id));
-    dispatch(actions.resource.clearConflict(id));
+    dispatch(actions.resource.clearConflict(id, scope));
   },
   handleConflict: skipCommit => {
     if (!skipCommit) {
-      dispatch(actions.resource.commitStaged(resourceType, id));
+      dispatch(actions.resource.commitStaged(resourceType, id, scope));
     }
 
-    dispatch(actions.resource.clearConflict(id));
+    dispatch(actions.resource.clearConflict(id, scope));
   },
 });
 const ConflictAlertFactory = props => {

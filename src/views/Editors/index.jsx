@@ -6,6 +6,7 @@ import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
+import FileDefinitionEditorDialog from '../../components/AFE/FileDefinitionEditor/Dialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
 import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
 import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
@@ -137,6 +138,15 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'FileDefinitionEditor':
+        return (
+          <FileDefinitionEditorDialog
+            title="File definition rules"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -168,7 +178,7 @@ export default class Editors extends Component {
         name: 'CsvParseEditor',
         label: 'CSV Parser',
         description:
-          'This processor converts comma seperated values into JSON.',
+          'This processor converts comma separated values into JSON.',
       },
       {
         name: 'XmlParseEditor',
@@ -189,6 +199,12 @@ export default class Editors extends Component {
         label: 'JavaScript Editor',
         description:
           'This processor allows a user to run javascript safely in our secure jsruntime environmnet.',
+      },
+      {
+        name: 'FileDefinitionEditor',
+        label: 'File-Definition Parser',
+        description:
+          'This processor allows a user to parse junk data into readable json format by applying file definition sturcture on it',
       },
     ];
 

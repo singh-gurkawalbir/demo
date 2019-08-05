@@ -1,4 +1,5 @@
 const { join } = require('path');
+const { sections } = require('./docs/sections');
 
 require('babel-register')({
   plugins: [
@@ -101,6 +102,7 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
+        editorConfig: { theme: 'material' },
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
@@ -112,43 +114,10 @@ module.exports = {
           ),
         },
 
-        sections: [
-          {
-            name: 'Introduction',
-            content: 'docs/introduction.md',
-          },
-          {
-            name: 'Color Palette',
-            content: 'docs/colors.md',
-          },          
-          {
-            name: 'Components',
-
-            showUsage: true,
-            skipComponentsWithoutExample: true,
-    
-            sections: [
-              {
-                name: 'Typography',
-                content: 'docs/typography.md',
-              },
-              {
-                name: 'Buttons',
-                content: 'docs/buttons.md',
-              },
-              {
-                name: 'Icons',
-                components: 'src/components/icons/**/index.jsx',
-                editorConfig: { theme: 'material' },
-              },
-              {
-                name: 'Celigo Components',
-                components: 'src/components/*/index.jsx',
-                editorConfig: { theme: 'material' },
-              },
-            ],
-          },
-        ],
+        sections: sections,
+        require: [
+          join(__dirname, 'docs/styles.css')
+        ]
       },
     ],
     [
@@ -176,6 +145,7 @@ module.exports = {
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
+            'max-len':'off',
             'react/jsx-filename-extension': [
               1,
               { extensions: ['.js', '.jsx'] },

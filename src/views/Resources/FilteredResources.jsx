@@ -9,7 +9,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
-// import shortid from 'shortid';
+import Avatar from '@material-ui/core/Avatar';
+import shortid from 'shortid';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import ResourceImage from '../../components/icons/ResourceImg';
 import actions from '../../actions';
@@ -36,6 +37,11 @@ const mapDispatchToProps = (dispatch, { list }) => ({
     left: theme.spacing.unit * 2,
     bottom: theme.spacing.unit / 4,
   },
+  avatar: {
+    backgroundColor: theme.palette.background.editorInner,
+    border: '1px solid',
+    borderColor: theme.palette.text.primary,
+  },
 }))
 class FilteredResources extends Component {
   // TODO: use this component to highlight the matching text in the resuts:
@@ -50,7 +56,7 @@ class FilteredResources extends Component {
       </span>
     );
 
-    if (!list.count) return null;
+    // if (!list.count) return null;
 
     return (
       <div className={classes.root}>
@@ -61,21 +67,22 @@ class FilteredResources extends Component {
               path="/pg/resources/:resourceType/add/:id"
               render={() => null}
             />
-            {/*  Hide the "Add" until we have a good implementation for it.
-            <Route
-              render={() => (
-                <Button
-                  size="small"
-                  variant="contained"
-                  aria-label="Add"
-                  component={Link}
-                  to={`/pg/resources/${resourceType}/add/${shortid.generate()}`}
-                  className={classes.addResource}>
-                  Add
-                </Button>
-              )}
-            />
-          */}
+            {
+              <Route
+                render={() => (
+                  <Button
+                    size="small"
+                    variant="contained"
+                    // color="secondary"
+                    aria-label="Add"
+                    component={Link}
+                    to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}
+                    className={classes.addResource}>
+                    Add
+                  </Button>
+                )}
+              />
+            }
           </Switch>
         </Typography>
 
@@ -88,10 +95,14 @@ class FilteredResources extends Component {
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
               {['exports', 'imports', 'connections'].includes(resourceType) ? (
-                <ApplicationImg
-                  assistant={r.assistant}
-                  type={resourceType === 'connections' ? r.type : r.adaptorType}
-                />
+                <Avatar className={classes.avatar}>
+                  <ApplicationImg
+                    assistant={r.assistant}
+                    type={
+                      resourceType === 'connections' ? r.type : r.adaptorType
+                    }
+                  />
+                </Avatar>
               ) : (
                 <ResourceImage resource={r} resourceType={resourceType} />
               )}
@@ -107,7 +118,7 @@ class FilteredResources extends Component {
             <Button
               onClick={handleMore(list.count + 2)}
               size="small"
-              variant="outlined">
+              variant="text">
               Show more results ({list.filtered - list.count} left)
             </Button>
           )}

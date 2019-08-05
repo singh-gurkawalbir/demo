@@ -1,11 +1,11 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-@withStyles(theme => ({
+const styles = theme => ({
   arrow: {
     position: 'absolute',
     fontSize: 7,
@@ -19,9 +19,17 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
       height: 0,
       borderStyle: 'solid',
     },
+    '&::after': {
+      content: '""',
+      margin: 'auto',
+      display: 'block',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+    },
   },
   popper: {
-    zIndex: 1,
+    zIndex: 2,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
@@ -32,6 +40,15 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
         borderWidth: '0 1em 1em 1em',
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
+      },
+      '&::after': {
+        borderWidth: '0 1.3em 1.3em 1.3em',
+        // eslint-disable-next-line prettier/prettier
+        borderColor: `transparent transparent ${theme.palette.background.arrowAfter} transparent`,
+        position: 'absolute',
+        top: '-2px',
+        left: '2px',
+        zIndex: '-2',
       },
     },
     '&[x-placement*="top"] $arrow': {
@@ -45,6 +62,15 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
         // eslint-disable-next-line prettier/prettier
         borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
       },
+      '&::after': {
+        borderWidth: '1.3em 1.3em 0 1.3em',
+        // eslint-disable-next-line prettier/prettier
+        borderColor: ` ${theme.palette.background.arrowAfter} transparent transparent  transparent`,
+        position: 'absolute',
+        top: '0px',
+        left: '2px',
+        zIndex: '-2',
+      },
     },
     '&[x-placement*="right"] $arrow': {
       left: 0,
@@ -55,6 +81,15 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
         borderWidth: '1em 1em 1em 0',
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+      },
+      '&::after': {
+        borderWidth: '1.3em 1.3em 1.3em 0',
+        // eslint-disable-next-line prettier/prettier
+        borderColor: `transparent ${theme.palette.background.arrowAfter} transparent transparent`,
+        position: 'absolute',
+        top: '-2px',
+        left: '-2px',
+        zIndex: '-2',
       },
     },
     '&[x-placement*="left"] $arrow': {
@@ -67,59 +102,62 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
       },
+      '&::after': {
+        borderWidth: '1.3em 0 1.3em 1.3em',
+        // eslint-disable-next-line prettier/prettier
+        borderColor: `transparent transparent transparent ${theme.palette.background.arrowAfter}`,
+        position: 'absolute',
+        top: '-2px',
+        left: '0px',
+        zIndex: '-2',
+      },
     },
   },
-}))
-export default class ArrowPopper extends Component {
-  state = {
-    arrowEl: null,
-  };
-  handleArrowEl = node => {
-    this.setState({ arrowEl: node });
-  };
+});
 
-  render() {
-    const {
-      id,
-      open,
-      anchorEl,
-      placement = 'bottom-end',
-      classes,
-      children,
-      onClose = () => {}, // default to noop.
-      className,
-    } = this.props;
-    const { arrowEl } = this.state;
+function ArrowPopper(props) {
+  const {
+    id,
+    open,
+    anchorEl,
+    placement = 'bottom-end',
+    classes,
+    children,
+    onClose = () => {}, // default to noop.
+    className,
+  } = props;
+  const [arrowEl, setArrowEl] = useState(null);
 
-    return (
-      <Popper
-        id={id}
-        anchorEl={anchorEl}
-        placement={placement}
-        disablePortal={false}
-        open={open}
-        className={classes.popper}
-        onClose={onClose}
-        modifiers={{
-          flip: {
-            enabled: true,
-          },
-          preventOverflow: {
-            enabled: true,
-            boundariesElement: 'scrollParent',
-          },
-          arrow: {
-            enabled: true,
-            element: arrowEl,
-          },
-        }}>
-        <span className={classes.arrow} ref={this.handleArrowEl} />
-        <ClickAwayListener onClickAway={onClose}>
-          <Paper className={classNames(classes.paper, className)}>
-            {children}
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
-    );
-  }
+  return (
+    <Popper
+      id={id}
+      anchorEl={anchorEl}
+      placement={placement}
+      disablePortal={false}
+      open={open}
+      className={classes.popper}
+      onClose={onClose}
+      modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
+        arrow: {
+          enabled: true,
+          element: arrowEl,
+        },
+      }}>
+      <span className={classes.arrow} ref={setArrowEl} />
+      <ClickAwayListener onClickAway={onClose}>
+        <Paper className={classNames(classes.paper, className)} elevation={1}>
+          {children}
+        </Paper>
+      </ClickAwayListener>
+    </Popper>
+  );
 }
+
+export default withStyles(styles)(ArrowPopper);

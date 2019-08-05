@@ -3,19 +3,13 @@ import colors from './colors';
 export default {
   name: 'Celigo Dark Theme',
   appBar: {
-    background: colors.celigoNeutral7,
+    background: colors.celigoNeutral8,
     contrast: colors.celigoWhite,
     hover: colors.celigoWhite,
   },
   editor: {
-    panelBackground: colors.celigoNeutral2,
-    panelBorder: colors.celigoNeutral2,
-  },
-  radius: {
-    radius4: '4px',
-    radius6: '6px',
-    radius8: '8px',
-    radius50: '50%',
+    panelBackground: colors.celigoNeutral7,
+    panelBorder: colors.celigoNeutral6,
   },
   palette: {
     type: 'dark',
@@ -24,12 +18,11 @@ export default {
       default: colors.celigoNeutral6,
       editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
+      arrowAfter: colors.celigoNeutral7,
       // success:
       // warning: celigo.celigoWarning
       // error:
     },
-    // action: {[object]},
-    // Spinner color changes below
     primary: {
       backgroundColor: colors.celigoAccent1,
       color: colors.celigoWhite,
@@ -40,161 +33,62 @@ export default {
       main: colors.celigoAccent1,
     },
     text: {
-      primary: colors.celigoHelpText,
+      primary: colors.celigoNeutral1,
       link: colors.celigoNeutral6,
       linkHover: colors.celigoAccent1,
       secondary: colors.celigoNeutral4,
+      title: colors.celigoWhite,
       // disabled: '#rrggbb',
       // hint: '#rrggbb',
     },
+    divider: colors.celigoNeutral6,
   },
   overrides: {
     MuiTypography: {
-      body2: {
-        fontSize: '15px',
-        fontWeight: '400',
-        lineHeight: '20px',
-        letterSpacing: 'normal',
-        color: colors.celigoWhite,
-      },
-      body1: {
-        fontSize: '18px',
-        fontWeight: '400',
-        lineHeight: '24px',
-        letterSpacing: 'normal',
-        color: colors.celigoWhite,
-      },
-      h1: {
-        fontSize: '48px',
-        fontWeight: '300',
-        lineHeight: '50px',
-        letterSpacing: '0.7px',
-        color: colors.celigoWhite,
-      },
-      h2: {
-        fontSize: '36px',
-        fontWeight: '400',
-        lineHeight: '23px',
-        letterSpacing: '0.5px',
-        color: colors.celigoWhite,
-      },
-
-      h3: {
-        fontSize: '24px',
-        fontWeight: '300',
-        lineHeight: '20px',
-        letterSpacing: 'normal',
-        color: colors.celigoWhite,
-      },
-      h4: {
-        fontSize: '20px',
-        fontWeight: '400',
-        lineHeight: '23px',
-        letterSpacing: 'normal',
-        color: colors.celigoWhite,
-      },
-      h5: {
-        fontSize: '20px',
-        fontWeight: '300',
-        lineHeight: '20px',
-        letterSpacing: 'normal',
-        color: colors.celigoWhite,
-      },
-      h6: {
-        fontSize: '16px',
-        fontWeight: '300',
-        lineHeight: '18px',
-        letterSpacing: 'normal',
-        color: colors.celigoHelpText,
-      },
-      subtitle1: {
-        fontSize: '14px',
-        fontWeight: '300',
-        lineHeight: '18px',
-        letterSpacing: 'normal',
-        color: colors.celigoHelpText,
-      },
-      subtitle2: {
-        fontSize: '12px',
-        fontWeight: '300',
-        lineHeight: '18px',
-        letterSpacing: 'normal',
-        color: colors.celigoHelpText,
-      },
-      overline: {
-        fontSize: '12px',
-        fontWeight: '400',
-        lineHeight: '20px',
-        letterSpacing: '1px',
-        color: colors.celigoWhite,
-      },
+      body2: { color: colors.celigoWhite },
+      body1: { color: colors.celigoWhite },
+      h1: { color: colors.celigoWhite },
+      h2: { color: colors.celigoWhite },
+      h3: { color: colors.celigoWhite },
+      h4: { color: colors.celigoWhite },
+      h5: { color: colors.celigoWhite },
+      h6: { color: colors.celigoNeutral1 },
+      subtitle1: { color: colors.celigoNeutral1 },
+      subtitle2: { color: colors.celigoNeutral1 },
+      overline: { color: colors.celigoWhite },
     },
     MuiButton: {
       textPrimary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        minWidth: '100px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        color: colors.celigoNeutral6,
-        padding: '10px 20px',
+        color: colors.celigoNeutral1,
         '&:focus': {
-          color: colors.celigoNeutral7,
+          color: colors.celigoAccent2,
         },
         '&:hover': {
-          backgroundColor: 'transparent',
           color: colors.celigoAccent2,
-          background: 'none',
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral6,
         },
       },
       textSecondary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        minWidth: '100px',
-        fontSize: '12px',
-        lineHeight: '8px',
         color: colors.celigoAccent2,
-        padding: '10px 20px',
+        '&::after': {
+          backgroundColor: colors.celigoAccent3,
+        },
         '&:focus': {
-          background: 'none',
           color: colors.celigoAccent1,
         },
         '&:hover': {
-          backgroundColor: 'transparent',
           color: colors.celigoAccent3,
-          textDecoration: 'underline',
         },
         '&:disabled': {
-          color: colors.celigoNeutral4,
+          color: colors.celigoNeutral5,
         },
       },
-      // small size button
-      sizeSmall: {
-        padding: '10px 20px',
-        fontSize: '14px',
-      },
-      // large Size Button
-      sizeLarge: {
-        padding: '10px 20px',
-        lineHeight: 'normal',
-        fontSize: '20px',
-        minWidth: 200,
-      },
-
-      // outlined: {},
       outlinedPrimary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
         backgroundColor: colors.celigoAccent3,
         borderColor: colors.celigoAccent3,
         color: colors.celigoWhite,
-        padding: '10px 20px',
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
           borderColor: colors.celigoAccent3,
@@ -210,15 +104,8 @@ export default {
         },
       },
       outlinedSecondary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
-        backgroundColor: 'transparent',
         borderColor: colors.celigoNeutral6,
         color: colors.celigoNeutral6,
-        padding: '10px 20px',
         '&:hover': {
           color: colors.celigoNeutral7,
           backgroundColor: colors.celigoWhite,
@@ -232,16 +119,9 @@ export default {
 
       // rounded buttons styles
       contained: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
         backgroundColor: colors.celigoNeutral2,
-        border: `1px solid ${colors.celigoNeutral2}`,
-        boxShadow: 'none',
+        borderColor: colors.celigoNeutral2,
         color: colors.celigoNeutral6,
-        padding: '10px 20px',
         '&:hover': {
           color: colors.celigoNeutral7,
           backgroundColor: colors.celigoNeutral2,
@@ -249,21 +129,13 @@ export default {
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
-          background: 'none',
           borderColor: colors.celigoNeutral4,
         },
       },
       containedPrimary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
         backgroundColor: colors.celigoAccent3,
-        border: `1px solid ${colors.celigoAccent3}`,
+        borderColor: colors.celigoAccent3,
         color: colors.celigoWhite,
-        padding: '10px 20px',
-        boxShadow: 'none',
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
           borderColor: colors.celigoAccent4,
@@ -280,34 +152,24 @@ export default {
         },
       },
       containedSecondary: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        minWidth: '100px',
-        backgroundColor: 'transparent',
-        border: `1px solid ${colors.celigoNeutral6}`,
-        boxShadow: 'none',
+        borderColor: colors.celigoNeutral6,
         color: colors.celigoNeutral6,
-        padding: '10px 20px',
+        backgroundColor: 'transparent',
         '&:hover': {
-          color: colors.celigoNeutral7,
-          backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          color: colors.celigoNeutral3,
+          backgroundColor: 'transparent',
+          borderColor: colors.celigoNeutral3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
-          background: 'none',
           borderColor: colors.celigoNeutral4,
+          backgroundColor: colors.celigoNeutral7,
         },
       },
-      // disabled: {},
-
-      // fullWidth: {},
     },
     MuiAvatar: {
       colorDefault: {
-        color: colors.celigoHelpText,
+        color: colors.celigoNeutral1,
         backgroundColor: colors.celigoNeutral6,
       },
     },
@@ -315,14 +177,6 @@ export default {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral7 },
       },
-    },
-  },
-  props: {
-    // Name of the component ⚛️
-    MuiButtonBase: {
-      // The default props to change
-      // variant: 'contained',
-      background: colors.celigoError,
     },
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import { Typography } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,8 +33,8 @@ const mapStateToProps = (state, { editorId }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, { editorId }) => ({
-  patchEditor: (option, value) => {
+const mapDispatchToProps = dispatch => ({
+  patchEditor: editorId => (option, value) => {
     if (typeof option === 'string') {
       dispatch(actions.editor.patch(editorId, { [option]: value }));
     } else {
@@ -64,41 +64,28 @@ const styles = theme => ({
   },
 });
 const JavaScriptPanel = props => {
-  const [requestedContent, setRequestedContent] = useState(false);
-  const setOrRequestContent = scriptId => {
-    const { getScriptContent, requestScript, patchEditor } = props;
-
-    if (!scriptId) return;
-    const content = getScriptContent(scriptId);
-
-    if (content === undefined) {
-      requestScript(scriptId);
-      // Shouldnt we update to the selected scriptId
-      patchEditor({ scriptId });
-      setRequestedContent(true);
-    } else {
-      patchEditor({ code: content, scriptId });
-    }
-  };
-
-  useEffect(() => {
-    const { editor } = props;
-
-    setOrRequestContent(editor.scriptId);
-  }, []);
-
-  const { editor, allScripts, patchEditor, classes, getScriptContent } = props;
+  const {
+    getScriptContent,
+    requestScript,
+    patchEditor,
+    editorId,
+    allScripts,
+    classes,
+  } = props;
+  const { editor } = props;
   const { code = '', entryFunction = '', scriptId = '' } = editor;
-  const requestedScriptContent = getScriptContent(scriptId);
+  const scriptContent = getScriptContent(scriptId);
 
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
     // do we have a timeout for the spinner
-    if (requestedScriptContent) {
-      patchEditor({ code: requestedScriptContent });
-      setRequestedContent(false);
+    if (scriptContent) {
+      patchEditor(editorId)({ code: scriptContent });
+    } else if (scriptId) {
+      requestScript(scriptId);
+      // Shouldnt we update to the selected scriptId
     }
-  }, [requestedScriptContent]);
+  }, [editorId, patchEditor, requestScript, scriptContent, scriptId]);
 
   return (
     <LoadResources required resources={['scripts']}>
@@ -111,7 +98,9 @@ const JavaScriptPanel = props => {
             id="scriptId"
             margin="dense"
             value={scriptId}
-            onChange={event => setOrRequestContent(event.target.value)}>
+            onChange={event =>
+              patchEditor(editorId)({ scriptId: event.target.value })
+            }>
             {allScripts.map(s => (
               <MenuItem key={s._id} value={s._id}>
                 {s.name}
@@ -124,11 +113,13 @@ const JavaScriptPanel = props => {
           InputLabelProps={{ className: classes.label }}
           className={classes.textField}
           value={entryFunction}
-          onChange={event => patchEditor('entryFunction', event.target.value)}
+          onChange={event =>
+            patchEditor(editorId)('entryFunction', event.target.value)
+          }
           label="Entry Function"
           margin="dense"
         />
-        {requestedContent ? (
+        {!scriptContent && scriptId ? (
           <Fragment>
             <Typography>Retrieving your script</Typography>
             <Spinner />
@@ -138,7 +129,7 @@ const JavaScriptPanel = props => {
             name="code"
             value={code}
             mode="javascript"
-            onChange={code => patchEditor('code', code)}
+            onChange={code => patchEditor(editorId)('code', code)}
           />
         )}
       </div>

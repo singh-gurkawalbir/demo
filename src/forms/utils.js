@@ -1,3 +1,5 @@
+import jsonPatch from 'fast-json-patch';
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -84,38 +86,41 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
-  const getStub = segments => {
-    const o = {};
-    let cur = o;
-
-    segments.forEach(s => {
-      cur[s] = {};
-      cur = cur[s];
-    });
-
-    return o;
+  const addMissing = missingPath => {
+    if (!missing.find(path => path === missingPath)) {
+      missing.push(missingPath);
+    }
   };
 
   paths.forEach(p => {
     const segments = p.split('/');
 
     // console.log(segments);
-
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
     if (segments.length > 2) {
-      let value = {};
       let r = resource;
       let path = '';
 
-      for (let i = 1; i <= segments.length - 1; i += 1) {
+      for (let i = 1; i <= segments.length - 2; i += 1) {
         const segment = segments[i];
 
         path = `${path}/${segment}`;
 
-        if (r === undefined || r[segment] === undefined) {
-          value = getStub(segments.slice(i + 1, segments.length));
-          missing.push({ path, value, op: 'add' });
+        if (
+          r === undefined ||
+          r[segment] === undefined ||
+          typeof r[segment] !== 'object'
+        ) {
+          addMissing(path);
+
+          const missingSegments = segments.slice(i + 1, segments.length);
+          let missingPath = `${path}/${missingSegments[0]}`;
+
+          for (let j = 1; j <= missingSegments.length; j += 1) {
+            addMissing(missingPath);
+            missingPath = `${missingPath}/${missingSegments[j]}`;
+          }
 
           break;
         }
@@ -124,14 +129,13 @@ export const getMissingPatchSet = (paths, resource) => {
       }
     }
   });
-  // console.log(missing);
+  // console.log(missing.sort());
 
-  return missing;
+  return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
   if (!patchSet) return patchSet;
-
   const sanitizedSet = patchSet.reduce((s, patch) => {
     if (patch.op === 'replace') {
       const field = getFieldByName({ name: patch.path, fieldMeta });
@@ -153,8 +157,17 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
     resource
   );
   const newSet = [...missingPatchSet, ...sanitizedSet];
+  const error = jsonPatch.validate(newSet, resource);
 
-  // console.log(newSet);
+  if (error) {
+    // TODO: resolve why the validate performs a more strict check than
+    // applying a patch... or possibly we are applying the patch to a
+    // different object which is why its not failing when applying patches.
+
+    // eslint-disable-next-line
+    console.log(error, newSet, resource);
+    // throw new Error('Something wrong with the patchSet operations ', error);
+  }
 
   return newSet;
 };
@@ -167,7 +180,7 @@ export const replaceField = ({ meta, field }) => {
         // already be dealing with a copy.
         meta.fields[i] = field; // eslint-disable-line
 
-        // break as soon as replacement occurres.
+        // break as soon as replacement occurs.
         return meta;
       }
     }

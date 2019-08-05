@@ -2,9 +2,9 @@ These are our Celigo brand colors. Both light and dark theme use the same colors
 
 ```js
 
-const ColorTiles = require('../src/styleguide/ColorTitle.jsx').default;
+const ColorPalette = require('../src/styleguide/ColorPalette.jsx').default;
 <div>
 
-<ColorTiles />
+<ColorPalette />
 </div>
 ```

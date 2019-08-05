@@ -3,12 +3,6 @@ export default {
     { fieldId: 'hookType', defaultValue: 'script' },
     {
       fieldId: 'hooks.preSavePage.function',
-      visibleWhen: [
-        {
-          field: 'hookType',
-          is: ['script'],
-        },
-      ],
     },
     {
       fieldId: 'hooks.preSavePage._scriptId',
@@ -17,17 +11,6 @@ export default {
         {
           field: 'hookType',
           is: ['script'],
-        },
-      ],
-    },
-
-    {
-      fieldId: 'hooks.preSavePage.configuration',
-
-      visibleWhen: [
-        {
-          field: 'hookType',
-          is: ['stack'],
         },
       ],
     },

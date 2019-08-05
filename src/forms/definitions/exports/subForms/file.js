@@ -7,7 +7,7 @@ export default {
 
       // if there is a uploadFileField in the form meta
       // then provide the file type if not return null
-      // then the prevelant mode value will take over
+      // then the prevalent mode value will take over
       if (uploadFileField) {
         const fileTypeField = fields.find(
           field => field.fieldId === 'file.type'

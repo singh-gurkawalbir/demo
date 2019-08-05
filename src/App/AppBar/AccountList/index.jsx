@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownArrow from '../../../components/icons/DownArrow';
+import DownIcon from '../../../components/icons/DownIcon';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 
@@ -135,7 +135,8 @@ class AccountList extends Component {
     confirmDialog({
       title: 'Leave Account',
       // eslint-disable-next-line prettier/prettier
-      message: `By leaving the account "${account.company}", you will no longer have access to the account or any of the integrations within the account.`,
+      message: `By leaving the account "${account.company}", 
+        you will no longer have access to the account or any of the integrations within the account.`,
       buttons: [
         {
           label: 'Cancel',
@@ -178,7 +179,7 @@ class AccountList extends Component {
             {selectedAccount && selectedAccount.label}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
-            <DownArrow className={classes.arrow} />
+            <DownIcon className={classes.arrow} />
           </RootRef>
         </span>
 

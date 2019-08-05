@@ -3,7 +3,7 @@ import each from 'jest-each';
 import getJsonPaths from './jsonPaths';
 import getRoutePath from './routePaths';
 import getExistingResourcePagePath from './resource';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from './constants';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import getRequestOptions from './requestOptions';
 import actionTypes from '../actions/types';
 
@@ -11,11 +11,12 @@ const uiRoutePathPrefix = '/pg';
 
 describe('Json paths util method', () => {
   test('generate all json paths for a valid JSON object', () => {
-    const sampleJSON = { a: { d: '4', e: '5' }, b: '3' };
+    const sampleJSON = { a: { d: '4', e: '5', f: 4 }, b: '3' };
 
     expect(getJsonPaths(sampleJSON)).toEqual([
       { id: 'a.d', type: 'string' },
       { id: 'a.e', type: 'string' },
+      { id: 'a.f', type: 'number' },
       { id: 'b', type: 'string' },
     ]);
   });

@@ -57,7 +57,9 @@ describe('stage reducers', () => {
       expect(state[id].patch.length).toEqual(2);
 
       state = reducer(state, actions.resource.undoStaged(id));
-      expect(state[id].patch).toEqual([patch]);
+      expect(state[id].patch).toEqual([
+        { ...patch, timestamp: expect.any(Number) },
+      ]);
     });
   });
 
@@ -68,8 +70,7 @@ describe('stage reducers', () => {
       const state = reducer(undefined, actions.resource.patchStaged(id, patch));
 
       expect(state[id]).toEqual({
-        patch,
-        lastChange: expect.any(Number), // date is epoc date
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
     });
 
@@ -83,8 +84,10 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.patchStaged(id, patch2));
 
       expect(state[id]).toEqual({
-        patch: [...patch1, ...patch2],
-        lastChange: expect.any(Number), // date is epoc date
+        patch: [
+          { ...patch1[0], timestamp: expect.any(Number) },
+          { ...patch2[0], timestamp: expect.any(Number) },
+        ],
       });
     });
 
@@ -98,8 +101,14 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.patchStaged(id, patch2));
 
       expect(state[id]).toEqual({
-        patch: [{ op: 'replace', path: '/name', value: '123' }],
-        lastChange: expect.any(Number), // date is epoc date
+        patch: [
+          {
+            op: 'replace',
+            path: '/name',
+            value: '123',
+            timestamp: expect.any(Number),
+          },
+        ],
       });
     });
   });
@@ -126,9 +135,8 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.commitConflict(id, conflict));
 
       expect(state[id]).toEqual({
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
   });
@@ -171,19 +179,19 @@ describe('stage selectors', () => {
       expect(selectors.stagedResource({}, 'key')).toEqual({});
     });
 
-    test('should return staged respource when match found.', () => {
+    test('should return staged resource when match found.', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
       const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
       let state;
 
       state = reducer(state, actions.resource.patchStaged(id, patch));
+
       state = reducer(state, actions.resource.commitConflict(id, conflict));
 
       expect(selectors.stagedResource(state, id)).toEqual({
-        patch,
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
         conflict,
-        lastChange: expect.any(Number), // date is epoc date
       });
     });
   });
