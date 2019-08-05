@@ -148,6 +148,10 @@ export default {
           field: 'configureTokenRefresh',
           is: [true],
         },
+        {
+          field: 'http.auth.token.refreshMethod',
+          is: ['POST', 'PUT'],
+        },
       ],
     },
     {

@@ -192,5 +192,10 @@ export default {
         { fieldId: 'http.ping.errorPath' },
       ],
     },
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
   ],
 };

@@ -4,6 +4,7 @@ import restBasic from './restBasic';
 import restToken from './restToken';
 import restAdvanced from './restAdvanced';
 import httpAdvanced from './httpAdvanced';
+import restCookie from './restCookie';
 
 export default {
   httpBasic,
@@ -12,4 +13,5 @@ export default {
   restToken,
   restAdvanced,
   httpAdvanced,
+  restCookie,
 };

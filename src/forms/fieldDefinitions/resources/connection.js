@@ -27,6 +27,7 @@ export default {
   type: {
     type: 'select',
     label: 'Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -51,6 +52,7 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -325,6 +327,7 @@ export default {
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -362,7 +365,8 @@ export default {
   // #region rest
   'rest.mediaType': {
     type: 'select',
-    label: 'Rest media Type',
+    label: 'Media Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -389,13 +393,14 @@ export default {
       'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   },
   'rest.tokenLocation': {
-    type: 'radiogroup',
-    label: 'Rest token Location',
+    type: 'select',
+    label: 'Location:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
           { label: 'Header', value: 'header' },
-          { label: 'Url', value: 'url' },
+          { label: 'URL Parameter', value: 'url' },
         ],
       },
     ],
@@ -428,18 +433,15 @@ export default {
   },
   'rest.authType': {
     type: 'select',
-    label: 'Rest auth Type',
+    label: 'Authentication Type:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
-          { label: 'Oauth', value: 'oauth' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
-          { label: 'Jwt', value: 'jwt' },
-          { label: 'Hmac', value: 'hmac' },
-          { label: 'Wsse', value: 'wsse' },
         ],
       },
     ],
@@ -458,15 +460,16 @@ export default {
   },
   'rest.authScheme': {
     type: 'select',
-    label: 'Rest auth Scheme',
+    label: 'Scheme:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
           { label: 'MAC', value: 'MAC' },
           { label: 'OAuth', value: 'OAuth' },
           { label: 'Bearer', value: 'Bearer' },
-          { label: 'Hmac', value: 'Hmac' },
-          { label: ' ', value: ' ' },
+          // { label: 'Hmac', value: 'Hmac' },
+          { label: 'None', value: ' ' },
         ],
       },
     ],
@@ -483,22 +486,32 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
+    defaultValue: '',
   },
   'rest.cookieAuth.uri': {
     type: 'text',
-    label: 'Rest cookie Auth uri',
+    label: 'Cookie URI:',
   },
   'rest.cookieAuth.body': {
     type: 'text',
-    label: 'Rest cookie Auth body',
+    label: 'Cookie Body:',
   },
   'rest.cookieAuth.method': {
-    type: 'text',
-    label: 'Rest cookie Auth method',
+    type: 'select',
+    label: 'Cookie Method:',
+    defaultItemValue: 'Please Select',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
   },
   'rest.cookieAuth.successStatusCode': {
     type: 'text',
-    label: 'Rest cookie Auth success Status Code',
+    label: 'Cookie Success Status Code:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -510,11 +523,11 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Rest headers',
+    label: 'Configure HTTP Headers',
   },
   'rest.encrypted': {
     type: 'text',
-    label: 'Rest encrypted',
+    label: 'Encrypted:',
   },
   'rest.encrypteds': {
     type: 'editor',
@@ -523,7 +536,7 @@ export default {
   },
   'rest.unencrypted': {
     type: 'text',
-    label: 'Rest unencrypted',
+    label: 'Unencrypted:',
   },
   'rest.unencrypteds': {
     type: 'editor',
@@ -555,12 +568,22 @@ export default {
     label: 'Rest oauth password',
   },
   'rest.refreshTokenMethod': {
-    type: 'text',
-    label: 'Rest refresh Token Method',
+    type: 'select',
+    label: 'Refresh Token Method:',
+    defaultItemValue: 'Please Select',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+        ],
+      },
+    ],
   },
   'rest.refreshTokenBody': {
     type: 'text',
-    label: 'Rest refresh Token Body',
+    label: 'Refresh Body:',
   },
   'rest.refreshTokenURI': {
     type: 'text',
@@ -568,16 +591,17 @@ export default {
   },
   'rest.refreshTokenPath': {
     type: 'text',
-    label: 'Rest refresh Token Path',
+    label: 'Refresh Token Path:',
   },
   'rest.refreshTokenMediaType': {
-    type: 'radiogroup',
-    label: 'Rest refresh Token Media Type',
+    type: 'select',
+    label: 'Refresh Token Media Type:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
-          { label: 'Json', value: 'json' },
-          { label: 'Urlencoded', value: 'urlencoded' },
+          { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
         ],
       },
     ],
@@ -587,7 +611,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Rest refresh Token Headers',
+    label: 'Refresh Token Headers',
   },
   'rest.info': {
     type: 'text',
@@ -595,19 +619,16 @@ export default {
   },
   'rest.pingRelativeURI': {
     type: 'text',
-    label: 'Rest ping Relative URI',
+    label: 'Ping URI:',
   },
   'rest.pingSuccessPath': {
     type: 'text',
-    label: 'Rest ping Success Path',
+    label: 'Ping Success Path:',
   },
-  'rest.pingSuccessValuess': {
+  'rest.pingSuccessValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Rest ping Success Values',
-    validWhen: [],
+    valueDelimiter: ',',
+    label: 'Ping Success Values:',
   },
   'rest.pingFailurePath': {
     type: 'text',
@@ -624,6 +645,7 @@ export default {
   'rest.concurrencyLevel': {
     type: 'select',
     label: 'Rest concurrency Level',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -664,8 +686,9 @@ export default {
     ],
   },
   'rest.pingMethod': {
-    type: 'radiogroup',
-    label: 'Rest ping Method',
+    type: 'select',
+    label: 'Ping Method:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -677,13 +700,14 @@ export default {
   },
   'rest.pingBody': {
     type: 'text',
-    label: 'Rest ping Body',
+    label: 'Ping Body:',
   },
   // #endregion rest
   // #region http
   'http.auth.type': {
     type: 'select',
     label: 'Authentication Type:',
+    defaultItemValue: 'Please Select',
     helpText: `The HTTP adaptors currently support 3 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called. Finally, choose 'custom' for all other types. If you select the 'custom' auth method integrator.io will not perform any special auth processing. It is up to the user to configure the HTTP request fields (method, relativeUri, headers and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in the 'encrypted' and 'unencrypted' fields of this connection.`,
     options: [
       {
@@ -697,7 +721,8 @@ export default {
   },
   'http.mediaType': {
     type: 'select',
-    label: 'Http media Type',
+    label: 'Media Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -724,6 +749,7 @@ export default {
   'http.concurrencyLevel': {
     label: 'Http concurrency Level',
     type: 'select',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -779,6 +805,7 @@ export default {
   'http.ping.method': {
     type: 'select',
     label: 'Ping Method:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -896,6 +923,7 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -913,6 +941,7 @@ export default {
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -931,6 +960,7 @@ export default {
   'http.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh Method:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -956,6 +986,7 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type:',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1013,7 +1044,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Http headers',
+    label: 'Configure HTTP Headers',
   },
   'http.unencrypted': {
     type: 'textarea',
@@ -1088,6 +1119,7 @@ export default {
   'ftp.entryParser': {
     type: 'select',
     label: 'Entry Parser',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1193,6 +1225,7 @@ export default {
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'As2 partner Station Info mdn mdn Signing',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1240,6 +1273,7 @@ export default {
   'as2.partnerStationInfo.auth.token.location': {
     type: 'select',
     label: 'As2 partner Station Info auth token location',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1289,6 +1323,7 @@ export default {
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
     label: 'As2 partner Station Info auth token refresh Media Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1356,6 +1391,7 @@ export default {
   'as2.partnerStationInfo.encryptionType': {
     type: 'select',
     label: 'As2 partner Station Info encryption Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1372,6 +1408,7 @@ export default {
   'as2.partnerStationInfo.signing': {
     type: 'select',
     label: 'As2 partner Station Info signing',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1409,6 +1446,7 @@ export default {
   'as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'As2 user Station Info mdn mdn Signing',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1423,6 +1461,7 @@ export default {
   'as2.userStationInfo.encryptionType': {
     type: 'select',
     label: 'As2 user Station Info encryption Type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1439,6 +1478,7 @@ export default {
   'as2.userStationInfo.signing': {
     type: 'select',
     label: 'As2 user Station Info signing',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1489,6 +1529,7 @@ export default {
   'netsuite.authType': {
     type: 'select',
     label: 'Connection type',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1513,6 +1554,7 @@ export default {
   'netsuite.environment': {
     type: 'select',
     label: 'Netsuite environment',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1577,6 +1619,7 @@ export default {
   'netsuite.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1635,6 +1678,7 @@ export default {
   'netSuiteDistributedAdaptor.environment': {
     type: 'select',
     label: 'Net Suite Distributed Adaptor environment',
+    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
