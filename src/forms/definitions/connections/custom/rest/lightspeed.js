@@ -33,7 +33,12 @@ export default {
         'employee:customers_credit_limit',
       ],
     },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

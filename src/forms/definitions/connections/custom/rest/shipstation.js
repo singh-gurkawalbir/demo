@@ -20,7 +20,12 @@ export default {
       helpText: 'The API Secret of your ShipStation account.',
       label: 'API Secret:',
     },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

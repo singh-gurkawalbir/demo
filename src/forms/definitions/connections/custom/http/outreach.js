@@ -210,8 +210,12 @@ export default {
         'roles.delete',
       ],
     },
-    { fieldId: 'http.disableStrictSSL' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
   ],
 };

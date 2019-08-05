@@ -12,9 +12,12 @@ export default {
     '/rest/scope': ['https://www.googleapis.com/auth/content'],
   }),
 
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

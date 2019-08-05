@@ -23,7 +23,12 @@ export default {
         'https://www.googleapis.com/auth/drive',
       ],
     },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

@@ -9,9 +9,12 @@ export default {
     '/rest/authURI': 'https://developers.pdffiller.com/api_access',
     '/rest/oauthTokenURI': 'https://api.pdffiller.com/v2/oauth/token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

@@ -13,9 +13,12 @@ export default {
     '/rest/pingRelativeURI': '/v3/users/me',
     '/rest/pingMethod': 'GET',
   }),
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

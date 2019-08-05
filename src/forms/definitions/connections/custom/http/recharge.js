@@ -21,8 +21,12 @@ export default {
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
       required: true,
     },
-    { fieldId: 'http.disableStrictSSL' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
   ],
 };

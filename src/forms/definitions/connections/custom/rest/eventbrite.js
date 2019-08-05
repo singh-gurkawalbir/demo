@@ -13,9 +13,12 @@ export default {
     '/rest/tokenLocation': 'header',
   }),
 
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

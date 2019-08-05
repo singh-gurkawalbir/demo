@@ -12,9 +12,12 @@ export default {
     '/rest/scopeDelimiter': ',',
     '/rest/headers': [{ name: 'x-myobapi-version', value: 'v0' }],
   }),
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'rest.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
   ],
 };

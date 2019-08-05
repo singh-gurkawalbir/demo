@@ -54,8 +54,12 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    { fieldId: 'http.disableStrictSSL' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
   ],
 };

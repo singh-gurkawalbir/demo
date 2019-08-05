@@ -29,9 +29,12 @@ export default {
         'UserTimelineActivity.Write.CreatedByApp',
       ],
     },
-    { fieldId: 'http.disableStrictSSL' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
+  ],
 };

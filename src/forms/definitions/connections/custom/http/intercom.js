@@ -10,10 +10,12 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://api.intercom.io/auth/eagle/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: 'http.disableStrictSSL' },
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
+  fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
   ],
 };
