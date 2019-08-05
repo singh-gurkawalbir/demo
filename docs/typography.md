@@ -50,19 +50,19 @@ const Typography = require('@material-ui/core/Typography').default;
 ```js
 const Typography = require('@material-ui/core/Typography').default;
 
-<Typography variant="body1">The quick brown fox jumps over the lazy dog and that lazy dog got angry</Typography>
+<Typography variant="body1">The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry.</Typography>
 ```
 ### Body 2
 ```js
 const Typography = require('@material-ui/core/Typography').default;
 
-<Typography variant="body2">The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry.The quick brown fox jumps over the lazy dog and that lazy dog got angry</Typography>
+<Typography variant="body2">The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry.</Typography>
 ```
 ### Overline
 ```js
 const Typography = require('@material-ui/core/Typography').default;
 
-<Typography variant="overline">The quick brown fox jumps over the lazy dog and that lazy dog got angry. The quick brown fox jumps over the lazy dog and that lazy dog got angry.The quick brown fox jumps over the lazy dog and that lazy dog got angry</Typography>
+<Typography variant="overline">The quick brown fox jumps over the lazy dog and that lazy dog got angry.</Typography>
 ```
 ### Code
 ```js
