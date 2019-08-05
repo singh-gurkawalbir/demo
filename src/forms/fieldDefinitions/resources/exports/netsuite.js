@@ -291,30 +291,10 @@ export default {
     type: 'text',
     label: 'Netsuite restlet hooks pre Send configuration',
   },
-  // 'netsuite.distributed.recordType': {
-  //   type: 'text',
-  //   label: 'Netsuite distributed record Type',
-  // },
-  // 'netsuite.distributed.executionContexts': {
-  //   type: 'text',
-  //   keyName: 'name',
-  //   valueName: 'value',
-  //   valueType: 'array',
-  //   label: 'Netsuite distributed execution Context',
-  //   validWhen: [],
-  // },
   'netsuite.distributed.disabled': {
     type: 'checkbox',
     label: 'Netsuite distributed disabled',
   },
-  // 'netsuite.distributed.executionTypes': {
-  //   type: 'text',
-  //   keyName: 'name',
-  //   valueName: 'value',
-  //   valueType: 'array',
-  //   label: 'Netsuite distributed execution Type',
-  //   validWhen: [],
-  // },
   'netsuite.distributed.qualifier': {
     type: 'text',
     label: 'Netsuite distributed qualifier',
@@ -331,10 +311,6 @@ export default {
     type: 'text',
     label: 'Netsuite distributed hooks pre Send configuration',
   },
-  // 'netsuite.distributed.sublists': {
-  //   type: 'text',
-  //   label: 'Netsuite distributed sublists',
-  // },
   'netsuite.distributed.forceReload': {
     type: 'checkbox',
     label: 'Netsuite distributed force Reload',

@@ -14,27 +14,6 @@ export default {
     {
       fieldId: 'netsuite.restlet.searchId',
     },
-    // {
-    //   fieldId: 'netsuite.restlet.searchType',
-    // },
-    // {
-    //   fieldId: 'netsuite.restlet.searchId',
-    //   visibleWhen: [
-    //     {
-    //       field: 'netsuite.restlet.searchType',
-    //       is: ['public'],
-    //     },
-    //   ],
-    // },
-    // {
-    //   fieldId: 'netsuite.restlet.searchInternalId',
-    //   visibleWhen: [
-    //     {
-    //       field: 'netsuite.restlet.searchType',
-    //       is: ['private'],
-    //     },
-    //   ],
-    // },
     {
       fieldId: 'type',
     },
@@ -73,7 +52,9 @@ export default {
     },
     // Search Criteria
     // Sample Data
-    //  Tranform  Data
+    //  Transform  Data
+    { fieldId: 'ftp.exportTransformRecords' },
+    { fieldId: 'transform.expression.rules' },
     // Filter  Data
     // Advanced
   ],
