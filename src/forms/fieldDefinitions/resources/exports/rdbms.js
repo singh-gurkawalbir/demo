@@ -2,10 +2,17 @@ export default {
   'rdbms.query': {
     type: 'editor',
     mode: 'sql',
-    label: 'Rdbms query',
+    label: 'Query',
   },
   'rdbms.once.query': {
-    type: 'text',
-    label: 'Rdbms once query',
+    type: 'editor',
+    mode: 'sql',
+    label: 'Configure Once Query',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['once'],
+      },
+    ],
   },
 };
