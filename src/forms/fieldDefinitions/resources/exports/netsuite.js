@@ -171,35 +171,6 @@ export default {
     ],
     defaultValue: r => r.type || 'all',
   },
-  // date field
-  'delta.dateField': {
-    label: 'Date field',
-    type: 'refreshoptions',
-    mode: 'suitescript',
-    filterKey: 'dateField',
-    defaultValue: r => r.delta && r.delta.dateField,
-    required: true,
-    placeholder: 'Please select a date field',
-    connectionId: r => r._connectionId,
-  },
-  // lagoffset
-  'delta.lagOffset': {
-    type: 'text',
-    label: 'Offset',
-    defaultValue: r => r.delta && r.delta.lagOffset,
-    required: true,
-  },
-  // boolean field
-  'once.booleanField': {
-    label: 'Boolean Field',
-    type: 'refreshoptions',
-    placeholder: 'Please select a Boolean field',
-    defaultValue: r => r.once && r.once.booleanField,
-    mode: 'suitescript',
-    filterKey: 'booleanField',
-    required: true,
-    connectionId: r => r._connectionId,
-  },
   // skip grouping
   'netsuite.skipGrouping': {
     type: 'checkbox',
