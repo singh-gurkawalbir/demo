@@ -15,6 +15,7 @@ import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import JsonEditorDialog from '../../components/JsonEditorDialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -160,6 +161,21 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'JSONEditor':
+        return (
+          <JsonEditorDialog
+            value={rawData}
+            title="JSON Editor"
+            id={editorName}
+            onClose={() => {
+              this.handleEditorChange(null);
+            }}
+            // eslint-disable-next-line no-unused-vars
+            onChange={value => {
+              // console.log(value);
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -224,6 +240,11 @@ export default class Editors extends Component {
         label: 'SQL Query Builder Editor',
         description:
           'This processor allows user to build Sql Query using handlerbars and json as input to it',
+      },
+      {
+        name: 'JSONEditor',
+        label: 'JSON Editor',
+        description: 'This processor allows user to edit JSON Object',
       },
     ];
 
