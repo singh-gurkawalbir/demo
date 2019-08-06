@@ -375,7 +375,7 @@ export default {
   },
   'rest.baseURI': {
     type: 'text',
-    label: 'Rest base URI',
+    label: 'Base URI',
     required: true,
   },
   'rest.bearerToken': {
@@ -1649,6 +1649,7 @@ export default {
   'salesforce.sandbox': {
     type: 'select',
     label: 'Account Type:',
+    required: true,
     options: [
       {
         items: [
@@ -1665,6 +1666,7 @@ export default {
   'salesforce.oauth2FlowType': {
     type: 'select',
     label: 'Oauth2 Flow Type:',
+    required: true,
     options: [
       {
         items: [
