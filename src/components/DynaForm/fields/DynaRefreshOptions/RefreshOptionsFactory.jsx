@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { FieldWrapper } from 'react-forms-processor';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -16,7 +17,7 @@ function DynaSelectOptionsGenerator(props) {
       filterKey
     )
   );
-  const onFetchResource = () => {
+  const onFetchResource = useCallback(() => {
     const resource = (options && options.resourceToFetch) || resourceType;
 
     if (resource && !isLoadingData) {
@@ -24,7 +25,15 @@ function DynaSelectOptionsGenerator(props) {
         actions.metadata.request(connectionId, resource, mode, filterKey)
       );
     }
-  };
+  }, [
+    connectionId,
+    dispatch,
+    filterKey,
+    isLoadingData,
+    mode,
+    options,
+    resourceType,
+  ]);
 
   return (
     <FieldWrapper {...props}>

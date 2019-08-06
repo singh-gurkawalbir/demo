@@ -173,9 +173,9 @@ export default {
   },
   // skip grouping
   'netsuite.skipGrouping': {
-    type: 'checkbox',
+    type: 'inversecheckbox',
     label: 'Group Rows',
-    defaultValue: r => !(r.netsuite && r.netsuite.skipGrouping),
+    defaultValue: r => r.netsuite && r.netsuite.skipGrouping,
   },
 
   'netsuite.netsuiteExportlabel': {

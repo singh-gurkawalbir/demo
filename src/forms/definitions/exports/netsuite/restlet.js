@@ -1,8 +1,5 @@
 export default {
-  preSubmit: formValues => ({
-    ...formValues,
-    '/netsuite/skipGrouping': !formValues['/netsuite/skipGrouping'],
-  }),
+  preSubmit: formValues => formValues,
   fields: [
     { formId: 'common' },
     {
@@ -48,7 +45,6 @@ export default {
     },
     {
       fieldId: 'netsuite.skipGrouping',
-      defaultValue: r => !(r.netsuite && r.netsuite.skipGrouping),
     },
     // Search Criteria
     // Sample Data

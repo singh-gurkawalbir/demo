@@ -1,19 +1,14 @@
 export default {
-  preSubmit: formValues => {
-    const newValues = formValues;
-
-    newValues['/netsuite/searches'] = [
+  preSubmit: formValues => ({
+    ...formValues,
+    '/netsuite/searches': [
       {
         savedSearchId: formValues['/netsuite/webservices/searchId'],
         recordType: formValues['/netsuite/webservices/recordType'],
         criteria: [],
       },
-    ];
-
-    newValues['/netsuite/skipGrouping'] = !formValues['/netsuite/skipGrouping'];
-
-    return newValues;
-  },
+    ],
+  }),
 
   fields: [
     { formId: 'common' },
@@ -77,12 +72,20 @@ export default {
       const recordTypeField = fields.find(
         field => field.fieldId === 'netsuite.webservices.recordType'
       );
+      let record = recordTypeField && recordTypeField.value;
+
+      if (
+        recordTypeField &&
+        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
+      ) {
+        record = 'customRecord';
+      }
 
       // returns corresponding relative uri path based on recordType selected
       return {
         resourceToFetch:
           recordTypeField &&
-          `searchMetadata/${recordTypeField.connectionId}?recordType=${recordTypeField.value}`,
+          `searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
     }
 
@@ -90,12 +93,20 @@ export default {
       const recordTypeField = fields.find(
         field => field.fieldId === 'netsuite.webservices.recordType'
       );
+      let record = recordTypeField && recordTypeField.value;
+
+      if (
+        recordTypeField &&
+        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
+      ) {
+        record = 'customRecord';
+      }
 
       // returns corresponding relative uri path based on recordType selected
       return {
         resourceToFetch:
           recordTypeField &&
-          `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${recordTypeField.value}`,
+          `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
