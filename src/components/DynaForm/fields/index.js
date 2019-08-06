@@ -6,7 +6,6 @@ import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
-import DynaInverseCheckbox from './DynaInverseCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
@@ -28,7 +27,6 @@ export default {
   editor: DynaEditor,
   textarea: DynaText,
   checkbox: DynaCheckbox,
-  inversecheckbox: DynaInverseCheckbox,
   select: DynaSelect,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,

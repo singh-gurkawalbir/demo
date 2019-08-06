@@ -173,7 +173,8 @@ export default {
   },
   // skip grouping
   'netsuite.skipGrouping': {
-    type: 'inversecheckbox',
+    type: 'checkbox',
+    inverse: true,
     label: 'Group Rows',
     defaultValue: r => r.netsuite && r.netsuite.skipGrouping,
   },
