@@ -1,5 +1,4 @@
 export default {
-  preSubmit: formValues => formValues,
   fields: [
     { formId: 'common' },
     {

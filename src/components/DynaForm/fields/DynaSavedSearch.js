@@ -1,4 +1,4 @@
-import { FieldWrapper } from 'react-forms-processor';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import {
   RadioGroup,
   FormControlLabel,

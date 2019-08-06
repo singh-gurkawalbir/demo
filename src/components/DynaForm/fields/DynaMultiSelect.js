@@ -74,13 +74,13 @@ class MaterialUiMultiSelect extends React.Component {
         option => option.value === value
       );
 
-      return (
+      return fieldOption ? (
         <Chip
           key={value}
           label={fieldOption.label || value}
           className={classes.chip}
         />
-      );
+      ) : null;
     };
 
     return (

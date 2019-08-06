@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { FieldWrapper } from 'react-forms-processor';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
