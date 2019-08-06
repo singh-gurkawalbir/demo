@@ -29,9 +29,7 @@ const Editor = props => {
     resultTitle,
     error,
     violations,
-    handleRuleChange,
-    handleDefaultDataChange,
-    handleSampleDataChange,
+    handleChange,
     enableAutocomplete,
   } = props;
 
@@ -48,7 +46,9 @@ const Editor = props => {
           name="rule"
           value={rule}
           mode={ruleMode}
-          onChange={handleRuleChange}
+          onChange={data => {
+            handleChange('template', data);
+          }}
           enableAutocomplete={enableAutocomplete}
         />
       </PanelGridItem>
@@ -56,9 +56,8 @@ const Editor = props => {
         <SqlDataTabPanel
           processor="merge"
           sampleData={sampleData}
-          handleSampleDataChange={handleSampleDataChange}
           defaultData={defaultData}
-          handleDefaultDataChange={handleDefaultDataChange}
+          handleChange={handleChange}
         />
       </PanelGridItem>
 
@@ -78,9 +77,7 @@ Editor.propTypes = {
   sampleData: string,
   result: string,
   error: string,
-  handleRuleChange: func.isRequired,
-  handleSampleDataChange: func.isRequired,
-  handleDefaultDataChange: func.isRequired,
+  handleChange: func.isRequired,
 };
 
 export default withStyles(styles)(Editor);

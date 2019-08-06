@@ -7,39 +7,9 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
 
-const customTabsStyle = () => ({
-  root: {
-    borderBottom: '1px solid #e8e8e8',
-  },
-  indicator: {
-    backgroundColor: '#1890ff',
-  },
-});
-const CustomTabs = withStyles(customTabsStyle)(Tabs);
-const CustomTab = withStyles({
-  root: {
-    textTransform: 'none',
-    minWidth: 72,
-    fontSize: '16px',
-    lineHeight: '24px',
-    fontWeight: 400,
-    fontFamily: 'source sans pro',
-    '&:hover': {
-      color: '#40a9ff',
-      opacity: 1,
-    },
-    '&$selected': {
-      color: '#1890ff',
-    },
-    '&:focus': {
-      color: '#40a9ff',
-    },
-  },
-  selected: {},
-})(props => <Tab disableRipple {...props} />);
-const styles = () => ({
+const styles = {
   content: {
-    display: 'contents',
+    display: 'inline',
   },
   tabPanel: {
     height: '100%',
@@ -47,7 +17,7 @@ const styles = () => ({
   hide: {
     display: 'none',
   },
-});
+};
 
 function TabPanel(props) {
   const { index, ...other } = props;
@@ -71,33 +41,26 @@ function customTabProps(index) {
 }
 
 const SqlDataTabPanel = props => {
-  const {
-    sampleData,
-    dataMode,
-    defaultData,
-    classes,
-    handleDefaultDataChange,
-    handleSampleDataChange,
-  } = props;
+  const { sampleData, dataMode, defaultData, classes, handleChange } = props;
   const [tabValue, setTabValue] = useState(0);
 
-  function handleChange(event, newValue) {
+  function handleTabChange(event, newValue) {
     setTabValue(newValue);
   }
 
   return (
     <React.Fragment>
-      <CustomTabs
+      <Tabs
         value={tabValue}
-        onChange={handleChange}
+        onChange={handleTabChange}
         aria-label="simple tabs example">
-        <CustomTab className="tab" label="Sample Data" {...customTabProps(0)} />
-        <CustomTab
-          className="tab"
-          label="Default Data"
-          {...customTabProps(1)}
+        <Tab
+          className={classes.tab}
+          label="Sample Data"
+          {...customTabProps(0)}
         />
-      </CustomTabs>
+        <Tab className="tab" label="Default Data" {...customTabProps(1)} />
+      </Tabs>
       <div className={classes.content}>
         <TabPanel
           className={classNames(
@@ -110,7 +73,9 @@ const SqlDataTabPanel = props => {
             name="sampleData"
             value={sampleData}
             mode={dataMode}
-            onChange={handleSampleDataChange}
+            onChange={data => {
+              handleChange('sampleData', data);
+            }}
           />
         </TabPanel>
         <TabPanel
@@ -124,7 +89,9 @@ const SqlDataTabPanel = props => {
             name="defaultData"
             value={defaultData}
             mode={dataMode}
-            onChange={handleDefaultDataChange}
+            onChange={data => {
+              handleChange('defaultData', data);
+            }}
           />
         </TabPanel>
       </div>
@@ -135,8 +102,7 @@ const SqlDataTabPanel = props => {
 SqlDataTabPanel.propTypes = {
   defaultData: string,
   sampleData: string,
-  handleSampleDataChange: func.isRequired,
-  handleDefaultDataChange: func.isRequired,
+  handleChange: func.isRequired,
 };
 
 export default withStyles(styles)(SqlDataTabPanel);
