@@ -16,6 +16,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
+import shortid from 'shortid';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import AgentDetail from './AgentDetail';
@@ -109,7 +110,7 @@ class AgentList extends Component {
             Agents
           </Typography>
           <Link
-            to={getRoutePath('agents/add/new-gX_XRD3wbxD')}
+            to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
             className={classes.createAgentButton}>
             <div>New Agent</div>
           </Link>

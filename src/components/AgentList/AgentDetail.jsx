@@ -121,7 +121,6 @@ class AgentDetail extends Component {
           <TableCell>
             <AgentDownloadInstaller
               onInstallerClick={this.handleInstallerClick}
-              agent={agent}
             />
           </TableCell>
           <TableCell>Offline</TableCell>
