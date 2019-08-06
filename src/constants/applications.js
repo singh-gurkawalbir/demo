@@ -384,13 +384,12 @@ export default [
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'retailops', type: 'rest', assistant: 'retailops' },
   { id: 'returnly', name: 'returnly', type: 'rest', assistant: 'returnly' },
-  { id: 's3', name: 's3', type: 's3', assistant: 's3' },
+  { id: 's3', name: 's3', type: 's3' },
   { id: 'sageone', name: 'sageone', type: 'rest', assistant: 'sageone' },
   {
     id: 'salesforce',
     name: 'salesforce',
     type: 'salesforce',
-    assistant: 'salesforce',
   },
   // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment' },
   {

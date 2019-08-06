@@ -60,8 +60,7 @@ class DynaSelectResource extends React.Component {
       resources = [],
       value = '',
       label,
-      defaultItemValue,
-      defaultItemLabel,
+      placeholder,
       onFieldChange,
     } = this.props;
     let availableResourceOptions = resources.map(conn => {
@@ -74,16 +73,14 @@ class DynaSelectResource extends React.Component {
         </MenuItem>
       );
     });
+    const tempPlaceHolder = placeholder || 'Please Select';
+    const defaultItem = (
+      <MenuItem key={tempPlaceHolder} value="">
+        {tempPlaceHolder}
+      </MenuItem>
+    );
 
-    if (defaultItemValue) {
-      const defaultItem = (
-        <MenuItem key={defaultItemValue} value={defaultItemValue}>
-          {defaultItemLabel || defaultItemValue}
-        </MenuItem>
-      );
-
-      availableResourceOptions = [defaultItem, ...availableResourceOptions];
-    }
+    availableResourceOptions = [defaultItem, ...availableResourceOptions];
 
     return (
       <FormControl key={id} disabled={disabled}>
@@ -93,7 +90,9 @@ class DynaSelectResource extends React.Component {
         <Select
           value={value}
           onChange={evt => {
-            onFieldChange(id, evt.target.value);
+            const { value: evtValue } = evt.target;
+
+            onFieldChange(id, evtValue);
           }}
           input={<Input name={name} id={id} />}>
           {availableResourceOptions}

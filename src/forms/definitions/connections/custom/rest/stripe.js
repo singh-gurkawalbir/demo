@@ -21,4 +21,11 @@ export default {
       helpText: 'The secret key of your Stripe account.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

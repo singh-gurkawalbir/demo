@@ -19,11 +19,10 @@ export default {
   pitneybowes: {
     responseParser: resp => ({
       'rest.bearerToken': resp && resp.access_token,
-      'rest.siteId': resp && resp.clientID,
     }),
 
     payloadTransformer: form => {
-      const apiKey = form[`/rest/encrypted/apiKey`];
+      const apiKey = form[`/rest/unencrypted/apiKey`];
       const apiSecret = form[`/rest/encrypted/apiSecret`];
       const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
 
@@ -32,5 +31,17 @@ export default {
         baseURI: 'https://api.pitneybowes.com/',
       };
     },
+  },
+  onelogin: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+      'http.auth.token.refreshToken': resp && resp.refresh_token,
+    }),
+
+    payloadTransformer: form => ({
+      oneloginRegion: form[`/http/oneloginRegion`],
+      clientId: form[`/http/unencrypted/apiKey`],
+      clientSecret: form[`/http/encrypted/apiSecret`],
+    }),
   },
 };

@@ -26,7 +26,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain = baseUri.substring(
           baseUri.indexOf('https://') + 8,
           baseUri.indexOf('.recurly.com')
@@ -43,6 +43,13 @@ export default {
     },
     {
       fieldId: 'http.auth.basic.password',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

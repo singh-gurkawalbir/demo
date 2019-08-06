@@ -30,5 +30,11 @@ export default {
       ],
     },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
+  ],
 };
