@@ -28,10 +28,14 @@ export function MaterialUiSelect(props) {
     name,
     options = [],
     defaultValue = '',
+    defaultItemValue,
+    defaultItemLabel,
+    // placeholder,
+    // required,
     label,
     onFieldChange,
   } = props;
-  const items = options.reduce(
+  let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -63,6 +67,15 @@ export function MaterialUiSelect(props) {
     finalTextValue = value;
   }
 
+  const tempDefaultItemValue = defaultItemValue || 'Please Select';
+  const defaultItem = (
+    <MenuItem key={tempDefaultItemValue} value={tempDefaultItemValue}>
+      {defaultItemLabel || tempDefaultItemValue}
+    </MenuItem>
+  );
+
+  items = [defaultItem, ...items];
+
   return (
     <FormControl key={id} disabled={disabled} className={classes.root}>
       <InputLabel shrink htmlFor={id}>
@@ -72,9 +85,16 @@ export function MaterialUiSelect(props) {
         value={finalTextValue}
         displayEmpty
         onChange={evt => {
-          const { value } = evt.target;
+          const { value: evtValue } = evt.target;
 
-          onFieldChange(id, value);
+          if (
+            evtValue === tempDefaultItemValue ||
+            evtValue === defaultItemLabel
+          ) {
+            return onFieldChange(id, '');
+          }
+
+          onFieldChange(id, evtValue);
         }}
         input={<Input name={name} id={id} />}>
         {items}

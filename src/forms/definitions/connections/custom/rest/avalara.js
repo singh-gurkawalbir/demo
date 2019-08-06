@@ -30,7 +30,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
@@ -49,6 +49,13 @@ export default {
 
     {
       fieldId: 'rest.basicAuth.password',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

@@ -36,7 +36,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain = baseUri.substr(
           'https://api.bamboohr.com/api/gateway.php/'.length
         );
@@ -53,6 +53,13 @@ export default {
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
       description:
         'Note: for security reasons this field must always be re-entered.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };
