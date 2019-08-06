@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useCallback, useReducer } from 'react';
+import { deepClone } from 'fast-json-patch';
 import { withStyles } from '@material-ui/core/styles';
 // import DoneIcon from '@material-ui/icons/Done';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,12 +70,15 @@ function reducer(state, action) {
 }
 
 const TestAndSaveButton = props => {
-  const [stateForm, dispatchForm] = useReducer(reducer, {});
+  const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const { classes, resourceType, resourceId, label } = props;
   const dispatch = useDispatch();
-  const handleSubmitForm = (resourceType, resourceId) => values =>
-    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
-  const handleTestConnection = resourceId => values =>
+  const handleSubmitForm = useCallback(
+    values =>
+      dispatch(actions.resourceForm.submit(resourceType, resourceId, values)),
+    [dispatch, resourceId, resourceType]
+  );
+  const handleTestConnection = values =>
     dispatch(actions.resource.connections.test(resourceId, values));
   const clearComms = useCallback(() => dispatch(actions.clearComms()), [
     dispatch,
@@ -82,33 +86,38 @@ const TestAndSaveButton = props => {
   const testConnectionCommState = useSelector(state =>
     selectors.testConnectionCommState(state)
   );
-  const handleSubmit = handleSubmitForm(resourceType, resourceId);
   const pingLoading = testConnectionCommState.commState === COMM_STATES.LOADING;
-  const { commState } = testConnectionCommState;
-  const { message } = testConnectionCommState;
-  const { formValues, testInitiated, erroredMessage } = stateForm;
+  const { commState, message } = testConnectionCommState;
+  const { formValues, testInitiated, erroredMessage } = formState;
 
   useEffect(() => {
     if (commState === COMM_STATES.LOADING && formValues) {
-      dispatchForm({ type: 'testInitiated' });
+      dispatchLocalAction({ type: 'testInitiated' });
     }
   }, [commState, formValues]);
 
   useEffect(() => {
     if (testInitiated && commState) {
       if (commState === COMM_STATES.SUCCESS) {
-        handleSubmit(formValues);
-        dispatchForm({ type: 'clearFormData' });
+        handleSubmitForm(deepClone(formValues));
+        dispatchLocalAction({ type: 'clearFormData' });
         clearComms();
       } else if (commState === COMM_STATES.ERROR && message) {
-        dispatchForm({
+        dispatchLocalAction({
           type: 'testErrored',
           erroredMessage: message,
         });
         clearComms();
       }
     }
-  }, [testInitiated, commState, handleSubmit, formValues, clearComms, message]);
+  }, [
+    testInitiated,
+    commState,
+    formValues,
+    clearComms,
+    message,
+    handleSubmitForm,
+  ]);
 
   return (
     <Fragment>
@@ -117,20 +126,20 @@ const TestAndSaveButton = props => {
           commErrorMessage={erroredMessage}
           formValues={formValues}
           handleCloseAndClearForm={() =>
-            dispatchForm({ type: 'clearFormData' })
+            dispatchLocalAction({ type: 'clearFormData' })
           }
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmitForm}
         />
       )}
-      {/* TODO show ping snackbar */}
+      {/* Test button which hides the test button and shows the ping snackbar */}
       <TestButton {...props} isTestOnly={false} />
       <DynaAction
         {...props}
         disableButton={pingLoading}
         onClick={values => {
           clearComms();
-          handleTestConnection(resourceId)(values);
-          dispatchForm({ type: 'setFormValues', formValues: values });
+          handleTestConnection(values);
+          dispatchLocalAction({ type: 'setFormValues', formValues: values });
         }}
         className={classes.actionButton}
         size="small"

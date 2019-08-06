@@ -50,17 +50,12 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
-const actionButtonsCreator = props => actions =>
-  actions.map(id => {
-    const Action = consolidatedActions[id];
-
-    return <Action key={id} {...props} />;
-  });
 
 function ActionsFactory(props) {
   const { resourceType, isNew, connectionType } = props;
   const { actions } = props.fieldMeta;
 
+  // When action buttons is provided in the metadata then we generate the action buttons for you
   if (actions) {
     const ActionButtons = actions.map(action => {
       const Action = consolidatedActions[action.id];
@@ -73,21 +68,25 @@ function ActionsFactory(props) {
 
   let ActionButtons;
 
+  // When action button metadata isn't provided we infer the action buttons.
   if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      ActionButtons = actionButtonsCreator(props)(['cancel', 'oauth']);
+      ActionButtons = ['cancel', 'oauth'];
     } else {
-      ActionButtons = actionButtonsCreator(props)([
-        'test',
-        'cancel',
-        'testandsave',
-      ]);
+      ActionButtons = ['test', 'cancel', 'testandsave'];
     }
   } else {
-    ActionButtons = actionButtonsCreator(props)(['cancel', 'save']);
+    ActionButtons = ['cancel', 'save'];
   }
 
-  return <DynaForm {...props}>{ActionButtons}</DynaForm>;
+  const actionButtonsCreator = actions =>
+    actions.map(id => {
+      const Action = consolidatedActions[id];
+
+      return <Action key={id} {...props} />;
+    });
+
+  return <DynaForm {...props}>{actionButtonsCreator(ActionButtons)}</DynaForm>;
 }
 
 export const ResourceFormFactory = props => {

@@ -22,7 +22,7 @@ const styles = theme => ({
 const TestButton = props => {
   const { classes, resourceId, label, isTestOnly = true } = props;
   const dispatch = useDispatch();
-  const handleTestConnection = resourceId => values =>
+  const handleTestConnection = values =>
     dispatch(actions.resource.connections.test(resourceId, values));
   const cancelProcess = () => dispatch(actions.cancelTask());
   const clearComms = () => dispatch(actions.clearComms());
@@ -42,7 +42,7 @@ const TestButton = props => {
         <DynaAction
           {...props}
           disabled={pingLoading}
-          onClick={handleTestConnection(resourceId)}
+          onClick={handleTestConnection}
           className={classes.actionButton}
           size="small"
           variant="contained"

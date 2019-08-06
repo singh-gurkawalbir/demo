@@ -15,14 +15,14 @@ function OAuthButton(props) {
   // action id
   const { resourceId } = rest;
   const dispatch = useDispatch();
-  const handleSaveAndAuthorizeConnection = resourceId => values =>
+  const handleSaveAndAuthorizeConnection = values =>
     dispatch(actions.resource.connections.saveAndAuthorize(resourceId, values));
 
   return (
     <DynaAction
       {...rest}
       className={classes.actionButton}
-      onClick={handleSaveAndAuthorizeConnection(resourceId)}>
+      onClick={handleSaveAndAuthorizeConnection}>
       {label || 'Save & Authorize'}
     </DynaAction>
   );

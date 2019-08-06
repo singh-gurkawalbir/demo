@@ -34,23 +34,13 @@ function* createPayload({ values, resourceId }) {
 export function* netsuiteUserRoles({ resourceId, values }) {
   // '/netsuite/alluserroles'
   let reqPayload = {};
-  const connectionResource = yield select(
-    selectors.resource,
-    'connections',
-    resourceId
-  );
-  let connectionId;
 
-  if (connectionResource) {
-    connectionId = connectionResource._id;
-  }
-
-  if (!values && !connectionId) return;
+  if (!values && !resourceId) return;
 
   if (!values) {
     // retrieving existing userRoles for a connection
 
-    reqPayload = { _connectionId: connectionId };
+    reqPayload = { _connectionId: resourceId };
   } else {
     // retrieving userRoles for a new connection
     const { '/netsuite/email': email, '/netsuite/password': password } = values;
@@ -64,8 +54,14 @@ export function* netsuiteUserRoles({ resourceId, values }) {
       opts: { body: reqPayload, method: 'POST' },
       hidden: true,
     });
+    const respSuccess =
+      resp &&
+      Object.keys(resp).reduce(
+        (env, acc) => acc && resp[env] && resp[env].success,
+        true
+      );
 
-    if (resp && resp.production && !resp.production.success)
+    if (!respSuccess)
       yield put(
         actions.resource.connections.netsuite.requestUserRolesFailed(
           resourceId,

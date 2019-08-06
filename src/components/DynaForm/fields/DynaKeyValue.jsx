@@ -26,13 +26,13 @@ import FormLabel from '@material-ui/core/FormLabel';
 }))
 class KeyValueTable extends Component {
   state = {
-    rule: [],
+    values: [],
   };
 
   handleUpdate(row, event, field) {
     const { value } = event.target;
     const { id, onFieldChange } = this.props;
-    const { rule } = this.state;
+    const { values } = this.state;
 
     // TODO: Why are all these event fn being called here?
     // Test if it is even needed...
@@ -41,22 +41,22 @@ class KeyValueTable extends Component {
     event.nativeEvent.stopImmediatePropagation();
 
     if (row !== undefined) {
-      rule[row][field] = value;
+      values[row][field] = value;
     } else {
-      rule.push({ [field]: value });
+      values.push({ [field]: value });
     }
 
     // console.log(`row: ${row || 'new'}.${field} = ${value}`);
 
-    this.setState({ rule });
-    onFieldChange(id, rule);
+    this.setState({ values });
+    onFieldChange(id, values);
   }
 
   // TODO: verify this works throgh a rest connection
   componentDidMount() {
     const { value } = this.props;
 
-    this.setState({ rule: value });
+    this.setState({ values: value });
   }
 
   render() {
@@ -69,8 +69,8 @@ class KeyValueTable extends Component {
       errorMessages,
       isValid,
     } = this.props;
-    const { rule } = this.state;
-    const tableData = rule ? rule.map((r, n) => ({ ...r, row: n })) : [];
+    const { values } = this.state;
+    const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
     // console.log(rule, tableData);
     const handleKeyUpdate = row => event =>
       this.handleUpdate(row, event, keyName);

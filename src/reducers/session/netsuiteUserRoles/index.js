@@ -16,7 +16,6 @@ export default (state = {}, action) => {
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.RECEIVED:
-      if (!newState[resourceId]) newState[resourceId] = {};
       newState[resourceId] = {
         ...newState[resourceId],
         userRoles: deepClone(userRoles),

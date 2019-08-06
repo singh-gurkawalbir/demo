@@ -3,7 +3,7 @@ import SaveButton from './SaveButton';
 import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
 import OAuthButton from './OAuthButton';
-import ValidateButton from './ValidateButton';
+import NetsuiteValidateButton from './NetsuiteValidateButton';
 
 export default {
   cancel: CancelButton,
@@ -11,5 +11,5 @@ export default {
   test: TestButton,
   testandsave: TestAndSaveButton,
   oauth: OAuthButton,
-  validate: ValidateButton,
+  validate: NetsuiteValidateButton,
 };
