@@ -384,8 +384,6 @@ export default {
     inputType: 'password',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    helpText:
-      'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   },
   'rest.tokenLocation': {
     type: 'select',
@@ -406,8 +404,6 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Rest scope',
-    helpText:
-      'OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token. For example, an access token issued to a client app may be granted READ and WRITE access to protected resources, or just READ access.',
   },
   'rest.scopeDelimiter': {
     type: 'text',
@@ -517,22 +513,14 @@ export default {
     label: 'Configure HTTP Headers',
   },
   'rest.encrypted': {
-    type: 'text',
-    label: 'Encrypted:',
-  },
-  'rest.encrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
-    label: 'Rest encrypted',
+    label: 'Encrypted:',
+    mode: 'json',
   },
   'rest.unencrypted': {
-    type: 'text',
-    label: 'Unencrypted:',
-  },
-  'rest.unencrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
-    label: 'Rest unencrypted',
+    label: 'Unencrypted:',
+    mode: 'json',
   },
   'rest.oauth.accessTokenPath': {
     type: 'text',
@@ -694,7 +682,6 @@ export default {
   'http.auth.type': {
     type: 'select',
     label: 'Authentication Type:',
-    helpText: `The HTTP adaptors currently support 3 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called. Finally, choose 'custom' for all other types. If you select the 'custom' auth method integrator.io will not perform any special auth processing. It is up to the user to configure the HTTP request fields (method, relativeUri, headers and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in the 'encrypted' and 'unencrypted' fields of this connection.`,
     options: [
       {
         items: [
@@ -776,10 +763,6 @@ export default {
   'http.retryHeader': {
     type: 'text',
     label: 'Retry Header:',
-  },
-  'http.pingHeader': {
-    type: 'labeltitle',
-    label: 'How to test connection?',
   },
   'http.ping.relativeURI': {
     type: 'text',
@@ -901,7 +884,6 @@ export default {
     inputType: 'password',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    helpText: `The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.`,
   },
   'http.auth.token.location': {
     type: 'select',
@@ -1026,17 +1008,14 @@ export default {
     label: 'Configure HTTP Headers',
   },
   'http.unencrypted': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Unencrypted:',
   },
   'http.encrypted': {
-    type: 'textarea',
-    label: 'Encrypted:',
-  },
-  'http.encrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
-    label: 'Http encrypted',
+    mode: 'json',
+    label: 'Encrypted:',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -1473,12 +1452,13 @@ export default {
     ],
   },
   'as2.encrypted': {
-    type: 'text',
-    label: 'As2 encrypted',
+    type: 'editor',
+    mode: 'json',
+    label: 'Encrypted:',
   },
   'as2.concurrencyLevel': {
     type: 'text',
-    label: 'As2 concurrency Level',
+    label: 'Concurrency Level:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1486,13 +1466,9 @@ export default {
     ],
   },
   'as2.unencrypted': {
-    type: 'text',
-    label: 'As2 unencrypted',
-  },
-  'as2.encrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
-    label: 'As2 encrypted',
+    mode: 'json',
+    label: 'Unencrypted:',
   },
   // #endregion as2
   // #region netsuite
@@ -1750,21 +1726,13 @@ export default {
   // #endregion salesforce
   // #region wrapper
   'wrapper.unencrypted': {
-    type: 'text',
-    label: 'Wrapper unencrypted',
-  },
-  'wrapper.unencrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
+    mode: 'json',
     label: 'Wrapper unencrypted',
   },
   'wrapper.encrypted': {
-    type: 'text',
-    label: 'Wrapper encrypted',
-  },
-  'wrapper.encrypteds': {
     type: 'editor',
-    valueType: 'editorExpression',
+    mode: 'json',
     label: 'Wrapper encrypted',
   },
   'wrapper.pingFunction': {

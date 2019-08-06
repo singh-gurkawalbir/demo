@@ -2,14 +2,6 @@ export default {
   preSubmit: formValues => {
     const newValues = Object.assign({}, formValues);
 
-    if (!newValues['/configureApiRateLimits']) {
-      newValues['/http/rateLimit/limit'] = undefined;
-      newValues['/http/rateLimit/failValues'] = undefined;
-      newValues['/http/rateLimit/failPath'] = undefined;
-      newValues['/http/rateLimit/failStatusCode'] = undefined;
-      newValues['/http/rateLimit/retryHeader'] = undefined;
-    }
-
     if (!newValues['/http/ping/successPath']) {
       newValues['/http/ping/successValues'] = undefined;
     }
@@ -37,8 +29,7 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'basic') {
-      newValues['/http/auth/basic/username'] = undefined;
-      newValues['/http/auth/basic/password'] = undefined;
+      newValues['/http/auth/basic'] = undefined;
     }
 
     if (
@@ -121,57 +112,19 @@ export default {
         },
       ],
     },
-    {
-      fieldId: 'configureApiRateLimits',
-    },
-    {
-      fieldId: 'http.rateLimits',
-      visible: false,
-      visibleWhenAll: [
-        {
-          field: 'configureApiRateLimits',
-          is: [true],
-        },
-      ],
-    },
-    {
-      fieldId: 'http.rateLimit.limit',
-      visibleWhenAll: [
-        {
-          field: 'configureApiRateLimits',
-          is: [true],
-        },
-      ],
-    },
-    {
-      fieldId: 'http.rateLimit.failStatusCode',
-      visibleWhenAll: [
-        {
-          field: 'configureApiRateLimits',
-          is: [true],
-        },
-      ],
-    },
-    {
-      fieldId: 'http.rateLimit.failValues',
-      visibleWhenAll: [
-        {
-          field: 'configureApiRateLimits',
-          is: [true],
-        },
-      ],
-    },
-    {
-      fieldId: 'http.retryHeader',
-      visibleWhenAll: [
-        {
-          field: 'configureApiRateLimits',
-          is: [true],
-        },
-      ],
-    },
   ],
   fieldSets: [
+    {
+      header: 'API Rate Limits',
+      collapsed: false,
+      fields: [
+        { fieldId: 'http.rateLimit.limit' },
+        { fieldId: 'http.rateLimit.failStatusCode' },
+        { fieldId: 'http.rateLimit.failPath' },
+        { fieldId: 'http.rateLimit.failValues' },
+        { fieldId: 'http.retryHeader' },
+      ],
+    },
     {
       header: 'How to test connection?',
       collapsed: false,
