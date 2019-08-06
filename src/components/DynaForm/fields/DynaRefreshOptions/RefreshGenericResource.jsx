@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -45,31 +45,42 @@ function RefreshGenericResource(props) {
     placeholder,
   } = props;
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
+  // Boolean state to minimize calls on useEffect
+  const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
+
   // Resets field's value to value provided as argument
   // TODO - Add onFieldChange as a dependency
-  const resetResource = useCallback(
-    value => {
-      onFieldChange(id, value);
-    },
-    [id]
-  );
+  useEffect(() => {
+    if (isDefaultValueChanged) {
+      if (resetValue) {
+        onFieldChange(id, multiselect ? [] : '');
+      } else {
+        onFieldChange(id, defaultValue);
+      }
 
+      setIsDefaultValueChanged(false);
+    }
+  }, [
+    id,
+    resetValue,
+    multiselect,
+    defaultValue,
+    isDefaultValueChanged,
+    onFieldChange,
+    setIsDefaultValueChanged,
+  ]);
   useEffect(() => {
     if (!fieldOptions) {
       onFetchResource();
     }
-  }, [fieldOptions]);
+  }, [fieldOptions, onFetchResource]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
     if (resourceToFetch) {
-      if (resetValue) {
-        resetResource(multiselect ? [] : '');
-      } else {
-        resetResource(defaultValue);
-      }
+      setIsDefaultValueChanged(true);
     }
-  }, [resourceToFetch, resetValue, defaultValue, multiselect, resetResource]);
+  }, [resourceToFetch, setIsDefaultValueChanged]);
 
   if (!fieldOptions) return <Spinner />;
   let optionMenuItems = fieldOptions.map(options => {
