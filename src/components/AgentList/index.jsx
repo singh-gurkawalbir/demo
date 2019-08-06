@@ -105,16 +105,14 @@ class AgentList extends Component {
           </Button>
         </Dialog>
         <Fragment>
-          <Typography variant="h2" component="h2" className={classes.title}>
+          <Typography variant="h2" className={classes.title}>
             Agents
           </Typography>
-          <Button
-            component={Link}
+          <Link
             to={getRoutePath('agents/add/new-gX_XRD3wbxD')}
-            color="primary"
             className={classes.createAgentButton}>
-            Create Agent
-          </Button>
+            <div>New Agent</div>
+          </Link>
           <div className={classes.root}>
             <Table className={classes.table}>
               <TableHead>

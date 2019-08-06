@@ -49,7 +49,28 @@ export function* changeToken({ id }) {
   yield put(actions.agent.maskToken({ _id: id }));
 }
 
-export function* downloadInstaller({ osType, id }) {}
+export function* downloadInstaller({ osType, id }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.AGENT_DOWNLOAD_INSTALLER,
+    {
+      osType,
+      resourceId: id,
+    }
+  );
+  const { path, opts } = requestOptions;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Download Installer',
+    });
+    window.open(response.signedURL, 'target=_blank', response.options, false);
+  } catch (e) {
+    return true;
+  }
+}
 
 export const agentSagas = [
   takeEvery(actionTypes.AGENT_TOKEN_DISPLAY, displayToken),

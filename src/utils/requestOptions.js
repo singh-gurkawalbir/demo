@@ -2,7 +2,7 @@ import actionTypes from '../actions/types';
 
 export default function getRequestOptions(
   action,
-  { resourceId, integrationId } = {}
+  { resourceId, integrationId, osType } = {}
 ) {
   switch (action) {
     case actionTypes.USER_CREATE:
@@ -20,6 +20,11 @@ export default function getRequestOptions(
       return {
         path: `/agents/${resourceId}/change-token`,
         opts: { method: 'PUT' },
+      };
+    case actionTypes.AGENT_DOWNLOAD_INSTALLER:
+      return {
+        path: `/agents/${resourceId}/installer/signedURL?os=${osType}`,
+        opts: { method: 'GET' },
       };
     case actionTypes.USER_DISABLE:
       return {
