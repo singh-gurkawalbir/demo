@@ -67,15 +67,14 @@ function MaterialUiSelect(props) {
     finalTextValue = value;
   }
 
-  if (defaultItemValue) {
-    const defaultItem = (
-      <MenuItem key={defaultItemValue} value={defaultItemValue}>
-        {defaultItemLabel || defaultItemValue}
-      </MenuItem>
-    );
+  const tempDefaultItemValue = defaultItemValue || 'Please Select';
+  const defaultItem = (
+    <MenuItem key={tempDefaultItemValue} value={tempDefaultItemValue}>
+      {defaultItemLabel || tempDefaultItemValue}
+    </MenuItem>
+  );
 
-    items = [defaultItem, ...items];
-  }
+  items = [defaultItem, ...items];
 
   return (
     <FormControl key={id} disabled={disabled} className={classes.root}>
@@ -88,7 +87,10 @@ function MaterialUiSelect(props) {
         onChange={evt => {
           const { value: evtValue } = evt.target;
 
-          if (evtValue === defaultItemValue || evtValue === defaultItemLabel) {
+          if (
+            evtValue === tempDefaultItemValue ||
+            evtValue === defaultItemLabel
+          ) {
             return onFieldChange(id, '');
           }
 

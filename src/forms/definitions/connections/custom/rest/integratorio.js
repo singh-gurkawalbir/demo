@@ -23,7 +23,6 @@ export default {
       id: 'integrator.environment',
       type: 'select',
       label: 'Environment:',
-      defaultItemValue: 'Please Select',
       required: true,
       options: [
         {

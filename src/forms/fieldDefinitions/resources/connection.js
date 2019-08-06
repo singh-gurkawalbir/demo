@@ -8,7 +8,6 @@ export default {
     excludeFilter: r => ({ _id: r._id }),
     type: 'selectresource',
     label: 'Borrow Concurrency From',
-    defaultItemValue: 'Please Select',
   },
   _agentId: {
     type: 'selectresource',
@@ -27,7 +26,6 @@ export default {
   type: {
     type: 'select',
     label: 'Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -52,7 +50,6 @@ export default {
   assistant: {
     type: 'select',
     label: 'Assistant',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -327,7 +324,6 @@ export default {
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -366,7 +362,6 @@ export default {
   'rest.mediaType': {
     type: 'select',
     label: 'Media Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -395,7 +390,6 @@ export default {
   'rest.tokenLocation': {
     type: 'select',
     label: 'Location:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -434,7 +428,6 @@ export default {
   'rest.authType': {
     type: 'select',
     label: 'Authentication Type:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -461,7 +454,6 @@ export default {
   'rest.authScheme': {
     type: 'select',
     label: 'Scheme:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -499,7 +491,6 @@ export default {
   'rest.cookieAuth.method': {
     type: 'select',
     label: 'Cookie Method:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -570,7 +561,6 @@ export default {
   'rest.refreshTokenMethod': {
     type: 'select',
     label: 'Refresh Token Method:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -596,7 +586,6 @@ export default {
   'rest.refreshTokenMediaType': {
     type: 'select',
     label: 'Refresh Token Media Type:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -645,7 +634,6 @@ export default {
   'rest.concurrencyLevel': {
     type: 'select',
     label: 'Rest concurrency Level',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -688,7 +676,6 @@ export default {
   'rest.pingMethod': {
     type: 'select',
     label: 'Ping Method:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -707,7 +694,6 @@ export default {
   'http.auth.type': {
     type: 'select',
     label: 'Authentication Type:',
-    defaultItemValue: 'Please Select',
     helpText: `The HTTP adaptors currently support 3 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called. Finally, choose 'custom' for all other types. If you select the 'custom' auth method integrator.io will not perform any special auth processing. It is up to the user to configure the HTTP request fields (method, relativeUri, headers and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in the 'encrypted' and 'unencrypted' fields of this connection.`,
     options: [
       {
@@ -722,7 +708,6 @@ export default {
   'http.mediaType': {
     type: 'select',
     label: 'Media Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -749,7 +734,6 @@ export default {
   'http.concurrencyLevel': {
     label: 'Http concurrency Level',
     type: 'select',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -805,7 +789,6 @@ export default {
   'http.ping.method': {
     type: 'select',
     label: 'Ping Method:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -923,7 +906,6 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -941,7 +923,6 @@ export default {
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -960,7 +941,6 @@ export default {
   'http.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh Method:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -986,7 +966,6 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type:',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1119,7 +1098,6 @@ export default {
   'ftp.entryParser': {
     type: 'select',
     label: 'Entry Parser',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1225,7 +1203,6 @@ export default {
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'As2 partner Station Info mdn mdn Signing',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1273,7 +1250,6 @@ export default {
   'as2.partnerStationInfo.auth.token.location': {
     type: 'select',
     label: 'As2 partner Station Info auth token location',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1323,7 +1299,6 @@ export default {
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
     label: 'As2 partner Station Info auth token refresh Media Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1391,7 +1366,6 @@ export default {
   'as2.partnerStationInfo.encryptionType': {
     type: 'select',
     label: 'As2 partner Station Info encryption Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1408,7 +1382,6 @@ export default {
   'as2.partnerStationInfo.signing': {
     type: 'select',
     label: 'As2 partner Station Info signing',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1446,7 +1419,6 @@ export default {
   'as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'As2 user Station Info mdn mdn Signing',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1461,7 +1433,6 @@ export default {
   'as2.userStationInfo.encryptionType': {
     type: 'select',
     label: 'As2 user Station Info encryption Type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1478,7 +1449,6 @@ export default {
   'as2.userStationInfo.signing': {
     type: 'select',
     label: 'As2 user Station Info signing',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1529,7 +1499,6 @@ export default {
   'netsuite.authType': {
     type: 'select',
     label: 'Connection type',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1554,7 +1523,6 @@ export default {
   'netsuite.environment': {
     type: 'select',
     label: 'Netsuite environment',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1619,7 +1587,6 @@ export default {
   'netsuite.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1678,7 +1645,6 @@ export default {
   'netSuiteDistributedAdaptor.environment': {
     type: 'select',
     label: 'Net Suite Distributed Adaptor environment',
-    defaultItemValue: 'Please Select',
     options: [
       {
         items: [
@@ -1705,28 +1671,42 @@ export default {
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
   'salesforce.sandbox': {
-    type: 'checkbox',
-    label: 'Salesforce sandbox',
+    type: 'select',
+    label: 'Account Type:',
+    options: [
+      {
+        items: [
+          { label: 'Production', value: false },
+          { label: 'Sandbox', value: true },
+        ],
+      },
+    ],
   },
   'salesforce.baseURI': {
     type: 'text',
     label: 'Salesforce base URI',
   },
   'salesforce.oauth2FlowType': {
-    type: 'radiogroup',
-    label: 'Salesforce oauth2Flow Type',
+    type: 'select',
+    label: 'Oauth2 Flow Type:',
     options: [
       {
         items: [
-          { label: 'JwtBearerToken', value: 'jwtBearerToken' },
-          { label: 'RefreshToken', value: 'refreshToken' },
+          { label: 'Refresh Token', value: 'refreshToken' },
+          { label: 'JWT Bearer Token', value: 'jwtBearerToken' },
         ],
       },
     ],
   },
   'salesforce.username': {
     type: 'text',
-    label: 'Salesforce username',
+    label: 'Username:',
+    visibleWhen: [
+      {
+        field: 'salesforce.oauth2FlowType',
+        is: ['jwtBearerToken'],
+      },
+    ],
   },
   'salesforce.bearerToken': {
     type: 'text',
@@ -1754,10 +1734,16 @@ export default {
   },
   'salesforce.concurrencyLevel': {
     type: 'text',
-    label: 'Salesforce concurrency Level',
+    label: 'Concurrency Level:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
       },
     ],
   },
