@@ -20,4 +20,11 @@ export default {
       label: 'API Key:',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

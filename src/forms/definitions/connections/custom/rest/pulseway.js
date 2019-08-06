@@ -22,4 +22,11 @@ export default {
       fieldId: 'rest.basicAuth.password',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

@@ -29,7 +29,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
         const subdomain = baseUri.substring(
           baseUri.indexOf('https://') + 8,
           baseUri.indexOf('.sharepoint.com')
@@ -37,6 +37,13 @@ export default {
 
         return subdomain;
       },
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

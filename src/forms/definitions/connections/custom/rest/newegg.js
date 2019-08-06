@@ -44,7 +44,7 @@ export default {
       helpText:
         'Select "Newegg Business" if your account is created on https://www.neweggbusiness.com. \n Select "Newegg" if your account is created on https://www.newegg.com.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('b2b') !== -1) {
@@ -86,6 +86,13 @@ export default {
       required: true,
       helpText:
         'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

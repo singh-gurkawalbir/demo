@@ -54,4 +54,11 @@ export default {
       helpText: 'The API key of your Chargify account.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };
