@@ -8,7 +8,6 @@ export default {
   'ftp.fileType': {
     type: 'select',
     label: 'File Type',
-    defaultValue: 'Please Select',
     required: true,
     options: [
       {
@@ -50,7 +49,7 @@ export default {
           { label: 'Comma', value: ',' },
           { label: 'Pipe', value: '|' },
           { label: 'Semicolon', value: ';' },
-          { label: 'Space', value: '' },
+          { label: 'Space', value: ' ' },
           { label: 'Tab', value: '\t' },
         ],
       },
@@ -119,7 +118,6 @@ export default {
   'ftp.useTempFile': {
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
-    defaultValue: false,
   },
   'ftp.inProgressFileName': {
     type: 'text',
@@ -134,7 +132,6 @@ export default {
   'ftp.skipAggregation': {
     type: 'checkbox',
     label: 'Skip Aggregation',
-    defaultValue: false,
     visibleWhen: [
       {
         field: 'ftp.fileType',
@@ -145,7 +142,6 @@ export default {
   'ftp.compressFiles': {
     type: 'checkbox',
     label: 'Compress Files',
-    defaultValue: false,
   },
   'ftp.compressionFormat': {
     type: 'select',
@@ -166,7 +162,6 @@ export default {
   'ftp.wrapWithQuotes': {
     type: 'checkbox',
     label: 'Wrap with quotes',
-    defaultValue: false,
     visibleWhen: [
       {
         field: 'ftp.fileType',
@@ -177,7 +172,6 @@ export default {
   'ftp.replaceTabWithSpace': {
     type: 'checkbox',
     label: 'Replace tab with space',
-    defaultValue: false,
     visibleWhen: [
       {
         field: 'ftp.fileType',
@@ -188,7 +182,6 @@ export default {
   'ftp.replaceNewLineWithSpace': {
     type: 'checkbox',
     label: 'Replace new line with space',
-    defaultValue: false,
     visibleWhen: [
       {
         field: 'ftp.fileType',

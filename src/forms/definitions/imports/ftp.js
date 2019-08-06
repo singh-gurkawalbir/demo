@@ -7,7 +7,6 @@ export default {
     { fieldId: 'ftp.sampleFile' },
     { fieldId: 'ftp.columnDelimiter' },
     { fieldId: 'ftp.includeHeader' },
-    { fieldId: 'ftp.fileDefinitionRules' },
     { fieldId: 'ftp.advanceOption' },
     { fieldId: 'ftp.childRecords' },
     { fieldId: 'ftp.rowDelimiter' },
