@@ -60,8 +60,7 @@ class DynaSelectResource extends React.Component {
       resources = [],
       value = '',
       label,
-      defaultItemValue,
-      defaultItemLabel,
+      placeholder,
       onFieldChange,
     } = this.props;
     let availableResourceOptions = resources.map(conn => {
@@ -74,10 +73,10 @@ class DynaSelectResource extends React.Component {
         </MenuItem>
       );
     });
-    const tempDefaultItemValue = defaultItemValue || 'Please Select';
+    const tempPlaceHolder = placeholder || 'Please Select';
     const defaultItem = (
-      <MenuItem key={tempDefaultItemValue} value={tempDefaultItemValue}>
-        {defaultItemLabel || tempDefaultItemValue}
+      <MenuItem key={tempPlaceHolder} value="">
+        {tempPlaceHolder}
       </MenuItem>
     );
 
@@ -92,13 +91,6 @@ class DynaSelectResource extends React.Component {
           value={value}
           onChange={evt => {
             const { value: evtValue } = evt.target;
-
-            if (
-              evtValue === tempDefaultItemValue ||
-              evtValue === defaultItemLabel
-            ) {
-              return onFieldChange(id, '');
-            }
 
             onFieldChange(id, evtValue);
           }}

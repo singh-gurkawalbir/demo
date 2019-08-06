@@ -6,6 +6,10 @@ export default {
       newValues['/http/ping/successValues'] = undefined;
     }
 
+    if (!newValues['/http/ratLimit/failPath']) {
+      newValues['/http/rateLimit/failValues'] = undefined;
+    }
+
     if (newValues['/http/ping/method'] === 'GET') {
       newValues['/http/ping/body'] = undefined;
     }
