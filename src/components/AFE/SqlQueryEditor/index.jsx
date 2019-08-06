@@ -31,6 +31,7 @@ const Editor = props => {
     violations,
     handleChange,
     enableAutocomplete,
+    showDefaultData,
   } = props;
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const Editor = props => {
       <PanelGridItem gridArea="data">
         <SqlDataTabPanel
           processor="merge"
+          showDefaultData={showDefaultData}
           sampleData={sampleData}
           defaultData={defaultData}
           handleChange={handleChange}

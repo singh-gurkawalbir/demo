@@ -229,6 +229,32 @@ describe('editor selectors', () => {
         },
       },
       {
+        processor: 'sql',
+        valid: {
+          initOpts: {
+            template: 'Select * from {{id}}',
+            strict: true,
+            sampleData: '{"age": 33}',
+            defaultData: '{"id": 99}',
+          },
+          expectedRequest: {
+            body: {
+              data: { age: 33, id: 99 },
+              rules: { strict: true, template: 'Select * from {{id}}' },
+            },
+            processor: 'handlebars',
+          },
+        },
+        invalid: {
+          initOpts: {
+            template: '{{a}}',
+            sampleData: '{a: xxx}',
+            defaultData: '',
+          },
+          violations: { dataError: 'Unexpected token a in JSON at position 1' },
+        },
+      },
+      {
         processor: 'merge',
         valid: {
           initOpts: { rule: '{"b": true}', data: '{"a": 123}' },

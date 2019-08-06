@@ -41,7 +41,14 @@ function customTabProps(index) {
 }
 
 const SqlDataTabPanel = props => {
-  const { sampleData, dataMode, defaultData, classes, handleChange } = props;
+  const {
+    sampleData,
+    dataMode,
+    defaultData,
+    classes,
+    handleChange,
+    showDefaultData,
+  } = props;
   const [tabValue, setTabValue] = useState(0);
 
   function handleTabChange(event, newValue) {
@@ -52,7 +59,11 @@ const SqlDataTabPanel = props => {
     <React.Fragment>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Sample Data" {...customTabProps(0)} />
-        <Tab label="Default Data" {...customTabProps(1)} />
+        <Tab
+          className={showDefaultData ? '' : classes.hide}
+          label="Default Data"
+          {...customTabProps(1)}
+        />
       </Tabs>
       <div className={classes.content}>
         <TabPanel
@@ -74,7 +85,7 @@ const SqlDataTabPanel = props => {
         <TabPanel
           className={classNames(
             classes.tabPanel,
-            tabValue === 1 ? '' : classes.hide
+            tabValue === 1 || showDefaultData ? '' : classes.hide
           )}
           value={tabValue}
           index={1}>

@@ -30,7 +30,6 @@ export default function reducer(state = {}, action) {
         defaultOptions: deepClone(options),
         ...deepClone(options),
         lastChange: Date.now(),
-        editorId: id,
       };
 
       return newState;

@@ -5,7 +5,7 @@ import * as completers from '../editorSetup/completers';
 import Editor from '../SqlQueryEditor';
 
 export default function HandlebarsWithDefaults(props) {
-  const { editorId, ruleTitle, resultTitle, ...other } = props;
+  const { editorId, ruleTitle, showDefaultData, resultTitle } = props;
   const {
     template,
     sampleData,
@@ -30,12 +30,12 @@ export default function HandlebarsWithDefaults(props) {
 
   const handleInit = () => {
     dispatch(
-      actions.editor.init(editorId, 'handlebars', {
+      actions.editor.init(editorId, 'sql', {
         props: props.strict,
         autoEvaluate: true,
         autoEvaluateDelay: 300,
         template: props.rule,
-        defaultData: props.defaultData,
+        defaultData: props.defaultData || '',
         sampleData: props.sampleData,
       })
     );
@@ -46,19 +46,19 @@ export default function HandlebarsWithDefaults(props) {
   return (
     <Editor
       editorId={editorId}
-      {...other}
       handleInit={handleInit}
       handleChange={handleChange}
-      processor="sqlQueryBuilder"
+      processor="sql"
       ruleMode="handlebars"
       dataMode="json"
       resultMode="text"
       ruleTitle={ruleTitle}
       resultTitle={resultTitle}
       violations={violations}
+      showDefaultData={showDefaultData}
       rule={template}
       sampleData={sampleData}
-      defaultData={defaultData}
+      defaultData={defaultData || ''}
       result={result ? result.data : ''}
       error={error && error.message}
       enableAutocomplete
