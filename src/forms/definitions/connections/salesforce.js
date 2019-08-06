@@ -9,7 +9,6 @@ export default {
     return newValues;
   },
   fields: [
-    { fieldId: 'type', required: true },
     { fieldId: 'name', required: true },
     { fieldId: 'salesforce.sandbox' },
     { fieldId: 'salesforce.oauth2FlowType' },
