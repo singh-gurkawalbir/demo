@@ -50,16 +50,9 @@ const SqlDataTabPanel = props => {
 
   return (
     <React.Fragment>
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        aria-label="simple tabs example">
-        <Tab
-          className={classes.tab}
-          label="Sample Data"
-          {...customTabProps(0)}
-        />
-        <Tab className="tab" label="Default Data" {...customTabProps(1)} />
+      <Tabs value={tabValue} onChange={handleTabChange}>
+        <Tab label="Sample Data" {...customTabProps(0)} />
+        <Tab label="Default Data" {...customTabProps(1)} />
       </Tabs>
       <div className={classes.content}>
         <TabPanel
