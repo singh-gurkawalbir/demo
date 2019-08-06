@@ -37,8 +37,7 @@ module.exports.sections = [
       },
       {
         name: 'Celigo Components',
-        components: 'src/components/*/index.jsx',
-        // editorConfig: { theme: 'material' },
+        components: 'src/components/**/*/index.jsx',
       },
     ],
   },

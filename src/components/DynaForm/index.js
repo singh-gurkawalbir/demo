@@ -13,6 +13,7 @@ import getRenderer from './renderer';
     border: 'solid 1px',
     backgroundColor: theme.palette.background.editorInner,
     borderColor: 'rgb(0,0,0,0.1)',
+    minHeight: '30vh',
     maxHeight: `60vh`,
     overflowY: 'auto',
     padding: theme.spacing.unit,

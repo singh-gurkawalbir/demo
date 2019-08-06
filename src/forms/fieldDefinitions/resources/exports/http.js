@@ -1,21 +1,4 @@
 export default {
-  type: {
-    type: 'select',
-    label: 'Export Type',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-        ],
-      },
-    ],
-  },
-  pagingData: {
-    type: 'labeltitle',
-    label: 'Does this API support paging?',
-  },
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
@@ -50,7 +33,7 @@ export default {
     ],
   },
   'http.errorMediaType': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Error Media Type',
     options: [
       {
@@ -84,9 +67,6 @@ export default {
   },
   'http.headers': {
     type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
     label: 'Configure HTTP Headers',
   },
   'http.paging.method': {
@@ -130,6 +110,10 @@ export default {
       },
     ],
   },
+  configureAsyncHelper: {
+    type: 'checkbox',
+    label: 'Configure Async Helper',
+  },
   'http.paging.token': {
     type: 'text',
     label: 'Token',
@@ -146,7 +130,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['skip', 'page', 'relativeuri', 'linkheader'],
+        is: ['token', 'url'],
       },
     ],
   },
@@ -156,7 +140,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['skip', 'page', 'linkheader', 'url'],
+        is: ['token', 'relativeuri'],
       },
     ],
   },
@@ -186,7 +170,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+        is: ['skip', 'page'],
       },
     ],
   },
@@ -196,7 +180,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.paging.method',
-        isNot: ['token', 'relativeuri', 'linkheader', 'url'],
+        is: ['skip', 'page'],
       },
     ],
   },
@@ -213,13 +197,10 @@ export default {
     type: 'text',
     label: 'Last Page Path',
   },
-  'http.paging.lastPageValuess': {
+  'http.paging.lastPageValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'Last Page Values',
-    validWhen: [],
+    valueDelimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
@@ -249,11 +230,8 @@ export default {
   },
   'http.response.successValuess': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    valueDelimiter: ',',
     label: 'Success Values',
-    validWhen: [],
   },
   'http.response.errorPath': {
     type: 'text',
@@ -277,10 +255,6 @@ export default {
     label: 'Http response blob Format',
   },
   // #region transform
-  'ftp.exportTransformRecords': {
-    label: 'Would you like to transform the records?',
-    type: 'labeltitle',
-  },
   'transform.expression.rules': {
     type: 'transformeditor',
     label: 'Transform expression rules',
@@ -316,12 +290,12 @@ export default {
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    label: 'Hooks pre Save Page _script Id',
+    label: 'Pre Save Page _script Id',
   },
   'hooks.preSavePage._stackId': {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Hooks pre Save Page _stack Id',
+    label: 'Pre Save Page _stack Id',
   },
 };

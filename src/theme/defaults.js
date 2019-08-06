@@ -6,8 +6,7 @@ const unit = 8;
 export default {
   typography: {
     useNextVariants: true,
-    htmlFontSize: 16,
-    fontSize: 16,
+    fontFamily: 'Roboto, sans-serif',
   },
   spacing: {
     unit,
@@ -28,14 +27,14 @@ export default {
       body1: {
         fontSize: '18px',
         fontWeight: '400',
-        lineHeight: '24px',
+        lineHeight: '27px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       body2: {
         fontSize: '15px',
         fontWeight: '400',
-        lineHeight: '20px',
+        lineHeight: '22px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
@@ -48,7 +47,7 @@ export default {
       h2: {
         fontSize: '36px',
         fontWeight: '300',
-        lineHeight: '39px',
+        lineHeight: '40px',
         letterSpacing: '-0.5px',
       },
 
@@ -65,27 +64,27 @@ export default {
         letterSpacing: 'normal',
       },
       h5: {
-        fontSize: '20px',
-        fontWeight: '300',
+        fontSize: '18px',
+        fontWeight: '400',
         lineHeight: '16px',
         letterSpacing: 'normal',
       },
       h6: {
-        fontSize: '14px',
-        fontWeight: '300',
+        fontSize: '16px',
+        fontWeight: '400',
         lineHeight: '20px',
         letterSpacing: 'normal',
       },
       subtitle1: {
-        fontSize: '18px',
+        fontSize: '22px',
         fontWeight: '400',
-        lineHeight: '18px',
+        lineHeight: '30px',
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '15px',
-        fontWeight: '300',
-        lineHeight: 'normal',
+        fontSize: '16px',
+        fontWeight: '400',
+        lineHeight: '24px',
         letterSpacing: 'normal',
       },
       overline: {

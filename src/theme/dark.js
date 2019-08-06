@@ -37,9 +37,11 @@ export default {
       link: colors.celigoNeutral6,
       linkHover: colors.celigoAccent1,
       secondary: colors.celigoNeutral4,
+      title: colors.celigoWhite,
       // disabled: '#rrggbb',
       // hint: '#rrggbb',
     },
+    divider: colors.celigoNeutral6,
   },
   overrides: {
     MuiTypography: {
@@ -59,7 +61,7 @@ export default {
       textPrimary: {
         color: colors.celigoNeutral1,
         '&:focus': {
-          color: colors.celigoNeutral7,
+          color: colors.celigoAccent2,
         },
         '&:hover': {
           color: colors.celigoAccent2,

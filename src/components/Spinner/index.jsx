@@ -1,41 +1,27 @@
-import { PureComponent } from 'react';
-import { bool } from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-@withStyles({
+const styles = {
   center: {
     textAlign: 'center',
   },
-})
+};
+
 /**
  * Render an indeterminate spinning indicator.
  */
-export default class Spinner extends PureComponent {
-  static propTypes = {
-    /**
-     * Set to `true` to render the spinner with its own
-     * block-centered container.
-     */
-    loading: bool,
-  };
+function Spinner(props) {
+  const { loading, classes, className, ...rest } = props;
+  const progress = (
+    <CircularProgress color="primary" className={className} {...rest} />
+  );
 
-  static defaultProps = {
-    loading: false,
-  };
-
-  render() {
-    const { loading, classes, className, ...props } = this.props;
-    const progress = (
-      <CircularProgress color="primary" className={className} {...props} />
-    );
-
-    // TODO:Something wrong here...both of them are the same
-    return loading ? (
-      <div className={classNames(classes.center, className)}>{progress}</div>
-    ) : (
-      progress
-    );
-  }
+  return loading ? (
+    <div className={classNames(classes.center, className)}>{progress}</div>
+  ) : (
+    progress
+  );
 }
+
+export default withStyles(styles)(Spinner);
