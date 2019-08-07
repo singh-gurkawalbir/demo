@@ -32,14 +32,28 @@ const SqlDataTabPanel = props => {
   return (
     <React.Fragment>
       <Tabs value={tabValue} onChange={handleTabChange}>
-        <Tab label="Sample Data" value="sample" />
-        {showDefaultData && <Tab label="Default Data" value="default" />}
+        <Tab
+          label="Sample Data"
+          value="sample"
+          id="tab-sample"
+          aria-controls="tabpanel-sample"
+        />
+        {showDefaultData && (
+          <Tab
+            label="Default Data"
+            value="default"
+            id="tab-default"
+            aria-controls="tabpanel-default"
+          />
+        )}
       </Tabs>
       <div className={classes.content}>
         {tabValue === 'sample' && (
           <Typography
             component="div"
             role="tabpanel"
+            id="tabpanel-sample"
+            aria-labelledby="tab-sample"
             className={classes.tabPanel}>
             <CodePanel
               name="sampleData"
@@ -55,6 +69,8 @@ const SqlDataTabPanel = props => {
           <Typography
             component="div"
             role="tabpanel"
+            id="tabpanel-default"
+            aria-labelledby="tab-default"
             className={classes.tabPanel}>
             <CodePanel
               name="defaultData"
