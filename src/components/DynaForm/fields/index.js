@@ -19,6 +19,7 @@ import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaStaticMap from './DynaStaticMap';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -33,6 +34,7 @@ export default {
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
+  staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
   refreshoptions: DynaRefreshOptions,
   transformeditor: DynaTransformEditor,
