@@ -178,3 +178,7 @@ export function isBulkRetryInProgress(state) {
 export function jobErrors(state, jobId) {
   return fromJobs.jobErrors(state.jobs, jobId);
 }
+
+export function retryObject(state, retryId) {
+  return fromJobs.retryObject(state.jobs, retryId);
+}

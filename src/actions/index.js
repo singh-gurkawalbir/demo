@@ -392,8 +392,21 @@ const job = {
       flowJobId,
       selectedErrorIds,
     }),
+  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds }) =>
+    action(actionTypes.JOB.ERROR.RETRY_SELECTED, {
+      jobId,
+      flowJobId,
+      selectedRetryIds,
+    }),
   downloadErrorFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
+  requestRetryData: ({ retryId }) =>
+    action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
+  receivedRetryData: ({ retryData, retryId }) =>
+    action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
+  updateRetryData: ({ retryData, retryId }) =>
+    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  clearErrors: () => action(actionTypes.JOB.ERROR.CLEAR),
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

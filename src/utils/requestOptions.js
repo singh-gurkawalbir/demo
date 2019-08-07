@@ -132,6 +132,21 @@ export default function getRequestOptions(
         path: `/jobs/${resourceId}/joberrors/resolve`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.ERROR.RETRY_SELECTED:
+      return {
+        path: `/jobs/${resourceId}/retries/retry`,
+        opts: { method: 'POST' },
+      };
+    case actionTypes.JOB.ERROR.REQUEST_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/data`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.JOB.ERROR.UPDATE_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/data`,
+        opts: { method: 'PUT' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,

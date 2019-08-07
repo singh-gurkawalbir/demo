@@ -516,6 +516,69 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
   }
 }
 
+export function* retrySelectedRetries({ jobId, flowJobId, selectedRetryIds }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.RETRY_SELECTED,
+    {
+      resourceId: jobId,
+    }
+  );
+
+  opts.body = selectedRetryIds;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+    yield call(getJobFamily, { jobId: flowJobId });
+  } catch (e) {
+    return true;
+  }
+}
+
+export function* requestRetryData({ retryId }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.REQUEST_RETRY_DATA,
+    {
+      resourceId: retryId,
+    }
+  );
+
+  try {
+    const retryData = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    yield put(actions.job.receivedRetryData({ retryData, retryId }));
+  } catch (e) {
+    return true;
+  }
+}
+
+export function* updateRetryData({ retryId, retryData }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.UPDATE_RETRY_DATA,
+    {
+      resourceId: retryId,
+    }
+  );
+
+  opts.body = retryData;
+
+  try {
+    const retryData = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    yield put(actions.job.receivedRetryData({ retryData, retryId }));
+  } catch (e) {
+    return true;
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
@@ -533,4 +596,7 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
   takeEvery(actionTypes.JOB.DOWNLOAD_ERROR_FILE, downloaErrorFile),
   takeEvery(actionTypes.JOB.ERROR.RESOLVE_SELECTED, resolveSelectedErrors),
+  takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
+  takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),
+  takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
 ];

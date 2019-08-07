@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -19,7 +20,7 @@ function parseJobs(jobs) {
 const defaultState = {
   flowJobs: [],
   bulkRetryJobs: [],
-  errors: {},
+  errors: [],
   retryObjects: {},
 };
 
@@ -32,6 +33,8 @@ export default (state = defaultState, action) => {
 
   if (type === actionTypes.JOB.CLEAR) {
     return defaultState;
+  } else if (type === actionTypes.JOB.ERROR.CLEAR) {
+    return { ...state, errors: [], retryObjects: {} };
   }
 
   if (type === actionTypes.JOB.RECEIVED_COLLECTION) {
@@ -502,43 +505,52 @@ export default (state = defaultState, action) => {
       };
     }
   } else if (type === actionTypes.JOB.ERROR.RECEIVED_COLLECTION) {
-    let _id = 0;
-    const errors = collection.map(je => {
-      _id += 1;
+    const errors = collection.map(je => ({
+      _id: shortid.generate(),
+      ...je,
+    }));
 
-      return {
-        _id: _id.toString(),
-        ...je,
-      };
-    });
-
-    return { ...state, errors: { [jobId]: errors } };
+    return { ...state, errors };
   } else if (type === actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION) {
-    const retryObjectsMap = {};
+    const retryObjects = {};
 
     collection.forEach(rt => {
-      retryObjectsMap[rt._id] = rt;
+      retryObjects[rt._id] = rt;
     });
 
-    return { ...state, retryObjects: { [jobId]: retryObjectsMap } };
+    return { ...state, retryObjects };
   } else if (type === actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT) {
-    if (!state || !state.errors || !state.errors[jobId]) {
-      return [];
+    if (!state || !state.errors) {
+      return state;
     }
 
-    const errors = state.errors[jobId];
+    const { errors } = state;
     const { selectedErrorIds } = action;
 
     return {
       ...state,
-      errors: {
-        [jobId]: errors.map(je => {
-          if (selectedErrorIds.includes(je._id)) {
-            return { ...je, resolved: true };
-          }
+      errors: errors.map(je => {
+        if (selectedErrorIds.includes(je._id)) {
+          return { ...je, resolved: true };
+        }
 
-          return { ...je };
-        }),
+        return { ...je };
+      }),
+    };
+  } else if (type === actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA) {
+    const { retryData, retryId } = action;
+
+    if (!state || !state.retryObjects || !state.retryObjects[retryId]) {
+      return state;
+    }
+
+    const { retryObjects, ...rest } = state;
+
+    return {
+      ...rest,
+      retryObjects: {
+        ...retryObjects,
+        [retryId]: { ...retryObjects[retryId], retryData },
       },
     };
   }
@@ -779,25 +791,35 @@ export function isBulkRetryInProgress(state) {
 }
 
 export function jobErrors(state, jobId) {
-  if (!state || !state.errors || !state.errors[jobId]) {
+  if (!state || !state.errors) {
     return [];
   }
 
-  const errors = state.errors[jobId];
-  const retryObjects = state.retryObjects[jobId] || {};
+  const { errors, retryObjects } = state;
 
-  return errors.map(e => {
-    const retryObject = (e._retryId && retryObjects[e._retryId]) || {};
+  return errors
+    .filter(e => e._jobId === jobId)
+    .map(e => {
+      const retryObject = (e._retryId && retryObjects[e._retryId]) || {};
 
-    return {
-      ...e,
-      retryObject: {
-        ...retryObject,
-        isDataEditable: ['object', 'page'].includes(retryObject.type),
-        isRetriable: ['file', 'object', 'page'].includes(retryObject.type),
-      },
-    };
-  });
+      return {
+        ...e,
+        retryObject: {
+          ...retryObject,
+          isDataEditable: ['object', 'page'].includes(retryObject.type),
+          isRetriable: ['file', 'object', 'page'].includes(retryObject.type),
+          isDownloadable: retryObject.type === 'file',
+        },
+      };
+    });
+}
+
+export function retryObject(state, retryId) {
+  if (!state || !state.retryObjects || !state.retryObjects[retryId]) {
+    return undefined;
+  }
+
+  return state.retryObjects[retryId];
 }
 
 // #endregion

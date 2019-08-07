@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,18 +7,38 @@ import { Typography, IconButton, withStyles } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { JOB_TYPES } from '../../utils/constants';
-/* import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../../reducers/comms';
-import CommStatus from '../CommStatus'; */
 import JobErrorTable from './JobErrorTable';
+import Spinner from '../Spinner';
 
 const styles = theme => ({
+  title: {
+    minWidth: '640px',
+  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing.unit,
     top: theme.spacing.unit,
     color: theme.palette.grey[500],
+  },
+  spinner: {
+    left: '0px',
+    right: '0px',
+    background: 'rgba(0,0,0,0.7)',
+    width: '100%',
+    position: 'absolute',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 'inherit',
+    '& div': {
+      width: '20px !important',
+      height: '20px !important',
+    },
+    '& span': {
+      marginLeft: '10px',
+      color: '#fff',
+    },
   },
 });
 
@@ -36,6 +56,13 @@ function JobErrorDialog({
     selectors.flowJob(state, { jobId: parentJobId || jobId })
   );
 
+  useEffect(
+    () => () => {
+      dispatch(actions.job.clearErrors());
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     if (childJobId) {
       dispatch(
@@ -44,9 +71,7 @@ function JobErrorDialog({
         })
       );
     } else if (flowJob.children.length > 0) {
-      const jobsWithErrors = flowJob.children.filter(
-        j => j.type === JOB_TYPES.IMPORT && j.numError > 0
-      );
+      const jobsWithErrors = flowJob.children.filter(j => j.numError > 0);
 
       if (jobsWithErrors.length > 0) {
         setChildJobId(jobsWithErrors[0]._id);
@@ -70,29 +95,29 @@ function JobErrorDialog({
   }
 
   return (
-    <Fragment>
-      <Dialog open maxWidth={false}>
-        <DialogTitle>
-          <Typography>
-            {`${integrationName} > ${flowJob && flowJob.name}`}
-          </Typography>
-          <IconButton
-            className={classes.closeButton}
-            onClick={handleCloseClick}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent style={{ width: '70vw' }}>
-          {job && (
-            <JobErrorTable
-              jobErrors={jobErrors}
-              job={job}
-              onCloseClick={onCloseClick}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-    </Fragment>
+    <Dialog open maxWidth={false}>
+      <DialogTitle className={classes.title}>
+        <Typography>
+          {`${integrationName} > ${flowJob && flowJob.name}`}
+        </Typography>
+        <IconButton className={classes.closeButton} onClick={handleCloseClick}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        {!job ? (
+          <div className={classes.spinner}>
+            <Spinner /> <span>Loading child jobs...</span>
+          </div>
+        ) : (
+          <JobErrorTable
+            jobErrors={jobErrors}
+            job={job}
+            onCloseClick={onCloseClick}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 

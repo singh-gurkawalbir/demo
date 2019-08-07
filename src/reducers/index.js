@@ -1097,3 +1097,7 @@ export function jobErrors(state, jobId) {
       ),
   }));
 }
+
+export function retryObject(state, retryId) {
+  return fromData.retryObject(state.data, retryId);
+}
