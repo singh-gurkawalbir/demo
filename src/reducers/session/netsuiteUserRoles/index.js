@@ -2,29 +2,29 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, resourceId, userRoles, message } = action;
+  const { type, connectionId, userRoles, message } = action;
   const newState = { ...state };
 
   switch (type) {
     case actionTypes.NETSUITE_USER_ROLES.CLEAR:
-      newState[resourceId] = { ...newState[resourceId] };
-      delete newState[resourceId].message;
+      newState[connectionId] = { ...newState[connectionId] };
+      delete newState[connectionId].message;
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.REQUEST:
-      if (!newState[resourceId]) newState[resourceId] = {};
+      if (!newState[connectionId]) newState[connectionId] = {};
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.RECEIVED:
-      newState[resourceId] = {
-        ...newState[resourceId],
+      newState[connectionId] = {
+        ...newState[connectionId],
         userRoles: deepClone(userRoles),
       };
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.FAILED:
-      if (!newState[resourceId]) newState[resourceId] = {};
-      newState[resourceId] = { ...newState[resourceId], message };
+      if (!newState[connectionId]) newState[connectionId] = {};
+      newState[connectionId] = { ...newState[connectionId], message };
 
       return newState;
 
@@ -36,17 +36,20 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function netsuiteUserRoles(
   state,
-  resourceId,
+  connectionId,
   netsuiteResourceType,
   env,
   acc
 ) {
-  if (!state || !state[resourceId]) return {};
-  const { userRoles } = state[resourceId];
+  if (!state || !state[connectionId]) return {};
+  const { userRoles } = state[connectionId];
 
   // all environments
-  if (!userRoles) return state[resourceId];
+  if (!userRoles) return state[connectionId];
   const envs = Object.keys(userRoles).map(env => ({ label: env, value: env }));
+
+  if (netsuiteResourceType === 'environment')
+    return { ...state[connectionId], optionsArr: envs };
   // get matchings accounts for a user environment
   const allAcc =
     userRoles[env] &&
@@ -63,7 +66,11 @@ export function netsuiteUserRoles(
         label: account.account.name,
         value: account.account.internalId,
       }));
+
+  if (netsuiteResourceType === 'account')
+    return { ...state[connectionId], optionsArr: accounts };
   // get matching roles for a user environment and account
+
   const roles =
     userRoles[env] &&
     userRoles[env].accounts &&
@@ -74,13 +81,9 @@ export function netsuiteUserRoles(
         value: account.role.internalId,
       }));
 
-  if (netsuiteResourceType === 'environment')
-    return { ...state[resourceId], optionsArr: envs };
-  else if (netsuiteResourceType === 'account')
-    return { ...state[resourceId], optionsArr: accounts };
-  else if (netsuiteResourceType === 'role')
-    return { ...state[resourceId], optionsArr: roles };
+  if (netsuiteResourceType === 'role')
+    return { ...state[connectionId], optionsArr: roles };
 
-  return { ...state[resourceId], optionsArr: null };
+  return { ...state[connectionId], optionsArr: null };
 }
 // #endregion

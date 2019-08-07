@@ -23,14 +23,14 @@ export default combineReducers({
 
 export function netsuiteUserRoles(
   state,
-  resourceId,
+  connectionId,
   netsuiteResourceType,
   env,
   acc
 ) {
   return fromNetsuiteUserRoles.netsuiteUserRoles(
     state && state.netsuiteUserRole,
-    resourceId,
+    connectionId,
     netsuiteResourceType,
     env,
     acc

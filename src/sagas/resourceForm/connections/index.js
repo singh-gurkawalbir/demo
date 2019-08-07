@@ -31,16 +31,16 @@ function* createPayload({ values, resourceId }) {
   return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
 }
 
-export function* netsuiteUserRoles({ resourceId, values }) {
+export function* netsuiteUserRoles({ connectionId, values }) {
   // '/netsuite/alluserroles'
   let reqPayload = {};
 
-  if (!values && !resourceId) return;
+  if (!values && !connectionId) return;
 
   if (!values) {
     // retrieving existing userRoles for a connection
 
-    reqPayload = { _connectionId: resourceId };
+    reqPayload = { _connectionId: connectionId };
   } else {
     // retrieving userRoles for a new connection
     const { '/netsuite/email': email, '/netsuite/password': password } = values;
@@ -57,21 +57,21 @@ export function* netsuiteUserRoles({ resourceId, values }) {
     const respSuccess =
       resp &&
       Object.keys(resp).reduce(
-        (env, acc) => acc && resp[env] && resp[env].success,
+        (acc, env) => acc && resp[env] && resp[env].success,
         true
       );
 
     if (!respSuccess)
       yield put(
         actions.resource.connections.netsuite.requestUserRolesFailed(
-          resourceId,
+          connectionId,
           resp.production.error.message
         )
       );
     else
       yield put(
         actions.resource.connections.netsuite.receivedUserRoles(
-          resourceId,
+          connectionId,
           resp
         )
       );
@@ -85,7 +85,7 @@ export function* netsuiteUserRoles({ resourceId, values }) {
 
     yield put(
       actions.resource.connections.netsuite.requestUserRolesFailed(
-        resourceId,
+        connectionId,
         errors[0].message
       )
     );

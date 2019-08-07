@@ -888,14 +888,14 @@ export function affectedResourcesAndUsersFromAuditLogs(
 
 export function netsuiteUserRoles(
   state,
-  resourceId,
+  connectionId,
   netsuiteResourceType,
   env,
   acc
 ) {
   return fromSession.netsuiteUserRoles(
     state && state.session,
-    resourceId,
+    connectionId,
     netsuiteResourceType,
     env,
     acc

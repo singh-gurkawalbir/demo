@@ -66,17 +66,17 @@ function ActionsFactory(props) {
     return <DynaForm {...props}>{ActionButtons}</DynaForm>;
   }
 
-  let ActionButtons;
+  let actionButtons;
 
   // When action button metadata isn't provided we infer the action buttons.
   if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      ActionButtons = ['cancel', 'oauth'];
+      actionButtons = ['cancel', 'oauth'];
     } else {
-      ActionButtons = ['test', 'cancel', 'testandsave'];
+      actionButtons = ['test', 'cancel', 'testandsave'];
     }
   } else {
-    ActionButtons = ['cancel', 'save'];
+    actionButtons = ['cancel', 'save'];
   }
 
   const actionButtonsCreator = actions =>
@@ -86,7 +86,7 @@ function ActionsFactory(props) {
       return <Action key={id} {...props} />;
     });
 
-  return <DynaForm {...props}>{actionButtonsCreator(ActionButtons)}</DynaForm>;
+  return <DynaForm {...props}>{actionButtonsCreator(actionButtons)}</DynaForm>;
 }
 
 export const ResourceFormFactory = props => {
