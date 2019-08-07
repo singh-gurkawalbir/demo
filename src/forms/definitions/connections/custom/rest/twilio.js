@@ -22,4 +22,11 @@ export default {
       label: 'Auth Token:',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

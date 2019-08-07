@@ -30,4 +30,11 @@ export default {
       ],
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

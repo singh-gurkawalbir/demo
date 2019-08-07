@@ -60,7 +60,7 @@ export default {
       ],
       helpText: 'The Zuora account type.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('apisandbox') !== -1) {
@@ -70,6 +70,13 @@ export default {
 
         return 'production';
       },
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };
