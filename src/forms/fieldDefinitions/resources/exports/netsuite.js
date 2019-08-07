@@ -4,28 +4,34 @@ export default {
     label: 'Record Type',
     mode: 'suitescript',
     defaultValue: r =>
-      r.netsuite.distributed && r.netsuite.distributed.recordType,
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.recordType,
     required: true,
     type: 'refreshoptions',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.recordType',
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   'netsuite.restlet.recordType': {
     label: 'Record Type',
     mode: 'suitescript',
-    defaultValue: r => r.netsuite.restlet && r.netsuite.restlet.recordType,
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
     required: true,
     type: 'refreshoptions',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.recordType': {
     label: 'Record Type',
     mode: 'webservices',
     defaultValue: r =>
+      r &&
+      r.netsuite &&
       r.netsuite.searches &&
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
@@ -34,7 +40,7 @@ export default {
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   // execution context
   'netsuite.distributed.executionContext': {
@@ -60,7 +66,10 @@ export default {
       },
     ],
     defaultValue: r =>
-      r.netsuite.distributed && r.netsuite.distributed.executionContext,
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionContext,
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -89,7 +98,10 @@ export default {
       },
     ],
     defaultValue: r =>
-      r.netsuite.distributed && r.netsuite.distributed.executionType,
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionType,
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -103,8 +115,11 @@ export default {
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
     defaultValue: r =>
-      r.netsuite.distributed && r.netsuite.distributed.sublists,
-    connectionId: r => r._connectionId,
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.sublists,
+    connectionId: r => r && r._connectionId,
   },
   // search type
   'netsuite.restlet.searchType': {
@@ -125,11 +140,12 @@ export default {
     type: 'savedsearch',
     label: 'Saved Searches',
     mode: 'suitescript',
-    defaultValue: r => r.netsuite.restlet && r.netsuite.restlet.searchId,
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
     resourceType: 'savedSearches',
     required: true,
     placeholder: 'Please select a saved search',
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.searchId': {
     label: 'Saved Searches',
@@ -141,16 +157,19 @@ export default {
     filterKey: 'savedSearches',
     helpKey: 'export.netsuite.searches.searchId',
     defaultValue: r =>
+      r &&
+      r.netsuite &&
       r.netsuite.searches &&
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].savedSearchId,
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   // internal id
   'netsuite.restlet.searchInternalId': {
     type: 'text',
     label: 'Saved Search Internal/Script Id',
-    defaultValue: r => r.netsuite.restlet && r.netsuite.restlet.searchId,
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
     required: true,
     visible: false,
   },
@@ -168,14 +187,14 @@ export default {
         ],
       },
     ],
-    defaultValue: r => r.type || 'all',
+    defaultValue: r => (r && r.type) || 'all',
   },
   // skip grouping
   'netsuite.skipGrouping': {
     type: 'checkbox',
     inverse: true,
     label: 'Group Rows',
-    defaultValue: r => r.netsuite && r.netsuite.skipGrouping,
+    defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
   },
 
   'netsuite.netsuiteExportlabel': {
