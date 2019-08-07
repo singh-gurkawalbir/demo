@@ -179,6 +179,7 @@ module.exports = {
         '/signout': proxyOpts,
         '/csrf': proxyOpts,
         '/api': proxyOpts,
+        '/netSuiteWS': proxyOpts,
         '/connection': proxyOpts,
       });
       neutrino.config.output.publicPath('/pg/');
