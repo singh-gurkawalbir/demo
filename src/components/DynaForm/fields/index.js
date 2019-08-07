@@ -20,7 +20,6 @@ import DynaSelectScopes from './DynaSelectScopes';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
-import DynaHandlebarsEvaluator from './DynaHandlebarsEvaluator';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -46,5 +45,4 @@ export default {
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
-  handlebarsevaluator: DynaHandlebarsEvaluator,
 };
