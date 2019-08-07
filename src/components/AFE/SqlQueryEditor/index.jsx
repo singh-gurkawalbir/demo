@@ -9,16 +9,33 @@ import CodePanel from '../GenericEditor/CodePanel';
 import SqlDataTabPanel from './SqlDataTabPanel';
 
 const styles = () => ({
-  template: {
+  compactTemplate: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule data" "rule result" "error error"',
+  },
+  compact2Template: {
     gridTemplateColumns: '1fr 1fr',
     gridTemplateRows: '1fr 1fr 0fr',
     gridTemplateAreas: '"rule data" "result data" "error error"',
+  },
+  rowTemplate: {
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr 1ft 1fr 0fr',
+    gridTemplateAreas: '"rule" "data" "result" "error"',
+  },
+  columnTemplate: {
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateRows: '4fr 0fr',
+    gridTemplateAreas: '"rule data result" "error error error"',
   },
 });
 const Editor = props => {
   const {
     handleInit,
     classes,
+    layout = 'compact',
+    templateClassName,
     rule,
     ruleMode,
     ruleTitle,
@@ -38,9 +55,11 @@ const Editor = props => {
     handleInit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // favor custom template over pre-defined layouts.
+  const gridTemplate = templateClassName || classes[`${layout}Template`];
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid className={gridTemplate}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title={ruleTitle} />
         <CodePanel

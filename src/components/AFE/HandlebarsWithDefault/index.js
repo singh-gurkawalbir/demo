@@ -7,7 +7,14 @@ import Editor from '../SqlQueryEditor';
 const { merge } = require('lodash');
 
 export default function HandlebarsWithDefaults(props) {
-  const { editorId, ruleTitle, showDefaultData, resultTitle } = props;
+  const {
+    editorId,
+    ruleTitle,
+    layout,
+    showDefaultData,
+    templateClassName,
+    resultTitle,
+  } = props;
   const {
     template,
     sampleData,
@@ -15,21 +22,19 @@ export default function HandlebarsWithDefaults(props) {
     result,
     error,
     violations,
-  } = useSelector(state => {
-    const editor = selectors.editor(state, editorId);
-    // update directly to the completers
+  } = useSelector(state => selectors.editor(state, editorId));
+
+  useSelector(state => {
     const jsonData = JSON.stringify(
       merge(
         {},
-        editor.defaultData ? JSON.parse(editor.defaultData) : {},
-        editor.sampleData ? JSON.parse(editor.sampleData) : {}
+        defaultData ? JSON.parse(defaultData) : {},
+        sampleData ? JSON.parse(sampleData) : {}
       )
     );
     const helperFunctions = selectors.editorHelperFunctions(state);
 
     completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
-
-    return editor;
   });
   const dispatch = useDispatch();
   const handleChange = (field, value) => {
@@ -60,6 +65,8 @@ export default function HandlebarsWithDefaults(props) {
       ruleMode="handlebars"
       dataMode="json"
       resultMode="text"
+      layout={layout}
+      templateClassName={templateClassName}
       ruleTitle={ruleTitle}
       resultTitle={resultTitle}
       violations={violations}
