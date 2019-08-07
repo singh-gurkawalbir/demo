@@ -18,36 +18,22 @@ export default function AgentDownloadInstaller(props) {
   }
 
   function handleInstallerClick(osType) {
-    handleMenuClose();
-    onInstallerClick(osType);
+    return () => {
+      handleMenuClose();
+      onInstallerClick(osType);
+    };
   }
 
   return (
     <Fragment>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}>
-        <MenuItem
-          onClick={() => {
-            handleInstallerClick('windows');
-          }}>
-          Windows
-        </MenuItem>
-
+      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
+        <MenuItem onClick={handleInstallerClick('windows')}>Windows</MenuItem>
         <Divider />
-        <MenuItem
-          onClick={() => {
-            handleInstallerClick('linux');
-          }}>
+        <MenuItem onClick={handleInstallerClick('linux')}>
           Linux (BETA)
         </MenuItem>
         <Divider />
-
-        <MenuItem
-          onClick={() => {
-            handleInstallerClick('macOS');
-          }}>
+        <MenuItem onClick={handleInstallerClick('macOS')}>
           Mac OS (BETA)
         </MenuItem>
       </Menu>

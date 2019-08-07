@@ -75,13 +75,13 @@ const resource = {
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
 
   fetchResourceReferences: (resourceType, id) =>
-    action(actionTypes.RESOURCE.FETCH_RESOURCE_REFERENCES, {
+    action(actionTypes.RESOURCE.REFERENCES_FETCH, {
       resourceType,
       id,
     }),
 
   receivedResourceReferences: (resourceType, id, resourceReferences) =>
-    action(actionTypes.RESOURCE.RECEIVED_RESOURCE_REFERENCES, {
+    action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
       resourceType,
       id,
       resourceReferences,
@@ -190,13 +190,13 @@ const ashares = {
     resource.receivedCollection('ashares', ashares),
 };
 const agent = {
-  displayToken: id => action(actionTypes.AGENT_TOKEN_DISPLAY, { id }),
-  changeToken: id => action(actionTypes.AGENT_TOKEN_CHANGE, { id }),
+  displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
+  changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
   tokenReceived: agentToken =>
-    action(actionTypes.AGENT_TOKEN_RECEIVED, { agentToken }),
-  maskToken: agentToken => action(actionTypes.AGENT_TOKEN_MASK, { agentToken }),
+    action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
-    action(actionTypes.AGENT_DOWNLOAD_INSTALLER, { osType, id }),
+    action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const user = {
   profile: {

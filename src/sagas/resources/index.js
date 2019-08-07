@@ -146,9 +146,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
-  takeEvery(
-    actionTypes.RESOURCE.FETCH_RESOURCE_REFERENCES,
-    fetchResourceReferences
-  ),
+  takeEvery(actionTypes.RESOURCE.REFERENCES_FETCH, fetchResourceReferences),
   ...metadataSagas,
 ];

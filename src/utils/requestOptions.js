@@ -11,17 +11,17 @@ export default function getRequestOptions(
       return { path: `/ashares/${resourceId}`, opts: { method: 'PUT' } };
     case actionTypes.USER_DELETE:
       return { path: `/ashares/${resourceId}`, opts: { method: 'DELETE' } };
-    case actionTypes.AGENT_TOKEN_DISPLAY:
+    case actionTypes.AGENT.TOKEN_DISPLAY:
       return {
         path: `/agents/${resourceId}/display-token`,
         opts: { method: 'GET' },
       };
-    case actionTypes.AGENT_TOKEN_CHANGE:
+    case actionTypes.AGENT.TOKEN_CHANGE:
       return {
         path: `/agents/${resourceId}/change-token`,
         opts: { method: 'PUT' },
       };
-    case actionTypes.AGENT_DOWNLOAD_INSTALLER:
+    case actionTypes.AGENT.DOWNLOAD_INSTALLER:
       return {
         path: `/agents/${resourceId}/installer/signedURL?os=${osType}`,
         opts: { method: 'GET' },

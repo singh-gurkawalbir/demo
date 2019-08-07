@@ -1,6 +1,5 @@
-import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import { withStyles } from '@material-ui/core/styles';
@@ -18,21 +17,11 @@ import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import shortid from 'shortid';
 import * as selectors from '../../reducers';
-import LoadResources from '../../components/LoadResources';
 import AgentDetail from './AgentDetail';
 import getRoutePath from '../../utils/routePaths';
+import LoadResources from '../../components/LoadResources';
 
-const mapStateToProps = state => {
-  const agents = selectors.resourceList(state, {
-    type: 'agents',
-  });
-
-  return {
-    agents,
-  };
-};
-
-@withStyles(theme => ({
+const styles = theme => ({
   root: {
     width: '98%',
     marginTop: theme.spacing.unit * 3,
@@ -58,92 +47,93 @@ const mapStateToProps = state => {
     marginTop: theme.spacing.unit * 3,
     float: 'right',
   },
-}))
-@hot(module)
-class AgentList extends Component {
-  state = {
-    showReferences: false,
-    agentReferences: null,
-  };
-  viewReferencesClickHandler(references) {
-    this.setState({ showReferences: true });
-    this.setState({ agentReferences: references });
-  }
-  handleClose = () => {
-    this.setState({ showReferences: false });
-  };
-  render() {
-    const { showReferences, agentReferences } = this.state;
-    const { classes } = this.props;
-    const { resources } = this.props.agents;
+});
 
-    return (
-      <LoadResources resources={['agents']}>
-        <Dialog
-          onClose={this.handleClose}
-          aria-labelledby="simple-dialog-title"
-          open={showReferences}>
-          <DialogTitle id="simple-dialog-title">Agent References:</DialogTitle>
-          <List>
-            {agentReferences &&
-              Object.keys(agentReferences).map(key => (
-                <ListItem key={key}>
-                  <ListItemText primary={`${key}:`} />
-                  <List>
-                    {agentReferences[key].map(val => (
-                      <ListItem key={val.name}>
-                        <ListItemText primary={val.name} />
-                        <Divider />
-                      </ListItem>
-                    ))}
-                  </List>
-                  <Divider />
-                </ListItem>
-              ))}
-          </List>
-          <Button onClick={this.handleClose} color="primary">
-            Close
-          </Button>
-        </Dialog>
-        <Fragment>
-          <Typography variant="h2" className={classes.title}>
-            Agents
-          </Typography>
-          <Link
-            to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
-            className={classes.createAgentButton}>
-            <div>New Agent</div>
-          </Link>
-          <div className={classes.root}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Access Token</TableCell>
-                  <TableCell>Download Installer</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {resources &&
-                  resources.map(agent => (
-                    <AgentDetail
-                      key={agent._id}
-                      agent={agent}
-                      viewReferencesClickHandler={references => {
-                        this.viewReferencesClickHandler(references);
-                      }}
-                    />
-                  ))}
-              </TableBody>
-            </Table>
-          </div>
-        </Fragment>
-      </LoadResources>
-    );
+function AgentList(props) {
+  const { classes } = props;
+  const [showReferences, setshowReferences] = useState(false);
+  const [agentReferences, setagentReferences] = useState(null);
+  const agents = useSelector(state =>
+    selectors.resourceList(state, {
+      type: 'agents',
+    })
+  );
+
+  function viewReferencesClickHandler(references) {
+    setshowReferences(true);
+    setagentReferences(references);
   }
+
+  function handleClose() {
+    setshowReferences(false);
+  }
+
+  return (
+    <LoadResources resources={['agents']}>
+      <Dialog
+        onClose={handleClose}
+        aria-labelledby="simple-dialog-title"
+        open={showReferences}>
+        <DialogTitle id="simple-dialog-title">Agent References:</DialogTitle>
+        <List>
+          {agentReferences &&
+            Object.keys(agentReferences).map(key => (
+              <ListItem key={key}>
+                <ListItemText primary={`${key}:`} />
+                <List>
+                  {agentReferences[key].map(val => (
+                    <ListItem key={val.name}>
+                      <ListItemText primary={val.name} />
+                      <Divider />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+              </ListItem>
+            ))}
+        </List>
+        <Button onClick={handleClose} color="primary">
+          Close
+        </Button>
+      </Dialog>
+      <Fragment>
+        <Typography variant="h2" className={classes.title}>
+          Agents
+        </Typography>
+        <Link
+          to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
+          className={classes.createAgentButton}>
+          <div>New Agent</div>
+        </Link>
+        <div className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Access Token</TableCell>
+                <TableCell>Download Installer</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {agents.resources &&
+                agents.resources.map(agent => (
+                  <AgentDetail
+                    key={agent._id}
+                    agent={agent}
+                    viewReferencesClickHandler={references => {
+                      viewReferencesClickHandler(references);
+                    }}
+                  />
+                ))}
+            </TableBody>
+          </Table>
+        </div>
+      </Fragment>
+    </LoadResources>
+  );
 }
 
-export default connect(mapStateToProps)(AgentList);
+export default withStyles(styles)(AgentList);

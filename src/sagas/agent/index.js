@@ -6,7 +6,7 @@ import getRequestOptions from '../../utils/requestOptions';
 import { MASK_AGENT_TOKEN_DELAY } from '../../utils/constants';
 
 export function* displayToken({ id }) {
-  const requestOptions = getRequestOptions(actionTypes.AGENT_TOKEN_DISPLAY, {
+  const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_DISPLAY, {
     resourceId: id,
   });
   const { path, opts } = requestOptions;
@@ -28,7 +28,7 @@ export function* displayToken({ id }) {
 }
 
 export function* changeToken({ id }) {
-  const requestOptions = getRequestOptions(actionTypes.AGENT_TOKEN_CHANGE, {
+  const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
     resourceId: id,
   });
   const { path, opts } = requestOptions;
@@ -51,7 +51,7 @@ export function* changeToken({ id }) {
 
 export function* downloadInstaller({ osType, id }) {
   const requestOptions = getRequestOptions(
-    actionTypes.AGENT_DOWNLOAD_INSTALLER,
+    actionTypes.AGENT.DOWNLOAD_INSTALLER,
     {
       osType,
       resourceId: id,
@@ -73,7 +73,7 @@ export function* downloadInstaller({ osType, id }) {
 }
 
 export const agentSagas = [
-  takeEvery(actionTypes.AGENT_TOKEN_DISPLAY, displayToken),
-  takeEvery(actionTypes.AGENT_TOKEN_CHANGE, changeToken),
-  takeEvery(actionTypes.AGENT_DOWNLOAD_INSTALLER, downloadInstaller),
+  takeEvery(actionTypes.AGENT.TOKEN_DISPLAY, displayToken),
+  takeEvery(actionTypes.AGENT.TOKEN_CHANGE, changeToken),
+  takeEvery(actionTypes.AGENT.DOWNLOAD_INSTALLER, downloadInstaller),
 ];

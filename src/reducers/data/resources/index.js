@@ -90,7 +90,7 @@ export default (state = {}, action) => {
       }
 
       return state;
-    case actionTypes.RESOURCE.RECEIVED_RESOURCE_REFERENCES:
+    case actionTypes.RESOURCE.REFERENCES_RECEIVED:
       resourceIndex = state[resourceType].findIndex(r => r._id === id);
 
       if (resourceIndex > -1) {

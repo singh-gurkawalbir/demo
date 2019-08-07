@@ -11,7 +11,7 @@ export default (state = [], action) => {
   let newState;
 
   switch (type) {
-    case actionTypes.AGENT_TOKEN_RECEIVED:
+    case actionTypes.AGENT.TOKEN_RECEIVED:
       resourceIndex = state.findIndex(r => r._id === agentToken._id);
 
       if (resourceIndex > -1) {
@@ -26,7 +26,7 @@ export default (state = [], action) => {
 
       return [...state, { ...agentToken }];
 
-    case actionTypes.AGENT_TOKEN_MASK:
+    case actionTypes.AGENT.TOKEN_MASK:
       resourceIndex = state.findIndex(r => r._id === agentToken._id);
 
       if (resourceIndex > -1) {
