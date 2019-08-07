@@ -102,6 +102,7 @@ module.exports = {
       {
         pagePerSection: true,
         theme: theme.styleguide,
+        editorConfig: { theme: 'material' },
         styles: {
           StyleGuide: theme.styleguide.StyleGuide,
         },
@@ -144,6 +145,7 @@ module.exports = {
           rules: {
             // This is disabled in next airbnb preset release for
             // React 16.3 compatibility
+            'max-len':'off',
             'react/jsx-filename-extension': [
               1,
               { extensions: ['.js', '.jsx'] },
@@ -177,6 +179,7 @@ module.exports = {
         '/signout': proxyOpts,
         '/csrf': proxyOpts,
         '/api': proxyOpts,
+        '/netSuiteWS': proxyOpts,
         '/connection': proxyOpts,
       });
       neutrino.config.output.publicPath('/pg/');

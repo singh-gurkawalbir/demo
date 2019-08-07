@@ -11,6 +11,7 @@ import wrapper from './wrapper';
 import mongodb from './mongodb';
 import custom from './custom';
 import newImport from './new';
+import subForms from './subForms';
 
 export default {
   new: newImport,
@@ -26,4 +27,5 @@ export default {
   wrapper,
   mongodb,
   custom,
+  subForms,
 };

@@ -21,4 +21,11 @@ export default {
       helpText: 'The password of your Anaplan account.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

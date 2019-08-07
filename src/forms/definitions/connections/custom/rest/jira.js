@@ -48,4 +48,11 @@ export default {
       helpText: 'The password of your JIRA account.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

@@ -24,9 +24,6 @@ export default {
       // warning: celigo.celigoWarning
       // error:
     },
-
-    // action: {[object]},
-    // Spinner color changes below
     primary: {
       main: colors.celigoAccent1,
       color: colors.celigoNeutral6,
@@ -40,10 +37,12 @@ export default {
       link: colors.celigoAccent2,
       linkHover: colors.celigoAccent1,
       linkActive: colors.celigoAccent2,
+      title: colors.celigoNeutral7,
       // secondary: '#rrggbb',
       // disabled: '#rrggbb',
       // hint: '#rrggbb',
     },
+    divider: colors.celigoNeutral3,
   },
   overrides: {
     MuiTypography: {

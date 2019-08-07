@@ -30,6 +30,7 @@ export default {
       required: true,
       helpText: `3dcart merchant's Secure URL.`,
       defaultValue: r =>
+        r &&
         r.rest &&
         r.rest.headers &&
         r.rest.headers.find(header => header.name === 'SecureUrl') &&
@@ -48,6 +49,13 @@ export default {
       fieldId: 'rest.bearerToken',
       required: true,
       helpText: `The 3dcart merchant's token.`,
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };
