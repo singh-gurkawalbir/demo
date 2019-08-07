@@ -13,9 +13,6 @@ const styles = {
   tabPanel: {
     height: '100%',
   },
-  hide: {
-    display: 'none',
-  },
 };
 const SqlDataTabPanel = props => {
   const {
