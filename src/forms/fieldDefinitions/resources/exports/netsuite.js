@@ -98,7 +98,6 @@ export default {
   'netsuite.distributed.sublists': {
     label: 'Sublists to Include',
     type: 'refreshoptions',
-    resourceType: '',
     mode: 'suitescript',
     multiselect: true,
     placeholder: 'Please select Sublists',

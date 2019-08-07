@@ -17,7 +17,7 @@ function DynaSelectOptionsGenerator(props) {
       filterKey
     )
   );
-  const onFetchResource = useCallback(() => {
+  const handleFetchResource = useCallback(() => {
     const resource = (options && options.resourceToFetch) || resourceType;
 
     if (resource && !isLoadingData) {
@@ -40,7 +40,7 @@ function DynaSelectOptionsGenerator(props) {
       <RefreshGenericResource
         resourceToFetch={props.options.resourceToFetch}
         resetValue={props.options.resetValue}
-        onFetchResource={onFetchResource}
+        handleFetchResource={handleFetchResource}
         isLoadingData={isLoadingData}
         fieldOptions={fieldOptions}
         {...props}

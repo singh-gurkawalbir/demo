@@ -39,7 +39,7 @@ function RefreshGenericResource(props) {
     multiselect,
     onFieldChange,
     fieldOptions,
-    onFetchResource,
+    handleFetchResource,
     isLoading,
     classes,
     placeholder,
@@ -71,9 +71,9 @@ function RefreshGenericResource(props) {
   ]);
   useEffect(() => {
     if (!fieldOptions) {
-      onFetchResource();
+      handleFetchResource();
     }
-  }, [fieldOptions, onFetchResource]);
+  }, [fieldOptions, handleFetchResource]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -152,7 +152,7 @@ function RefreshGenericResource(props) {
             {optionMenuItems}
           </Select>
         )}
-        {!isLoading && <RefreshIcon onClick={onFetchResource} />}
+        {!isLoading && <RefreshIcon onClick={handleFetchResource} />}
         {fieldOptions && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
