@@ -23,16 +23,12 @@ function SavedSearch(props) {
     onFieldChange,
     id,
   } = props;
-  const searchTypeOptions = {
-    label: 'Saved Search Type',
-    name: 'searchType',
-    defaultValue: 'public',
-    handleChange: evt => {
-      setSearchType(evt.target.value);
-    },
+  const searchIdOptions = {
+    placeholder: 'Please select a saved search',
+    label: 'Saved searches',
   };
   const searchInternalIdOptions = {
-    label: 'Search Internal ID',
+    label: 'Search internal ID',
     value,
   };
   const handleChange = evt => {
@@ -61,30 +57,23 @@ function SavedSearch(props) {
   return (
     <div>
       <FormControl component="fieldset">
-        <FormLabel component="legend">Search Type</FormLabel>
+        <FormLabel component="legend">Saved search type</FormLabel>
         <RadioGroup
-          aria-label={searchTypeOptions.label}
-          name={searchTypeOptions.name}
-          defaultValue={searchTypeOptions.defaultValue}
+          name="searchType"
+          defaultValue="public"
           value={searchType}
           onChange={handleChange}>
-          <FormControlLabel
-            value="public"
-            control={<Radio />}
-            key="public"
-            label="Public"
-          />
+          <FormControlLabel value="public" control={<Radio />} label="Public" />
           <FormControlLabel
             value="private"
             control={<Radio />}
-            key="private"
             label="Private"
           />
         </RadioGroup>
       </FormControl>
 
       {searchType === 'public' ? (
-        <RefreshOptionsFactory {...props} />
+        <RefreshOptionsFactory {...searchIdOptions} {...props} />
       ) : (
         <DynaText {...searchInternalIdOptions} {...props} />
       )}
@@ -92,10 +81,10 @@ function SavedSearch(props) {
   );
 }
 
-const DynaSavedSearch = props => (
+const DynaNSSavedSearch = props => (
   <FieldWrapper {...props}>
     <SavedSearch />
   </FieldWrapper>
 );
 
-export default DynaSavedSearch;
+export default DynaNSSavedSearch;

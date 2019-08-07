@@ -1,7 +1,7 @@
 export default {
   // record types
   'netsuite.distributed.recordType': {
-    label: 'Record Type',
+    label: 'Record type',
     mode: 'suitescript',
     defaultValue: r =>
       r &&
@@ -16,7 +16,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.restlet.recordType': {
-    label: 'Record Type',
+    label: 'Record type',
     mode: 'suitescript',
     defaultValue: r =>
       r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
@@ -27,7 +27,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.recordType': {
-    label: 'Record Type',
+    label: 'Record type',
     mode: 'webservices',
     defaultValue: r =>
       r &&
@@ -45,7 +45,7 @@ export default {
   // execution context
   'netsuite.distributed.executionContext': {
     type: 'multiselect',
-    label: 'Execution Context',
+    label: 'Execution context',
     options: [
       {
         items: [
@@ -77,7 +77,7 @@ export default {
   // executiontype
   'netsuite.distributed.executionType': {
     type: 'multiselect',
-    label: 'Execution Type',
+    label: 'Execution type',
     options: [
       {
         items: [
@@ -108,7 +108,7 @@ export default {
   },
   // sublists
   'netsuite.distributed.sublists': {
-    label: 'Sublists to Include',
+    label: 'Sublists to include',
     type: 'refreshoptions',
     mode: 'suitescript',
     multiselect: true,
@@ -121,34 +121,18 @@ export default {
       r.netsuite.distributed.sublists,
     connectionId: r => r && r._connectionId,
   },
-  // search type
-  'netsuite.restlet.searchType': {
-    type: 'radiogroup',
-    label: 'Saved Search Type',
-    options: [
-      {
-        items: [
-          { label: 'Public', value: 'public' },
-          { label: 'Private', value: 'private' },
-        ],
-      },
-    ],
-    defaultValue: 'public',
-  },
   // search id
   'netsuite.restlet.searchId': {
-    type: 'savedsearch',
-    label: 'Saved Searches',
+    type: 'nssavedsearch',
     mode: 'suitescript',
     defaultValue: r =>
       r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
     resourceType: 'savedSearches',
     required: true,
-    placeholder: 'Please select a saved search',
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.searchId': {
-    label: 'Saved Searches',
+    label: 'Saved searches',
     type: 'refreshoptions',
     resourceType: 'savedSearches',
     required: true,
@@ -164,19 +148,10 @@ export default {
       r.netsuite.searches[0].savedSearchId,
     connectionId: r => r && r._connectionId,
   },
-  // internal id
-  'netsuite.restlet.searchInternalId': {
-    type: 'text',
-    label: 'Saved Search Internal/Script Id',
-    defaultValue: r =>
-      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
-    required: true,
-    visible: false,
-  },
   // type
   type: {
     type: 'select',
-    label: 'Export Type',
+    label: 'Export type',
     options: [
       {
         items: [
@@ -193,7 +168,7 @@ export default {
   'netsuite.skipGrouping': {
     type: 'checkbox',
     inverse: true,
-    label: 'Group Rows',
+    label: 'Group rows',
     defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
   },
 
