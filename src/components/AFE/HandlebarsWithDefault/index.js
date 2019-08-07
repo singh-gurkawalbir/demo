@@ -25,17 +25,20 @@ export default function HandlebarsWithDefaults(props) {
   } = useSelector(state => selectors.editor(state, editorId));
 
   useSelector(state => {
-    const jsonData = JSON.stringify(
-      merge(
-        {},
-        defaultData ? JSON.parse(defaultData) : {},
-        sampleData ? JSON.parse(sampleData) : {}
-      )
-    );
-    const helperFunctions = selectors.editorHelperFunctions(state);
+    if (!violations) {
+      const jsonData = JSON.stringify(
+        merge(
+          {},
+          defaultData ? JSON.parse(defaultData) : {},
+          sampleData ? JSON.parse(sampleData) : {}
+        )
+      );
+      const helperFunctions = selectors.editorHelperFunctions(state);
 
-    completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
+      completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
+    }
   });
+
   const dispatch = useDispatch();
   const handleChange = (field, value) => {
     dispatch(actions.editor.patch(editorId, { [field]: value }));

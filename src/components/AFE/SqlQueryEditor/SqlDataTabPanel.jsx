@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { func, string } from 'prop-types';
-import classNames from 'classnames';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
@@ -18,28 +17,6 @@ const styles = {
     display: 'none',
   },
 };
-
-function TabPanel(props) {
-  const { index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    />
-  );
-}
-
-function customTabProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 const SqlDataTabPanel = props => {
   const {
     sampleData,
@@ -49,7 +26,7 @@ const SqlDataTabPanel = props => {
     handleChange,
     showDefaultData,
   } = props;
-  const [tabValue, setTabValue] = useState(0);
+  const [tabValue, setTabValue] = useState('sample');
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
@@ -58,46 +35,40 @@ const SqlDataTabPanel = props => {
   return (
     <React.Fragment>
       <Tabs value={tabValue} onChange={handleTabChange}>
-        <Tab label="Sample Data" {...customTabProps(0)} />
-        <Tab
-          className={showDefaultData ? '' : classes.hide}
-          label="Default Data"
-          {...customTabProps(1)}
-        />
+        <Tab label="Sample Data" value="sample" />
+        {showDefaultData && <Tab label="Default Data" value="default" />}
       </Tabs>
       <div className={classes.content}>
-        <TabPanel
-          className={classNames(
-            classes.tabPanel,
-            tabValue === 0 ? '' : classes.hide
-          )}
-          value={tabValue}
-          index={0}>
-          <CodePanel
-            name="sampleData"
-            value={sampleData}
-            mode={dataMode}
-            onChange={data => {
-              handleChange('sampleData', data);
-            }}
-          />
-        </TabPanel>
-        <TabPanel
-          className={classNames(
-            classes.tabPanel,
-            tabValue === 1 || showDefaultData ? '' : classes.hide
-          )}
-          value={tabValue}
-          index={1}>
-          <CodePanel
-            name="defaultData"
-            value={defaultData}
-            mode={dataMode}
-            onChange={data => {
-              handleChange('defaultData', data);
-            }}
-          />
-        </TabPanel>
+        {tabValue === 'sample' && (
+          <Typography
+            component="div"
+            role="tabpanel"
+            className={classes.tabPanel}>
+            <CodePanel
+              name="sampleData"
+              value={sampleData}
+              mode={dataMode}
+              onChange={data => {
+                handleChange('sampleData', data);
+              }}
+            />
+          </Typography>
+        )}
+        {tabValue === 'default' && showDefaultData && (
+          <Typography
+            component="div"
+            role="tabpanel"
+            className={classes.tabPanel}>
+            <CodePanel
+              name="defaultData"
+              value={defaultData}
+              mode={dataMode}
+              onChange={data => {
+                handleChange('defaultData', data);
+              }}
+            />
+          </Typography>
+        )}
       </div>
     </React.Fragment>
   );
