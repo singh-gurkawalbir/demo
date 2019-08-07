@@ -13,4 +13,11 @@ export default {
     '/rest/headers': [{ name: 'x-myobapi-version', value: 'v0' }],
   }),
   fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };
