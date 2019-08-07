@@ -28,7 +28,7 @@ export default {
       helpText:
         'Select either Production or Sandbox based on your requirement.',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('api-stg.') !== -1) {
@@ -64,6 +64,13 @@ export default {
       helpText: 'The Secret Key of your Jobvite account.',
       description:
         'Note: for security reasons this field must always be re-entered.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };
