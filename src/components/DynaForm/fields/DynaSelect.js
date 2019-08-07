@@ -28,9 +28,7 @@ export function MaterialUiSelect(props) {
     name,
     options = [],
     defaultValue = '',
-    defaultItemValue,
-    defaultItemLabel,
-    // placeholder,
+    placeholder,
     // required,
     label,
     onFieldChange,
@@ -67,10 +65,10 @@ export function MaterialUiSelect(props) {
     finalTextValue = value;
   }
 
-  const tempDefaultItemValue = defaultItemValue || 'Please Select';
+  const tempPlaceHolder = placeholder || 'Please Select';
   const defaultItem = (
-    <MenuItem key={tempDefaultItemValue} value={tempDefaultItemValue}>
-      {defaultItemLabel || tempDefaultItemValue}
+    <MenuItem key={tempPlaceHolder} value="">
+      {tempPlaceHolder}
     </MenuItem>
   );
 
@@ -86,13 +84,6 @@ export function MaterialUiSelect(props) {
         displayEmpty
         onChange={evt => {
           const { value: evtValue } = evt.target;
-
-          if (
-            evtValue === tempDefaultItemValue ||
-            evtValue === defaultItemLabel
-          ) {
-            return onFieldChange(id, '');
-          }
 
           onFieldChange(id, evtValue);
         }}
