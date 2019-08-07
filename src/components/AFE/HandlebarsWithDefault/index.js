@@ -4,6 +4,8 @@ import * as selectors from '../../../reducers';
 import * as completers from '../editorSetup/completers';
 import Editor from '../SqlQueryEditor';
 
+const { merge } = require('lodash');
+
 export default function HandlebarsWithDefaults(props) {
   const { editorId, ruleTitle, showDefaultData, resultTitle } = props;
   const {
@@ -16,7 +18,13 @@ export default function HandlebarsWithDefaults(props) {
   } = useSelector(state => {
     const editor = selectors.editor(state, editorId);
     // update directly to the completers
-    const jsonData = editor.data;
+    const jsonData = JSON.stringify(
+      merge(
+        {},
+        editor.defaultData ? JSON.parse(editor.defaultData) : {},
+        editor.sampleData ? JSON.parse(editor.sampleData) : {}
+      )
+    );
     const helperFunctions = selectors.editorHelperFunctions(state);
 
     completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
