@@ -73,10 +73,9 @@ class DynaSelectResource extends React.Component {
         </MenuItem>
       );
     });
-    const tempPlaceHolder = placeholder || 'Please Select';
     const defaultItem = (
-      <MenuItem key={tempPlaceHolder} value="">
-        {tempPlaceHolder}
+      <MenuItem key="__placeholder" value="">
+        {placeholder || 'Please Select'}
       </MenuItem>
     );
 
