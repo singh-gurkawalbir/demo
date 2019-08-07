@@ -218,8 +218,4 @@ export default {
       },
     ],
   },
-  security: {
-    type: 'labeltitle',
-    label: 'Security',
-  },
 };

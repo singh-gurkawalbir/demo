@@ -6,17 +6,13 @@ export default {
     mode: r => r && r.file && r.file.type,
     visibleWhen: [
       {
-        field: 'ftp.type',
+        field: 'file.type',
         is: ['csv', 'xml', 'json', 'xlsx'],
       },
     ],
     // filter: r => ({ type: r.type }),
     // excludeFilter: r => ({ _
     //
-  },
-  'ftp.exportFrom': {
-    type: 'labeltitle',
-    label: 'Where would you like to export data from?',
   },
   's3.region': {
     type: 'select',
@@ -56,7 +52,7 @@ export default {
       },
     ],
   },
-  'ftp.type': {
+  'file.type': {
     type: 'select',
     label: 'File Type',
     options: [
@@ -78,8 +74,18 @@ export default {
     type: 'text',
     visibleWhen: [
       {
-        field: 'ftp.type',
+        field: 'file.type',
         is: ['json'],
+      },
+    ],
+  },
+  'file.csv': {
+    type: 'csvparse',
+    label: 'Configure CSV parse options',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['csv'],
       },
     ],
   },
@@ -88,12 +94,12 @@ export default {
     label: 'File Has Header',
     visibleWhen: [
       {
-        field: 'ftp.type',
+        field: 'file.type',
         is: ['xlsx'],
       },
     ],
   },
-  'ftp.xlsx.keyColumns': {
+  'file.xlsx.keyColumns': {
     type: 'multiselect',
     label: 'Key Columns',
     visibleWhen: [
@@ -108,7 +114,7 @@ export default {
     label: 'Multiple Rows Per Record',
     visibleWhen: [
       {
-        field: 'ftp.type',
+        field: 'file.type',
         is: ['xlsx'],
       },
     ],
@@ -118,16 +124,8 @@ export default {
     type: 'text',
     visibleWhen: [
       {
-        field: 'ftp.type',
-        is: ['filedefinition'],
-      },
-      {
-        field: 'ftp.type',
-        is: ['fixed'],
-      },
-      {
-        field: 'ftp.type',
-        is: ['delimited/edifact'],
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
     ],
   },
@@ -144,7 +142,6 @@ export default {
       },
     ],
   },
-
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave File On Server',
@@ -169,85 +166,8 @@ export default {
     type: 'text',
     visibleWhen: [
       {
-        field: 'ftp.type',
+        field: 'file.type',
         is: ['xml'],
-      },
-    ],
-  },
-  'ftp.csv.columnDelimiter': {
-    type: 'select',
-    label: 'Column Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'Comma', value: ',' },
-          { label: 'Pipe', value: '|' },
-          { label: 'Semicolon', value: ';' },
-          { label: 'Space', value: ' ' },
-          { label: 'Tab', value: '\t' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'ftp.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'ftp.csv.trimSpaces': {
-    type: 'checkbox',
-    label: 'Trim Spaces',
-    visibleWhen: [
-      {
-        field: 'ftp.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'ftp.csv.hasHeaderRow': {
-    type: 'checkbox',
-    label: 'File Has Header',
-    visibleWhen: [
-      {
-        field: 'ftp.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'ftp.csv.rowsToSkip': {
-    type: 'text',
-    label: 'Number Of Rows To Skip',
-    defaultValue: 0,
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'ftp.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'ftp.csv.rowsPerRecord': {
-    type: 'checkbox',
-    label: 'Multiple Rows Per Record',
-    visibleWhen: [
-      {
-        field: 'ftp.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'ftp.csv.keyColumns': {
-    type: 'multiselect',
-    label: 'Key Columns',
-    visibleWhen: [
-      {
-        field: 'ftp.csv.rowsPerRecord',
-        is: [true],
       },
     ],
   },
@@ -275,13 +195,5 @@ export default {
   dataURITemplate: {
     type: 'relativeuri',
     label: 'Data URI Template',
-  },
-  exportData: {
-    type: 'labeltitle',
-    label: 'What would you like to Export?',
-  },
-  'ftp.exportTransformRecords': {
-    label: 'Would you like to transform the records?',
-    type: 'labeltitle',
   },
 };

@@ -1,7 +1,7 @@
 export default {
   fields: [
     { formId: 'common' },
-    { fieldId: 'security' },
+    { fieldId: 'security', type: 'labeltitle', label: 'Security' },
     { fieldId: 'webhook.provider' },
     { fieldId: 'webhook.verify' },
     { fieldId: 'webhook.algorithm' },

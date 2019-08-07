@@ -4,11 +4,13 @@ export default {
     label: 'Collection',
   },
   'mongodb.filter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Filter',
   },
   'mongodb.projection': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Projection',
   },
   pageSize: {
@@ -19,10 +21,6 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
-  },
-  exportData: {
-    type: 'labeltitle',
-    label: 'What would you like to export from MongoDB?',
   },
   'delta.dateField': {
     type: 'text',

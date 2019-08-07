@@ -9,10 +9,6 @@ export default {
       },
     ],
   },
-  exportData: {
-    type: 'labeltitle',
-    label: 'What would you like to Export?',
-  },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',

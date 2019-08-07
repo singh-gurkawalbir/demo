@@ -13,10 +13,6 @@ export default {
       },
     ],
   },
-  exportData: {
-    type: 'labeltitle',
-    label: 'What would you like to Export?',
-  },
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',

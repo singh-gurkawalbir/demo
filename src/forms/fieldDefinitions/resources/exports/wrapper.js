@@ -54,8 +54,4 @@ export default {
     type: 'relativeuri',
     label: 'Data URI Template',
   },
-  exportData: {
-    type: 'labeltitle',
-    label: 'What would you like to Export?',
-  },
 };

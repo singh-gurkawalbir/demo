@@ -1,7 +1,11 @@
 export default {
   fields: [
     { formId: 'common' },
-    { fieldId: 'exportData' },
+    {
+      fieldId: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to Export?',
+    },
     { fieldId: 'mongodb.collection' },
     { fieldId: 'mongodb.filter' },
     { fieldId: 'mongodb.projection' },

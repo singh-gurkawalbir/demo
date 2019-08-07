@@ -1,7 +1,11 @@
 export default {
   fields: [
     { formId: 'common' },
-    { fieldId: 'exportData' },
+    {
+      fieldId: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to Export?',
+    },
     { fieldId: 'http.method' },
     { fieldId: 'http.headers' },
     { fieldId: 'http.relativeURI' },
