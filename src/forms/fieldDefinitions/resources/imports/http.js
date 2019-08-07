@@ -1,161 +1,518 @@
 export default {
+  'http.advanceOption': {
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed translate to multiple records in the import application?',
+    defaultValue: 'N',
+    options: [
+      {
+        items: [
+          { label: 'Yes(Advanced)', value: 'Y' },
+          { label: 'No', value: 'N' },
+        ],
+      },
+    ],
+  },
+  'http.childRecords': {
+    type: 'text',
+    label:
+      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'http.advanceOption',
+        is: ['Y'],
+      },
+    ],
+  },
+  'http.method': {
+    type: 'radiogroup',
+    label: 'Http request Media Type',
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'DELETE', value: 'DELETE' },
+          { label: 'PATCH', value: 'PATCH' },
+          { label: 'Composite', value: 'COMPOSITE' },
+        ],
+      },
+    ],
+  },
+  'http.headers': {
+    type: 'keyvalue',
+    label: 'Configure HTTP Headers',
+  },
   'http.requestMediaType': {
     type: 'select',
     label: 'Http request Media Type',
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
-          { label: 'Csv', value: 'csv' },
-          { label: 'Urlencoded', value: 'urlencoded' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'URL Encoded', value: 'urlencoded' },
         ],
+      },
+    ],
+  },
+  'http.compositeType': {
+    type: 'select',
+    label: 'Composite Type',
+    options: [
+      {
+        items: [
+          {
+            label: 'Create New Data & Update Existing Data',
+            value: 'CREATE_AND_UPDATE',
+          },
+          {
+            label: 'Create New Data & Ignore Existing Data',
+            value: 'CREATE_AND_IGNORE',
+          },
+          {
+            label: 'Update Existing Data & Ignore NEW Data',
+            value: 'UPDATE_AND_IGNORE',
+          },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+    ],
+  },
+  'http.compositeMethod': {
+    type: 'select',
+    label: 'HTTP Method',
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+    ],
+  },
+  'http.relativeUri': {
+    type: 'text',
+    label: 'Relative URI',
+    placeholder: 'Optional',
+  },
+  'http.successPath': {
+    type: 'text',
+    label: 'Success Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+  },
+  'http.successValues': {
+    type: 'text',
+    label: 'Success Values',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+  },
+  'http.responseIdPath': {
+    type: 'text',
+    label: 'Response Id Path',
+    placeholder: 'Optional',
+  },
+  'http.responsePath': {
+    type: 'text',
+    label: 'Response Path',
+  },
+  'http.errorPath': {
+    type: 'text',
+    label: 'Error Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+  },
+  'http.batchSizeLimit': {
+    type: 'text',
+    label: 'Batch Size Limit',
+    defaultValue: 1,
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+  },
+  'http.compositeMethodUpdate': {
+    type: 'select',
+    label: 'HTTP Method',
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE'],
+      },
+    ],
+  },
+  'http.relativeUriUpdate': {
+    type: 'text',
+    label: 'Relative URI',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE'],
+      },
+    ],
+  },
+  'http.responseIdPathUpdate': {
+    type: 'text',
+    label: 'Response Id Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE'],
+      },
+    ],
+  },
+  'http.responsePathUpdate': {
+    type: 'text',
+    label: 'Response Path',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE'],
+      },
+    ],
+  },
+  'http.existingDataId': {
+    type: 'text',
+    label: 'Existing Data Id',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
   'http.successMediaType': {
-    type: 'radiogroup',
-    label: 'Http success Media Type',
+    type: 'select',
+    label: 'Success Media Type',
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
-  },
-  'http.requestType[*]s': {
-    type: 'text',
-    label: 'Http request Type[*]',
-    name: 'undefineds',
-    validWhen: [],
   },
   'http.errorMediaType': {
-    type: 'radiogroup',
-    label: 'Http error Media Type',
+    type: 'select',
+    label: 'Error Media Type',
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
   },
-  'http.relativeURI[*]s': {
-    type: 'text',
-    label: 'Http relative URI[*]',
-    name: 'undefineds',
-    validWhen: [],
+  'http.sampleFile': {
+    type: 'uploadfile',
+    label: 'Sample File (that would be imported)',
+    resourceType: 'connections',
+    mode: r => r && r.file && r.file.type,
   },
-  'http.method[*]s': {
-    type: 'text',
-    label: 'Http method[*]',
-    name: 'undefineds',
-    validWhen: [],
-  },
-  'http.body[*]s': {
-    type: 'text',
-    label: 'Http body[*]',
-    name: 'undefineds',
-    validWhen: [],
-  },
-  'http.endPointBodyLimit': {
-    type: 'text',
-    label: 'Http end Point Body Limit',
-    validWhen: [
+  'http.columnDelimiter': {
+    type: 'select',
+    label: 'Column Delimiter',
+    options: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        items: [
+          { label: 'Comma', value: ',' },
+          { label: 'Pipe', value: '|' },
+          { label: 'Semicolon', value: ';' },
+          { label: 'Space', value: '' },
+          { label: 'Tab', value: '\t' },
+        ],
       },
     ],
   },
-  'http.headers[*].name': {
-    type: 'text',
-    label: 'Http headers[*] name',
+  'http.includeHeader': {
+    type: 'checkbox',
+    label: 'Include Header',
   },
-  'http.response.resourcePath[*]s': {
-    type: 'text',
-    label: 'Http response resource Path[*]',
-    name: 'undefineds',
-    validWhen: [],
+  'http.customHeaderRows': {
+    type: 'textarea',
+    label: 'Custom Header Rows',
   },
-  'http.response.resourceIdPath[*]s': {
-    type: 'text',
-    label: 'Http response resource Id Path[*]',
-    name: 'undefineds',
-    validWhen: [],
-  },
-  'http.response.successPath': {
-    type: 'text',
-    label: 'Http response success Path',
-  },
-  'http.response.successValues[*]s': {
-    type: 'text',
-    label: 'Http response success Values[*]',
-    name: 'undefineds',
-    validWhen: [],
-  },
-  'http.response.errorPath': {
-    type: 'text',
-    label: 'Http response error Path',
-  },
-  'http._asyncHelperId': {
-    type: 'text',
-    label: 'Http _async Helper Id',
-  },
-  'http.batchSize': {
-    type: 'text',
-    label: 'Http batch Size',
-    validWhen: [
+  'http.advanceOptionMapping': {
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed translate to multiple records in the import application?',
+    defaultValue: 'N',
+    options: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        items: [
+          { label: 'Yes(Advanced)', value: 'Y' },
+          { label: 'No', value: 'N' },
+        ],
       },
     ],
   },
-  'http.ignoreLookupName': {
+  'http.childRecordsMapping': {
     type: 'text',
-    label: 'Http ignore Lookup Name',
+    label:
+      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'http.advanceOption',
+        is: ['Y'],
+      },
+    ],
   },
-  'http.ignoreExtract': {
-    type: 'text',
-    label: 'Http ignore Extract',
+  'http.rowDelimiter': {
+    type: 'select',
+    label: 'Row Delimiter',
+    options: [
+      {
+        items: [
+          { label: 'LF(\\n)', value: '\n' },
+          { label: 'CR(\\r)', value: '\r' },
+          { label: 'CR(\\r) LF(\\n) ', value: '\r\n' },
+        ],
+      },
+    ],
   },
-  'http.lookups[*].name': {
-    type: 'text',
-    label: 'Http lookups[*] name',
+  'http.wrapWithQuotes': {
+    type: 'checkbox',
+    label: 'Wrap with quotes',
   },
-  'http.lookups[*].map': {
-    type: 'text',
-    label: 'Http lookups[*] map',
+  'http.replaceTabWithSpace': {
+    type: 'checkbox',
+    label: 'Replace tab with space',
   },
-  'http.lookups[*].default': {
-    type: 'text',
-    label: 'Http lookups[*] default',
-  },
-  'http.lookups[*].relativeURI': {
-    type: 'text',
-    label: 'Http lookups[*] relative URI',
-  },
-  'http.lookups[*].method': {
-    type: 'text',
-    label: 'Http lookups[*] method',
-  },
-  'http.lookups[*].body': {
-    type: 'text',
-    label: 'Http lookups[*] body',
-  },
-  'http.lookups[*].extract': {
-    type: 'text',
-    label: 'Http lookups[*] extract',
-  },
-  'http.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'Http lookups[*] allow Failures',
+  'http.replaceNewLineWithSpace': {
+    type: 'checkbox',
+    label: 'Replace new line with space',
   },
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
-    label: 'Http ignore Empty Nodes',
-    defaultValue: false,
+    label: 'Ignore Empty Nodes',
+  },
+  'http.concurrencyIdLockTemplate': {
+    type: 'textarea',
+    label: 'Concurrency Id Lock Template',
+  },
+  'http.dataUriTemplate': {
+    type: 'text',
+    label: 'Data URI Template',
+    placeholder: 'Optional',
+  },
+  'http.configureAsyncHelper': {
+    type: 'checkbox',
+    label: 'Configure Async Helper',
+  },
+  hookType: {
+    type: 'radiogroup',
+    label: 'Hook Type',
+    defaultValue: 'script',
+    options: [
+      {
+        items: [
+          { label: 'Script', value: 'script' },
+          { label: 'Stack', value: 'stack' },
+        ],
+      },
+    ],
+  },
+  'hooks.preMap.function': {
+    type: 'text',
+    label: 'Pre Map',
+    placeholder: 'Function Name',
+    requiredWhen: [
+      {
+        field: 'hooks.preMap._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.preMap._stackId',
+        isNot: [''],
+      },
+    ],
+  },
+  'hooks.preMap._scriptId': {
+    type: 'selectresource',
+    placeholder: 'Please select a script',
+    resourceType: 'scripts',
+    label: 'Pre Map Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+  },
+  'hooks.preMap._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Pre Map Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
+  },
+  'hooks.postMap.function': {
+    type: 'text',
+    label: 'Post Map',
+    placeholder: 'Function Name',
+    requiredWhen: [
+      {
+        field: 'hooks.postMap._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postMap._stackId',
+        isNot: [''],
+      },
+    ],
+  },
+  'hooks.postMap._scriptId': {
+    type: 'selectresource',
+    placeholder: 'Please select a script',
+    resourceType: 'scripts',
+    label: 'Post Map Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+  },
+  'hooks.postMap._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Post Map Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
+  },
+  'hooks.postSubmit.function': {
+    type: 'text',
+    label: 'Post Submit',
+    placeholder: 'Function Name',
+    requiredWhen: [
+      {
+        field: 'hooks.postSubmit._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postSubmit._stackId',
+        isNot: [''],
+      },
+    ],
+  },
+  'hooks.postSubmit._scriptId': {
+    type: 'selectresource',
+    resourceType: 'scripts',
+    placeholder: 'Please select a script',
+    label: 'Post Submit Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+  },
+  'hooks.postSubmit._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Post Submit Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
+  },
+  'hooks.postAggregate.function': {
+    type: 'text',
+    label: 'Post Aggregate',
+    placeholder: 'Function Name',
+    requiredWhen: [
+      {
+        field: 'hooks.postAggregate._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postAggregate._stackId',
+        isNot: [''],
+      },
+    ],
+  },
+  'hooks.postAggregate._scriptId': {
+    type: 'selectresource',
+    resourceType: 'scripts',
+    placeholder: 'Please select a script',
+    label: 'Post Aggregate Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+  },
+  'hooks.postAggregate._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Post Aggregate Stack Id',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
 };
