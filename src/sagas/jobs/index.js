@@ -124,9 +124,7 @@ export function* requestJobCollection({
       opts,
     });
 
-    yield put(
-      actions.job.receivedCollection({ collection, integrationId, flowId })
-    );
+    yield put(actions.job.receivedCollection({ collection }));
     yield put(
       actions.job.getInProgressJobStatus({
         integrationId,

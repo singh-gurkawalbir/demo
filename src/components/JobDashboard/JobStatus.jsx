@@ -23,16 +23,16 @@ export default function JobStatus({ job }) {
     if (
       job.uiStatus !== JOB_STATUS.RUNNING ||
       !job.doneExporting ||
-      !job.__percentComplete
+      !job.percentComplete
     ) {
       return JOB_UI_STATUS[job.uiStatus];
     }
 
-    if (job.__percentComplete === 100) {
+    if (job.percentComplete === 100) {
       return JOB_UI_STATUS.COMPLETING;
     }
 
-    return `${JOB_UI_STATUS[job.uiStatus]} ${job.__percentComplete} %`;
+    return `${JOB_UI_STATUS[job.uiStatus]} ${job.percentComplete} %`;
   }
 
   if (job.type === JOB_TYPES.EXPORT) {
@@ -40,14 +40,14 @@ export default function JobStatus({ job }) {
   }
 
   if (job.type === JOB_TYPES.IMPORT) {
-    if (job.uiStatus !== JOB_STATUS.RUNNING || !job.__percentComplete) {
+    if (job.uiStatus !== JOB_STATUS.RUNNING || !job.percentComplete) {
       return JOB_UI_STATUS[job.uiStatus];
     }
 
-    if (job.__percentComplete === 100) {
+    if (job.percentComplete === 100) {
       return JOB_UI_STATUS.COMPLETING;
     }
 
-    return `${JOB_UI_STATUS[job.uiStatus]} ${job.__percentComplete} %`;
+    return `${JOB_UI_STATUS[job.uiStatus]} ${job.percentComplete} %`;
   }
 }

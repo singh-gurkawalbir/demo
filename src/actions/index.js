@@ -305,11 +305,9 @@ const job = {
       flowId,
       filters,
     }),
-  receivedCollection: ({ collection, integrationId, flowId }) =>
+  receivedCollection: ({ collection }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
-      integrationId,
-      flowId,
     }),
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),

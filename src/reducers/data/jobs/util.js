@@ -1,6 +1,22 @@
 import moment from 'moment';
 import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
 
+export const DEFAULT_STATE = Object.freeze({
+  flowJobs: [],
+  bulkRetryJobs: [],
+  errors: [],
+  retryObjects: {},
+});
+
+export const DEFAULT_JOB_PROPS = Object.freeze({
+  numError: 0,
+  numResolved: 0,
+  numSuccess: 0,
+  numIgnore: 0,
+  numPagesGenerated: 0,
+  numPagesProcessed: 0,
+});
+
 export function getFlowJobIdsThatArePartOfABulkRetryJob(
   flowJobs,
   bulkRetryJob
@@ -64,4 +80,18 @@ export function getJobDuration(job) {
 
     return duration;
   }
+
+  return undefined;
+}
+
+export function parseJobs(jobs) {
+  const flowJobs = jobs
+    .filter(job => job.type === JOB_TYPES.FLOW)
+    .map(job => ({
+      ...DEFAULT_JOB_PROPS,
+      ...job,
+    }));
+  const bulkRetryJobs = jobs.filter(job => job.type === JOB_TYPES.BULK_RETRY);
+
+  return { flowJobs, bulkRetryJobs };
 }

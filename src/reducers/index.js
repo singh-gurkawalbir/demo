@@ -1041,7 +1041,7 @@ export function flowJobList(state, integrationId, flowId) {
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {
-      additionalProps.__percentComplete = Math.floor(
+      additionalProps.percentComplete = Math.floor(
         (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
             ((resourceMap.flows[job._flowId] &&
@@ -1049,7 +1049,7 @@ export function flowJobList(state, integrationId, flowId) {
               1))
       );
     } else {
-      additionalProps.__percentComplete = 0;
+      additionalProps.percentComplete = 0;
     }
 
     return { ...job, ...additionalProps };
