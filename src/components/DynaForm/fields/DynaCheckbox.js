@@ -13,6 +13,7 @@ class MaterialCheckbox extends React.Component {
       onFieldChange,
       value = '',
       label,
+      inverse,
     } = this.props;
 
     return (
@@ -24,8 +25,13 @@ class MaterialCheckbox extends React.Component {
             disabled={disabled}
             // isInvalid={!isValid}
             value={typeof value === 'string' ? value : value.toString()}
-            checked={value}
-            onChange={evt => onFieldChange(id, evt.target.checked)}
+            checked={inverse ? !value : value}
+            onChange={evt =>
+              onFieldChange(
+                id,
+                inverse ? !evt.target.checked : evt.target.checked
+              )
+            }
           />
         }
         label={label}

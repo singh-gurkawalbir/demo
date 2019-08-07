@@ -20,6 +20,7 @@ import DynaSelectScopes from './DynaSelectScopes';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
+import DynaNSSavedSearch from './DynaNSSavedSearch';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -45,4 +46,5 @@ export default {
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
+  nssavedsearch: DynaNSSavedSearch,
 };

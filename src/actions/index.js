@@ -170,19 +170,27 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const metadata = {
-  request: (connectionId, metadataType, mode) =>
+  request: (connectionId, metadataType, mode, filterKey) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
       mode,
+      filterKey,
     }),
   netsuite: {
-    receivedCollection: (metadata, metadataType, connectionId, mode) =>
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey
+    ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
         metadataType,
         connectionId,
         mode,
+        filterKey,
       }),
   },
 };
