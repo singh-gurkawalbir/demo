@@ -14,17 +14,17 @@ export default {
   }),
   validate: editor => {
     const getDataError = () => {
-      let toReturn = null;
+      let errMsg = null;
 
       if (editor.sampleData) {
-        toReturn = util.validateJsonString(editor.sampleData);
+        errMsg = util.validateJsonString(editor.sampleData);
       }
 
-      if (!toReturn && editor.defaultData) {
-        toReturn = util.validateJsonString(editor.defaultData);
+      if (!errMsg && editor.defaultData) {
+        errMsg = util.validateJsonString(editor.defaultData);
       }
 
-      return toReturn;
+      return errMsg;
     };
 
     return {

@@ -170,9 +170,9 @@ export default class Editors extends Component {
             onClose={() => {
               this.handleEditorChange(null);
             }}
-            // eslint-disable-next-line no-unused-vars
             onChange={value => {
-              // console.log(value);
+              // eslint-disable-next-line
+              console.log(value);
             }}
           />
         );
