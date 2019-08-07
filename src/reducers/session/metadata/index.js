@@ -127,6 +127,24 @@ export default (
       return { ...state, ...{ netsuite: newState } };
     }
 
+    case actionTypes.METADATA.CLEAR_NETSUITE: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+      let key = metadataType;
+
+      if (filterKey) {
+        key = `${key}-${filterKey}`;
+      }
+
+      // Clears the data from store if exists
+      if (specificMode[connectionId] && specificMode[connectionId][key]) {
+        delete specificMode[connectionId][key];
+      }
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
     default:
       return state;
   }

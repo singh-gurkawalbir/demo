@@ -40,6 +40,7 @@ function RefreshGenericResource(props) {
     onFieldChange,
     fieldOptions,
     handleFetchResource,
+    handleRefreshResource,
     isLoading,
     classes,
     placeholder,
@@ -152,7 +153,7 @@ function RefreshGenericResource(props) {
             {optionMenuItems}
           </Select>
         )}
-        {!isLoading && <RefreshIcon onClick={handleFetchResource} />}
+        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
         {fieldOptions && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>

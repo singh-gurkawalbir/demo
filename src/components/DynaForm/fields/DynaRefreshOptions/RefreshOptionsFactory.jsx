@@ -34,6 +34,20 @@ function DynaSelectOptionsGenerator(props) {
     options,
     resourceType,
   ]);
+  const handleRefreshResource = () => {
+    const resource = (options && options.resourceToFetch) || resourceType;
+
+    if (resource) {
+      dispatch(
+        actions.metadata.netsuite.clearCollection(
+          connectionId,
+          resource,
+          mode,
+          filterKey
+        )
+      );
+    }
+  };
 
   return (
     <FieldWrapper {...props}>
@@ -41,6 +55,7 @@ function DynaSelectOptionsGenerator(props) {
         resourceToFetch={props.options.resourceToFetch}
         resetValue={props.options.resetValue}
         handleFetchResource={handleFetchResource}
+        handleRefreshResource={handleRefreshResource}
         isLoadingData={isLoadingData}
         fieldOptions={fieldOptions}
         {...props}
