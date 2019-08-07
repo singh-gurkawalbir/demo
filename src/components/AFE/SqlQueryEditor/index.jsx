@@ -7,29 +7,9 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
 import SqlDataTabPanel from './SqlDataTabPanel';
+import layouts from '../layout/defaultDialogLayout';
 
-const styles = () => ({
-  compactTemplate: {
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr 0fr',
-    gridTemplateAreas: '"rule data" "rule result" "error error"',
-  },
-  compact2Template: {
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr 0fr',
-    gridTemplateAreas: '"rule data" "result data" "error error"',
-  },
-  rowTemplate: {
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: '1fr 1ft 1fr 0fr',
-    gridTemplateAreas: '"rule" "data" "result" "error"',
-  },
-  columnTemplate: {
-    gridTemplateColumns: '1fr 1fr 1fr',
-    gridTemplateRows: '4fr 0fr',
-    gridTemplateAreas: '"rule data result" "error error error"',
-  },
-});
+const styles = layouts;
 const Editor = props => {
   const {
     handleInit,
