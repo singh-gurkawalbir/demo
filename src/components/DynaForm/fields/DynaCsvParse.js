@@ -47,7 +47,7 @@ class DynaCsvParse extends React.Component {
 
   render() {
     const { showEditor } = this.state;
-    const { classes, id, value, label, sampleData } = this.props;
+    const { classes, id, value, label, sampleData = '' } = this.props;
 
     return (
       <Fragment>
