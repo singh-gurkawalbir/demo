@@ -349,10 +349,10 @@ export default {
     type: 'refreshoptions',
     mode: 'suitescript',
     filterKey: 'dateField',
-    defaultValue: r => r.delta && r.delta.dateField,
+    defaultValue: r => r && r.delta && r.delta.dateField,
     required: true,
     placeholder: 'Please select a date field',
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   'delta.dateFormat': {
     type: 'text',
@@ -365,7 +365,7 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    defaultValue: r => r.delta && r.delta.lagOffset,
+    defaultValue: r => r && r.delta && r.delta.lagOffset,
     required: true,
   },
   'delta.endDateField': {
@@ -378,11 +378,11 @@ export default {
     label: 'Boolean Field',
     type: 'refreshoptions',
     placeholder: 'Please select a Boolean field',
-    defaultValue: r => r.once && r.once.booleanField,
+    defaultValue: r => r && r.once && r.once.booleanField,
     mode: 'suitescript',
     filterKey: 'booleanField',
     required: true,
-    connectionId: r => r._connectionId,
+    connectionId: r => r && r._connectionId,
   },
   // #endregion once
   // #region valueDelta
