@@ -51,8 +51,8 @@ const styles = theme => ({
 
 function AgentList(props) {
   const { classes } = props;
-  const [showReferences, setshowReferences] = useState(false);
-  const [agentReferences, setagentReferences] = useState(null);
+  const [showReferences, setShowReferences] = useState(false);
+  const [agentReferences, setAgentReferences] = useState(null);
   const agents = useSelector(state =>
     selectors.resourceList(state, {
       type: 'agents',
@@ -60,12 +60,12 @@ function AgentList(props) {
   );
 
   function viewReferencesClickHandler(references) {
-    setshowReferences(true);
-    setagentReferences(references);
+    setShowReferences(true);
+    setAgentReferences(references);
   }
 
   function handleClose() {
-    setshowReferences(false);
+    setShowReferences(false);
   }
 
   return (
@@ -83,7 +83,11 @@ function AgentList(props) {
                 <List>
                   {agentReferences[key].map(val => (
                     <ListItem key={val.name}>
-                      <ListItemText primary={val.name} />
+                      <Link
+                        to={getRoutePath(`${key}`)}
+                        className={classes.createAgentButton}>
+                        <ListItemText primary={val.name} />
+                      </Link>
                       <Divider />
                     </ListItem>
                   ))}

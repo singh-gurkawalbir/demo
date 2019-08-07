@@ -134,8 +134,6 @@ export function* fetchResourceReferences({ resourceType, id }) {
         resourceReferences
       )
     );
-
-    return resourceReferences;
   } catch (error) {
     return undefined;
   }

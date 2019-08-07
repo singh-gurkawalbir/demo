@@ -240,12 +240,8 @@ export function resourceReferences(state, resourceType, id) {
     return {};
   }
 
-  const resourceIndex = state[resourceType].findIndex(r => r._id === id);
+  const matchingResource = state[resourceType].find(r => r._id === id);
 
-  if (resourceIndex > -1) {
-    return state[resourceType][resourceIndex].references;
-  }
-
-  return {};
+  return matchingResource && matchingResource.references;
 }
 // #endregion

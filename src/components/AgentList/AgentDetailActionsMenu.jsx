@@ -20,16 +20,15 @@ export default function AgentDetailActionsMenu(props) {
   }
 
   function handleActionClick(action) {
-    handleMenuClose();
-    onActionClick(action);
+    return () => {
+      handleMenuClose();
+      onActionClick(action);
+    };
   }
 
   return (
     <Fragment>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}>
+      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
         <MenuItem
           component={Link}
           to={getRoutePath(`agents/edit/${agent._id}`)}>
@@ -37,20 +36,12 @@ export default function AgentDetailActionsMenu(props) {
         </MenuItem>
 
         <Divider />
-        <MenuItem
-          onClick={() => {
-            handleActionClick('viewReferences');
-          }}>
+        <MenuItem onClick={handleActionClick('viewReferences')}>
           View References
         </MenuItem>
         <Divider />
 
-        <MenuItem
-          onClick={() => {
-            handleActionClick('delete');
-          }}>
-          Delete Agent
-        </MenuItem>
+        <MenuItem onClick={handleActionClick('delete')}>Delete Agent</MenuItem>
       </Menu>
       <IconButton onClick={handleMenuClick}>
         <MoreVertIcon />
