@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 const styles = theme => ({
   root: {
     padding: '12px',
-    minWidth: '120px',
+    minWidth: '200px',
     maxWidth: '270px',
     border: '1px solid',
     borderColor: theme.palette.background.arrowAfter,
@@ -19,8 +19,12 @@ const styles = theme => ({
     color: theme.palette.text.title,
   },
   content: {
-    lineHeight: 'inherit',
     paddingBottom: '8px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+    color: theme.palette.text.primary,
+    fontSize: '14px',
+    lineHeight: '22px',
   },
   action: {
     borderTop: '1px solid',
