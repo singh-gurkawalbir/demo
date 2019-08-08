@@ -172,13 +172,6 @@ const metadata = {
         mode,
         filterKey,
       }),
-    clearCollection: (connectionId, metadataType, mode, filterKey) =>
-      action(actionTypes.METADATA.CLEAR_NETSUITE, {
-        connectionId,
-        metadataType,
-        mode,
-        filterKey,
-      }),
   },
 };
 const ashares = {

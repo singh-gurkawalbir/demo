@@ -8,7 +8,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 function DynaSelectOptionsGenerator(props) {
   const { connectionId, resourceType, mode, options, filterKey } = props;
   const dispatch = useDispatch();
-  const { isLoadingData, options: fieldOptions } = useSelector(state =>
+  const fieldOptions = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -17,37 +17,27 @@ function DynaSelectOptionsGenerator(props) {
       filterKey
     )
   );
-  const handleFetchResource = useCallback(() => {
-    const resource = (options && options.resourceToFetch) || resourceType;
+  const handleFetchResource = useCallback(
+    ({ onload }) => {
+      const resource = (options && options.resourceToFetch) || resourceType;
 
-    if (resource && !isLoadingData) {
-      dispatch(
-        actions.metadata.request(connectionId, resource, mode, filterKey)
-      );
-    }
-  }, [
-    connectionId,
-    dispatch,
-    filterKey,
-    isLoadingData,
-    mode,
-    options,
-    resourceType,
-  ]);
-  const handleRefreshResource = () => {
-    const resource = (options && options.resourceToFetch) || resourceType;
-
-    if (resource) {
-      dispatch(
-        actions.metadata.netsuite.clearCollection(
-          connectionId,
-          resource,
-          mode,
-          filterKey
-        )
-      );
-    }
-  };
+      // Dispatches request action onload / onRefresh
+      if (resource && (!onload || (onload && !fieldOptions))) {
+        dispatch(
+          actions.metadata.request(connectionId, resource, mode, filterKey)
+        );
+      }
+    },
+    [
+      connectionId,
+      dispatch,
+      fieldOptions,
+      filterKey,
+      mode,
+      options,
+      resourceType,
+    ]
+  );
 
   return (
     <FieldWrapper {...props}>
@@ -55,9 +45,8 @@ function DynaSelectOptionsGenerator(props) {
         resourceToFetch={props.options.resourceToFetch}
         resetValue={props.options.resetValue}
         handleFetchResource={handleFetchResource}
-        handleRefreshResource={handleRefreshResource}
-        isLoadingData={isLoadingData}
-        fieldOptions={fieldOptions}
+        fieldStatus={fieldOptions && fieldOptions.status}
+        fieldData={fieldOptions && fieldOptions.data}
         {...props}
       />
     </FieldWrapper>

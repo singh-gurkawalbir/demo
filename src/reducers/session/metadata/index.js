@@ -98,6 +98,34 @@ export default (
   let newState;
 
   switch (type) {
+    case actionTypes.METADATA.REQUEST: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+      let key = metadataType;
+
+      if (filterKey) {
+        key = `${key}-${filterKey}`;
+      }
+
+      // Updates Object with status as 'requested' incase of Refresh Request
+      if (
+        specificMode[connectionId] &&
+        specificMode[connectionId][key] &&
+        specificMode[connectionId][key].status
+      ) {
+        specificMode[connectionId][key].status = 'requested';
+      } else {
+        // Creates Object with status as 'requested' incase of New Request
+        specificMode[connectionId] = {
+          ...specificMode[connectionId],
+          [key]: { status: 'requested' },
+        };
+      }
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
     // This is quiet a deep object...ensuring i am creating
     // new instances all the way to the children of the object.
     // This is to ensure that a react component listening
@@ -121,26 +149,8 @@ export default (
 
       specificMode[connectionId] = {
         ...specificMode[connectionId],
-        [key]: options,
+        [key]: { status: 'received', data: options },
       };
-
-      return { ...state, ...{ netsuite: newState } };
-    }
-
-    case actionTypes.METADATA.CLEAR_NETSUITE: {
-      newState = { ...state.netsuite };
-      newState[mode] = { ...state.netsuite[mode] };
-      const specificMode = newState[mode];
-      let key = metadataType;
-
-      if (filterKey) {
-        key = `${key}-${filterKey}`;
-      }
-
-      // Clears the data from store if exists
-      if (specificMode[connectionId] && specificMode[connectionId][key]) {
-        delete specificMode[connectionId][key];
-      }
 
       return { ...state, ...{ netsuite: newState } };
     }

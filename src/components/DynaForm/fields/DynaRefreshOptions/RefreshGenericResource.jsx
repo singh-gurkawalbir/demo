@@ -38,14 +38,14 @@ function RefreshGenericResource(props) {
     resetValue,
     multiselect,
     onFieldChange,
-    fieldOptions,
+    fieldData,
+    fieldStatus,
     handleFetchResource,
-    handleRefreshResource,
-    isLoading,
     classes,
     placeholder,
   } = props;
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
+  const isLoading = !fieldStatus || fieldStatus === 'requested';
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
@@ -71,10 +71,10 @@ function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldOptions) {
-      handleFetchResource();
+    if (!fieldData) {
+      handleFetchResource({ onload: true });
     }
-  }, [fieldOptions, handleFetchResource]);
+  }, [fieldData, handleFetchResource]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -83,8 +83,9 @@ function RefreshGenericResource(props) {
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
 
-  if (!fieldOptions) return <Spinner />;
-  let optionMenuItems = fieldOptions.map(options => {
+  if (!fieldData) return <Spinner />;
+
+  let optionMenuItems = fieldData.map(options => {
     const { label, value } = options;
 
     return (
@@ -99,7 +100,7 @@ function RefreshGenericResource(props) {
     </MenuItem>
   );
   const createChip = value => {
-    const fieldOption = fieldOptions.find(option => option.value === value);
+    const fieldOption = fieldData.find(option => option.value === value);
 
     return fieldOption ? (
       <Chip
@@ -153,8 +154,8 @@ function RefreshGenericResource(props) {
             {optionMenuItems}
           </Select>
         )}
-        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
-        {fieldOptions && isLoading && <Spinner />}
+        {!isLoading && <RefreshIcon onClick={handleFetchResource} />}
+        {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
     </div>

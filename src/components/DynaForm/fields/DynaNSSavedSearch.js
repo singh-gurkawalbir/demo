@@ -37,7 +37,7 @@ function SavedSearch(props) {
     setSearchType(evt.target.value);
   };
 
-  const { options } = useSelector(state =>
+  const options = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -47,8 +47,10 @@ function SavedSearch(props) {
   );
 
   useEffect(() => {
-    if (options) {
-      const savedSearch = options.find(option => option.value === defaultValue);
+    if (options && options.data) {
+      const savedSearch = options.data.find(
+        option => option.value === defaultValue
+      );
 
       setSearchType(savedSearch ? 'public' : 'private');
     }
