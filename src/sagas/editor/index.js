@@ -39,7 +39,14 @@ export function* evaluateProcessor({ id }) {
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {
-    return yield put(actions.editor.evaluateFailure(id, e.message));
+    try {
+      const errJSON = JSON.parse(e.message);
+
+      return yield put(actions.editor.evaluateFailure(id, errJSON));
+    } catch (ex) {
+      // cases where response is not an object
+      return yield put(actions.editor.evaluateFailure(id, e.message));
+    }
   }
 }
 
