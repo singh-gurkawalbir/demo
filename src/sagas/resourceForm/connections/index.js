@@ -39,7 +39,6 @@ export function* netsuiteUserRoles({ connectionId, values }) {
 
   if (!values) {
     // retrieving existing userRoles for a connection
-
     reqPayload = { _connectionId: connectionId };
   } else {
     // retrieving userRoles for a new connection
@@ -57,18 +56,32 @@ export function* netsuiteUserRoles({ connectionId, values }) {
     const respSuccess =
       resp &&
       Object.keys(resp).reduce(
-        (acc, env) => acc && resp[env] && resp[env].success,
-        true
+        (acc, env) => acc || (resp[env] && resp[env].success),
+        false
       );
 
     if (!respSuccess)
       yield put(
         actions.resource.connections.netsuite.requestUserRolesFailed(
           connectionId,
-          resp.production.error.message
+          'Invalid netsuite credentials provided'
         )
       );
-    else
+    else if (values) {
+      // for a new connection we fetch userRoles
+      // remove non success user environments
+      const successOnlyEnvs = Object.keys(resp)
+        .filter(env => resp[env].success)
+        .map(env => ({ [env]: resp[env] }))
+        .reduce((acc, env) => ({ ...acc, ...env }), {});
+
+      yield put(
+        actions.resource.connections.netsuite.receivedUserRoles(
+          connectionId,
+          successOnlyEnvs
+        )
+      );
+    } else
       yield put(
         actions.resource.connections.netsuite.receivedUserRoles(
           connectionId,

@@ -9,6 +9,7 @@ export default (state = {}, action) => {
     case actionTypes.NETSUITE_USER_ROLES.CLEAR:
       newState[connectionId] = { ...newState[connectionId] };
       delete newState[connectionId].message;
+      delete newState[connectionId].status;
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.REQUEST:
@@ -19,12 +20,17 @@ export default (state = {}, action) => {
       newState[connectionId] = {
         ...newState[connectionId],
         userRoles: deepClone(userRoles),
+        status: 'success',
       };
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.FAILED:
       if (!newState[connectionId]) newState[connectionId] = {};
-      newState[connectionId] = { ...newState[connectionId], message };
+      newState[connectionId] = {
+        ...newState[connectionId],
+        message,
+        status: 'failed',
+      };
 
       return newState;
 

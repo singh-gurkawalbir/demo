@@ -39,7 +39,7 @@ const NetsuiteValidateButton = props => {
   const isValidatingNetsuiteUserRoles = useSelector(state =>
     selectors.isValidatingNetsuiteUserRoles(state)
   );
-  const { message } = netsuiteUserRolesState || {};
+  const { message, status } = netsuiteUserRolesState || {};
   const matchingActionField = fields.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -53,25 +53,33 @@ const NetsuiteValidateButton = props => {
   }, [dispatch, fieldsIsVisible, resourceId]);
 
   useEffect(() => {
-    if (message) {
-      enquesnackbar({ message, variant: 'error' });
-
-      dispatch(
-        actions.resource.connections.netsuite.clearUserRoles(resourceId)
-      );
-
-      if (matchingActionField) {
-        onFieldChange(id, 'true');
+    if (fieldsIsVisible) {
+      if (status === 'success') {
+        // enable save button
+        onFieldChange(id, 'false');
+        dispatch(
+          actions.resource.connections.netsuite.clearUserRoles(resourceId)
+        );
+      } else if (status === 'failed') {
+        if (message) {
+          enquesnackbar({ message, variant: 'error' });
+          // disable save button
+          onFieldChange(id, 'true');
+          dispatch(
+            actions.resource.connections.netsuite.clearUserRoles(resourceId)
+          );
+        }
       }
     }
   }, [
     dispatch,
     enquesnackbar,
-    id,
-    matchingActionField,
     message,
-    onFieldChange,
+    status,
     resourceId,
+    onFieldChange,
+    id,
+    fieldsIsVisible,
   ]);
 
   useEffect(() => {
@@ -102,7 +110,6 @@ const NetsuiteValidateButton = props => {
       className={classes.actionButton}
       disabled={disabled || isValidatingNetsuiteUserRoles}
       onClick={() => {
-        onFieldChange(id, 'false');
         handleValidate(value);
       }}>
       {isValidatingNetsuiteUserRoles ? 'Validating' : 'Validate'}
