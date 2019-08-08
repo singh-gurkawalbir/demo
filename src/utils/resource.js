@@ -77,6 +77,11 @@ export const adaptorTypeMap = {
   HTTPImport: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
+  S3Export: 's3',
+  RDBMSExport: 'rdbms',
+  MongodbExport: 'mongodb',
+  WrapperExport: 'wrapper',
+  AS2Export: 'as2',
 };
 
 // This method is used for only import/export/connection. Im not sure
@@ -91,7 +96,10 @@ export function getResourceSubType(resource) {
   // we should have an adaptorType... if not, we cant proceed.
   if (!adaptorType && !type) return {};
 
-  return { type: adaptorTypeMap[adaptorType] || type, assistant };
+  return {
+    type: adaptorTypeMap[adaptorType] || type,
+    assistant,
+  };
 }
 
 // fn to consolidate this simple expression in case we ever
