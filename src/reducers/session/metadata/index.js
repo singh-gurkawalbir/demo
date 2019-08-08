@@ -102,11 +102,22 @@ export default (
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
-      let key = metadataType;
+      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
-      if (filterKey) {
-        key = `${key}-${filterKey}`;
-      }
+      // Creates Object with status as 'requested' incase of New Request
+      specificMode[connectionId] = {
+        ...specificMode[connectionId],
+        [key]: { status: 'requested' },
+      };
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
+    case actionTypes.METADATA.REFRESH: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
       // Updates Object with status as 'requested' incase of Refresh Request
       if (
@@ -114,13 +125,7 @@ export default (
         specificMode[connectionId][key] &&
         specificMode[connectionId][key].status
       ) {
-        specificMode[connectionId][key].status = 'requested';
-      } else {
-        // Creates Object with status as 'requested' incase of New Request
-        specificMode[connectionId] = {
-          ...specificMode[connectionId],
-          [key]: { status: 'requested' },
-        };
+        specificMode[connectionId][key].status = 'refreshed';
       }
 
       return { ...state, ...{ netsuite: newState } };
@@ -141,11 +146,7 @@ export default (
         mode,
         filterKey
       );
-      let key = metadataType;
-
-      if (filterKey) {
-        key = `${key}-${filterKey}`;
-      }
+      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
       specificMode[connectionId] = {
         ...specificMode[connectionId],

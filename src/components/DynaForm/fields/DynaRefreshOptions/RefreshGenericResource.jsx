@@ -41,11 +41,14 @@ function RefreshGenericResource(props) {
     fieldData,
     fieldStatus,
     handleFetchResource,
+    handleRefreshResource,
     classes,
     placeholder,
   } = props;
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
-  const isLoading = !fieldStatus || fieldStatus === 'requested';
+  // component is in loading state in both request and refresh cases
+  const isLoading =
+    !fieldStatus || fieldStatus === 'requested' || fieldStatus === 'refreshed';
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
@@ -72,7 +75,7 @@ function RefreshGenericResource(props) {
   ]);
   useEffect(() => {
     if (!fieldData) {
-      handleFetchResource({ onload: true });
+      handleFetchResource();
     }
   }, [fieldData, handleFetchResource]);
 
@@ -154,7 +157,7 @@ function RefreshGenericResource(props) {
             {optionMenuItems}
           </Select>
         )}
-        {!isLoading && <RefreshIcon onClick={handleFetchResource} />}
+        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>

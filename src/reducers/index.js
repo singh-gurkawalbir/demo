@@ -938,18 +938,10 @@ export function metadataOptionsAndResources(
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
   const applicationType = connection.type;
-  let metadataKey = metadataType;
+  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
-  if (filterKey) {
-    metadataKey = `${metadataKey}-${filterKey}`;
-  }
-
-  return optionsFromMetadata(
-    state,
-    connectionId,
-    applicationType,
-    metadataKey,
-    mode
+  return (
+    optionsFromMetadata(state, connectionId, applicationType, key, mode) || {}
   );
 }
 

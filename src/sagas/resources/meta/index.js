@@ -46,5 +46,8 @@ function* getNetsuiteOrSalesforceMeta({
 }
 
 export default [
-  takeEvery(actionTypes.METADATA.REQUEST, getNetsuiteOrSalesforceMeta),
+  takeEvery(
+    [actionTypes.METADATA.REQUEST, actionTypes.METADATA.REFRESH],
+    getNetsuiteOrSalesforceMeta
+  ),
 ];

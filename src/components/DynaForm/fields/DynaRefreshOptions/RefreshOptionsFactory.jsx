@@ -8,7 +8,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 function DynaSelectOptionsGenerator(props) {
   const { connectionId, resourceType, mode, options, filterKey } = props;
   const dispatch = useDispatch();
-  const fieldOptions = useSelector(state =>
+  const { status, data } = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -17,27 +17,24 @@ function DynaSelectOptionsGenerator(props) {
       filterKey
     )
   );
-  const handleFetchResource = useCallback(
-    ({ onload }) => {
-      const resource = (options && options.resourceToFetch) || resourceType;
+  const handleFetchResource = useCallback(() => {
+    const resource = (options && options.resourceToFetch) || resourceType;
 
-      // Dispatches request action onload / onRefresh
-      if (resource && (!onload || (onload && !fieldOptions))) {
-        dispatch(
-          actions.metadata.request(connectionId, resource, mode, filterKey)
-        );
-      }
-    },
-    [
-      connectionId,
-      dispatch,
-      fieldOptions,
-      filterKey,
-      mode,
-      options,
-      resourceType,
-    ]
-  );
+    if (resource && !data) {
+      dispatch(
+        actions.metadata.request(connectionId, resource, mode, filterKey)
+      );
+    }
+  }, [connectionId, data, dispatch, filterKey, mode, options, resourceType]);
+  const handleRefreshResource = () => {
+    const resource = (options && options.resourceToFetch) || resourceType;
+
+    if (resource) {
+      dispatch(
+        actions.metadata.refresh(connectionId, resource, mode, filterKey)
+      );
+    }
+  };
 
   return (
     <FieldWrapper {...props}>
@@ -45,8 +42,9 @@ function DynaSelectOptionsGenerator(props) {
         resourceToFetch={props.options.resourceToFetch}
         resetValue={props.options.resetValue}
         handleFetchResource={handleFetchResource}
-        fieldStatus={fieldOptions && fieldOptions.status}
-        fieldData={fieldOptions && fieldOptions.data}
+        handleRefreshResource={handleRefreshResource}
+        fieldStatus={status}
+        fieldData={data}
         {...props}
       />
     </FieldWrapper>

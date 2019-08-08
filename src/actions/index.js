@@ -157,6 +157,13 @@ const metadata = {
       mode,
       filterKey,
     }),
+  refresh: (connectionId, metadataType, mode, filterKey) =>
+    action(actionTypes.METADATA.REFRESH, {
+      connectionId,
+      metadataType,
+      mode,
+      filterKey,
+    }),
   netsuite: {
     receivedCollection: (
       metadata,
