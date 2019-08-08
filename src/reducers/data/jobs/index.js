@@ -8,9 +8,9 @@ import {
 import {
   DEFAULT_STATE,
   parseJobs,
+  parseJobFamily,
   getFlowJobIdsThatArePartOfBulkRetryJobs,
   getJobDuration,
-  DEFAULT_JOB_PROPS,
 } from './util';
 
 export default (state = DEFAULT_STATE, action) => {
@@ -34,20 +34,8 @@ export default (state = DEFAULT_STATE, action) => {
     };
   } else if (type === actionTypes.JOB.RECEIVED_FAMILY) {
     if (job.type === JOB_TYPES.FLOW) {
+      const jobWithDefaultProps = parseJobFamily(job);
       const index = state.flowJobs.findIndex(j => j._id === job._id);
-      const jobWithDefaultProps = {
-        ...DEFAULT_JOB_PROPS,
-        ...job,
-      };
-
-      if (
-        jobWithDefaultProps.children &&
-        jobWithDefaultProps.children.length > 0
-      ) {
-        jobWithDefaultProps.children = jobWithDefaultProps.children.map(
-          cJob => ({ ...DEFAULT_JOB_PROPS, ...cJob })
-        );
-      }
 
       if (index > -1) {
         const existingJob = state.flowJobs[index];
@@ -213,10 +201,18 @@ export default (state = DEFAULT_STATE, action) => {
 
       if (parentJobIndex > -1) {
         parentJob = state.flowJobs[parentJobIndex];
-        let children = [];
+        parentJob = {
+          ...parentJob,
+          numError: 0,
+          numResolved: parentJob.numResolved + parentJob.numError,
+          __original: {
+            numError: parentJob.numError,
+            numResolved: parentJob.numResolved,
+          },
+        };
 
         if (parentJob.children && parentJob.children.length) {
-          children = parentJob.children.map(cJob => {
+          parentJob.children = parentJob.children.map(cJob => {
             if (!cJob.numError) {
               return cJob;
             }
@@ -232,17 +228,6 @@ export default (state = DEFAULT_STATE, action) => {
             };
           });
         }
-
-        parentJob = {
-          ...parentJob,
-          numError: 0,
-          numResolved: parentJob.numResolved + parentJob.numError,
-          __original: {
-            numError: parentJob.numError,
-            numResolved: parentJob.numResolved,
-          },
-          children,
-        };
       }
     }
 
@@ -257,7 +242,6 @@ export default (state = DEFAULT_STATE, action) => {
     }
   } else if (type === actionTypes.JOB.RESOLVE_UNDO) {
     let childJobIndex;
-    let childJob;
     let parentJobIndex;
     let parentJob;
 
@@ -265,16 +249,22 @@ export default (state = DEFAULT_STATE, action) => {
       parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
 
       if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
+        const { __original, ...restOfParentJob } = {
+          ...state.flowJobs[parentJobIndex],
+        };
+
+        parentJob = {
+          ...restOfParentJob,
+        };
+
         childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
 
         if (childJobIndex > -1) {
-          childJob = parentJob.children[childJobIndex];
-          childJob = {
-            ...childJob,
-            numError: childJob.__original.numError,
-            numResolved: childJob.__original.numResolved,
-            __original: {},
+          const { __original, ...rest } = parentJob.children[childJobIndex];
+          const childJob = {
+            ...rest,
+            numError: __original.numError,
+            numResolved: __original.numResolved,
           };
 
           parentJob = {
@@ -293,29 +283,31 @@ export default (state = DEFAULT_STATE, action) => {
       parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
 
       if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-        const children = parentJob.children.map(cJob => {
-          if (!cJob.__original || !cJob.__original.numError) {
-            return cJob;
-          }
-
-          return {
-            ...cJob,
-            numError: cJob.__original.numError,
-            numResolved: cJob.__original.numResolved,
-            __original: {},
-          };
-        });
+        const { __original, ...restOfParentJob } = state.flowJobs[
+          parentJobIndex
+        ];
 
         parentJob = {
-          ...parentJob,
-          ...{
-            numError: parentJob.__original.numError,
-            numResolved: parentJob.__original.numResolved,
-          },
-          __original: {},
-          children,
+          ...restOfParentJob,
+          numError: __original.numError,
+          numResolved: __original.numResolved,
         };
+
+        if (parentJob.children && parentJob.children.length > 0) {
+          parentJob.children = parentJob.children.map(cJob => {
+            if (!cJob.__original || !cJob.__original.numError) {
+              return cJob;
+            }
+
+            const { __original, ...rest } = cJob;
+
+            return {
+              ...rest,
+              numError: __original.numError,
+              numResolved: __original.numResolved,
+            };
+          });
+        }
       }
     }
 

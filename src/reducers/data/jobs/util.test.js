@@ -6,8 +6,9 @@ import {
   getJobDuration,
   getFlowJobIdsThatArePartOfABulkRetryJob,
   getFlowJobIdsThatArePartOfBulkRetryJobs,
-  parseJobs,
   DEFAULT_JOB_PROPS,
+  parseJobs,
+  parseJobFamily,
 } from './util';
 
 describe('getJobDuration util method', () => {
@@ -376,5 +377,102 @@ describe('parseJobs util method', () => {
       flowJobs,
       bulkRetryJobs,
     });
+  });
+});
+
+describe('parseJobFamily util method', () => {
+  const testCases = [
+    [DEFAULT_JOB_PROPS, {}],
+    [{ ...DEFAULT_JOB_PROPS, _id: 'something' }, { _id: 'something' }],
+    [
+      { ...DEFAULT_JOB_PROPS, ...{ something: 'else', numError: 1 } },
+      { something: 'else', numError: 1 },
+    ],
+    [
+      { ...DEFAULT_JOB_PROPS, ...{ numResolved: 5, numSuccess: 10 } },
+      { numResolved: 5, numSuccess: 10 },
+    ],
+    [
+      {
+        ...DEFAULT_JOB_PROPS,
+        ...{
+          numError: 1,
+          numResolved: 2,
+          numSuccess: 3,
+          numIgnore: 2,
+          numPagesGenerated: 10,
+          numPagesProcessed: 5,
+        },
+      },
+      {
+        numError: 1,
+        numResolved: 2,
+        numSuccess: 3,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numPagesProcessed: 5,
+      },
+    ],
+    [
+      { ...DEFAULT_JOB_PROPS, children: [{ ...DEFAULT_JOB_PROPS }] },
+      { children: [{}] },
+    ],
+    [
+      {
+        ...DEFAULT_JOB_PROPS,
+        ...{
+          numPagesProcessed: 1,
+          children: [
+            { ...DEFAULT_JOB_PROPS, something: 'else', numPagesGenerated: 6 },
+          ],
+        },
+      },
+      {
+        numPagesProcessed: 1,
+        children: [{ something: 'else', numPagesGenerated: 6 }],
+      },
+    ],
+    [
+      {
+        ...DEFAULT_JOB_PROPS,
+        ...{
+          numResolved: 5,
+          numSuccess: 10,
+          children: [
+            {
+              ...DEFAULT_JOB_PROPS,
+              something: 'else',
+              numError: 1,
+              numResolved: 2,
+              numSuccess: 3,
+            },
+            {
+              ...DEFAULT_JOB_PROPS,
+              somethingelse: 'something',
+              numIgnore: 2,
+              numPagesGenerated: 10,
+              numPagesProcessed: 5,
+            },
+          ],
+        },
+      },
+      {
+        numResolved: 5,
+        numSuccess: 10,
+        children: [
+          { numError: 1, numResolved: 2, numSuccess: 3, something: 'else' },
+          {
+            numIgnore: 2,
+            numPagesGenerated: 10,
+            numPagesProcessed: 5,
+            somethingelse: 'something',
+          },
+        ],
+      },
+    ],
+  ];
+
+  each(testCases).test('should return %o for %o', (expected, job) => {
+    expect(parseJobFamily(job)).toEqual(expected);
   });
 });

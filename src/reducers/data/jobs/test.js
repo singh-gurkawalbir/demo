@@ -2,7 +2,7 @@
 import reducer from './';
 import actions from '../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
-import { DEFAULT_STATE, parseJobs, DEFAULT_JOB_PROPS } from './util';
+import { DEFAULT_STATE, parseJobs, parseJobFamily } from './util';
 
 const _integrationId = 'i1';
 const jobs = [
@@ -174,11 +174,7 @@ describe('jobs reducer', () => {
       const newState = reducer(state, jobFamilyReceivedAction);
       const expectedFlowJobs = [...flowJobs];
 
-      expectedFlowJobs[0] = { ...DEFAULT_JOB_PROPS, ...jobFamily };
-      expectedFlowJobs[0].children = expectedFlowJobs[0].children.map(cJob => ({
-        ...DEFAULT_JOB_PROPS,
-        ...cJob,
-      }));
+      expectedFlowJobs[0] = parseJobFamily(jobFamily);
 
       expect(newState).toEqual({
         ...state,
@@ -210,27 +206,27 @@ describe('jobs reducer', () => {
     });
   });
 
-  describe('should update state properly for resolve all', () => {
-    test('should update the state properly for integration level resolve all init', () => {
-      const jobsReceivedAction = actions.job.receivedCollection({
-        collection: jobs,
-      });
+  describe('should update state properly for all jobs resolve', () => {
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobFamily = flowJobs.find(job => job._id === 'fj4');
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
       const state = reducer(undefined, jobsReceivedAction);
-      const jobFamily = flowJobs.find(job => job._id === 'fj4');
-      const jobFamilyReceivedAction = actions.job.receivedFamily({
-        job: jobFamily,
-      });
       const state2 = reducer(state, jobFamilyReceivedAction);
       const state3 = reducer(state2, actions.job.resolveAllInit({}));
       const expectedFlowJobs = [...flowJobs];
+      const idsOfFlowJobsWithErrors = ['fj3', 'fj4'];
 
-      ['fj3', 'fj4'].forEach(jobId => {
+      idsOfFlowJobsWithErrors.forEach(jobId => {
         const jobIndex = expectedFlowJobs.findIndex(j => j._id === jobId);
 
         if (jobIndex > -1) {
-          let job = expectedFlowJobs[jobIndex];
-
-          job = { ...DEFAULT_JOB_PROPS, ...job };
+          const job = parseJobFamily(expectedFlowJobs[jobIndex]);
 
           job.__original = {
             numError: job.numError,
@@ -241,19 +237,17 @@ describe('jobs reducer', () => {
 
           if (job.children) {
             job.children = job.children.map(cJob => {
-              const childJob = { ...DEFAULT_JOB_PROPS, ...cJob };
-
-              if (childJob.numError === 0) {
-                return childJob;
+              if (cJob.numError === 0) {
+                return cJob;
               }
 
               return {
-                ...childJob,
+                ...cJob,
                 __original: {
-                  numError: childJob.numError,
-                  numResolved: childJob.numResolved,
+                  numError: cJob.numError,
+                  numResolved: cJob.numResolved,
                 },
-                numResolved: childJob.numResolved + childJob.numError,
+                numResolved: cJob.numResolved + cJob.numError,
                 numError: 0,
               };
             });
@@ -264,18 +258,171 @@ describe('jobs reducer', () => {
       });
       expect(state3).toEqual({ ...state2, flowJobs: expectedFlowJobs });
     });
-    test('should update the state properly for integration level resolve all undo', () => {
-      const jobsReceivedAction = actions.job.receivedCollection({
-        collection: jobs,
-      });
+    test('should update the state properly for undo', () => {
       const state = reducer(undefined, jobsReceivedAction);
-      const jobFamily = flowJobs.find(job => job._id === 'fj4');
-      const jobFamilyReceivedAction = actions.job.receivedFamily({
-        job: jobFamily,
-      });
       const state2 = reducer(state, jobFamilyReceivedAction);
       const state3 = reducer(state2, actions.job.resolveAllInit({}));
       const state4 = reducer(state3, actions.job.resolveAllUndo({}));
+
+      expect(state4).toEqual(state2);
+    });
+  });
+
+  describe('should update state properly for a parent job (with children) resolve', () => {
+    const jobId = 'fj4';
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobFamily = flowJobs.find(job => job._id === jobId);
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.resolveInit({ jobId }));
+      const expectedFlowJobs = [...flowJobs];
+      const jobIndex = expectedFlowJobs.findIndex(j => j._id === jobId);
+      const job = parseJobFamily(expectedFlowJobs[jobIndex]);
+
+      job.__original = {
+        numError: job.numError,
+        numResolved: job.numResolved,
+      };
+      job.numResolved += job.numError;
+      job.numError = 0;
+
+      job.children = job.children.map(cJob => {
+        if (cJob.numError === 0) {
+          return cJob;
+        }
+
+        return {
+          ...cJob,
+          __original: {
+            numError: cJob.numError,
+            numResolved: cJob.numResolved,
+          },
+          numResolved: cJob.numResolved + cJob.numError,
+          numError: 0,
+        };
+      });
+
+      expectedFlowJobs[jobIndex] = job;
+      expect(state3).toEqual({ ...state2, flowJobs: expectedFlowJobs });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.resolveInit({ jobId }));
+      const state4 = reducer(state3, actions.job.resolveUndo({ jobId }));
+
+      expect(state4).toEqual(state2);
+    });
+  });
+
+  describe('should update state properly for a parent job (without children) resolve', () => {
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobId = 'fj3';
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, actions.job.resolveInit({ jobId }));
+      const expectedFlowJobs = [...flowJobs];
+      const jobIndex = expectedFlowJobs.findIndex(j => j._id === jobId);
+      const job = parseJobFamily(expectedFlowJobs[jobIndex]);
+
+      job.__original = {
+        numError: job.numError,
+        numResolved: job.numResolved,
+      };
+      job.numResolved += job.numError;
+      job.numError = 0;
+
+      expectedFlowJobs[jobIndex] = job;
+      expect(state2).toEqual({ ...state, flowJobs: expectedFlowJobs });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, actions.job.resolveInit({ jobId }));
+      const state3 = reducer(state2, actions.job.resolveUndo({ jobId }));
+
+      expect(state3).toEqual(state);
+    });
+  });
+
+  describe('should update state properly for a child job resolve', () => {
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const parentJobId = 'fj4';
+    const childJobId = 'fj4i2';
+    const jobFamily = flowJobs.find(job => job._id === parentJobId);
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(
+        state2,
+        actions.job.resolveInit({ parentJobId, jobId: childJobId })
+      );
+      const expectedFlowJobs = [...state2.flowJobs];
+      const parentJobIndex = expectedFlowJobs.findIndex(
+        j => j._id === parentJobId
+      );
+      let parentJob = parseJobFamily({
+        ...expectedFlowJobs[parentJobIndex],
+      });
+      const childJobIndex = parentJob.children.findIndex(
+        cj => cj._id === childJobId
+      );
+      const childJob = {
+        ...parentJob.children[childJobIndex],
+      };
+
+      parentJob.children[childJobIndex] = {
+        ...childJob,
+        __original: {
+          numError: childJob.numError,
+          numResolved: childJob.numResolved,
+        },
+        numResolved: childJob.numResolved + childJob.numError,
+        numError: 0,
+      };
+
+      parentJob = {
+        ...parentJob,
+        __original: {
+          numError: parentJob.numError,
+          numResolved: parentJob.numResolved,
+        },
+        numResolved: parentJob.numResolved + childJob.numError,
+        numError: parentJob.numError - childJob.numError,
+      };
+
+      expectedFlowJobs[parentJobIndex] = parentJob;
+      expect(state3).toEqual({ ...state2, flowJobs: expectedFlowJobs });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(
+        state2,
+        actions.job.resolveInit({ parentJobId, jobId: childJobId })
+      );
+      const state4 = reducer(
+        state3,
+        actions.job.resolveUndo({ parentJobId, jobId: childJobId })
+      );
 
       expect(state4).toEqual(state2);
     });

@@ -95,3 +95,20 @@ export function parseJobs(jobs) {
 
   return { flowJobs, bulkRetryJobs };
 }
+
+export function parseJobFamily(job) {
+  const { children, ...rest } = job;
+  const updatedJob = {
+    ...DEFAULT_JOB_PROPS,
+    ...rest,
+  };
+
+  if (children && children.length > 0) {
+    updatedJob.children = children.map(childJob => ({
+      ...DEFAULT_JOB_PROPS,
+      ...childJob,
+    }));
+  }
+
+  return updatedJob;
+}
