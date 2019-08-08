@@ -4,37 +4,44 @@ export default {
     {
       fieldId: 'exportRdbmsData',
       type: 'labeltitle',
-      label: 'What would you like to export from rdbms ?',
+      label: 'What would you like to export from rdbms?',
     },
     { fieldId: 'rdbms.query' },
-    { fieldId: 'allConnectionsExportType' },
+
     {
-      fieldId: 'rdbms.once.query',
-      visibleWhen: [
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      options: [
         {
-          field: 'allConnectionsExportType',
-          is: ['once'],
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
         },
       ],
     },
-
     {
-      fieldId: 'exportRdbmsSampleData',
-      type: 'labeltitle',
-      label: 'Sample Data',
+      fieldId: 'rdbms.once.query',
     },
-    { fieldId: 'sampleData' },
-
-    { fieldId: 'ftp.exportTransformRecords' },
-    { fieldId: 'transform.expression.rules' },
-    { fieldId: 'ftp.exportHooks' },
-    { formId: 'hooks' },
   ],
   fieldSets: [
     {
+      header: 'Would you like to transform the records?',
+      collapsed: false,
+      fields: [{ fieldId: 'transform.expression.rules' }],
+    },
+    {
+      header: 'Hooks (Optional, Developers Only)',
+      collapsed: false,
+      fields: [{ formId: 'hooks' }],
+    },
+    {
       header: 'Advanced',
       collapsed: true,
-      fields: [{ fieldId: 'pageSize' }, { fieldId: 'dataURITemplate' }],
+      fields: [{ formId: 'advancedSettings' }],
     },
   ],
 };
