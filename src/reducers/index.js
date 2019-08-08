@@ -935,7 +935,11 @@ export function commMetadataPathGen(
   let commMetadataPath;
 
   if (applicationType === 'netsuite') {
-    commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+    if (mode === 'webservices' && metadataType !== 'recordTypes') {
+      commMetadataPath = `netSuiteWS/${metadataType}`;
+    } else {
+      commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+    }
   } else if (applicationType === 'salesforce') {
     commMetadataPath = `${applicationType}/metadata/webservices/connections/${connectionId}/${metadataType}`;
   } else {
@@ -949,7 +953,8 @@ export function metadataOptionsAndResources(
   state,
   connectionId,
   mode,
-  metadataType
+  metadataType,
+  filterKey
 ) {
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
@@ -960,6 +965,11 @@ export function metadataOptionsAndResources(
     metadataType,
     mode
   );
+  let metadataKey = metadataType;
+
+  if (filterKey) {
+    metadataKey = `${metadataKey}-${filterKey}`;
+  }
 
   return {
     // resourceData
@@ -967,7 +977,7 @@ export function metadataOptionsAndResources(
       state,
       connectionId,
       applicationType,
-      metadataType,
+      metadataKey,
       mode
     ),
     isLoadingData: resourceStatus(state, commMetadataPath).isLoading,

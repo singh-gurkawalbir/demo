@@ -1,7 +1,11 @@
 export default {
   fields: [
     { formId: 'common' },
-    { fieldId: 'exportData' },
+    {
+      fieldId: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to Export?',
+    },
     { fieldId: 'http.method' },
     { fieldId: 'http.headers' },
     { fieldId: 'http.relativeURI' },
@@ -10,7 +14,7 @@ export default {
     { fieldId: 'http.errorMediaType' },
     { fieldId: 'http.response.resourcePath' },
     { fieldId: 'http.response.successPath' },
-    { fieldId: 'http.response.successValuess' },
+    { fieldId: 'http.response.successValues' },
     { fieldId: 'http.response.errorPath' },
     {
       id: 'type',
