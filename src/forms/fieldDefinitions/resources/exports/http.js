@@ -228,7 +228,7 @@ export default {
     type: 'text',
     label: 'Success Path',
   },
-  'http.response.successValuess': {
+  'http.response.successValues': {
     type: 'text',
     valueDelimiter: ',',
     label: 'Success Values',
