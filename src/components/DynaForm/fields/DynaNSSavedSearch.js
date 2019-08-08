@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import RefreshOptionsFactory from './DynaRefreshOptions/RefreshOptionsFactory';
+import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaText from './DynaText';
 import * as selectors from '../../../reducers';
 
@@ -73,7 +73,7 @@ function SavedSearch(props) {
       </FormControl>
 
       {searchType === 'public' ? (
-        <RefreshOptionsFactory {...searchIdOptions} {...props} />
+        <DynaRefreshableSelect {...searchIdOptions} {...props} />
       ) : (
         <DynaText {...searchInternalIdOptions} {...props} />
       )}

@@ -10,7 +10,7 @@ import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
-import DynaRefreshOptions from './DynaRefreshOptions/RefreshOptionsFactory';
+import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './DynaTransformEditor';
 import DynaTextFtpPort from './CustomComponents/DynaTextFtpPort';
 import DynaUploadFile from './CustomComponents/DynaUploadFile';
@@ -35,7 +35,7 @@ export default {
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
-  refreshoptions: DynaRefreshOptions,
+  refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
