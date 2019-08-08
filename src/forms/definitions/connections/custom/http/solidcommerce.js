@@ -46,4 +46,11 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
+  ],
 };

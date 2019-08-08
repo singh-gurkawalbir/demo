@@ -4,7 +4,12 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { resource, commMetadataPathGen } from '../../../reducers/index';
 
-function* getNetsuiteOrSalesforceMeta({ connectionId, metadataType, mode }) {
+function* getNetsuiteOrSalesforceMeta({
+  connectionId,
+  metadataType,
+  mode,
+  filterKey,
+}) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = connection.type;
   const commMetadataPath = commMetadataPathGen(
@@ -22,15 +27,17 @@ function* getNetsuiteOrSalesforceMeta({ connectionId, metadataType, mode }) {
       message: `Fetching ${metadataType}`,
     });
 
-    if (applicationType === 'netsuite')
+    if (applicationType === 'netsuite') {
       yield put(
         actions.metadata.netsuite.receivedCollection(
           metadata,
           metadataType,
           connectionId,
-          mode
+          mode,
+          filterKey
         )
       );
+    }
 
     return metadata;
   } catch (error) {

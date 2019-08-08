@@ -1,18 +1,28 @@
 export default {
-  fields: [
-    { fieldId: 'type' },
-    { fieldId: 'name' },
+  preSubmit: formValues => {
+    const newValues = Object.assign({}, formValues);
 
+    if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
+      newValues['/salesforce/username'] = undefined;
+    }
+
+    return newValues;
+  },
+  fields: [
+    { fieldId: 'name', required: true },
     { fieldId: 'salesforce.sandbox' },
-    { fieldId: 'salesforce.baseURI' },
     { fieldId: 'salesforce.oauth2FlowType' },
     { fieldId: 'salesforce.username' },
-    { fieldId: 'salesforce.bearerToken' },
-    { fieldId: 'salesforce.refreshToken' },
-    { fieldId: 'salesforce.packagedOAuth' },
-    { fieldId: 'salesforce.scopes' },
-    { fieldId: 'salesforce.info' },
-    { fieldId: 'salesforce.concurrencyLevel' },
   ],
-  fieldSets: [],
+
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [
+        { fieldId: '_borrowConcurrencyFromConnectionId' },
+        { fieldId: 'salesforce.concurrencyLevel' },
+      ],
+    },
+  ],
 };
