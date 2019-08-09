@@ -33,7 +33,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.rest && r.rest.baseURI;
         const subdomain = baseUri.substring(
           baseUri.indexOf('https://') + 8,
           baseUri.indexOf('.api.accelo.com')
@@ -45,6 +45,13 @@ export default {
     {
       fieldId: 'rest.scope',
       scopes: ['read(all)', 'write(all)'],
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

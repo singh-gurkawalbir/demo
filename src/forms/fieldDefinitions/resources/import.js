@@ -10,7 +10,7 @@ export default {
     label: 'Description',
   },
   apiIdentifier: {
-    label: 'Invoke this Import [POST]:',
+    label: 'Invoke this Import [POST]',
     type: 'text',
     disabled: true,
   },

@@ -23,7 +23,7 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
-    label: 'Invoke this Export [POST]:',
+    label: 'Invoke this Export [POST]',
     type: 'apiidentifier',
   },
   configureAsyncHelper: {
@@ -345,8 +345,14 @@ export default {
   // #endregion test
   // #region delta
   'delta.dateField': {
-    type: 'text',
-    label: 'Delta date Field',
+    label: 'Date field',
+    type: 'refreshoptions',
+    mode: 'suitescript',
+    filterKey: 'dateField',
+    defaultValue: r => r && r.delta && r.delta.dateField,
+    required: true,
+    placeholder: 'Please select a date field',
+    connectionId: r => r && r._connectionId,
   },
   'delta.dateFormat': {
     type: 'text',
@@ -358,12 +364,9 @@ export default {
   },
   'delta.lagOffset': {
     type: 'text',
-    label: 'Delta lag Offset',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
+    label: 'Offset',
+    defaultValue: r => r && r.delta && r.delta.lagOffset,
+    required: true,
   },
   'delta.endDateField': {
     type: 'text',
@@ -372,8 +375,14 @@ export default {
   // #endregion delta
   // #region once
   'once.booleanField': {
-    type: 'text',
-    label: 'Once boolean Field',
+    label: 'Boolean Field',
+    type: 'refreshoptions',
+    placeholder: 'Please select a Boolean field',
+    defaultValue: r => r && r.once && r.once.booleanField,
+    mode: 'suitescript',
+    filterKey: 'booleanField',
+    required: true,
+    connectionId: r => r && r._connectionId,
   },
   // #endregion once
   // #region valueDelta

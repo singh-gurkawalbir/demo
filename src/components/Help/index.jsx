@@ -1,20 +1,19 @@
 import { useState, Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import HelpIcon from 'mdi-react/HelpIcon';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
+import HelpContent from '../HelpContent';
 
-const styles = theme => ({
-  helpPopper: {
-    maxWidth: '350px',
-    maxHeight: '300px',
-    padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
-    overflow: 'auto',
-  },
-});
+// const styles = theme => ({
+//   helpPopper: {
+//     maxWidth: '350px',
+//     maxHeight: '300px',
+//     padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
+//     overflow: 'auto',
+//   },
+// });
 
 function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -31,7 +30,7 @@ function Help(props) {
   };
 
   const getHelpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
-  const { classes, className, helpKey, helpText } = props;
+  const { className, helpKey, helpText } = props;
   const open = !!anchorEl;
   const helpTextValue = getHelpText(helpText, helpKey);
 
@@ -46,14 +45,13 @@ function Help(props) {
       </ClickAwayListener>
       <ArrowPopper
         placement="left"
-        className={classes.helpPopper}
         id="helpBubble"
         open={open}
         anchorEl={anchorEl}>
-        <Typography variant="caption">{helpTextValue}</Typography>
+        <HelpContent title={helpKey}>{helpTextValue}</HelpContent>
       </ArrowPopper>
     </Fragment>
   );
 }
 
-export default withStyles(styles)(Help);
+export default Help;

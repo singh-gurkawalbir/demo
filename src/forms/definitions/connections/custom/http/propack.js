@@ -57,7 +57,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('test') === -1) {
@@ -84,6 +84,13 @@ export default {
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

@@ -10,4 +10,11 @@ export default {
     '/rest/oauthTokenURI': 'https://api.pdffiller.com/v2/oauth/token',
   }),
   fields: [{ fieldId: 'name' }],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };
