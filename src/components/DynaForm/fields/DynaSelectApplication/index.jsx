@@ -111,6 +111,7 @@ export const SelectApplication = withStyles(styles)(
         type: app.type,
         icon: app.icon || app.assistant,
         label: app.name,
+        keywords: app.keywords,
       })),
     }));
     const Option = props => {
@@ -137,6 +138,20 @@ export const SelectApplication = withStyles(styles)(
       );
     };
 
+    const filterOptions = (candidate, input) => {
+      if (input) {
+        const term = input.toLowerCase();
+        const { label, keywords } = candidate.data;
+
+        return (
+          (label && label.toLowerCase().includes(term)) ||
+          (keywords && keywords.includes(term))
+        );
+      }
+
+      return true;
+    };
+
     return (
       <FormControl key={id} disabled={disabled} className={classes.formControl}>
         <Select
@@ -150,6 +165,7 @@ export const SelectApplication = withStyles(styles)(
             onFieldChange && onFieldChange(id, e.value);
           }}
           styles={customStyles}
+          filterOption={filterOptions}
         />
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
