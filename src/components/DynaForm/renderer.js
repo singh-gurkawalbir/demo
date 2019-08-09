@@ -9,7 +9,7 @@ const styles = {
   editIcon: { float: 'right' },
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldWrapper = withStyles(styles)(props => {
+const FieldActions = withStyles(styles)(props => {
   const {
     field,
     editMode,
@@ -18,6 +18,7 @@ const FieldWrapper = withStyles(styles)(props => {
     classes,
     formFieldsMeta,
     resourceContext,
+    children,
   } = props;
   const { type: fieldType } = field;
 
@@ -33,12 +34,13 @@ const FieldWrapper = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
+          title={field.label || helpKey || 'Field Help'}
           className={classes.helpIcon}
           helpKey={helpKey}
           helpText={helpText}
         />
       )}
-      {props.children}
+      {children}
     </Fragment>
   );
 });
@@ -62,7 +64,7 @@ function getRenderer(
     }
 
     return (
-      <FieldWrapper
+      <FieldActions
         key={fid}
         editMode={editMode}
         field={field}
@@ -71,7 +73,7 @@ function getRenderer(
         resourceContext={context}
         helpText={helpText}>
         <DynaField {...field} />
-      </FieldWrapper>
+      </FieldActions>
     );
   };
 }
