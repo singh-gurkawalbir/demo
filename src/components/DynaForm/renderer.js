@@ -1,8 +1,10 @@
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
+import * as selectors from '../../reducers';
 
 const styles = {
   helpIcon: { float: 'right' },
@@ -21,6 +23,7 @@ const FieldActions = withStyles(styles)(props => {
     children,
   } = props;
   const { type: fieldType } = field;
+  const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
     <Fragment>
@@ -34,8 +37,9 @@ const FieldActions = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
-          title={field.label || helpKey || 'Field Help'}
+          title={field.label || 'Field Help'}
           className={classes.helpIcon}
+          caption={developer && helpKey}
           helpKey={helpKey}
           helpText={helpText}
         />

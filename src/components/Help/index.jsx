@@ -6,15 +6,6 @@ import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
 
-// const styles = theme => ({
-//   helpPopper: {
-//     maxWidth: '350px',
-//     maxHeight: '300px',
-//     padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
-//     overflow: 'auto',
-//   },
-// });
-
 function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = event => {
@@ -30,7 +21,7 @@ function Help(props) {
   };
 
   const getHelpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
-  const { className, helpKey, helpText } = props;
+  const { className, helpKey, helpText, ...rest } = props;
   const open = !!anchorEl;
   const helpTextValue = getHelpText(helpText, helpKey);
 
@@ -48,7 +39,7 @@ function Help(props) {
         id="helpBubble"
         open={open}
         anchorEl={anchorEl}>
-        <HelpContent title={helpKey}>{helpTextValue}</HelpContent>
+        <HelpContent {...rest}>{helpTextValue}</HelpContent>
       </ArrowPopper>
     </Fragment>
   );
