@@ -1,6 +1,5 @@
 System  Toasters
 ```js
-const NotificationMessage = require('../NotificationMessage').default;
 const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 const Typography = require('@material-ui/core/Typography').default;
 const wrapper = {
@@ -33,7 +32,6 @@ flexFlow: 'column',
 ```
 Notification Banners
 ```js
-const NotificationMessage = require('../NotificationMessage').default;
 const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 const Typography = require('@material-ui/core/Typography').default;
 const wrapper = {

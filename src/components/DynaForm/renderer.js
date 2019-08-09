@@ -1,15 +1,17 @@
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
+import * as selectors from '../../reducers';
 
 const styles = {
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldWrapper = withStyles(styles)(props => {
+const FieldActions = withStyles(styles)(props => {
   const {
     field,
     editMode,
@@ -18,8 +20,10 @@ const FieldWrapper = withStyles(styles)(props => {
     classes,
     formFieldsMeta,
     resourceContext,
+    children,
   } = props;
   const { type: fieldType } = field;
+  const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
     <Fragment>
@@ -33,12 +37,14 @@ const FieldWrapper = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
+          title={field.label || 'Field Help'}
           className={classes.helpIcon}
+          caption={developer && helpKey}
           helpKey={helpKey}
           helpText={helpText}
         />
       )}
-      {props.children}
+      {children}
     </Fragment>
   );
 });
@@ -62,7 +68,7 @@ function getRenderer(
     }
 
     return (
-      <FieldWrapper
+      <FieldActions
         key={fid}
         editMode={editMode}
         field={field}
@@ -71,7 +77,7 @@ function getRenderer(
         resourceContext={context}
         helpText={helpText}>
         <DynaField {...field} />
-      </FieldWrapper>
+      </FieldActions>
     );
   };
 }

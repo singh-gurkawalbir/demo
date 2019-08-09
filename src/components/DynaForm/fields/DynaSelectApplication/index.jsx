@@ -5,9 +5,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
 import { FieldWrapper } from 'react-forms-processor/dist';
-import applications from '../../../../constants/applications';
+import { groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 
+const groupedApps = groupApplications();
 const styles = theme => ({
   optionRoot: {
     display: 'flex',
@@ -103,11 +104,15 @@ export const SelectApplication = withStyles(styles)(
     // we may need to also refactor the applications metadata file
     // accordingly.
     // https://react-select.com/components#replacing-components
-    const options = applications.map(app => ({
-      value: app.id,
-      type: app.type,
-      icon: app.icon || app.assistant,
-      label: app.name,
+    const options = groupedApps.map(group => ({
+      label: group.label,
+      options: group.connectors.map(app => ({
+        value: app.id,
+        type: app.type,
+        icon: app.icon || app.assistant,
+        label: app.name,
+        keywords: app.keywords,
+      })),
     }));
     const Option = props => {
       const { type, icon } = props.data;
@@ -121,16 +126,30 @@ export const SelectApplication = withStyles(styles)(
             <components.Option {...props} />
           </div>
           {/* <div className={classes.groupSeparator}>
-            <Typography
-              className={classes.dividerFullWidth}
-              color="textSecondary"
-              display="block"
-              variant="caption">
-              Databases
-            </Typography>
-          </div> */}
+              <Typography
+                className={classes.dividerFullWidth}
+                color="textSecondary"
+                display="block"
+                variant="caption">
+                Databases
+              </Typography>
+            </div> */}
         </Fragment>
       );
+    };
+
+    const filterOptions = (candidate, input) => {
+      if (input) {
+        const term = input.toLowerCase();
+        const { label, keywords } = candidate.data;
+
+        return (
+          (label && label.toLowerCase().includes(term)) ||
+          (keywords && keywords.includes(term))
+        );
+      }
+
+      return true;
     };
 
     return (
@@ -146,6 +165,7 @@ export const SelectApplication = withStyles(styles)(
             onFieldChange && onFieldChange(id, e.value);
           }}
           styles={customStyles}
+          filterOption={filterOptions}
         />
         {description && <FormHelperText>{description}</FormHelperText>}
       </FormControl>
