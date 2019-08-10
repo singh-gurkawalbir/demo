@@ -13,8 +13,28 @@ import {
   getJobDuration,
 } from './util';
 
+function getParentJobIndex(jobs, jobId) {
+  return jobs.findIndex(j => j._id === jobId);
+}
+
+function getChildJobIndexDetails(jobs, parentJobId, jobId) {
+  const parentJobIndex = getParentJobIndex(jobs, parentJobId);
+  let childJobIndex = -1;
+
+  if (parentJobIndex > -1 && jobId) {
+    childJobIndex = jobs[parentJobIndex].children.findIndex(
+      cj => cj._id === jobId
+    );
+  }
+
+  return {
+    parentJobIndex,
+    childJobIndex,
+  };
+}
+
 export default (state = DEFAULT_STATE, action) => {
-  const { type, collection, job, jobId, parentJobId } = action;
+  const { type, collection, job } = action;
 
   if (!type) {
     return state;
@@ -35,10 +55,10 @@ export default (state = DEFAULT_STATE, action) => {
   } else if (type === actionTypes.JOB.RECEIVED_FAMILY) {
     if (job.type === JOB_TYPES.FLOW) {
       const jobWithDefaultProps = parseJobFamily(job);
-      const index = state.flowJobs.findIndex(j => j._id === job._id);
+      const index = getParentJobIndex(state.flowJobs, job._id);
 
       if (index > -1) {
-        const existingJob = state.flowJobs[index];
+        const existingJob = { ...state.flowJobs[index] };
         const propsToOverwrite = {};
 
         if (existingJob.__original && existingJob.__original.numError) {
@@ -154,334 +174,299 @@ export default (state = DEFAULT_STATE, action) => {
 
     return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RESOLVE_INIT) {
-    let childJobIndex;
-    let childJob;
-    let parentJobIndex;
-    let parentJob;
+    const { parentJobId, childJobId } = action;
+    const { parentJobIndex, childJobIndex } = getChildJobIndexDetails(
+      state.flowJobs,
+      parentJobId,
+      childJobId
+    );
 
-    if (parentJobId) {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+    if (parentJobIndex === -1) {
+      return state;
+    }
 
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
+    if (parentJobId && childJobId && childJobIndex === -1) {
+      return state;
+    }
 
-        if (parentJob.children.length > 0) {
-          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+    let parentJob = { ...state.flowJobs[parentJobIndex] };
 
-          if (childJobIndex > -1) {
-            childJob = parentJob.children[childJobIndex];
+    if (childJobIndex > -1) {
+      const childJob = parentJob.children[childJobIndex];
 
-            parentJob = {
-              ...parentJob,
-              numError: parentJob.numError - childJob.numError,
-              numResolved: parentJob.numResolved + childJob.numError,
-              __original: {
-                numError: parentJob.numError,
-                numResolved: parentJob.numResolved,
-              },
-              children: [
-                ...parentJob.children.slice(0, childJobIndex),
-                {
-                  ...childJob,
-                  numError: 0,
-                  numResolved: childJob.numResolved + childJob.numError,
-                  __original: {
-                    numError: childJob.numError,
-                    numResolved: childJob.numResolved,
-                  },
-                },
-                ...parentJob.children.slice(childJobIndex + 1),
-              ],
-            };
-          }
-        }
-      }
-    } else {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
-
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-        parentJob = {
-          ...parentJob,
-          numError: 0,
-          numResolved: parentJob.numResolved + parentJob.numError,
-          __original: {
-            numError: parentJob.numError,
-            numResolved: parentJob.numResolved,
+      parentJob = {
+        ...parentJob,
+        numError: parentJob.numError - childJob.numError,
+        numResolved: parentJob.numResolved + childJob.numError,
+        __original: {
+          numError: parentJob.numError,
+          numResolved: parentJob.numResolved,
+        },
+        children: [
+          ...parentJob.children.slice(0, childJobIndex),
+          {
+            ...childJob,
+            numError: 0,
+            numResolved: childJob.numResolved + childJob.numError,
+            __original: {
+              numError: childJob.numError,
+              numResolved: childJob.numResolved,
+            },
           },
-        };
+          ...parentJob.children.slice(childJobIndex + 1),
+        ],
+      };
+    } else {
+      parentJob = {
+        ...parentJob,
+        numError: 0,
+        numResolved: parentJob.numResolved + parentJob.numError,
+        __original: {
+          numError: parentJob.numError,
+          numResolved: parentJob.numResolved,
+        },
+      };
 
-        if (parentJob.children && parentJob.children.length) {
-          parentJob.children = parentJob.children.map(cJob => {
-            if (!cJob.numError) {
-              return cJob;
-            }
+      if (parentJob.children && parentJob.children.length) {
+        parentJob.children = parentJob.children.map(cJob => {
+          if (!cJob.numError) {
+            return cJob;
+          }
 
-            return {
-              ...cJob,
-              __original: {
-                numError: cJob.numError,
-                numResolved: cJob.numResolved,
-              },
-              numError: 0,
-              numResolved: cJob.numResolved + cJob.numError,
-            };
-          });
-        }
+          return {
+            ...cJob,
+            __original: {
+              numError: cJob.numError,
+              numResolved: cJob.numResolved,
+            },
+            numError: 0,
+            numResolved: cJob.numResolved + cJob.numError,
+          };
+        });
       }
     }
 
-    if (parentJobIndex > -1) {
-      const newCollection = [
-        ...state.flowJobs.slice(0, parentJobIndex),
-        parentJob,
-        ...state.flowJobs.slice(parentJobIndex + 1),
-      ];
+    const newCollection = [
+      ...state.flowJobs.slice(0, parentJobIndex),
+      parentJob,
+      ...state.flowJobs.slice(parentJobIndex + 1),
+    ];
 
-      return { ...state, flowJobs: newCollection };
-    }
+    return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RESOLVE_UNDO) {
-    let childJobIndex;
-    let parentJobIndex;
-    let parentJob;
+    const { parentJobId, childJobId } = action;
+    const { parentJobIndex, childJobIndex } = getChildJobIndexDetails(
+      state.flowJobs,
+      parentJobId,
+      childJobId
+    );
 
-    if (parentJobId) {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
+    if (parentJobIndex === -1) {
+      return state;
+    }
 
-      if (parentJobIndex > -1) {
-        const { __original, ...restOfParentJob } = {
-          ...state.flowJobs[parentJobIndex],
-        };
+    if (parentJobId && childJobId && childJobIndex === -1) {
+      return state;
+    }
 
-        parentJob = {
-          ...restOfParentJob,
-        };
+    let parentJob = { ...state.flowJobs[parentJobIndex] };
+    const { __original, ...restOfParentJob } = parentJob;
 
-        childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
+    if (childJobIndex > -1) {
+      const { __original, ...restOfChildJob } = parentJob.children[
+        childJobIndex
+      ];
+      const childJob = {
+        ...restOfChildJob,
+        numError: __original.numError,
+        numResolved: __original.numResolved,
+      };
 
-        if (childJobIndex > -1) {
-          const { __original, ...rest } = parentJob.children[childJobIndex];
-          const childJob = {
+      parentJob = {
+        ...restOfParentJob,
+        numError: parentJob.numError + childJob.numError,
+        numResolved: parentJob.numResolved - childJob.numError,
+        children: [
+          ...parentJob.children.slice(0, childJobIndex),
+          childJob,
+          ...parentJob.children.slice(childJobIndex + 1),
+        ],
+      };
+    } else {
+      parentJob = {
+        ...restOfParentJob,
+        numError: __original.numError,
+        numResolved: __original.numResolved,
+      };
+
+      if (parentJob.children && parentJob.children.length > 0) {
+        parentJob.children = parentJob.children.map(cJob => {
+          if (!cJob.__original || !cJob.__original.numError) {
+            return cJob;
+          }
+
+          const { __original, ...rest } = cJob;
+
+          return {
             ...rest,
             numError: __original.numError,
             numResolved: __original.numResolved,
           };
-
-          parentJob = {
-            ...parentJob,
-            numError: parentJob.numError + childJob.numError,
-            numResolved: parentJob.numResolved - childJob.numError,
-            children: [
-              ...parentJob.children.slice(0, childJobIndex),
-              childJob,
-              ...parentJob.children.slice(childJobIndex + 1),
-            ],
-          };
-        }
-      }
-    } else {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
-
-      if (parentJobIndex > -1) {
-        const { __original, ...restOfParentJob } = state.flowJobs[
-          parentJobIndex
-        ];
-
-        parentJob = {
-          ...restOfParentJob,
-          numError: __original.numError,
-          numResolved: __original.numResolved,
-        };
-
-        if (parentJob.children && parentJob.children.length > 0) {
-          parentJob.children = parentJob.children.map(cJob => {
-            if (!cJob.__original || !cJob.__original.numError) {
-              return cJob;
-            }
-
-            const { __original, ...rest } = cJob;
-
-            return {
-              ...rest,
-              numError: __original.numError,
-              numResolved: __original.numResolved,
-            };
-          });
-        }
+        });
       }
     }
 
-    if (parentJobIndex > -1) {
-      const newCollection = [
-        ...state.flowJobs.slice(0, parentJobIndex),
-        parentJob,
-        ...state.flowJobs.slice(parentJobIndex + 1),
-      ];
+    const newCollection = [
+      ...state.flowJobs.slice(0, parentJobIndex),
+      parentJob,
+      ...state.flowJobs.slice(parentJobIndex + 1),
+    ];
 
-      return { ...state, flowJobs: newCollection };
-    }
+    return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RETRY_INIT) {
-    let childJobIndex;
-    let childJob;
-    let parentJobIndex;
-    let parentJob;
+    const { parentJobId, childJobId } = action;
+    const { parentJobIndex, childJobIndex } = getChildJobIndexDetails(
+      state.flowJobs,
+      parentJobId,
+      childJobId
+    );
 
-    if (parentJobId) {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
-
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-
-        if (parentJob.children.length > 0) {
-          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
-
-          if (childJobIndex > -1) {
-            childJob = parentJob.children[childJobIndex];
-
-            parentJob = {
-              ...parentJob,
-              children: [
-                ...parentJob.children.slice(0, childJobIndex),
-                {
-                  ...childJob,
-                  retries: [
-                    ...(childJob.retries || []),
-                    { type: JOB_TYPES.RETRY },
-                  ],
-                },
-                ...parentJob.children.slice(childJobIndex + 1),
-              ],
-            };
-          }
-        }
-      }
-    } else {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
-
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-        let children = [];
-
-        if (parentJob.children && parentJob.children.length) {
-          children = parentJob.children.map(cJob => {
-            if (!cJob.retriable) {
-              return cJob;
-            }
-
-            return {
-              ...cJob,
-              retries: [...(cJob.retries || []), { type: JOB_TYPES.RETRY }],
-            };
-          });
-        }
-
-        parentJob = { ...parentJob, children };
-      }
+    if (parentJobIndex === -1) {
+      return state;
     }
 
-    if (parentJobIndex > -1) {
-      const newCollection = [
-        ...state.flowJobs.slice(0, parentJobIndex),
-        parentJob,
-        ...state.flowJobs.slice(parentJobIndex + 1),
-      ];
-
-      return { ...state, flowJobs: newCollection };
+    if (parentJobId && childJobId && childJobIndex === -1) {
+      return state;
     }
+
+    let parentJob = { ...state.flowJobs[parentJobIndex] };
+
+    if (childJobIndex > -1) {
+      const childJob = parentJob.children[childJobIndex];
+
+      parentJob = {
+        ...parentJob,
+        children: [
+          ...parentJob.children.slice(0, childJobIndex),
+          {
+            ...childJob,
+            retries: [...(childJob.retries || []), { type: JOB_TYPES.RETRY }],
+          },
+          ...parentJob.children.slice(childJobIndex + 1),
+        ],
+      };
+    } else if (parentJob.children && parentJob.children.length > 0) {
+      parentJob.children = parentJob.children.map(cJob => {
+        if (!cJob.retriable) {
+          return cJob;
+        }
+
+        return {
+          ...cJob,
+          retries: [...(cJob.retries || []), { type: JOB_TYPES.RETRY }],
+        };
+      });
+    }
+
+    const newCollection = [
+      ...state.flowJobs.slice(0, parentJobIndex),
+      parentJob,
+      ...state.flowJobs.slice(parentJobIndex + 1),
+    ];
+
+    return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RETRY_UNDO) {
-    let childJobIndex;
     let childJob;
-    let parentJobIndex;
-    let parentJob;
+    const { parentJobId, childJobId } = action;
+    const { parentJobIndex, childJobIndex } = getChildJobIndexDetails(
+      state.flowJobs,
+      parentJobId,
+      childJobId
+    );
 
-    if (parentJobId) {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === parentJobId);
-
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-
-        if (parentJob.children.length > 0) {
-          childJobIndex = parentJob.children.findIndex(j => j._id === jobId);
-
-          if (childJobIndex > -1) {
-            childJob = parentJob.children[childJobIndex];
-
-            const retryIndex = childJob.retries.findIndex(
-              r => !r._id && r.type === JOB_TYPES.RETRY
-            );
-
-            parentJob = {
-              ...parentJob,
-              children: [
-                ...parentJob.children.slice(0, childJobIndex),
-                {
-                  ...childJob,
-                  retries:
-                    retryIndex > -1
-                      ? [
-                          ...childJob.retries.slice(0, retryIndex),
-                          ...childJob.retries.slice(retryIndex + 1),
-                        ]
-                      : [...childJob.retries],
-                },
-                ...parentJob.children.slice(childJobIndex + 1),
-              ],
-            };
-          }
-        }
-      }
-    } else {
-      parentJobIndex = state.flowJobs.findIndex(j => j._id === jobId);
-
-      if (parentJobIndex > -1) {
-        parentJob = state.flowJobs[parentJobIndex];
-        let children = [];
-
-        if (parentJob.children && parentJob.children.length) {
-          children = parentJob.children.map(cJob => {
-            if (!cJob.retries || cJob.retries.length === 0) {
-              return cJob;
-            }
-
-            const retryIndex = cJob.retries.findIndex(
-              r => !r._id && r.type === JOB_TYPES.RETRY
-            );
-
-            if (retryIndex === -1) {
-              return cJob;
-            }
-
-            return {
-              ...cJob,
-              retries: [
-                ...cJob.retries.slice(0, retryIndex),
-                ...cJob.retries.slice(retryIndex + 1),
-              ],
-            };
-          });
-        }
-
-        parentJob = { ...parentJob, children };
-      }
+    if (parentJobIndex === -1) {
+      return state;
     }
 
-    if (parentJobIndex > -1) {
-      const newCollection = [
-        ...state.flowJobs.slice(0, parentJobIndex),
-        parentJob,
-        ...state.flowJobs.slice(parentJobIndex + 1),
-      ];
-
-      return { ...state, flowJobs: newCollection };
+    if (parentJobId && childJobId && childJobIndex === -1) {
+      return state;
     }
+
+    let parentJob = { ...state.flowJobs[parentJobIndex] };
+
+    if (childJobIndex > -1) {
+      childJob = parentJob.children[childJobIndex];
+      const retryIndex = childJob.retries.findIndex(
+        r => !r._id && r.type === JOB_TYPES.RETRY
+      );
+
+      if (retryIndex > -1) {
+        childJob = {
+          ...childJob,
+          retries: [
+            ...childJob.retries.slice(0, retryIndex),
+            ...childJob.retries.slice(retryIndex + 1),
+          ],
+        };
+      }
+
+      if (childJob.retries.length === 0) {
+        delete childJob.retries;
+      }
+
+      parentJob = {
+        ...parentJob,
+        children: [
+          ...parentJob.children.slice(0, childJobIndex),
+          childJob,
+          ...parentJob.children.slice(childJobIndex + 1),
+        ],
+      };
+    } else if (parentJob.children && parentJob.children.length > 0) {
+      parentJob.children = parentJob.children.map(cJob => {
+        if (!cJob.retries || cJob.retries.length === 0) {
+          return cJob;
+        }
+
+        const retryIndex = cJob.retries.findIndex(
+          r => !r._id && r.type === JOB_TYPES.RETRY
+        );
+
+        if (retryIndex === -1) {
+          return cJob;
+        }
+
+        if (cJob.retries.length === 1) {
+          const { retries, ...restOfChildJob } = cJob;
+
+          return restOfChildJob;
+        }
+
+        return {
+          ...cJob,
+          retries: [
+            ...cJob.retries.slice(0, retryIndex),
+            ...cJob.retries.slice(retryIndex + 1),
+          ],
+        };
+      });
+    }
+
+    const newCollection = [
+      ...state.flowJobs.slice(0, parentJobIndex),
+      parentJob,
+      ...state.flowJobs.slice(parentJobIndex + 1),
+    ];
+
+    return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RETRY_ALL_INIT) {
     const { bulkRetryJobs } = state;
 
     return {
       ...state,
       bulkRetryJobs: [
-        ...bulkRetryJobs,
         { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+        ...bulkRetryJobs,
       ],
     };
   } else if (type === actionTypes.JOB.RETRY_ALL_UNDO) {

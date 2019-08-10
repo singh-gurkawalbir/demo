@@ -130,8 +130,8 @@ function JobErrorTable({
             jobsToRetry.forEach(job =>
               dispatch(
                 actions.job.retryUndo({
-                  jobId: job._id,
-                  parentJobId: job._flowJobId,
+                  parentJobId: job._flowJobId || job._id,
+                  childJobId: job._flowJobId ? job._id : null,
                 })
               )
             );
@@ -190,8 +190,8 @@ function JobErrorTable({
             jobsToResolve.forEach(job =>
               dispatch(
                 actions.job.resolveUndo({
-                  jobId: job._id,
-                  parentJobId: job._flowJobId,
+                  parentJobId: job._flowJobId || job._id,
+                  childJobId: job._flowJobId ? job._id : null,
                 })
               )
             );

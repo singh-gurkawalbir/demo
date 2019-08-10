@@ -200,8 +200,8 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
             jobsToResolve.forEach(job =>
               dispatch(
                 actions.job.resolveUndo({
-                  jobId: job._id,
-                  parentJobId: job._flowJobId,
+                  parentJobId: job._flowJobId || job._id,
+                  childJobId: job._flowJobId ? job._id : null,
                 })
               )
             );
@@ -253,12 +253,7 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         autoHideDuration: UNDO_TIME.RETRY,
         handleClose(event, reason) {
           if (reason === 'undo') {
-            return dispatch(
-              actions.job.retryAllUndo({
-                flowId: selectedFlowId,
-                integrationId,
-              })
-            );
+            return dispatch(actions.job.retryAllUndo());
           }
 
           dispatch(
@@ -309,8 +304,8 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
             jobsToRetry.forEach(job =>
               dispatch(
                 actions.job.retryUndo({
-                  jobId: job._id,
-                  parentJobId: job._flowJobId,
+                  parentJobId: job._flowJobId || job._id,
+                  childJobId: job._flowJobId ? job._id : null,
                 })
               )
             );

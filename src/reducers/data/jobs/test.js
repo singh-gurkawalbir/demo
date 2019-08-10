@@ -47,16 +47,24 @@ const jobs = [
         status: JOB_STATUS.COMPLETED,
         numError: 2,
         numResolved: 2,
+        retriable: true,
       },
       {
         _id: 'fj4i2',
         type: JOB_TYPES.IMPORT,
         status: JOB_STATUS.FAILED,
         numError: 4,
+        retriable: true,
+        retries: [{ _id: 'something', status: JOB_STATUS.COMPLETED }],
       },
     ],
   },
-  { type: JOB_TYPES.BULK_RETRY, _id: 'brj1', _integrationId },
+  {
+    type: JOB_TYPES.BULK_RETRY,
+    _id: 'brj1',
+    _integrationId,
+    status: JOB_STATUS.COMPLETED,
+  },
 ];
 const { flowJobs, bulkRetryJobs } = parseJobs(jobs);
 
@@ -269,11 +277,11 @@ describe('jobs reducer', () => {
   });
 
   describe('should update state properly for a parent job (with children) resolve', () => {
-    const jobId = 'fj4';
+    const parentJobId = 'fj4';
     const jobsReceivedAction = actions.job.receivedCollection({
       collection: jobs,
     });
-    const jobFamily = flowJobs.find(job => job._id === jobId);
+    const jobFamily = flowJobs.find(job => job._id === parentJobId);
     const jobFamilyReceivedAction = actions.job.receivedFamily({
       job: jobFamily,
     });
@@ -281,9 +289,9 @@ describe('jobs reducer', () => {
     test('should update the state properly for init', () => {
       const state = reducer(undefined, jobsReceivedAction);
       const state2 = reducer(state, jobFamilyReceivedAction);
-      const state3 = reducer(state2, actions.job.resolveInit({ jobId }));
+      const state3 = reducer(state2, actions.job.resolveInit({ parentJobId }));
       const expectedFlowJobs = [...flowJobs];
-      const jobIndex = expectedFlowJobs.findIndex(j => j._id === jobId);
+      const jobIndex = expectedFlowJobs.findIndex(j => j._id === parentJobId);
       const job = parseJobFamily(expectedFlowJobs[jobIndex]);
 
       job.__original = {
@@ -316,8 +324,8 @@ describe('jobs reducer', () => {
     test('should update the state properly for undo', () => {
       const state = reducer(undefined, jobsReceivedAction);
       const state2 = reducer(state, jobFamilyReceivedAction);
-      const state3 = reducer(state2, actions.job.resolveInit({ jobId }));
-      const state4 = reducer(state3, actions.job.resolveUndo({ jobId }));
+      const state3 = reducer(state2, actions.job.resolveInit({ parentJobId }));
+      const state4 = reducer(state3, actions.job.resolveUndo({ parentJobId }));
 
       expect(state4).toEqual(state2);
     });
@@ -327,13 +335,13 @@ describe('jobs reducer', () => {
     const jobsReceivedAction = actions.job.receivedCollection({
       collection: jobs,
     });
-    const jobId = 'fj3';
+    const parentJobId = 'fj3';
 
     test('should update the state properly for init', () => {
       const state = reducer(undefined, jobsReceivedAction);
-      const state2 = reducer(state, actions.job.resolveInit({ jobId }));
+      const state2 = reducer(state, actions.job.resolveInit({ parentJobId }));
       const expectedFlowJobs = [...flowJobs];
-      const jobIndex = expectedFlowJobs.findIndex(j => j._id === jobId);
+      const jobIndex = expectedFlowJobs.findIndex(j => j._id === parentJobId);
       const job = parseJobFamily(expectedFlowJobs[jobIndex]);
 
       job.__original = {
@@ -349,8 +357,8 @@ describe('jobs reducer', () => {
 
     test('should update the state properly for undo', () => {
       const state = reducer(undefined, jobsReceivedAction);
-      const state2 = reducer(state, actions.job.resolveInit({ jobId }));
-      const state3 = reducer(state2, actions.job.resolveUndo({ jobId }));
+      const state2 = reducer(state, actions.job.resolveInit({ parentJobId }));
+      const state3 = reducer(state2, actions.job.resolveUndo({ parentJobId }));
 
       expect(state3).toEqual(state);
     });
@@ -372,7 +380,7 @@ describe('jobs reducer', () => {
       const state2 = reducer(state, jobFamilyReceivedAction);
       const state3 = reducer(
         state2,
-        actions.job.resolveInit({ parentJobId, jobId: childJobId })
+        actions.job.resolveInit({ parentJobId, childJobId })
       );
       const expectedFlowJobs = [...state2.flowJobs];
       const parentJobIndex = expectedFlowJobs.findIndex(
@@ -417,14 +425,338 @@ describe('jobs reducer', () => {
       const state2 = reducer(state, jobFamilyReceivedAction);
       const state3 = reducer(
         state2,
-        actions.job.resolveInit({ parentJobId, jobId: childJobId })
+        actions.job.resolveInit({ parentJobId, childJobId })
       );
       const state4 = reducer(
         state3,
-        actions.job.resolveUndo({ parentJobId, jobId: childJobId })
+        actions.job.resolveUndo({ parentJobId, childJobId })
       );
 
       expect(state4).toEqual(state2);
     });
+  });
+
+  describe('should update state properly for all jobs retry', () => {
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobFamily = flowJobs.find(job => job._id === 'fj4');
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.retryAllInit());
+      const expectedBulkRetryJobs = [
+        { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+        ...bulkRetryJobs,
+      ];
+
+      expect(state3).toEqual({
+        ...state2,
+        bulkRetryJobs: expectedBulkRetryJobs,
+      });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.retryAllInit());
+      const state4 = reducer(state3, actions.job.retryAllUndo());
+
+      expect(state4).toEqual(state2);
+    });
+  });
+
+  describe('should update state properly for a parent job (with children) retry', () => {
+    const parentJobId = 'fj4';
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobFamily = flowJobs.find(job => job._id === parentJobId);
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.retryInit({ parentJobId }));
+      const expectedFlowJobs = [...flowJobs];
+      const jobIndex = expectedFlowJobs.findIndex(j => j._id === parentJobId);
+      const job = parseJobFamily(expectedFlowJobs[jobIndex]);
+
+      job.children = job.children.map(cJob => {
+        if (!cJob.retriable) {
+          return cJob;
+        }
+
+        return {
+          ...cJob,
+          retries: [...(cJob.retries || []), { type: JOB_TYPES.RETRY }],
+        };
+      });
+
+      expectedFlowJobs[jobIndex] = job;
+      expect(state3).toEqual({ ...state2, flowJobs: expectedFlowJobs });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(state2, actions.job.retryInit({ parentJobId }));
+      const state4 = reducer(state3, actions.job.retryUndo({ parentJobId }));
+
+      expect(state4).toEqual(state2);
+    });
+  });
+
+  describe('should update state properly for a child job retry', () => {
+    const parentJobId = 'fj4';
+    const childJobId = 'fj4i1';
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const jobFamily = flowJobs.find(job => job._id === parentJobId);
+    const jobFamilyReceivedAction = actions.job.receivedFamily({
+      job: jobFamily,
+    });
+
+    test('should update the state properly for init', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(
+        state2,
+        actions.job.retryInit({ parentJobId, childJobId })
+      );
+      const expectedFlowJobs = [...flowJobs];
+      const parentJobIndex = expectedFlowJobs.findIndex(
+        j => j._id === parentJobId
+      );
+      const parentJob = parseJobFamily({
+        ...expectedFlowJobs[parentJobIndex],
+      });
+      const childJobIndex = parentJob.children.findIndex(
+        cj => cj._id === childJobId
+      );
+      const childJob = {
+        ...parentJob.children[childJobIndex],
+      };
+
+      parentJob.children[childJobIndex] = {
+        ...childJob,
+        retries: [...(childJob.retries || []), { type: JOB_TYPES.RETRY }],
+      };
+
+      expectedFlowJobs[parentJobIndex] = parentJob;
+      expect(state3).toEqual({ ...state2, flowJobs: expectedFlowJobs });
+    });
+
+    test('should update the state properly for undo', () => {
+      const state = reducer(undefined, jobsReceivedAction);
+      const state2 = reducer(state, jobFamilyReceivedAction);
+      const state3 = reducer(
+        state2,
+        actions.job.retryInit({ parentJobId, childJobId })
+      );
+      const state4 = reducer(
+        state3,
+        actions.job.retryUndo({ parentJobId, childJobId })
+      );
+
+      expect(state4).toEqual(state2);
+    });
+  });
+
+  test('should update state properly when a job error collection received', () => {
+    const state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: jobs,
+      })
+    );
+    const state2 = reducer(
+      state,
+      actions.job.receivedRetryObjects({
+        collection: [
+          {
+            _id: 'ro1',
+            something: 'something else',
+          },
+          {
+            _id: 'ro2',
+            somethingElse: 'something',
+          },
+        ],
+        jobId: 'something',
+      })
+    );
+    const errors = [
+      {
+        source: 's1',
+        code: 'c1',
+        message: 'something',
+      },
+      {
+        source: 's1',
+        code: 'c2',
+        message: 'something else',
+      },
+    ];
+    const state3 = reducer(
+      state2,
+      actions.job.receivedErrors({
+        collection: errors,
+        jobId: 'something',
+      })
+    );
+    const expectedErrors = [];
+
+    state3.errors.forEach((e, i) => {
+      expectedErrors.push({
+        _id: e._id,
+        ...errors[i],
+      });
+    });
+    expect(state3).toEqual({ ...state2, errors: expectedErrors });
+  });
+
+  test('should update state properly for a job selected errors resolve init', () => {
+    const errors = [
+      {
+        source: 's1',
+        code: 'c1',
+        message: 'something',
+      },
+      {
+        source: 's1',
+        code: 'c2',
+        message: 'something else',
+        resolved: false,
+      },
+      {
+        source: 's2',
+        code: 'c1',
+        message: 'something else',
+      },
+    ];
+    const state = reducer(
+      { ...DEFAULT_STATE },
+      actions.job.receivedErrors({
+        collection: errors,
+        jobId: 'something',
+      })
+    );
+    const expectedErrors = [];
+    const selectedErrorIds = [];
+
+    state.errors.forEach((e, i) => {
+      expectedErrors.push({
+        _id: e._id,
+        ...errors[i],
+      });
+
+      if (i % 2 === 0) {
+        selectedErrorIds.push(e._id);
+        expectedErrors[i].resolved = true;
+      }
+    });
+    const state2 = reducer(
+      state,
+      actions.job.resolveSelectedErrorsInit({
+        selectedErrorIds,
+      })
+    );
+
+    expect(state2).toEqual({ ...state, errors: expectedErrors });
+  });
+
+  test('should update state properly when a job retry object collection received', () => {
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const state1 = reducer(undefined, jobsReceivedAction);
+    const state2 = reducer(
+      state1,
+      actions.job.receivedErrors({
+        collection: [
+          {
+            source: 's1',
+            code: 'c1',
+            message: 'something',
+          },
+          {
+            source: 's1',
+            code: 'c2',
+            message: 'something else',
+          },
+        ],
+        jobId: 'something',
+      })
+    );
+    const retryObjectCollection = [
+      {
+        _id: 'ro1',
+        something: 'something else',
+      },
+      {
+        _id: 'ro2',
+        somethingElse: 'something',
+      },
+    ];
+    const state3 = reducer(
+      state2,
+      actions.job.receivedRetryObjects({
+        collection: retryObjectCollection,
+        jobId: 'something',
+      })
+    );
+    const expectedRetryObjects = {};
+
+    retryObjectCollection.forEach(ro => {
+      expectedRetryObjects[ro._id] = ro;
+    });
+
+    expect(state3).toEqual({ ...state2, retryObjects: expectedRetryObjects });
+  });
+
+  test('should update state properly when a retry object data received', () => {
+    const retryObjectCollection = [
+      {
+        _id: 'ro1',
+        something: 'something else',
+      },
+      {
+        _id: 'ro2',
+        somethingElse: 'something',
+      },
+    ];
+    const state = reducer(
+      { ...DEFAULT_STATE },
+      actions.job.receivedRetryObjects({
+        collection: retryObjectCollection,
+        jobId: 'something',
+      })
+    );
+    const retryObjectId = 'ro2';
+    const retryObjectData = { some: 'thing', else: 'something' };
+    const state2 = reducer(
+      state,
+      actions.job.receivedRetryData({
+        retryId: retryObjectId,
+        retryData: retryObjectData,
+      })
+    );
+    const expectedRetryObjects = {};
+
+    retryObjectCollection.forEach(ro => {
+      expectedRetryObjects[ro._id] = ro;
+    });
+
+    expectedRetryObjects[retryObjectId].retryData = retryObjectData;
+
+    expect(state2).toEqual({ ...state, retryObjects: expectedRetryObjects });
   });
 });

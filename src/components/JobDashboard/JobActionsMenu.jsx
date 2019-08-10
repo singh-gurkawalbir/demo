@@ -174,8 +174,8 @@ export default function AccessTokenActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.resolveUndo({
-                jobId: job._id,
-                parentJobId: job._flowJobId,
+                childJobId: job._flowJobId ? job._id : null,
+                parentJobId: job._flowJobId || job._id,
               })
             );
           }
@@ -215,8 +215,8 @@ export default function AccessTokenActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.retryUndo({
-                jobId: job._id,
-                parentJobId: job._flowJobId,
+                parentJobId: job._flowJobId || job._id,
+                childJobId: job._flowJobId ? job._id : null,
               })
             );
           }

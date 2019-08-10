@@ -233,7 +233,10 @@ export function* resolveSelected({ jobs }) {
   yield all(
     jobs.map(job =>
       put(
-        actions.job.resolveInit({ jobId: job._id, parentJobId: job._flowJobId })
+        actions.job.resolveInit({
+          parentJobId: job._flowJobId || job._id,
+          childJobId: job._flowJobId ? job._id : null,
+        })
       )
     )
   );
@@ -314,7 +317,10 @@ export function* retrySelected({ jobs }) {
   yield all(
     jobs.map(job =>
       put(
-        actions.job.retryInit({ jobId: job._id, parentJobId: job._flowJobId })
+        actions.job.retryInit({
+          parentJobId: job._flowJobId || job._id,
+          childJobId: job._flowJobId ? job._id : null,
+        })
       )
     )
   );
@@ -490,8 +496,6 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
 
   yield put(
     actions.job.resolveSelectedErrorsInit({
-      jobId,
-      flowJobId,
       selectedErrorIds,
     })
   );
