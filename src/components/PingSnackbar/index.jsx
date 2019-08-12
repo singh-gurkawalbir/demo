@@ -39,7 +39,7 @@ const styles1 = theme => ({
   },
   iconVariant: {
     opacity: 0.9,
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   message: {
     display: 'flex',
@@ -84,7 +84,7 @@ function ClosableSnackbar(props) {
 const WrappedClosableSnackbar = withStyles(styles1)(ClosableSnackbar);
 const styles2 = theme => ({
   margin: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
   },
 });
 const commStateToVariantType = {

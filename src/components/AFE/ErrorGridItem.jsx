@@ -11,7 +11,7 @@ import CodePanel from './GenericEditor/CodePanel';
     minWidth: '150px',
     minHeight: '100px',
     gridArea: 'error',
-    marginBottom: theme.spacing.double,
+    marginBottom: theme.spacing(2),
   },
 
   flexContainer: {

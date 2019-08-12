@@ -4,8 +4,8 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   textField: {
-    paddingTop: theme.spacing.double,
-    paddingBottom: theme.spacing.double,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     display: 'inline-block',
     fontSize: theme.typography.fontSize * 1.5,
   },

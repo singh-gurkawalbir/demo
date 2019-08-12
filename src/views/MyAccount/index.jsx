@@ -40,26 +40,26 @@ const Audit = loadable(() =>
     // color: theme.palette.action.active,
   },
   appFrame: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   about: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   root: {
     display: 'flex',
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     alignItems: 'flex-start',
   },
   leftElement: {
     position: 'relative',
     textAlign: 'center',
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     minHeight: 500,
   },
   rightElement: {
     flex: 4,
     textAlign: 'center',
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   activeLink: {
     fontWeight: 'bold',

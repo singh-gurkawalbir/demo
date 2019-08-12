@@ -63,18 +63,18 @@ const mapStateToProps = state => {
 
   drawerPaper: {
     position: 'relative',
-    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
+    height: `calc(100vh - ${theme.spacing(7)}px)`,
     width: theme.drawerWidth,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
 
   content: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.triple,
+    padding: theme.spacing(3),
   },
   paper: {
-    padding: theme.spacing.double,
+    padding: theme.spacing(2),
   },
 }))
 class Resources extends Component {

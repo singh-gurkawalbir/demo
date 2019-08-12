@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 @withStyles(theme => ({
   gridContainer: {
     display: 'grid',
-    gridGap: `${theme.spacing.double}px`,
+    gridGap: theme.spacing(2),
     alignItems: 'stretch',
     height: '100%',
   },

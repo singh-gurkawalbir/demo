@@ -10,7 +10,6 @@ import { FieldWrapper } from 'react-forms-processor/dist';
 
 @withStyles(theme => ({
   formControl: {
-    // margin: theme.spacing.unit,
     minWidth: 120,
     maxWidth: 300,
   },
@@ -19,7 +18,7 @@ import { FieldWrapper } from 'react-forms-processor/dist';
     flexWrap: 'wrap',
   },
   chip: {
-    margin: theme.spacing.unit / 4,
+    margin: theme.spacing(0.25),
   },
 }))
 class MaterialUiMultiSelect extends React.Component {

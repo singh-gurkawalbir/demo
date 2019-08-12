@@ -15,7 +15,7 @@ import CodeEditor from '../../../components/CodeEditor';
 
 @withStyles(theme => ({
   container: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   label: {
@@ -26,9 +26,9 @@ import CodeEditor from '../../../components/CodeEditor';
   },
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    marginRight: theme.spacing.unit,
-    marginTop: theme.spacing.unit,
-    height: theme.spacing.unit * 10,
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    height: theme.spacing(10),
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',

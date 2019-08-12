@@ -31,7 +31,7 @@ const styles = theme => ({
 });
 
 export const SelectApplication = withStyles(styles)(
-  withTheme()(props => {
+  withTheme(props => {
     const {
       description,
       disabled,

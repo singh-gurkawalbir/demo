@@ -11,10 +11,10 @@ import ErrorBox from './ErrorBox';
 
 const styles = theme => ({
   panel: {
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.spacing(1),
   },
   paper: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.triple}px`,
+    padding: theme.spacing(1, 3),
     display: 'flex',
     justifyContent: 'space-between',
     color: 'white',

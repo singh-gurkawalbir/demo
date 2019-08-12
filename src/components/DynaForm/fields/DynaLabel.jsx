@@ -10,13 +10,13 @@ import helpTextMap from '../../Help/helpTextMap';
   helpPopper: {
     maxWidth: '350px',
     maxHeight: '300px',
-    padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
+    padding: theme.spacing(1, 2),
     overflow: 'auto',
   },
 
   textField: {
-    paddingTop: theme.spacing.double,
-    paddingBottom: theme.spacing.double,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     display: 'inline-block',
     fontSize: theme.typography.fontSize * 1.5,
   },

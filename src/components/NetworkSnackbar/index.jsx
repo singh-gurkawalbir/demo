@@ -24,10 +24,10 @@ const Dismiss = props =>
 
 @withStyles(theme => ({
   snackbar: {
-    marginTop: theme.spacing.unit * 1,
+    marginTop: theme.spacing(1),
   },
   snackbarContent: {
-    w: theme.spacing.unit * 4,
+    w: theme.spacing(4),
     flexGrow: 0,
     justifyContent: 'center',
     textAlign: 'center',
