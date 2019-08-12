@@ -6,22 +6,63 @@
 // assistant: Optional - set if App is a variant (Assistant)
 // connections: Optional - if application supports multiple connection
 //   types, list them. Concur and Constant Contact are examples.
-
-export default [
-  // generic connectors
-  { id: 'HTTP', name: 'HTTP', type: 'http' },
-
-  { id: 'REST', name: 'REST API', type: 'rest' },
-  { id: 'FTP', name: 'FTP', type: 'ftp' },
-  { id: 'Webhook', name: 'Webhook', type: 'webhook' },
-
-  // databases
-  { id: 'mongodb', name: 'MongoDB', type: 'mongodb' },
-  { id: 'mssql', name: 'mssql', type: 'mssql' },
-  { id: 'mysql', name: 'MySQL', type: 'mysql' },
-  { id: 'postgresql', name: 'postgresql', type: 'postgresql' },
-
-  // Assistants
+// keyword: any words in combination with the name that will be used for search.
+// group: optional. If present used to group connectors together in the UI when
+//   listing them.
+const connectors = [
+  // tech connectors
+  {
+    id: 'HTTP',
+    name: 'HTTP',
+    type: 'http',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  {
+    id: 'REST',
+    name: 'REST API',
+    type: 'rest',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  { id: 'FTP', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
+  {
+    id: 'Webhook',
+    name: 'Webhook',
+    type: 'webhook',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  // Database connectors
+  {
+    id: 'mongodb',
+    name: 'MongoDB',
+    type: 'mongodb',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
+    id: 'mssql',
+    name: 'mssql',
+    type: 'mssql',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
+    id: 'mysql',
+    name: 'MySQL',
+    type: 'mysql',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
+    id: 'postgresql',
+    name: 'postgresql',
+    type: 'postgresql',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  // Application connectors
   { id: '3dcart', name: '3D Cart', type: 'rest', assistant: '3dcart' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
   {
@@ -493,3 +534,20 @@ export default [
   { id: 'zoom', name: 'zoom', type: 'rest', assistant: 'zoom' },
   { id: 'zuora', name: 'zuora', type: 'rest', assistant: 'zuora' },
 ];
+
+export const groupApplications = () => [
+  {
+    label: 'Databases',
+    connectors: connectors.filter(c => c.group === 'db'),
+  },
+  {
+    label: 'Generic tech connectors',
+    connectors: connectors.filter(c => c.group === 'tech'),
+  },
+  {
+    label: 'Connectors',
+    connectors: connectors.filter(c => !c.group),
+  },
+];
+
+export default connectors;

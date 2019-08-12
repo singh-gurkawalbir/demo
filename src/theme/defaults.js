@@ -8,6 +8,14 @@ export default {
     useNextVariants: true,
     fontFamily: 'Roboto, sans-serif',
   },
+  palette: {
+    background: {
+      success: colors.celigoSuccess,
+      warning: colors.celigoWarning,
+      error: colors.celigoError,
+      info: colors.celigoAccent1,
+    },
+  },
   spacing: {
     unit,
     double: unit * 2,
