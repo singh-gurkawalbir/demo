@@ -19,11 +19,11 @@ const mapStateToProps = state => ({
 @withStyles(theme => ({
   actions: {
     textAlign: 'right',
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing(0.5),
   },
   actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
   },
 }))
 class UserForm extends Component {

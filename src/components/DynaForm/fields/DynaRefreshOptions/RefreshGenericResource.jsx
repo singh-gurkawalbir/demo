@@ -22,7 +22,7 @@ const styles = theme => ({
     flexWrap: 'wrap',
   },
   chip: {
-    margin: theme.spacing.unit / 4,
+    margin: theme.spacing(0.25),
   },
 });
 

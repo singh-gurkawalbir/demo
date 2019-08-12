@@ -10,12 +10,12 @@ import FormLabel from '@material-ui/core/FormLabel';
     // border: 'solid 1px',
     // borderColor: theme.palette.text.disabled,
     // backgroundColor: theme.palette.background.default,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   input: {
     flex: '1 1 auto',
-    marginRight: theme.spacing.double,
+    marginRight: theme.spacing(2),
   },
   rowContainer: {
     display: 'flex',

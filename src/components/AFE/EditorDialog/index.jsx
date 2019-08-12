@@ -29,8 +29,8 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     paddingBottom: 0,
   },
   toolbarContainer: {
-    margin: `0 ${theme.spacing.unit}px`,
-    padding: theme.spacing.double,
+    margin: theme.spacing(0, 1),
+    padding: theme.spacing(2),
     display: 'flex',
   },
   toolbarItem: {
@@ -42,12 +42,12 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     justifyContent: 'flex-start',
   },
   fullScreen: {
-    marginLeft: `${theme.spacing.unit * 2}px`,
+    marginLeft: theme.spacing(2),
   },
   actions: {
-    marginRight: theme.spacing.unit * 3 - 2,
-    marginTop: 0, // theme.spacing.unit / 2,
-    marginBottom: theme.spacing.double,
+    marginRight: theme.spacing(3) - 2,
+    marginTop: 0,
+    marginBottom: theme.spacing(2),
   },
 }))
 class EditorDialog extends Component {

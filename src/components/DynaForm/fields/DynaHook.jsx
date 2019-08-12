@@ -29,7 +29,7 @@ const mapStateToProps = state => {
   },
   textField: {
     width: 'calc(50% - 30px)',
-    paddingRight: theme.spacing.unit,
+    paddingRight: theme.spacing(1),
   },
   editorButton: {},
 }))

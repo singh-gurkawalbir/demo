@@ -16,11 +16,11 @@ import getRenderer from './renderer';
     minHeight: '30vh',
     maxHeight: `60vh`,
     overflowY: 'auto',
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   details: {
     display: 'block',
-    paddingRight: theme.spacing.unit,
+    paddingRight: theme.spacing(1),
   },
 }))
 export default class DynaForm extends Component {
