@@ -38,7 +38,7 @@ const connectors = [
     id: 'mongodb',
     name: 'MongoDB',
     type: 'mongodb',
-    keywords: 'database,rdbms,db',
+    keywords: 'database,db',
     group: 'db',
   },
   {
