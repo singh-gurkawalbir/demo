@@ -11,6 +11,13 @@ export default {
     panelBackground: colors.celigoNeutral2,
     panelBorder: colors.celigoNeutral2,
   },
+  selectFormControl: {
+    color: colors.celigoNeutral6,
+    background: colors.celigoWhite,
+    hover: colors.celigoNeutral1,
+    text: colors.celigoNeutral8,
+    separator: colors.celigoNeutral3,
+  },
   palette: {
     type: 'light',
     background: {
@@ -20,9 +27,6 @@ export default {
       sideBar: colors.celigoNeutral1,
       editorInner: colors.celigoNeutral2,
       arrowAfter: colors.celigoNeutral3,
-      // success:
-      // warning: celigo.celigoWarning
-      // error:
     },
     primary: {
       main: colors.celigoAccent1,
@@ -57,6 +61,7 @@ export default {
       subtitle1: { color: colors.celigoNeutral6 },
       subtitle2: { color: colors.celigoNeutral6 },
       overline: { color: colors.celigoNeutral6 },
+      caption: { color: colors.celigoNeutral6 },
     },
     MuiButton: {
       textPrimary: {

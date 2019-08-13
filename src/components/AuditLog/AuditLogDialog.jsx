@@ -11,7 +11,7 @@ import AuditLog from './index';
 @withStyles(theme => ({
   title: {
     margin: 0,
-    padding: theme.spacing.double,
+    padding: theme.spacing(2),
   },
   closeButton: {
     position: 'absolute',

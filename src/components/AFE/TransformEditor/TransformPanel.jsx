@@ -17,14 +17,14 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
 
 @withStyles(theme => ({
   container: {
-    paddingLeft: theme.spacing.unit,
+    paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflowY: 'auto',
   },
   input: {
     flex: '1 1 auto',
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   rowContainer: {
     display: 'flex',

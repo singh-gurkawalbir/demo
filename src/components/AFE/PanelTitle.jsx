@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 @withStyles(theme => ({
   title: {
-    paddingLeft: theme.spacing.unit,
+    paddingLeft: theme.spacing(1),
     backgroundColor: theme.editor.panelBackground,
     // color: theme.palette.text.main,
     borderBottom: `solid 1px ${theme.editor.panelBorder}`,
