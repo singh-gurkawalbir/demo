@@ -1,4 +1,3 @@
-import { FieldWrapper } from 'react-forms-processor/dist';
 import {
   RadioGroup,
   FormControlLabel,
@@ -12,7 +11,7 @@ import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaText from './DynaText';
 import * as selectors from '../../../reducers';
 
-function SavedSearch(props) {
+export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
   const {
     value,
@@ -80,11 +79,3 @@ function SavedSearch(props) {
     </div>
   );
 }
-
-const DynaNSSavedSearch = props => (
-  <FieldWrapper {...props}>
-    <SavedSearch />
-  </FieldWrapper>
-);
-
-export default DynaNSSavedSearch;

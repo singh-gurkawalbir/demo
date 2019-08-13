@@ -19,7 +19,7 @@ const styles = theme => ({
   },
   navLink: {
     color: theme.appBar.contrast,
-    paddingRight: theme.spacing.triple,
+    paddingRight: theme.spacing(3),
     letterSpacing: '1.3px',
     fontSize: '13px',
     fontWeight: 500,

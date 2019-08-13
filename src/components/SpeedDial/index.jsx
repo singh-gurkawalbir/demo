@@ -9,8 +9,8 @@ const isTouch =
 @withStyles(theme => ({
   speedDial: {
     position: 'absolute',
-    bottom: theme.spacing.double,
-    right: theme.spacing.triple,
+    bottom: theme.spacing(2),
+    right: theme.spacing(3),
   },
 }))
 export default class SpeedDial extends Component {

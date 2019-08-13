@@ -48,7 +48,7 @@ const getColumns = result => {
     height: '100%',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     // minWidth: 120,
   },
 }))
