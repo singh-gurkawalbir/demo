@@ -90,11 +90,13 @@ export default (
   const {
     type,
     metadata,
+    metadataError,
     connectionId,
     metadataType,
     mode,
     filterKey,
   } = action;
+  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
   let newState;
 
   switch (type) {
@@ -102,7 +104,6 @@ export default (
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
-      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
       // Creates Object with status as 'requested' incase of New Request
       specificMode[connectionId] = {
@@ -117,7 +118,6 @@ export default (
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
-      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
       // Updates Object with status as 'requested' incase of Refresh Request
       if (
@@ -146,11 +146,24 @@ export default (
         mode,
         filterKey
       );
-      const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
       specificMode[connectionId] = {
         ...specificMode[connectionId],
         [key]: { status: 'received', data: options },
+      };
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
+    // Error handler
+    case actionTypes.METADATA.RECEIVED_ERROR: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+
+      specificMode[connectionId] = {
+        ...specificMode[connectionId],
+        [key]: { status: 'error', data: [], errorMessage: metadataError },
       };
 
       return { ...state, ...{ netsuite: newState } };

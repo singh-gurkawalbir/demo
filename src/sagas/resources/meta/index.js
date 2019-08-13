@@ -27,7 +27,18 @@ function* getNetsuiteOrSalesforceMeta({
       message: `Fetching ${metadataType}`,
     });
 
-    if (applicationType === 'netsuite') {
+    // Handle Errors sent as part of response object  with status 200
+    if (metadata && metadata.errors) {
+      yield put(
+        actions.metadata.netsuite.receivedError(
+          metadata.errors[0] && metadata.errors[0].message,
+          metadataType,
+          connectionId,
+          mode,
+          filterKey
+        )
+      );
+    } else if (applicationType === 'netsuite') {
       yield put(
         actions.metadata.netsuite.receivedCollection(
           metadata,
@@ -41,7 +52,20 @@ function* getNetsuiteOrSalesforceMeta({
 
     return metadata;
   } catch (error) {
-    return undefined;
+    // Handling error statuses in  between 400 and 500 to show customized error
+    if (error.status >= 400 && error.status < 500) {
+      const parsedError = JSON.parse(error.message);
+
+      yield put(
+        actions.metadata.netsuite.receivedError(
+          parsedError && parsedError[0] && parsedError[0].message,
+          metadataType,
+          connectionId,
+          mode,
+          filterKey
+        )
+      );
+    }
   }
 }
 

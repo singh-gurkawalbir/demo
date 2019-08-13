@@ -43,6 +43,7 @@ function RefreshGenericResource(props) {
     handleFetchResource,
     handleRefreshResource,
     placeholder,
+    fieldError,
   } = props;
   const classes = useStyles(props);
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -160,6 +161,9 @@ function RefreshGenericResource(props) {
         {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
+        {fieldError && (
+          <FormHelperText error="true">{fieldError}</FormHelperText>
+        )}
       </FormControl>
     </div>
   );

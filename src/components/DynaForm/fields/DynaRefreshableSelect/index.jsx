@@ -7,7 +7,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 export default function DynaSelectOptionsGenerator(props) {
   const { connectionId, resourceType, mode, options, filterKey } = props;
   const dispatch = useDispatch();
-  const { status, data } = useSelector(state =>
+  const { status, data, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -43,6 +43,7 @@ export default function DynaSelectOptionsGenerator(props) {
       handleRefreshResource={handleRefreshResource}
       fieldStatus={status}
       fieldData={data}
+      fieldError={errorMessage}
       {...props}
     />
   );

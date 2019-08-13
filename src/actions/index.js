@@ -179,6 +179,20 @@ const metadata = {
         mode,
         filterKey,
       }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_ERROR, {
+        metadataError,
+        metadataType,
+        connectionId,
+        mode,
+        filterKey,
+      }),
   },
 };
 const ashares = {
