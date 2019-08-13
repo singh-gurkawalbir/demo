@@ -1,25 +1,34 @@
-import { Component } from 'react';
 import EditorDialog from '../EditorDialog';
 import JavaScriptEditor from './';
 
-export default class JavaScriptEditorDialog extends Component {
-  render() {
-    const defaults = {
-      width: '80vw',
-      height: '60vh',
-      open: true,
-    };
-    const { id, scriptId, entryFunction, data, ...rest } = this.props;
+export default function JavaScriptEditorDialog(props) {
+  const {
+    id,
+    scriptId,
+    entryFunction,
+    title,
+    data,
+    width = '80vw',
+    onClose,
+    height = '60vh',
+    open = true,
+  } = props;
 
-    return (
-      <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
-        <JavaScriptEditor
-          editorId={id}
-          scriptId={scriptId}
-          entryFunction={entryFunction}
-          data={data}
-        />
-      </EditorDialog>
-    );
-  }
+  return (
+    <EditorDialog
+      id={id}
+      open={open}
+      title={title}
+      width={width}
+      height={height}
+      onClose={onClose}
+      showLayoutOptions={false}>
+      <JavaScriptEditor
+        editorId={id}
+        scriptId={scriptId}
+        entryFunction={entryFunction}
+        data={data}
+      />
+    </EditorDialog>
+  );
 }

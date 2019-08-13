@@ -1,6 +1,6 @@
-import { useEffect, Fragment } from 'react';
+import { useEffect, useCallback, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -13,42 +13,8 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 
-const mapStateToProps = (state, { editorId }) => {
-  const editor = selectors.editor(state, editorId);
-  const getScriptContent = id => {
-    const data = selectors.resourceData(state, 'scripts', id);
-
-    if (data && data.merged) {
-      return data.merged.content;
-    }
-  };
-
-  const allScripts = selectors.resourceList(state, { type: 'scripts' })
-    .resources;
-
-  return {
-    editor,
-    allScripts,
-    getScriptContent,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  patchEditor: editorId => (option, value) => {
-    if (typeof option === 'string') {
-      dispatch(actions.editor.patch(editorId, { [option]: value }));
-    } else {
-      // option is already an object.
-      dispatch(actions.editor.patch(editorId, option));
-    }
-  },
-  requestScript: id => {
-    dispatch(actions.resource.request('scripts', id));
-  },
-});
 const styles = theme => ({
   container: {
-    // padding: '10px',
     backgroundColor: theme.palette.background.default,
     height: '100%',
   },
@@ -64,25 +30,43 @@ const styles = theme => ({
   },
 });
 const JavaScriptPanel = props => {
-  const {
-    getScriptContent,
-    requestScript,
-    patchEditor,
-    editorId,
-    allScripts,
-    classes,
-  } = props;
-  const { editor } = props;
-  const { code = '', entryFunction = '', scriptId = '' } = editor;
-  const scriptContent = getScriptContent(scriptId);
+  const { editorId, classes } = props;
+  const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
+  const scriptContent = useSelector(state => {
+    const data = selectors.resourceData(state, 'scripts', scriptId);
+
+    if (data && data.merged) {
+      return data.merged.content;
+    }
+  });
+  const allScripts = useSelector(
+    state => selectors.resourceList(state, { type: 'scripts' }).resources
+  );
+  const dispatch = useDispatch();
+  const patchEditor = useCallback(
+    () => (option, value) => {
+      if (typeof option === 'string') {
+        dispatch(actions.editor.patch(editorId, { [option]: value }));
+      } else {
+        // option is already an object.
+        dispatch(actions.editor.patch(editorId, option));
+      }
+    },
+    [dispatch, editorId]
+  );
+  const requestScript = useCallback(() => {
+    dispatch(actions.resource.request('scripts', scriptId));
+  }, [dispatch, scriptId]);
 
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
     // do we have a timeout for the spinner
     if (scriptContent) {
-      patchEditor(editorId)({ code: scriptContent });
+      patchEditor()({ code: scriptContent });
     } else if (scriptId) {
-      requestScript(scriptId);
+      requestScript();
       // Shouldnt we update to the selected scriptId
     }
   }, [editorId, patchEditor, requestScript, scriptContent, scriptId]);
@@ -137,6 +121,4 @@ const JavaScriptPanel = props => {
   );
 };
 
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)
-(withStyles(styles)(JavaScriptPanel));
+export default withStyles(styles)(JavaScriptPanel);
