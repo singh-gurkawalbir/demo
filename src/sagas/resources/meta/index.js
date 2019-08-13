@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -70,8 +70,6 @@ function* getNetsuiteOrSalesforceMeta({
 }
 
 export default [
-  takeEvery(
-    [actionTypes.METADATA.REQUEST, actionTypes.METADATA.REFRESH],
-    getNetsuiteOrSalesforceMeta
-  ),
+  takeEvery(actionTypes.METADATA.REQUEST, getNetsuiteOrSalesforceMeta),
+  takeLatest(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMeta),
 ];
