@@ -22,6 +22,10 @@ import getRenderer from './renderer';
     display: 'block',
     paddingRight: theme.spacing(1),
   },
+  actions: {
+    textAlign: 'right',
+    padding: theme.spacing.unit / 2,
+  },
 }))
 export default class DynaForm extends Component {
   render() {
@@ -60,7 +64,8 @@ export default class DynaForm extends Component {
             ))}
         </div>
         {/* The children are action buttons for the form */}
-        {children}
+
+        <div className={classes.actions}>{children}</div>
       </Form>
     );
   }

@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import CsvParseEditorDialog from '../../../components/AFE/CsvParseEditor/Dialog';
 
 export default function DynaCsvParse(props) {
-  const { id, onFieldChange, value, label, sampleData } = props;
+  const { id, onFieldChange, value, label, sampleData = '' } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
