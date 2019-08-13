@@ -367,7 +367,7 @@ export function* makeOwner({ email }) {
 }
 
 export const userSagas = [
-  takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
+  takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
   takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),

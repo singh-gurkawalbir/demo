@@ -3,10 +3,10 @@
 import reducer, { netsuiteUserRoles } from '.';
 import actions from '../../../actions';
 
-describe('netsuiteUser roles reducer', () => {
+describe('netsuiteUser roles reducer ', () => {
   const connectionId = '123';
 
-  test('on request should create a new connection if there isn`t an existing one and retain an existing state if there is one', () => {
+  test('should create a new connection on request if there isn`t an existing one', () => {
     const existingState = {
       [connectionId]: { somePrevStateProp: 'something' },
     };
@@ -26,7 +26,7 @@ describe('netsuiteUser roles reducer', () => {
     expect(state).toEqual({ [connectionId]: {} });
   });
 
-  test('on received netsuite user roles should copy persist in state', () => {
+  test('should persist userRoles in state on received action', () => {
     let state = reducer(
       undefined,
       actions.resource.connections.netsuite.requestUserRoles(connectionId)
@@ -43,14 +43,14 @@ describe('netsuiteUser roles reducer', () => {
       [connectionId]: { userRoles: { something: {} }, status: 'success' },
     });
   });
-  test('on failure netsuite user roles should copy persist in state', () => {
+  test('should update the status to failed when the request for netsuiteUserRoles has failed', () => {
     let state = reducer(
       undefined,
       actions.resource.connections.netsuite.requestUserRoles(connectionId)
     );
 
     state = reducer(
-      undefined,
+      state,
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
         'Failed to retrieve'
@@ -61,14 +61,14 @@ describe('netsuiteUser roles reducer', () => {
       [connectionId]: { status: 'failed', message: 'Failed to retrieve' },
     });
   });
-  test('on clear netsuite user roles should clear the message and status', () => {
+  test('should clear the the message and the status on a failed request for netsuiteUserRoles', () => {
     let state = reducer(
       undefined,
       actions.resource.connections.netsuite.requestUserRoles(connectionId)
     );
 
     state = reducer(
-      undefined,
+      state,
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
         'Failed to retrieve'
@@ -77,6 +77,85 @@ describe('netsuiteUser roles reducer', () => {
 
     expect(state).toEqual({
       [connectionId]: { status: 'failed', message: 'Failed to retrieve' },
+    });
+
+    state = reducer(
+      state,
+      actions.resource.connections.netsuite.clearUserRoles(connectionId)
+    );
+
+    expect(state).toEqual({
+      [connectionId]: {},
+    });
+  });
+
+  test('should not clear the previous successful retrieval of netsuiteUserRoles in the event of a failure', () => {
+    let state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(connectionId, {
+        something: {},
+      })
+    );
+
+    state = reducer(
+      state,
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        connectionId,
+        'Failed to retrieve'
+      )
+    );
+
+    expect(state[connectionId]).toEqual({
+      message: 'Failed to retrieve',
+      status: 'failed',
+      userRoles: { something: {} },
+    });
+  });
+
+  test('should not update a different connection state', () => {
+    const anotherConnectionId = '3434';
+    let state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(connectionId, {
+        something: {},
+      })
+    );
+
+    state = reducer(
+      state,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        anotherConnectionId,
+        {
+          somethingElse: {},
+        }
+      )
+    );
+    expect(state).toEqual({
+      [connectionId]: { status: 'success', userRoles: { something: {} } },
+      [anotherConnectionId]: {
+        status: 'success',
+        userRoles: { somethingElse: {} },
+      },
+    });
+  });
+
+  test('should not mutate the state for a non relevant action type', () => {
+    let state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(connectionId, {
+        something: {},
+      })
+    );
+
+    state = reducer(state, { type: 'some type' });
+    // state is the same
+    expect(state).toEqual({
+      [connectionId]: {
+        status: 'success',
+        userRoles: {
+          something: {},
+        },
+      },
     });
   });
 });
@@ -126,6 +205,34 @@ describe('netsuiteUserRoles selector ', () => {
       ],
     },
   };
+  const sampleRespOfMultipleRolesForTheSameAcc = {
+    production: {
+      accounts: [
+        {
+          account: {
+            internalId: '123333',
+            name: 'Integrator Scrum',
+            type: 'PRODUCTION',
+          },
+          role: {
+            internalId: 21212,
+            name: 'Administrator',
+          },
+        },
+        {
+          account: {
+            internalId: '123333',
+            name: 'Integrator Scrum',
+            type: 'PRODUCTION',
+          },
+          role: {
+            internalId: 122,
+            name: 'Celigo Integration Admin',
+          },
+        },
+      ],
+    },
+  };
 
   test('should return all environments when environment is provided as the netsuite resource request type', () => {
     const state = reducer(
@@ -146,9 +253,10 @@ describe('netsuiteUserRoles selector ', () => {
       acc
     );
 
-    expect(optionsArr).toEqual(
-      ['production', 'sandbox'].map(env => ({ label: env, value: env }))
-    );
+    expect(optionsArr).toEqual([
+      { label: 'production', value: 'production' },
+      { label: 'sandbox', value: 'sandbox' },
+    ]);
   });
 
   test('should return all accounts matching an environment when the environment is selected', () => {
@@ -204,5 +312,116 @@ describe('netsuiteUserRoles selector ', () => {
         label: 'Celigo Integration Admin',
       },
     ]);
+  });
+
+  test('should return a null optionsArr when invalid netsuite resource type is provided', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        sampleResp
+      )
+    );
+    const netsuiteResourceType = 'someInvalidResourceType';
+    const env = null;
+    const acc = null;
+    const { optionsArr } = netsuiteUserRoles(
+      state,
+      connectionId,
+      netsuiteResourceType,
+      env,
+      acc
+    );
+
+    expect(optionsArr).toEqual(null);
+  });
+
+  test('should return all unique accounts when a netsuiteUserRoles response has multiple roles of the same account', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        sampleRespOfMultipleRolesForTheSameAcc
+      )
+    );
+    const netsuiteResourceType = 'account';
+    const env = 'production';
+    const acc = null;
+    const { optionsArr } = netsuiteUserRoles(
+      state,
+      connectionId,
+      netsuiteResourceType,
+      env,
+      acc
+    );
+
+    expect(optionsArr).toEqual([
+      { label: 'Integrator Scrum', value: '123333' },
+    ]);
+  });
+
+  test('should return undefined for netsuiteResourceType of account when there isn`t any matching accounts for the selected environment', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        sampleResp
+      )
+    );
+    const netsuiteResourceType = 'account';
+    const env = 'someNonMatchingEnvironement';
+    const acc = null;
+    const { optionsArr } = netsuiteUserRoles(
+      state,
+      connectionId,
+      netsuiteResourceType,
+      env,
+      acc
+    );
+
+    expect(optionsArr).toEqual(undefined);
+  });
+
+  test('should return an empty array for netsuiteResourceType of role when there isn`t any matching roles for the selected account', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        sampleResp
+      )
+    );
+    const netsuiteResourceType = 'role';
+    const env = 'production';
+    const acc = 'someNonMatchingAccount';
+    const { optionsArr } = netsuiteUserRoles(
+      state,
+      connectionId,
+      netsuiteResourceType,
+      env,
+      acc
+    );
+
+    expect(optionsArr).toEqual([]);
+  });
+  test('should return undefined for netsuiteResourceType of role when there isn`t any matching roles for the selected environment and account', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        sampleResp
+      )
+    );
+    const netsuiteResourceType = 'role';
+    const env = 'someNonMatchingEnvironement';
+    const acc = 'someNonMatchingAccount';
+    const { optionsArr } = netsuiteUserRoles(
+      state,
+      connectionId,
+      netsuiteResourceType,
+      env,
+      acc
+    );
+
+    expect(optionsArr).toEqual(undefined);
   });
 });

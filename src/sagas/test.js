@@ -66,9 +66,9 @@ describe('netsuiteUserRoles', () => {
     afterEach(() => {
       expect(saga.next().done).toEqual(true);
     });
-    test('should check the response for errors on a successful call and subsequently dispatch an error', () => {
+    test('should check the response for errors on a successful call and subsequently dispatch an error if all the environments fail', () => {
       const failedResp = {
-        environement: { accounts: {}, success: false },
+        production: { accounts: {}, success: false },
         sandbox: { accounts: {}, success: false },
       };
 
@@ -82,9 +82,9 @@ describe('netsuiteUserRoles', () => {
       );
     });
 
-    test('should check the response for errors on a successful call and subsequently dispatch an successful netsuite userRoles if any of the environments succeeded', () => {
+    test('should check the response for errors on a successful call and subsequently dispatch a successful netsuite userRoles if any of the environments succeeded', () => {
       const oneEnvfailedResp = {
-        environement: { accounts: {}, success: true },
+        production: { accounts: {}, success: true },
         sandbox: { accounts: {}, success: false },
       };
 
@@ -97,9 +97,9 @@ describe('netsuiteUserRoles', () => {
         )
       );
     });
-    test('should save the userRoles on a successfull call', () => {
+    test('should save the userRoles on a successful call', () => {
       const successResp = {
-        environement: { accounts: {}, success: true },
+        production: { accounts: {}, success: true },
       };
 
       expect(saga.next(successResp).value).toEqual(
@@ -112,7 +112,7 @@ describe('netsuiteUserRoles', () => {
       );
     });
 
-    test('should dispatch an Error action when the api call has failed and thrown an exception ', () => {
+    test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
       const errorException = {
         message: JSON.stringify({ errors: [{ message: 'Some error' }] }),
       };
@@ -128,7 +128,7 @@ describe('netsuiteUserRoles', () => {
     });
   });
   describe('netsuite api call response behavior for an new connection', () => {
-    test('should save all save only success netsuite environements', () => {
+    test('should save only all success netsuite environments', () => {
       const email = 'some email';
       const password = 'some password';
       const saga = netsuiteUserRoles({
@@ -153,14 +153,14 @@ describe('netsuiteUserRoles', () => {
         })
       );
       const oneEnvfailedResp = {
-        environement: { accounts: {}, success: true },
+        production: { accounts: {}, success: true },
         sandbox: { accounts: {}, success: false },
       };
 
       expect(saga.next(oneEnvfailedResp).value).toEqual(
         put(
           actions.resource.connections.netsuite.receivedUserRoles('123', {
-            environement: { accounts: {}, success: true },
+            production: { accounts: {}, success: true },
           })
         )
       );
