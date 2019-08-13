@@ -11,6 +11,13 @@ export default {
     panelBackground: colors.celigoNeutral7,
     panelBorder: colors.celigoNeutral6,
   },
+  selectFormControl: {
+    color: colors.celigoNeutral1,
+    background: colors.celigoNeutral8,
+    hover: colors.celigoNeutral4,
+    text: colors.celigoNeutral8,
+    separator: colors.celigoNeutral6,
+  },
   palette: {
     type: 'dark',
     background: {
@@ -56,6 +63,7 @@ export default {
       subtitle1: { color: colors.celigoNeutral1 },
       subtitle2: { color: colors.celigoNeutral1 },
       overline: { color: colors.celigoWhite },
+      caption: { color: colors.celigoNeutral1 },
     },
     MuiButton: {
       textPrimary: {

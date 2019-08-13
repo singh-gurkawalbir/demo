@@ -1,19 +1,20 @@
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
-const unit = 8;
-
 export default {
   typography: {
     useNextVariants: true,
     fontFamily: 'Roboto, sans-serif',
   },
-  spacing: {
-    unit,
-    double: unit * 2,
-    triple: unit * 3,
-    quad: unit * 4,
+  palette: {
+    background: {
+      success: colors.celigoSuccess,
+      warning: colors.celigoWarning,
+      error: colors.celigoError,
+      info: colors.celigoAccent1,
+    },
   },
+  spacing: 8,
   drawerWidth: 300,
 
   overrides: {

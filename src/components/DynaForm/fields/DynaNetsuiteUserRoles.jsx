@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
-import { MaterialUiSelect } from './DynaSelect';
+import MaterialUiSelect from './DynaSelect';
 import * as selectors from '../../../reducers/index';
 
 const styles = () => ({

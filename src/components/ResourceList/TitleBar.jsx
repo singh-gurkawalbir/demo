@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
     display: 'flex',
   },
   title: {
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
     flexBasis: '50%',
     flexShrink: 0,
   },

@@ -11,10 +11,10 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.triple,
+    padding: theme.spacing(3),
   },
   paper: {
-    padding: theme.spacing.double,
+    padding: theme.spacing(2),
   },
 });
 

@@ -32,11 +32,11 @@ const mapDispatchToProps = (dispatch, { editorId }) => ({
     overflow: 'auto',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     // minWidth: 120,
   },
   textField: {
-    marginTop: theme.spacing.double,
+    marginTop: theme.spacing(2),
   },
 }))
 class XmlParsePanel extends Component {

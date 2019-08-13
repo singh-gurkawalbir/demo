@@ -145,7 +145,6 @@ export const ResourceFormFactory = props => {
     return <Typography>Initializing Form</Typography>;
   }
 
-  // let Form;
   return (
     <ActionsFactory
       {...props}

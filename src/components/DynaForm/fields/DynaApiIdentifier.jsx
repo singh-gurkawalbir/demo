@@ -1,31 +1,22 @@
-import { withStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
+import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
+import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 
-const styles = theme => ({
-  textField: {
-    paddingTop: theme.spacing.double,
-    paddingBottom: theme.spacing.double,
-    display: 'inline-block',
-    fontSize: theme.typography.fontSize * 1.5,
+const useStyles = makeStyles(theme => ({
+  text: {
+    padding: theme.spacing(1, 0),
   },
-});
+}));
 
-function ApiIdentifier(props) {
-  const { classes, label, value } = props;
+export default function DynaApiIdentifier(props) {
+  const { value, resourceType } = props;
+  const classes = useStyles(props);
 
   return (
-    <Typography className={classes.textField}>
-      {label}: {value}
+    <Typography variant="body1" className={classes.text}>
+      Invoke this {MODEL_PLURAL_TO_LABEL[resourceType]} via [POST] to:
+      https://api.staging.integrator.io/
+      {value}
     </Typography>
   );
 }
-
-const ComponentWithStyles = withStyles(styles)(ApiIdentifier);
-const DynaApiIdentifier = props => (
-  <FieldWrapper {...props}>
-    <ComponentWithStyles />
-  </FieldWrapper>
-);
-
-export default DynaApiIdentifier;

@@ -39,13 +39,13 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
 @withStyles(theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     overflowX: 'auto',
     // textAlign: 'center',
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     textAlign: 'center',
   },
   heading: {
@@ -65,9 +65,7 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginTop: theme.spacing(3, 1, 0, 1),
   }),
   focusedSummary: {
     backgroundColor: 'red',
