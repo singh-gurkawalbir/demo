@@ -1,29 +1,15 @@
-import React, { Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import CsvParseEditorDialog from '../../../components/AFE/CsvParseEditor/Dialog';
 
-@withStyles(() => ({
-  textField: {
-    minWidth: 200,
-  },
-  editorButton: {
-    // float: 'right',
-  },
-}))
-class DynaCsvParse extends React.Component {
-  state = {
-    showEditor: false,
+export default function DynaCsvParse(props) {
+  const { id, onFieldChange, value, label, sampleData } = props;
+  const [showEditor, setShowEditor] = useState(false);
+  const handleEditorClick = () => {
+    setShowEditor(!showEditor);
   };
 
-  handleEditorClick = () => {
-    this.setState({ showEditor: !this.state.showEditor });
-  };
-
-  handleClose = (shouldCommit, editorValues) => {
-    const { id, onFieldChange } = this.props;
-
+  const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
         columnDelimiter,
@@ -42,41 +28,24 @@ class DynaCsvParse extends React.Component {
       });
     }
 
-    this.handleEditorClick();
+    handleEditorClick();
   };
 
-  render() {
-    const { showEditor } = this.state;
-    const { classes, id, value, label, sampleData } = this.props;
-
-    return (
-      <Fragment>
-        {showEditor && (
-          <CsvParseEditorDialog
-            title="CSV parse options"
-            id={id}
-            mode="csv"
-            data={sampleData}
-            rule={value}
-            onClose={this.handleClose}
-          />
-        )}
-        <Button
-          variant="contained"
-          // color="secondary"
-          onClick={this.handleEditorClick}
-          className={classes.editorButton}>
-          {label}
-        </Button>
-      </Fragment>
-    );
-  }
+  return (
+    <Fragment>
+      {showEditor && (
+        <CsvParseEditorDialog
+          title="CSV parse options"
+          id={id}
+          mode="csv"
+          data={sampleData}
+          rule={value}
+          onClose={handleClose}
+        />
+      )}
+      <Button variant="contained" onClick={handleEditorClick}>
+        {label}
+      </Button>
+    </Fragment>
+  );
 }
-
-const WrappedDynaCsvParse = props => (
-  <FieldWrapper {...props}>
-    <DynaCsvParse />
-  </FieldWrapper>
-);
-
-export default WrappedDynaCsvParse;

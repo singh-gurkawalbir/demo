@@ -1,19 +1,9 @@
-// @flow
 import { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import { InputAdornment } from '@material-ui/core';
 
-const styles = () => ({
-  textField: {
-    // minWidth: 120,
-  },
-});
-
-export function MaterialUiTextField(props) {
+export default function DynaText(props) {
   const {
-    classes,
     description,
     disabled,
     errorMessages,
@@ -68,7 +58,6 @@ export function MaterialUiTextField(props) {
         ) : null,
       }}
       type={inputType}
-      className={classes.textField}
       placeholder={placeholder}
       helperText={isValid ? description : errorMessages}
       disabled={disabled}
@@ -81,12 +70,3 @@ export function MaterialUiTextField(props) {
     />
   );
 }
-
-const TextWithStyles = withStyles(styles)(MaterialUiTextField);
-const DynaText = props => (
-  <FieldWrapper {...props}>
-    <TextWithStyles />
-  </FieldWrapper>
-);
-
-export default DynaText;
