@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import ModalDialog from '../../ModalDialog';
-import TransferList from '../../TransferListComponent';
+import TransferList from '../../TransferList';
 
 const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));

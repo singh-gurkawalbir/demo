@@ -32,7 +32,7 @@ function intersection(a, b) {
 }
 
 function TransferList(props) {
-  const { left, setLeft, right, setRight, classes } = props;
+  const { left = [], setLeft, right = [], setRight, classes } = props;
   const [checked, setChecked] = React.useState([]);
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -74,27 +74,28 @@ function TransferList(props) {
   const customList = items => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
-        {items.map(value => {
-          const labelId = `transfer-list-item-${value}-label`;
+        {items.map &&
+          items.map(value => {
+            const labelId = `transfer-list-item-${value}-label`;
 
-          return (
-            <ListItem
-              key={value}
-              role="listitem"
-              button
-              onClick={handleToggle(value)}>
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={value} />
-            </ListItem>
-          );
-        })}
+            return (
+              <ListItem
+                key={value}
+                role="listitem"
+                button
+                onClick={handleToggle(value)}>
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checked.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{ 'aria-labelledby': labelId }}
+                  />
+                </ListItemIcon>
+                <ListItemText id={labelId} primary={value} />
+              </ListItem>
+            );
+          })}
         <ListItem />
       </List>
     </Paper>

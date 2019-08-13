@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,7 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FieldWrapper } from 'react-forms-processor/dist';
 
-const styles = () => ({
+const useStyles = makeStyles({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -18,7 +18,6 @@ const styles = () => ({
 
 function MaterialUiSelect(props) {
   const {
-    classes,
     description,
     disabled,
     id,
@@ -33,6 +32,7 @@ function MaterialUiSelect(props) {
     label,
     onFieldChange,
   } = props;
+  const classes = useStyles(props);
   let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -104,4 +104,4 @@ const DynaSelect = props => (
   </FieldWrapper>
 );
 
-export default withStyles(styles)(DynaSelect);
+export default DynaSelect;

@@ -1,12 +1,12 @@
 // @flow
-import React, { Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { useState, Fragment } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import Typography from '@material-ui/core/Typography';
 import ArrowPopper from '../../ArrowPopper';
 import helpTextMap from '../../Help/helpTextMap';
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   helpPopper: {
     maxWidth: '350px',
     maxHeight: '300px',
@@ -20,44 +20,40 @@ import helpTextMap from '../../Help/helpTextMap';
     display: 'inline-block',
     fontSize: theme.typography.fontSize * 1.5,
   },
-}))
-class LabelElement extends React.Component {
-  helpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
-  state = {
-    anchorEl: null,
+}));
+
+function LabelElement(props) {
+  const { label, helpKey, helpText } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const classes = useStyles(props);
+  const handlePopoverOpen = event => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handlePopoverOpen = event => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
   };
 
-  handlePopoverClose = () => {
-    this.setState({ anchorEl: null });
-  };
-  render() {
-    const { classes, label, helpKey, helpText } = this.props;
-    const { anchorEl } = this.state;
-    const helpTextValue = this.helpText(helpText, helpKey);
-
-    return (
-      <Fragment>
-        <ArrowPopper
-          placement="left"
-          className={classes.helpPopper}
-          id="helpBubble"
-          open={!!anchorEl}
-          anchorEl={anchorEl}>
-          <Typography variant="caption">{helpTextValue}</Typography>
-        </ArrowPopper>
-        <Typography
-          onMouseEnter={this.handlePopoverOpen}
-          onMouseLeave={this.handlePopoverClose}
-          className={classes.textField}>
-          {label}
+  return (
+    <Fragment>
+      <ArrowPopper
+        placement="left"
+        className={classes.helpPopper}
+        id="helpBubble"
+        open={!!anchorEl}
+        anchorEl={anchorEl}>
+        <Typography variant="caption">
+          {helpText || helpTextMap[helpKey]}
         </Typography>
-      </Fragment>
-    );
-  }
+      </ArrowPopper>
+      <Typography
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        className={classes.textField}>
+        {label}
+      </Typography>
+    </Fragment>
+  );
 }
 
 const WrappedDynaLabel = props => (

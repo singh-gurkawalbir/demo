@@ -29,6 +29,7 @@ const FieldActions = withStyles(styles)(props => {
     <Fragment>
       {editMode && (
         <EditFieldButton
+          key={`edit-${field.id}`}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
@@ -37,6 +38,7 @@ const FieldActions = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
+          key={`help-${field.id}`}
           title={field.label || 'Field Help'}
           className={classes.helpIcon}
           caption={developer && helpKey}
