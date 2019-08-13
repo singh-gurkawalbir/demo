@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 const styles = theme => ({
   root: {
     padding: '12px',
-    minWidth: '120px',
+    minWidth: '200px',
     maxWidth: '270px',
     border: '1px solid',
     borderColor: theme.palette.background.arrowAfter,
@@ -14,13 +14,17 @@ const styles = theme => ({
     overflow: 'hidden',
   },
   title: {
-    paddingBottom: '10px',
     textTransform: 'capitalize',
     color: theme.palette.text.title,
   },
   content: {
-    lineHeight: 'inherit',
+    paddingTop: '10px',
     paddingBottom: '8px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+    color: theme.palette.text.primary,
+    fontSize: '14px',
+    lineHeight: '22px',
   },
   action: {
     borderTop: '1px solid',
@@ -55,13 +59,14 @@ const styles = theme => ({
 });
 
 function HelpContent(props) {
-  const { classes, children, title } = props;
+  const { classes, children, title, caption } = props;
 
   return (
     <div className={classes.root}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
+      {caption && <Typography variant="caption">{caption}</Typography>}
       <div className={classes.content}>{children}</div>
       <div className={classes.action}>
         <Typography className={classes.actionTitle}>

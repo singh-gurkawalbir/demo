@@ -31,15 +31,15 @@ const mapStateToProps = state => ({
     flex: '1 1 1',
   },
   navLinksContainer: {
-    paddingLeft: theme.spacing.unit * 3,
+    paddingLeft: theme.spacing(1) * 3,
     flex: 1,
   },
   // TODO: This does nothing...
   // figure out how to affect child elements under container
   iconContainer: {
     '&button': {
-      padding: theme.spacing.unit - 1,
-      margin: theme.spacing.unit / 2,
+      padding: theme.spacing(1) - 1,
+      margin: theme.spacing(0.5),
     },
   },
   celigoLogo: {
@@ -47,13 +47,11 @@ const mapStateToProps = state => ({
     position: 'static',
     height: 55,
     width: 140,
-    // marginLeft: theme.spacing.unit * 2,
-    // eslint-disable-next-line prettier/prettier
     background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   navLink: {
     color: theme.appBar.contrast,
-    paddingRight: theme.spacing.unit * 3,
+    paddingRight: theme.spacing(3),
     letterSpacing: '1.3px',
     fontSize: '13px',
     fontWeight: 500,

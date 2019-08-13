@@ -36,14 +36,14 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   snackbar: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   submit: {
     marginLeft: 'auto',
     marginRight: ' auto',
   },
   editableFields: {
-    paddingTop: theme.spacing.unit,
+    paddingTop: theme.spacing(1),
     textAlign: 'center',
     maxWidth: 500,
     marginLeft: 'auto',
@@ -53,8 +53,6 @@ const mapDispatchToProps = dispatch => ({
     textDecoration: 'none',
   },
   textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
     flex: 1,
     width: '70%',
   },

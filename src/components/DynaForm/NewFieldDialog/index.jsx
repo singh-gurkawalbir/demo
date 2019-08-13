@@ -88,18 +88,18 @@ const getFieldProps = type => ({
 
 @withStyles(theme => ({
   content: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   fieldPreview: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     backgroundColor: 'rgb(0,0,0,0.05)', // darken the BG bt 5%
     border: '1px solid',
     borderColor: theme.palette.divider,
-    marginBottom: theme.spacing.double,
+    marginBottom: theme.spacing(2),
   },
 
   formControl: {
-    marginBottom: theme.spacing.double,
+    marginBottom: theme.spacing(2),
     width: '50%',
   },
   editorContainer: {

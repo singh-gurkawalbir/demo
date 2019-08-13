@@ -28,8 +28,8 @@ const styles = theme => ({
     textAlign: 'right',
   },
   actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
   },
 });
 const ConfirmDialog = props => {

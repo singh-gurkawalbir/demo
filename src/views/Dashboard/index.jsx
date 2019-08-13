@@ -16,7 +16,7 @@ const styles = theme => ({
     padding: 12,
   },
   paper: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
@@ -73,7 +73,7 @@ function Dashboard(props) {
   return (
     <LoadResources required resources="published,integrations,connections">
       <div className={classes.root}>
-        <Grid container spacing={24}>
+        <Grid container spacing={3}>
           {sortedTiles.map(t => (
             <Grid
               key={t._ioConnectionId ? t._id : t._integrationId}
