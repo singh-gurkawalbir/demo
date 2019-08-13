@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { EditorField } from './DynaEditor';
+import EditorField from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
@@ -35,9 +35,18 @@ export default function DynaScriptContent(props) {
     }
   }, [dispatch, resourceId, scriptContent]);
 
+  const [valueChanged, setValueChanged] = useState(false);
+
   useEffect(() => {
-    onFieldChange(id, scriptContent);
-  }, [id, onFieldChange, scriptContent]);
+    setValueChanged(true);
+  }, [scriptContent]);
+  // onFieldChange is a bound function and causing endless recursive calls
+  useEffect(() => {
+    if (valueChanged) {
+      onFieldChange(id, scriptContent);
+      setValueChanged(false);
+    }
+  }, [id, onFieldChange, scriptContent, valueChanged]);
 
   if (scriptContent === undefined) {
     return <Typography>Loading Script...</Typography>;
