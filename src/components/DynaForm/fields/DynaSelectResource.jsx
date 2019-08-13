@@ -7,7 +7,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles({
@@ -17,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-function DynaSelectResource(props) {
+export default function DynaSelectResource(props) {
   const {
     description,
     disabled,
@@ -101,11 +100,3 @@ function DynaSelectResource(props) {
     </FormControl>
   );
 }
-
-const FieldWrappedDynaSelectResource = props => (
-  <FieldWrapper {...props}>
-    <DynaSelectResource />
-  </FieldWrapper>
-);
-
-export default FieldWrappedDynaSelectResource;

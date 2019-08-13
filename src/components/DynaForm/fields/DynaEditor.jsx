@@ -1,7 +1,6 @@
 import { useState, Fragment } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function EditorField(props) {
+export default function DynaEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles(props);
   const {
@@ -146,11 +145,3 @@ function EditorField(props) {
     </Fragment>
   );
 }
-
-const DynaEditor = props => (
-  <FieldWrapper {...props}>
-    <EditorField />
-  </FieldWrapper>
-);
-
-export default DynaEditor;

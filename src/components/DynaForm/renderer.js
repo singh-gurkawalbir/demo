@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
@@ -78,7 +79,9 @@ function getRenderer(
         formFieldsMeta={formFieldsMeta}
         resourceContext={context}
         helpText={helpText}>
-        <DynaField {...field} />
+        <FieldWrapper {...field}>
+          <DynaField />
+        </FieldWrapper>
       </FieldActions>
     );
   };

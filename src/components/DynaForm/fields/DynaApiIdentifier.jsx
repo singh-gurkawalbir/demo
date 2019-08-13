@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import Typography from '@material-ui/core/Typography';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 
@@ -9,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ApiIdentifier(props) {
+export default function DynaApiIdentifier(props) {
   const { value, resourceType } = props;
   const classes = useStyles(props);
 
@@ -21,11 +20,3 @@ function ApiIdentifier(props) {
     </Typography>
   );
 }
-
-const DynaApiIdentifier = props => (
-  <FieldWrapper {...props}>
-    <ApiIdentifier />
-  </FieldWrapper>
-);
-
-export default DynaApiIdentifier;

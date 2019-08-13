@@ -1,60 +1,48 @@
-// @flow
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
-import { FieldWrapper } from 'react-forms-processor/dist';
 
-class FtpPort extends React.Component {
-  render() {
-    const {
-      description,
-      errorMessages,
-      id,
-      isValid,
-      name,
-      onFieldChange,
-      placeholder,
-      value,
-      label,
-      options,
-      valueType,
-    } = this.props;
-    let result;
+export default function DynaTextFtpPort(props) {
+  const {
+    description,
+    errorMessages,
+    id,
+    isValid,
+    name,
+    onFieldChange,
+    placeholder,
+    value,
+    label,
+    options,
+    valueType,
+  } = props;
+  let result;
 
-    if ((!value || [21, 22, 990].includes(value)) && options) {
-      result = options;
-    } else {
-      result = value;
-    }
-
-    const handleFieldChange = event => {
-      const { value, name } = event.target;
-
-      if (!name || name !== this.props.name) return;
-
-      return onFieldChange(id, value);
-    };
-
-    return (
-      <TextField
-        autoComplete="off"
-        key={id}
-        type={valueType}
-        name={name}
-        label={label}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        error={!isValid}
-        value={result}
-        onChange={handleFieldChange}
-      />
-    );
+  if ((!value || [21, 22, 990].includes(value)) && options) {
+    result = options;
+  } else {
+    result = value;
   }
+
+  const handleFieldChange = event => {
+    const { value, name } = event.target;
+
+    if (!name || name !== props.name) return;
+
+    return onFieldChange(id, value);
+  };
+
+  return (
+    <TextField
+      autoComplete="off"
+      key={id}
+      type={valueType}
+      name={name}
+      label={label}
+      placeholder={placeholder}
+      helperText={isValid ? description : errorMessages}
+      error={!isValid}
+      value={result}
+      onChange={handleFieldChange}
+    />
+  );
 }
-
-const DynaTextFtpPort = props => (
-  <FieldWrapper {...props}>
-    <FtpPort />
-  </FieldWrapper>
-);
-
-export default DynaTextFtpPort;

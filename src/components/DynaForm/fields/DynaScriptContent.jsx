@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import { EditorField } from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -14,7 +13,7 @@ const useStyles = makeStyles({
   },
 });
 
-function DynaScriptContent(props) {
+export default function DynaScriptContent(props) {
   const { id, onFieldChange, resourceId } = props;
   const classes = useStyles(props);
   const scriptContent = useSelector(state => {
@@ -52,11 +51,3 @@ function DynaScriptContent(props) {
     />
   );
 }
-
-const FieldWrappedDynaEditor = props => (
-  <FieldWrapper {...props}>
-    <DynaScriptContent />
-  </FieldWrapper>
-);
-
-export default FieldWrappedDynaEditor;

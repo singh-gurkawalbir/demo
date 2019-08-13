@@ -1,7 +1,5 @@
-// @flow
 import { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import Typography from '@material-ui/core/Typography';
 import ArrowPopper from '../../ArrowPopper';
 import helpTextMap from '../../Help/helpTextMap';
@@ -22,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function LabelElement(props) {
+export default function DynaLabel(props) {
   const { label, helpKey, helpText } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles(props);
@@ -55,11 +53,3 @@ function LabelElement(props) {
     </Fragment>
   );
 }
-
-const WrappedDynaLabel = props => (
-  <FieldWrapper {...props}>
-    <LabelElement />
-  </FieldWrapper>
-);
-
-export default WrappedDynaLabel;

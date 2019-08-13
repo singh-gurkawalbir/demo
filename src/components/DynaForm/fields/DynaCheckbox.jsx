@@ -1,8 +1,7 @@
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { FieldWrapper } from 'react-forms-processor/dist';
 
-function MaterialCheckbox(props) {
+export default function DynaCheckbox(props) {
   const {
     disabled,
     id,
@@ -35,11 +34,3 @@ function MaterialCheckbox(props) {
     />
   );
 }
-
-const DynaCheckbox = props => (
-  <FieldWrapper {...props}>
-    <MaterialCheckbox />
-  </FieldWrapper>
-);
-
-export default DynaCheckbox;

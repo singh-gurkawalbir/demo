@@ -5,7 +5,6 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 // import EditIcon from 'mdi-react/EditIcon';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 
@@ -18,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function DynaRelativeUri(props) {
+export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles(props);
   const {
@@ -110,11 +109,3 @@ function DynaRelativeUri(props) {
     </Fragment>
   );
 }
-
-const FieldWrappedDynaRelativeUri = props => (
-  <FieldWrapper {...props}>
-    <DynaRelativeUri />
-  </FieldWrapper>
-);
-
-export default FieldWrappedDynaRelativeUri;

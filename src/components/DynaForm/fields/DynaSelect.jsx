@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
@@ -7,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { FieldWrapper } from 'react-forms-processor/dist';
 
 const useStyles = makeStyles({
   root: {
@@ -16,7 +14,7 @@ const useStyles = makeStyles({
   },
 });
 
-function MaterialUiSelect(props) {
+export default function DynaSelect(props) {
   const {
     description,
     disabled,
@@ -97,11 +95,3 @@ function MaterialUiSelect(props) {
     </FormControl>
   );
 }
-
-const DynaSelect = props => (
-  <FieldWrapper {...props}>
-    <MaterialUiSelect classes={props.classes} />
-  </FieldWrapper>
-);
-
-export default DynaSelect;

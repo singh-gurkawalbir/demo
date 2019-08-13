@@ -5,7 +5,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
-import { FieldWrapper } from 'react-forms-processor/dist';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -21,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MaterialUiMultiSelect(props) {
+export default function DynaMultiSelect(props) {
   const {
     disabled,
     id,
@@ -98,11 +97,3 @@ function MaterialUiMultiSelect(props) {
     </FormControl>
   );
 }
-
-const DynaSelect = props => (
-  <FieldWrapper {...props}>
-    <MaterialUiMultiSelect />
-  </FieldWrapper>
-);
-
-export default DynaSelect;

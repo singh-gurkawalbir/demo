@@ -7,10 +7,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   inlineElements: {
     display: 'inline',
   },
@@ -24,7 +24,7 @@ const styles = theme => ({
   chip: {
     margin: theme.spacing(0.25),
   },
-});
+}));
 
 function RefreshGenericResource(props) {
   const {
@@ -41,9 +41,9 @@ function RefreshGenericResource(props) {
     fieldOptions,
     handleFetchResource,
     isLoading,
-    classes,
     placeholder,
   } = props;
+  const classes = useStyles(props);
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
@@ -160,4 +160,4 @@ function RefreshGenericResource(props) {
   );
 }
 
-export default withStyles(styles)(RefreshGenericResource);
+export default RefreshGenericResource;

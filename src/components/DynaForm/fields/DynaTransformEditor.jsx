@@ -1,9 +1,8 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialog';
 
-function DynaTransformEditor(props) {
+export default function DynaTransformEditor(props) {
   const { id, rules, label, sampleData, resourceId, onFieldChange } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
@@ -48,11 +47,3 @@ function DynaTransformEditor(props) {
     </Fragment>
   );
 }
-
-const WrappedDynaTransformEditor = props => (
-  <FieldWrapper {...props}>
-    <DynaTransformEditor />
-  </FieldWrapper>
-);
-
-export default WrappedDynaTransformEditor;

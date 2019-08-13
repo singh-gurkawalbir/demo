@@ -8,8 +8,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-// import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
 
@@ -27,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   editorButton: {},
 }));
 
-function DynaHook(props) {
+export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles(props);
   const { resources: allScripts } = useSelector(state =>
@@ -117,11 +115,3 @@ function DynaHook(props) {
     </Fragment>
   );
 }
-
-const FieldWrappedDynaHook = props => (
-  <FieldWrapper {...props}>
-    <DynaHook />
-  </FieldWrapper>
-);
-
-export default FieldWrappedDynaHook;

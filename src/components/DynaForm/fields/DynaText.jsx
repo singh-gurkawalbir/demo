@@ -1,10 +1,8 @@
-// @flow
 import { useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import { InputAdornment } from '@material-ui/core';
 
-export function MaterialUiTextField(props) {
+export default function DynaText(props) {
   const {
     description,
     disabled,
@@ -72,11 +70,3 @@ export function MaterialUiTextField(props) {
     />
   );
 }
-
-const DynaText = props => (
-  <FieldWrapper {...props}>
-    <MaterialUiTextField />
-  </FieldWrapper>
-);
-
-export default DynaText;

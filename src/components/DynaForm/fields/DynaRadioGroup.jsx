@@ -5,9 +5,8 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-import { FieldWrapper } from 'react-forms-processor/dist';
 
-function MaterialUiRadioGroup(props) {
+export default function DynaRadio(props) {
   const {
     id,
     name,
@@ -62,11 +61,3 @@ function MaterialUiRadioGroup(props) {
     </FormControl>
   );
 }
-
-const DynaRadio = props => (
-  <FieldWrapper {...props}>
-    <MaterialUiRadioGroup />
-  </FieldWrapper>
-);
-
-export default DynaRadio;

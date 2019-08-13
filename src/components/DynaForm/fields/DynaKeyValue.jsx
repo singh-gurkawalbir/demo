@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 
@@ -25,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function KeyValueTable(props) {
+export default function DynaKeyValue(props) {
   const {
     id,
     value,
@@ -105,11 +104,3 @@ function KeyValueTable(props) {
     </div>
   );
 }
-
-const DynaKeyValue = props => (
-  <FieldWrapper {...props}>
-    <KeyValueTable />
-  </FieldWrapper>
-);
-
-export default DynaKeyValue;
