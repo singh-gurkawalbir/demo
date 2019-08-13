@@ -35,14 +35,14 @@ import JsonEditorDialog from '../../components/JsonEditorDialog';
   drawerPaper: {
     position: 'relative',
     width: theme.drawerWidth,
-    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
-    padding: theme.spacing.unit,
+    height: `calc(100vh - ${theme.spacing(7)}px)`,
+    padding: theme.spacing(1),
   },
 
   content: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
   },
 }))
 export default class Editors extends Component {

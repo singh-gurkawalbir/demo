@@ -16,7 +16,7 @@ import TableRow from '@material-ui/core/TableRow';
 @hot(module)
 @withStyles(theme => ({
   table: {
-    paddingTop: theme.spacing.unit,
+    paddingTop: theme.spacing(1),
     // minWidth: 700,
   },
 }))

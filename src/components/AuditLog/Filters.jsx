@@ -36,11 +36,11 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     flexWrap: 'wrap',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     minWidth: 200,
   },
   selectEmpty: {
-    marginTop: theme.spacing.double,
+    marginTop: theme.spacing(2),
   },
 }))
 class Filters extends Component {

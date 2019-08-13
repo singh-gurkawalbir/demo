@@ -10,12 +10,12 @@ import { withStyles } from '@material-ui/core/styles';
 
 @withStyles(theme => ({
   modalDialog: {
-    padding: theme.spacing.quad,
+    padding: theme.spacing(4),
     minWidth: 500,
   },
   modalContent: {
-    margin: `0 ${theme.spacing.unit}px`,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    margin: theme.spacing(0, 1),
+    padding: theme.spacing(1, 2),
     width: '100',
   },
   iconButton: {
@@ -24,10 +24,8 @@ import { withStyles } from '@material-ui/core/styles';
     right: '10px',
   },
   actions: {
-    '& *': { marginRight: theme.spacing.unit },
-    marginRight: theme.spacing.unit,
-    marginTop: theme.spacing.unit, // theme.spacing.unit / 2,
-    marginBottom: theme.spacing.double,
+    '& *': { marginRight: theme.spacing(1) },
+    margin: theme.spacing(1, 1, 2, 0),
   },
 }))
 export default class ModalDialog extends Component {

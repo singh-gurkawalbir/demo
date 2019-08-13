@@ -1,9 +1,5 @@
 module.exports.sections = [
   {
-    name: 'Introduction',
-    content: 'docs/introduction.md',
-  },
-  {
     name: 'Color Palette',
     content: 'docs/colors.md',
   },
@@ -38,6 +34,15 @@ module.exports.sections = [
       {
         name: 'Celigo Components',
         components: 'src/components/**/*/index.jsx',
+      },
+    ],
+  },
+  {
+    name: 'UI Framework Docs',
+    sections: [
+      {
+        name: 'Resource Management',
+        content: 'docs/specs/resource.md',
       },
     ],
   },
