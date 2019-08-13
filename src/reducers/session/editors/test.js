@@ -316,7 +316,7 @@ describe('editor selectors', () => {
             },
             violations: {
               dataError:
-                'Sample Data : Unexpected token a in JSON at position 1',
+                'Sample Data: Unexpected token a in JSON at position 1',
             },
           },
           {
@@ -327,7 +327,7 @@ describe('editor selectors', () => {
             },
             violations: {
               dataError:
-                'Default Data : Unexpected token a in JSON at position 1',
+                'Default Data: Unexpected token a in JSON at position 1',
             },
           },
           {
@@ -338,7 +338,7 @@ describe('editor selectors', () => {
             },
             violations: {
               dataError:
-                'Default Data : Unexpected token a in JSON at position 1',
+                'Default Data: Unexpected token a in JSON at position 1',
             },
           },
           {
@@ -348,7 +348,7 @@ describe('editor selectors', () => {
               defaultData: '{"a": "xxx"}',
             },
             violations: {
-              dataError: 'Sample Data : Unexpected end of JSON input',
+              dataError: 'Sample Data: Unexpected end of JSON input',
             },
           },
           {
@@ -359,7 +359,7 @@ describe('editor selectors', () => {
             },
             violations: {
               dataError:
-                'Sample Data : Unexpected token { in JSON at position 1\nDefault Data : Unexpected end of JSON input',
+                'Sample Data: Unexpected token { in JSON at position 1\nDefault Data: Unexpected end of JSON input',
             },
           },
         ],

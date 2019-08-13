@@ -78,7 +78,7 @@ export default function HandlebarsWithDefaults(props) {
       sampleData={sampleData}
       defaultData={defaultData || ''}
       result={result ? result.data : ''}
-      error={error && error.message}
+      error={error}
       enableAutocomplete
     />
   );

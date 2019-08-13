@@ -19,13 +19,13 @@ export default {
       if (editor.sampleData) {
         const message = util.validateJsonString(editor.sampleData);
 
-        if (message) errMessages.push(`Sample Data : ${message}`);
+        if (message) errMessages.push(`Sample Data: ${message}`);
       }
 
       if (editor.defaultData) {
         const message = util.validateJsonString(editor.defaultData);
 
-        if (message) errMessages.push(`Default Data : ${message}`);
+        if (message) errMessages.push(`Default Data: ${message}`);
       }
 
       return errMessages.join('\n');
