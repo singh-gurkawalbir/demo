@@ -28,6 +28,7 @@ export default {
         },
       },
       helpText: 'Please enter your account subdomain here.',
+      required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =

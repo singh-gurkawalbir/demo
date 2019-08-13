@@ -1,6 +1,19 @@
 export default {
-  'as2.fileKey': {
+  'file.fileDefinition.resourcePath': {
+    label: 'Resource Path',
     type: 'text',
-    label: 'As2 file Key',
+  },
+  pageSize: {
+    type: 'text',
+    label: 'Page Size',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  dataURITemplate: {
+    type: 'relativeuri',
+    label: 'Data URI Template',
   },
 };

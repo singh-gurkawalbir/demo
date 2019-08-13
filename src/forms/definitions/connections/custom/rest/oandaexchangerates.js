@@ -14,8 +14,10 @@ export default {
     {
       fieldId: 'rest.bearerToken',
       helpText: 'Please enter the API Key of your OANDA account.',
+      type: 'text',
       label: 'API Key:',
       required: true,
+      inputType: 'password',
     },
   ],
   fieldSets: [
