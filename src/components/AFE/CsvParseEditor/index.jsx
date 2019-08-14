@@ -61,7 +61,7 @@ function CsvParseEditor(props) {
         <PanelTitle title="Parsed Result" />
         <CodePanel
           name="result"
-          value={result ? result.data : ''}
+          value={result && result.data ? result.data : ''}
           mode="json"
           readOnly
         />

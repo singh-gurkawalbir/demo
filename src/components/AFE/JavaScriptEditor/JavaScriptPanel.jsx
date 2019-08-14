@@ -37,9 +37,7 @@ const JavaScriptPanel = props => {
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', scriptId);
 
-    if (data && data.merged) {
-      return data.merged.content;
-    }
+    return data && data.merged && data.merged.content;
   });
   const allScripts = useSelector(
     state => selectors.resourceList(state, { type: 'scripts' }).resources
