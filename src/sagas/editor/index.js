@@ -39,7 +39,12 @@ export function* evaluateProcessor({ id }) {
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {
-    return yield put(actions.editor.evaluateFailure(id, e.message));
+    // Error with status code between 400 and 500 are json, hence we can parse them
+    if (e.status >= 400 && e.status < 500) {
+      const errJSON = JSON.parse(e.message);
+
+      return yield put(actions.editor.evaluateFailure(id, errJSON.message));
+    }
   }
 }
 

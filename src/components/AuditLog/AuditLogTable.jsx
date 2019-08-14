@@ -42,8 +42,8 @@ const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
 @withStyles(theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     overflowX: 'auto',
   },
   table: {

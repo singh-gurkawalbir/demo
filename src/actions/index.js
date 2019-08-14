@@ -149,6 +149,26 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+
+    netsuite: {
+      requestUserRoles: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+        }),
+      receivedUserRoles: (connectionId, userRoles) =>
+        action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
+          connectionId,
+          userRoles,
+        }),
+      requestUserRolesFailed: (connectionId, message) =>
+        action(actionTypes.NETSUITE_USER_ROLES.FAILED, {
+          connectionId,
+          message,
+        }),
+      clearUserRoles: connectionId =>
+        action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
+    },
   },
 };
 // #endregion
@@ -169,19 +189,27 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const metadata = {
-  request: (connectionId, metadataType, mode) =>
+  request: (connectionId, metadataType, mode, filterKey) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
       mode,
+      filterKey,
     }),
   netsuite: {
-    receivedCollection: (metadata, metadataType, connectionId, mode) =>
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey
+    ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
         metadataType,
         connectionId,
         mode,
+        filterKey,
       }),
   },
 };

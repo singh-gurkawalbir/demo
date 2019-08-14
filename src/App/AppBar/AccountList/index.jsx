@@ -69,7 +69,7 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   currentAccount: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     color: theme.appBar.contrast,
   },
   currentContainer: {

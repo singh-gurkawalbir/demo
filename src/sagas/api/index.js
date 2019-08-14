@@ -17,7 +17,7 @@ const sessionExpired = {
 
 export function APIException(response) {
   this.status = response.status;
-  this.message = 'Error';
+  this.message = response.message || 'Error';
 
   if (process.env.NODE_ENV === `development`) {
     this.message = response.message;
@@ -37,7 +37,12 @@ export function normalizeUrlAndOptions(path, opts) {
     options = opts;
   } else {
     // all regular api requests go in here
-    url = `/api${path}`;
+    if (path.includes('/netSuiteWS')) {
+      url = path;
+    } else {
+      url = `/api${path}`;
+    }
+
     options = {
       ...opts,
       credentials: 'same-origin', // this is needed to instruct fetch to send cookies

@@ -1,15 +1,18 @@
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
+import * as selectors from '../../reducers';
 
 const styles = {
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldWrapper = withStyles(styles)(props => {
+const FieldActions = withStyles(styles)(props => {
   const {
     field,
     editMode,
@@ -18,13 +21,16 @@ const FieldWrapper = withStyles(styles)(props => {
     classes,
     formFieldsMeta,
     resourceContext,
+    children,
   } = props;
   const { type: fieldType } = field;
+  const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
     <Fragment>
       {editMode && (
         <EditFieldButton
+          key={`edit-${field.id}`}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
@@ -33,12 +39,15 @@ const FieldWrapper = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
+          key={`help-${field.id}`}
+          title={field.label || 'Field Help'}
           className={classes.helpIcon}
+          caption={developer && helpKey}
           helpKey={helpKey}
           helpText={helpText}
         />
       )}
-      {props.children}
+      {children}
     </Fragment>
   );
 });
@@ -62,7 +71,7 @@ function getRenderer(
     }
 
     return (
-      <FieldWrapper
+      <FieldActions
         key={fid}
         editMode={editMode}
         field={field}
@@ -70,8 +79,10 @@ function getRenderer(
         formFieldsMeta={formFieldsMeta}
         resourceContext={context}
         helpText={helpText}>
-        <DynaField {...field} />
-      </FieldWrapper>
+        <FieldWrapper {...field}>
+          <DynaField />
+        </FieldWrapper>
+      </FieldActions>
     );
   };
 }

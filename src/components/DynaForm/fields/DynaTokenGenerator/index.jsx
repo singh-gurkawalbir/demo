@@ -1,12 +1,11 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FieldWrapper } from 'react-forms-processor/dist';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaSubmit from '../../DynaSubmit';
-import { MaterialUiTextField } from '../DynaText';
+import MaterialUiTextField from '../DynaText';
 
 const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
@@ -17,16 +16,11 @@ const mapDispatchToProps = dispatch => ({
   handleClearToken: resourceId =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });
-const styles = () => ({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-
+const useStyles = makeStyles(() => ({
   children: {
     flex: 1,
   },
-});
+}));
 
 function GenerateTokenButton(props) {
   const { handleRequestToken, disabled, label, resourceId } = props;
@@ -41,15 +35,15 @@ function GenerateTokenButton(props) {
   );
 }
 
-function DynaTokenGenerator(props) {
+function TokenGenerator(props) {
   const {
     onFieldChange,
     connectionToken,
     handleClearToken,
     resourceId,
-    classes,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
+  const classes = useStyles(props);
   const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
@@ -70,33 +64,24 @@ function DynaTokenGenerator(props) {
   }, [enquesnackbar, handleClearToken, message, resourceId]);
 
   return (
-    <Fragment>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
-          <MaterialUiTextField
-            {...props}
-            disabled={false}
-            required
-            className={classes.children}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <GenerateTokenButton {...props} className={classes.children} />
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
+        <MaterialUiTextField
+          {...props}
+          disabled={false}
+          required
+          className={classes.children}
+          style={{ width: '100%' }}
+        />
       </div>
-    </Fragment>
+      <div>
+        <GenerateTokenButton {...props} className={classes.children} />
+      </div>
+    </div>
   );
 }
 
-const ConnectedTokenGenerator = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DynaTokenGenerator));
-const FieldWrappedTokenGenerator = props => (
-  <FieldWrapper {...props}>
-    <ConnectedTokenGenerator />
-  </FieldWrapper>
-);
-
-export default FieldWrappedTokenGenerator;
+)(TokenGenerator);

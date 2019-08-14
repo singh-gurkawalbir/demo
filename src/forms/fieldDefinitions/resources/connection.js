@@ -1485,7 +1485,7 @@ export default {
     ],
   },
   'netsuite.account': {
-    type: 'text',
+    type: 'netsuiteuserroles',
     label: 'Netsuite account',
   },
   'netsuite.tokenId': {
@@ -1497,21 +1497,11 @@ export default {
     label: 'Netsuite token Secret',
   },
   'netsuite.environment': {
-    type: 'select',
+    type: 'netsuiteuserroles',
     label: 'Netsuite environment',
-    options: [
-      {
-        items: [
-          { label: 'Production', value: 'production' },
-          { label: 'Sandbox', value: 'sandbox' },
-          { label: 'Beta', value: 'beta' },
-          { label: 'Sandbox2.0', value: 'sandbox2.0' },
-        ],
-      },
-    ],
   },
   'netsuite.roleId': {
-    type: 'text',
+    type: 'netsuiteuserroles',
     label: 'Netsuite role Id',
   },
   'netsuite.email': {

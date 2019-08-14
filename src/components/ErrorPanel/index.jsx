@@ -11,23 +11,21 @@ import ErrorBox from './ErrorBox';
 
 const styles = theme => ({
   panel: {
-    marginBottom: theme.spacing.triple,
+    marginBottom: theme.spacing(1),
   },
   paper: {
-    padding: `0 ${theme.spacing.double}px`,
+    padding: theme.spacing(1, 3),
     display: 'flex',
     justifyContent: 'space-between',
+    color: 'white',
   },
   pad: {
     paddingTop: 9,
     paddingBottom: 9,
   },
   error: {
-    backgroundColor: theme.palette.error.dark,
-    borderColor: theme.palette.error.light,
-  },
-  errorText: {
-    color: theme.palette.error.contrastText,
+    backgroundColor: theme.palette.background.error,
+    color: 'white',
   },
   disabled: {
     opacity: 1,
@@ -35,6 +33,9 @@ const styles = theme => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
+  },
+  icon: {
+    color: 'white',
   },
 });
 
@@ -53,7 +54,7 @@ function ErrorPanel(props) {
         className={classNames(classes.panel, classes.paper, classes.error)}>
         {typeof error === 'string' ? error : error.message}
         {onClose && (
-          <IconButton onClick={onClose}>
+          <IconButton onClick={onClose} className={classes.icon}>
             <CloseIcon />
           </IconButton>
         )}
@@ -67,7 +68,7 @@ function ErrorPanel(props) {
       disabled={!showStack}>
       <ExpansionPanelSummary
         classes={{ disabled: classes.disabled }}
-        expandIcon={<ChevronDownIcon />}>
+        expandIcon={<ChevronDownIcon className={classes.icon} />}>
         {typeof error === 'string' ? error : error.message}
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>

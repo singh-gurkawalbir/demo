@@ -51,8 +51,11 @@ export function* getAdditionalHeaders(path) {
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
+  const { retryCount = 0 } = yield select(resourceStatus, path, method);
 
-  yield put(actions.api.request(path, method, message, hidden));
+  // check if you are retrying ...if you are not retrying make a brand new request
+  if (retryCount === 0)
+    yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
   const additionalHeaders = yield call(getAdditionalHeaders, path);

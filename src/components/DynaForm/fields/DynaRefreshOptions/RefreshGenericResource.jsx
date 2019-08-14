@@ -1,96 +1,163 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import { useEffect, useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import Select from '@material-ui/core/Select';
+import Chip from '@material-ui/core/Chip';
+import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 
-@withStyles(() => ({
+const useStyles = makeStyles(theme => ({
   inlineElements: {
     display: 'inline',
   },
   selectElement: {
     width: '80%',
   },
-}))
-class RefreshGenericResource extends React.Component {
-  componentDidMount() {
-    const { onFetchResource, options } = this.props;
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  chip: {
+    margin: theme.spacing(0.25),
+  },
+}));
 
-    // When it has data don't refetch again...if the user
-    // specifically wants to do it...user can use refresh icon
-    if (!options || options.length === 0) onFetchResource();
-  }
-  render() {
-    const {
-      description,
-      disabled,
-      id,
-      name,
-      defaultValue = '',
-      // options = [],
-      value,
-      label,
-      onFieldChange,
-      options,
-      onFetchResource,
-      isLoading,
-      placeholder,
-      classes,
-    } = this.props;
+function RefreshGenericResource(props) {
+  const {
+    description,
+    disabled,
+    id,
+    name,
+    value,
+    label,
+    resourceToFetch,
+    resetValue,
+    multiselect,
+    onFieldChange,
+    fieldOptions,
+    handleFetchResource,
+    isLoading,
+    placeholder,
+  } = props;
+  const classes = useStyles(props);
+  const defaultValue = props.defaultValue || (multiselect ? [] : '');
+  // Boolean state to minimize calls on useEffect
+  const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
-    if (!options) return <Spinner />;
+  // Resets field's value to value provided as argument
+  // TODO - Add onFieldChange as a dependency
+  useEffect(() => {
+    if (isDefaultValueChanged) {
+      if (resetValue) {
+        onFieldChange(id, multiselect ? [] : '');
+      } else {
+        onFieldChange(id, defaultValue);
+      }
 
-    let optionsMenuItems = options.map(option => {
-      const { label, value } = option;
+      setIsDefaultValueChanged(false);
+    }
+  }, [
+    id,
+    resetValue,
+    multiselect,
+    defaultValue,
+    isDefaultValueChanged,
+    onFieldChange,
+    setIsDefaultValueChanged,
+  ]);
+  useEffect(() => {
+    if (!fieldOptions) {
+      handleFetchResource();
+    }
+  }, [fieldOptions, handleFetchResource]);
 
-      return (
-        <MenuItem key={value} value={value}>
-          {label}
-        </MenuItem>
-      );
-    });
-    const placeHolderMenuItem = (
-      <MenuItem key="" value="" disabled>
-        {placeholder}
+  useEffect(() => {
+    // Reset selected values on change of resourceToFetch
+    if (resourceToFetch) {
+      setIsDefaultValueChanged(true);
+    }
+  }, [resourceToFetch, setIsDefaultValueChanged]);
+
+  if (!fieldOptions) return <Spinner />;
+  let optionMenuItems = fieldOptions.map(options => {
+    const { label, value } = options;
+
+    return (
+      <MenuItem key={value} value={value}>
+        {label}
       </MenuItem>
     );
+  });
+  const placeHolderMenu = (
+    <MenuItem key="" value="" disabled>
+      {placeholder}
+    </MenuItem>
+  );
+  const createChip = value => {
+    const fieldOption = fieldOptions.find(option => option.value === value);
 
-    optionsMenuItems = [placeHolderMenuItem, ...optionsMenuItems];
+    return fieldOption ? (
+      <Chip
+        key={value}
+        label={fieldOption.label || value}
+        className={classes.chip}
+      />
+    ) : null;
+  };
 
-    // the input label shrinks irrespective of the value
-    // because there will always be some value
-    // TODO: should this be the same behavior for other dropdown
-    return (
-      <div>
-        <FormControl
-          key={id}
-          disabled={disabled}
-          className={classes.inlineElements}>
-          <InputLabel shrink htmlFor={id}>
-            {label}
-          </InputLabel>
+  optionMenuItems = multiselect
+    ? optionMenuItems
+    : [placeHolderMenu, ...optionMenuItems];
+
+  return (
+    <div>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        className={classes.inlineElements}>
+        <InputLabel shrink htmlFor={id}>
+          {label}
+        </InputLabel>
+        {multiselect ? (
           <Select
+            multiple
+            value={value || defaultValue}
+            onChange={evt => {
+              onFieldChange(id, evt.target.value);
+            }}
+            input={<Input name={name} id={id} />}
             className={classes.selectElement}
+            renderValue={selected => (
+              <div className={classes.chips}>
+                {selected &&
+                  typeof selected.map === 'function' &&
+                  selected.map(createChip)}
+              </div>
+            )}>
+            {optionMenuItems}
+          </Select>
+        ) : (
+          <Select
             displayEmpty
             value={value || defaultValue}
             onChange={evt => {
               onFieldChange(id, evt.target.value);
             }}
-            input={<Input name={name} id={id} />}>
-            {optionsMenuItems}
+            input={<Input id={id} name={name} />}
+            className={classes.selectElement}>
+            {optionMenuItems}
           </Select>
-          {!isLoading && <RefreshIcon onClick={onFetchResource} />}
-          {options && isLoading && <Spinner />}
-          {description && <FormHelperText>{description}</FormHelperText>}
-        </FormControl>
-      </div>
-    );
-  }
+        )}
+        {!isLoading && <RefreshIcon onClick={handleFetchResource} />}
+        {fieldOptions && isLoading && <Spinner />}
+        {description && <FormHelperText>{description}</FormHelperText>}
+      </FormControl>
+    </div>
+  );
 }
 
 export default RefreshGenericResource;

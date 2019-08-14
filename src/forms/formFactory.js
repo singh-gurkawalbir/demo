@@ -54,10 +54,11 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let fieldSets = [];
   let preSubmit;
   let init;
+  let actions;
   let meta;
   const { type } = getResourceSubType(resource);
 
-  // console.log(isNew, resourceType, type, resource);
+  // console.log('resource', resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
@@ -76,7 +77,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets, preSubmit, init } = meta);
+        ({ fields, fieldSets, preSubmit, init, actions } = meta);
       }
 
       break;
@@ -84,17 +85,21 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'imports':
     case 'exports':
       meta = formMeta[resourceType];
+      // console.log('type', type);
 
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        }
+        // get edit form meta branch
+        else if (type === 'netsuite') {
+          meta = meta.netsuite[resource.netsuite.type];
         } else {
-          // get edit form meta branch
           meta = meta[type];
         }
 
         if (meta) {
-          ({ fields, fieldSets, init, preSubmit } = meta);
+          ({ fields, fieldSets, init, preSubmit, actions } = meta);
         }
       }
 
@@ -120,7 +125,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   );
 
   return {
-    fieldMeta: { fields, fieldSets },
+    fieldMeta: { fields, fieldSets, actions },
     init,
     preSubmit,
     optionsHandler,
@@ -240,7 +245,7 @@ const setDefaults = (fields, resourceType, resource) => {
 
 const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   const filled = [];
-  const { fields, fieldSets } = fieldMeta;
+  const { fields, fieldSets, actions } = fieldMeta;
 
   if (fieldSets && fieldSets.length > 0) {
     fieldSets.forEach(set => {
@@ -256,6 +261,7 @@ const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
   return {
     fields: setDefaults(fields, resourceType, resource),
     fieldSets: filled,
+    actions,
   };
 };
 
@@ -275,7 +281,7 @@ const returnFieldWithJustVisibilityRules = f => {
 };
 
 const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType) => {
-  const { fields, fieldSets } = fieldMeta;
+  const { fields, fieldSets, actions } = fieldMeta;
   const modifiedFields = fields.flatMap(field => {
     if (field.formId) {
       const fieldsWithVisibility = applyVisibilityRulesToSubForm(
@@ -291,7 +297,7 @@ const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType) => {
     return returnFieldWithJustVisibilityRules(field);
   });
 
-  return { fields: modifiedFields, fieldSets };
+  return { fields: modifiedFields, fieldSets, actions };
 };
 
 export default {
