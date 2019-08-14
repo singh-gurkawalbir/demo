@@ -17,9 +17,6 @@ export default function AgentDetail(props) {
   const agentToken = useSelector(
     state => selectors.agentAccessToken(state, agent._id) || {}
   );
-  const agentReferences = useSelector(
-    state => selectors.resourceReferences(state, 'agents', agent._id) || {}
-  );
   const displayAgentToken = () => {
     dispatch(actions.agent.displayToken(agent._id));
   };
@@ -30,10 +27,6 @@ export default function AgentDetail(props) {
 
   const deleteAgent = () => {
     dispatch(actions.resource.delete('agents', agent._id));
-  };
-
-  const getAgentReferences = () => {
-    dispatch(actions.resource.fetchResourceReferences('agents', agent._id));
   };
 
   const downloadAgentInstaller = (osType, id) => {
@@ -49,8 +42,7 @@ export default function AgentDetail(props) {
 
     switch (action) {
       case 'viewReferences':
-        getAgentReferences();
-        viewReferencesClickHandler(agentReferences);
+        viewReferencesClickHandler(agent._id);
         break;
       case 'delete':
         confirmDialog({

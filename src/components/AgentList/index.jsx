@@ -46,30 +46,32 @@ const styles = theme => ({
 function AgentList(props) {
   const { classes } = props;
   const [showReferences, setShowReferences] = useState(false);
-  const [agentReferences, setAgentReferences] = useState(null);
+  const [agentId, setAgentId] = useState(null);
   const agents = useSelector(state =>
     selectors.resourceList(state, {
       type: 'agents',
     })
   );
 
-  function viewReferencesClickHandler(references) {
+  function viewReferencesClickHandler(id) {
     setShowReferences(true);
-    setAgentReferences(references);
+    setAgentId(id);
   }
 
   function handleClose() {
     setShowReferences(false);
+    setAgentId(null);
   }
 
   return (
     <LoadResources resources={['agents']}>
-      <ResourceReferences
-        type="Agent"
-        showReferences={showReferences}
-        handleClose={handleClose}
-        references={agentReferences}
-      />
+      {showReferences && agentId && (
+        <ResourceReferences
+          type="agents"
+          id={agentId}
+          handleClose={handleClose}
+        />
+      )}
       <Fragment>
         <Typography variant="h2" className={classes.title}>
           Agents
