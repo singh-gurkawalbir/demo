@@ -536,14 +536,6 @@ export default (state = DEFAULT_STATE, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function jobList(state) {
-  if (!state) {
-    return DEFAULT_STATE;
-  }
-
-  return state;
-}
-
 export function flowJobList(state) {
   if (!state) {
     return DEFAULT_STATE.flowJobs;
@@ -559,7 +551,7 @@ export function flowJobList(state) {
     const additionalProps = {
       uiStatus: job.status,
       duration: getJobDuration(job),
-      doneExporting: job.doneExporting,
+      doneExporting: !!job.doneExporting,
       numPagesProcessed: 0,
     };
 
@@ -599,10 +591,6 @@ export function flowJobList(state) {
             10
           );
 
-          if (cJob.retriable) {
-            additionalProps.retriable = true;
-          }
-
           if (
             cJob.retries &&
             cJob.retries.filter(
@@ -613,6 +601,14 @@ export function flowJobList(state) {
           ) {
             additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
             additionalProps.uiStatus = JOB_STATUS.RETRYING;
+          }
+
+          if (cJob.retriable) {
+            additionalProps.retriable = true;
+
+            if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+              additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+            }
           }
         }
 
