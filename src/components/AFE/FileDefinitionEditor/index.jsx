@@ -4,9 +4,10 @@ import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
 
 export default function FileDefinitionEditor(props) {
-  const { rule, data, editorId, result, ...other } = props;
-  const parsedData = result && result.data;
-  const { ...editor } = useSelector(state => selectors.editor(state, editorId));
+  const { editorId, layout = 'column' } = props;
+  const { rule, data, result, error, violations } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
   const dispatch = useDispatch();
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { rule }));
@@ -18,22 +19,25 @@ export default function FileDefinitionEditor(props) {
 
   const handleInit = () => {
     dispatch(
-      actions.editor.init(editorId, 'structuredFileParser', {
-        rule,
-        data,
+      actions.editor.init(props.editorId, 'structuredFileParser', {
+        rule: props.rule,
+        data: props.data,
       })
     );
   };
 
   return (
     <Editor
-      result={parsedData}
       handleInit={handleInit}
       handleDataChange={handleDataChange}
       handleRuleChange={handleRuleChange}
-      {...editor}
-      {...other}
+      rule={rule}
+      data={data}
+      result={result ? result.data : ''}
+      violations={violations}
+      error={error}
       processor="structuredFileParser"
+      layout={layout}
       ruleMode="json"
       dataMode="text"
       resultMode="json"
