@@ -40,8 +40,8 @@ export const getOptions = async (fieldId, fields) => {
 @hot(module)
 @withStyles(theme => ({
   paper: {
-    margin: theme.spacing.double,
-    padding: theme.spacing.double,
+    margin: theme.spacing(2),
+    padding: theme.spacing(2),
   },
 }))
 export default class CustomForms extends Component {

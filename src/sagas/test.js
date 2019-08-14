@@ -1,13 +1,172 @@
-/* global describe, test, expect, fail */
+/* global describe, test, expect, fail,beforeEach,afterEach */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 
-import { call, take, race } from 'redux-saga/effects';
+import { call, take, race, put } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
+import actions from '../actions';
 import { apiCallWithRetry } from './';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
+import { netsuiteUserRoles } from './resourceForm/connections';
+
+// todo : should be moved to a seperate test file
+describe('netsuiteUserRoles', () => {
+  describe('request payload generation', () => {
+    test('should utilize the connection id to retrieve userRoles when no form values provided  ', () => {
+      const saga = netsuiteUserRoles({ connectionId: '123', values: null });
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path: '/netsuite/alluserroles',
+          opts: { body: { _connectionId: '123' }, method: 'POST' },
+          hidden: true,
+        })
+      );
+    });
+    test('should utilize the form values to retrieve userRoles when form values are provided ', () => {
+      const email = 'some email';
+      const password = 'some password';
+      const saga = netsuiteUserRoles({
+        connectionId: '123',
+        values: {
+          '/netsuite/email': email,
+          '/netsuite/password': password,
+        },
+      });
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path: '/netsuite/alluserroles',
+          opts: {
+            body: {
+              email,
+              password,
+            },
+            method: 'POST',
+          },
+          hidden: true,
+        })
+      );
+    });
+  });
+
+  describe('netsuite api call response behavior for an existing connection', () => {
+    let saga;
+    const connectionId = '123';
+
+    beforeEach(() => {
+      saga = netsuiteUserRoles({ connectionId, values: null });
+
+      // skipping the api call
+      saga.next();
+    });
+
+    afterEach(() => {
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should check the response for errors on a successful call and subsequently dispatch an error if all the environments fail', () => {
+      const failedResp = {
+        production: { accounts: {}, success: false },
+        sandbox: { accounts: {}, success: false },
+      };
+
+      expect(saga.next(failedResp).value).toEqual(
+        put(
+          actions.resource.connections.netsuite.requestUserRolesFailed(
+            connectionId,
+            'Invalid netsuite credentials provided'
+          )
+        )
+      );
+    });
+
+    test('should check the response for errors on a successful call and subsequently dispatch a successful netsuite userRoles if any of the environments succeeded', () => {
+      const oneEnvfailedResp = {
+        production: { accounts: {}, success: true },
+        sandbox: { accounts: {}, success: false },
+      };
+
+      expect(saga.next(oneEnvfailedResp).value).toEqual(
+        put(
+          actions.resource.connections.netsuite.receivedUserRoles(
+            connectionId,
+            oneEnvfailedResp
+          )
+        )
+      );
+    });
+    test('should save the userRoles on a successful call', () => {
+      const successResp = {
+        production: { accounts: {}, success: true },
+      };
+
+      expect(saga.next(successResp).value).toEqual(
+        put(
+          actions.resource.connections.netsuite.receivedUserRoles(
+            connectionId,
+            successResp
+          )
+        )
+      );
+    });
+
+    test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
+      const errorException = {
+        message: JSON.stringify({ errors: [{ message: 'Some error' }] }),
+      };
+
+      expect(saga.throw(errorException).value).toEqual(
+        put(
+          actions.resource.connections.netsuite.requestUserRolesFailed(
+            connectionId,
+            'Some error'
+          )
+        )
+      );
+    });
+  });
+  describe('netsuite api call response behavior for an new connection', () => {
+    test('should save only all success netsuite environments', () => {
+      const email = 'some email';
+      const password = 'some password';
+      const saga = netsuiteUserRoles({
+        connectionId: '123',
+        values: {
+          '/netsuite/email': email,
+          '/netsuite/password': password,
+        },
+      });
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path: '/netsuite/alluserroles',
+          opts: {
+            body: {
+              email,
+              password,
+            },
+            method: 'POST',
+          },
+          hidden: true,
+        })
+      );
+      const oneEnvfailedResp = {
+        production: { accounts: {}, success: true },
+        sandbox: { accounts: {}, success: false },
+      };
+
+      expect(saga.next(oneEnvfailedResp).value).toEqual(
+        put(
+          actions.resource.connections.netsuite.receivedUserRoles('123', {
+            production: { accounts: {}, success: true },
+          })
+        )
+      );
+    });
+  });
+});
 
 describe(`apiCallWithRetry saga`, () => {
   const path = '/somePath';

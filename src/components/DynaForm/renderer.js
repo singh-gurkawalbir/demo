@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import { FieldWrapper } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
@@ -29,6 +30,7 @@ const FieldActions = withStyles(styles)(props => {
     <Fragment>
       {editMode && (
         <EditFieldButton
+          key={`edit-${field.id}`}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.editIcon}
@@ -37,6 +39,7 @@ const FieldActions = withStyles(styles)(props => {
       )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
+          key={`help-${field.id}`}
           title={field.label || 'Field Help'}
           className={classes.helpIcon}
           caption={developer && helpKey}
@@ -76,7 +79,9 @@ function getRenderer(
         formFieldsMeta={formFieldsMeta}
         resourceContext={context}
         helpText={helpText}>
-        <DynaField {...field} />
+        <FieldWrapper {...field}>
+          <DynaField />
+        </FieldWrapper>
       </FieldActions>
     );
   };

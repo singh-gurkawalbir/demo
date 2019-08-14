@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshGenericResource from './RefreshGenericResource';
 
-function DynaSelectOptionsGenerator(props) {
+export default function DynaSelectOptionsGenerator(props) {
   const { connectionId, resourceType, mode, options, filterKey } = props;
   const dispatch = useDispatch();
   const { isLoadingData, options: fieldOptions } = useSelector(state =>
@@ -36,17 +35,13 @@ function DynaSelectOptionsGenerator(props) {
   ]);
 
   return (
-    <FieldWrapper {...props}>
-      <RefreshGenericResource
-        resourceToFetch={props.options.resourceToFetch}
-        resetValue={props.options.resetValue}
-        handleFetchResource={handleFetchResource}
-        isLoadingData={isLoadingData}
-        fieldOptions={fieldOptions}
-        {...props}
-      />
-    </FieldWrapper>
+    <RefreshGenericResource
+      resourceToFetch={props.options.resourceToFetch}
+      resetValue={props.options.resetValue}
+      handleFetchResource={handleFetchResource}
+      isLoadingData={isLoadingData}
+      fieldOptions={fieldOptions}
+      {...props}
+    />
   );
 }
-
-export default DynaSelectOptionsGenerator;

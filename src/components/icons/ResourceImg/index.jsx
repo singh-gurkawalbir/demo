@@ -2,12 +2,12 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   small: {
-    maxWidth: theme.spacing.quad,
-    maxHeight: theme.spacing.quad,
+    maxWidth: theme.spacing(4),
+    maxHeight: theme.spacing(4),
   },
   large: {
-    maxWidth: theme.spacing.quad * 2,
-    maxHeight: theme.spacing.quad * 2,
+    maxWidth: theme.spacing(8),
+    maxHeight: theme.spacing(8),
   },
 });
 const mapTypes = type => {

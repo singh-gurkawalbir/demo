@@ -26,7 +26,7 @@ const requestBody = editor => {
 
 const validate = editor => ({
   dataError:
-    !editor.data && !editor.data.length && 'Must provide some sample data.',
+    (!editor.data || !editor.data.length) && 'Must provide some sample data.',
 });
 
 export default {

@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
@@ -367,8 +367,8 @@ export function* makeOwner({ email }) {
 }
 
 export const userSagas = [
-  takeEvery(actionTypes.UPDATE_PROFILE, updateProfile),
-  takeEvery(actionTypes.UPDATE_PREFERENCES, updatePreferences),
+  takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
+  takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
