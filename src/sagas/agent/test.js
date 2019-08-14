@@ -1,10 +1,10 @@
 /* global describe, test, expect */
 import { call, put, delay } from 'redux-saga/effects';
-import actions from '../../actions';
+import actions, { availableOSTypes } from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { displayToken, changeToken } from './';
+import { displayToken, changeToken, downloadInstaller } from './';
 import { MASK_AGENT_TOKEN_DELAY } from '../../utils/constants';
 
 describe('agent tokens sagas', () => {
@@ -120,6 +120,62 @@ describe('agent tokens sagas', () => {
           path,
           opts,
           message: 'Changing Agent Token',
+        })
+      );
+      expect(saga.throw(new Error()).value).toEqual(true);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+});
+availableOSTypes.forEach(osType => {
+  describe(`downloadInstaller("${osType}", id) saga`, () => {
+    const id = 123;
+
+    test('should succeed on successful api call', () => {
+      const saga = downloadInstaller(
+        actions.agent.downloadInstaller(osType, id)
+      );
+      const requestOptions = getRequestOptions(
+        actionTypes.AGENT.DOWNLOAD_INSTALLER,
+        {
+          osType,
+          resourceId: id,
+        }
+      );
+      const { path, opts } = requestOptions;
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+          message: 'Download Installer',
+        })
+      );
+
+      const final = saga.next();
+
+      expect(final.done).toBe(true);
+    });
+    test('should handle api error properly while downloading token', () => {
+      const saga = downloadInstaller(
+        actions.agent.downloadInstaller(osType, id)
+      );
+      const requestOptions = getRequestOptions(
+        actionTypes.AGENT.DOWNLOAD_INSTALLER,
+        {
+          osType,
+          resourceId: id,
+        }
+      );
+      const { path, opts } = requestOptions;
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+          message: 'Download Installer',
         })
       );
       expect(saga.throw(new Error()).value).toEqual(true);

@@ -13,6 +13,8 @@ export const availableResources = [
   'flows',
 ];
 
+export const availableOSTypes = ['windows', 'linux', 'macOS'];
+
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
 // a type are symmetrical in shape by generating them via "action creator"
