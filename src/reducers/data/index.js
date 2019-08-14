@@ -159,12 +159,16 @@ export function jobList(state, integrationId, flowId) {
   return fromJobs.jobList(state.jobs, integrationId, flowId);
 }
 
-export function flowJobList(state, integrationId, flowId) {
-  return fromJobs.flowJobList(state.jobs, integrationId, flowId);
+export function jobPageDetails(state) {
+  return fromJobs.jobPageDetails(state.jobs);
 }
 
-export function inProgressJobIds(state, integrationId, flowId) {
-  return fromJobs.inProgressJobIds(state.jobs, integrationId, flowId);
+export function flowJobList(state) {
+  return fromJobs.flowJobList(state.jobs);
+}
+
+export function inProgressJobIds(state) {
+  return fromJobs.inProgressJobIds(state.jobs);
 }
 
 export function job(state, { type, jobId, parentJobId }) {

@@ -341,19 +341,16 @@ const job = {
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
 
-  getInProgressJobStatus: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS, {
-      integrationId,
-      flowId,
-    }),
-  noInProgressJobs: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.NO_IN_PROGRESS_JOBS, {
-      integrationId,
-      flowId,
-    }),
+  getInProgressJobStatus: () =>
+    action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
+  noInProgressJobs: () => action(actionTypes.JOB.NO_IN_PROGRESS_JOBS),
   downloadDiagnosticsFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
+  setJobsPerPage: jobsPerPage =>
+    action(actionTypes.JOB.SET_JOBS_PER_PAGE, { jobsPerPage }),
+  setJobsCurrentPage: jobsCurrentPage =>
+    action(actionTypes.JOB.SET_JOBS_CURRENT_PAGE, { jobsCurrentPage }),
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
 

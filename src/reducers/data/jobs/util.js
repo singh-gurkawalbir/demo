@@ -6,6 +6,8 @@ export const DEFAULT_STATE = Object.freeze({
   bulkRetryJobs: [],
   errors: [],
   retryObjects: {},
+  jobsCurrentPage: 0,
+  jobsPerPage: 10,
 });
 
 export const DEFAULT_JOB_PROPS = Object.freeze({

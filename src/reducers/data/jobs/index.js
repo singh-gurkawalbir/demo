@@ -40,7 +40,15 @@ export default (state = DEFAULT_STATE, action) => {
     return state;
   }
 
-  if (type === actionTypes.JOB.CLEAR) {
+  if (type === actionTypes.JOB.SET_JOBS_PER_PAGE) {
+    const { jobsPerPage } = action;
+
+    return { ...state, jobsPerPage };
+  } else if (type === actionTypes.JOB.SET_JOBS_CURRENT_PAGE) {
+    const { jobsCurrentPage } = action;
+
+    return { ...state, jobsCurrentPage };
+  } else if (type === actionTypes.JOB.CLEAR) {
     return DEFAULT_STATE;
   } else if (type === actionTypes.JOB.ERROR.CLEAR) {
     return { ...state, errors: [], retryObjects: {} };
@@ -536,90 +544,103 @@ export default (state = DEFAULT_STATE, action) => {
 };
 
 // #region PUBLIC SELECTORS
+
+export function jobPageDetails(state) {
+  const { jobsCurrentPage, jobsPerPage, flowJobs } = state || DEFAULT_STATE;
+
+  return {
+    jobsCurrentPage,
+    jobsPerPage,
+    totalJobs: flowJobs ? flowJobs.length : 0,
+  };
+}
+
 export function flowJobList(state) {
   if (!state) {
     return DEFAULT_STATE.flowJobs;
   }
 
-  const { flowJobs, bulkRetryJobs } = state;
-  const flowJobIds = getFlowJobIdsThatArePartOfBulkRetryJobs(
+  const { jobsCurrentPage, jobsPerPage, flowJobs, bulkRetryJobs } = state;
+  const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
     flowJobs,
     bulkRetryJobs
   );
 
-  return flowJobs.map(job => {
-    const additionalProps = {
-      uiStatus: job.status,
-      duration: getJobDuration(job),
-      doneExporting: !!job.doneExporting,
-      numPagesProcessed: 0,
-    };
+  return flowJobs
+    .slice(jobsCurrentPage * jobsPerPage, (jobsCurrentPage + 1) * jobsPerPage)
+    .map(job => {
+      const additionalProps = {
+        uiStatus: job.status,
+        duration: getJobDuration(job),
+        doneExporting: !!job.doneExporting,
+        numPagesProcessed: 0,
+      };
 
-    if (!additionalProps.doneExporting) {
-      if (
-        [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED].includes(
-          job.status
-        )
-      ) {
-        additionalProps.doneExporting = true;
+      if (!additionalProps.doneExporting) {
+        if (
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.CANCELED,
+            JOB_STATUS.FAILED,
+          ].includes(job.status)
+        ) {
+          additionalProps.doneExporting = true;
+        }
       }
-    }
 
-    if (flowJobIds.includes(job._id)) {
-      additionalProps.uiStatus = JOB_STATUS.RETRYING;
-    }
+      if (flowJobIdsThatArePartOfBulkRetryJobs.includes(job._id)) {
+        additionalProps.uiStatus = JOB_STATUS.RETRYING;
+      }
 
-    if (job.children && job.children.length > 0) {
-      // eslint-disable-next-line no-param-reassign
-      job.children = job.children.map(cJob => {
-        const additionalChildProps = {
-          uiStatus: cJob.status,
-          duration: getJobDuration(cJob),
-        };
+      if (job.children && job.children.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        job.children = job.children.map(cJob => {
+          const additionalChildProps = {
+            uiStatus: cJob.status,
+            duration: getJobDuration(cJob),
+          };
 
-        if (cJob.type === 'import') {
-          if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
-            additionalChildProps.percentComplete = Math.floor(
-              (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+          if (cJob.type === 'import') {
+            if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
+              additionalChildProps.percentComplete = Math.floor(
+                (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+              );
+            } else {
+              additionalChildProps.percentComplete = 0;
+            }
+
+            additionalProps.numPagesProcessed += parseInt(
+              cJob.numPagesProcessed,
+              10
             );
-          } else {
-            additionalChildProps.percentComplete = 0;
-          }
 
-          additionalProps.numPagesProcessed += parseInt(
-            cJob.numPagesProcessed,
-            10
-          );
-
-          if (
-            cJob.retries &&
-            cJob.retries.filter(
-              r =>
-                !r.status ||
-                [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
-            ).length > 0
-          ) {
-            additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
-            additionalProps.uiStatus = JOB_STATUS.RETRYING;
-          }
-
-          if (cJob.retriable) {
-            additionalProps.retriable = true;
-
-            if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+            if (
+              cJob.retries &&
+              cJob.retries.filter(
+                r =>
+                  !r.status ||
+                  [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
+              ).length > 0
+            ) {
               additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+              additionalProps.uiStatus = JOB_STATUS.RETRYING;
+            }
+
+            if (cJob.retriable) {
+              additionalProps.retriable = true;
+
+              if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+                additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+              }
             }
           }
-        }
 
-        return { ...cJob, ...additionalChildProps };
-      });
-    } else {
-      additionalProps.children = [];
-    }
+          return { ...cJob, ...additionalChildProps };
+        });
+      }
 
-    return { ...job, ...additionalProps };
-  });
+      return { ...job, ...additionalProps };
+    });
 }
 
 export function inProgressJobIds(state) {
@@ -629,12 +650,22 @@ export function inProgressJobIds(state) {
     return jobIds;
   }
 
+  const { jobsCurrentPage, jobsPerPage, bulkRetryJobs } = state;
+  let { flowJobs } = state;
+
+  flowJobs = flowJobs.slice(
+    jobsCurrentPage * jobsPerPage,
+    (jobsCurrentPage + 1) * jobsPerPage
+  );
   const runningBulkRetryJobs = {};
 
   // eslint-disable-next-line max-len
   /** Build a map of running bulk retry jobs with _integrationId & _flowId as the key and _id as value */
-  state.bulkRetryJobs.forEach(job => {
-    if (job._id && [JOB_STATUS.QUEUED].includes(job.status)) {
+  bulkRetryJobs.forEach(job => {
+    if (
+      job._id &&
+      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
+    ) {
       jobIds.bulkRetryJobs.push(job._id);
     }
 
@@ -650,7 +681,7 @@ export function inProgressJobIds(state) {
 
   let hasJobsInRetryingState = false;
 
-  state.flowJobs.forEach(job => {
+  flowJobs.forEach(job => {
     if (
       [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
         job.status
@@ -677,7 +708,7 @@ export function inProgressJobIds(state) {
   // eslint-disable-next-line max-len
   /** Find jobs that are part of a running bulk retry but the status is not 'retrying' */
   if (Object.keys(runningBulkRetryJobs).length > 0 && !hasJobsInRetryingState) {
-    state.flowJobs.forEach(job => {
+    flowJobs.forEach(job => {
       if (
         [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
           job.status

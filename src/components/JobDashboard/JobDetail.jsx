@@ -58,14 +58,18 @@ function JobDetail({
     selectedJobs[job._id] && selectedJobs[job._id].selected
   );
   const childJobIds = job.children
-    .filter(
-      cJob =>
-        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
-          cJob.uiStatus
-        ) &&
-        (cJob.retriable || cJob.numError > 0)
-    )
-    .map(cJob => cJob._id);
+    ? job.children
+        .filter(
+          cJob =>
+            [
+              JOB_STATUS.COMPLETED,
+              JOB_STATUS.FAILED,
+              JOB_STATUS.CANCELED,
+            ].includes(cJob.uiStatus) &&
+            (cJob.retriable || cJob.numError > 0)
+        )
+        .map(cJob => cJob._id)
+    : [];
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
@@ -221,7 +225,7 @@ function JobDetail({
             userPermissionsOnIntegration={userPermissionsOnIntegration}
           />
         </TableCell>
-        {expanded && (!job.children || !job.children.length) && (
+        {expanded && !job.children && (
           <div className={classes.spinner}>
             <Spinner /> <span>Loading child jobs...</span>
           </div>

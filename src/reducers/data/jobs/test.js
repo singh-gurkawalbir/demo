@@ -4,71 +4,71 @@ import actions from '../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
 import { DEFAULT_STATE, parseJobs, parseJobFamily } from './util';
 
-const _integrationId = 'i1';
-const jobs = [
-  {
-    type: JOB_TYPES.FLOW,
-    _id: 'fj1',
-    _integrationId,
-    status: JOB_STATUS.RUNNING,
-    numError: 10,
-  },
-  {
-    type: JOB_TYPES.FLOW,
-    _id: 'fj2',
-    _integrationId,
-    status: JOB_STATUS.COMPLETED,
-    numError: 0,
-  },
-  {
-    type: JOB_TYPES.FLOW,
-    _id: 'fj3',
-    _integrationId,
-    status: JOB_STATUS.COMPLETED,
-    numError: 5,
-  },
-  {
-    type: JOB_TYPES.FLOW,
-    _id: 'fj4',
-    _integrationId,
-    status: JOB_STATUS.COMPLETED,
-    numError: 8,
-    numResolved: 2,
-    children: [
-      {
-        _id: 'fj4e1',
-        type: JOB_TYPES.EXPORT,
-        status: JOB_STATUS.COMPLETED,
-        numError: 2,
-      },
-      {
-        _id: 'fj4i1',
-        type: JOB_TYPES.IMPORT,
-        status: JOB_STATUS.COMPLETED,
-        numError: 2,
-        numResolved: 2,
-        retriable: true,
-      },
-      {
-        _id: 'fj4i2',
-        type: JOB_TYPES.IMPORT,
-        status: JOB_STATUS.FAILED,
-        numError: 4,
-        retriable: true,
-        retries: [{ _id: 'something', status: JOB_STATUS.COMPLETED }],
-      },
-    ],
-  },
-  {
-    type: JOB_TYPES.BULK_RETRY,
-    _id: 'brj1',
-    _integrationId,
-    status: JOB_STATUS.COMPLETED,
-  },
-];
-const { flowJobs, bulkRetryJobs } = parseJobs(jobs);
-
 describe('jobs reducer', () => {
+  const _integrationId = 'i1';
+  const jobs = [
+    {
+      type: JOB_TYPES.FLOW,
+      _id: 'fj1',
+      _integrationId,
+      status: JOB_STATUS.RUNNING,
+      numError: 10,
+    },
+    {
+      type: JOB_TYPES.FLOW,
+      _id: 'fj2',
+      _integrationId,
+      status: JOB_STATUS.COMPLETED,
+      numError: 0,
+    },
+    {
+      type: JOB_TYPES.FLOW,
+      _id: 'fj3',
+      _integrationId,
+      status: JOB_STATUS.COMPLETED,
+      numError: 5,
+    },
+    {
+      type: JOB_TYPES.FLOW,
+      _id: 'fj4',
+      _integrationId,
+      status: JOB_STATUS.COMPLETED,
+      numError: 8,
+      numResolved: 2,
+      children: [
+        {
+          _id: 'fj4e1',
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+          numError: 2,
+        },
+        {
+          _id: 'fj4i1',
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.COMPLETED,
+          numError: 2,
+          numResolved: 2,
+          retriable: true,
+        },
+        {
+          _id: 'fj4i2',
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.FAILED,
+          numError: 4,
+          retriable: true,
+          retries: [{ _id: 'something', status: JOB_STATUS.COMPLETED }],
+        },
+      ],
+    },
+    {
+      type: JOB_TYPES.BULK_RETRY,
+      _id: 'brj1',
+      _integrationId,
+      status: JOB_STATUS.COMPLETED,
+    },
+  ];
+  const { flowJobs, bulkRetryJobs } = parseJobs(jobs);
+
   test('any other action should return default state', () => {
     const state = reducer(undefined, 'someaction');
 
@@ -762,7 +762,7 @@ describe('jobs reducer', () => {
 });
 
 describe('flowJobList selector', () => {
-  test('should return [] when state is empty', () => {
+  test('should return correct results when state is empty', () => {
     const state = reducer(undefined, 'some action');
 
     expect(selectors.flowJobList(state)).toEqual([]);
@@ -931,7 +931,6 @@ describe('flowJobList selector', () => {
         numResolved: 0,
         numSuccess: 0,
         uiStatus: JOB_STATUS.QUEUED,
-        children: [],
       },
       {
         _id: 'j2',
@@ -1064,7 +1063,6 @@ describe('flowJobList selector', () => {
         numResolved: 0,
         numSuccess: 0,
         uiStatus: JOB_STATUS.COMPLETED,
-        children: [],
       },
       {
         _id: 'j5',
@@ -1323,7 +1321,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.QUEUED,
-          children: [],
         },
         {
           _id: 'j2',
@@ -1452,7 +1449,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.COMPLETED,
-          children: [],
         },
         {
           _id: 'j5',
@@ -1725,7 +1721,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.QUEUED,
-          children: [],
         },
         {
           _id: 'j2',
@@ -1857,7 +1852,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.COMPLETED,
-          children: [],
         },
         {
           _id: 'j5',
@@ -2132,7 +2126,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.QUEUED,
-          children: [],
         },
         {
           _id: 'j2',
@@ -2264,7 +2257,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.COMPLETED,
-          children: [],
         },
         {
           _id: 'j5',
@@ -2550,7 +2542,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.QUEUED,
-          children: [],
         },
         {
           _id: 'j2',
@@ -2685,7 +2676,6 @@ describe('flowJobList selector', () => {
           numResolved: 0,
           numSuccess: 0,
           uiStatus: JOB_STATUS.COMPLETED,
-          children: [],
         },
         {
           _id: 'j5',
@@ -2761,6 +2751,961 @@ describe('flowJobList selector', () => {
           ],
         },
       ]);
+    });
+  });
+});
+
+describe('inProgressJobIds selector', () => {
+  test('should return correct details when state is empty', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: [],
+      bulkRetryJobs: [],
+    });
+  });
+
+  test('should return correct results when there are no bulk retry jobs', () => {
+    let state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RETRYING,
+          },
+          {
+            _id: 'j4',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j5',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j6',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j7',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j8',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j9',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j10',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j11',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j12',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      })
+    );
+    const jobsWithChildren = [
+      {
+        _id: 'j7',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RETRYING,
+          },
+        ],
+      },
+      {
+        _id: 'j8',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      },
+      {
+        _id: 'j9',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.QUEUED,
+          },
+        ],
+      },
+      {
+        _id: 'j10',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      },
+      {
+        _id: 'j11',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      },
+      {
+        _id: 'j12',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      },
+    ];
+
+    jobsWithChildren.forEach(job => {
+      state = reducer(
+        state,
+        actions.job.receivedFamily({
+          job,
+        })
+      );
+    });
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
+      bulkRetryJobs: [],
+    });
+  });
+
+  test('should return correct results when there are no bulk retry jobs in queued/running state', () => {
+    let state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RETRYING,
+          },
+          {
+            _id: 'j4',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j5',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j6',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j7',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j8',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j9',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j10',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j11',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j12',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj1',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'brj2',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj3',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      })
+    );
+    const jobsWithChildren = [
+      {
+        _id: 'j7',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RETRYING,
+          },
+        ],
+      },
+      {
+        _id: 'j8',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      },
+      {
+        _id: 'j9',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.QUEUED,
+          },
+        ],
+      },
+      {
+        _id: 'j10',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      },
+      {
+        _id: 'j11',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      },
+      {
+        _id: 'j12',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      },
+    ];
+
+    jobsWithChildren.forEach(job => {
+      state = reducer(
+        state,
+        actions.job.receivedFamily({
+          job,
+        })
+      );
+    });
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
+      bulkRetryJobs: [],
+    });
+  });
+
+  test('should return correct results when there are bulk retry jobs in queued state', () => {
+    let state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RETRYING,
+          },
+          {
+            _id: 'j4',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j5',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j6',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j7',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j8',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j9',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j10',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j11',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j12',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj1',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            _id: 'brj2',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj3',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      })
+    );
+    const jobsWithChildren = [
+      {
+        _id: 'j7',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RETRYING,
+          },
+        ],
+      },
+      {
+        _id: 'j8',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      },
+      {
+        _id: 'j9',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.QUEUED,
+          },
+        ],
+      },
+      {
+        _id: 'j10',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      },
+      {
+        _id: 'j11',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      },
+      {
+        _id: 'j12',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      },
+    ];
+
+    jobsWithChildren.forEach(job => {
+      state = reducer(
+        state,
+        actions.job.receivedFamily({
+          job,
+        })
+      );
+    });
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
+      bulkRetryJobs: ['brj1'],
+    });
+  });
+
+  test('should return correct results when there are integration level bulk retry jobs in queued state', () => {
+    const _integrationId = 'i1';
+    let state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+            _integrationId,
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RETRYING,
+          },
+          {
+            _id: 'j4',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j5',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j6',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j7',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j8',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j9',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j10',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j11',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j12',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj1',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            _id: 'brj2',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj3',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      })
+    );
+    const jobsWithChildren = [
+      {
+        _id: 'j7',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RETRYING,
+          },
+        ],
+      },
+      {
+        _id: 'j8',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      },
+      {
+        _id: 'j9',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.QUEUED,
+          },
+        ],
+      },
+      {
+        _id: 'j10',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      },
+      {
+        _id: 'j11',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      },
+      {
+        _id: 'j12',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      },
+    ];
+
+    jobsWithChildren.forEach(job => {
+      state = reducer(
+        state,
+        actions.job.receivedFamily({
+          job,
+        })
+      );
+    });
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
+      bulkRetryJobs: ['brj1'],
+    });
+  });
+
+  test('should return correct results when there are integration level bulk retry jobs in running state', () => {
+    const _integrationId = 'i1';
+    let state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            _id: 'j1',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.QUEUED,
+            _integrationId,
+          },
+          {
+            _id: 'j2',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'j3',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RETRYING,
+          },
+          {
+            _id: 'j4',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j5',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j6',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j7',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j8',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j9',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'j10',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            _id: 'j11',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.FAILED,
+          },
+          {
+            _id: 'j12',
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj1',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            _id: 'brj2',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            _id: 'brj3',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      })
+    );
+    const jobsWithChildren = [
+      {
+        _id: 'j7',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RETRYING,
+          },
+        ],
+      },
+      {
+        _id: 'j8',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.RUNNING,
+          },
+        ],
+      },
+      {
+        _id: 'j9',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.QUEUED,
+          },
+        ],
+      },
+      {
+        _id: 'j10',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      },
+      {
+        _id: 'j11',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.FAILED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.FAILED,
+          },
+        ],
+      },
+      {
+        _id: 'j12',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        children: [
+          {
+            type: JOB_TYPES.EXPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.IMPORT,
+            status: JOB_STATUS.COMPLETED,
+          },
+        ],
+      },
+    ];
+
+    jobsWithChildren.forEach(job => {
+      state = reducer(
+        state,
+        actions.job.receivedFamily({
+          job,
+        })
+      );
+    });
+
+    expect(selectors.inProgressJobIds(state)).toEqual({
+      flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
+      bulkRetryJobs: ['brj1'],
     });
   });
 });

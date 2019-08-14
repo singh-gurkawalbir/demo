@@ -39,18 +39,14 @@ export function* getJobFamily({ jobId, type }) {
   }
 }
 
-export function* getInProgressJobsStatus({ integrationId, flowId }) {
-  const inProgressJobIds = yield select(
-    selectors.inProgressJobIds,
-    integrationId,
-    flowId
-  );
+export function* getInProgressJobsStatus() {
+  const inProgressJobIds = yield select(selectors.inProgressJobIds);
 
   if (
     inProgressJobIds.flowJobs.length === 0 &&
     inProgressJobIds.bulkRetryJobs.length === 0
   ) {
-    yield put(actions.job.noInProgressJobs({ integrationId, flowId }));
+    yield put(actions.job.noInProgressJobs());
 
     return true;
   }
@@ -138,8 +134,16 @@ export function* requestJobCollection({
   }
 }
 
-export function* getJobCollection(options) {
-  const watcher = yield fork(requestJobCollection, options);
+export function* getJobCollection({
+  integrationId,
+  flowId = undefined,
+  filters = {},
+}) {
+  const watcher = yield fork(requestJobCollection, {
+    integrationId,
+    flowId,
+    filters,
+  });
 
   yield take(actionTypes.JOB.CLEAR);
   yield cancel(watcher);

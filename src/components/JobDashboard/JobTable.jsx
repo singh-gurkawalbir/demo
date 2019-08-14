@@ -1,4 +1,5 @@
 import { useState, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,16 +12,17 @@ import { difference } from 'lodash';
 import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobErrorDialog from './JobErrorDialog';
+import * as selectors from '../../reducers';
 
 const styles = theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     overflowX: 'auto',
   },
   title: {
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
     float: 'left',
   },
   table: {
@@ -31,19 +33,17 @@ const styles = theme => ({
 
 function JobTable({
   classes,
-  rowsPerPage = 10,
   onSelectChange,
-  jobs,
+  jobsInCurrentPage,
   selectedJobs,
   userPermissionsOnIntegration,
   integrationName,
+  onChangePage,
 }) {
-  const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const jobsInCurrentPage = jobs.slice(
-    currentPage * rowsPerPage,
-    (currentPage + 1) * rowsPerPage
+  const { jobsCurrentPage, jobsPerPage, totalJobs } = useSelector(state =>
+    selectors.jobPageDetails(state)
   );
+  const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
       [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
@@ -62,7 +62,8 @@ function JobTable({
     difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
 
   function handleChangePage(event, newPage) {
-    setCurrentPage(newPage);
+    // setCurrentPage(newPage);
+    onChangePage(newPage);
   }
 
   function handleSelectChange(job, jobId) {
@@ -101,11 +102,11 @@ function JobTable({
     <Fragment>
       <TablePagination
         classes={{ root: classes.tablePaginationRoot }}
-        rowsPerPageOptions={[rowsPerPage]}
+        rowsPerPageOptions={[jobsPerPage]}
         component="div"
-        count={jobs.length}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
+        count={totalJobs || 0}
+        rowsPerPage={jobsPerPage}
+        page={jobsCurrentPage}
         backIconButtonProps={{
           'aria-label': 'Previous Page',
         }}
@@ -121,7 +122,7 @@ function JobTable({
           <TableRow>
             <TableCell padding="checkbox">
               <Checkbox
-                disabled={jobs.length === 0}
+                disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}
                 onChange={handleSelectAllChange}
                 inputProps={{ 'aria-label': 'Select all jobs' }}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
@@ -14,29 +13,11 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 
-const styles = theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing.unit * 2,
-    float: 'left',
-  },
-  createAPITokenButton: {
-    margin: theme.spacing.unit,
-    textAlign: 'center',
-    float: 'right',
-  },
-  table: {
-    minWidth: 700,
-  },
-  tablePaginationRoot: { float: 'left' },
-});
-
-function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
+export default function JobDashboard({
+  integrationId,
+  flowId,
+  rowsPerPage = 10,
+}) {
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const userPermissionsOnIntegration = useSelector(state =>
@@ -44,9 +25,6 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
   );
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
-  );
-  const jobs = useSelector(state =>
-    selectors.flowJobList(state, integrationId, flowId)
   );
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
@@ -56,21 +34,33 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
   const [numJobsSelected, setNumJobsSelected] = useState(0);
   const [disableButtons, setDisableButtons] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
+  const [currentPage, setCurrentPage] = useState(0);
+  const jobs = useSelector(state => selectors.flowJobList(state));
 
   useEffect(
     () => () => {
       dispatch(actions.job.clear());
+      setCurrentPage(0);
     },
     [dispatch, filters]
   );
 
   useEffect(() => {
-    if (!jobs.length) {
+    dispatch(actions.job.setJobsCurrentPage(currentPage));
+    dispatch(actions.job.getInProgressJobStatus());
+  }, [dispatch, currentPage]);
+
+  useEffect(() => {
+    dispatch(actions.job.setJobsPerPage(rowsPerPage));
+  }, [dispatch, rowsPerPage]);
+
+  useEffect(() => {
+    if (jobs.length === 0) {
       dispatch(
         actions.job.requestCollection({ integrationId, flowId, filters })
       );
     }
-  }, [dispatch, filters, flowId, integrationId, jobs.length]);
+  }, [dispatch, integrationId, flowId, filters, jobs.length]);
 
   useEffect(() => {
     setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
@@ -94,9 +84,14 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
     }
   }, [selectedJobs, numJobsSelected]);
 
+  function handleChangePage(newPage) {
+    setCurrentPage(newPage);
+  }
+
   function handleFiltersChange(newFilters) {
     if (!isEqual(filters, newFilters)) {
       setFilters(newFilters);
+      setCurrentPage(0);
     }
   }
 
@@ -363,18 +358,13 @@ function JobDashboard({ integrationId, flowId, rowsPerPage = 10 }) {
         disableButtons={disableButtons}
       />
       <JobTable
-        integrationId={integrationId}
-        flowId={flowId}
-        filters={filters}
-        rowsPerPage={rowsPerPage}
         onSelectChange={handleSelectChange}
-        jobs={jobs}
+        jobsInCurrentPage={jobs}
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
         integrationName={integration && integration.name}
+        onChangePage={handleChangePage}
       />
     </LoadResources>
   );
 }
-
-export default withStyles(styles)(JobDashboard);

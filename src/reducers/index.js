@@ -1035,12 +1035,12 @@ export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
 }
 
-export function jobList(state, integrationId, flowId) {
-  return fromData.jobList(state.data, integrationId, flowId);
+export function jobPageDetails(state) {
+  return fromData.jobPageDetails(state.data);
 }
 
-export function flowJobList(state, integrationId, flowId) {
-  const jobs = fromData.flowJobList(state.data, integrationId, flowId);
+export function flowJobList(state) {
+  const jobs = fromData.flowJobList(state.data);
   const preferences = userPreferences(state);
   const resourceMap = resourceDetailsMap(state);
 
@@ -1089,8 +1089,8 @@ export function flowJobList(state, integrationId, flowId) {
   });
 }
 
-export function inProgressJobIds(state, integrationId, flowId) {
-  return fromData.inProgressJobIds(state.data, integrationId, flowId);
+export function inProgressJobIds(state) {
+  return fromData.inProgressJobIds(state.data);
 }
 
 export function flowJob(state, { jobId }) {
