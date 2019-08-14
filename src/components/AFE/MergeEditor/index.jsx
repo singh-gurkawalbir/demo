@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -8,7 +9,6 @@ export default function MergeEditor(props) {
   const { data, result, rule, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
-  // const parsedData = result && result.data && result.data[0];
   const dispatch = useDispatch();
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { rule }));
@@ -18,14 +18,16 @@ export default function MergeEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
-  const handleInit = () => {
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'merge', {
         rule: props.rule,
         data: props.data,
       })
     );
-  };
+  }, [dispatch, editorId, props.data, props.rule]);
+  const parsedResult =
+    result && result.data ? JSON.stringify(result.data[0], null, 2) : '';
 
   return (
     <Editor
@@ -33,7 +35,7 @@ export default function MergeEditor(props) {
       rule={rule}
       error={error}
       violations={violations}
-      result={result && result.data ? result.data[0] : ''}
+      result={parsedResult}
       processor="merge"
       ruleMode="json"
       layout={layout}

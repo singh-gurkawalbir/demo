@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -17,14 +18,14 @@ export default function FileDefinitionEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
-  const handleInit = () => {
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(props.editorId, 'structuredFileParser', {
         rule: props.rule,
         data: props.data,
       })
     );
-  };
+  }, [dispatch, props.data, props.editorId, props.rule]);
 
   return (
     <Editor
