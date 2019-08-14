@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -26,12 +26,11 @@ export default function HandlebarsEditor(props) {
     selectors.editorHelperFunctions(state)
   );
 
+  completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+
   useEffect(() => {
-    completers.handleBarsCompleters.setCompleters(
-      data,
-      handlebarHelperFunction
-    );
-  }, [handlebarHelperFunction, data]);
+    completers.handleBarsCompleters.setJsonCompleter(data);
+  }, [data]);
   const dispatch = useDispatch();
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { template: rule }));
@@ -41,7 +40,7 @@ export default function HandlebarsEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
-  const handleInit = () => {
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
@@ -53,8 +52,7 @@ export default function HandlebarsEditor(props) {
     );
     // get Helper functions when the editor intializes
     dispatch(actions.editor.refreshHelperFunctions());
-  };
-
+  }, [dispatch, editorId, props.data, props.rule, props.strict]);
   const handlePreview = () => {
     dispatch(actions.editor.evaluateRequest(editorId));
   };
