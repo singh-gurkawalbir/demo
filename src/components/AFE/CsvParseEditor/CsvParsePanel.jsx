@@ -10,6 +10,28 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+const getColumns = result => {
+  if (!result || !result.data || !result.data.length) {
+    return [];
+  }
+
+  const sampleRecord = Array.isArray(result.data[0])
+    ? result.data[0][0]
+    : result.data[0];
+
+  return Object.keys(sampleRecord);
+};
+
 const styles = theme => ({
   container: {
     padding: '10px',
@@ -34,28 +56,6 @@ function CsvParsePanel(props) {
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
-  };
-
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
-  const getColumns = result => {
-    if (!result || !result.data || !result.data.length) {
-      return [];
-    }
-
-    const sampleRecord = Array.isArray(result.data[0])
-      ? result.data[0][0]
-      : result.data[0];
-
-    return Object.keys(sampleRecord);
   };
 
   const allColumns = getColumns(result);

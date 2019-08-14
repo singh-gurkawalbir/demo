@@ -20,12 +20,12 @@ export default function FileDefinitionEditor(props) {
 
   const handleInit = useCallback(() => {
     dispatch(
-      actions.editor.init(props.editorId, 'structuredFileParser', {
+      actions.editor.init(editorId, 'structuredFileParser', {
         rule: props.rule,
         data: props.data,
       })
     );
-  }, [dispatch, props.data, props.editorId, props.rule]);
+  }, [dispatch, props.data, editorId, props.rule]);
 
   return (
     <Editor

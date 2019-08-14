@@ -19,7 +19,7 @@ const styles = {
 };
 
 function JavaScriptEditor(props) {
-  const { editorId, classes } = props;
+  const { editorId, classes, entryFunction, scriptId } = props;
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -31,13 +31,13 @@ function JavaScriptEditor(props) {
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
-        scriptId: props.scriptId,
-        entryFunction: props.entryFunction || 'main',
+        scriptId,
+        entryFunction: entryFunction || 'main',
         data: props.data,
         autoEvaluate: true,
       })
     );
-  }, [dispatch, editorId, props.data, props.entryFunction, props.scriptId]);
+  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
 
   useEffect(() => {
     handleInit();
