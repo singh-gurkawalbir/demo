@@ -3,23 +3,17 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import shortid from 'shortid';
 import * as selectors from '../../reducers';
 import AgentDetail from './AgentDetail';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../../components/LoadResources';
+import ResourceReferences from '../../components/ResourceReferences';
 
 const styles = theme => ({
   root: {
@@ -70,36 +64,12 @@ function AgentList(props) {
 
   return (
     <LoadResources resources={['agents']}>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="simple-dialog-title"
-        open={showReferences}>
-        <DialogTitle id="simple-dialog-title">Agent References:</DialogTitle>
-        <List>
-          {agentReferences &&
-            Object.keys(agentReferences).map(key => (
-              <ListItem key={key}>
-                <ListItemText primary={`${key}:`} />
-                <List>
-                  {agentReferences[key].map(val => (
-                    <ListItem key={val.name}>
-                      <Link
-                        to={getRoutePath(`${key}`)}
-                        className={classes.createAgentButton}>
-                        <ListItemText primary={val.name} />
-                      </Link>
-                      <Divider />
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider />
-              </ListItem>
-            ))}
-        </List>
-        <Button onClick={handleClose} color="primary">
-          Close
-        </Button>
-      </Dialog>
+      <ResourceReferences
+        type="Agent"
+        showReferences={showReferences}
+        handleClose={handleClose}
+        references={agentReferences}
+      />
       <Fragment>
         <Typography variant="h2" className={classes.title}>
           Agents
@@ -107,7 +77,7 @@ function AgentList(props) {
         <Link
           to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
           className={classes.createAgentButton}>
-          <div>New Agent</div>
+          <div>+ New Agent</div>
         </Link>
         <div className={classes.root}>
           <Table className={classes.table}>

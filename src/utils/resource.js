@@ -2,7 +2,7 @@ import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
-  agents: 'Agents',
+  agents: 'Agent',
   accesstokens: 'API Token',
   asynchelpers: 'Async Helper',
   connections: 'Connection',
