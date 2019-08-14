@@ -1,39 +1,43 @@
 import { useState } from 'react';
+import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-const useStyles = makeStyles(theme => ({
+const useAppBarStyles = makeStyles(theme => ({
   root: {
+    borderRadius: 24,
+    padding: 2,
+    backgroundColor: theme.palette.secondary.dark,
     '& button': {
-      // height: 26,
-      backgroundColor: props =>
-        props.variant === 'appbar' && theme.palette.primary.dark,
+      height: 26,
+      border: 0,
+      backgroundColor: theme.palette.secondary.dark,
       '& p': {
-        color: props =>
-          props.variant === 'appbar' && theme.palette.primary.light,
+        color: theme.palette.secondary.light,
       },
     },
     '& button.Mui-selected': {
-      backgroundColor: props =>
-        props.variant === 'appbar' && theme.palette.primary.light,
+      borderRadius: 24,
+      backgroundColor: theme.palette.primary.main,
       '& p': {
-        color: props =>
-          props.variant === 'appbar' && theme.palette.primary.contrastText,
+        color: theme.palette.common.white,
       },
     },
 
     '& button:hover': {
-      backgroundColor: props =>
-        props.variant === 'appbar' && theme.palette.primary.main,
+      backgroundColor: 'rgba(0,0,0,0.1)',
+      borderRadius: 24,
     },
 
     '& button.Mui-selected:hover': {
-      backgroundColor: props =>
-        props.variant === 'appbar' && theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.main,
     },
-
+  },
+}));
+const useStyles = makeStyles({
+  root: {
     '& button:first-child': {
       borderTopLeftRadius: 24,
       borderBottomLeftRadius: 24,
@@ -45,17 +49,19 @@ const useStyles = makeStyles(theme => ({
   },
   item: {
     minWidth: props => props.minWidth,
+    textTransform: 'none',
   },
-}));
+});
 
-export default function Toggle({
+export default function TextToggle({
   options = [],
   defaultValue,
   minWidth,
   variant,
   ...rest
 }) {
-  const classes = useStyles({ variant, minWidth });
+  const classes = useStyles({ minWidth });
+  const appBarClasses = useAppBarStyles();
   const [value, setValue] = useState(defaultValue);
   const handleChange = (event, newValue) => {
     if (newValue) {
@@ -63,10 +69,13 @@ export default function Toggle({
     }
   };
 
+  const rootClasses =
+    variant === 'appbar' ? [classes.root, appBarClasses.root] : classes.root;
+
   return (
     <ToggleButtonGroup
       {...rest}
-      className={classes.root}
+      className={classNames(rootClasses)}
       value={value}
       onChange={handleChange}>
       {options.map(item => (
