@@ -130,6 +130,26 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+
+    netsuite: {
+      requestUserRoles: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+        }),
+      receivedUserRoles: (connectionId, userRoles) =>
+        action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
+          connectionId,
+          userRoles,
+        }),
+      requestUserRolesFailed: (connectionId, message) =>
+        action(actionTypes.NETSUITE_USER_ROLES.FAILED, {
+          connectionId,
+          message,
+        }),
+      clearUserRoles: connectionId =>
+        action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
+    },
   },
 };
 // #endregion
