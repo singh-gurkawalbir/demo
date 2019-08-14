@@ -14,9 +14,7 @@ export default {
       fieldId: 'rest.bearerToken',
       label: 'API Access Token:',
       required: true,
-      type: 'text',
       helpText: 'Please enter your API token here.',
-      inputType: 'password',
     },
   ],
   fieldSets: [

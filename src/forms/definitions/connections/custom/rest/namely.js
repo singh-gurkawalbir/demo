@@ -47,8 +47,6 @@ export default {
       fieldId: 'rest.bearerToken',
       label: 'Personal Access Token:',
       required: true,
-      type: 'text',
-      inputType: 'password',
       helpText: 'The personal access token of your account on namely.',
     },
   ],
