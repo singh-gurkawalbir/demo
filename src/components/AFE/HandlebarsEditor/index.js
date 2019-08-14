@@ -8,7 +8,6 @@ import Editor from '../GenericEditor';
 export default function HandlebarsEditor(props) {
   const {
     editorId,
-    // processor,
     layout,
     templateClassName,
     ruleTitle,
@@ -77,7 +76,7 @@ export default function HandlebarsEditor(props) {
       dataTitle={dataTitle}
       data={data}
       result={result ? result.data : ''}
-      error={error && error.message}
+      error={error}
       enableAutocomplete={enableAutocomplete}
     />
   );
