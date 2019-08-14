@@ -244,7 +244,7 @@ class Edit extends Component {
           <Link
             key="conn"
             className={classes.relatedContent}
-            to={`/pg/resources/connections/edit/${connection._id}`}>
+            to={`/pg/connections/edit/${connection._id}`}>
             <Button size="small" color="primary">
               Connected to {connection.name || connection._id}
             </Button>

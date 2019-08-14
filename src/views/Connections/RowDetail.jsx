@@ -31,7 +31,7 @@ function ConnectionsData(props) {
       case 'delete':
         confirmDialog({
           title: 'Confirm',
-          message: 'Are you sure you want to delete this Agent?',
+          message: 'Are you sure you want to delete this Connection?',
           buttons: [
             {
               label: 'Cancel',
@@ -63,49 +63,12 @@ function ConnectionsData(props) {
       <Typography className={classes.exportDetails}>
         Created on {new Date(item.lastModified).toLocaleDateString()}
         <br />
-        {/* {item.connection && (
-            <Fragment>
-              Using a {item.connection.type} connection named:
-              {item.connection.name || item.connection._id}
-            </Fragment>
-          )} */}
       </Typography>
       <Typography className={classes.secondaryHeading}>
-        <Button
-          component={Link}
-          // className={classes.link}
-          to={`/pg/resources/connections/edit/${item._id}`}>
+        <Button component={Link} to={`/pg/connections/edit/${item._id}`}>
           Edit Connection
         </Button>
         <br />
-        {/* <Link
-          className={classes.link}
-          to={`/pg/resources/connections/edit/${item._id}`}>
-          Share connection
-        </Link>
-        <br />
-        <Link
-          className={classes.link}
-          to={`/pg/resources/connections/edit/${item._id}`}>
-          Refresh metadata
-        </Link>
-        <br />
-        <Link
-          className={classes.link}
-          to={`/pg/resources/connections/edit/${item._id}`}>
-          Download debug logs
-        </Link>
-        <br />
-        <Link
-          className={classes.link}
-          to={`/pg/resources/connections/edit/${item._id}`}>
-          Configure debugger
-        </Link>
-        <br />
-        <Link className={classes.link} to="/pg/connections/clone">
-          (View audit log
-        </Link>
-        <br /> */}
         <Button
           onClick={() => handleActionClick('downloadDebugLogs', `${item._id}`)}>
           Download debug logs
