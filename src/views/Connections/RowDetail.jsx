@@ -26,35 +26,24 @@ const styles = theme => ({
 function ConnectionsData(props) {
   const { classes, item } = props;
   const dispatch = useDispatch();
-  const handleActionClick = (action, id) => {
-    switch (action) {
-      case 'delete':
-        confirmDialog({
-          title: 'Confirm',
-          message: 'Are you sure you want to delete this Connection?',
-          buttons: [
-            {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
-              onClick: () => {
-                dispatch(actions.resource.delete('connections', id));
-              },
-            },
-          ],
-        });
-        break;
-      case 'viewReferences':
-        dispatch(actions.resource.requestReferences('connections', id));
-        break;
-      case 'downloadDebugLogs':
-        break;
-      case 'configureDebugger':
-        break;
-      default:
-        break;
-    }
+  const handleConfigureDebugger = () => {};
+  const handleDownLoadDebug = () => {};
+  const handleDeleteClick = () => {
+    confirmDialog({
+      title: 'Confirm',
+      message: 'Are you sure you want to delete this Connection?',
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            dispatch(actions.resource.delete('connections', `${item._id}`));
+          },
+        },
+      ],
+    });
   };
 
   return (
@@ -69,24 +58,20 @@ function ConnectionsData(props) {
           Edit Connection
         </Button>
         <br />
-        <Button
-          onClick={() => handleActionClick('downloadDebugLogs', `${item._id}`)}>
-          Download debug logs
-        </Button>
+        <Button onClick={handleDownLoadDebug}>Download debug logs</Button>
+        <br />
+        <Button onClick={handleConfigureDebugger}>Configure debugger</Button>
         <br />
         <Button
-          onClick={() => handleActionClick('configureDebugger', `${item._id}`)}>
-          Configure debugger
-        </Button>
-        <br />
-        <Button
-          onClick={() => handleActionClick('viewReferences', `${item._id}`)}>
+          onClick={() =>
+            dispatch(
+              actions.resource.requestReferences('connections', `${item._id}`)
+            )
+          }>
           View references
         </Button>
         <br />
-        <Button onClick={() => handleActionClick('delete', `${item._id}`)}>
-          Delete connection
-        </Button>
+        <Button onClick={handleDeleteClick}>Delete connection</Button>
       </Typography>
     </Fragment>
   );
