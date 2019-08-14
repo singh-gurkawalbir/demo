@@ -38,11 +38,11 @@ export default function AgentDetail(props) {
   };
 
   const handleActionClick = action => {
-    const { viewReferencesClickHandler } = props;
+    const { onReferencesClick } = props;
 
     switch (action) {
       case 'viewReferences':
-        viewReferencesClickHandler(agent._id);
+        onReferencesClick(agent._id);
         break;
       case 'delete':
         confirmDialog({

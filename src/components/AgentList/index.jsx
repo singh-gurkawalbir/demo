@@ -53,7 +53,7 @@ function AgentList(props) {
     })
   );
 
-  function viewReferencesClickHandler(id) {
+  function handleReferencesClick(id) {
     setShowReferences(true);
     setAgentId(id);
   }
@@ -99,8 +99,8 @@ function AgentList(props) {
                   <AgentDetail
                     key={agent._id}
                     agent={agent}
-                    viewReferencesClickHandler={references => {
-                      viewReferencesClickHandler(references);
+                    onReferencesClick={id => {
+                      handleReferencesClick(id);
                     }}
                   />
                 ))}

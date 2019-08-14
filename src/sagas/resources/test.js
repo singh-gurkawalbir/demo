@@ -6,7 +6,7 @@ import {
   getResource,
   getResourceCollection,
   deleteResource,
-  fetchResourceReferences,
+  requestReferences,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -302,14 +302,14 @@ availableResources.forEach(type => {
       expect(final.value).toBeUndefined();
     });
   });
-  describe(`fetchResourceReferences("${type}", id) saga`, () => {
+  describe(`requestReferences("${type}", id) saga`, () => {
     const id = 123;
 
     test('should succeed on successful api call', () => {
       // assign
 
-      const saga = fetchResourceReferences(
-        actions.resource.fetchResourceReferences(type, id)
+      const saga = requestReferences(
+        actions.resource.requestReferences(type, id)
       );
       const path = `/${type}/${id}/dependencies`;
       const mockResourceReferences = {
@@ -324,11 +324,7 @@ availableResources.forEach(type => {
 
       expect(effect).toEqual(
         put(
-          actions.resource.receivedResourceReferences(
-            type,
-            id,
-            mockResourceReferences
-          )
+          actions.resource.receivedReferences(type, id, mockResourceReferences)
         )
       );
 
@@ -339,8 +335,8 @@ availableResources.forEach(type => {
 
     test('should return undefined if api call fails', () => {
       // assign
-      const saga = fetchResourceReferences(
-        actions.resource.fetchResourceReferences(type, id)
+      const saga = requestReferences(
+        actions.resource.requestReferences(type, id)
       );
       const path = `/${type}/${id}/dependencies`;
       const callEffect = saga.next().value;

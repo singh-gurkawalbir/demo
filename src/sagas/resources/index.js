@@ -119,7 +119,7 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* fetchResourceReferences({ resourceType, id }) {
+export function* requestReferences({ resourceType, id }) {
   const path = id
     ? `/${resourceType}/${id}/dependencies`
     : `/${resourceType}/dependencies`;
@@ -128,11 +128,7 @@ export function* fetchResourceReferences({ resourceType, id }) {
     const resourceReferences = yield call(apiCallWithRetry, { path });
 
     yield put(
-      actions.resource.receivedResourceReferences(
-        resourceType,
-        id,
-        resourceReferences
-      )
+      actions.resource.receivedReferences(resourceType, id, resourceReferences)
     );
   } catch (error) {
     return undefined;
@@ -144,6 +140,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
-  takeEvery(actionTypes.RESOURCE.REFERENCES_FETCH, fetchResourceReferences),
+  takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   ...metadataSagas,
 ];

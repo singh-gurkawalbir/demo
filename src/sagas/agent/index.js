@@ -3,13 +3,12 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { MASK_AGENT_TOKEN_DELAY } from '../../utils/constants';
+import { MASK_SENSITIVE_INFO_DELAY } from '../../utils/constants';
 
 export function* displayToken({ id }) {
-  const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_DISPLAY, {
+  const { path, opts } = getRequestOptions(actionTypes.AGENT.TOKEN_DISPLAY, {
     resourceId: id,
   });
-  const { path, opts } = requestOptions;
   let response;
 
   try {
@@ -23,15 +22,14 @@ export function* displayToken({ id }) {
   }
 
   yield put(actions.agent.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_AGENT_TOKEN_DELAY);
+  yield delay(MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.agent.maskToken({ _id: id }));
 }
 
 export function* changeToken({ id }) {
-  const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
+  const { path, opts } = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
     resourceId: id,
   });
-  const { path, opts } = requestOptions;
   let response;
 
   try {
@@ -45,19 +43,18 @@ export function* changeToken({ id }) {
   }
 
   yield put(actions.agent.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_AGENT_TOKEN_DELAY);
+  yield delay(MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.agent.maskToken({ _id: id }));
 }
 
 export function* downloadInstaller({ osType, id }) {
-  const requestOptions = getRequestOptions(
+  const { path, opts } = getRequestOptions(
     actionTypes.AGENT.DOWNLOAD_INSTALLER,
     {
       osType,
       resourceId: id,
     }
   );
-  const { path, opts } = requestOptions;
   let response;
 
   try {

@@ -35,7 +35,7 @@ function ResourceReferences(props) {
   );
 
   useEffect(() => {
-    dispatch(actions.resource.fetchResourceReferences(type, id));
+    dispatch(actions.resource.requestReferences(type, id));
   }, [dispatch, id, type]);
 
   return (

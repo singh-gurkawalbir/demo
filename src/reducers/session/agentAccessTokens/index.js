@@ -49,6 +49,8 @@ export default (state = [], action) => {
 // #region PUBLIC SELECTORS
 
 export function agentAccessToken(state, id) {
+  if (!state) return '*****';
+
   return state.find(t => t._id === id);
 }
 

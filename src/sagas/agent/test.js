@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { displayToken, changeToken, downloadInstaller } from './';
-import { MASK_AGENT_TOKEN_DELAY } from '../../utils/constants';
+import { MASK_SENSITIVE_INFO_DELAY } from '../../utils/constants';
 
 describe('agent tokens sagas', () => {
   describe('displayToken saga', () => {
@@ -13,13 +13,12 @@ describe('agent tokens sagas', () => {
       const tokenId = 'something';
       const tokenInPlainText = 'token in plain text';
       const saga = displayToken({ id: tokenId });
-      const requestOptions = getRequestOptions(
+      const { path, opts } = getRequestOptions(
         actionTypes.AGENT.TOKEN_DISPLAY,
         {
           resourceId: tokenId,
         }
       );
-      const { path, opts } = requestOptions;
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -38,7 +37,7 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_AGENT_TOKEN_DELAY));
+      expect(saga.next().value).toEqual(delay(MASK_SENSITIVE_INFO_DELAY));
       expect(saga.next().value).toEqual(
         put(
           actions.agent.maskToken({
@@ -51,13 +50,12 @@ describe('agent tokens sagas', () => {
     test('should handle api error properly while displaying token', () => {
       const tokenId = 'something';
       const saga = displayToken({ id: tokenId });
-      const requestOptions = getRequestOptions(
+      const { path, opts } = getRequestOptions(
         actionTypes.AGENT.TOKEN_DISPLAY,
         {
           resourceId: tokenId,
         }
       );
-      const { path, opts } = requestOptions;
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -75,10 +73,9 @@ describe('agent tokens sagas', () => {
       const tokenId = 'something';
       const tokenInPlainText = 'token in plain text';
       const saga = changeToken({ id: tokenId });
-      const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
+      const { path, opts } = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
         resourceId: tokenId,
       });
-      const { path, opts } = requestOptions;
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -97,7 +94,7 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_AGENT_TOKEN_DELAY));
+      expect(saga.next().value).toEqual(delay(MASK_SENSITIVE_INFO_DELAY));
       expect(saga.next().value).toEqual(
         put(
           actions.agent.maskToken({
@@ -110,10 +107,9 @@ describe('agent tokens sagas', () => {
     test('should handle api error properly while changing token', () => {
       const tokenId = 'something';
       const saga = changeToken({ id: tokenId });
-      const requestOptions = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
+      const { path, opts } = getRequestOptions(actionTypes.AGENT.TOKEN_CHANGE, {
         resourceId: tokenId,
       });
-      const { path, opts } = requestOptions;
 
       expect(saga.next().value).toEqual(
         call(apiCallWithRetry, {
@@ -135,14 +131,13 @@ availableOSTypes.forEach(osType => {
       const saga = downloadInstaller(
         actions.agent.downloadInstaller(osType, id)
       );
-      const requestOptions = getRequestOptions(
+      const { path, opts } = getRequestOptions(
         actionTypes.AGENT.DOWNLOAD_INSTALLER,
         {
           osType,
           resourceId: id,
         }
       );
-      const { path, opts } = requestOptions;
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(
@@ -161,14 +156,13 @@ availableOSTypes.forEach(osType => {
       const saga = downloadInstaller(
         actions.agent.downloadInstaller(osType, id)
       );
-      const requestOptions = getRequestOptions(
+      const { path, opts } = getRequestOptions(
         actionTypes.AGENT.DOWNLOAD_INSTALLER,
         {
           osType,
           resourceId: id,
         }
       );
-      const { path, opts } = requestOptions;
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(

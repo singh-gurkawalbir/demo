@@ -76,13 +76,13 @@ const resource = {
   deleted: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
 
-  fetchResourceReferences: (resourceType, id) =>
-    action(actionTypes.RESOURCE.REFERENCES_FETCH, {
+  requestReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
       resourceType,
       id,
     }),
 
-  receivedResourceReferences: (resourceType, id, resourceReferences) =>
+  receivedReferences: (resourceType, id, resourceReferences) =>
     action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
       resourceType,
       id,
