@@ -35,7 +35,7 @@ const opts2 = [
     <div style={demoContainer}>
     <TextToggle 
         variant="appbar" 
-        minWidth={120}
+        minWidth={80}
         defaultValue={0} options={opts2}  
         size="small" />
     </div>
