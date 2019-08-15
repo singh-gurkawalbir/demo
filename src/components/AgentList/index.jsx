@@ -58,7 +58,7 @@ function AgentList(props) {
     setAgentId(id);
   }
 
-  function handleClose() {
+  function handleReferencesClose() {
     setShowReferences(false);
     setAgentId(null);
   }
@@ -69,7 +69,7 @@ function AgentList(props) {
         <ResourceReferences
           type="agents"
           id={agentId}
-          handleClose={handleClose}
+          onReferencesClose={handleReferencesClose}
         />
       )}
       <Fragment>

@@ -34,14 +34,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const {
-    id,
-    type,
-    resource,
-    collection,
-    resourceType,
-    resourceReferences,
-  } = action;
+  const { id, type, resource, collection, resourceType } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -90,26 +83,7 @@ export default (state = {}, action) => {
       }
 
       return state;
-    case actionTypes.RESOURCE.REFERENCES_RECEIVED:
-      resourceIndex = state[resourceType].findIndex(r => r._id === id);
 
-      if (resourceIndex > -1) {
-        newState = {
-          ...state,
-          [resourceType]: [
-            ...state[resourceType].slice(0, resourceIndex),
-            {
-              ...state[resourceType][resourceIndex],
-              references: resourceReferences,
-            },
-            ...state[resourceType].slice(resourceIndex + 1),
-          ],
-        };
-
-        return newState;
-      }
-
-      return state;
     default:
       return state;
   }
@@ -235,13 +209,4 @@ export function resourceDetailsMap(state) {
   return allResources;
 }
 
-export function resourceReferences(state, resourceType, id) {
-  if (!state) {
-    return {};
-  }
-
-  const matchingResource = state[resourceType].find(r => r._id === id);
-
-  return matchingResource && matchingResource.references;
-}
 // #endregion

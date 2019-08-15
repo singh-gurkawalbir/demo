@@ -24,10 +24,6 @@ export function resourceList(state, options) {
   return fromResources.resourceList(state.resources, options);
 }
 
-export function resourceReferences(state, resourceType, id) {
-  return fromResources.resourceReferences(state.resources, resourceType, id);
-}
-
 export function resourceDetailsMap(state, options) {
   return fromResources.resourceDetailsMap(state.resources, options);
 }

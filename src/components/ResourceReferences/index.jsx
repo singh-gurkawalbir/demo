@@ -28,15 +28,20 @@ const styles = theme => ({
 });
 
 function ResourceReferences(props) {
-  const { classes, handleClose, type, id } = props;
+  const { classes, onReferencesClose, type, id } = props;
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>
-    selectors.resourceReferences(state, type, id)
+    selectors.resourceReferences(state)
   );
 
   useEffect(() => {
     dispatch(actions.resource.requestReferences(type, id));
-  }, [dispatch, id, type]);
+  }, [dispatch, type, id]);
+
+  function handleClose() {
+    dispatch(actions.resource.deleteReferences(type, id));
+    onReferencesClose();
+  }
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="resource-references" open>

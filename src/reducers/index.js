@@ -382,8 +382,8 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
-export function resourceReferences(state, resourceType, id) {
-  return fromData.resourceReferences(state.data, resourceType, id);
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state.session);
 }
 
 export function resourceDetailsMap(state) {

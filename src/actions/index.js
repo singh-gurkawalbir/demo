@@ -81,6 +81,11 @@ const resource = {
       resourceType,
       id,
     }),
+  deleteReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_DELETE, {
+      resourceType,
+      id,
+    }),
 
   receivedReferences: (resourceType, id, resourceReferences) =>
     action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
