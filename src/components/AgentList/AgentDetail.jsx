@@ -17,6 +17,9 @@ export default function AgentDetail(props) {
   const agentToken = useSelector(
     state => selectors.agentAccessToken(state, agent._id) || {}
   );
+  const agentStatus = useSelector(state =>
+    selectors.isAgentOnline(state, agent._id)
+  );
   const displayAgentToken = () => {
     dispatch(actions.agent.displayToken(agent._id));
   };
@@ -93,12 +96,7 @@ export default function AgentDetail(props) {
       <TableCell>
         <AgentDownloadInstaller onInstallerClick={handleInstallerClick} />
       </TableCell>
-      <TableCell>
-        {agent.lastHeartbeatAt &&
-        new Date().getTime() - agent.lastHeartbeatAt.getTime() <= 600000
-          ? 'Online'
-          : 'Offline'}
-      </TableCell>
+      <TableCell>{agentStatus ? 'Online' : 'Offline'}</TableCell>
 
       <TableCell>
         <AgentDetailActionsMenu

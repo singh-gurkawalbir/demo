@@ -18,8 +18,8 @@ import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 
 const styles = theme => ({
   createResourceButton: {
-    margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit * 3,
+    margin: theme.spacing(1),
+    marginTop: theme.spacing(3),
     float: 'right',
   },
   spinner: {

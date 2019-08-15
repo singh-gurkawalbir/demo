@@ -35,6 +35,10 @@ export function processors(state) {
 export function hasData(state, resourceType) {
   return fromResources.hasData(state.resources, resourceType);
 }
+
+export function isAgentOnline(state, agentId) {
+  return fromResources.isAgentOnline(state.resources, agentId);
+}
 // #endregion
 
 export function integrationUsers(state, integrationId) {

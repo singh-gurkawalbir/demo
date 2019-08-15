@@ -394,6 +394,10 @@ export function processors(state) {
   return fromData.processors(state.data);
 }
 
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
+}
+
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

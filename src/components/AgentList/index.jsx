@@ -18,18 +18,18 @@ import ResourceReferences from '../../components/ResourceReferences';
 const styles = theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     overflowX: 'auto',
   },
   title: {
-    marginBottom: theme.spacing.unit * 2,
-    marginTop: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit,
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     float: 'left',
   },
   inviteUserButton: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     textAlign: 'center',
     float: 'right',
   },
@@ -37,8 +37,8 @@ const styles = theme => ({
     minWidth: 700,
   },
   createAgentButton: {
-    margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit * 3,
+    margin: theme.spacing(1),
+    marginTop: theme.spacing(3),
     float: 'right',
   },
 });
