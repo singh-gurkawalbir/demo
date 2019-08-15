@@ -214,7 +214,7 @@ export function isAgentOnline(state, agentId) {
   const matchingAgent =
     state.agents && state.agents.find(r => r._id === agentId);
 
-  return (
+  return !!(
     matchingAgent &&
     matchingAgent.lastHeartbeatAt &&
     new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <= 600000

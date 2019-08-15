@@ -83,6 +83,34 @@ describe('resources reducer', () => {
         expect(state[resourceType]).toEqual(data2);
       });
     });
+    describe(`${resourceType} delete resource action`, () => {
+      test('should delete an existing resource', () => {
+        const collection = [
+          { _id: 'id1', name: 'rob' },
+          { _id: 'id2', name: 'bob' },
+        ];
+        let state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+
+        state = reducer(state, actions.resource.deleted(resourceType, 'id2'));
+        expect(state[resourceType]).toEqual([collection[0]]);
+      });
+      test('should not delete any resource if there is no resource with given id', () => {
+        const collection = [
+          { _id: 'id1', name: 'rob' },
+          { _id: 'id2', name: 'bob' },
+        ];
+        let state = reducer(
+          undefined,
+          actions.resource.receivedCollection(resourceType, collection)
+        );
+
+        state = reducer(state, actions.resource.deleted(resourceType, 'id3'));
+        expect(state[resourceType]).toEqual(collection);
+      });
+    });
   });
 });
 
@@ -313,5 +341,46 @@ describe('resourceDetailsMap selector', () => {
         flow4: { name: 'flow_Four', _connectorId: 'connector4' },
       },
     });
+  });
+});
+describe('isAgentOnline selector', () => {
+  test('should return false when no data in store', () => {
+    expect(selectors.isAgentOnline(undefined, 123)).toEqual(false);
+    expect(selectors.isAgentOnline({}, 456)).toEqual(false);
+  });
+  test('should return false when there is no matching agent', () => {
+    const testAgents = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('agents', testAgents)
+    );
+
+    expect(selectors.isAgentOnline(state, 123)).toEqual(false);
+  });
+  test('should return false when there is no lastHeartbeatAt for matching agent', () => {
+    const currentDate = new Date();
+    const testAgents = [
+      { _id: 234, name: 'A', lastHeartbeatAt: currentDate },
+      { _id: 567, name: 'B' },
+    ];
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('agents', testAgents)
+    );
+
+    expect(selectors.isAgentOnline(state, 567)).toEqual(false);
+  });
+  test('should return true when diff b/w current and lastHeartbeatAt is less than 10 minutes', () => {
+    const currentDate = new Date();
+    const testAgents = [
+      { _id: 234, name: 'A', lastHeartbeatAt: currentDate },
+      { _id: 567, name: 'B' },
+    ];
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('agents', testAgents)
+    );
+
+    expect(selectors.isAgentOnline(state, 234)).toEqual(true);
   });
 });
