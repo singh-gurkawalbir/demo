@@ -136,11 +136,12 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
+      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
       // defaults to a api request action with
       // message defaulting to the path
       // and comm activity not hidden
       // method is defaulted to get as well
-      expect(saga.next().value).toEqual(
+      expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'GET', path, false))
       );
     });
@@ -152,10 +153,27 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(
+      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+
+      expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'GET', path, false))
       );
       expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));
+      expect(saga.next().value).toEqual(call(introduceNetworkLatency));
+    });
+
+    test('should skip dispatching an apiRequest action when retrying', () => {
+      const path = '/somePath';
+      const opts = {};
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const request = { url: path, args };
+      const saga = onRequestSaga(request);
+
+      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+
+      expect(saga.next({ retryCount: 1 }).value).toEqual(
+        call(getAdditionalHeaders, path)
+      );
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
@@ -166,7 +184,9 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(
+      expect(saga.next().value).toEqual(select(resourceStatus, path, 'POST'));
+
+      expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
       expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));
@@ -204,7 +224,9 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(
+      expect(saga.next().value).toEqual(select(resourceStatus, path, 'POST'));
+
+      expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
       expect(saga.next().value).toEqual(call(getAdditionalHeaders, path));

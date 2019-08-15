@@ -29,12 +29,10 @@ export default {
       arrowAfter: colors.celigoNeutral3,
     },
     primary: {
-      main: colors.celigoAccent1,
-      color: colors.celigoNeutral6,
+      main: colors.celigoAccent2,
     },
     secondary: {
-      light: colors.celigoAccent3,
-      main: colors.celigoAccent1,
+      main: colors.celigoNeutral6,
     },
     text: {
       primary: colors.celigoNeutral6,

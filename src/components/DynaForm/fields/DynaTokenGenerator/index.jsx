@@ -1,11 +1,11 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaSubmit from '../../DynaSubmit';
-import { MaterialUiTextField } from '../DynaText';
+import MaterialUiTextField from '../DynaText';
 
 const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
@@ -64,28 +64,24 @@ function TokenGenerator(props) {
   }, [enquesnackbar, handleClearToken, message, resourceId]);
 
   return (
-    <Fragment>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
-          <MaterialUiTextField
-            {...props}
-            disabled={false}
-            required
-            className={classes.children}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <GenerateTokenButton {...props} className={classes.children} />
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
+        <MaterialUiTextField
+          {...props}
+          disabled={false}
+          required
+          className={classes.children}
+          style={{ width: '100%' }}
+        />
       </div>
-    </Fragment>
+      <div>
+        <GenerateTokenButton {...props} className={classes.children} />
+      </div>
+    </div>
   );
 }
 
-const DynaTokenGenerator = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(TokenGenerator);
-
-export default DynaTokenGenerator;

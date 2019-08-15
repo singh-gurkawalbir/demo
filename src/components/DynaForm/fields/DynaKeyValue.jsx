@@ -37,11 +37,11 @@ export default function DynaKeyValue(props) {
     isValid,
   } = props;
   const classes = useStyles(props);
-  const [rule, setRule] = useState([]);
+  const [values, setValues] = useState([]);
 
   useEffect(() => {
     if (value) {
-      setRule(value);
+      setValues(value);
     }
   }, [value]);
 
@@ -49,18 +49,18 @@ export default function DynaKeyValue(props) {
     const { value } = event.target;
 
     if (row !== undefined) {
-      rule[row][field] = value;
+      values[row][field] = value;
     } else {
-      rule.push({ [field]: value });
+      values.push({ [field]: value });
     }
 
     // console.log(`row: ${row || 'new'}.${field} = ${value}`);
 
-    setRule(rule);
-    onFieldChange(id, rule);
+    setValues(values);
+    onFieldChange(id, values);
   };
 
-  const tableData = rule ? rule.map((r, n) => ({ ...r, row: n })) : [];
+  const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
   const handleKeyUpdate = row => event => handleUpdate(row, event, keyName);
   const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
 

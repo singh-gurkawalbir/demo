@@ -10,6 +10,7 @@ import {
   evaluateProcessor,
   refreshHelperFunctions,
 } from './';
+import { APIException } from '../api';
 import { getResource } from '../resources';
 
 describe('evaluateProcessor saga', () => {
@@ -78,29 +79,62 @@ describe('evaluateProcessor saga', () => {
 
   test('should complete with dispatch of evaluate failure when api call fails.', () => {
     const id = 1;
-    const saga = evaluateProcessor({ id });
-    const selectEffect = saga.next().value;
+    const invalidCases = [
+      {
+        initOpt: new APIException({
+          status: 500,
+          message: 'any message',
+        }),
+        expectedResult: 'boom',
+        skipEvaluate: true,
+      },
+      {
+        initOpt: new APIException({
+          status: 422,
+          message: '{"message":"boom"}',
+        }),
+        expectedResult: 'boom',
+      },
+      {
+        initOpt: new APIException({
+          status: 401,
+          message: '{"message":"boom", "code":"code"}',
+        }),
+        expectedResult: 'boom',
+      },
+    ];
 
-    expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
+    invalidCases.forEach(invalidCase => {
+      const saga = evaluateProcessor({ id });
+      const selectEffect = saga.next().value;
 
-    const selectResponse = { processor: 'p', body: 'body' };
-    const callEffect = saga.next(selectResponse).value;
-    const opts = {
-      method: 'POST',
-      body: 'body',
-    };
+      expect(selectEffect).toEqual(
+        select(selectors.processorRequestOptions, id)
+      );
 
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
-    );
+      const selectResponse = { processor: 'p', body: 'body' };
+      const callEffect = saga.next(selectResponse).value;
+      const opts = {
+        method: 'POST',
+        body: 'body',
+      };
 
-    const putEffect = saga.throw(new Error('boom')).value;
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
+      );
 
-    expect(putEffect).toEqual(put(actions.editor.evaluateFailure(id, 'boom')));
+      const putEffect = saga.throw(invalidCase.initOpt).value;
 
-    const finalEffect = saga.next();
+      if (!invalidCase.skipEvaluate) {
+        expect(putEffect).toEqual(
+          put(actions.editor.evaluateFailure(id, invalidCase.expectedResult))
+        );
+      }
 
-    expect(finalEffect).toEqual({ done: true, value: undefined });
+      const finalEffect = saga.next();
+
+      expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
   });
 });
 
