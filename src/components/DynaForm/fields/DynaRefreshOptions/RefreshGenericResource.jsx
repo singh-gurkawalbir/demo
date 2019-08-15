@@ -43,7 +43,7 @@ function RefreshGenericResource(props) {
     isLoading,
     placeholder,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);

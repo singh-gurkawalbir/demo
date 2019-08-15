@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 function DynaLabel(props) {
   const { label, helpKey, helpText } = props;
   const [anchorEl, setAnchorEl] = useState(null);
-  const classes = useStyles(props);
+  const classes = useStyles();
   const handlePopoverOpen = event => {
     setAnchorEl(event.currentTarget);
   };

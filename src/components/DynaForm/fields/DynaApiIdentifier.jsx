@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaApiIdentifier(props) {
   const { value, resourceType } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
 
   return (
     <Typography variant="body1" className={classes.text}>
