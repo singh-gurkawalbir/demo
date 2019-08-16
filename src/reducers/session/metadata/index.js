@@ -8,7 +8,7 @@ function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
       // {"internalId":"Account","label":"Account"}
       options = data.map(item => ({
         label: item.label,
-        value: item.internalId.toLowerCase(),
+        value: item.internalId && item.internalId.toLowerCase(),
       }));
     } else if (filterKey === 'savedSearches') {
       // {internalId: "794", name: "New Account Search",
@@ -55,7 +55,7 @@ function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
       // userPermission: "4"}
       options = data.map(item => ({
         label: item.name,
-        value: item.scriptId.toLowerCase(),
+        value: item.scriptId && item.scriptId.toLowerCase(),
       }));
     } else if (metadataType === 'savedSearches') {
       // {id: "2615", name: "1mb data"}
@@ -161,10 +161,19 @@ export default (
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
 
-      specificMode[connectionId] = {
-        ...specificMode[connectionId],
-        [key]: { status: 'error', data: [], errorMessage: metadataError },
-      };
+      if (
+        specificMode[connectionId] &&
+        specificMode[connectionId][key] &&
+        specificMode[connectionId][key].status === 'refreshed'
+      ) {
+        specificMode[connectionId][key].status = 'error';
+        specificMode[connectionId][key].errorMessage = metadataError;
+      } else {
+        specificMode[connectionId] = {
+          ...specificMode[connectionId],
+          [key]: { status: 'error', data: [], errorMessage: metadataError },
+        };
+      }
 
       return { ...state, ...{ netsuite: newState } };
     }

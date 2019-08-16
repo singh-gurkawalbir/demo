@@ -54,7 +54,6 @@ function RefreshGenericResource(props) {
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
   // Resets field's value to value provided as argument
-  // TODO - Add onFieldChange as a dependency
   useEffect(() => {
     if (isDefaultValueChanged) {
       if (resetValue) {
