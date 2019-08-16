@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from './JavaScriptPanel';
@@ -10,16 +10,17 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 
-const styles = {
+const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '1fr 1fr',
     gridTemplateRows: '1fr 1fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
   },
-};
+});
 
-function JavaScriptEditor(props) {
-  const { editorId, classes, entryFunction, scriptId } = props;
+export default function JavaScriptEditor(props) {
+  const { editorId, entryFunction, scriptId } = props;
+  const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -67,5 +68,3 @@ function JavaScriptEditor(props) {
     </PanelGrid>
   );
 }
-
-export default withStyles(styles)(JavaScriptEditor);

@@ -2,28 +2,16 @@ import EditorDialog from '../EditorDialog';
 import TransformEditor from './';
 
 export default function TransformEditorDialog(props) {
-  const {
-    id,
-    rule,
-    data,
-    title,
-    onClose,
-    layout = 'column',
-    width = '85vw',
-    height = '60vh',
-    open = true,
-  } = props;
+  const { id, rule, data, ...rest } = props;
+  const defaults = {
+    width: '85vw',
+    height: '60vh',
+    layout: 'column',
+    open: true,
+  };
 
   return (
-    <EditorDialog
-      id={id}
-      open={open}
-      title={title}
-      layout={layout}
-      width={width}
-      height={height}
-      onClose={onClose}
-      showLayoutOptions={false}>
+    <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
       <TransformEditor editorId={id} rule={rule} data={data} />
     </EditorDialog>
   );

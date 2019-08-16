@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
 import TransformPanel from './TransformPanel';
 import PanelGrid from '../PanelGrid';
@@ -10,16 +10,17 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 
-const styles = {
+const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
   },
-};
+});
 
-function TransformEditor(props) {
-  const { editorId, classes } = props;
+export default function TransformEditor(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -79,5 +80,3 @@ function TransformEditor(props) {
     </PanelGrid>
   );
 }
-
-export default withStyles(styles)(TransformEditor);

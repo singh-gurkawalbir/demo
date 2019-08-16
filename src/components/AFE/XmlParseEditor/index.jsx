@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
 import XmlParsePanel from './XmlParsePanel';
 import PanelGrid from '../PanelGrid';
@@ -10,16 +10,17 @@ import ErrorGridItem from '../ErrorGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const styles = {
+const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
   },
-};
+});
 
-function XmlParseEditor(props) {
-  const { editorId, classes } = props;
+export default function XmlParseEditor(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -73,5 +74,3 @@ function XmlParseEditor(props) {
     </PanelGrid>
   );
 }
-
-export default withStyles(styles)(XmlParseEditor);

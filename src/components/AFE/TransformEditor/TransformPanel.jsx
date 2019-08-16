@@ -1,11 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import Input from '@material-ui/core/Input';
-import { withStyles } from '@material-ui/core/styles';
-// import { deepClone } from 'fast-json-patch';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
@@ -19,10 +18,11 @@ const styles = theme => ({
   rowContainer: {
     display: 'flex',
   },
-});
+}));
 
-function TransformPanel(props) {
-  const { editorId, classes } = props;
+export default function TransformPanel(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = value => {
@@ -92,5 +92,3 @@ function TransformPanel(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(TransformPanel);

@@ -6,7 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
@@ -32,7 +32,7 @@ const getColumns = result => {
   return Object.keys(sampleRecord);
 };
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     padding: '10px',
     backgroundColor: theme.palette.background.default,
@@ -41,10 +41,11 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing(1),
   },
-});
+}));
 
-function CsvParsePanel(props) {
-  const { editorId, classes } = props;
+export default function CsvParsePanel(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const {
     columnDelimiter = '',
     rowDelimiter = '',
@@ -143,5 +144,3 @@ function CsvParsePanel(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(CsvParsePanel);

@@ -3,27 +3,15 @@ import EditorDialog from '../EditorDialog';
 import FileDefinitionEditor from './index';
 
 function FileDefinitionEditorDialog(props) {
-  const {
-    id,
-    rule,
-    data,
-    title,
-    onClose,
-    open = true,
-    layout = 'column',
-    width = '80vw',
-    height = '50vh',
-  } = props;
+  const { id, rule, data, ...rest } = props;
+  const defaults = {
+    width: '80vw',
+    height: '50vh',
+    open: true,
+  };
 
   return (
-    <EditorDialog
-      id={id}
-      open={open}
-      title={title}
-      width={width}
-      layout={layout}
-      height={height}
-      onClose={onClose}>
+    <EditorDialog id={id} {...defaults} {...rest}>
       <FileDefinitionEditor editorId={id} rule={rule} data={data} />
     </EditorDialog>
   );

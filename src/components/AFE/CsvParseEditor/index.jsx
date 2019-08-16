@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { string } from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
 import CsvParsePanel from './CsvParsePanel';
 import PanelGrid from '../PanelGrid';
@@ -11,16 +11,17 @@ import ErrorGridItem from '../ErrorGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const styles = {
+const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
   },
-};
+});
 
-function CsvParseEditor(props) {
-  const { editorId, classes } = props;
+export default function CsvParseEditor(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -76,5 +77,3 @@ CsvParseEditor.propTypes = {
   rule: string,
   data: string,
 };
-
-export default withStyles(styles)(CsvParseEditor);

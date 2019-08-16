@@ -1,17 +1,18 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   gridContainer: {
     display: 'grid',
     gridGap: theme.spacing(2),
     alignItems: 'stretch',
     height: '100%',
   },
-});
+}));
 
-function PanelGrid(props) {
-  const { children, height, width, classes, className } = props;
+export default function PanelGrid(props) {
+  const { children, height, width, className } = props;
+  const classes = useStyles(props);
   const size = { height, width };
 
   return (
@@ -20,5 +21,3 @@ function PanelGrid(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(PanelGrid);

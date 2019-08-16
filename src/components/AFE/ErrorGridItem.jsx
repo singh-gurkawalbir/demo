@@ -1,9 +1,9 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import PanelTitle from './PanelTitle';
 import CodePanel from './GenericEditor/CodePanel';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   gridItem: {
     border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
@@ -21,10 +21,11 @@ const styles = theme => ({
   },
   title: { flex: '0 0 auto' },
   panel: { flex: '1 1 100px', minHeight: '50px' },
-});
+}));
 
-function ErrorGridItem(props) {
-  const { classes, error, violations } = props;
+export default function ErrorGridItem(props) {
+  const { error, violations } = props;
+  const classes = useStyles(props);
 
   if (!error && !violations) return null;
 
@@ -53,5 +54,3 @@ function ErrorGridItem(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(ErrorGridItem);

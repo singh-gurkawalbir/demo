@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   gridItem: {
     border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
@@ -16,10 +16,11 @@ const styles = theme => ({
   },
   title: { flex: '0 0 auto' },
   panel: { flex: '1 1 100px', minHeight: '50px' },
-});
+}));
 
-function PanelGridItem(props) {
-  const { classes, className, children, gridArea } = props;
+export default function PanelGridItem(props) {
+  const { className, children, gridArea } = props;
+  const classes = useStyles(props);
 
   if (!children.length) {
     return (
@@ -40,5 +41,3 @@ function PanelGridItem(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(PanelGridItem);

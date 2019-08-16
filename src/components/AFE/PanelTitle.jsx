@@ -1,17 +1,18 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   title: {
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.editor.panelBackground,
     // color: theme.palette.text.main,
     borderBottom: `solid 1px ${theme.editor.panelBorder}`,
   },
-});
+}));
 
-function PanelTitle(props) {
-  const { title, children, classes } = props;
+export default function PanelTitle(props) {
+  const { title, children } = props;
+  const classes = useStyles(props);
 
   return (
     <div className={classes.title}>
@@ -19,5 +20,3 @@ function PanelTitle(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(PanelTitle);

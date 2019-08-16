@@ -1,7 +1,7 @@
 import { useEffect, useCallback, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,7 +13,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.default,
     height: '100%',
@@ -28,9 +28,11 @@ const styles = theme => ({
   label: {
     paddingLeft: theme.spacing(1),
   },
-});
-const JavaScriptPanel = props => {
-  const { editorId, classes } = props;
+}));
+
+export default function JavaScriptPanel(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -44,13 +46,8 @@ const JavaScriptPanel = props => {
   );
   const dispatch = useDispatch();
   const patchEditor = useCallback(
-    () => (option, value) => {
-      if (typeof option === 'string') {
-        dispatch(actions.editor.patch(editorId, { [option]: value }));
-      } else {
-        // option is already an object.
-        dispatch(actions.editor.patch(editorId, option));
-      }
+    (option, value) => {
+      dispatch(actions.editor.patch(editorId, { [option]: value }));
     },
     [dispatch, editorId]
   );
@@ -80,9 +77,7 @@ const JavaScriptPanel = props => {
             id="scriptId"
             margin="dense"
             value={scriptId}
-            onChange={event =>
-              patchEditor(editorId)({ scriptId: event.target.value })
-            }>
+            onChange={event => patchEditor('scriptId', event.target.value)}>
             {allScripts.map(s => (
               <MenuItem key={s._id} value={s._id}>
                 {s.name}
@@ -95,9 +90,7 @@ const JavaScriptPanel = props => {
           InputLabelProps={{ className: classes.label }}
           className={classes.textField}
           value={entryFunction}
-          onChange={event =>
-            patchEditor(editorId)('entryFunction', event.target.value)
-          }
+          onChange={event => patchEditor('entryFunction', event.target.value)}
           label="Entry Function"
           margin="dense"
         />
@@ -111,12 +104,10 @@ const JavaScriptPanel = props => {
             name="code"
             value={code}
             mode="javascript"
-            onChange={code => patchEditor(editorId)('code', code)}
+            onChange={code => patchEditor('code', code)}
           />
         )}
       </div>
     </LoadResources>
   );
-};
-
-export default withStyles(styles)(JavaScriptPanel);
+}

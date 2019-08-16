@@ -7,12 +7,12 @@ import Typography from '@material-ui/core/Typography';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import helpTextMap from '../../../components/Help/helpTextMap';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   helpText: {
     whiteSpace: 'pre-line',
   },
@@ -28,10 +28,11 @@ const styles = theme => ({
   textField: {
     marginTop: theme.spacing(2),
   },
-});
+}));
 
-function XmlParsePanel(props) {
-  const { editorId, classes } = props;
+export default function XmlParsePanel(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
   const {
     advanced = false,
     trimSpaces = false,
@@ -174,5 +175,3 @@ function XmlParsePanel(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(XmlParsePanel);
