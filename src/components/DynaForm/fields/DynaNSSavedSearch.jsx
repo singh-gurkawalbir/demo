@@ -13,7 +13,8 @@ import * as selectors from '../../../reducers';
 
 export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
-  const [isDefaultValueSet, setIsDefaultValueSet] = useState(false);
+  // Use this state to set Search type for the first time
+  const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
   const {
     value,
     connectionId,
@@ -47,13 +48,14 @@ export default function DynaNSSavedSearch(props) {
   );
 
   useEffect(() => {
-    if (data && !isDefaultValueSet) {
+    // check for isSearchTypeSet to avoid changing search types on refresh
+    if (data && !isSearchTypeSet) {
       const savedSearch = data.find(option => option.value === defaultValue);
 
       setSearchType(savedSearch ? 'public' : 'private');
-      setIsDefaultValueSet(true);
+      setIsSearchTypeSet(true);
     }
-  }, [data, defaultValue, isDefaultValueSet, setSearchType]);
+  }, [data, defaultValue, isSearchTypeSet, setSearchType]);
 
   return (
     <div>
