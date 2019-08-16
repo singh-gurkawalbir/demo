@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import reducer, * as selectors from './';
-import actions from '../../../actions';
+import actions, { availableResources } from '../../../actions';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -20,6 +20,48 @@ describe('session.resource reducers', () => {
       expect(state[tempId]).toEqual(dbId);
     });
   });
+  availableResources.forEach(resourceType => {
+    describe('RESOURCE.REFERENCES_RECEIVED action', () => {
+      test(`should store the ${resourceType} references in the state`, () => {
+        const testReferences = {
+          imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
+          exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
+        };
+        const state = reducer(
+          undefined,
+          actions.resource.receivedReferences(
+            resourceType,
+            'id1',
+            testReferences
+          )
+        );
+
+        expect(state.references).toEqual(testReferences);
+      });
+    });
+    describe('RESOURCE.REFERENCES_DELETE action', () => {
+      test(`should delete the ${resourceType} references from the state`, () => {
+        const testReferences = {
+          imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
+          exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
+        };
+        const state = reducer(
+          undefined,
+          actions.resource.receivedReferences(
+            resourceType,
+            'id1',
+            testReferences
+          )
+        );
+        const newState = reducer(
+          state,
+          actions.resource.deleteReferences(resourceType, 'id1')
+        );
+
+        expect(newState).toEqual({});
+      });
+    });
+  });
 });
 
 describe('session.resource selectors', () => {
@@ -37,6 +79,29 @@ describe('session.resource selectors', () => {
       const state = reducer(undefined, actions.resource.created(dbId, tempId));
 
       expect(selectors.createdResourceId(state, tempId)).toEqual(dbId);
+    });
+  });
+  describe('resourceReferences', () => {
+    test('should return empty object when state is undefined', () => {
+      expect(selectors.resourceReferences(undefined)).toEqual({});
+    });
+    availableResources.forEach(resourceType => {
+      test(`should return ${resourceType} references for valid state`, () => {
+        const testReferences = {
+          imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
+          exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
+        };
+        const state = reducer(
+          undefined,
+          actions.resource.receivedReferences(
+            resourceType,
+            'id1',
+            testReferences
+          )
+        );
+
+        expect(selectors.resourceReferences(state)).toEqual(state.references);
+      });
     });
   });
 });
