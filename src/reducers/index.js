@@ -885,6 +885,23 @@ export function affectedResourcesAndUsersFromAuditLogs(
 // #endregion
 
 // #region Session metadata selectors
+
+export function netsuiteUserRoles(
+  state,
+  connectionId,
+  netsuiteResourceType,
+  env,
+  acc
+) {
+  return fromSession.netsuiteUserRoles(
+    state && state.session,
+    connectionId,
+    netsuiteResourceType,
+    env,
+    acc
+  );
+}
+
 export function stagedResource(state, id, scope) {
   return fromSession.stagedResource(state && state.session, id, scope);
 }
@@ -961,6 +978,12 @@ export function metadataOptionsAndResources(
     ),
     isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
   };
+}
+
+export function isValidatingNetsuiteUserRoles(state) {
+  const commPath = commKeyGen('/netsuite/alluserroles', 'POST');
+
+  return fromComms.isLoading(state.comms, commPath);
 }
 
 export function createdResourceId(state, tempId) {

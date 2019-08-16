@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import { FieldWrapper } from 'react-forms-processor';
 import ArrowPopper from '../../ArrowPopper';
 import helpTextMap from '../../Help/helpTextMap';
 
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaLabel(props) {
+function DynaLabel(props) {
   const { label, helpKey, helpText } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles(props);
@@ -53,3 +54,16 @@ export default function DynaLabel(props) {
     </Fragment>
   );
 }
+
+// This is necessary for this field to be excluded from the form
+// submit. Since im not setting this field in this form,
+// Im assuming the value on this field is either undefined or ''(This is
+// through the defaultValue metadata set in the formFactory) .
+const omitWhenValueIs = [undefined, ''];
+const WrappedDynaLabel = props => (
+  <FieldWrapper {...props} omitWhenValueIs={omitWhenValueIs}>
+    <DynaLabel />
+  </FieldWrapper>
+);
+
+export default WrappedDynaLabel;
