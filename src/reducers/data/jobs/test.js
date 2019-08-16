@@ -1,8 +1,14 @@
 /* global describe, test, expect */
+import each from 'jest-each';
 import reducer, * as selectors from './';
 import actions from '../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
-import { DEFAULT_STATE, parseJobs, parseJobFamily } from './util';
+import {
+  DEFAULT_STATE,
+  parseJobs,
+  parseJobFamily,
+  RETRY_OBJECT_TYPES,
+} from './util';
 
 describe('jobs reducer', () => {
   const _integrationId = 'i1';
@@ -113,6 +119,59 @@ describe('jobs reducer', () => {
       flowJobs: [{ _id: 1 }],
       bulkRetryJobs: [{ _id: 2 }],
     });
+  });
+  describe('should update state properly when setting jobs per page ', () => {
+    const testCases = [
+      [6, 6],
+      [DEFAULT_STATE.jobsPerPage, 0],
+      [DEFAULT_STATE.jobsPerPage, -5],
+      [DEFAULT_STATE.jobsPerPage, 'something'],
+    ];
+
+    each(testCases).test('should return %s for %s', (expected, jobsPerPage) => {
+      const state = reducer(
+        {
+          ...DEFAULT_STATE,
+        },
+        'someaction'
+      );
+      const newState = reducer(state, actions.job.setJobsPerPage(jobsPerPage));
+
+      expect(newState).toEqual({
+        ...DEFAULT_STATE,
+        jobsPerPage: expected,
+      });
+    });
+  });
+
+  describe('should update state properly when setting jobs current page ', () => {
+    const testCases = [
+      [7, 7],
+      [DEFAULT_STATE.jobsCurrentPage, 0],
+      [DEFAULT_STATE.jobsCurrentPage, -5],
+      [DEFAULT_STATE.jobsCurrentPage, 'something'],
+    ];
+
+    each(testCases).test(
+      'should return %s for %s',
+      (expected, jobsCurrentPage) => {
+        const state = reducer(
+          {
+            ...DEFAULT_STATE,
+          },
+          'someaction'
+        );
+        const newState = reducer(
+          state,
+          actions.job.setJobsCurrentPage(jobsCurrentPage)
+        );
+
+        expect(newState).toEqual({
+          ...DEFAULT_STATE,
+          jobsCurrentPage: expected,
+        });
+      }
+    );
   });
 
   describe('should update the state properly when job collection received', () => {
@@ -758,6 +817,145 @@ describe('jobs reducer', () => {
     expectedRetryObjects[retryObjectId].retryData = retryObjectData;
 
     expect(state2).toEqual({ ...state, retryObjects: expectedRetryObjects });
+  });
+});
+
+describe('jobPageDetails selector', () => {
+  test('should return correct results for default state', () => {
+    const noJobsState = reducer(undefined, 'something');
+
+    expect(selectors.jobPageDetails(noJobsState)).toEqual({
+      jobsCurrentPage: DEFAULT_STATE.jobsCurrentPage,
+      jobsPerPage: DEFAULT_STATE.jobsPerPage,
+      totalJobs: 0,
+    });
+  });
+
+  describe('should return correct results when state is not empty', () => {
+    const jobs = [
+      {
+        _id: 'j1',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.QUEUED,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j2',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j3',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        startedAt: '2019-08-11T09:34:00.000Z',
+        endedAt: '2019-08-11T09:51:00.000Z',
+        numPagesGenerated: 10,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j4',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        startedAt: '2019-08-11T09:14:00.000Z',
+        endedAt: '2019-08-11T09:19:00.000Z',
+        doneExporting: true,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j5',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        startedAt: '2019-08-11T08:14:00.000Z',
+        endedAt: '2019-08-11T08:20:00.000Z',
+        numError: 1,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numResolved: 5,
+        numSuccess: 20,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj1',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.RUNNING,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj2',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.CANCELED,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj3',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.COMPLETED,
+        _integrationId: 'i1',
+      },
+    ];
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const state = reducer(undefined, jobsReceivedAction);
+    const jobFamilyJ3 = {
+      _id: 'j3',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.COMPLETED,
+      startedAt: '2019-08-11T09:34:00.000Z',
+      endedAt: '2019-08-11T09:51:00.000Z',
+      numPagesGenerated: 10,
+      _integrationId: 'i1',
+      children: [
+        {
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:10.000Z',
+          endedAt: '2019-08-11T09:40:00.000Z',
+        },
+        {
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:15.000Z',
+          endedAt: '2019-08-11T09:41:00.000Z',
+          numPagesProcessed: 7,
+          retriable: true,
+          retries: [
+            {
+              status: JOB_STATUS.QUEUED,
+            },
+          ],
+        },
+      ],
+    };
+    const jobFamilyJ3ReceivedAction = actions.job.receivedFamily({
+      job: jobFamilyJ3,
+    });
+    const state2 = reducer(state, jobFamilyJ3ReceivedAction);
+    const testCases = [
+      [{ jobsCurrentPage: 0, jobsPerPage: 1, totalJobs: 5 }, 0, 1],
+      [{ jobsCurrentPage: 2, jobsPerPage: 1, totalJobs: 5 }, 2, 1],
+      [{ jobsCurrentPage: 0, jobsPerPage: 5, totalJobs: 5 }, 0, 5],
+      [{ jobsCurrentPage: 1, jobsPerPage: 5, totalJobs: 5 }, 1, 5],
+    ];
+
+    each(testCases).test(
+      'should return %o for page=%s and page size=%s',
+      (expected, jobsCurrentPage, jobsPerPage) => {
+        const newState = reducer(
+          state2,
+          actions.job.setJobsPerPage(jobsPerPage)
+        );
+        const newState2 = reducer(
+          newState,
+          actions.job.setJobsCurrentPage(jobsCurrentPage)
+        );
+
+        expect(selectors.jobPageDetails(newState2)).toEqual(expected);
+      }
+    );
   });
 });
 
@@ -2753,6 +2951,137 @@ describe('flowJobList selector', () => {
       ]);
     });
   });
+
+  describe('should return correct results for different page & page sizes', () => {
+    const jobs = [
+      {
+        _id: 'j1',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.QUEUED,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j2',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j3',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        startedAt: '2019-08-11T09:34:00.000Z',
+        endedAt: '2019-08-11T09:51:00.000Z',
+        numPagesGenerated: 10,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j4',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.COMPLETED,
+        startedAt: '2019-08-11T09:14:00.000Z',
+        endedAt: '2019-08-11T09:19:00.000Z',
+        doneExporting: true,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'j5',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.CANCELED,
+        startedAt: '2019-08-11T08:14:00.000Z',
+        endedAt: '2019-08-11T08:20:00.000Z',
+        numError: 1,
+        numIgnore: 2,
+        numPagesGenerated: 10,
+        numResolved: 5,
+        numSuccess: 20,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj1',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.RUNNING,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj2',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.CANCELED,
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'brj3',
+        type: JOB_TYPES.BULK_RETRY,
+        status: JOB_STATUS.COMPLETED,
+        _integrationId: 'i1',
+      },
+    ];
+    const jobsReceivedAction = actions.job.receivedCollection({
+      collection: jobs,
+    });
+    const state = reducer(undefined, jobsReceivedAction);
+    const jobFamilyJ3 = {
+      _id: 'j3',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.COMPLETED,
+      startedAt: '2019-08-11T09:34:00.000Z',
+      endedAt: '2019-08-11T09:51:00.000Z',
+      numPagesGenerated: 10,
+      _integrationId: 'i1',
+      children: [
+        {
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:10.000Z',
+          endedAt: '2019-08-11T09:40:00.000Z',
+        },
+        {
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.COMPLETED,
+          startedAt: '2019-08-11T09:34:15.000Z',
+          endedAt: '2019-08-11T09:41:00.000Z',
+          numPagesProcessed: 7,
+          retriable: true,
+          retries: [
+            {
+              status: JOB_STATUS.QUEUED,
+            },
+          ],
+        },
+      ],
+    };
+    const jobFamilyJ3ReceivedAction = actions.job.receivedFamily({
+      job: jobFamilyJ3,
+    });
+    const state2 = reducer(state, jobFamilyJ3ReceivedAction);
+    const testCases = [
+      [['j1'], 0, 1],
+      [['j3'], 2, 1],
+      [['j1', 'j2', 'j3', 'j4', 'j5'], 0, 5],
+      [[], 1, 5],
+      [['j1', 'j2', 'j3'], 0, 3],
+      [['j4', 'j5'], 1, 3],
+    ];
+
+    each(testCases).test(
+      'should return %o for page=%s and page size=%s',
+      (expected, jobsCurrentPage, jobsPerPage) => {
+        const newState = reducer(
+          state2,
+          actions.job.setJobsPerPage(jobsPerPage)
+        );
+        const newState2 = reducer(
+          newState,
+          actions.job.setJobsCurrentPage(jobsCurrentPage)
+        );
+
+        expect(selectors.flowJobList(newState2).map(j => j._id)).toEqual(
+          expected
+        );
+      }
+    );
+  });
 });
 
 describe('inProgressJobIds selector', () => {
@@ -3707,5 +4036,266 @@ describe('inProgressJobIds selector', () => {
       flowJobs: ['j1', 'j2', 'j3', 'j7', 'j8', 'j9'],
       bulkRetryJobs: ['brj1'],
     });
+  });
+});
+
+describe('isBulkRetryInProgress selector', () => {
+  test('should return false for default state', () => {
+    const state = reducer(undefined, 'something');
+
+    expect(selectors.isBulkRetryInProgress(state)).toEqual(false);
+  });
+  test('should return false when there are no bulk retry jobs in queued/running state', () => {
+    const state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      })
+    );
+
+    expect(selectors.isBulkRetryInProgress(state)).toEqual(false);
+  });
+  test('should return true when there are bulk retry jobs in queued state', () => {
+    const state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.COMPLETED,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.QUEUED,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      })
+    );
+
+    expect(selectors.isBulkRetryInProgress(state)).toEqual(true);
+  });
+  test('should return true when there are bulk retry jobs in running state', () => {
+    const state = reducer(
+      undefined,
+      actions.job.receivedCollection({
+        collection: [
+          {
+            type: JOB_TYPES.FLOW,
+            status: JOB_STATUS.CANCELED,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.RUNNING,
+          },
+          {
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.CANCELED,
+          },
+        ],
+      })
+    );
+
+    expect(selectors.isBulkRetryInProgress(state)).toEqual(true);
+  });
+});
+
+describe('jobErrors selector', () => {
+  test('should return [] for default state', () => {
+    const state = reducer(undefined, 'something');
+
+    expect(selectors.jobErrors(state, 'somethingElse')).toEqual([]);
+  });
+  test('every job error should have _id property', () => {
+    const _jobId = 'somethingElse';
+    const errors = [
+      {
+        source: 's1',
+        code: 'c1',
+        message: 'something',
+        _jobId,
+      },
+      {
+        source: 's1',
+        code: 'c2',
+        message: 'something else',
+        _jobId,
+      },
+    ];
+    const state = reducer(
+      undefined,
+      actions.job.receivedErrors({
+        collection: errors,
+        jobId: _jobId,
+      })
+    );
+
+    selectors.jobErrors(state, _jobId).forEach(e => {
+      expect(e._id).toBeTruthy();
+    });
+  });
+  test('should return correct results when job errors exist', () => {
+    const _jobId = 'somethingElse';
+    const errors = [
+      {
+        source: 's1',
+        code: 'c1',
+        message: 'something',
+        _jobId,
+      },
+      {
+        source: 's1',
+        code: 'c2',
+        message: 'something else',
+        _jobId,
+      },
+    ];
+    const state = reducer(
+      undefined,
+      actions.job.receivedErrors({
+        collection: errors,
+        jobId: _jobId,
+      })
+    );
+    const jobErrors = selectors.jobErrors(state, _jobId);
+    const jobErrorsWithoutIds = jobErrors.map(e => {
+      const { _id, ...rest } = e;
+
+      return rest;
+    });
+    const expectedJobErrors = errors.map(e => ({
+      ...e,
+      retryObject: {
+        isDataEditable: false,
+        isRetriable: false,
+        isDownloadable: false,
+      },
+    }));
+
+    expect(jobErrorsWithoutIds).toEqual(expectedJobErrors);
+  });
+  test('should return correct results when job errors and retry objects both exist', () => {
+    const _jobId = 'somethingElse';
+    const retries = [
+      {
+        _id: 'r1',
+        type: 'object',
+        _jobId,
+      },
+      {
+        _id: 'r2',
+        type: 'page',
+        _jobId,
+      },
+      {
+        _id: 'r3',
+        type: 'file',
+        _jobId,
+      },
+      {
+        _id: 'r4',
+        type: 'path',
+        _jobId,
+      },
+    ];
+    const errors = [
+      {
+        source: 's1',
+        code: 'c1',
+        message: 'something',
+        _jobId,
+        _retryId: 'r1',
+      },
+      {
+        source: 's1',
+        code: 'c2',
+        message: 'something else',
+        _jobId,
+        _retryId: 'r2',
+      },
+      {
+        source: 's1',
+        code: 'c3',
+        message: 'somethingElse',
+        _jobId,
+        _retryId: 'r3',
+      },
+      {
+        source: 's2',
+        code: 'c2',
+        message: 'something something else',
+        _jobId,
+        _retryId: 'r4',
+      },
+      {
+        source: 's3',
+        code: 'c1',
+        message: 'something',
+        _jobId,
+        _retryId: 'r5',
+      },
+    ];
+    const state = reducer(
+      undefined,
+      actions.job.receivedRetryObjects({
+        collection: retries,
+        jobId: _jobId,
+      })
+    );
+    const state2 = reducer(
+      state,
+      actions.job.receivedErrors({
+        collection: errors,
+        jobId: _jobId,
+      })
+    );
+    const jobErrors = selectors.jobErrors(state2, _jobId);
+    const jobErrorsWithoutIds = jobErrors.map(e => {
+      const { _id, ...rest } = e;
+
+      return rest;
+    });
+    const expectedJobErrors = errors.map(e => {
+      const ro = retries.find(r => r._id === e._retryId) || {};
+
+      return {
+        ...e,
+        retryObject: {
+          ...ro,
+          isDataEditable: [
+            RETRY_OBJECT_TYPES.OBJECT,
+            RETRY_OBJECT_TYPES.PAGE,
+          ].includes(ro.type),
+          isRetriable: [
+            RETRY_OBJECT_TYPES.FILE,
+            RETRY_OBJECT_TYPES.OBJECT,
+            RETRY_OBJECT_TYPES.PAGE,
+          ].includes(ro.type),
+          isDownloadable: ro.type === RETRY_OBJECT_TYPES.FILE,
+        },
+      };
+    });
+
+    expect(jobErrorsWithoutIds).toEqual(expectedJobErrors);
   });
 });

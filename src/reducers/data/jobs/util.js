@@ -19,6 +19,13 @@ export const DEFAULT_JOB_PROPS = Object.freeze({
   numPagesProcessed: 0,
 });
 
+export const RETRY_OBJECT_TYPES = Object.freeze({
+  FILE: 'file',
+  OBJECT: 'object',
+  PAGE: 'page',
+  PATH: 'path',
+});
+
 export function getFlowJobIdsThatArePartOfABulkRetryJob(
   flowJobs,
   bulkRetryJob

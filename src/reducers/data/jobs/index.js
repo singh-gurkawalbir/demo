@@ -11,6 +11,7 @@ import {
   parseJobFamily,
   getFlowJobIdsThatArePartOfBulkRetryJobs,
   getJobDuration,
+  RETRY_OBJECT_TYPES,
 } from './util';
 
 function getParentJobIndex(jobs, jobId) {
@@ -41,13 +42,23 @@ export default (state = DEFAULT_STATE, action) => {
   }
 
   if (type === actionTypes.JOB.SET_JOBS_PER_PAGE) {
-    const { jobsPerPage } = action;
+    let { jobsPerPage } = action;
 
-    return { ...state, jobsPerPage };
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(jobsPerPage) || parseInt(jobsPerPage, 10) <= 0) {
+      ({ jobsPerPage } = DEFAULT_STATE);
+    }
+
+    return { ...state, jobsPerPage: parseInt(jobsPerPage, 10) };
   } else if (type === actionTypes.JOB.SET_JOBS_CURRENT_PAGE) {
-    const { jobsCurrentPage } = action;
+    let { jobsCurrentPage } = action;
 
-    return { ...state, jobsCurrentPage };
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(jobsCurrentPage) || parseInt(jobsCurrentPage, 10) < 0) {
+      ({ jobsCurrentPage } = DEFAULT_STATE);
+    }
+
+    return { ...state, jobsCurrentPage: parseInt(jobsCurrentPage, 10) };
   } else if (type === actionTypes.JOB.CLEAR) {
     return DEFAULT_STATE;
   } else if (type === actionTypes.JOB.ERROR.CLEAR) {
@@ -800,9 +811,16 @@ export function jobErrors(state, jobId) {
         ...e,
         retryObject: {
           ...retryObject,
-          isDataEditable: ['object', 'page'].includes(retryObject.type),
-          isRetriable: ['file', 'object', 'page'].includes(retryObject.type),
-          isDownloadable: retryObject.type === 'file',
+          isDataEditable: [
+            RETRY_OBJECT_TYPES.OBJECT,
+            RETRY_OBJECT_TYPES.PAGE,
+          ].includes(retryObject.type),
+          isRetriable: [
+            RETRY_OBJECT_TYPES.FILE,
+            RETRY_OBJECT_TYPES.OBJECT,
+            RETRY_OBJECT_TYPES.PAGE,
+          ].includes(retryObject.type),
+          isDownloadable: retryObject.type === RETRY_OBJECT_TYPES.FILE,
         },
       };
     });

@@ -55,6 +55,9 @@ function JobErrorDialog({
   const flowJob = useSelector(state =>
     selectors.flowJob(state, { jobId: parentJobId || jobId })
   );
+  const [flowJobChildrenLoaded, setFlowJobChildrenLoaded] = useState(
+    !!(flowJob && flowJob.children && flowJob.children.length > 0)
+  );
 
   useEffect(
     () => () => {
@@ -64,13 +67,19 @@ function JobErrorDialog({
   );
 
   useEffect(() => {
+    if (flowJob && flowJob.children && flowJob.children.length > 0) {
+      setFlowJobChildrenLoaded(true);
+    }
+  }, [flowJob]);
+
+  useEffect(() => {
     if (childJobId) {
       dispatch(
         actions.job.requestErrors({
           jobId: childJobId,
         })
       );
-    } else if (flowJob.children.length > 0) {
+    } else if (flowJobChildrenLoaded) {
       const jobsWithErrors = flowJob.children.filter(j => j.numError > 0);
 
       if (jobsWithErrors.length > 0) {
@@ -78,7 +87,7 @@ function JobErrorDialog({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [childJobId, flowJob.children.length]);
+  }, [dispatch, childJobId, flowJobChildrenLoaded]);
 
   let job;
 
