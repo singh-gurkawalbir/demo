@@ -6,6 +6,7 @@ function FileDefinitionEditorDialog(props) {
   const { id, rule, data, ...rest } = props;
   const defaults = {
     width: '80vw',
+    layout: 'column',
     height: '50vh',
     open: true,
   };
