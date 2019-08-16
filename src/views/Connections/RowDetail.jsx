@@ -39,7 +39,7 @@ function ConnectionsData(props) {
         {
           label: 'Yes',
           onClick: () => {
-            dispatch(actions.resource.delete('connections', `${item._id}`));
+            dispatch(actions.resource.delete('connections', item._id));
           },
         },
       ],
@@ -65,7 +65,7 @@ function ConnectionsData(props) {
         <Button
           onClick={() =>
             dispatch(
-              actions.resource.requestReferences('connections', `${item._id}`)
+              actions.resource.requestReferences('connections', item._id)
             )
           }>
           View references

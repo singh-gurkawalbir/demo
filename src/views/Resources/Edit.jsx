@@ -18,6 +18,7 @@ import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 import { SCOPES } from '../../sagas/resourceForm';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
@@ -244,6 +245,7 @@ class Edit extends Component {
           <Link
             key="conn"
             className={classes.relatedContent}
+            tp={getRoutePath(`/connections/edit/${connection._id}`)}
             to={`/pg/connections/edit/${connection._id}`}>
             <Button size="small" color="primary">
               Connected to {connection.name || connection._id}
