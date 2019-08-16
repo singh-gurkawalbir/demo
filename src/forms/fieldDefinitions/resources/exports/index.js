@@ -13,7 +13,6 @@ import wrapper from './wrapper';
 
 const allFieldDefinitions = {
   ...as2,
-  ...abstractExport,
   ...file,
   ...ftp,
   ...http,
@@ -24,6 +23,7 @@ const allFieldDefinitions = {
   ...s3,
   ...salesforce,
   ...wrapper,
+  ...abstractExport,
 };
 
 export default allFieldDefinitions;
