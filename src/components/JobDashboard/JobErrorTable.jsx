@@ -231,7 +231,7 @@ function JobErrorTable({
       return undefined;
     }
 
-    return selectors.retryObject(state, editDataOfRetryId);
+    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
   });
 
   useEffect(() => {

@@ -41,24 +41,30 @@ export default (state = DEFAULT_STATE, action) => {
     return state;
   }
 
-  if (type === actionTypes.JOB.SET_JOBS_PER_PAGE) {
-    let { jobsPerPage } = action;
+  if (type === actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE) {
+    let { rowsPerPage } = action;
 
     // eslint-disable-next-line no-restricted-globals
-    if (isNaN(jobsPerPage) || parseInt(jobsPerPage, 10) <= 0) {
-      ({ jobsPerPage } = DEFAULT_STATE);
+    if (isNaN(rowsPerPage) || parseInt(rowsPerPage, 10) <= 0) {
+      ({ rowsPerPage } = DEFAULT_STATE.paging);
     }
 
-    return { ...state, jobsPerPage: parseInt(jobsPerPage, 10) };
-  } else if (type === actionTypes.JOB.SET_JOBS_CURRENT_PAGE) {
-    let { jobsCurrentPage } = action;
+    return {
+      ...state,
+      paging: { ...state.paging, rowsPerPage: parseInt(rowsPerPage, 10) },
+    };
+  } else if (type === actionTypes.JOB.PAGING.SET_CURRENT_PAGE) {
+    let { currentPage } = action;
 
     // eslint-disable-next-line no-restricted-globals
-    if (isNaN(jobsCurrentPage) || parseInt(jobsCurrentPage, 10) < 0) {
-      ({ jobsCurrentPage } = DEFAULT_STATE);
+    if (isNaN(currentPage) || parseInt(currentPage, 10) < 0) {
+      ({ currentPage } = DEFAULT_STATE.paging);
     }
 
-    return { ...state, jobsCurrentPage: parseInt(jobsCurrentPage, 10) };
+    return {
+      ...state,
+      paging: { ...state.paging, currentPage: parseInt(currentPage, 10) },
+    };
   } else if (type === actionTypes.JOB.CLEAR) {
     return DEFAULT_STATE;
   } else if (type === actionTypes.JOB.ERROR.CLEAR) {
@@ -556,29 +562,31 @@ export default (state = DEFAULT_STATE, action) => {
 
 // #region PUBLIC SELECTORS
 
-export function jobPageDetails(state) {
-  const { jobsCurrentPage, jobsPerPage, flowJobs } = state || DEFAULT_STATE;
+export function flowJobsPagingDetails(state) {
+  const { paging, flowJobs } = state || DEFAULT_STATE;
 
   return {
-    jobsCurrentPage,
-    jobsPerPage,
+    paging,
     totalJobs: flowJobs ? flowJobs.length : 0,
   };
 }
 
-export function flowJobList(state) {
+export function flowJobs(state) {
   if (!state) {
     return DEFAULT_STATE.flowJobs;
   }
 
-  const { jobsCurrentPage, jobsPerPage, flowJobs, bulkRetryJobs } = state;
+  const { paging, flowJobs, bulkRetryJobs } = state;
   const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
     flowJobs,
     bulkRetryJobs
   );
 
   return flowJobs
-    .slice(jobsCurrentPage * jobsPerPage, (jobsCurrentPage + 1) * jobsPerPage)
+    .slice(
+      paging.currentPage * paging.rowsPerPage,
+      (paging.currentPage + 1) * paging.rowsPerPage
+    )
     .map(job => {
       const additionalProps = {
         uiStatus: job.status,
@@ -661,12 +669,12 @@ export function inProgressJobIds(state) {
     return jobIds;
   }
 
-  const { jobsCurrentPage, jobsPerPage, bulkRetryJobs } = state;
+  const { paging, bulkRetryJobs } = state;
   let { flowJobs } = state;
 
   flowJobs = flowJobs.slice(
-    jobsCurrentPage * jobsPerPage,
-    (jobsCurrentPage + 1) * jobsPerPage
+    paging.currentPage * paging.rowsPerPage,
+    (paging.currentPage + 1) * paging.rowsPerPage
   );
   const runningBulkRetryJobs = {};
 
@@ -826,7 +834,7 @@ export function jobErrors(state, jobId) {
     });
 }
 
-export function retryObject(state, retryId) {
+export function jobErrorRetryObject(state, retryId) {
   if (!state || !state.retryObjects || !state.retryObjects[retryId]) {
     return undefined;
   }

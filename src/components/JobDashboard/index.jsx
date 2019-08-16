@@ -35,7 +35,7 @@ export default function JobDashboard({
   const [disableButtons, setDisableButtons] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
-  const jobs = useSelector(state => selectors.flowJobList(state));
+  const jobs = useSelector(state => selectors.flowJobs(state));
 
   useEffect(
     () => () => {
@@ -46,12 +46,12 @@ export default function JobDashboard({
   );
 
   useEffect(() => {
-    dispatch(actions.job.setJobsCurrentPage(currentPage));
+    dispatch(actions.job.paging.setCurrentPage(currentPage));
     dispatch(actions.job.getInProgressJobStatus());
   }, [dispatch, currentPage]);
 
   useEffect(() => {
-    dispatch(actions.job.setJobsPerPage(rowsPerPage));
+    dispatch(actions.job.paging.setRowsPerPage(rowsPerPage));
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {

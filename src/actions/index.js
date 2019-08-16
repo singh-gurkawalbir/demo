@@ -347,10 +347,12 @@ const job = {
   downloadDiagnosticsFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
-  setJobsPerPage: jobsPerPage =>
-    action(actionTypes.JOB.SET_JOBS_PER_PAGE, { jobsPerPage }),
-  setJobsCurrentPage: jobsCurrentPage =>
-    action(actionTypes.JOB.SET_JOBS_CURRENT_PAGE, { jobsCurrentPage }),
+  paging: {
+    setRowsPerPage: rowsPerPage =>
+      action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
+    setCurrentPage: currentPage =>
+      action(actionTypes.JOB.PAGING.SET_CURRENT_PAGE, { currentPage }),
+  },
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
 

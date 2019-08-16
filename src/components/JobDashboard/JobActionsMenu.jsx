@@ -102,7 +102,7 @@ export default function AccessTokenActionsMenu({
           resourceId: job._flowId,
         },
       });
-      dispatch(actions.job.setJobsCurrentPage(0));
+      dispatch(actions.job.paging.setCurrentPage(0));
     } else if (action === 'cancelJob') {
       confirmDialog({
         title: 'Confirm',

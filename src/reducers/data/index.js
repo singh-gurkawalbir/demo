@@ -155,16 +155,12 @@ export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }
 
-export function jobList(state, integrationId, flowId) {
-  return fromJobs.jobList(state.jobs, integrationId, flowId);
+export function flowJobsPagingDetails(state) {
+  return fromJobs.flowJobsPagingDetails(state.jobs);
 }
 
-export function jobPageDetails(state) {
-  return fromJobs.jobPageDetails(state.jobs);
-}
-
-export function flowJobList(state) {
-  return fromJobs.flowJobList(state.jobs);
+export function flowJobs(state) {
+  return fromJobs.flowJobs(state.jobs);
 }
 
 export function inProgressJobIds(state) {
@@ -183,6 +179,6 @@ export function jobErrors(state, jobId) {
   return fromJobs.jobErrors(state.jobs, jobId);
 }
 
-export function retryObject(state, retryId) {
-  return fromJobs.retryObject(state.jobs, retryId);
+export function jobErrorRetryObject(state, retryId) {
+  return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }

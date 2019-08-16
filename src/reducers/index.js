@@ -1035,12 +1035,12 @@ export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
 }
 
-export function jobPageDetails(state) {
-  return fromData.jobPageDetails(state.data);
+export function flowJobsPagingDetails(state) {
+  return fromData.flowJobsPagingDetails(state.data);
 }
 
-export function flowJobList(state) {
-  const jobs = fromData.flowJobList(state.data);
+export function flowJobs(state) {
+  const jobs = fromData.flowJobs(state.data);
   const preferences = userPreferences(state);
   const resourceMap = resourceDetailsMap(state);
 
@@ -1089,14 +1089,14 @@ export function flowJobList(state) {
   });
 }
 
-export function inProgressJobIds(state) {
-  return fromData.inProgressJobIds(state.data);
-}
-
 export function flowJob(state, { jobId }) {
-  const jobList = flowJobList(state);
+  const jobList = flowJobs(state);
 
   return jobList.find(j => j._id === jobId);
+}
+
+export function inProgressJobIds(state) {
+  return fromData.inProgressJobIds(state.data);
 }
 
 export function job(state, { type, jobId, parentJobId }) {
@@ -1131,6 +1131,6 @@ export function jobErrors(state, jobId) {
   }));
 }
 
-export function retryObject(state, retryId) {
-  return fromData.retryObject(state.data, retryId);
+export function jobErrorRetryObject(state, retryId) {
+  return fromData.jobErrorRetryObject(state.data, retryId);
 }

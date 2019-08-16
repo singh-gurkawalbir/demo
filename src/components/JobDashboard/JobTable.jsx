@@ -40,8 +40,8 @@ function JobTable({
   integrationName,
   onChangePage,
 }) {
-  const { jobsCurrentPage, jobsPerPage, totalJobs } = useSelector(state =>
-    selectors.jobPageDetails(state)
+  const { paging, totalJobs } = useSelector(state =>
+    selectors.flowJobsPagingDetails(state)
   );
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
@@ -102,11 +102,11 @@ function JobTable({
     <Fragment>
       <TablePagination
         classes={{ root: classes.tablePaginationRoot }}
-        rowsPerPageOptions={[jobsPerPage]}
+        rowsPerPageOptions={[paging.rowsPerPage]}
         component="div"
         count={totalJobs || 0}
-        rowsPerPage={jobsPerPage}
-        page={jobsCurrentPage}
+        rowsPerPage={paging.rowsPerPage}
+        page={paging.currentPage}
         backIconButtonProps={{
           'aria-label': 'Previous Page',
         }}

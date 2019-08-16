@@ -123,23 +123,29 @@ describe('jobs reducer', () => {
   describe('should update state properly when setting jobs per page ', () => {
     const testCases = [
       [6, 6],
-      [DEFAULT_STATE.jobsPerPage, 0],
-      [DEFAULT_STATE.jobsPerPage, -5],
-      [DEFAULT_STATE.jobsPerPage, 'something'],
+      [DEFAULT_STATE.paging.rowsPerPage, 0],
+      [DEFAULT_STATE.paging.rowsPerPage, -5],
+      [DEFAULT_STATE.paging.rowsPerPage, 'something'],
     ];
 
-    each(testCases).test('should return %s for %s', (expected, jobsPerPage) => {
+    each(testCases).test('should return %s for %s', (expected, rowsPerPage) => {
       const state = reducer(
         {
           ...DEFAULT_STATE,
         },
         'someaction'
       );
-      const newState = reducer(state, actions.job.setJobsPerPage(jobsPerPage));
+      const newState = reducer(
+        state,
+        actions.job.paging.setRowsPerPage(rowsPerPage)
+      );
 
       expect(newState).toEqual({
         ...DEFAULT_STATE,
-        jobsPerPage: expected,
+        paging: {
+          ...DEFAULT_STATE.paging,
+          rowsPerPage: expected,
+        },
       });
     });
   });
@@ -147,31 +153,31 @@ describe('jobs reducer', () => {
   describe('should update state properly when setting jobs current page ', () => {
     const testCases = [
       [7, 7],
-      [DEFAULT_STATE.jobsCurrentPage, 0],
-      [DEFAULT_STATE.jobsCurrentPage, -5],
-      [DEFAULT_STATE.jobsCurrentPage, 'something'],
+      [DEFAULT_STATE.paging.currentPage, 0],
+      [DEFAULT_STATE.paging.currentPage, -5],
+      [DEFAULT_STATE.paging.currentPage, 'something'],
     ];
 
-    each(testCases).test(
-      'should return %s for %s',
-      (expected, jobsCurrentPage) => {
-        const state = reducer(
-          {
-            ...DEFAULT_STATE,
-          },
-          'someaction'
-        );
-        const newState = reducer(
-          state,
-          actions.job.setJobsCurrentPage(jobsCurrentPage)
-        );
-
-        expect(newState).toEqual({
+    each(testCases).test('should return %s for %s', (expected, currentPage) => {
+      const state = reducer(
+        {
           ...DEFAULT_STATE,
-          jobsCurrentPage: expected,
-        });
-      }
-    );
+        },
+        'someaction'
+      );
+      const newState = reducer(
+        state,
+        actions.job.paging.setCurrentPage(currentPage)
+      );
+
+      expect(newState).toEqual({
+        ...DEFAULT_STATE,
+        paging: {
+          ...DEFAULT_STATE.paging,
+          currentPage: expected,
+        },
+      });
+    });
   });
 
   describe('should update the state properly when job collection received', () => {
@@ -820,13 +826,12 @@ describe('jobs reducer', () => {
   });
 });
 
-describe('jobPageDetails selector', () => {
+describe('flowJobsPagingDetails selector', () => {
   test('should return correct results for default state', () => {
     const noJobsState = reducer(undefined, 'something');
 
-    expect(selectors.jobPageDetails(noJobsState)).toEqual({
-      jobsCurrentPage: DEFAULT_STATE.jobsCurrentPage,
-      jobsPerPage: DEFAULT_STATE.jobsPerPage,
+    expect(selectors.flowJobsPagingDetails(noJobsState)).toEqual({
+      paging: DEFAULT_STATE.paging,
       totalJobs: 0,
     });
   });
@@ -935,35 +940,35 @@ describe('jobPageDetails selector', () => {
     });
     const state2 = reducer(state, jobFamilyJ3ReceivedAction);
     const testCases = [
-      [{ jobsCurrentPage: 0, jobsPerPage: 1, totalJobs: 5 }, 0, 1],
-      [{ jobsCurrentPage: 2, jobsPerPage: 1, totalJobs: 5 }, 2, 1],
-      [{ jobsCurrentPage: 0, jobsPerPage: 5, totalJobs: 5 }, 0, 5],
-      [{ jobsCurrentPage: 1, jobsPerPage: 5, totalJobs: 5 }, 1, 5],
+      [{ paging: { currentPage: 0, rowsPerPage: 1 }, totalJobs: 5 }, 0, 1],
+      [{ paging: { currentPage: 2, rowsPerPage: 1 }, totalJobs: 5 }, 2, 1],
+      [{ paging: { currentPage: 0, rowsPerPage: 5 }, totalJobs: 5 }, 0, 5],
+      [{ paging: { currentPage: 1, rowsPerPage: 5 }, totalJobs: 5 }, 1, 5],
     ];
 
     each(testCases).test(
       'should return %o for page=%s and page size=%s',
-      (expected, jobsCurrentPage, jobsPerPage) => {
+      (expected, currentPage, rowsPerPage) => {
         const newState = reducer(
           state2,
-          actions.job.setJobsPerPage(jobsPerPage)
+          actions.job.paging.setRowsPerPage(rowsPerPage)
         );
         const newState2 = reducer(
           newState,
-          actions.job.setJobsCurrentPage(jobsCurrentPage)
+          actions.job.paging.setCurrentPage(currentPage)
         );
 
-        expect(selectors.jobPageDetails(newState2)).toEqual(expected);
+        expect(selectors.flowJobsPagingDetails(newState2)).toEqual(expected);
       }
     );
   });
 });
 
-describe('flowJobList selector', () => {
+describe('flowJobs selector', () => {
   test('should return correct results when state is empty', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.flowJobList(state)).toEqual([]);
+    expect(selectors.flowJobs(state)).toEqual([]);
   });
 
   test('should return correct results when there are no bulk retry jobs', () => {
@@ -1114,7 +1119,7 @@ describe('flowJobList selector', () => {
     });
     const state4 = reducer(state3, jobFamilyJ2ReceivedAction);
 
-    expect(selectors.flowJobList(state4)).toEqual([
+    expect(selectors.flowJobs(state4)).toEqual([
       {
         _id: 'j1',
         type: JOB_TYPES.FLOW,
@@ -1334,7 +1339,7 @@ describe('flowJobList selector', () => {
     ]);
   });
 
-  describe('flowJobList selector when there are integration level bulk retries', () => {
+  describe('flowJobs selector when there are integration level bulk retries', () => {
     test('should return correct results when there are no bulk retry jobs in queued state', () => {
       const jobs = [
         {
@@ -1504,7 +1509,7 @@ describe('flowJobList selector', () => {
       });
       const state4 = reducer(state3, jobFamilyJ2ReceivedAction);
 
-      expect(selectors.flowJobList(state4)).toEqual([
+      expect(selectors.flowJobs(state4)).toEqual([
         {
           _id: 'j1',
           type: JOB_TYPES.FLOW,
@@ -1904,7 +1909,7 @@ describe('flowJobList selector', () => {
       });
       const state4 = reducer(state3, jobFamilyJ2ReceivedAction);
 
-      expect(selectors.flowJobList(state4)).toEqual([
+      expect(selectors.flowJobs(state4)).toEqual([
         {
           _id: 'j1',
           type: JOB_TYPES.FLOW,
@@ -2127,7 +2132,7 @@ describe('flowJobList selector', () => {
     });
   });
 
-  describe('flowJobList selector when there are flow level bulk retries', () => {
+  describe('flowJobs selector when there are flow level bulk retries', () => {
     test('should return correct results when there are no bulk retry jobs in queued state', () => {
       const jobs = [
         {
@@ -2308,7 +2313,7 @@ describe('flowJobList selector', () => {
       });
       const state4 = reducer(state3, jobFamilyJ2ReceivedAction);
 
-      expect(selectors.flowJobList(state4)).toEqual([
+      expect(selectors.flowJobs(state4)).toEqual([
         {
           _id: 'j1',
           type: JOB_TYPES.FLOW,
@@ -2724,7 +2729,7 @@ describe('flowJobList selector', () => {
       });
       const state4 = reducer(state3, jobFamilyJ2ReceivedAction);
 
-      expect(selectors.flowJobList(state4)).toEqual([
+      expect(selectors.flowJobs(state4)).toEqual([
         {
           _id: 'j1',
           type: JOB_TYPES.FLOW,
@@ -3066,19 +3071,17 @@ describe('flowJobList selector', () => {
 
     each(testCases).test(
       'should return %o for page=%s and page size=%s',
-      (expected, jobsCurrentPage, jobsPerPage) => {
+      (expected, currentPage, rowsPerPage) => {
         const newState = reducer(
           state2,
-          actions.job.setJobsPerPage(jobsPerPage)
+          actions.job.paging.setRowsPerPage(rowsPerPage)
         );
         const newState2 = reducer(
           newState,
-          actions.job.setJobsCurrentPage(jobsCurrentPage)
+          actions.job.paging.setCurrentPage(currentPage)
         );
 
-        expect(selectors.flowJobList(newState2).map(j => j._id)).toEqual(
-          expected
-        );
+        expect(selectors.flowJobs(newState2).map(j => j._id)).toEqual(expected);
       }
     );
   });
@@ -4297,5 +4300,59 @@ describe('jobErrors selector', () => {
     });
 
     expect(jobErrorsWithoutIds).toEqual(expectedJobErrors);
+  });
+});
+
+describe('jobErrorRetryObject selector', () => {
+  test('should return undefined when state is empty', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.jobErrorRetryObject(state, 'something')).toBeUndefined();
+  });
+
+  describe('should return correct details when there are retryObjects in state', () => {
+    const _jobId = 'someJobId';
+    const retries = [
+      { _id: 'r1', type: RETRY_OBJECT_TYPES.FILE, _jobId },
+      { _id: 'r2', type: RETRY_OBJECT_TYPES.OBJECT, _jobId },
+    ];
+    const state = reducer(
+      undefined,
+      actions.job.receivedRetryObjects({
+        collection: retries,
+        jobId: _jobId,
+      })
+    );
+    const retryId = 'r1';
+
+    test('should return undefined for invalid retry id', () => {
+      expect(
+        selectors.jobErrorRetryObject(state, 'invalid retry id')
+      ).toBeUndefined();
+    });
+
+    test('should return correct details when retryData is not present', () => {
+      expect(selectors.jobErrorRetryObject(state, retryId)).toEqual(
+        retries.find(r => r._id === retryId)
+      );
+    });
+
+    test('should return correct details when retryData is present', () => {
+      const retryData = {
+        something: 'else',
+      };
+      const state2 = reducer(
+        state,
+        actions.job.receivedRetryData({
+          retryData,
+          retryId,
+        })
+      );
+
+      expect(selectors.jobErrorRetryObject(state2, retryId)).toEqual({
+        ...retries.find(r => r._id === retryId),
+        retryData,
+      });
+    });
   });
 });
