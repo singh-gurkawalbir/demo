@@ -39,7 +39,7 @@ function ResourceReferences(props) {
   }, [dispatch, type, id]);
 
   function handleClose() {
-    dispatch(actions.resource.deleteReferences(type, id));
+    dispatch(actions.resource.deleteReferences());
     onReferencesClose();
   }
 

@@ -83,6 +83,6 @@ describe('agentAccessToken selector', () => {
     ];
     const state = reducer(agentTokens, 'some action');
 
-    expect(selectors.agentAccessToken(state, 'id3')).toEqual(undefined);
+    expect(selectors.agentAccessToken(state, 'id3')).toEqual('*****');
   });
 });

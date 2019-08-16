@@ -296,10 +296,9 @@ availableResources.forEach(type => {
         })
       );
 
-      const final = saga.throw(status500);
+      const final = saga.throw(new Error('some API exception'));
 
       expect(final.done).toBe(true);
-      expect(final.value).toBeUndefined();
     });
   });
   describe(`requestReferences("${type}", id) saga`, () => {
@@ -323,9 +322,7 @@ availableResources.forEach(type => {
       const effect = saga.next(mockResourceReferences).value;
 
       expect(effect).toEqual(
-        put(
-          actions.resource.receivedReferences(type, id, mockResourceReferences)
-        )
+        put(actions.resource.receivedReferences(mockResourceReferences))
       );
 
       const final = saga.next();
@@ -343,10 +340,9 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
-      const final = saga.throw(status500);
+      const final = saga.throw(new Error('some API exception'));
 
       expect(final.done).toBe(true);
-      expect(final.value).toBeUndefined();
     });
   });
 });

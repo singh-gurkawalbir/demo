@@ -51,7 +51,7 @@ export default (state = [], action) => {
 export function agentAccessToken(state, id) {
   if (!state) return '*****';
 
-  return state.find(t => t._id === id);
+  return state.find(t => t._id === id) || '*****';
 }
 
 // #endregion

@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { AGENT_STATUS_INTERVAL } from '../../../utils/constants';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -203,7 +204,8 @@ export function isAgentOnline(state, agentId) {
   return !!(
     matchingAgent &&
     matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <= 600000
+    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+      AGENT_STATUS_INTERVAL
   );
 }
 // #endregion

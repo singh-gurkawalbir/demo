@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
@@ -72,42 +72,41 @@ function AgentList(props) {
           onReferencesClose={handleReferencesClose}
         />
       )}
-      <Fragment>
-        <Typography variant="h2" className={classes.title}>
-          Agents
-        </Typography>
-        <Link
-          to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
-          className={classes.createAgentButton}>
-          <div>+ New Agent</div>
-        </Link>
-        <div className={classes.root}>
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Access Token</TableCell>
-                <TableCell>Download Installer</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {agents.resources &&
-                agents.resources.map(agent => (
-                  <AgentDetail
-                    key={agent._id}
-                    agent={agent}
-                    onReferencesClick={id => {
-                      handleReferencesClick(id);
-                    }}
-                  />
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-      </Fragment>
+
+      <Typography variant="h2" className={classes.title}>
+        Agents
+      </Typography>
+      <Link
+        to={getRoutePath(`agents/add/new-${shortid.generate()}`)}
+        className={classes.createAgentButton}>
+        <div>+ New Agent</div>
+      </Link>
+      <div className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Access Token</TableCell>
+              <TableCell>Download Installer</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {agents.resources &&
+              agents.resources.map(agent => (
+                <AgentDetail
+                  key={agent._id}
+                  agent={agent}
+                  onReferencesClick={id => {
+                    handleReferencesClick(id);
+                  }}
+                />
+              ))}
+          </TableBody>
+        </Table>
+      </div>
     </LoadResources>
   );
 }

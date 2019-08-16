@@ -14,8 +14,8 @@ import getRoutePath from '../../utils/routePaths';
 export default function AgentDetail(props) {
   const { agent } = props;
   const dispatch = useDispatch();
-  const agentToken = useSelector(
-    state => selectors.agentAccessToken(state, agent._id) || {}
+  const agentToken = useSelector(state =>
+    selectors.agentAccessToken(state, agent._id)
   );
   const agentStatus = useSelector(state =>
     selectors.isAgentOnline(state, agent._id)
