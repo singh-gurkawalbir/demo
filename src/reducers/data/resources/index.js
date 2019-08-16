@@ -57,9 +57,6 @@ export default (state = {}, action) => {
     return state;
   }
 
-  let resourceIndex;
-  let newState;
-
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
@@ -68,21 +65,10 @@ export default (state = {}, action) => {
       return replaceOrInsertResource(state, resourceType, resource);
 
     case actionTypes.RESOURCE.DELETED:
-      resourceIndex = state[resourceType].findIndex(r => r._id === id);
-
-      if (resourceIndex > -1) {
-        newState = {
-          ...state,
-          [resourceType]: [
-            ...state[resourceType].slice(0, resourceIndex),
-            ...state[resourceType].slice(resourceIndex + 1),
-          ],
-        };
-
-        return newState;
-      }
-
-      return state;
+      return {
+        ...state,
+        [resourceType]: state[resourceType].filter(r => r._id !== id),
+      };
 
     default:
       return state;

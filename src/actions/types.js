@@ -13,11 +13,11 @@ export const REQUEST = 'REQUEST';
 export const REQUEST_COLLECTION = 'REQUEST_COLLECTION';
 export const RECEIVED = 'RECEIVED';
 export const RECEIVED_COLLECTION = 'RECEIVED_COLLECTION';
-export const DELETE = 'DELETE';
-export const DELETED = 'DELETED';
-export const REFERENCES_REQUEST = 'REFERENCES_REQUEST';
-export const REFERENCES_DELETE = 'REFERENCES_DELETE';
-export const REFERENCES_RECEIVED = 'REFERENCES_RECEIVED';
+const DELETE = 'DELETE';
+const DELETED = 'DELETED';
+const REFERENCES_REQUEST = 'REFERENCES_REQUEST';
+const REFERENCES_DELETE = 'REFERENCES_DELETE';
+const REFERENCES_RECEIVED = 'REFERENCES_RECEIVED';
 const METADATA = {
   REQUEST: 'REQUEST_METADATA',
   RECEIVED_NETSUITE: 'RECEIVED_NETSUITE_METADATA',
@@ -73,11 +73,6 @@ const baseResourceActions = [
   REQUEST_COLLECTION,
   RECEIVED,
   RECEIVED_COLLECTION,
-  DELETE,
-  DELETED,
-  REFERENCES_REQUEST,
-  REFERENCES_DELETE,
-  REFERENCES_RECEIVED,
 ];
 const stageResourceActions = [
   STAGE_PATCH,
@@ -89,12 +84,15 @@ const stageResourceActions = [
   PATCH_FORM_FIELD,
   INIT_CUSTOM_FORM,
 ];
+const resourceSpecificActions = [
+  DELETE,
+  DELETED,
+  REFERENCES_REQUEST,
+  REFERENCES_DELETE,
+  REFERENCES_RECEIVED,
+];
 
-function createResourceActionTypes(base, includeStagedActions) {
-  const supportedActions = includeStagedActions
-    ? [...baseResourceActions, ...stageResourceActions]
-    : [...baseResourceActions];
-
+function createResourceActionTypes(base, supportedActions) {
   return supportedActions.reduce((acc, type) => {
     acc[type] = `${base}_${type}`;
 
@@ -102,8 +100,12 @@ function createResourceActionTypes(base, includeStagedActions) {
   }, {});
 }
 
-const PROFILE = createResourceActionTypes('PROFILE');
-const RESOURCE = createResourceActionTypes('RESOURCE', true);
+const PROFILE = createResourceActionTypes('PROFILE', baseResourceActions);
+const RESOURCE = createResourceActionTypes('RESOURCE', [
+  ...baseResourceActions,
+  ...stageResourceActions,
+  ...resourceSpecificActions,
+]);
 const RESOURCE_FORM = {
   INIT: 'RESOURCE_FORM_INIT',
   INIT_COMPLETE: 'RESOURCE_FORM_INIT_COMPLETE',
