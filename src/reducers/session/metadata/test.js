@@ -312,6 +312,37 @@ describe('Netsuite', () => {
     });
   });
   describe('Metadata Received Error reducer in Suitescript Mode', () => {
+    test('should update status as default error when there is no error supplied', () => {
+      const requestState = reducer(
+        undefined,
+        actions.metadata.request('1234', 'recordTypes', 'suitescript')
+      );
+      const errorReducer = reducer(
+        requestState,
+        actions.metadata.netsuite.receivedError(
+          undefined,
+          'recordTypes',
+          '1234',
+          'suitescript'
+        )
+      );
+
+      expect(errorReducer).toMatchObject({
+        netsuite: {
+          webservices: {},
+          suitescript: {
+            1234: {
+              recordTypes: {
+                status: 'error',
+                data: [],
+                errorMessage: 'Error occured',
+              },
+            },
+          },
+        },
+        salesforce: {},
+      });
+    });
     test('should update status as error for suitescript Record Types', () => {
       const requestState = reducer(
         undefined,

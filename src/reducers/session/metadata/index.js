@@ -160,6 +160,7 @@ export default (
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
+      const defaultError = 'Error occured';
 
       if (
         specificMode[connectionId] &&
@@ -167,11 +168,16 @@ export default (
         specificMode[connectionId][key].status === 'refreshed'
       ) {
         specificMode[connectionId][key].status = 'error';
-        specificMode[connectionId][key].errorMessage = metadataError;
+        specificMode[connectionId][key].errorMessage =
+          metadataError || defaultError;
       } else {
         specificMode[connectionId] = {
           ...specificMode[connectionId],
-          [key]: { status: 'error', data: [], errorMessage: metadataError },
+          [key]: {
+            status: 'error',
+            data: [],
+            errorMessage: metadataError || defaultError,
+          },
         };
       }
 
