@@ -119,7 +119,7 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* requestResourceReferences({ resourceType, id }) {
+export function* requestReferences({ resourceType, id }) {
   const path = id
     ? `/${resourceType}/${id}/dependencies`
     : `/${resourceType}/dependencies`;
@@ -140,6 +140,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
-  takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestResourceReferences),
+  takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   ...metadataSagas,
 ];

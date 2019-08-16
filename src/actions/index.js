@@ -79,12 +79,17 @@ const resource = {
       resourceType,
       id,
     }),
+  deleteReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_DELETE, {
+      resourceType,
+      id,
+    }),
 
-  receivedReferences: (resourceType, id, references) =>
+  receivedReferences: (resourceType, id, resourceReferences) =>
     action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
       resourceType,
       id,
-      references,
+      resourceReferences,
     }),
 
   clearStaged: (id, scope) =>

@@ -24,7 +24,7 @@ const styles = theme => ({
 });
 
 function ConnectionsData(props) {
-  const { classes, item } = props;
+  const { classes, item, handleReferencesClick } = props;
   const dispatch = useDispatch();
   const handleConfigureDebugger = () => {};
   const handleDownLoadDebug = () => {};
@@ -62,12 +62,7 @@ function ConnectionsData(props) {
         <br />
         <Button onClick={handleConfigureDebugger}>Configure debugger</Button>
         <br />
-        <Button
-          onClick={() =>
-            dispatch(
-              actions.resource.requestReferences('connections', item._id)
-            )
-          }>
+        <Button onClick={() => handleReferencesClick(item._id)}>
           View references
         </Button>
         <br />
