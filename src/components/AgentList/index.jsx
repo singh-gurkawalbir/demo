@@ -23,9 +23,7 @@ const styles = theme => ({
     overflowX: 'auto',
   },
   title: {
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+    margin: theme.spacing(3, 0, 2, 1),
     float: 'left',
   },
   inviteUserButton: {
@@ -45,7 +43,6 @@ const styles = theme => ({
 
 function AgentList(props) {
   const { classes } = props;
-  const [showReferences, setShowReferences] = useState(false);
   const [agentId, setAgentId] = useState(null);
   const agents = useSelector(state =>
     selectors.resourceList(state, {
@@ -54,18 +51,16 @@ function AgentList(props) {
   );
 
   function handleReferencesClick(id) {
-    setShowReferences(true);
     setAgentId(id);
   }
 
   function handleReferencesClose() {
-    setShowReferences(false);
     setAgentId(null);
   }
 
   return (
     <LoadResources resources={['agents']}>
-      {showReferences && agentId && (
+      {agentId && (
         <ResourceReferences
           type="agents"
           id={agentId}
