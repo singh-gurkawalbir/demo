@@ -347,12 +347,7 @@ const job = {
   downloadDiagnosticsFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
-  paging: {
-    setRowsPerPage: rowsPerPage =>
-      action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
-    setCurrentPage: currentPage =>
-      action(actionTypes.JOB.PAGING.SET_CURRENT_PAGE, { currentPage }),
-  },
+
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
 
@@ -428,7 +423,15 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
-  clearErrors: () => action(actionTypes.JOB.ERROR.CLEAR),
+  paging: {
+    setRowsPerPage: rowsPerPage =>
+      action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
+    setCurrentPage: currentPage =>
+      action(actionTypes.JOB.PAGING.SET_CURRENT_PAGE, { currentPage }),
+  },
+  error: {
+    clear: () => action(actionTypes.JOB.ERROR.CLEAR),
+  },
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),

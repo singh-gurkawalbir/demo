@@ -112,7 +112,7 @@ describe('jobs reducer', () => {
       },
       'someaction'
     );
-    const newState = reducer(state, actions.job.clearErrors());
+    const newState = reducer(state, actions.job.error.clear());
 
     expect(newState).toEqual({
       ...DEFAULT_STATE,

@@ -1,8 +1,9 @@
 import actionTypes from '../actions/types';
+import { JOB_TYPES } from './constants';
 
 export default function getRequestOptions(
   action,
-  { resourceId, integrationId } = {}
+  { resourceId, integrationId, filters = {} } = {}
 ) {
   switch (action) {
     case actionTypes.USER_CREATE:
@@ -57,11 +58,29 @@ export default function getRequestOptions(
         path: `/accesstokens/${resourceId}/generate`,
         opts: { method: 'POST' },
       };
-    case actionTypes.JOB.REQUEST_COLLECTION:
+    case actionTypes.JOB.REQUEST_COLLECTION: {
+      const qs = [];
+
+      Object.keys(filters).forEach(k => {
+        if (filters[k]) {
+          qs.push(
+            `${
+              ['integrationId', 'flowId'].includes(k) ? '_' : ''
+            }${k}=${encodeURIComponent(filters[k])}`
+          );
+        }
+      });
+
+      [JOB_TYPES.FLOW, JOB_TYPES.BULK_RETRY].forEach((val, idx) => {
+        qs.push(`type_in[${idx}]=${encodeURIComponent(val)}`);
+      });
+
       return {
-        path: '/jobs',
+        path: `/jobs?${qs.join('&')}`,
         opts: { method: 'GET' },
       };
+    }
+
     case actionTypes.JOB.REQUEST_FAMILY:
       return {
         path: `/jobs/${resourceId}/family`,

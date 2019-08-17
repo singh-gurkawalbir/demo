@@ -14,7 +14,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
-import openExternalUrl from '../../utils/util';
+import openExternalUrl from '../../utils/window';
 import { JOB_TYPES } from '../../utils/constants';
 
 export function* getJobFamily({ jobId, type }) {
@@ -27,16 +27,15 @@ export function* getJobFamily({ jobId, type }) {
     }
   );
   const { path, opts } = requestOptions;
+  let job;
 
   try {
-    const job = yield call(apiCallWithRetry, { path, opts });
-
-    yield put(actions.job.receivedFamily({ job }));
-
-    return job;
+    job = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  yield put(actions.job.receivedFamily({ job }));
 }
 
 export function* getInProgressJobsStatus() {
@@ -51,26 +50,31 @@ export function* getInProgressJobsStatus() {
     return true;
   }
 
-  yield all(
-    inProgressJobIds.flowJobs.map(jobId => call(getJobFamily, { jobId }))
-  );
-  yield all(
-    inProgressJobIds.bulkRetryJobs.map(jobId =>
-      call(getJobFamily, { jobId, type: JOB_TYPES.BULK_RETRY })
-    )
-  );
-}
+  if (inProgressJobIds.flowJobs.length > 0) {
+    yield all(
+      inProgressJobIds.flowJobs.map(jobId => call(getJobFamily, { jobId }))
+    );
+  }
 
-export function* pollForInProgressJobs({ integrationId, flowId }) {
-  while (true) {
-    yield delay(5 * 1000);
-
-    yield call(getInProgressJobsStatus, { integrationId, flowId });
+  if (inProgressJobIds.bulkRetryJobs.length > 0) {
+    yield all(
+      inProgressJobIds.bulkRetryJobs.map(jobId =>
+        call(getJobFamily, { jobId, type: JOB_TYPES.BULK_RETRY })
+      )
+    );
   }
 }
 
-export function* startPollingForInProgressJobs({ integrationId, flowId }) {
-  const watcher = yield fork(pollForInProgressJobs, { integrationId, flowId });
+export function* pollForInProgressJobs() {
+  while (true) {
+    yield delay(5 * 1000);
+
+    yield call(getInProgressJobsStatus);
+  }
+}
+
+export function* startPollingForInProgressJobs() {
+  const watcher = yield fork(pollForInProgressJobs);
 
   yield take([
     actionTypes.JOB.CLEAR,
@@ -80,65 +84,33 @@ export function* startPollingForInProgressJobs({ integrationId, flowId }) {
   yield cancel(watcher);
 }
 
-export function* requestJobCollection({
-  integrationId,
-  flowId = undefined,
-  filters = {},
-}) {
-  const requestOptions = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION);
-  const { path, opts } = requestOptions;
-  let queryString = '';
+export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   const jobFilters = { ...filters, integrationId };
 
   if (flowId) {
     jobFilters.flowId = flowId;
   }
 
-  Object.keys(jobFilters).forEach(p => {
-    if (jobFilters[p]) {
-      if (queryString) {
-        queryString += '&';
-      }
-
-      queryString += `${
-        ['integrationId', 'flowId'].includes(p) ? '_' : ''
-      }${p}=${encodeURIComponent(jobFilters[p])}`;
-    }
+  const requestOptions = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters: jobFilters,
   });
-
-  ['flow', 'retry', 'bulk_retry'].forEach((val, idx) => {
-    if (queryString) {
-      queryString += '&';
-    }
-
-    queryString += `type_in[${idx}]=${encodeURIComponent(val)}`;
-  });
+  const { path, opts } = requestOptions;
+  let collection;
 
   try {
-    const collection = yield call(apiCallWithRetry, {
-      path: `${path}?${queryString}`,
+    collection = yield call(apiCallWithRetry, {
+      path: `${path}`,
       opts,
     });
-
-    yield put(actions.job.receivedCollection({ collection }));
-    yield put(
-      actions.job.getInProgressJobStatus({
-        integrationId,
-        flowId,
-      })
-    );
   } catch (error) {
-    // generic message to the user that the
-    // saga failed and services team working on it
-    return undefined;
+    return true;
   }
+
+  yield put(actions.job.receivedCollection({ collection }));
+  yield put(actions.job.getInProgressJobStatus());
 }
 
-export function* getJobCollection({
-  integrationId,
-  flowId = undefined,
-  filters = {},
-}) {
+export function* getJobCollection({ integrationId, flowId, filters = {} }) {
   const watcher = yield fork(requestJobCollection, {
     integrationId,
     flowId,
@@ -164,28 +136,32 @@ export function* downloadDiagnosticsFile({ jobId }) {
       path,
       opts,
     });
-    openExternalUrl({ url: response.signedURL });
   } catch (e) {
     return true;
   }
+
+  if (response.signedURL) {
+    yield call(openExternalUrl, { url: response.signedURL });
+  }
 }
 
-export function* cancelJob({ jobId, flowJobId }) {
+export function* cancelJob({ jobId }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
   });
   const { path, opts } = requestOptions;
+  let job;
 
   try {
-    const job = yield call(apiCallWithRetry, { path, opts });
-
-    if (flowJobId) {
-      yield call(getJobFamily, { jobId: flowJobId });
-    } else {
-      yield put(actions.job.receivedFamily({ job }));
-    }
+    job = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
+  }
+
+  if (job._flowJobId) {
+    yield call(getJobFamily, { jobId: job._flowJobId });
+  } else {
+    yield put(actions.job.receivedFamily({ job }));
   }
 }
 

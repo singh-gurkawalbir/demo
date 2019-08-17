@@ -129,7 +129,6 @@ export default function AccessTokenActionsMenu({
                             dispatch(
                               actions.job.cancel({
                                 jobId: rJob._id,
-                                flowJobId: job._id,
                               })
                             );
                           }
@@ -148,7 +147,6 @@ export default function AccessTokenActionsMenu({
                     return dispatch(
                       actions.job.cancel({
                         jobId: retryJob._id,
-                        flowJobId: job._flowJobId,
                       })
                     );
                   }

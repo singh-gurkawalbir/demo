@@ -61,7 +61,7 @@ function JobErrorDialog({
 
   useEffect(
     () => () => {
-      dispatch(actions.job.clearErrors());
+      dispatch(actions.job.error.clear());
     },
     [dispatch]
   );

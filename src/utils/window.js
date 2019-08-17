@@ -6,6 +6,6 @@ export default function openExternalUrl({ url, options }) {
       winPopup.opener = null;
     }
   } catch (ex) {
-    // TBD - need to write a splunk
+    // TBD - need to write to splunk ??
   }
 }
