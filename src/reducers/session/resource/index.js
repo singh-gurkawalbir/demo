@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
       newState = { ...state, references: resourceReferences };
 
       return newState;
-    case actionTypes.RESOURCE.REFERENCES_DELETE:
+    case actionTypes.RESOURCE.REFERENCES_CLEAR:
       newState = {};
 
       return newState;

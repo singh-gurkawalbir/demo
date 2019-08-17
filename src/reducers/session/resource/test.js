@@ -34,7 +34,7 @@ describe('session.resource reducers', () => {
       expect(state.references).toEqual(testReferences);
     });
   });
-  describe('RESOURCE.REFERENCES_DELETE action', () => {
+  describe('RESOURCE.REFERENCES_CLEAR action', () => {
     test(`should delete the references from the state`, () => {
       const testReferences = {
         imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
