@@ -9,7 +9,7 @@ export default {
       r.netsuite.distributed &&
       r.netsuite.distributed.recordType,
     required: true,
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.recordType',
@@ -21,7 +21,7 @@ export default {
     defaultValue: r =>
       r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
     required: true,
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
@@ -36,7 +36,7 @@ export default {
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
     required: true,
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
@@ -109,7 +109,7 @@ export default {
   // sublists
   'netsuite.distributed.sublists': {
     label: 'Sublists to include',
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     mode: 'suitescript',
     multiselect: true,
     placeholder: 'Please select Sublists',
@@ -133,7 +133,7 @@ export default {
   },
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     resourceType: 'savedSearches',
     required: true,
     placeholder: 'Please select a saved search',

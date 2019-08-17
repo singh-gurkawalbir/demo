@@ -25,7 +25,6 @@ export default {
       ],
     },
     //  Tranform  Data
-    { fieldId: 'ftp.exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
     // Qualification Criteria
     // Sample Data
