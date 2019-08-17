@@ -7,7 +7,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 export default function DynaSelectOptionsGenerator(props) {
   const { connectionId, resourceType, mode, options, filterKey } = props;
   const dispatch = useDispatch();
-  const { isLoadingData, options: fieldOptions } = useSelector(state =>
+  const { status, data, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -19,28 +19,31 @@ export default function DynaSelectOptionsGenerator(props) {
   const handleFetchResource = useCallback(() => {
     const resource = (options && options.resourceToFetch) || resourceType;
 
-    if (resource && !isLoadingData) {
+    if (resource && !data) {
       dispatch(
         actions.metadata.request(connectionId, resource, mode, filterKey)
       );
     }
-  }, [
-    connectionId,
-    dispatch,
-    filterKey,
-    isLoadingData,
-    mode,
-    options,
-    resourceType,
-  ]);
+  }, [connectionId, data, dispatch, filterKey, mode, options, resourceType]);
+  const handleRefreshResource = () => {
+    const resource = (options && options.resourceToFetch) || resourceType;
+
+    if (resource) {
+      dispatch(
+        actions.metadata.refresh(connectionId, resource, mode, filterKey)
+      );
+    }
+  };
 
   return (
     <RefreshGenericResource
       resourceToFetch={props.options.resourceToFetch}
       resetValue={props.options.resetValue}
       handleFetchResource={handleFetchResource}
-      isLoadingData={isLoadingData}
-      fieldOptions={fieldOptions}
+      handleRefreshResource={handleRefreshResource}
+      fieldStatus={status}
+      fieldData={data}
+      fieldError={errorMessage}
       {...props}
     />
   );
