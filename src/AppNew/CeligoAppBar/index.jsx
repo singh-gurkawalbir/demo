@@ -45,6 +45,7 @@ export default function CeligoAppBar({ shift = false }) {
     <SlideOnScroll threshold={250}>
       <ElevateOnScroll threshold={100}>
         <AppBar
+          color="secondary"
           position="fixed"
           className={clsx(classes.appBar, {
             [classes.appBarShift]: shift,
@@ -66,7 +67,7 @@ export default function CeligoAppBar({ shift = false }) {
                 size="small"
                 aria-label="show 17 new notifications"
                 color="inherit">
-                <Badge badgeContent={17} color="secondary">
+                <Badge variant="dot" badgeContent={17} color="primary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>

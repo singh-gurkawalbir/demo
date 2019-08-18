@@ -10,9 +10,12 @@ const theme = {
       main: colors.celigoAccent3,
     },
     secondary: {
-      main: colors.celigoNeutral5,
+      main: colors.celigoNeutral7,
     },
   },
+  // global overrides for MUI styles...
+  overrides: {},
 };
 
 export default () => createMuiTheme(theme);
+s;
