@@ -37,7 +37,7 @@ function ResourceReferences(props) {
   useEffect(() => {
     dispatch(actions.resource.requestReferences(type, id));
 
-    return () => dispatch(actions.resource.deleteReferences());
+    return () => dispatch(actions.resource.clearReferences());
   }, [dispatch, type, id]);
 
   return (

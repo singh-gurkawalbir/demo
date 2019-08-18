@@ -44,7 +44,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.resource.receivedReferences(testReferences)
       );
-      const newState = reducer(state, actions.resource.deleteReferences());
+      const newState = reducer(state, actions.resource.clearReferences());
 
       expect(newState).toEqual({});
     });
