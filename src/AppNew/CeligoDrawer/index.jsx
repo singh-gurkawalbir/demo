@@ -60,6 +60,9 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(0, 0, 2, 0.5),
     },
   },
+  menuItem: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export default function CeligoDrawer({ open = false, onClick }) {
@@ -110,7 +113,7 @@ export default function CeligoDrawer({ open = false, onClick }) {
         </div>
         <div>
           <Divider />
-          <div className={classes.toolbar}>
+          <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton onClick={onClick}>
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
