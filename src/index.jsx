@@ -6,6 +6,7 @@ import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import { SnackbarProvider } from 'notistack';
 import App from './App';
+import AppNew from './AppNew';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import { loadState, saveState } from './utils/session';
@@ -47,7 +48,7 @@ sagaMiddleware.run(rootSaga);
 render(
   <Provider store={store}>
     <SnackbarProvider maxSnack={3}>
-      <App />
+      {process.env.USE_NEW_APP === 'true' ? <AppNew /> : <App />}
     </SnackbarProvider>
   </Provider>,
   document.getElementById('root')

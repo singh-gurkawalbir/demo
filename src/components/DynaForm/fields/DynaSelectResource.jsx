@@ -28,7 +28,7 @@ export default function DynaSelectResource(props) {
     onFieldChange,
     resourceType,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, { type: resourceType })
   );

@@ -45,7 +45,7 @@ function RefreshGenericResource(props) {
     placeholder,
     fieldError,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
   const isLoading =

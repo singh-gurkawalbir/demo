@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles(props);
+  const classes = useStyles();
   const {
     id,
     mode,
