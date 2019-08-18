@@ -18,4 +18,3 @@ const theme = {
 };
 
 export default () => createMuiTheme(theme);
-s;
