@@ -955,29 +955,11 @@ export function metadataOptionsAndResources(
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
   const applicationType = connection.type;
-  const commMetadataPath = commMetadataPathGen(
-    applicationType,
-    connectionId,
-    metadataType,
-    mode
+  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
+
+  return (
+    optionsFromMetadata(state, connectionId, applicationType, key, mode) || {}
   );
-  let metadataKey = metadataType;
-
-  if (filterKey) {
-    metadataKey = `${metadataKey}-${filterKey}`;
-  }
-
-  return {
-    // resourceData
-    options: optionsFromMetadata(
-      state,
-      connectionId,
-      applicationType,
-      metadataKey,
-      mode
-    ),
-    isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
-  };
 }
 
 export function isValidatingNetsuiteUserRoles(state) {

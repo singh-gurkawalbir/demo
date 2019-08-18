@@ -8,7 +8,7 @@ function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
       // {"internalId":"Account","label":"Account"}
       options = data.map(item => ({
         label: item.label,
-        value: item.internalId.toLowerCase(),
+        value: item.internalId && item.internalId.toLowerCase(),
       }));
     } else if (filterKey === 'savedSearches') {
       // {internalId: "794", name: "New Account Search",
@@ -55,7 +55,7 @@ function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
       // userPermission: "4"}
       options = data.map(item => ({
         label: item.name,
-        value: item.scriptId.toLowerCase(),
+        value: item.scriptId && item.scriptId.toLowerCase(),
       }));
     } else if (metadataType === 'savedSearches') {
       // {id: "2615", name: "1mb data"}
@@ -90,14 +90,47 @@ export default (
   const {
     type,
     metadata,
+    metadataError,
     connectionId,
     metadataType,
     mode,
     filterKey,
   } = action;
+  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
   let newState;
 
   switch (type) {
+    case actionTypes.METADATA.REQUEST: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+
+      // Creates Object with status as 'requested' incase of New Request
+      specificMode[connectionId] = {
+        ...specificMode[connectionId],
+        [key]: { status: 'requested' },
+      };
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
+    case actionTypes.METADATA.REFRESH: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+
+      // Updates Object with status as 'requested' incase of Refresh Request
+      if (
+        specificMode[connectionId] &&
+        specificMode[connectionId][key] &&
+        specificMode[connectionId][key].status
+      ) {
+        specificMode[connectionId][key].status = 'refreshed';
+      }
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
     // This is quiet a deep object...ensuring i am creating
     // new instances all the way to the children of the object.
     // This is to ensure that a react component listening
@@ -113,16 +146,40 @@ export default (
         mode,
         filterKey
       );
-      let key = metadataType;
-
-      if (filterKey) {
-        key = `${key}-${filterKey}`;
-      }
 
       specificMode[connectionId] = {
         ...specificMode[connectionId],
-        [key]: options,
+        [key]: { status: 'received', data: options },
       };
+
+      return { ...state, ...{ netsuite: newState } };
+    }
+
+    // Error handler
+    case actionTypes.METADATA.RECEIVED_ERROR: {
+      newState = { ...state.netsuite };
+      newState[mode] = { ...state.netsuite[mode] };
+      const specificMode = newState[mode];
+      const defaultError = 'Error occured';
+
+      if (
+        specificMode[connectionId] &&
+        specificMode[connectionId][key] &&
+        specificMode[connectionId][key].status === 'refreshed'
+      ) {
+        specificMode[connectionId][key].status = 'error';
+        specificMode[connectionId][key].errorMessage =
+          metadataError || defaultError;
+      } else {
+        specificMode[connectionId] = {
+          ...specificMode[connectionId],
+          [key]: {
+            status: 'error',
+            data: [],
+            errorMessage: metadataError || defaultError,
+          },
+        };
+      }
 
       return { ...state, ...{ netsuite: newState } };
     }
