@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     width: theme.spacing(5) + 1,
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(8) + 1,
+      width: theme.spacing(7) + 1,
     },
   },
   drawerPaper: {
@@ -47,15 +47,17 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 
   menuContainer: {
+    overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '40px auto 80px',
+    gridTemplateRows: '48px auto 80px',
     '& > div:first-child': {
-      margin: theme.spacing(1, 0, 0, 1),
+      alignSelf: 'end',
+      margin: theme.spacing(1, 0, 0, 0.5),
     },
     '& > div:last-child': {
       alignSelf: 'end',
-      margin: theme.spacing(0, 0, 2, 1),
+      margin: theme.spacing(0, 0, 2, 0.5),
     },
   },
 }));

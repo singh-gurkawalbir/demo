@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Search({ shift = false }) {
+export default function CeligoPageBar({ shift = false }) {
   const classes = useStyles();
 
   return (

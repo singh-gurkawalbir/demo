@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   toolbar: theme.mixins.toolbar,
+  pageBar: { height: theme.pageBarHeight },
 }));
 
 export default function PageContent({ shift = false }) {
@@ -18,6 +19,7 @@ export default function PageContent({ shift = false }) {
     <main className={classes.content}>
       <div className={classes.toolbar} />
       <CeligoPageBar shift={shift} />
+      <div className={classes.pageBar} />
       <Typography paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus

@@ -1,7 +1,7 @@
 import React from 'react';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
-const ElevationScroll = React.forwardRef((props, ref) => {
+const ElevateOnScroll = React.forwardRef((props, ref) => {
   const { children, threshold } = props;
   const trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -14,4 +14,4 @@ const ElevationScroll = React.forwardRef((props, ref) => {
   });
 });
 
-export default ElevationScroll;
+export default ElevateOnScroll;

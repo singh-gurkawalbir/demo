@@ -14,7 +14,7 @@ import SlideOnScroll from '../SlideOnScroll';
 const useStyles = makeStyles(theme => ({
   appBar: {
     marginLeft: theme.drawerWidth,
-    width: `calc(100% - ${theme.spacing(8)}px)`,
+    width: `calc(100% - ${theme.spacing(7)}px)`,
 
     // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
