@@ -1,0 +1,17 @@
+import { createMuiTheme } from '@material-ui/core/styles';
+import colors from '../theme/colors';
+
+const theme = {
+  spacing: 8,
+  drawerWidth: 240,
+  palette: {
+    primary: {
+      main: colors.celigoAccent3,
+    },
+    secondary: {
+      main: colors.celigoNeutral5,
+    },
+  },
+};
+
+export default () => createMuiTheme(theme);
