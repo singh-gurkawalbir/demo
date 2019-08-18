@@ -35,7 +35,7 @@ const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
 const Agents = loadable(() =>
-  import(/* webpackChunkName: 'Imports' */ '../../views/Agents')
+  import(/* webpackChunkName: 'Agents' */ '../../views/Agents')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')

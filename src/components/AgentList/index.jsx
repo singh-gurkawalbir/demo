@@ -64,7 +64,7 @@ function AgentList(props) {
         <ResourceReferences
           type="agents"
           id={agentId}
-          onReferencesClose={handleReferencesClose}
+          onClose={handleReferencesClose}
         />
       )}
 

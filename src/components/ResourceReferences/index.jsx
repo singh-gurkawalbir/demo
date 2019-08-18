@@ -28,7 +28,7 @@ const styles = theme => ({
 });
 
 function ResourceReferences(props) {
-  const { classes, onReferencesClose, type, id } = props;
+  const { classes, onClose, type, id } = props;
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
@@ -36,15 +36,12 @@ function ResourceReferences(props) {
 
   useEffect(() => {
     dispatch(actions.resource.requestReferences(type, id));
+
+    return () => dispatch(actions.resource.deleteReferences());
   }, [dispatch, type, id]);
 
-  function handleClose() {
-    dispatch(actions.resource.deleteReferences());
-    onReferencesClose();
-  }
-
   return (
-    <Dialog onClose={handleClose} aria-labelledby="resource-references" open>
+    <Dialog onClose={onClose} aria-labelledby="resource-references" open>
       {resourceReferences &&
         (Object.keys(resourceReferences).length !== 0 ? (
           <Fragment>
@@ -62,7 +59,7 @@ function ResourceReferences(props) {
                           to={getRoutePath(
                             `${resourceType}/edit/${resource.id}`
                           )}
-                          onClick={handleClose}
+                          onClick={onClose}
                           className={classes.ReferenceLink}>
                           <ListItemText primary={resource.name} />
                         </Link>
@@ -88,7 +85,7 @@ function ResourceReferences(props) {
           <Spinner className={classes.spinner} />
         </Fragment>
       )}
-      <Button onClick={handleClose} color="primary">
+      <Button onClick={onClose} color="primary">
         Close
       </Button>
     </Dialog>
