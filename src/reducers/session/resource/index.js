@@ -1,7 +1,7 @@
 import actionTypes from '../../../actions/types';
 
 export default function reducer(state = {}, action) {
-  const { type, tempId, id } = action;
+  const { type, tempId, id, resourceReferences } = action;
   let newState;
 
   switch (type) {
@@ -9,6 +9,12 @@ export default function reducer(state = {}, action) {
       newState = { ...state, [tempId]: id };
 
       return newState;
+    case actionTypes.RESOURCE.REFERENCES_RECEIVED:
+      newState = { ...state, references: resourceReferences };
+
+      return newState;
+    case actionTypes.RESOURCE.REFERENCES_CLEAR:
+      return {};
 
     default:
       return state;
@@ -22,5 +28,13 @@ export function createdResourceId(state, tempId) {
   }
 
   return state[tempId];
+}
+
+export function resourceReferences(state) {
+  if (!state) {
+    return {};
+  }
+
+  return state.references;
 }
 // #endregion

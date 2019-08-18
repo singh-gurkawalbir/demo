@@ -376,6 +376,10 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state.session);
+}
+
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
 }

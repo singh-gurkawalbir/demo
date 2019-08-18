@@ -68,6 +68,24 @@ const resource = {
       collection,
     }),
 
+  delete: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
+
+  deleted: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
+
+  requestReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
+      resourceType,
+      id,
+    }),
+  clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
+
+  receivedReferences: resourceReferences =>
+    action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
+      resourceReferences,
+    }),
+
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 

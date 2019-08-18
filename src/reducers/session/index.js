@@ -95,4 +95,8 @@ export function resourceFormState(state, resourceType, resourceId) {
 export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
+
+export function resourceReferences(state) {
+  return fromResource.resourceReferences(state.resource);
+}
 // #endregion

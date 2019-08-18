@@ -34,7 +34,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { type, resource, collection, resourceType } = action;
+  const { id, type, resource, collection, resourceType } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -63,6 +63,12 @@ export default (state = {}, action) => {
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
+
+    case actionTypes.RESOURCE.DELETED:
+      return {
+        ...state,
+        [resourceType]: state[resourceType].filter(r => r._id !== id),
+      };
 
     default:
       return state;

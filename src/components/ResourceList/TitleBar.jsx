@@ -4,8 +4,13 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
+import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const mapStateToProps = (state, { resourceType }) => {
   const filter = selectors.filter(state, resourceType);
@@ -48,7 +53,13 @@ class TitleBar extends Component {
   // https://gist.github.com/eliperelman/068e47353eaf526716d97185429c317d
 
   render() {
-    const { classes, keyword, handleKeywordChange, itemName } = this.props;
+    const {
+      classes,
+      keyword,
+      handleKeywordChange,
+      itemName,
+      resourceType,
+    } = this.props;
 
     return (
       <div className={classes.titleBox}>
@@ -66,6 +77,11 @@ class TitleBar extends Component {
             margin="normal"
           />
         </div>
+        <Button
+          component={Link}
+          to={getRoutePath(`${resourceType}/add/new-${shortid.generate()}`)}>
+          + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
+        </Button>
       </div>
     );
   }
