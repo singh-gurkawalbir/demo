@@ -201,6 +201,13 @@ const metadata = {
       mode,
       filterKey,
     }),
+  refresh: (connectionId, metadataType, mode, filterKey) =>
+    action(actionTypes.METADATA.REFRESH, {
+      connectionId,
+      metadataType,
+      mode,
+      filterKey,
+    }),
   netsuite: {
     receivedCollection: (
       metadata,
@@ -211,6 +218,20 @@ const metadata = {
     ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
+        metadataType,
+        connectionId,
+        mode,
+        filterKey,
+      }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_ERROR, {
+        metadataError,
         metadataType,
         connectionId,
         mode,

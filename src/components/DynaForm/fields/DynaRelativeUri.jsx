@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
 
 export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles(props);
+  const classes = useStyles();
   const {
     connectionId,
     disabled,

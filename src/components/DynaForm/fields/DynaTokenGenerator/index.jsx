@@ -43,7 +43,7 @@ function TokenGenerator(props) {
     resourceId,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
-  const classes = useStyles(props);
+  const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {

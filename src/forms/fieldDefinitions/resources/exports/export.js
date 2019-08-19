@@ -346,7 +346,7 @@ export default {
   // #region delta
   'delta.dateField': {
     label: 'Date field',
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     mode: 'suitescript',
     filterKey: 'dateField',
     defaultValue: r => r && r.delta && r.delta.dateField,
@@ -376,7 +376,7 @@ export default {
   // #region once
   'once.booleanField': {
     label: 'Boolean Field',
-    type: 'refreshoptions',
+    type: 'refreshableselect',
     placeholder: 'Please select a Boolean field',
     defaultValue: r => r && r.once && r.once.booleanField,
     mode: 'suitescript',
