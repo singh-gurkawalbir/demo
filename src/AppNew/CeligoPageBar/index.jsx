@@ -16,7 +16,7 @@ import SlideOnScroll from '../SlideOnScroll';
 const useStyles = makeStyles(theme => ({
   pageHeader: {
     padding: theme.spacing(1, 3),
-    height: 72,
+    height: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
     margin: theme.spacing(-3, -3, 0),
     position: 'fixed',
