@@ -31,7 +31,7 @@ export default function DynaMultiSelect(props) {
     onFieldChange,
     valueDelimiter,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
