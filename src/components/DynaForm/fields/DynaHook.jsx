@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles(props);
+  const classes = useStyles();
   const { resources: allScripts } = useSelector(state =>
     selectors.resourceList(state, { type: 'scripts' })
   );

@@ -169,6 +169,7 @@ module.exports = {
         'CDN_BASE_URI',
         'ADD_NETWORK_LATENCY',
         'HELPER_FUNCTIONS_INTERVAL_UPDATE',
+        'USE_NEW_APP',
       ],
     ],
     neutrino => {

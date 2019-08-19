@@ -30,7 +30,7 @@ export default function DynaSelect(props) {
     label,
     onFieldChange,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
