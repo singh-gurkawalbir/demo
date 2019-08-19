@@ -35,14 +35,16 @@ function reduxRouterWrappedComponent({
 
 describe('AppRoutingWith authentication redirection behavior', () => {
   const initSession = jest.fn();
+  const clearAppError = jest.fn();
   // Should i bring a reducer and deduce the states form there
-  const intializedStateProps = {
+  const initializedStateProps = {
     isAuthenticated: false,
     shouldShowAppRouting: false,
     isSessionExpired: false,
     location: null,
     isAuthInitialized: false,
     initSession,
+    clearAppError,
   };
   const authenticationFailed = {
     isAuthenticated: false,
@@ -50,6 +52,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     isSessionExpired: false,
     isAuthInitialized: true,
     initSession,
+    clearAppError,
   };
   const authenticationSucceeded = {
     isAuthenticated: true,
@@ -57,6 +60,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     isSessionExpired: false,
     isAuthInitialized: true,
     initSession,
+    clearAppError,
   };
   const someRoute = '/some-route';
   const wrappedHistory = withRouter(AppRoutingWithAuth);
@@ -64,8 +68,59 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   // lower order components of our targeted test component
   const store = createStore(reducer, {});
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
+  });
 
+  describe('clear app error message', () => {
+    test('should clear the app error message on refresh', () => {
+      const history = createMemoryHistory({
+        initialEntries: [getRoutePath(someRoute)],
+      });
+
+      // app mounting for the first time or refreshing app
+      render(
+        reduxRouterWrappedComponent({
+          Component: wrappedHistory,
+          componentProps: initializedStateProps,
+          history,
+          store,
+        })
+      );
+
+      expect(clearAppError).toHaveBeenCalled();
+    });
+
+    test('should not clear the app error message in any state after refresh', () => {
+      const history = createMemoryHistory({
+        initialEntries: [getRoutePath(someRoute)],
+      });
+
+      expect(clearAppError).toHaveBeenCalledTimes(0);
+
+      const { rerender } = render(
+        reduxRouterWrappedComponent({
+          Component: wrappedHistory,
+          componentProps: initializedStateProps,
+          history,
+          store,
+        })
+      );
+
+      // a subsequent render with some state
+      rerender(
+        reduxRouterWrappedComponent({
+          Component: wrappedHistory,
+          componentProps: authenticationSucceeded,
+          history,
+          store,
+        })
+      );
+
+      expect(clearAppError).toHaveBeenCalledTimes(1);
+    });
+  });
   describe('test attempted Route state behavior', () => {
     test('should save the location state when the app is initialized for the very first', () => {
       const history = createMemoryHistory({
@@ -74,7 +129,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       const { rerender } = render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
-          componentProps: intializedStateProps,
+          componentProps: initializedStateProps,
           history,
           store,
         })
@@ -175,6 +230,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     isSessionExpired: true,
     isAuthInitialized: true,
     initSession,
+    clearAppError,
   };
 
   test('should stay in the same route when the user session has expired', () => {
@@ -204,6 +260,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     isSessionExpired: false,
     isAuthInitialized: false,
     initSession,
+    clearAppError,
   };
 
   test('should redirect the user to the signin route when the user has logged out', () => {

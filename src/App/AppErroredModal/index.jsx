@@ -15,7 +15,7 @@ export default function AppErroredModal() {
         <span>Application Errored</span>
       </Fragment>
       <Typography>
-        Oops...Something has caused the Integrator to crash. <br />
+        Oops...Something has caused the Integrator app to crash. <br />
         To resume working with Integrator please the click the reload button .
       </Typography>
       <Button
