@@ -372,7 +372,7 @@ const job = {
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
 
-  resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING, {}),
+  resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
   resolveSelected: ({ jobs }) =>
@@ -384,11 +384,10 @@ const job = {
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
   resolveUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_UNDO, { parentJobId, childJobId }),
-  resolveAllUndo: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL_UNDO, { flowId, integrationId }),
-  resolveCommit: ({ jobs }) => action(actionTypes.JOB.RESOLVE_COMMIT, { jobs }),
-  resolveAllCommit: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL_COMMIT, { flowId, integrationId }),
+  resolveAllUndo: () => action(actionTypes.JOB.RESOLVE_ALL_UNDO),
+  resolveCommit: () => action(actionTypes.JOB.RESOLVE_COMMIT),
+  resolveAllCommit: () => action(actionTypes.JOB.RESOLVE_ALL_COMMIT),
+  retryAllPending: () => action(actionTypes.JOB.RETRY_ALL_PENDING),
   retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
   retryFlowJob: ({ jobId }) =>
     action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
@@ -397,14 +396,12 @@ const job = {
   retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
   retryUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
-  retryCommit: ({ jobs }) => action(actionTypes.JOB.RETRY_COMMIT, { jobs }),
-  retryFlowJobCommit: ({ jobId }) =>
-    action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT, { jobId }),
+  retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
+  retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
   retryAll: ({ flowId, integrationId }) =>
     action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
-  retryAllCommit: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL_COMMIT, { flowId, integrationId }),
+  retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_RETRY_OBJECTS, { jobId }),
   receivedRetryObjects: ({ collection, jobId }) =>

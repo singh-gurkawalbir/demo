@@ -173,24 +173,25 @@ export function* resolveCommit({ jobs = [] }) {
 
   try {
     yield call(apiCallWithRetry, { path, opts });
-    const uniqueParentJobIds = [];
-
-    jobs.forEach(job => {
-      const pJobId = job._flowJobId || job._id;
-
-      if (!uniqueParentJobIds.includes(pJobId)) {
-        uniqueParentJobIds.push(pJobId);
-      }
-    });
-
-    yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  const uniqueParentJobIds = [];
+
+  jobs.forEach(job => {
+    const parentJobId = job._flowJobId || job._id;
+
+    if (!uniqueParentJobIds.includes(parentJobId)) {
+      uniqueParentJobIds.push(parentJobId);
+    }
+  });
+
+  yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
 }
 
 export function* resolveAllCommit({ flowId, integrationId }) {
-  const requestOptions = getRequestOptions(
+  const { path, opts } = getRequestOptions(
     flowId
       ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
       : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
@@ -198,12 +199,11 @@ export function* resolveAllCommit({ flowId, integrationId }) {
       resourceId: flowId || integrationId,
     }
   );
-  const { path, opts } = requestOptions;
 
   try {
     yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
   }
 }
 
@@ -264,35 +264,26 @@ export function* retryCommit({ jobs = [] }) {
 
   try {
     yield call(apiCallWithRetry, { path, opts });
-    const uniqueParentJobIds = [];
-
-    jobs.forEach(job => {
-      const pJobId = job._flowJobId || job._id;
-
-      if (!uniqueParentJobIds.includes(pJobId)) {
-        uniqueParentJobIds.push(pJobId);
-      }
-    });
-
-    yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
-    yield put(actions.job.getInProgressJobStatus({}));
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  const uniqueParentJobIds = [];
+
+  jobs.forEach(job => {
+    const pJobId = job._flowJobId || job._id;
+
+    if (!uniqueParentJobIds.includes(pJobId)) {
+      uniqueParentJobIds.push(pJobId);
+    }
+  });
+
+  yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
+  yield put(actions.job.getInProgressJobStatus());
 }
 
 export function* retrySelected({ jobs }) {
-  // yield put(actions.job.resolveAllPending());
-
-  const flowJobIds = [];
-
-  jobs.forEach(job => {
-    const flowJobId = job._flowJobId || job._id;
-
-    if (!flowJobIds.includes(flowJobId)) {
-      flowJobIds.push(flowJobId);
-    }
-  });
+  yield put(actions.job.retryAllPending());
 
   yield all(
     jobs.map(job =>
@@ -326,7 +317,7 @@ export function* retryFlowJob({ jobId }) {
   let job = yield select(selectors.job, { type: JOB_TYPES.FLOW, jobId });
 
   if (!job) {
-    return false;
+    return true;
   }
 
   if (!job.children || job.children.length === 0) {
@@ -344,7 +335,7 @@ export function* retryFlowJob({ jobId }) {
     });
 
   if (jobsToRetry.length === 0) {
-    return false;
+    return true;
   }
 
   yield call(retrySelected, { jobs: jobsToRetry });
@@ -360,19 +351,20 @@ export function* retryAllCommit({ flowId, integrationId }) {
     }
   );
   const { path, opts } = requestOptions;
+  let job;
 
   try {
-    const job = yield call(apiCallWithRetry, { path, opts });
-
-    yield put(actions.job.receivedFamily({ job }));
-    yield put(actions.job.getInProgressJobStatus({}));
+    job = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  yield put(actions.job.receivedFamily({ job }));
+  yield put(actions.job.getInProgressJobStatus());
 }
 
 export function* retryAll({ flowId, integrationId }) {
-  // yield put(actions.job.resolveAllPending());
+  yield put(actions.job.retryAllPending());
 
   yield put(actions.job.retryAllInit());
   const undoOrCommitAction = yield take([
@@ -394,21 +386,21 @@ export function* retryAll({ flowId, integrationId }) {
 }
 
 export function* requestRetryObjectCollection({ jobId }) {
-  const requestOptions = getRequestOptions(
+  const { path, opts } = getRequestOptions(
     actionTypes.JOB.REQUEST_RETRY_OBJECT_COLLECTION,
     {
       resourceId: jobId,
     }
   );
-  const { path, opts } = requestOptions;
+  let collection;
 
   try {
-    const collection = yield call(apiCallWithRetry, { path, opts });
-
-    yield put(actions.job.receivedRetryObjects({ collection, jobId }));
+    collection = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  yield put(actions.job.receivedRetryObjects({ collection, jobId }));
 }
 
 export function* requestJobErrorCollection({ jobId }) {
@@ -419,14 +411,15 @@ export function* requestJobErrorCollection({ jobId }) {
     }
   );
   const { path, opts } = requestOptions;
+  let collection;
 
   try {
-    const collection = yield call(apiCallWithRetry, { path, opts });
-
-    yield put(actions.job.receivedErrors({ collection, jobId }));
+    collection = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return undefined;
+    return true;
   }
+
+  yield put(actions.job.receivedErrors({ collection, jobId }));
 }
 
 export function* requestRetryObjectAndJobErrorCollection({ jobId }) {
