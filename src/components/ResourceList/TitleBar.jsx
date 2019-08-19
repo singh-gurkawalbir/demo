@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = (state, { resourceType }) => {
   const filter = selectors.filter(state, resourceType);
@@ -79,7 +80,7 @@ class TitleBar extends Component {
         <Button
           component={Link}
           // className={classes.link}
-          to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}>
+          to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>
           + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
         </Button>
       </div>

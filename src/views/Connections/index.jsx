@@ -4,7 +4,7 @@ import ResourceList from '../../components/ResourceList';
 import LoadResources from '../../components/LoadResources';
 import ResourceReferences from '../../components/ResourceReferences';
 
-export default function Exports() {
+export default function Connections() {
   const [showReferences, setShowReferences] = useState(false);
   const [id, setId] = useState(null);
 

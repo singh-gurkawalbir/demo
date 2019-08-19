@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import moment from 'moment';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 
@@ -17,7 +18,7 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
     // color: theme.palette.action.active,
   },
-  exportDetails: {
+  connectionDetails: {
     flexBasis: '66.66%',
     flexShrink: 0,
   },
@@ -46,11 +47,54 @@ function ConnectionsData(props) {
     });
   };
 
+  const getQueueSize = () => {
+    const queueSize = 0;
+
+    for (let i = 0; item.queues && i < item.queues.length; i += 1) {
+      if (item.queues[i].name === item._id) {
+        item.queueSize = `${item.queues[i].size}`;
+      }
+    }
+
+    return queueSize;
+  };
+
+  const getDisplayType = () => item.assistant || item.type;
+  const getAPIValue = () => {
+    if (item.type === 'rest') return item.rest && item.rest.baseURI;
+
+    if (item.type === 'http') return item.http && item.http.baseURI;
+
+    return '';
+  };
+
+  const showDownloadbutton = () => {
+    let toReturn = false;
+
+    if (item.debugDate) {
+      if (moment() <= moment(item.debugDate)) {
+        toReturn = true;
+      } else {
+        toReturn = moment() - moment(item.debugDate) <= 24 * 60 * 60 * 1000;
+      }
+    }
+
+    return toReturn;
+  };
+
+  const handleRefreshMetadataClick = () => {};
+  const handleViewAuditLog = () => {};
+
   return (
     <Fragment>
-      {item.description && <div>{item.description}</div>}
-      <Typography className={classes.exportDetails}>
-        Created on {new Date(item.lastModified).toLocaleDateString()}
+      <Typography className={classes.connectionDetails}>
+        Type: {getDisplayType()}
+        <br />
+        Status: {item.offline ? 'Offline' : 'Online'}
+        <br />
+        API: {getAPIValue()}
+        <br />
+        Queue Size: {getQueueSize()}
         <br />
       </Typography>
       <Typography className={classes.secondaryHeading}>
@@ -58,9 +102,19 @@ function ConnectionsData(props) {
           Edit Connection
         </Button>
         <br />
-        <Button onClick={handleDownLoadDebug}>Download debug logs</Button>
+        <Button onClick={() => handleRefreshMetadataClick(item._id)}>
+          Refresh metadata
+        </Button>
         <br />
+        {showDownloadbutton() && (
+          <Fragment>
+            <Button onClick={handleDownLoadDebug}>Download debug logs</Button>
+            <br />
+          </Fragment>
+        )}
         <Button onClick={handleConfigureDebugger}>Configure debugger</Button>
+        <br />
+        <Button onClick={handleViewAuditLog}>View audit log</Button>
         <br />
         <Button onClick={() => handleReferencesClick(item._id)}>
           View references
