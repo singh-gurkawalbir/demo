@@ -1,12 +1,14 @@
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
 
 export default function FileDefinitionEditor(props) {
-  const { rule, data, editorId, result, ...other } = props;
-  const parsedData = result && result.data;
-  const { ...editor } = useSelector(state => selectors.editor(state, editorId));
+  const { editorId, layout = 'column' } = props;
+  const { rule, data, result, error, violations } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
   const dispatch = useDispatch();
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { rule }));
@@ -16,24 +18,27 @@ export default function FileDefinitionEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
-  const handleInit = () => {
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'structuredFileParser', {
-        rule,
-        data,
+        rule: props.rule,
+        data: props.data,
       })
     );
-  };
+  }, [dispatch, props.data, editorId, props.rule]);
 
   return (
     <Editor
-      result={parsedData}
       handleInit={handleInit}
       handleDataChange={handleDataChange}
       handleRuleChange={handleRuleChange}
-      {...editor}
-      {...other}
+      rule={rule}
+      data={data}
+      result={result ? result.data : ''}
+      violations={violations}
+      error={error}
       processor="structuredFileParser"
+      layout={layout}
       ruleMode="json"
       dataMode="text"
       resultMode="json"

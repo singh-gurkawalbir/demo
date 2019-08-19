@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -23,8 +24,12 @@ export default function HandlebarsWithDefaults(props) {
     error,
     violations,
   } = useSelector(state => selectors.editor(state, editorId));
+  const handlebarHelperFunction = useSelector(state =>
+    selectors.editorHelperFunctions(state)
+  );
 
-  useSelector(state => {
+  completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+  useEffect(() => {
     if (!violations) {
       const jsonData = JSON.stringify(
         merge(
@@ -33,11 +38,10 @@ export default function HandlebarsWithDefaults(props) {
           sampleData ? JSON.parse(sampleData) : {}
         )
       );
-      const helperFunctions = selectors.editorHelperFunctions(state);
 
-      completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
+      completers.handleBarsCompleters.setJsonCompleter(jsonData);
     }
-  });
+  }, [defaultData, sampleData, violations]);
 
   const dispatch = useDispatch();
   const handleChange = (field, value) => {
