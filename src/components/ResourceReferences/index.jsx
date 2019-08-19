@@ -17,7 +17,7 @@ import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 
 const styles = theme => ({
-  createResourceButton: {
+  ReferenceLink: {
     margin: theme.spacing(1),
     marginTop: theme.spacing(3),
     float: 'right',
@@ -28,7 +28,7 @@ const styles = theme => ({
 });
 
 function ResourceReferences(props) {
-  const { classes, onReferencesClose, type, id } = props;
+  const { classes, onClose, type, id } = props;
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
@@ -36,34 +36,32 @@ function ResourceReferences(props) {
 
   useEffect(() => {
     dispatch(actions.resource.requestReferences(type, id));
+
+    return () => dispatch(actions.resource.clearReferences());
   }, [dispatch, type, id]);
 
-  function handleClose() {
-    dispatch(actions.resource.deleteReferences(type, id));
-    onReferencesClose();
-  }
-
   return (
-    <Dialog onClose={handleClose} aria-labelledby="resource-references" open>
+    <Dialog onClose={onClose} aria-labelledby="resource-references" open>
       {resourceReferences &&
-        (Object.keys(resourceReferences).length !== 0 ? (
+        (resourceReferences.length !== 0 ? (
           <Fragment>
             <DialogTitle id="resource-references">
               {`${MODEL_PLURAL_TO_LABEL[type]} References:`}
             </DialogTitle>
             <List>
-              {Object.keys(resourceReferences).map(resourceType => (
-                <ListItem key={resourceType}>
-                  <ListItemText primary={`${resourceType}:`} />
+              {resourceReferences.map(refObject => (
+                <ListItem key={refObject.resourceType}>
+                  <ListItemText primary={`${refObject.resourceType}:`} />
                   <List>
-                    {resourceReferences[resourceType].map(resource => (
-                      <ListItem key={resource.id}>
+                    {refObject.references.map(reference => (
+                      <ListItem key={reference.id}>
                         <Link
                           to={getRoutePath(
-                            `${resourceType}/edit/${resource.id}`
+                            `${refObject.resourceType}/edit/${reference.id}`
                           )}
-                          className={classes.createResourceButton}>
-                          <ListItemText primary={resource.name} />
+                          onClick={onClose}
+                          className={classes.ReferenceLink}>
+                          <ListItemText primary={reference.name} />
                         </Link>
                         <Divider />
                       </ListItem>
@@ -87,7 +85,7 @@ function ResourceReferences(props) {
           <Spinner className={classes.spinner} />
         </Fragment>
       )}
-      <Button onClick={handleClose} color="primary">
+      <Button onClick={onClose} color="primary">
         Close
       </Button>
     </Dialog>

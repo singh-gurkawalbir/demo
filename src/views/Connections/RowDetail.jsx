@@ -1,11 +1,10 @@
-// import { hot } from 'react-hot-loader';
 import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import moment from 'moment';
+// import moment from 'moment';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 
@@ -16,7 +15,6 @@ const styles = theme => ({
   },
   link: {
     color: theme.palette.text.secondary,
-    // color: theme.palette.action.active,
   },
   connectionDetails: {
     flexBasis: '66.66%',
@@ -27,8 +25,8 @@ const styles = theme => ({
 function ConnectionsData(props) {
   const { classes, item, handleReferencesClick } = props;
   const dispatch = useDispatch();
-  const handleConfigureDebugger = () => {};
-  const handleDownLoadDebug = () => {};
+  // const handleConfigureDebugger = () => {};
+  // const handleDownLoadDebug = () => {};
   const handleDeleteClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -68,22 +66,22 @@ function ConnectionsData(props) {
     return '';
   };
 
-  const showDownloadbutton = () => {
-    let toReturn = false;
+  // const showDownloadbutton = () => {
+  //   let toReturn = false;
 
-    if (item.debugDate) {
-      if (moment() <= moment(item.debugDate)) {
-        toReturn = true;
-      } else {
-        toReturn = moment() - moment(item.debugDate) <= 24 * 60 * 60 * 1000;
-      }
-    }
+  //   if (item.debugDate) {
+  //     if (moment() <= moment(item.debugDate)) {
+  //       toReturn = true;
+  //     } else {
+  //       toReturn = moment() - moment(item.debugDate) <= 24 * 60 * 60 * 1000;
+  //     }
+  //   }
 
-    return toReturn;
-  };
+  //   return toReturn;
+  // };
 
-  const handleRefreshMetadataClick = () => {};
-  const handleViewAuditLog = () => {};
+  // const handleRefreshMetadataClick = () => {};
+  // const handleViewAuditLog = () => {};
 
   return (
     <Fragment>
@@ -102,7 +100,7 @@ function ConnectionsData(props) {
           Edit Connection
         </Button>
         <br />
-        <Button onClick={() => handleRefreshMetadataClick(item._id)}>
+        {/* <Button onClick={() => handleRefreshMetadataClick(item._id)}>
           Refresh metadata
         </Button>
         <br />
@@ -115,7 +113,7 @@ function ConnectionsData(props) {
         <Button onClick={handleConfigureDebugger}>Configure debugger</Button>
         <br />
         <Button onClick={handleViewAuditLog}>View audit log</Button>
-        <br />
+        <br /> */}
         <Button onClick={() => handleReferencesClick(item._id)}>
           View references
         </Button>

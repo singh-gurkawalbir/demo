@@ -69,10 +69,6 @@ export default (state = {}, action) => {
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
 
-    case actionTypes.RESOURCE.REFERENCES_RECEIVED:
-      // need to add open reference code
-      return state;
-
     default:
       return state;
   }

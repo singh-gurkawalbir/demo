@@ -5,26 +5,23 @@ import LoadResources from '../../components/LoadResources';
 import ResourceReferences from '../../components/ResourceReferences';
 
 export default function Connections() {
-  const [showReferences, setShowReferences] = useState(false);
   const [id, setId] = useState(null);
 
   function handleReferencesClick(id) {
-    setShowReferences(true);
     setId(id);
   }
 
   function handleReferencesClose() {
-    setShowReferences(false);
     setId(null);
   }
 
   return (
     <LoadResources resources={['connections']}>
-      {showReferences && id && (
+      {id && (
         <ResourceReferences
           type="connections"
           id={id}
-          onReferencesClose={handleReferencesClose}
+          onClose={handleReferencesClose}
         />
       )}
       <ResourceList resourceType="connections" displayName="Connections">

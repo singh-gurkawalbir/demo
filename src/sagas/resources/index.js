@@ -127,9 +127,7 @@ export function* requestReferences({ resourceType, id }) {
   try {
     const resourceReferences = yield call(apiCallWithRetry, { path });
 
-    yield put(
-      actions.resource.receivedReferences(resourceType, id, resourceReferences)
-    );
+    yield put(actions.resource.receivedReferences(resourceReferences));
   } catch (error) {
     return undefined;
   }

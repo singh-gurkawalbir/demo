@@ -13,8 +13,11 @@ export default function reducer(state = {}, action) {
       newState = { ...state, references: resourceReferences };
 
       return newState;
-    case actionTypes.RESOURCE.REFERENCES_DELETE:
-      return {};
+    case actionTypes.RESOURCE.REFERENCES_CLEAR:
+      newState = { ...state };
+      delete newState.references;
+
+      return newState;
 
     default:
       return state;
@@ -31,10 +34,15 @@ export function createdResourceId(state, tempId) {
 }
 
 export function resourceReferences(state) {
-  if (!state) {
-    return {};
+  if (!state || !state.references) {
+    return null;
   }
 
-  return state.references;
+  const { references } = state;
+
+  return Object.keys(references).map(type => ({
+    resourceType: type,
+    references: references[type],
+  }));
 }
 // #endregion
