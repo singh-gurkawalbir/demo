@@ -9,9 +9,17 @@ import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import { loadState, saveState } from './utils/session';
+import actions from './actions';
 
 const middleware = [];
-const sagaMiddleware = createSagaMiddleware();
+let store;
+const sagaMiddleware = createSagaMiddleware({
+  onError: error => {
+    // eslint-disable-next-line no-console
+    console.warn('saga middlware crashed on error ', error);
+    store.dispatch(actions.appErrored());
+  },
+});
 
 middleware.push(sagaMiddleware);
 
@@ -30,7 +38,8 @@ if (process.env.NODE_ENV === `development`) {
 
 const preloadedState = loadState();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
+
+store = createStore(
   rootReducer,
   preloadedState,
   composeEnhancers(applyMiddleware(...middleware))

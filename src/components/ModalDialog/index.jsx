@@ -1,4 +1,4 @@
-import { React, Component } from 'react';
+import { React, Component, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -35,27 +35,38 @@ export default class ModalDialog extends Component {
     return (
       <div>
         <Dialog open={show} className={classes.modalDialog}>
-          <DialogTitle>
-            {this.props.children[0]}
-
-            <IconButton
-              onClick={handleClose}
-              color="primary"
-              className={classes.iconButton}
-              autoFocus>
-              <SvgIcon>
-                <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-              </SvgIcon>
-            </IconButton>
-          </DialogTitle>
-          <Divider />
-          <DialogContent className={classes.modalContent}>
-            {this.props.children[1]}
-          </DialogContent>
-          <Divider />
-          <DialogActions className={classes.actions}>
-            {this.props.children[2]}
-          </DialogActions>
+          {this.props.children[0] && (
+            <DialogTitle>
+              {this.props.children[0]}
+              {handleClose && (
+                <IconButton
+                  onClick={handleClose}
+                  color="primary"
+                  className={classes.iconButton}
+                  autoFocus>
+                  <SvgIcon>
+                    <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
+                  </SvgIcon>
+                </IconButton>
+              )}
+            </DialogTitle>
+          )}
+          {this.props.children[1] && (
+            <Fragment>
+              <Divider />
+              <DialogContent className={classes.modalContent}>
+                {this.props.children[1]}
+              </DialogContent>
+            </Fragment>
+          )}
+          {this.props.children[2] && (
+            <Fragment>
+              <Divider />
+              <DialogActions className={classes.actions}>
+                {this.props.children[2]}
+              </DialogActions>
+            </Fragment>
+          )}
         </Dialog>
       </div>
     );

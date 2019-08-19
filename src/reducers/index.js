@@ -62,6 +62,10 @@ export default rootReducer;
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
+
+export function appErrored(state) {
+  return fromApp.appErrored(state && state.app);
+}
 // #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
