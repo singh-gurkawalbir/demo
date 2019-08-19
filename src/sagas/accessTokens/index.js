@@ -3,7 +3,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { MASK_SENSITIVE_INFO_DELAY } from '../../utils/constants';
 import * as selectors from '../../reducers';
 
 export function* displayToken({ id }) {
@@ -27,7 +26,7 @@ export function* displayToken({ id }) {
   }
 
   yield put(actions.accessToken.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_SENSITIVE_INFO_DELAY);
+  yield delay(process.env.MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.accessToken.maskToken({ _id: id }));
 }
 
@@ -52,7 +51,7 @@ export function* generateToken({ id }) {
   }
 
   yield put(actions.accessToken.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_SENSITIVE_INFO_DELAY);
+  yield delay(process.env.MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.accessToken.maskToken({ _id: id }));
 }
 

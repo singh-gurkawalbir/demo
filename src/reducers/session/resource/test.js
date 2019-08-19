@@ -48,41 +48,68 @@ describe('session.resource reducers', () => {
 
       expect(newState).toEqual({});
     });
-  });
-});
-
-describe('session.resource selectors', () => {
-  describe(`createdResourceId`, () => {
-    test('should return undefined when no match found.', () => {
-      expect(selectors.createdResourceId(undefined, 'tempId')).toEqual(
-        undefined
-      );
-      expect(selectors.createdResourceId({}, 'tempId')).toEqual(undefined);
-    });
-
-    test('should return correct newly created ID when match against tempId found.', () => {
-      const tempId = 'new-123';
-      const dbId = 'abc123';
-      const state = reducer(undefined, actions.resource.created(dbId, tempId));
-
-      expect(selectors.createdResourceId(state, tempId)).toEqual(dbId);
-    });
-  });
-  describe('resourceReferences', () => {
-    test('should return empty object when state is undefined', () => {
-      expect(selectors.resourceReferences(undefined)).toEqual({});
-    });
-    test(`should return references for valid state`, () => {
+    test(`should not delete new id from other parts of the store`, () => {
       const testReferences = {
         imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
         exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
       };
-      const state = reducer(
+      const tempId = 'new123';
+      const dbId = 'abc123';
+      let state = reducer(
         undefined,
         actions.resource.receivedReferences(testReferences)
       );
 
-      expect(selectors.resourceReferences(state)).toEqual(state.references);
+      state = reducer(state, actions.resource.created(dbId, tempId));
+
+      expect(state.new123).toEqual(dbId);
+
+      state = reducer(state, actions.resource.clearReferences());
+      expect(state.new123).toEqual(dbId);
+    });
+  });
+
+  describe('session.resource selectors', () => {
+    describe(`createdResourceId`, () => {
+      test('should return undefined when no match found.', () => {
+        expect(selectors.createdResourceId(undefined, 'tempId')).toEqual(
+          undefined
+        );
+        expect(selectors.createdResourceId({}, 'tempId')).toEqual(undefined);
+      });
+
+      test('should return correct newly created ID when match against tempId found.', () => {
+        const tempId = 'new-123';
+        const dbId = 'abc123';
+        const state = reducer(
+          undefined,
+          actions.resource.created(dbId, tempId)
+        );
+
+        expect(selectors.createdResourceId(state, tempId)).toEqual(dbId);
+      });
+    });
+    describe('resourceReferences', () => {
+      test('should return empty object when state is undefined', () => {
+        expect(selectors.resourceReferences(undefined)).toEqual(null);
+      });
+      test(`should return references for valid state`, () => {
+        const testReferences = {
+          imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
+          exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
+        };
+        const state = reducer(
+          undefined,
+          actions.resource.receivedReferences(testReferences)
+        );
+        const { references } = state;
+        const refResult = Object.keys(references).map(type => ({
+          resourceType: type,
+          references: references[type],
+        }));
+
+        expect(selectors.resourceReferences(state)).toEqual(refResult);
+      });
     });
   });
 });

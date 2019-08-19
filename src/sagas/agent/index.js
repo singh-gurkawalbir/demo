@@ -3,7 +3,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { MASK_SENSITIVE_INFO_DELAY } from '../../utils/constants';
 
 export function* displayToken({ id }) {
   const { path, opts } = getRequestOptions(actionTypes.AGENT.TOKEN_DISPLAY, {
@@ -22,7 +21,7 @@ export function* displayToken({ id }) {
   }
 
   yield put(actions.agent.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_SENSITIVE_INFO_DELAY);
+  yield delay(process.env.MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.agent.maskToken({ _id: id }));
 }
 
@@ -43,7 +42,7 @@ export function* changeToken({ id }) {
   }
 
   yield put(actions.agent.tokenReceived({ ...response, _id: id }));
-  yield delay(MASK_SENSITIVE_INFO_DELAY);
+  yield delay(process.env.MASK_SENSITIVE_INFO_DELAY);
   yield put(actions.agent.maskToken({ _id: id }));
 }
 

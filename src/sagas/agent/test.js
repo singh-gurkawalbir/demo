@@ -5,7 +5,6 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { displayToken, changeToken, downloadInstaller } from './';
-import { MASK_SENSITIVE_INFO_DELAY } from '../../utils/constants';
 
 describe('agent tokens sagas', () => {
   describe('displayToken saga', () => {
@@ -37,7 +36,9 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_SENSITIVE_INFO_DELAY));
+      expect(saga.next().value).toEqual(
+        delay(process.env.MASK_SENSITIVE_INFO_DELAY)
+      );
       expect(saga.next().value).toEqual(
         put(
           actions.agent.maskToken({
@@ -94,7 +95,9 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_SENSITIVE_INFO_DELAY));
+      expect(saga.next().value).toEqual(
+        delay(process.env.MASK_SENSITIVE_INFO_DELAY)
+      );
       expect(saga.next().value).toEqual(
         put(
           actions.agent.maskToken({

@@ -43,25 +43,25 @@ function ResourceReferences(props) {
   return (
     <Dialog onClose={onClose} aria-labelledby="resource-references" open>
       {resourceReferences &&
-        (Object.keys(resourceReferences).length !== 0 ? (
+        (resourceReferences.length !== 0 ? (
           <Fragment>
             <DialogTitle id="resource-references">
               {`${MODEL_PLURAL_TO_LABEL[type]} References:`}
             </DialogTitle>
             <List>
-              {Object.keys(resourceReferences).map(resourceType => (
-                <ListItem key={resourceType}>
-                  <ListItemText primary={`${resourceType}:`} />
+              {resourceReferences.map(refObject => (
+                <ListItem key={refObject.resourceType}>
+                  <ListItemText primary={`${refObject.resourceType}:`} />
                   <List>
-                    {resourceReferences[resourceType].map(resource => (
-                      <ListItem key={resource.id}>
+                    {refObject.references.map(reference => (
+                      <ListItem key={reference.id}>
                         <Link
                           to={getRoutePath(
-                            `${resourceType}/edit/${resource.id}`
+                            `${refObject.resourceType}/edit/${reference.id}`
                           )}
                           onClick={onClose}
                           className={classes.ReferenceLink}>
-                          <ListItemText primary={resource.name} />
+                          <ListItemText primary={reference.name} />
                         </Link>
                         <Divider />
                       </ListItem>

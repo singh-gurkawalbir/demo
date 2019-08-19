@@ -371,6 +371,7 @@ describe('isAgentOnline selector', () => {
     expect(selectors.isAgentOnline(state, 567)).toEqual(false);
   });
   test('should return true when diff b/w current and lastHeartbeatAt is less than 10 minutes', () => {
+    process.env.AGENT_STATUS_INTERVAL = 600000;
     const currentDate = new Date();
     const testAgents = [
       { _id: 234, name: 'A', lastHeartbeatAt: currentDate },
