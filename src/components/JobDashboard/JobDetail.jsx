@@ -74,13 +74,13 @@ function JobDetail({
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
 
-    if (!expanded && (!job.children || !job.children.length)) {
+    if (!expanded && (!job.children || job.children.length === 0)) {
       dispatch(actions.job.requestFamily({ jobId: job._id }));
     }
   }
 
   if (isSelected) {
-    if (!expanded && (!job.children || !job.children.length)) {
+    if (!expanded && (!job.children || job.children.length === 0)) {
       handleExpandCollapseClick();
     }
   }

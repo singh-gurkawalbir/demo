@@ -45,6 +45,7 @@ export default function JobDashboard({
     [dispatch, filters]
   );
 
+  /** Whenever page changes, we need to update the same in state and request for inprogress jobs (in current page) status */
   useEffect(() => {
     dispatch(actions.job.paging.setCurrentPage(currentPage));
     dispatch(actions.job.requestInProgressJobStatus());
@@ -84,6 +85,10 @@ export default function JobDashboard({
     }
   }, [selectedJobs, numJobsSelected]);
 
+  function closeAllOpenSnackbars() {
+    closeSnackbar();
+  }
+
   function handleChangePage(newPage) {
     setCurrentPage(newPage);
   }
@@ -99,223 +104,254 @@ export default function JobDashboard({
     setSelectedJobs(selJobs);
   }
 
+  function resolveAllJobs() {
+    const selectedFlowId = flowId || filters.flowId;
+    const numberOfJobsToResolve = jobs
+      .filter(job => {
+        if (!selectedFlowId) {
+          return true;
+        }
+
+        return job._flowId === selectedFlowId;
+      })
+      .reduce((total, job) => {
+        if (job.numError) {
+          // eslint-disable-next-line no-param-reassign
+          total += 1;
+        }
+
+        if (job.children && job.children.length > 0) {
+          job.children.forEach(cJob => {
+            if (cJob.numError) {
+              // eslint-disable-next-line no-param-reassign
+              total += 1;
+            }
+          });
+        }
+
+        return total;
+      }, 0);
+
+    setSelectedJobs({});
+    closeAllOpenSnackbars();
+    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, integrationId }));
+    enqueueSnackbar({
+      message: `${numberOfJobsToResolve} jobs marked as resolved.`,
+      showUndo: true,
+      autoHideDuration: UNDO_TIME.RESOLVE,
+      handleClose(event, reason) {
+        if (reason === 'undo') {
+          return dispatch(
+            actions.job.resolveAllUndo({
+              flowId: selectedFlowId,
+              integrationId,
+            })
+          );
+        }
+
+        dispatch(
+          actions.job.resolveAllCommit({
+            flowId: selectedFlowId,
+            integrationId,
+          })
+        );
+        setActionsToMonitor({
+          resolveAll: {
+            action: flowId
+              ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
+              : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
+            resourceId: flowId || integrationId,
+          },
+        });
+      },
+    });
+  }
+
+  function resolveSelectedJobs() {
+    const jobsToResolve = [];
+
+    Object.keys(selectedJobs).forEach(jobId => {
+      if (
+        selectedJobs[jobId].selectedChildJobIds &&
+        selectedJobs[jobId].selectedChildJobIds.length > 0
+      ) {
+        selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
+          jobsToResolve.push({ _flowJobId: jobId, _id: cJobId });
+        });
+      } else if (selectedJobs[jobId].selected) {
+        jobsToResolve.push({ _id: jobId });
+      }
+    });
+
+    if (jobsToResolve.length === 0) {
+      return false;
+    }
+
+    setSelectedJobs({});
+    closeAllOpenSnackbars();
+    dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
+    enqueueSnackbar({
+      message: `${numJobsSelected} jobs marked as resolved.`,
+      showUndo: true,
+      autoHideDuration: UNDO_TIME.RESOLVE,
+      handleClose(event, reason) {
+        if (reason === 'undo') {
+          jobsToResolve.forEach(job =>
+            dispatch(
+              actions.job.resolveUndo({
+                parentJobId: job._flowJobId || job._id,
+                childJobId: job._flowJobId ? job._id : null,
+              })
+            )
+          );
+
+          return false;
+        }
+
+        dispatch(
+          actions.job.resolveCommit({
+            jobs: jobsToResolve,
+          })
+        );
+      },
+    });
+  }
+
+  function retryAllJobs() {
+    const selectedFlowId = flowId || filters.flowId;
+    const numberOfJobsToRetry = jobs
+      .filter(job => {
+        if (!selectedFlowId) {
+          return true;
+        }
+
+        return job._flowId === selectedFlowId;
+      })
+      .reduce((total, job) => {
+        if (job.numError > 0) {
+          // eslint-disable-next-line no-param-reassign
+          total += 1;
+        }
+
+        if (job.children && job.children.length > 0) {
+          job.children.forEach(cJob => {
+            if (cJob.retriable) {
+              // eslint-disable-next-line no-param-reassign
+              total += 1;
+            }
+          });
+        }
+
+        return total;
+      }, 0);
+
+    setSelectedJobs({});
+    closeAllOpenSnackbars();
+    dispatch(actions.job.retryAll({ flowId: selectedFlowId, integrationId }));
+    enqueueSnackbar({
+      message: `${numberOfJobsToRetry} jobs retried.`,
+      showUndo: true,
+      autoHideDuration: UNDO_TIME.RETRY,
+      handleClose(event, reason) {
+        if (reason === 'undo') {
+          return dispatch(actions.job.retryAllUndo());
+        }
+
+        dispatch(
+          actions.job.retryAllCommit({
+            flowId: selectedFlowId,
+            integrationId,
+          })
+        );
+        setActionsToMonitor({
+          retryAll: {
+            action: flowId
+              ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
+              : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
+            resourceId: flowId || integrationId,
+          },
+        });
+      },
+    });
+  }
+
+  function retrySelectedJobs() {
+    const jobsToRetry = [];
+
+    Object.keys(selectedJobs).forEach(jobId => {
+      if (
+        selectedJobs[jobId].selectedChildJobIds &&
+        selectedJobs[jobId].selectedChildJobIds.length > 0
+      ) {
+        selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
+          jobsToRetry.push({ _flowJobId: jobId, _id: cJobId });
+        });
+      } else if (selectedJobs[jobId].selected) {
+        jobsToRetry.push({ _id: jobId });
+      }
+    });
+
+    if (jobsToRetry.length === 0) {
+      return false;
+    }
+
+    setSelectedJobs({});
+    closeAllOpenSnackbars();
+    dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
+    enqueueSnackbar({
+      message: `${numJobsSelected} jobs retried.`,
+      showUndo: true,
+      autoHideDuration: UNDO_TIME.RETRY,
+      handleClose(event, reason) {
+        if (reason === 'undo') {
+          jobsToRetry.forEach(job =>
+            dispatch(
+              actions.job.retryUndo({
+                parentJobId: job._flowJobId || job._id,
+                childJobId: job._flowJobId ? job._id : null,
+              })
+            )
+          );
+
+          return false;
+        }
+
+        dispatch(
+          actions.job.retryCommit({
+            jobs: jobsToRetry,
+          })
+        );
+      },
+    });
+  }
+
   function handleActionClick(action) {
     if (action === 'resolveAll') {
-      const selectedFlowId = flowId || filters.flowId;
-      const numberOfJobsToResolve = jobs
-        .filter(job => {
-          if (!selectedFlowId) {
-            return true;
-          }
-
-          return job._flowId === selectedFlowId;
-        })
-        .reduce((total, job) => {
-          if (job.numError) {
-            // eslint-disable-next-line no-param-reassign
-            total += 1;
-          }
-
-          if (job.children && job.children.length > 0) {
-            job.children.forEach(cJob => {
-              if (cJob.numError) {
-                // eslint-disable-next-line no-param-reassign
-                total += 1;
-              }
-            });
-          }
-
-          return total;
-        }, 0);
-
-      setSelectedJobs({});
-      closeSnackbar();
-      dispatch(
-        actions.job.resolveAll({ flowId: selectedFlowId, integrationId })
-      );
-      enqueueSnackbar({
-        message: `${numberOfJobsToResolve} jobs marked as resolved.`,
-        showUndo: true,
-        autoHideDuration: UNDO_TIME.RESOLVE,
-        handleClose(event, reason) {
-          if (reason === 'undo') {
-            return dispatch(
-              actions.job.resolveAllUndo({
-                flowId: selectedFlowId,
-                integrationId,
-              })
-            );
-          }
-
-          dispatch(
-            actions.job.resolveAllCommit({
-              flowId: selectedFlowId,
-              integrationId,
-            })
-          );
-          setActionsToMonitor({
-            resolveAll: {
-              action: flowId
-                ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
-                : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
-              resourceId: flowId || integrationId,
-            },
-          });
-        },
-      });
+      resolveAllJobs();
     } else if (action === 'resolveSelected') {
-      const jobsToResolve = [];
-
-      Object.keys(selectedJobs).forEach(jobId => {
-        if (
-          selectedJobs[jobId].selectedChildJobIds &&
-          selectedJobs[jobId].selectedChildJobIds.length > 0
-        ) {
-          selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
-            jobsToResolve.push({ _flowJobId: jobId, _id: cJobId });
-          });
-        } else if (selectedJobs[jobId].selected) {
-          jobsToResolve.push({ _id: jobId });
-        }
-      });
-
-      if (jobsToResolve.length === 0) {
-        return false;
-      }
-
-      setSelectedJobs({});
-      closeSnackbar();
-      dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
-      enqueueSnackbar({
-        message: `${numJobsSelected} jobs marked as resolved.`,
-        showUndo: true,
-        autoHideDuration: UNDO_TIME.RESOLVE,
-        handleClose(event, reason) {
-          if (reason === 'undo') {
-            jobsToResolve.forEach(job =>
-              dispatch(
-                actions.job.resolveUndo({
-                  parentJobId: job._flowJobId || job._id,
-                  childJobId: job._flowJobId ? job._id : null,
-                })
-              )
-            );
-
-            return false;
-          }
-
-          dispatch(
-            actions.job.resolveCommit({
-              jobs: jobsToResolve,
-            })
-          );
-        },
-      });
+      resolveSelectedJobs();
     } else if (action === 'retryAll') {
-      const selectedFlowId = flowId || filters.flowId;
-      const numberOfJobsToRetry = jobs
-        .filter(job => {
-          if (!selectedFlowId) {
-            return true;
-          }
-
-          return job._flowId === selectedFlowId;
-        })
-        .reduce((total, job) => {
-          if (job.numError > 0) {
-            // eslint-disable-next-line no-param-reassign
-            total += 1;
-          }
-
-          if (job.children && job.children.length > 0) {
-            job.children.forEach(cJob => {
-              if (cJob.retriable) {
-                // eslint-disable-next-line no-param-reassign
-                total += 1;
-              }
-            });
-          }
-
-          return total;
-        }, 0);
-
-      setSelectedJobs({});
-      closeSnackbar();
-      dispatch(actions.job.retryAll({ flowId: selectedFlowId, integrationId }));
-      enqueueSnackbar({
-        message: `${numberOfJobsToRetry} jobs retried.`,
-        showUndo: true,
-        autoHideDuration: UNDO_TIME.RETRY,
-        handleClose(event, reason) {
-          if (reason === 'undo') {
-            return dispatch(actions.job.retryAllUndo());
-          }
-
-          dispatch(
-            actions.job.retryAllCommit({
-              flowId: selectedFlowId,
-              integrationId,
-            })
-          );
-          setActionsToMonitor({
-            retryAll: {
-              action: flowId
-                ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
-                : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
-              resourceId: flowId || integrationId,
-            },
-          });
-        },
-      });
+      retryAllJobs();
     } else if (action === 'retrySelected') {
-      const jobsToRetry = [];
-
-      Object.keys(selectedJobs).forEach(jobId => {
-        if (
-          selectedJobs[jobId].selectedChildJobIds &&
-          selectedJobs[jobId].selectedChildJobIds.length > 0
-        ) {
-          selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
-            jobsToRetry.push({ _flowJobId: jobId, _id: cJobId });
-          });
-        } else if (selectedJobs[jobId].selected) {
-          jobsToRetry.push({ _id: jobId });
-        }
-      });
-
-      if (jobsToRetry.length === 0) {
-        return false;
-      }
-
-      setSelectedJobs({});
-      closeSnackbar();
-      dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
-      enqueueSnackbar({
-        message: `${numJobsSelected} jobs retried.`,
-        showUndo: true,
-        autoHideDuration: UNDO_TIME.RETRY,
-        handleClose(event, reason) {
-          if (reason === 'undo') {
-            jobsToRetry.forEach(job =>
-              dispatch(
-                actions.job.retryUndo({
-                  parentJobId: job._flowJobId || job._id,
-                  childJobId: job._flowJobId ? job._id : null,
-                })
-              )
-            );
-
-            return false;
-          }
-
-          dispatch(
-            actions.job.retryCommit({
-              jobs: jobsToRetry,
-            })
-          );
-        },
-      });
+      retrySelectedJobs();
     }
+  }
+
+  function commStatusHandler(objStatus) {
+    ['resolveAll', 'resolveSelected', 'retryAll', 'retrySelected'].forEach(
+      action => {
+        if (
+          objStatus[action] &&
+          [COMM_STATES.ERROR].includes(objStatus[action].status) &&
+          objStatus[action].message
+        ) {
+          enqueueSnackbar({
+            message: objStatus[action].message,
+            variant: objStatus[action].status,
+          });
+        }
+      }
+    );
   }
 
   return (
@@ -323,30 +359,7 @@ export default function JobDashboard({
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
-        commStatusHandler={objStatus => {
-          const messages = {
-            retryAll: {
-              [COMM_STATES.ERROR]: `${objStatus.retryAll &&
-                objStatus.retryAll.message}`,
-            },
-          };
-
-          ['retryAll'].forEach(a => {
-            if (
-              objStatus[a] &&
-              [COMM_STATES.ERROR].includes(objStatus[a].status)
-            ) {
-              if (!messages[a] || !messages[a][objStatus[a].status]) {
-                return;
-              }
-
-              enqueueSnackbar({
-                message: messages[a][objStatus[a].status],
-                variant: objStatus[a].status,
-              });
-            }
-          });
-        }}
+        commStatusHandler={commStatusHandler}
       />
       {!flowId && integration && <Typography>{integration.name}</Typography>}
       <Filters
