@@ -210,7 +210,7 @@ describe('job sagas', () => {
         put(actions.job.receivedCollection({ collection: jobs }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -240,7 +240,7 @@ describe('job sagas', () => {
         put(actions.job.receivedCollection({ collection: jobs }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -270,7 +270,7 @@ describe('job sagas', () => {
         put(actions.job.receivedCollection({ collection: jobs }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -786,7 +786,7 @@ describe('job sagas', () => {
         all(['fj1', 'fj2'].map(jobId => call(getJobFamily, { jobId })))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -1075,7 +1075,7 @@ describe('job sagas', () => {
         put(actions.job.receivedFamily({ job: bulkRetryJob }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -1105,7 +1105,7 @@ describe('job sagas', () => {
         put(actions.job.receivedFamily({ job: bulkRetryJob }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.job.getInProgressJobStatus())
+        put(actions.job.requestInProgressJobStatus())
       );
       expect(saga.next().done).toEqual(true);
     });

@@ -107,7 +107,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   }
 
   yield put(actions.job.receivedCollection({ collection }));
-  yield put(actions.job.getInProgressJobStatus());
+  yield put(actions.job.requestInProgressJobStatus());
 }
 
 export function* getJobCollection({ integrationId, flowId, filters = {} }) {
@@ -279,7 +279,7 @@ export function* retryCommit({ jobs = [] }) {
   });
 
   yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
-  yield put(actions.job.getInProgressJobStatus());
+  yield put(actions.job.requestInProgressJobStatus());
 }
 
 export function* retrySelected({ jobs }) {
@@ -360,7 +360,7 @@ export function* retryAllCommit({ flowId, integrationId }) {
   }
 
   yield put(actions.job.receivedFamily({ job }));
-  yield put(actions.job.getInProgressJobStatus());
+  yield put(actions.job.requestInProgressJobStatus());
 }
 
 export function* retryAll({ flowId, integrationId }) {

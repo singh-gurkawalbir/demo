@@ -47,7 +47,7 @@ export default function JobDashboard({
 
   useEffect(() => {
     dispatch(actions.job.paging.setCurrentPage(currentPage));
-    dispatch(actions.job.getInProgressJobStatus());
+    dispatch(actions.job.requestInProgressJobStatus());
   }, [dispatch, currentPage]);
 
   useEffect(() => {
