@@ -36,6 +36,12 @@ import {
   requestRetryObjectCollection,
   requestJobErrorCollection,
   requestRetryObjectAndJobErrorCollection,
+  getJobErrors,
+  downloaErrorFile,
+  resolveSelectedErrors,
+  retrySelectedRetries,
+  requestRetryData,
+  updateRetryData,
 } from './';
 import * as selectors from '../../reducers/index';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
@@ -1372,6 +1378,294 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         call(requestJobErrorCollection, { jobId })
       );
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('getJobErrors saga', () => {
+    test('should fork requestRetryObjectAndJobErrorCollection, waits for job error clear action and then cancels requestRetryObjectAndJobErrorCollection', () => {
+      const jobId = 'something';
+      const saga = getJobErrors({ jobId });
+
+      expect(saga.next().value).toEqual(
+        fork(requestRetryObjectAndJobErrorCollection, { jobId })
+      );
+
+      const watcherTask = createMockTask();
+
+      expect(saga.next(watcherTask).value).toEqual(
+        take(actionTypes.JOB.ERROR.CLEAR)
+      );
+      expect(saga.next().value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('downloaErrorFile saga', () => {
+    test('should succeed on successful api call', () => {
+      const jobId = 'something';
+      const saga = downloaErrorFile({ jobId });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.REQUEST_ERROR_FILE_URL,
+        { resourceId: jobId }
+      );
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+      );
+      const response = { signedURL: 'some url' };
+
+      expect(saga.next(response).value).toEqual(
+        call(openExternalUrl, { url: response.signedURL })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('should handle api error properly', () => {
+      const jobId = 'something';
+      const saga = downloaErrorFile({ jobId });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.REQUEST_ERROR_FILE_URL,
+        { resourceId: jobId }
+      );
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+      );
+      expect(saga.throw(new Error()).value).toEqual(true);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('resolveSelectedErrors saga', () => {
+    const dataIn = {
+      flowJobId: 'fj1',
+      jobId: 'fj1i1',
+      selectedErrorIds: ['e1', 'e3', 'e4'],
+    };
+    const jobErrors = [
+      {
+        _id: 'e1',
+        createdAtAsString: 'cas1',
+        source: 's1',
+        code: 'c1',
+        some: 'thing',
+      },
+      {
+        _id: 'e2',
+        createdAtAsString: 'cas2',
+        source: 's1',
+        code: 'c2',
+        something: 'else',
+      },
+      {
+        _id: 'e3',
+        createdAtAsString: 'cas3',
+        source: 's2',
+        code: 'c3',
+        some: 'thing',
+      },
+      {
+        _id: 'e4',
+        createdAtAsString: 'cas4',
+        source: 's2',
+        code: 'c3',
+        something: 'something',
+      },
+      {
+        _id: 'e5',
+        createdAtAsString: 'cas5',
+        source: 's1',
+        code: 'c1',
+        some: 'thing',
+      },
+    ];
+
+    test('should succeed on successful api call', () => {
+      const saga = resolveSelectedErrors(dataIn);
+
+      expect(saga.next().value).toEqual(
+        put(
+          actions.job.resolveSelectedErrorsInit({
+            selectedErrorIds: dataIn.selectedErrorIds,
+          })
+        )
+      );
+      expect(saga.next().value).toEqual(
+        select(selectors.jobErrors, dataIn.jobId)
+      );
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.RESOLVE_SELECTED,
+        {
+          resourceId: dataIn.jobId,
+        }
+      );
+
+      opts.body = jobErrors.map(je => {
+        const { _id, createdAtAsString, ...rest } = je;
+
+        return { ...rest };
+      });
+      expect(saga.next(jobErrors).value).toEqual(
+        call(apiCallWithRetry, { path, opts })
+      );
+      expect(saga.next().value).toEqual(
+        call(getJobFamily, { jobId: dataIn.flowJobId })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('should handle api error properly', () => {
+      const saga = resolveSelectedErrors(dataIn);
+
+      expect(saga.next().value).toEqual(
+        put(
+          actions.job.resolveSelectedErrorsInit({
+            selectedErrorIds: dataIn.selectedErrorIds,
+          })
+        )
+      );
+      expect(saga.next().value).toEqual(
+        select(selectors.jobErrors, dataIn.jobId)
+      );
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.RESOLVE_SELECTED,
+        {
+          resourceId: dataIn.jobId,
+        }
+      );
+
+      opts.body = jobErrors.map(je => {
+        const { _id, createdAtAsString, ...rest } = je;
+
+        return { ...rest };
+      });
+      expect(saga.next(jobErrors).value).toEqual(
+        call(apiCallWithRetry, { path, opts })
+      );
+      expect(saga.throw(new Error()).value).toEqual(true);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('retrySelectedRetries saga', () => {
+    const jobId = 'j1';
+    const flowJobId = 'f1';
+    const selectedRetryIds = ['r1', 'r3'];
+
+    test('should succeed on successful api call', () => {
+      const saga = retrySelectedRetries({ jobId, flowJobId, selectedRetryIds });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.RETRY_SELECTED,
+        {
+          resourceId: jobId,
+        }
+      );
+
+      opts.body = selectedRetryIds;
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+      expect(saga.next().value).toEqual(
+        call(getJobFamily, { jobId: flowJobId })
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('should handle api error properly', () => {
+      const saga = retrySelectedRetries({ jobId, flowJobId, selectedRetryIds });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.RETRY_SELECTED,
+        {
+          resourceId: jobId,
+        }
+      );
+
+      opts.body = selectedRetryIds;
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+      expect(saga.throw(new Error()).value).toEqual(true);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('requestRetryData saga', () => {
+    const retryId = 'r1';
+
+    test('should succeed on successful api call', () => {
+      const saga = requestRetryData({ retryId });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.REQUEST_RETRY_DATA,
+        {
+          resourceId: retryId,
+        }
+      );
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+      const retryData = { some: 'thing', someThing: 'else' };
+
+      expect(saga.next(retryData).value).toEqual(
+        put(actions.job.receivedRetryData({ retryData, retryId }))
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('should handle api error properly', () => {
+      const saga = requestRetryData({ retryId });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.REQUEST_RETRY_DATA,
+        {
+          resourceId: retryId,
+        }
+      );
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+
+      expect(saga.throw(new Error()).value).toEqual(true);
+      expect(saga.next().done).toEqual(true);
+    });
+  });
+
+  describe('updateRetryData saga', () => {
+    const retryId = 'r1';
+    const retryData = { something: 'some thing else', nothing: 'some thing' };
+
+    test('should succeed on successful api call', () => {
+      const saga = updateRetryData({ retryId, retryData });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.UPDATE_RETRY_DATA,
+        {
+          resourceId: retryId,
+        }
+      );
+
+      opts.body = retryData;
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+      expect(saga.next().value).toEqual(
+        put(actions.job.receivedRetryData({ retryData, retryId }))
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('should handle api error properly', () => {
+      const saga = updateRetryData({ retryId, retryData });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.ERROR.UPDATE_RETRY_DATA,
+        {
+          resourceId: retryId,
+        }
+      );
+
+      opts.body = retryData;
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+      expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
   });

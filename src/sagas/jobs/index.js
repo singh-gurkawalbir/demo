@@ -427,11 +427,9 @@ export function* requestRetryObjectAndJobErrorCollection({ jobId }) {
   yield call(requestJobErrorCollection, { jobId });
 }
 
-export function* getJobErrors({ jobType, jobId, parentJobId }) {
+export function* getJobErrors({ jobId }) {
   const watcher = yield fork(requestRetryObjectAndJobErrorCollection, {
-    jobType,
     jobId,
-    parentJobId,
   });
 
   yield take(actionTypes.JOB.ERROR.CLEAR);
@@ -453,9 +451,12 @@ export function* downloaErrorFile({ jobId }) {
       path,
       opts,
     });
-    openExternalUrl({ url: response.signedURL });
   } catch (e) {
     return true;
+  }
+
+  if (response && response.signedURL) {
+    yield call(openExternalUrl, { url: response.signedURL });
   }
 }
 
@@ -485,10 +486,11 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
       path,
       opts,
     });
-    yield call(getJobFamily, { jobId: flowJobId });
   } catch (e) {
     return true;
   }
+
+  yield call(getJobFamily, { jobId: flowJobId });
 }
 
 export function* retrySelectedRetries({ jobId, flowJobId, selectedRetryIds }) {
@@ -506,10 +508,11 @@ export function* retrySelectedRetries({ jobId, flowJobId, selectedRetryIds }) {
       path,
       opts,
     });
-    yield call(getJobFamily, { jobId: flowJobId });
   } catch (e) {
     return true;
   }
+
+  yield call(getJobFamily, { jobId: flowJobId });
 }
 
 export function* requestRetryData({ retryId }) {
@@ -519,17 +522,18 @@ export function* requestRetryData({ retryId }) {
       resourceId: retryId,
     }
   );
+  let retryData;
 
   try {
-    const retryData = yield call(apiCallWithRetry, {
+    retryData = yield call(apiCallWithRetry, {
       path,
       opts,
     });
-
-    yield put(actions.job.receivedRetryData({ retryData, retryId }));
   } catch (e) {
     return true;
   }
+
+  yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
 export function* updateRetryData({ retryId, retryData }) {
@@ -543,15 +547,15 @@ export function* updateRetryData({ retryId, retryData }) {
   opts.body = retryData;
 
   try {
-    const retryData = yield call(apiCallWithRetry, {
+    yield call(apiCallWithRetry, {
       path,
       opts,
     });
-
-    yield put(actions.job.receivedRetryData({ retryData, retryId }));
   } catch (e) {
     return true;
   }
+
+  yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
 export const jobSagas = [
