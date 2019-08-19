@@ -97,6 +97,6 @@ export function createdResourceId(state, tempId) {
 }
 
 export function resourceReferences(state) {
-  return fromResource.resourceReferences(state.resource);
+  return fromResource.resourceReferences(state && state.resource);
 }
 // #endregion
