@@ -96,9 +96,6 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
-
-      expect(clearAppError).toHaveBeenCalledTimes(0);
-
       const { rerender } = render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
