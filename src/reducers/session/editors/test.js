@@ -213,16 +213,28 @@ describe('editor selectors', () => {
       },
       {
         processor: 'handlebars',
-        valid: {
-          initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
-          expectedRequest: {
-            body: {
-              data: { a: 123 },
-              rules: { strict: true, template: '{{a}}' },
+        valid: [
+          {
+            initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: { a: 123 },
+                rules: { strict: true, template: '{{a}}' },
+              },
+              processor: 'handlebars',
             },
-            processor: 'handlebars',
           },
-        },
+          {
+            initOpts: { template: 'Test', strict: true, data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: { a: 123 },
+                rules: { strict: true, template: 'Test' },
+              },
+              processor: 'handlebars',
+            },
+          },
+        ],
         invalid: {
           initOpts: { template: '{{a}', data: '{a: xxx}' },
           violations: { dataError: 'Unexpected token a in JSON at position 1' },
@@ -366,16 +378,28 @@ describe('editor selectors', () => {
       },
       {
         processor: 'merge',
-        valid: {
-          initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
-          expectedRequest: {
-            body: {
-              data: [{ a: 123 }],
-              rules: { b: true },
+        valid: [
+          {
+            initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: [{ a: 123 }],
+                rules: { b: true },
+              },
+              processor: 'merge',
             },
-            processor: 'merge',
           },
-        },
+          {
+            initOpts: { rule: '[{"a": 1}]', data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: [{ a: 123 }],
+                rules: [{ a: 1 }],
+              },
+              processor: 'merge',
+            },
+          },
+        ],
         invalid: {
           initOpts: { rule: '{a: xx}', data: '{"b": t}' },
           violations: {

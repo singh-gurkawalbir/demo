@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 
 export default function DynaScriptContent(props) {
   const { id, onFieldChange, resourceId } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', resourceId);
 

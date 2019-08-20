@@ -90,9 +90,11 @@ export const loadJsonHints = value => {
 };
 
 export const handleBarsCompleters = {
-  setCompleters: (jsonData, helperFunctions) => {
-    JsonCompleter.jsonHints = loadJsonHints(jsonData);
+  setFunctionCompleter: helperFunctions => {
     FunctionCompleter.functionsHints = helperFunctions;
+  },
+  setJsonCompleter: jsonData => {
+    JsonCompleter.jsonHints = loadJsonHints(jsonData);
   },
   getCompleters: () => ({
     JsonCompleter,

@@ -13,6 +13,8 @@ export const availableResources = [
   'flows',
 ];
 
+export const availableOSTypes = ['windows', 'linux', 'macOS'];
+
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
 // a type are symmetrical in shape by generating them via "action creator"
@@ -79,6 +81,7 @@ const resource = {
       resourceType,
       id,
     }),
+
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
 
   receivedReferences: resourceReferences =>
@@ -237,6 +240,15 @@ const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const agent = {
+  displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
+  changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
+  tokenReceived: agentToken =>
+    action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
+  downloadInstaller: (osType, id) =>
+    action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
+};
 const user = {
   profile: {
     request: message => resource.request('profile', undefined, message),
@@ -384,4 +396,5 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  agent,
 };

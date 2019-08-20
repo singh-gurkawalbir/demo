@@ -79,7 +79,7 @@ class TitleBar extends Component {
         </div>
         <Button
           component={Link}
-          to={getRoutePath(`${resourceType}/add/new-${shortid.generate()}`)}>
+          to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>
           + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
         </Button>
       </div>

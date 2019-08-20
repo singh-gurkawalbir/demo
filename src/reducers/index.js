@@ -102,6 +102,12 @@ export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }
 
+export function agentAccessToken(state, id) {
+  if (!state) return {};
+
+  return fromSession.agentAccessToken(state.session, id);
+}
+
 export function editor(state, id) {
   if (!state) return {};
 
@@ -377,7 +383,7 @@ export function resourceList(state, options) {
 }
 
 export function resourceReferences(state) {
-  return fromSession.resourceReferences(state.session);
+  return fromSession.resourceReferences(state && state.session);
 }
 
 export function resourceDetailsMap(state) {
@@ -386,6 +392,10 @@ export function resourceDetailsMap(state) {
 
 export function processors(state) {
   return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion

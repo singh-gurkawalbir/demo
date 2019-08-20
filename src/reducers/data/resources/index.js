@@ -63,7 +63,6 @@ export default (state = {}, action) => {
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
-
     case actionTypes.RESOURCE.DELETED:
       return {
         ...state,
@@ -193,5 +192,18 @@ export function resourceDetailsMap(state) {
   });
 
   return allResources;
+}
+
+export function isAgentOnline(state, agentId) {
+  if (!state) return false;
+  const matchingAgent =
+    state.agents && state.agents.find(r => r._id === agentId);
+
+  return !!(
+    matchingAgent &&
+    matchingAgent.lastHeartbeatAt &&
+    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+      process.env.AGENT_STATUS_INTERVAL
+  );
 }
 // #endregion

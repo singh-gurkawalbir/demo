@@ -40,7 +40,7 @@ export default function SelectApplication(props) {
     onFieldChange,
   } = props;
   // Custom styles for Select Control
-  const classes = useStyles(props);
+  const classes = useStyles();
   const theme = useTheme();
   const customStyles = {
     option: (provided, state) => ({
