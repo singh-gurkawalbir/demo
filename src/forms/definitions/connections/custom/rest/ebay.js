@@ -16,11 +16,10 @@ export default {
     }.ebay.com/identity/v1/oauth2/token`,
     '/rest/scopeDelimiter': ' ',
     '/rest/tokenLocation': 'header',
-    '/rest/scope': `${
+    '/rest/scope':
       formValues['/accountType'] === 'sandbox'
         ? formValues['/rest/scopeSandbox']
-        : formValues['/rest/scopeProduction']
-    }`,
+        : formValues['/rest/scopeProduction'],
   }),
   fields: [
     { fieldId: 'name' },

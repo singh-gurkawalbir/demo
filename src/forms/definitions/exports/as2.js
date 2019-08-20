@@ -2,7 +2,7 @@ export default {
   fields: [
     { formId: 'common' },
     {
-      fieldId: 'exportData',
+      id: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
