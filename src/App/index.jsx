@@ -12,6 +12,7 @@ import AppBar from './AppBar';
 import themeProvider from '../theme/themeProvider';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import AuthDialog from '../components/AuthDialog';
+import AppErroredModal from './AppErroredModal';
 
 const mapStateToProps = state => ({
   reloadCount: selectors.reloadCount(state),
@@ -79,8 +80,8 @@ class App extends Component {
           <Fragment>
             {showSnackBar && <NetworkSnackbar />}
             <AppBar themeName={themeName} />
+            <AppErroredModal />
             <AuthDialog />
-
             <ConnectedAppRoutingWithAuth />
           </Fragment>
         </BrowserRouter>

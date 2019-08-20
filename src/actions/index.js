@@ -297,6 +297,8 @@ const user = {
   },
 };
 const reloadApp = () => action(actionTypes.RELOAD_APP);
+const appErrored = () => action(actionTypes.APP_ERRORED);
+const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -380,6 +382,8 @@ const accessToken = {
 // #endregion
 
 export default {
+  clearAppError,
+  appErrored,
   metadata,
   cancelTask,
   reloadApp,
