@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     backgroundColor: fade(theme.palette.secondary.light, 0.9),
-    transition: theme.transitions.create(['background-color']),
+    color: theme.palette.common.white,
   },
 }));
 

@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '16px 48px auto 80px',
+    gridTemplateRows: '16px 48px auto 140px',
     '& > div:first-child': {
       alignSelf: 'end',
       margin: theme.spacing(1, 0, 0, 0.5),
@@ -68,11 +68,8 @@ const useStyles = makeStyles(theme => ({
   menuItem: {
     marginTop: theme.spacing(1),
   },
-  nestedList: {
-    backgroundColor: fade(theme.palette.common.white, 0.05),
-  },
   list: {
-    backgroundColor: fade(theme.palette.common.white, 0.05),
+    backgroundColor: fade(theme.palette.common.white, 0.07),
   },
   listItem: {
     '&:hover': {
@@ -85,6 +82,9 @@ const useStyles = makeStyles(theme => ({
   },
   itemIconRoot: {
     color: 'inherit',
+  },
+  menuList: {
+    overflowY: 'auto',
   },
 }));
 const menuItems = [
@@ -155,7 +155,7 @@ export default function CeligoDrawer({ open = false, onClick }) {
             <MenuIcon />
           </IconButton>
         </div>
-        <div>
+        <div className={classes.menuList}>
           <List className={classes.list}>
             {menuItems.map(({ label, Icon, children }) => (
               <Fragment key={label}>
@@ -172,7 +172,7 @@ export default function CeligoDrawer({ open = false, onClick }) {
                 </ListItem>
                 {children && (
                   <Collapse in={expand[label]} unmountOnExit timeout="auto">
-                    <List className={classes.nestedList} disablePadding>
+                    <List className={classes.list} disablePadding>
                       {children.map(({ label, Icon }) => (
                         <ListItem
                           className={classes.listItem}
