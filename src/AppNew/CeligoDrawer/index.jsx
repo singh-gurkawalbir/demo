@@ -12,9 +12,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import clsx from 'clsx';
+import CeligoLogo from '../../components/CeligoLogo';
+import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -55,10 +56,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '16px 48px auto 140px',
+    gridTemplateRows: '64px auto 140px',
     '& > div:first-child': {
-      alignSelf: 'end',
-      margin: theme.spacing(1, 0, 0, 0.5),
+      alignSelf: 'center',
     },
     '& > div:last-child': {
       alignSelf: 'end',
@@ -86,6 +86,14 @@ const useStyles = makeStyles(theme => ({
   menuList: {
     overflowY: 'auto',
     overflowX: 'hidden',
+  },
+  logoContainer: {
+    textAlign: 'center',
+  },
+  logo: {
+    width: 90,
+    display: 'inline-block',
+    fill: fade(theme.palette.primary.main, 0.8),
   },
 }));
 const menuItems = [
@@ -142,19 +150,21 @@ export default function CeligoDrawer({ open = false, onClick }) {
       }}
       open={open}>
       <div className={classes.menuContainer}>
-        <div className={classes.toolbar} />
         <div>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={onClick}
-            // edge="start"
-            // className={clsx(classes.menuButton, {
-            //   [classes.hide]: open,
-            // })}
-          >
-            <MenuIcon />
-          </IconButton>
+          <div className={classes.logoContainer}>
+            {open ? (
+              <span className={classes.logo}>
+                <CeligoLogo aria-label="open drawer" onClick={onClick} />
+              </span>
+            ) : (
+              <IconButton
+                color="inherit"
+                aria-label="close drawer"
+                onClick={onClick}>
+                <CeligoMarkIcon color="primary" />
+              </IconButton>
+            )}
+          </div>
         </div>
         <div className={classes.menuList}>
           <List className={classes.list}>
