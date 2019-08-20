@@ -54,7 +54,7 @@ export default {
       id: 'rest.unencrypted.endpointVersion',
       type: 'text',
       label: 'Endpoint Version:',
-      helpText: 'Please enter endpoint name of your Acumatica account.',
+      helpText: 'Please enter endpoint version of your Acumatica account.',
       required: true,
       defaultValue: r =>
         (r &&
@@ -69,10 +69,9 @@ export default {
       label: 'Username:',
       required: true,
 
-      helpText: 'Please enter endpoint name of your Acumatica account.',
+      helpText: 'Please enter username of your Acumatica account.',
       defaultValue: r =>
-        (r && r.rest && r.rest.unencrypted && r.rest.unencrypted.username) ||
-        'Default',
+        r && r.rest && r.rest.unencrypted && r.rest.unencrypted.username,
     },
     {
       id: 'password',
@@ -80,13 +79,13 @@ export default {
       inputType: 'password',
       label: 'Password:',
       required: true,
-      helpText: 'Please enter endpoint name of your Acumatica account.',
+      helpText: 'Please enter password of your Acumatica account.',
     },
     {
       id: 'rest.unencrypted.company',
       type: 'text',
       label: 'Company:',
-      helpText: 'Please enter endpoint name of your Acumatica account.',
+      helpText: 'Please enter company name of your Acumatica account.',
     },
   ],
   fieldSets: [

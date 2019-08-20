@@ -1,7 +1,13 @@
 /* global describe, test, expect */
 import { call, put, select } from 'redux-saga/effects';
 import actions, { availableResources } from '../../actions';
-import { commitStagedChanges, getResource, getResourceCollection } from './';
+import {
+  commitStagedChanges,
+  getResource,
+  getResourceCollection,
+  deleteResource,
+  requestReferences,
+} from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
 import * as selectors from '../../reducers';
@@ -241,6 +247,102 @@ availableResources.forEach(type => {
 
       expect(final.done).toBe(true);
       expect(final.value).toBeUndefined();
+    });
+  });
+
+  describe(`deleteResource("${type}", id) saga`, () => {
+    const id = 123;
+
+    test('should succeed on successful api call', () => {
+      // assign
+
+      const saga = deleteResource(actions.resource.delete(type, id));
+      const path = `/${type}/${id}`;
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'DELETE',
+          },
+          message: `Deleting ${type}`,
+        })
+      );
+
+      const effect = saga.next().value;
+
+      expect(effect).toEqual(put(actions.resource.deleted(type, id)));
+
+      const final = saga.next();
+
+      expect(final.done).toBe(true);
+    });
+
+    test('should return undefined if api call fails', () => {
+      // assign
+      const saga = deleteResource(actions.resource.delete(type, id));
+      const path = `/${type}/${id}`;
+      // act
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'DELETE',
+          },
+          message: `Deleting ${type}`,
+        })
+      );
+
+      const final = saga.throw(new Error('some API exception'));
+
+      expect(final.done).toBe(true);
+    });
+  });
+  describe(`requestReferences("${type}", id) saga`, () => {
+    const id = 123;
+
+    test('should succeed on successful api call', () => {
+      // assign
+
+      const saga = requestReferences(
+        actions.resource.requestReferences(type, id)
+      );
+      const path = `/${type}/${id}/dependencies`;
+      const mockResourceReferences = {
+        imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
+        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
+      };
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+
+      const effect = saga.next(mockResourceReferences).value;
+
+      expect(effect).toEqual(
+        put(actions.resource.receivedReferences(mockResourceReferences))
+      );
+
+      const final = saga.next();
+
+      expect(final.done).toBe(true);
+    });
+
+    test('should return undefined if api call fails', () => {
+      // assign
+      const saga = requestReferences(
+        actions.resource.requestReferences(type, id)
+      );
+      const path = `/${type}/${id}/dependencies`;
+      const callEffect = saga.next().value;
+
+      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+
+      const final = saga.throw(new Error('some API exception'));
+
+      expect(final.done).toBe(true);
     });
   });
 });

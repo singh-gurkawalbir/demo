@@ -30,7 +30,7 @@ export default function DynaSelect(props) {
     label,
     onFieldChange,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -63,10 +63,9 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const tempPlaceHolder = placeholder || 'Please Select';
   const defaultItem = (
-    <MenuItem key={tempPlaceHolder} value="">
-      {tempPlaceHolder}
+    <MenuItem key="__placeholder" value="">
+      {placeholder || 'Please Select'}
     </MenuItem>
   );
 

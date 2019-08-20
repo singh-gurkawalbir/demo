@@ -1,21 +1,18 @@
-import { Component } from 'react';
 import EditorDialog from '../EditorDialog';
 import UrlEditor from './';
 
-export default class UrlEditorDialog extends Component {
-  render() {
-    const defaults = {
-      open: true,
-      width: '70vw',
-      height: '55vh',
-    };
-    const { id, rule, data, ...other } = this.props;
-    const props = { ...defaults, ...other };
+export default function UrlEditorDialog(props) {
+  const { id, rule, data, ...rest } = props;
+  const defaults = {
+    layout: 'column',
+    width: '70vw',
+    height: '55vh',
+    open: true,
+  };
 
-    return (
-      <EditorDialog id={id} {...props} showLayoutOptions={false}>
-        <UrlEditor editorId={id} rule={rule} data={data} />
-      </EditorDialog>
-    );
-  }
+  return (
+    <EditorDialog id={id} {...defaults} {...rest} showFullScreen>
+      <UrlEditor editorId={id} rule={rule} data={data} />
+    </EditorDialog>
+  );
 }

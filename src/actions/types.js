@@ -13,9 +13,16 @@ export const REQUEST = 'REQUEST';
 export const REQUEST_COLLECTION = 'REQUEST_COLLECTION';
 export const RECEIVED = 'RECEIVED';
 export const RECEIVED_COLLECTION = 'RECEIVED_COLLECTION';
+const DELETE = 'DELETE';
+const DELETED = 'DELETED';
+const REFERENCES_REQUEST = 'REFERENCES_REQUEST';
+const REFERENCES_CLEAR = 'REFERENCES_CLEAR';
+const REFERENCES_RECEIVED = 'REFERENCES_RECEIVED';
 const METADATA = {
   REQUEST: 'REQUEST_METADATA',
+  REFRESH: 'REFRESH_METADATA',
   RECEIVED_NETSUITE: 'RECEIVED_NETSUITE_METADATA',
+  RECEIVED_ERROR: 'RECEIVED_ERROR',
 };
 const CONNECTORS = {
   REFRESH_METADATA: 'CONNECTORS_REFRESH_METADATA',
@@ -84,12 +91,15 @@ const stageResourceActions = [
   PATCH_FORM_FIELD,
   INIT_CUSTOM_FORM,
 ];
+const resourceSpecificActions = [
+  DELETE,
+  DELETED,
+  REFERENCES_REQUEST,
+  REFERENCES_CLEAR,
+  REFERENCES_RECEIVED,
+];
 
-function createResourceActionTypes(base, includeStagedActions) {
-  const supportedActions = includeStagedActions
-    ? [...baseResourceActions, ...stageResourceActions]
-    : [...baseResourceActions];
-
+function createResourceActionTypes(base, supportedActions) {
   return supportedActions.reduce((acc, type) => {
     acc[type] = `${base}_${type}`;
 
@@ -97,8 +107,12 @@ function createResourceActionTypes(base, includeStagedActions) {
   }, {});
 }
 
-const PROFILE = createResourceActionTypes('PROFILE');
-const RESOURCE = createResourceActionTypes('RESOURCE', true);
+const PROFILE = createResourceActionTypes('PROFILE', baseResourceActions);
+const RESOURCE = createResourceActionTypes('RESOURCE', [
+  ...baseResourceActions,
+  ...stageResourceActions,
+  ...resourceSpecificActions,
+]);
 const RESOURCE_FORM = {
   INIT: 'RESOURCE_FORM_INIT',
   INIT_COMPLETE: 'RESOURCE_FORM_INIT_COMPLETE',
@@ -107,6 +121,13 @@ const RESOURCE_FORM = {
   CLEAR: 'RESOURCE_FORM_CLEAR',
   SAVE_AND_AUTHORIZE: 'SAVE_AND_AUTHORIZE',
   COMMIT_AND_AUTHORIZE: 'COMMIT_AND_AUTHORIZE',
+};
+const AGENT = {
+  TOKEN_DISPLAY: 'AGENT_TOKEN_DISPLAY',
+  TOKEN_CHANGE: 'AGENT_TOKEN_CHANGE',
+  TOKEN_MASK: 'AGENT_TOKEN_MASK',
+  TOKEN_RECEIVED: 'AGENT_TOKEN_RECEIVED',
+  DOWNLOAD_INSTALLER: 'AGENT_DOWNLOAD_INSTALLER',
 };
 const LICENSE_TRIAL_REQUEST = 'LICENSE_TRIAL_REQUEST';
 const LICENSE_TRIAL_ISSUED = 'LICENSE_TRIAL_ISSUED';
@@ -170,6 +191,7 @@ export default {
   EDITOR_REFRESH_HELPER_FUNCTIONS,
   PROFILE,
   RESOURCE,
+  AGENT,
   API_REQUEST,
   API_COMPLETE,
   API_RETRY,

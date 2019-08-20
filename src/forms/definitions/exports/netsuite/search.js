@@ -62,7 +62,6 @@ export default {
     // Search Criteria
     // Sample Data
     //  Tranform  Data
-    { fieldId: 'ftp.exportTransformRecords' },
     { fieldId: 'transform.expression.rules' },
     // Filter  Data
     // Advanced

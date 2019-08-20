@@ -1,22 +1,18 @@
-import { Component } from 'react';
 import EditorDialog from '../EditorDialog';
 import TransformEditor from './';
 
-export default class TransformEditorDialog extends Component {
-  render() {
-    const { id, rule, data, ...other } = this.props;
-    const defaults = {
-      layout: 'column',
-      width: '85vw',
-      height: '60vh',
-      open: true,
-    };
-    const dialogProps = { ...defaults, ...other };
+export default function TransformEditorDialog(props) {
+  const { id, rule, data, ...rest } = props;
+  const defaults = {
+    width: '85vw',
+    height: '60vh',
+    layout: 'column',
+    open: true,
+  };
 
-    return (
-      <EditorDialog {...dialogProps} showLayoutOptions={false}>
-        <TransformEditor editorId={id} rule={rule} data={data} />
-      </EditorDialog>
-    );
-  }
+  return (
+    <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
+      <TransformEditor editorId={id} rule={rule} data={data} />
+    </EditorDialog>
+  );
 }

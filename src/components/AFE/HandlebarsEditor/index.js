@@ -1,50 +1,83 @@
-import { connect } from 'react-redux';
+import { useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import * as completers from '../editorSetup/completers';
 import Editor from '../GenericEditor';
 
-const mapStateToProps = (state, { editorId }) => {
-  const editor = selectors.editor(state, editorId);
-  // update directly to the completers
-  const jsonData = editor.data;
-  const helperFunctions = selectors.editorHelperFunctions(state);
+export default function HandlebarsEditor(props) {
+  const {
+    editorId,
+    layout,
+    templateClassName,
+    ruleTitle,
+    resultTitle,
+    dataTitle,
+    resultMode,
+    dataMode,
+    ruleMode,
+    enableAutocomplete,
+  } = props;
+  const { template, data, result, error, violations } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
+  const handlebarHelperFunction = useSelector(state =>
+    selectors.editorHelperFunctions(state)
+  );
 
-  completers.handleBarsCompleters.setCompleters(jsonData, helperFunctions);
+  completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
 
-  return {
-    rule: editor.template,
-    data: editor.data,
-    result: editor.result ? editor.result.data : '',
-    error: editor.error && editor.error.message,
-    violations: editor.violations,
-  };
-};
-
-const mapDispatchToProps = (dispatch, { editorId, strict, rule, data }) => ({
-  handleRuleChange: rule => {
+  useEffect(() => {
+    completers.handleBarsCompleters.setJsonCompleter(data);
+  }, [data]);
+  const dispatch = useDispatch();
+  const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { template: rule }));
-  },
-  handleDataChange: data => {
+  };
+
+  const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
-  },
-  handleInit: () => {
+  };
+
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
-        strict,
+        strict: props.strict,
         autoEvaluate: true,
         autoEvaluateDelay: 300,
-        template: rule,
-        data,
+        template: props.rule,
+        data: props.data,
       })
     );
     // get Helper functions when the editor intializes
     dispatch(actions.editor.refreshHelperFunctions());
-  },
-  handlePreview: () => {
+  }, [dispatch, editorId, props.data, props.rule, props.strict]);
+  const handlePreview = () => {
     dispatch(actions.editor.evaluateRequest(editorId));
-  },
-});
+  };
 
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(Editor);
+  return (
+    <Editor
+      editorId={editorId}
+      handleInit={handleInit}
+      handleRuleChange={handleRuleChange}
+      handlePreview={handlePreview}
+      handleDataChange={handleDataChange}
+      processor="handlebars"
+      ruleMode={ruleMode}
+      dataMode={dataMode}
+      resultMode={resultMode}
+      layout={layout}
+      templateClassName={templateClassName}
+      ruleTitle={ruleTitle}
+      resultTitle={resultTitle}
+      violations={violations}
+      rule={template}
+      dataTitle={dataTitle}
+      data={data}
+      result={result ? result.data : ''}
+      error={error}
+      enableAutocomplete={enableAutocomplete}
+    />
+  );
+}

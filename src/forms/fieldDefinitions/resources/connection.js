@@ -403,7 +403,7 @@ export default {
   },
   'rest.scope': {
     type: 'selectscopes',
-    label: 'Rest scope',
+    label: 'Configure Scopes',
   },
   'rest.scopeDelimiter': {
     type: 'text',

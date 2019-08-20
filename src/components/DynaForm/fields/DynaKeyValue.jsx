@@ -36,7 +36,7 @@ export default function DynaKeyValue(props) {
     errorMessages,
     isValid,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const [values, setValues] = useState([]);
 
   useEffect(() => {
