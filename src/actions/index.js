@@ -169,6 +169,23 @@ const auditLogs = {
   },
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
+const connectors = {
+  refreshMetadata: (fieldName, id, _integrationId) =>
+    action(actionTypes.CONNECTORS.REFRESH_METADATA, {
+      fieldName,
+      id,
+      _integrationId,
+    }),
+  receivedErrorForRefreshMetadata: () =>
+    action(actionTypes.CONNECTORS.RECEIVED_ERROR_REFRESH_METADATA),
+  receivedMetadataResponse: (metadata, fieldName, id, _integrationId) =>
+    action(actionTypes.CONNECTORS.RECEIVED_METADATA, {
+      metadata,
+      fieldName,
+      id,
+      _integrationId,
+    }),
+};
 const metadata = {
   request: (connectionId, metadataType, mode, filterKey) =>
     action(actionTypes.METADATA.REQUEST, {
@@ -330,6 +347,7 @@ const accessToken = {
 
 export default {
   metadata,
+  connectors,
   cancelTask,
   reloadApp,
   clearComms,

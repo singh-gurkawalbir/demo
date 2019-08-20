@@ -1,231 +1,234 @@
 import Input from '@material-ui/core/Input';
-import { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { useReducer, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { FieldWrapper } from 'react-forms-processor/dist';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
+import deepClone from 'lodash/cloneDeep';
+import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
+import DynaSelect from './DynaSelect';
+import actions from '../../../actions';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing.unit,
     overflowY: 'off',
   },
-  tableWidth: {
-    width: '100%',
+  root: {
+    flexGrow: 1,
   },
   input: {
     flex: '1 1 auto',
+    width: '100%',
     marginRight: theme.spacing.double,
   },
   rowContainer: {
     display: 'flex',
   },
   label: {
-    fontSize: '12px',
+    fontSize: '14px',
   },
-});
+}));
 
-// function KeyValueTable2(props) {
-//   console.log('first one');
-//   const {
-//     classes,
-//     label,
-//     keyName = 'key',
-//     valueName = 'value',
-//     description,
-//     errorMessages,
-//     isValid,
-//   } = props;
-//   const [rule, setRule] = useState([]);
-//   const tableData = rule ? rule.map((r, n) => ({ ...r, row: n })) : [];
+function reducer(state, action) {
+  const { type, value, index, field, lastRowData = {} } = action;
+  const lastRow = {};
 
-//   console.log('second one');
-//   const handleUpdate = (row, event, field) => {
-//     const { value } = event.target;
-//     const { id, onFieldChange } = props;
+  switch (type) {
+    case 'remove':
+      return [
+        ...state.slice(0, index),
+        ...state.slice(index + 1, state.length),
+      ];
+    case 'updateField':
+      if (state[index]) {
+        return [
+          ...state.slice(0, index),
+          Object.assign({}, state[index], { [field]: value }),
+          ...state.slice(index + 1, state.length),
+        ];
+      }
 
-//     // TODO: Why are all these event fn being called here?
-//     // Test if it is even needed...
-//     event.preventDefault();
-//     event.stopPropagation();
-//     event.nativeEvent.stopImmediatePropagation();
+      (state.optionsMap || []).forEach(om => {
+        lastRow[om.id] = om.type === 'select' ? undefined : '';
+      });
+      lastRow[field] = value;
 
-//     if (row !== undefined) {
-//       rule[row][field] = value;
-//     } else {
-//       rule.push({ [field]: value });
-//     }
-
-//     setRule(rule);
-//     onFieldChange(id, rule);
-//   };
-
-//   console.log('third one');
-//   const handleKeyUpdate = row => event =>
-// handleUpdate(row, event, keyName);
-//   const handleValueUpdate = row => event =>
-//  handleUpdate(row, event, valueName);
-//   const isLoading = false;
-//   const options = true;
-//   const onFetchResource = () => {};
-
-//   console.log('final one');
-
-//   return (
-//     <div className={classes.container}>
-//       <FormLabel className={classes.label}>{label}</FormLabel>
-//       <table Style={classes.tableWidth}>
-//         <thead>
-//           <tr>
-//             <th align="left">
-//               <span>row1</span>
-//               {!isLoading && <RefreshIcon onClick={onFetchResource} />}
-//               {options && isLoading && <Spinner />}
-//             </th>
-//             <th align="left">
-//               <span>row2</span>
-//               {!isLoading && <RefreshIcon onClick={onFetchResource} />}
-//               {options && isLoading && <Spinner />}
-//             </th>
-//           </tr>
-//         </thead>
-//       </table>
-//       {tableData.map(r => (
-//         <div className={classes.rowContainer} key={r.row}>
-//           <Input
-//             autoFocus
-//             defaultValue={r[keyName]}
-//             placeholder="hello"
-//             className={classes.input}
-//             onChange={handleKeyUpdate(r.row)}
-//           />
-//           <Input
-//             defaultValue={r[valueName]}
-//             placeholder="hello2"
-//             className={classes.input}
-//             onChange={handleValueUpdate(r.row)}
-//           />
-//         </div>
-//       ))}
-//       <div key="new" className={classes.rowContainer}>
-//         <Input
-//           value=""
-//           placeholder="hello"
-//           className={classes.input}
-//           onChange={handleKeyUpdate()}
-//         />
-//         <Input
-//           value=""
-//           placeholder="hello2"
-//           className={classes.input}
-//           onChange={handleValueUpdate()}
-//         />
-//       </div>
-//       <FormHelperText className={classes.helpText}>
-//         {isValid ? description : errorMessages}
-//       </FormHelperText>
-//     </div>
-//   );
-// }
-
-class KeyValueTable extends Component {
-  state = {
-    rule: [],
-  };
-
-  render() {
-    const {
-      classes,
-      label,
-      keyName = 'key222',
-      valueName = 'value222',
-      description,
-      errorMessages,
-      isValid,
-    } = this.props;
-    const { rule } = this.state;
-    const tableData = rule ? rule.map((r, n) => ({ ...r, row: n })) : [];
-    // console.log(rule, tableData);
-    const handleKeyUpdate = row => event =>
-      this.handleUpdate(row, event, keyName);
-    const handleValueUpdate = row => event =>
-      this.handleUpdate(row, event, valueName);
-    const isLoading = false;
-    const options = true;
-    const onFetchResource = () => {};
-
-    return (
-      <div className={classes.container}>
-        <FormLabel className={classes.label}>{label}</FormLabel>
-        <table Style={classes.tableWidth}>
-          <thead>
-            <tr>
-              <th align="left">
-                <span>row1</span>
-                {!isLoading && <RefreshIcon onClick={onFetchResource} />}
-                {options && isLoading && <Spinner />}
-              </th>
-              <th align="left">
-                <span>row2</span>
-                {!isLoading && <RefreshIcon onClick={onFetchResource} />}
-                {options && isLoading && <Spinner />}
-              </th>
-            </tr>
-          </thead>
-        </table>
-        {tableData.map(r => (
-          <div className={classes.rowContainer} key={r.row}>
-            <Input
-              autoFocus
-              defaultValue={r[keyName]}
-              placeholder="hello"
-              className={classes.input}
-              onChange={handleKeyUpdate(r.row)}
-            />
-            <Input
-              defaultValue={r[valueName]}
-              placeholder="hello2"
-              className={classes.input}
-              onChange={handleValueUpdate(r.row)}
-            />
-          </div>
-        ))}
-        <div key="new" className={classes.rowContainer}>
-          <Input
-            value=""
-            placeholder="hello"
-            className={classes.input}
-            onChange={handleKeyUpdate()}
-          />
-          <Input
-            value=""
-            placeholder="hello2"
-            className={classes.input}
-            onChange={handleValueUpdate()}
-          />
-        </div>
-        <FormHelperText className={classes.helpText}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      </div>
-    );
+      return [...state, Object.assign({}, lastRowData, lastRow)];
+    case 'reset':
+      return value;
+    default:
+      return state;
   }
 }
 
-// const StyledStaticMapWidget = withStyles(styles)(KeyValueTable);
-const StyleStaticMapWidgetNew = withStyles(styles)(KeyValueTable);
-// const DynaKeyValue = props => (
-//   <FieldWrapper {...props}>
-//     <StyledStaticMapWidget />
-//   </FieldWrapper>
-// );
-const DynaKeyValueNew = props => {
-  <FieldWrapper {...props}>
-    <StyleStaticMapWidgetNew />
-  </FieldWrapper>;
+const KeyValueTable = props => {
+  const classes = useStyles(props);
+  const {
+    label,
+    value,
+    optionsMap: optionsMapInit,
+    _integrationId = '5c481892055eea76c402ab98',
+    id,
+  } = props;
+  const dispatch = useDispatch();
+  const [optionsMap, setOptionsMap] = useState(optionsMapInit);
+  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
+  const valueData = deepClone(state);
+  const requiredFields = (optionsMap || []).filter(i => !!i.required);
+  const lastRow = {};
+  let requiredFieldsMissing = false;
+  const { isLoading, data: optionsMapNew } = useSelector(state =>
+    selectors.connectorsMetadataOptions(
+      state,
+      id,
+      null,
+      _integrationId,
+      optionsMap
+    )
+  );
+
+  useEffect(() => {
+    if (optionsMapNew) {
+      setOptionsMap(optionsMapNew.optionsMap);
+    }
+  }, [optionsMapNew]);
+
+  // If Value is present, check if there are required fields missing in the last row
+  if (valueData && valueData.length) {
+    (requiredFields || []).forEach(f => {
+      if (!valueData[valueData.length - 1][f.id]) {
+        requiredFieldsMissing = true;
+      }
+    });
+  }
+
+  // If all required fields are present in last row, add a dummy row at the end so user can enter values
+  if (!requiredFieldsMissing) {
+    optionsMap.forEach(om => {
+      lastRow[om.id] = om.type === 'select' ? undefined : '';
+    });
+    valueData.push(lastRow);
+  }
+
+  // Convert the value to react form readable format
+  const tableData = (valueData || []).map((v, i) => {
+    const arr = [];
+
+    Object.keys(v).forEach(k => {
+      const data = optionsMap.find(om => om.id === k);
+      let modifiedOptions;
+
+      if (data && data.options && data.options.length) {
+        modifiedOptions = {
+          options: [
+            { items: data.options.map(o => ({ label: o.text, value: o.id })) },
+          ],
+        };
+      }
+
+      arr.push({ ...data, ...modifiedOptions, value: v[k] });
+    });
+
+    return { values: arr, row: i };
+  });
+  // Update handler. Listens to change in any field and dispatches action to update state
+  const handleUpdate = (row, event, field) => {
+    const { value } = event.target;
+    const { id, onFieldChange } = props;
+
+    dispatchLocalAction({
+      type: 'updateField',
+      index: row,
+      field,
+      value,
+      lastRowData: valueData[valueData.length - 1],
+    });
+    onFieldChange(id, state);
+  };
+
+  function handleRefreshClick(e, fieldId) {
+    dispatch(actions.connectors.refreshMetadata(fieldId, id, _integrationId));
+  }
+
+  function dispatchActionToDelete(e, index) {
+    dispatchLocalAction({ type: 'remove', index });
+  }
+
+  const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
+  const onFetchResource = id => e => handleRefreshClick(e, id);
+  const handleRemoveRow = row => e => dispatchActionToDelete(e, row);
+
+  return (
+    <div className={classes.container}>
+      <FormLabel className={classes.label}>{label}</FormLabel>
+      <Grid container className={classes.root} spacing={2}>
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            {optionsMap.map(r => (
+              <Grid key={r.id} item xs>
+                <span className={classes.alignLeft}>{r.label}</span>
+                {r.supportsRefresh && !isLoading && (
+                  <RefreshIcon onClick={onFetchResource(r.id)} />
+                )}
+                {r.supportsRefresh && isLoading && <Spinner />}
+              </Grid>
+            ))}
+            <Grid key={100} item />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} direction="column">
+          {tableData.map(arr => (
+            <Grid item className={classes.rowContainer} key={arr.row}>
+              <Grid container direction="row" spacing={2}>
+                {arr.values.map(r => (
+                  <Grid item key={r.id} xs>
+                    {r.type !== 'select' && (
+                      <Input
+                        autoFocus
+                        defaultValue={r.value}
+                        placeholder={r.id}
+                        className={classes.input}
+                        onChange={handleAllUpdate(arr.row, r.id)}
+                      />
+                    )}
+
+                    {r.type === 'select' && (
+                      <DynaSelect
+                        value={r.value}
+                        placeholder={r.id}
+                        options={r.options || []}
+                        onFieldChange={(id, evt) => {
+                          handleUpdate(
+                            arr.row,
+                            { target: { value: evt } },
+                            r.id
+                          );
+                        }}
+                        className={classes.root}
+                      />
+                    )}
+                  </Grid>
+                ))}
+                <Grid item key={100}>
+                  <button onClick={handleRemoveRow(arr.row)}>X</button>
+                </Grid>
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+    </div>
+  );
 };
 
-export default DynaKeyValueNew;
-// export default DynaKeyValueNew;
+const DynaStaticMapWidget = props => (
+  <FieldWrapper {...props}>
+    <KeyValueTable />
+  </FieldWrapper>
+);
+
+export default DynaStaticMapWidget;

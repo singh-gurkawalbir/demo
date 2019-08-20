@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
+import connectorSagas from './connectors';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -106,4 +107,5 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   ...metadataSagas,
+  ...connectorSagas,
 ];

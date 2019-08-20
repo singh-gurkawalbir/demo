@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import connectors, * as fromConnectors from './connectors';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
@@ -13,6 +14,7 @@ export default combineReducers({
   filters,
   editors,
   metadata,
+  connectors,
   connectionToken,
   resourceForm,
   resource,
@@ -89,6 +91,20 @@ export function resourceFormState(state, resourceType, resourceId) {
     state && state.resourceForm,
     resourceType,
     resourceId
+  );
+}
+
+export function connectorsMetadataOptions(
+  state,
+  fieldName,
+  id,
+  _integrationId
+) {
+  return fromConnectors.connectorsMetadataOptions(
+    state && state.connectors,
+    fieldName,
+    id,
+    _integrationId
   );
 }
 
