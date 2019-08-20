@@ -16,7 +16,7 @@ export default {
 
     {
       fieldId: 'rest.bearerToken',
-      label: 'Secret key:',
+      label: 'Secret Key:',
       required: true,
       helpText: 'The secret key of your Stripe account.',
     },

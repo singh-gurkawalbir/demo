@@ -30,7 +30,7 @@ export default {
       helpText:
         'Please enter the subdomain of your account here which can be obtained from the login url.',
       endAdornment: '.coupacloud.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

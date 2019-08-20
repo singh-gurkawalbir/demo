@@ -41,7 +41,7 @@ export default {
     },
     {
       fieldId: 'rest.bearerToken',
-      required: true,
+      helpText: 'Please enter your API token here.',
     },
   ],
   fieldSets: [
