@@ -15,7 +15,6 @@ import {
   deleteAccessToken,
   modifyTokenData,
 } from './';
-import { MASK_ACCESSTOKEN_TOKEN_DELAY } from '../../utils/constants';
 import * as selectors from '../../reducers/index';
 
 describe('access tokens sagas', () => {
@@ -49,7 +48,9 @@ describe('access tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_ACCESSTOKEN_TOKEN_DELAY));
+      expect(saga.next().value).toEqual(
+        delay(process.env.MASK_SENSITIVE_INFO_DELAY)
+      );
       expect(saga.next().value).toEqual(
         put(
           actions.accessToken.maskToken({
@@ -112,7 +113,9 @@ describe('access tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().value).toEqual(delay(MASK_ACCESSTOKEN_TOKEN_DELAY));
+      expect(saga.next().value).toEqual(
+        delay(process.env.MASK_SENSITIVE_INFO_DELAY)
+      );
       expect(saga.next().value).toEqual(
         put(
           actions.accessToken.maskToken({
