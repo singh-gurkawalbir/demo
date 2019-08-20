@@ -1,6 +1,7 @@
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Fragment } from 'react';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
+import { Divider, List, Collapse } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -9,16 +10,21 @@ import MailIcon from '@material-ui/icons/Mail';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
     width: theme.drawerWidth,
+    borderRight: 0,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    '& > div': {
+      borderRight: 0,
+    },
     '& > div > div': {
       minHeight: 10,
     },
@@ -41,16 +47,15 @@ const useStyles = makeStyles(theme => ({
       width: theme.spacing(7) + 1,
     },
   },
-  drawerPaper: {
-    width: theme.drawerWidth, // drawerWidth needs to be in our design token.
-  },
   toolbar: theme.mixins.toolbar,
 
   menuContainer: {
+    backgroundColor: theme.palette.secondary.dark,
+    color: theme.palette.secondary.contrastText,
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '48px auto 80px',
+    gridTemplateRows: '16px 48px auto 80px',
     '& > div:first-child': {
       alignSelf: 'end',
       margin: theme.spacing(1, 0, 0, 0.5),
@@ -63,10 +68,62 @@ const useStyles = makeStyles(theme => ({
   menuItem: {
     marginTop: theme.spacing(1),
   },
+  nestedList: {
+    backgroundColor: fade(theme.palette.common.white, 0.05),
+  },
+  list: {
+    backgroundColor: fade(theme.palette.common.white, 0.05),
+  },
+  listItem: {
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+    },
+    '&:not(:last-child)': {
+      borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
+    },
+  },
+  itemIconRoot: {
+    color: 'inherit',
+  },
 }));
+const menuItems = [
+  { label: 'Home', Icon: MailIcon },
+  {
+    label: 'Tools',
+    Icon: MailIcon,
+    children: [
+      { label: 'Flow Builder', Icon: MailIcon },
+      { label: 'Data Loader', Icon: InboxIcon },
+    ],
+  },
+  {
+    label: 'Resources',
+    Icon: MailIcon,
+    children: [
+      { label: 'Exports', Icon: MailIcon },
+      { label: 'Imports', Icon: InboxIcon },
+      { label: 'Connections', Icon: MailIcon },
+      { label: 'Integrations', Icon: MailIcon },
+    ],
+  },
+  { label: 'Marketplace', Icon: MailIcon },
+  {
+    label: 'Support',
+    Icon: MailIcon,
+    children: [
+      { label: 'Knowledge Base', Icon: InboxIcon },
+      { label: 'Support Ticket', Icon: MailIcon },
+    ],
+  },
+];
 
 export default function CeligoDrawer({ open = false, onClick }) {
   const classes = useStyles();
+  const [expand, setExpand] = React.useState({});
+  const handleClick = label => () => {
+    setExpand({ ...expand, [label]: !expand[label] });
+  };
 
   return (
     <Drawer
@@ -83,12 +140,11 @@ export default function CeligoDrawer({ open = false, onClick }) {
         }),
       }}
       open={open}>
-      <div className={classes.toolbar} />
-
       <div className={classes.menuContainer}>
+        <div className={classes.toolbar} />
         <div>
           <IconButton
-            // color="inherit"
+            color="inherit"
             aria-label="open drawer"
             onClick={onClick}
             // edge="start"
@@ -100,21 +156,46 @@ export default function CeligoDrawer({ open = false, onClick }) {
           </IconButton>
         </div>
         <div>
-          <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
+          <List className={classes.list}>
+            {menuItems.map(({ label, Icon, children }) => (
+              <Fragment key={label}>
+                <ListItem
+                  button
+                  className={classes.listItem}
+                  onClick={children ? handleClick(label) : undefined}>
+                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                    {<Icon />}
+                  </ListItemIcon>
+                  <ListItemText primary={label} />
+                  {children &&
+                    (expand[label] ? <ExpandLess /> : <ExpandMore />)}
+                </ListItem>
+                {children && (
+                  <Collapse in={expand[label]} unmountOnExit timeout="auto">
+                    <List className={classes.nestedList} disablePadding>
+                      {children.map(({ label, Icon }) => (
+                        <ListItem
+                          className={classes.listItem}
+                          key={label}
+                          button>
+                          <ListItemIcon
+                            classes={{ root: classes.itemIconRoot }}>
+                            {<Icon />}
+                          </ListItemIcon>
+                          <ListItemText primary={label} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+              </Fragment>
             ))}
           </List>
         </div>
         <div>
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
-            <IconButton onClick={onClick}>
+            <IconButton color="inherit" onClick={onClick}>
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
