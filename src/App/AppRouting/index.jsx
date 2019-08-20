@@ -34,6 +34,9 @@ const StandaloneResource = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
+const Agents = loadable(() =>
+  import(/* webpackChunkName: 'Agents' */ '../../views/Agents')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -68,6 +71,7 @@ export default class AppRouting extends Component {
         />
         <Route path="/pg/exports" component={Exports} />
         <Route path="/pg/imports" component={Imports} />
+        <Route path="/pg/agents" component={Agents} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
         <Route path="/pg/connections" component={Connections} />

@@ -86,7 +86,7 @@ export function* getResource({ resourceType, id, message }) {
 }
 
 export function* deleteResource({ resourceType, id }) {
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+  const path = `/${resourceType}/${id}`;
 
   try {
     yield call(apiCallWithRetry, {
@@ -120,9 +120,7 @@ export function* getResourceCollection({ resourceType }) {
 }
 
 export function* requestReferences({ resourceType, id }) {
-  const path = id
-    ? `/${resourceType}/${id}/dependencies`
-    : `/${resourceType}/dependencies`;
+  const path = `/${resourceType}/${id}/dependencies`;
 
   try {
     const resourceReferences = yield call(apiCallWithRetry, { path });

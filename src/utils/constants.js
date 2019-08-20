@@ -104,7 +104,6 @@ export const PERMISSIONS = Object.freeze({
 });
 
 export const PASSWORD_MASK = '******';
-export const MASK_ACCESSTOKEN_TOKEN_DELAY = 5000; // milliseconds
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
