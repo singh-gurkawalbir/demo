@@ -11,6 +11,7 @@ const theme = {
     },
     secondary: {
       main: colors.celigoNeutral7,
+      contrastText: colors.celigoNeutral4,
     },
   },
   // global overrides for MUI styles...

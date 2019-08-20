@@ -21,7 +21,8 @@ describe('Handlebars autocomplete', () => {
     b: 4,
   });
 
-  handleBarsCompleters.setCompleters(jsonData, functionsHints);
+  handleBarsCompleters.setJsonCompleter(jsonData);
+  handleBarsCompleters.setFunctionCompleter(functionsHints);
   handlebarCompleterSetup(editor);
 
   //  we are doing something similar in the react end
