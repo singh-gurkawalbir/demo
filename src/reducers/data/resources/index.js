@@ -68,7 +68,6 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-
     default:
       return state;
   }

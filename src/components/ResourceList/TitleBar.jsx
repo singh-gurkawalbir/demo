@@ -9,8 +9,8 @@ import shortid from 'shortid';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import getRoutePath from '../../utils/routePaths';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = (state, { resourceType }) => {
   const filter = selectors.filter(state, resourceType);
@@ -79,6 +79,7 @@ class TitleBar extends Component {
         </div>
         <Button
           component={Link}
+          // className={classes.link}
           to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>
           + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
         </Button>
