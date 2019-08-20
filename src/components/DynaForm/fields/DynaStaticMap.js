@@ -71,7 +71,7 @@ const KeyValueTable = props => {
     label,
     value,
     optionsMap: optionsMapInit,
-    _integrationId = '5c481892055eea76c402ab98',
+    _integrationId,
     id,
   } = props;
   const dispatch = useDispatch();
