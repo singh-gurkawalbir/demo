@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
 
 function reducer(state, action) {
   const { type, value, index, field, lastRowData = {} } = action;
-  const lastRow = {};
 
   switch (type) {
     case 'remove':
@@ -52,12 +51,7 @@ function reducer(state, action) {
         ];
       }
 
-      (state.optionsMap || []).forEach(om => {
-        lastRow[om.id] = om.type === 'select' ? undefined : '';
-      });
-      lastRow[field] = value;
-
-      return [...state, Object.assign({}, lastRowData, lastRow)];
+      return [...state, Object.assign({}, lastRowData, { [field]: value })];
     default:
       return state;
   }
@@ -76,10 +70,10 @@ const KeyValueTable = props => {
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
   const [state, dispatchLocalAction] = useReducer(reducer, value || []);
   const valueData = deepClone(state);
-  const requiredFields = (optionsMap || []).filter(i => !!i.required);
+  const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
   let requiredFieldsMissing = false;
-  const { isLoading, data: optionsMapNew } = useSelector(state =>
+  const { isLoading, data: response } = useSelector(state =>
     selectors.connectorsMetadataOptions(
       state,
       id,
@@ -90,10 +84,10 @@ const KeyValueTable = props => {
   );
 
   useEffect(() => {
-    if (optionsMapNew) {
-      setOptionsMap(optionsMapNew.optionsMap);
+    if (response) {
+      setOptionsMap(response.optionsMap);
     }
-  }, [optionsMapNew]);
+  }, [response]);
 
   // If Value is present, check if there are required fields missing in the last row
   if (valueData && valueData.length) {
@@ -106,32 +100,37 @@ const KeyValueTable = props => {
 
   // If all required fields are present in last row, add a dummy row at the end so user can enter values
   if (!requiredFieldsMissing) {
-    optionsMap.forEach(om => {
-      lastRow[om.id] = om.type === 'select' ? undefined : '';
+    optionsMap.forEach(option => {
+      lastRow[option.id] = option.type === 'select' ? undefined : '';
     });
     valueData.push(lastRow);
   }
 
   // Convert the value to react form readable format
-  const tableData = (valueData || []).map((v, i) => {
+  const tableData = (valueData || []).map((value, index) => {
     const arr = [];
 
-    Object.keys(v).forEach(k => {
-      const data = optionsMap.find(om => om.id === k);
+    Object.keys(value).forEach(field => {
+      const data = optionsMap.find(option => option.id === field);
       let modifiedOptions;
 
       if (data && data.options && data.options.length) {
         modifiedOptions = {
           options: [
-            { items: data.options.map(o => ({ label: o.text, value: o.id })) },
+            {
+              items: data.options.map(opt => ({
+                label: opt.text,
+                value: opt.id,
+              })),
+            },
           ],
         };
       }
 
-      arr.push({ ...data, ...modifiedOptions, value: v[k] });
+      arr.push({ ...data, ...modifiedOptions, value: value[field] });
     });
 
-    return { values: arr, row: i };
+    return { values: arr, row: index };
   });
   // Update handler. Listens to change in any field and dispatches action to update state
   const handleUpdate = (row, event, field) => {
@@ -143,7 +142,9 @@ const KeyValueTable = props => {
       index: row,
       field,
       value,
-      lastRowData: valueData[valueData.length - 1],
+      lastRowData: (valueData || {}).length
+        ? valueData[valueData.length - 1]
+        : {},
     });
     onFieldChange(id, state);
   };
