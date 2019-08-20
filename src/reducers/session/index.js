@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import resource, * as fromResource from './resource';
@@ -15,6 +16,7 @@ export default combineReducers({
   metadata,
   connectionToken,
   resourceForm,
+  agentAccessTokens,
   resource,
   netsuiteUserRole,
 });
@@ -92,7 +94,18 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function agentAccessToken(state, resourceId) {
+  return fromAgentAccessTokens.agentAccessToken(
+    state && state.agentAccessTokens,
+    resourceId
+  );
+}
+
 export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
+}
+
+export function resourceReferences(state) {
+  return fromResource.resourceReferences(state.resource);
 }
 // #endregion
