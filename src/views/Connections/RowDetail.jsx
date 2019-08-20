@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 // import moment from 'moment';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
+import applications from '../../constants/applications';
 
 const styles = theme => ({
   secondaryHeading: {
@@ -57,7 +58,14 @@ function ConnectionsData(props) {
     return queueSize;
   };
 
-  const getDisplayType = () => item.assistant || item.type;
+  const getDisplayType = () => {
+    const app = applications.find(
+      a => a.id === (item.assistant ? item.assistant : item.type)
+    );
+
+    return app && app.name;
+  };
+
   const getAPIValue = () => {
     if (item.type === 'rest') return item.rest && item.rest.baseURI;
 
