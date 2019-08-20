@@ -506,7 +506,7 @@ export default {
     ],
   },
   'rest.headers': {
-    type: 'staticMap',
+    type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',

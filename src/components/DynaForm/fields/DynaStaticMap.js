@@ -58,8 +58,6 @@ function reducer(state, action) {
       lastRow[field] = value;
 
       return [...state, Object.assign({}, lastRowData, lastRow)];
-    case 'reset':
-      return value;
     default:
       return state;
   }
