@@ -9,6 +9,18 @@ export default function(state = { count: 1 }, action) {
       return { count: newCount };
     }
 
+    case actionTypes.APP_ERRORED: {
+      return { ...state, appErrored: true };
+    }
+
+    case actionTypes.APP_CLEAR_ERROR: {
+      const newState = { ...state };
+
+      delete newState.appErrored;
+
+      return newState;
+    }
+
     default: {
       return state;
     }
@@ -17,4 +29,10 @@ export default function(state = { count: 1 }, action) {
 
 export function reloadCount(state) {
   return state && state.count;
+}
+
+export function appErrored(state) {
+  if (!state) return null;
+
+  return state && state.appErrored;
 }
