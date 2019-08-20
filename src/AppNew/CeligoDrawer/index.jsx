@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
   },
   menuList: {
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
 }));
 const menuItems = [
