@@ -383,7 +383,7 @@ export function resourceList(state, options) {
 }
 
 export function resourceReferences(state) {
-  return fromSession.resourceReferences(state.session);
+  return fromSession.resourceReferences(state && state.session);
 }
 
 export function resourceDetailsMap(state) {

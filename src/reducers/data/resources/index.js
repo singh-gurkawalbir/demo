@@ -63,13 +63,11 @@ export default (state = {}, action) => {
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
-
     case actionTypes.RESOURCE.DELETED:
       return {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-
     default:
       return state;
   }
