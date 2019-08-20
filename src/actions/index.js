@@ -82,6 +82,11 @@ const resource = {
       id,
     }),
 
+  downloadDebugLogs: id =>
+    action(actionTypes.RESOURCE.DOWNLOAD_DEBUGLOGS, {
+      id,
+    }),
+
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
 
   receivedReferences: resourceReferences =>

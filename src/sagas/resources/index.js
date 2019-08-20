@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
+import { getAdditionalHeaders } from '../api/requestInterceptors';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -69,6 +70,34 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
   }
+}
+
+export function* downloadDebugLogs({ id }) {
+  const options = 'scrollbars=1,height=600,width=800';
+  let url = `/api/connections/${id}/debug`;
+  const additionalHeaders = yield call(getAdditionalHeaders, url);
+
+  if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
+  }
+
+  const win = window.open(url, '_blank', options);
+
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    // POPUP BLOCKED
+    // eslint-disable-next-line no-alert
+    window.alert('POPUP blocked');
+
+    try {
+      win.close();
+    } catch (ex) {
+      throw ex;
+    }
+
+    return false;
+  }
+
+  win.focus();
 }
 
 export function* getResource({ resourceType, id, message }) {
@@ -137,5 +166,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
+  takeEvery(actionTypes.RESOURCE.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
   ...metadataSagas,
 ];
