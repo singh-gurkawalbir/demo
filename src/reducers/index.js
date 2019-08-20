@@ -108,6 +108,12 @@ export function agentAccessToken(state, id) {
   return fromSession.agentAccessToken(state.session, id);
 }
 
+export function stackSystemToken(state, id) {
+  if (!state) return {};
+
+  return fromSession.stackSystemToken(state.session, id);
+}
+
 export function editor(state, id) {
   if (!state) return {};
 

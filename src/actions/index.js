@@ -249,6 +249,13 @@ const agent = {
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
+const stack = {
+  displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
+  generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
+  tokenReceived: stackToken =>
+    action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
+  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+};
 const user = {
   profile: {
     request: message => resource.request('profile', undefined, message),
@@ -397,4 +404,5 @@ export default {
   auditLogs,
   accessToken,
   agent,
+  stack,
 };

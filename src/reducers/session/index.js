@@ -5,6 +5,7 @@ import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
+import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import resource, * as fromResource from './resource';
@@ -17,6 +18,7 @@ export default combineReducers({
   connectionToken,
   resourceForm,
   agentAccessTokens,
+  stackSystemTokens,
   resource,
   netsuiteUserRole,
 });
@@ -97,6 +99,13 @@ export function resourceFormState(state, resourceType, resourceId) {
 export function agentAccessToken(state, resourceId) {
   return fromAgentAccessTokens.agentAccessToken(
     state && state.agentAccessTokens,
+    resourceId
+  );
+}
+
+export function stackSystemToken(state, resourceId) {
+  return fromStackSystemTokens.stackSystemToken(
+    state && state.stackSystemTokens,
     resourceId
   );
 }
