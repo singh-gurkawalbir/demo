@@ -28,41 +28,48 @@ export default function ManageLookup() {
   const fieldMeta = {
     fields: [
       {
-        id: 'relativeURI',
-        name: 'relativeURI',
-        type: 'text',
-        label: 'Relative URI:',
-        placeholder: 'Relative URI',
-      },
-      {
-        id: 'method',
-        name: 'method',
+        id: 'failFields',
+        name: 'failFields',
         type: 'select',
-        label: 'HTTP Method:',
-        placeholder: 'Required',
+        label: 'Action to take if unique match not found:',
         defaultValue: '',
         options: [
           {
             heading: 'Select Http Method:',
             items: [
               {
-                label: 'GET',
-                value: 'GET',
+                label: 'Fail Record',
+                value: 'allowFailures',
               },
               {
-                label: 'POST',
-                value: 'POST',
+                label: 'Use Empty String as Default Value',
+                value: 'useEmptyString',
+              },
+              {
+                label: 'Use Null as Default Value',
+                value: 'useNull',
+              },
+              {
+                label: 'Use Custom Default Value',
+                value: 'defaultLookup',
               },
             ],
           },
         ],
       },
       {
-        id: 'extract',
-        name: 'extract',
+        id: 'default',
+        name: 'default',
         type: 'text',
-        label: 'Resource Identifier Path:',
-        placeholder: 'Resource Identifier Path',
+        label: 'Enter Default Value:',
+        placeholder: 'Enter Default Value',
+        visibleWhen: [
+          {
+            id: 'default',
+            field: 'failFields',
+            is: ['defaultLookup'],
+          },
+        ],
       },
     ],
   };
