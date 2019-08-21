@@ -1,7 +1,6 @@
 /* global describe, test, expect, fail,beforeEach,afterEach */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
-
 import { call, take, race, put } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';

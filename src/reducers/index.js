@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
+import moment from 'moment';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -61,6 +62,10 @@ export default rootReducer;
 // #region app selectors
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
+}
+
+export function appErrored(state) {
+  return fromApp.appErrored(state && state.app);
 }
 // #endregion app selectors
 
@@ -483,6 +488,26 @@ export function userAccessLevel(state) {
 
 export function userPermissions(state) {
   return fromUser.permissions(state.user);
+}
+
+export function resourcePermissions(state, resourceType, resourceId) {
+  const permissions = userPermissions(state);
+
+  if (resourceType === 'integrations') {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    ) {
+      return permissions.integrations.all;
+    }
+
+    return permissions.integrations[resourceId] || {};
+  }
+
+  return {};
 }
 
 export function publishedConnectors(state) {
@@ -1017,4 +1042,104 @@ export function accessTokenList(state, integrationId) {
 
 export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
+}
+
+export function flowJobsPagingDetails(state) {
+  return fromData.flowJobsPagingDetails(state.data);
+}
+
+export function flowJobs(state) {
+  const jobs = fromData.flowJobs(state.data);
+  const preferences = userPreferences(state);
+  const resourceMap = resourceDetailsMap(state);
+
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          endedAtAsString:
+            cJob.endedAt &&
+            moment(cJob.endedAt).format(
+              `${preferences.dateFormat} ${preferences.timeFormat}`
+            ),
+          name: cJob._exportId
+            ? resourceMap.exports[cJob._exportId].name
+            : resourceMap.imports[cJob._importId].name,
+        };
+
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
+
+    const additionalProps = {
+      endedAtAsString:
+        job.endedAt &&
+        moment(job.endedAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      name:
+        resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
+    };
+
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
+          (job.numPagesGenerated *
+            ((resourceMap.flows[job._flowId] &&
+              resourceMap.flows[job._flowId].numImports) ||
+              1))
+      );
+    } else {
+      additionalProps.percentComplete = 0;
+    }
+
+    return { ...job, ...additionalProps };
+  });
+}
+
+export function flowJob(state, { jobId }) {
+  const jobList = flowJobs(state);
+
+  return jobList.find(j => j._id === jobId);
+}
+
+export function inProgressJobIds(state) {
+  return fromData.inProgressJobIds(state.data);
+}
+
+export function job(state, { type, jobId, parentJobId }) {
+  const resourceMap = resourceDetailsMap(state);
+  const j = fromData.job(state.data, { type, jobId, parentJobId });
+
+  if (!j) {
+    return j;
+  }
+
+  return {
+    ...j,
+    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+  };
+}
+
+export function isBulkRetryInProgress(state) {
+  return fromData.isBulkRetryInProgress(state.data);
+}
+
+export function jobErrors(state, jobId) {
+  const jErrors = fromData.jobErrors(state.data, jobId);
+  const preferences = userPreferences(state);
+
+  return jErrors.map(je => ({
+    ...je,
+    createdAtAsString:
+      je.createdAt &&
+      moment(je.createdAt).format(
+        `${preferences.dateFormat} ${preferences.timeFormat}`
+      ),
+  }));
+}
+
+export function jobErrorRetryObject(state, retryId) {
+  return fromData.jobErrorRetryObject(state.data, retryId);
 }
