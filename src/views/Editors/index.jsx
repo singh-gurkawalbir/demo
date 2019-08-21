@@ -12,11 +12,11 @@ import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
 import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
+import ManageLookup from '../../components/AFE/ManageLookup';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
-
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
@@ -176,6 +176,15 @@ export default class Editors extends Component {
             }}
           />
         );
+      case 'ManageLookup':
+        return (
+          <ManageLookup
+            title="Define Import Mapping"
+            id={editorName}
+            data={rawData}
+            onClose={this.handleClose}
+          />
+        );
       default:
         return null;
     }
@@ -245,6 +254,11 @@ export default class Editors extends Component {
         name: 'JSONEditor',
         label: 'JSON Editor',
         description: 'This processor allows user to edit JSON Object',
+      },
+      {
+        name: 'ManageLookup',
+        label: 'Test',
+        description: 'this processor allows user to map data',
       },
     ];
 
