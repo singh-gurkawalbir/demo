@@ -53,7 +53,7 @@ const mapDispatchToProps = dispatch => ({
     margin: theme.spacing(1),
   },
 }))
-class AppBar extends Component {
+class ProfileMenu extends Component {
   state = {
     anchorEl: null,
   };
@@ -112,7 +112,7 @@ class AppBar extends Component {
           onClose={this.handleClose}>
           <Grid
             container
-            spacing={16}
+            spacing={2}
             direction="row"
             justify="flex-start"
             alignItems="flex-start">
@@ -171,4 +171,4 @@ class AppBar extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(AppBar);
+export default connect(mapStateToProps,mapDispatchToProps)(ProfileMenu);

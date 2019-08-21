@@ -12,10 +12,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import clsx from 'clsx';
 import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
+import ProfileMenuButton from '../ProfileMenuButton';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -210,14 +210,7 @@ export default function CeligoDrawer({ open = false, onClick }) {
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
-          <IconButton
-            edge="end"
-            aria-label="account of current user"
-            aria-controls="menuId"
-            aria-haspopup="true"
-            color="inherit">
-            <AccountCircle />
-          </IconButton>
+          <ProfileMenuButton />
         </div>
       </div>
     </Drawer>
