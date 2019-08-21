@@ -1,10 +1,9 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import Typography from '@material-ui/core/Typography';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import deepClone from 'lodash/cloneDeep';
 import * as selectors from '../../../reducers';
@@ -27,9 +26,6 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
-  },
-  label: {
-    fontSize: '14px',
   },
 }));
 
@@ -58,7 +54,7 @@ function reducer(state, action) {
 }
 
 const KeyValueTable = props => {
-  const classes = useStyles(props);
+  const classes = useStyles();
   const {
     label,
     value,
@@ -74,13 +70,7 @@ const KeyValueTable = props => {
   const lastRow = {};
   let requiredFieldsMissing = false;
   const { isLoading, data: response } = useSelector(state =>
-    selectors.connectorsMetadataOptions(
-      state,
-      id,
-      null,
-      _integrationId,
-      optionsMap
-    )
+    selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
 
   useEffect(() => {
@@ -163,7 +153,7 @@ const KeyValueTable = props => {
 
   return (
     <div className={classes.container}>
-      <FormLabel className={classes.label}>{label}</FormLabel>
+      <Typography variant="h6">{label}</Typography>
       <Grid container className={classes.root} spacing={2}>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -224,10 +214,4 @@ const KeyValueTable = props => {
   );
 };
 
-const DynaStaticMapWidget = props => (
-  <FieldWrapper {...props}>
-    <KeyValueTable />
-  </FieldWrapper>
-);
-
-export default DynaStaticMapWidget;
+export default KeyValueTable;

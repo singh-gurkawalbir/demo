@@ -1,9 +1,9 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import actions from '../../../actions';
-import actionTypes from '../../../actions/types';
-import { apiCallWithRetry } from '../../index';
+import actions from '../../actions';
+import actionTypes from '../../actions/types';
+import { apiCallWithRetry } from '../index';
 
-function* getRefreshMetadata({ fieldName, id, _integrationId }) {
+function* fetchMetadata({ fieldName, id, _integrationId }) {
   const path = `/integrations/${_integrationId}/settings/refreshMetadata`;
 
   try {
@@ -14,7 +14,7 @@ function* getRefreshMetadata({ fieldName, id, _integrationId }) {
     });
 
     yield put(
-      actions.connectors.receivedMetadataResponse(
+      actions.connectors.receivedMetadata(
         metadata,
         fieldName,
         id,
@@ -24,12 +24,12 @@ function* getRefreshMetadata({ fieldName, id, _integrationId }) {
 
     return metadata;
   } catch (error) {
-    yield put(actions.connectors.receivedErrorForRefreshMetadata());
+    yield put(actions.connectors.failedMetadata());
 
     return undefined;
   }
 }
 
 export default [
-  takeEvery(actionTypes.CONNECTORS.REFRESH_METADATA, getRefreshMetadata),
+  takeEvery(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
 ];

@@ -96,13 +96,8 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
-export function connectorsMetadataOptions(
-  state,
-  fieldName,
-  id,
-  _integrationId
-) {
-  return fromConnectors.connectorsMetadataOptions(
+export function connectorMetadata(state, fieldName, id, _integrationId) {
+  return fromConnectors.connectorMetadata(
     state && state.connectors,
     fieldName,
     id,

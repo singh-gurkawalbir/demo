@@ -9,7 +9,7 @@ export default (state = {}, action) => {
   }
 
   switch (type) {
-    case actionTypes.CONNECTORS.REFRESH_METADATA:
+    case actionTypes.CONNECTORS.METADATA_REQUEST:
       newState[_integrationId][id] = { isLoading: true };
 
       return newState;
@@ -18,7 +18,7 @@ export default (state = {}, action) => {
       newState[_integrationId][id] = { isLoading: false, data: metadata };
 
       return newState;
-    case actionTypes.CONNECTORS.RECEIVED_ERROR_REFRESH_METADATA:
+    case actionTypes.CONNECTORS.METADATA_FAILURE:
       newState[_integrationId][id] = { isLoading: false };
 
       return newState;
@@ -28,19 +28,11 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function connectorsMetadataOptions(
-  state,
-  fieldName,
-  id,
-  _integrationId
-) {
+export function connectorMetadata(state, fieldName, id, _integrationId) {
   if (!state || !state[_integrationId]) {
     return {};
   }
 
-  return {
-    data: state[_integrationId][fieldName].data,
-    isLoading: state[_integrationId][fieldName].isLoading,
-  };
+  return state[_integrationId][fieldName];
 }
 // #endregion

@@ -192,15 +192,14 @@ const auditLogs = {
 };
 const connectors = {
   refreshMetadata: (fieldName, id, _integrationId) =>
-    action(actionTypes.CONNECTORS.REFRESH_METADATA, {
+    action(actionTypes.CONNECTORS.METADATA_REQUEST, {
       fieldName,
       id,
       _integrationId,
     }),
-  receivedErrorForRefreshMetadata: () =>
-    action(actionTypes.CONNECTORS.RECEIVED_ERROR_REFRESH_METADATA),
-  receivedMetadataResponse: (metadata, fieldName, id, _integrationId) =>
-    action(actionTypes.CONNECTORS.RECEIVED_METADATA, {
+  failedMetadata: () => action(actionTypes.CONNECTORS.METADATA_FAILURE),
+  receivedMetadata: (metadata, fieldName, id, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
       metadata,
       fieldName,
       id,
