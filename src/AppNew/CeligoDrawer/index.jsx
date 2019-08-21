@@ -1,12 +1,10 @@
 import React, { Fragment } from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Divider, List, Collapse } from '@material-ui/core';
+import { Divider, List, Collapse, ButtonBase } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -15,7 +13,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
-import ProfileMenuButton from '../ProfileMenuButton';
+import menuItems from './menuItems';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -96,42 +94,14 @@ const useStyles = makeStyles(theme => ({
     fill: fade(theme.palette.primary.main, 0.8),
   },
 }));
-const menuItems = [
-  { label: 'Home', Icon: MailIcon },
-  {
-    label: 'Tools',
-    Icon: MailIcon,
-    children: [
-      { label: 'Flow Builder', Icon: MailIcon },
-      { label: 'Data Loader', Icon: InboxIcon },
-    ],
-  },
-  {
-    label: 'Resources',
-    Icon: MailIcon,
-    children: [
-      { label: 'Exports', Icon: MailIcon },
-      { label: 'Imports', Icon: InboxIcon },
-      { label: 'Connections', Icon: MailIcon },
-      { label: 'Integrations', Icon: MailIcon },
-    ],
-  },
-  { label: 'Marketplace', Icon: MailIcon },
-  {
-    label: 'Support',
-    Icon: MailIcon,
-    children: [
-      { label: 'Knowledge Base', Icon: InboxIcon },
-      { label: 'Support Ticket', Icon: MailIcon },
-    ],
-  },
-];
 
-export default function CeligoDrawer({ open = false, onClick }) {
+export default function CeligoDrawer({ open = false, handleDrawerToggle }) {
   const classes = useStyles();
-  const [expand, setExpand] = React.useState({});
-  const handleClick = label => () => {
-    setExpand({ ...expand, [label]: !expand[label] });
+  const [expand, setExpand] = React.useState(null);
+  const handleItemClick = label => () => {
+    setExpand(label === expand ? null : label);
+
+    if (!open) handleDrawerToggle();
   };
 
   return (
@@ -153,14 +123,14 @@ export default function CeligoDrawer({ open = false, onClick }) {
         <div>
           <div className={classes.logoContainer}>
             {open ? (
-              <span className={classes.logo}>
-                <CeligoLogo aria-label="open drawer" onClick={onClick} />
-              </span>
+              <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
+                <CeligoLogo aria-label="open drawer" />
+              </ButtonBase>
             ) : (
               <IconButton
                 color="inherit"
                 aria-label="close drawer"
-                onClick={onClick}>
+                onClick={handleDrawerToggle}>
                 <CeligoMarkIcon color="primary" />
               </IconButton>
             )}
@@ -173,16 +143,16 @@ export default function CeligoDrawer({ open = false, onClick }) {
                 <ListItem
                   button
                   className={classes.listItem}
-                  onClick={children ? handleClick(label) : undefined}>
+                  onClick={children ? handleItemClick(label) : undefined}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
                   </ListItemIcon>
                   <ListItemText primary={label} />
                   {children &&
-                    (expand[label] ? <ExpandLess /> : <ExpandMore />)}
+                    (expand === label ? <ExpandLess /> : <ExpandMore />)}
                 </ListItem>
                 {children && (
-                  <Collapse in={expand[label]} unmountOnExit timeout="auto">
+                  <Collapse in={expand === label} unmountOnExit timeout="auto">
                     <List className={classes.list} disablePadding>
                       {children.map(({ label, Icon }) => (
                         <ListItem
@@ -206,11 +176,10 @@ export default function CeligoDrawer({ open = false, onClick }) {
         <div>
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
-            <IconButton color="inherit" onClick={onClick}>
+            <IconButton color="inherit" onClick={handleDrawerToggle}>
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
-          <ProfileMenuButton />
         </div>
       </div>
     </Drawer>

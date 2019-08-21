@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FontStager from '../components/FontStager';
@@ -31,7 +32,7 @@ console.log('new theme', theme);
 
 export default function AppNew() {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const isAllLoadingCommsAboveThreshold = useSelector(state =>
     selectors.isAllLoadingCommsAboveThreshold(state)
@@ -39,7 +40,7 @@ export default function AppNew() {
 
   // useEffect(() => {}, [isAllLoadingCommsAboveThreshold]);
 
-  function handleDrawerClick() {
+  function handleDrawerToggle() {
     setOpen(!open);
   }
 
@@ -47,16 +48,17 @@ export default function AppNew() {
     <MuiThemeProvider key={reloadCount} theme={theme}>
       <FontStager />
       <CssBaseline />
+      <BrowserRouter>
+        <div className={classes.root}>
+          {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
+          <CeligoAppBar shift={open} />
+          <AppErroredModal />
+          <AuthDialog />
 
-      <div className={classes.root}>
-        {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
-        <CeligoAppBar shift={open} />
-        <AppErroredModal />
-        <AuthDialog />
-
-        <CeligoDrawer onClick={handleDrawerClick} open={open} />
-        <PageContent shift={open} />
-      </div>
+          <CeligoDrawer handleDrawerToggle={handleDrawerToggle} open={open} />
+          <PageContent shift={open} />
+        </div>
+      </BrowserRouter>
     </MuiThemeProvider>
   );
 }

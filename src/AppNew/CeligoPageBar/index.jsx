@@ -34,7 +34,7 @@ export default function CeligoPageBar({ shift = false }) {
   const classes = useStyles();
 
   return (
-    <SlideOnScroll threshold={100}>
+    <SlideOnScroll threshold={250}>
       <ElevateOnScroll threshold={0}>
         <Paper
           className={clsx(classes.pageHeader, {

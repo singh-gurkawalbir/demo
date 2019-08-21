@@ -1,12 +1,12 @@
-import { Fragment, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
-import { A } from 'hookrouter';
+import { Link } from 'react-router-dom';
 import ArrowPopper from '../../components/ArrowPopper';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   avatarButton: {
+    marginLeft: theme.spacing(1),
     padding: theme.spacing(1),
   },
   avatar: {
@@ -35,10 +36,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
 }));
-
-export default function ProfileMenuButton() {
+const ProfileMenuButton = React.forwardRef((props, ref) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+  const theme = useTheme();
   const hasProfile = useSelector(state => selectors.hasProfile(state));
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
@@ -47,10 +48,6 @@ export default function ProfileMenuButton() {
   const dispatch = useDispatch();
   const open = !!anchorEl;
   const { name, email } = profile;
-  const handleUserLogout = () => {
-    dispatch(actions.auth.logout());
-  };
-
   const handleMenu = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -59,11 +56,17 @@ export default function ProfileMenuButton() {
     setAnchorEl(null);
   };
 
+  const handleUserLogout = () => {
+    handleClose();
+    dispatch(actions.auth.logout());
+  };
+
   if (!hasProfile || !hasPreferences) return null;
 
   return (
     <Fragment>
       <IconButton
+        size="small"
         className={classes.avatarButton}
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
@@ -72,7 +75,8 @@ export default function ProfileMenuButton() {
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
       </IconButton>
       <ArrowPopper
-        zIndex="1201"
+        ref={ref}
+        zIndex={theme.zIndex.drawer + 1}
         id="profileOptions"
         className={classes.popperContent}
         anchorEl={anchorEl}
@@ -94,12 +98,13 @@ export default function ProfileMenuButton() {
           </Grid>
         </Grid>
         <Button
+          // ref={ref}
           onClick={handleClose}
           variant="contained"
           color="primary"
           className={classes.button}
-          component={A}
-          href={getRoutePath(
+          component={Link}
+          to={getRoutePath(
             permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
               ? '/myAccount/subscription'
               : '/myAccount/profiles'
@@ -118,4 +123,6 @@ export default function ProfileMenuButton() {
       </ArrowPopper>
     </Fragment>
   );
-}
+});
+
+export default ProfileMenuButton;
