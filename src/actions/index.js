@@ -255,6 +255,10 @@ const stack = {
   tokenReceived: stackToken =>
     action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
   maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  requestStackShareCollection: () =>
+    action(actionTypes.STACK.STACK_SHARE_COLLECTION_REQUEST),
+  receivedStackShareCollection: collection =>
+    action(actionTypes.STACK.STACK_SHARE_COLLECTION_RECEIVED, { collection }),
 };
 const user = {
   profile: {

@@ -408,6 +408,10 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
+export function getStackShareCollection(state) {
+  return fromData.getStackShareCollection(state && state.data);
+}
+
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

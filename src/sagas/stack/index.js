@@ -53,7 +53,30 @@ export function* generateToken({ id }) {
   yield put(actions.stack.maskToken({ _id: id }));
 }
 
+export function* getStackShareCollection() {
+  const path = '/sshares';
+  let collection;
+
+  try {
+    collection = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+      message: 'getting Stack Share Collection',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.stack.receivedStackShareCollection({ collection }));
+}
+
 export const stackSagas = [
   takeEvery(actionTypes.STACK.TOKEN_DISPLAY, displayToken),
   takeEvery(actionTypes.STACK.TOKEN_GENERATE, generateToken),
+  takeEvery(
+    actionTypes.STACK.STACK_SHARE_COLLECTION_REQUEST,
+    getStackShareCollection
+  ),
 ];

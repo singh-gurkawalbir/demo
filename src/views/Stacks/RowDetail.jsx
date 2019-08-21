@@ -10,6 +10,7 @@ import getRoutePath from '../../utils/routePaths';
 import * as selectors from '../../reducers';
 import AuditLogDialog from '../../components/AuditLog/AuditLogDialog';
 import ResourceReferences from '../../components/ResourceReferences';
+import ShareStackDialog from '../../components/ShareStackDialog';
 
 const styles = theme => ({
   stackActions: {
@@ -28,6 +29,7 @@ function StacksData(props) {
   const dispatch = useDispatch();
   const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
   const [showReferencesDialog, setShowReferencesDialog] = useState(false);
+  const [showStackShareDialog, setShowStackShareDialog] = useState(false);
 
   function handleAuditLogClick() {
     setShowAuditLogDialog(true);
@@ -45,7 +47,14 @@ function StacksData(props) {
     setShowReferencesDialog(false);
   }
 
-  const handleShareStackClick = () => {};
+  function handleShareStackClick() {
+    setShowStackShareDialog(true);
+  }
+
+  function handleShareStackClose() {
+    setShowStackShareDialog(false);
+  }
+
   const handleDeleteClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -93,6 +102,9 @@ function StacksData(props) {
           onClose={handleReferencesClose}
         />
       )}
+      {showStackShareDialog && (
+        <ShareStackDialog stackId={item._id} onClose={handleShareStackClose} />
+      )}
       <Typography className={classes.stackDetails}>
         Type: {item.type}
         <br />
@@ -101,7 +113,7 @@ function StacksData(props) {
             Host: {item.server.hostURI}
             <br />
             <Fragment>
-              {'System Token: '}
+              System Token:
               {systemToken && (
                 <Fragment>
                   <Typography> {systemToken}</Typography>
