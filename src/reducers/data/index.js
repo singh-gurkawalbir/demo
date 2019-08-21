@@ -4,6 +4,7 @@ import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
 import accessTokens, * as fromAccessTokens from './accessTokens';
+import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
 
@@ -12,6 +13,7 @@ export default combineReducers({
   integrationAShares,
   audit,
   accessTokens,
+  jobs,
   suiteScript,
 });
 
@@ -155,4 +157,32 @@ export function suiteScriptTiles(state, connectionId) {
 
 export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
+}
+
+export function flowJobsPagingDetails(state) {
+  return fromJobs.flowJobsPagingDetails(state.jobs);
+}
+
+export function flowJobs(state) {
+  return fromJobs.flowJobs(state.jobs);
+}
+
+export function inProgressJobIds(state) {
+  return fromJobs.inProgressJobIds(state.jobs);
+}
+
+export function job(state, { type, jobId, parentJobId }) {
+  return fromJobs.job(state.jobs, { type, jobId, parentJobId });
+}
+
+export function isBulkRetryInProgress(state) {
+  return fromJobs.isBulkRetryInProgress(state.jobs);
+}
+
+export function jobErrors(state, jobId) {
+  return fromJobs.jobErrors(state.jobs, jobId);
+}
+
+export function jobErrorRetryObject(state, retryId) {
+  return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
