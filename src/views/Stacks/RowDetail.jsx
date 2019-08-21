@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,8 @@ import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import * as selectors from '../../reducers';
+import AuditLogDialog from '../../components/AuditLog/AuditLogDialog';
+import ResourceReferences from '../../components/ResourceReferences';
 
 const styles = theme => ({
   stackActions: {
@@ -21,10 +23,28 @@ const styles = theme => ({
 });
 
 function StacksData(props) {
-  const { classes, item, onReferencesClick } = props;
+  const { classes, item } = props;
   const isServerStack = item.type === 'server';
   const dispatch = useDispatch();
-  const handleAuditLogClick = () => {};
+  const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
+  const [showReferencesDialog, setShowReferencesDialog] = useState(false);
+
+  function handleAuditLogClick() {
+    setShowAuditLogDialog(true);
+  }
+
+  function handleAuditLogDialogClose() {
+    setShowAuditLogDialog(false);
+  }
+
+  function handleReferencesClick() {
+    setShowReferencesDialog(true);
+  }
+
+  function handleReferencesClose() {
+    setShowReferencesDialog(false);
+  }
+
   const handleShareStackClick = () => {};
   const handleDeleteClick = () => {
     confirmDialog({
@@ -59,6 +79,20 @@ function StacksData(props) {
 
   return (
     <Fragment>
+      {showAuditLogDialog && (
+        <AuditLogDialog
+          resourceType="stacks"
+          resourceId={item._id}
+          onClose={handleAuditLogDialogClose}
+        />
+      )}
+      {showReferencesDialog && (
+        <ResourceReferences
+          type="stacks"
+          id={item._id}
+          onClose={handleReferencesClose}
+        />
+      )}
       <Typography className={classes.stackDetails}>
         Type: {item.type}
         <br />
@@ -100,9 +134,7 @@ function StacksData(props) {
         <br />
         <Button onClick={handleAuditLogClick}>View audit log</Button>
         <br />
-        <Button onClick={() => onReferencesClick(item._id)}>
-          View references
-        </Button>
+        <Button onClick={handleReferencesClick}>View references</Button>
         <br />
         <Button onClick={handleDeleteClick}>Delete stack</Button>
       </Typography>
