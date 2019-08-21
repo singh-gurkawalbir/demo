@@ -2,7 +2,7 @@ import actionTypes from '../actions/types';
 
 export default function getRequestOptions(
   action,
-  { resourceId, integrationId } = {}
+  { resourceId, integrationId, osType } = {}
 ) {
   switch (action) {
     case actionTypes.USER_CREATE:
@@ -11,6 +11,21 @@ export default function getRequestOptions(
       return { path: `/ashares/${resourceId}`, opts: { method: 'PUT' } };
     case actionTypes.USER_DELETE:
       return { path: `/ashares/${resourceId}`, opts: { method: 'DELETE' } };
+    case actionTypes.AGENT.TOKEN_DISPLAY:
+      return {
+        path: `/agents/${resourceId}/display-token`,
+        opts: { method: 'GET' },
+      };
+    case actionTypes.AGENT.TOKEN_CHANGE:
+      return {
+        path: `/agents/${resourceId}/change-token`,
+        opts: { method: 'PUT' },
+      };
+    case actionTypes.AGENT.DOWNLOAD_INSTALLER:
+      return {
+        path: `/agents/${resourceId}/installer/signedURL?os=${osType}`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.USER_DISABLE:
       return {
         path: `/ashares/${resourceId}/disable`,

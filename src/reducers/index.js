@@ -62,6 +62,10 @@ export default rootReducer;
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
+
+export function appErrored(state) {
+  return fromApp.appErrored(state && state.app);
+}
 // #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
@@ -100,6 +104,12 @@ export function resourceFormState(state, resourceType, resourceId) {
 
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
+}
+
+export function agentAccessToken(state, id) {
+  if (!state) return {};
+
+  return fromSession.agentAccessToken(state.session, id);
 }
 
 export function editor(state, id) {
@@ -376,12 +386,20 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state && state.session);
+}
+
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
 }
 
 export function processors(state) {
   return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion

@@ -21,7 +21,7 @@ export default {
         "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -30,10 +30,12 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.freshdesk.com')
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.freshdesk.com')
+          );
 
         return subdomain;
       },

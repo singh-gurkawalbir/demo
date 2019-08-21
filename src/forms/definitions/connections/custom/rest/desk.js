@@ -18,7 +18,7 @@ export default {
         "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.desk.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -27,10 +27,12 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.desk.com')
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.desk.com')
+          );
 
         return subdomain;
       },

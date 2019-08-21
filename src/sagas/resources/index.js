@@ -85,6 +85,24 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 
+export function* deleteResource({ resourceType, id }) {
+  const path = `/${resourceType}/${id}`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'DELETE',
+      },
+      message: `Deleting ${resourceType}`,
+    });
+
+    yield put(actions.resource.deleted(resourceType, id));
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
 
@@ -101,9 +119,23 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
+export function* requestReferences({ resourceType, id }) {
+  const path = `/${resourceType}/${id}/dependencies`;
+
+  try {
+    const resourceReferences = yield call(apiCallWithRetry, { path });
+
+    yield put(actions.resource.receivedReferences(resourceReferences));
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
+  takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   ...metadataSagas,
 ];

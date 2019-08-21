@@ -30,7 +30,7 @@ export default {
       helpText:
         'Please enter the subdomain of your account here which can be obtained from the login url.',
       endAdornment: '.coupacloud.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -39,10 +39,12 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.coupacloud.com')
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.coupacloud.com')
+          );
 
         return subdomain;
       },

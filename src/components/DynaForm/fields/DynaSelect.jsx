@@ -63,10 +63,9 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const tempPlaceHolder = placeholder || 'Please Select';
   const defaultItem = (
-    <MenuItem key={tempPlaceHolder} value="">
-      {tempPlaceHolder}
+    <MenuItem key="__placeholder" value="">
+      {placeholder || 'Please Select'}
     </MenuItem>
   );
 

@@ -13,6 +13,8 @@ export const availableResources = [
   'flows',
 ];
 
+export const availableOSTypes = ['windows', 'linux', 'macOS'];
+
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
 // a type are symmetrical in shape by generating them via "action creator"
@@ -66,6 +68,25 @@ const resource = {
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+    }),
+
+  delete: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
+
+  deleted: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
+
+  requestReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
+      resourceType,
+      id,
+    }),
+
+  clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
+
+  receivedReferences: resourceReferences =>
+    action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
+      resourceReferences,
     }),
 
   clearStaged: (id, scope) =>
@@ -219,6 +240,15 @@ const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const agent = {
+  displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
+  changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
+  tokenReceived: agentToken =>
+    action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
+  downloadInstaller: (osType, id) =>
+    action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
+};
 const user = {
   profile: {
     request: message => resource.request('profile', undefined, message),
@@ -267,6 +297,8 @@ const user = {
   },
 };
 const reloadApp = () => action(actionTypes.RELOAD_APP);
+const appErrored = () => action(actionTypes.APP_ERRORED);
+const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -350,6 +382,8 @@ const accessToken = {
 // #endregion
 
 export default {
+  clearAppError,
+  appErrored,
   metadata,
   cancelTask,
   reloadApp,
@@ -366,4 +400,5 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  agent,
 };
