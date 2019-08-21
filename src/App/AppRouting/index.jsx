@@ -40,6 +40,11 @@ const Agents = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
+const IntegrationDashboard = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
+  )
+);
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
   import('../../views/IntegrationSettings')
@@ -56,6 +61,10 @@ export default class AppRouting extends Component {
   render() {
     return (
       <Switch>
+        <Route
+          path="/pg/integrations/:integrationId/dashboard"
+          component={IntegrationDashboard}
+        />
         <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
