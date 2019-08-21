@@ -1,20 +1,19 @@
 import React, { Fragment } from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Divider, List, Collapse } from '@material-ui/core';
+import { Divider, List, Collapse, ButtonBase } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import clsx from 'clsx';
+import CeligoLogo from '../../components/CeligoLogo';
+import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
+import menuItems from './menuItems';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -55,10 +54,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '16px 48px auto 80px',
+    gridTemplateRows: '64px auto 140px',
     '& > div:first-child': {
-      alignSelf: 'end',
-      margin: theme.spacing(1, 0, 0, 0.5),
+      alignSelf: 'center',
     },
     '& > div:last-child': {
       alignSelf: 'end',
@@ -68,11 +66,8 @@ const useStyles = makeStyles(theme => ({
   menuItem: {
     marginTop: theme.spacing(1),
   },
-  nestedList: {
-    backgroundColor: fade(theme.palette.common.white, 0.05),
-  },
   list: {
-    backgroundColor: fade(theme.palette.common.white, 0.05),
+    backgroundColor: fade(theme.palette.common.white, 0.07),
   },
   listItem: {
     '&:hover': {
@@ -86,43 +81,27 @@ const useStyles = makeStyles(theme => ({
   itemIconRoot: {
     color: 'inherit',
   },
+  menuList: {
+    overflowY: 'auto',
+    overflowX: 'hidden',
+  },
+  logoContainer: {
+    textAlign: 'center',
+  },
+  logo: {
+    width: 90,
+    display: 'inline-block',
+    fill: fade(theme.palette.primary.main, 0.8),
+  },
 }));
-const menuItems = [
-  { label: 'Home', Icon: MailIcon },
-  {
-    label: 'Tools',
-    Icon: MailIcon,
-    children: [
-      { label: 'Flow Builder', Icon: MailIcon },
-      { label: 'Data Loader', Icon: InboxIcon },
-    ],
-  },
-  {
-    label: 'Resources',
-    Icon: MailIcon,
-    children: [
-      { label: 'Exports', Icon: MailIcon },
-      { label: 'Imports', Icon: InboxIcon },
-      { label: 'Connections', Icon: MailIcon },
-      { label: 'Integrations', Icon: MailIcon },
-    ],
-  },
-  { label: 'Marketplace', Icon: MailIcon },
-  {
-    label: 'Support',
-    Icon: MailIcon,
-    children: [
-      { label: 'Knowledge Base', Icon: InboxIcon },
-      { label: 'Support Ticket', Icon: MailIcon },
-    ],
-  },
-];
 
-export default function CeligoDrawer({ open = false, onClick }) {
+export default function CeligoDrawer({ open = false, handleDrawerToggle }) {
   const classes = useStyles();
-  const [expand, setExpand] = React.useState({});
-  const handleClick = label => () => {
-    setExpand({ ...expand, [label]: !expand[label] });
+  const [expand, setExpand] = React.useState(null);
+  const handleItemClick = label => () => {
+    setExpand(label === expand ? null : label);
+
+    if (!open) handleDrawerToggle();
   };
 
   return (
@@ -141,38 +120,40 @@ export default function CeligoDrawer({ open = false, onClick }) {
       }}
       open={open}>
       <div className={classes.menuContainer}>
-        <div className={classes.toolbar} />
         <div>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={onClick}
-            // edge="start"
-            // className={clsx(classes.menuButton, {
-            //   [classes.hide]: open,
-            // })}
-          >
-            <MenuIcon />
-          </IconButton>
+          <div className={classes.logoContainer}>
+            {open ? (
+              <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
+                <CeligoLogo aria-label="open drawer" />
+              </ButtonBase>
+            ) : (
+              <IconButton
+                color="inherit"
+                aria-label="close drawer"
+                onClick={handleDrawerToggle}>
+                <CeligoMarkIcon color="primary" />
+              </IconButton>
+            )}
+          </div>
         </div>
-        <div>
+        <div className={classes.menuList}>
           <List className={classes.list}>
             {menuItems.map(({ label, Icon, children }) => (
               <Fragment key={label}>
                 <ListItem
                   button
                   className={classes.listItem}
-                  onClick={children ? handleClick(label) : undefined}>
+                  onClick={children ? handleItemClick(label) : undefined}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
                   </ListItemIcon>
                   <ListItemText primary={label} />
                   {children &&
-                    (expand[label] ? <ExpandLess /> : <ExpandMore />)}
+                    (expand === label ? <ExpandLess /> : <ExpandMore />)}
                 </ListItem>
                 {children && (
-                  <Collapse in={expand[label]} unmountOnExit timeout="auto">
-                    <List className={classes.nestedList} disablePadding>
+                  <Collapse in={expand === label} unmountOnExit timeout="auto">
+                    <List className={classes.list} disablePadding>
                       {children.map(({ label, Icon }) => (
                         <ListItem
                           className={classes.listItem}
@@ -195,18 +176,10 @@ export default function CeligoDrawer({ open = false, onClick }) {
         <div>
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
-            <IconButton color="inherit" onClick={onClick}>
+            <IconButton color="inherit" onClick={handleDrawerToggle}>
               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
-          <IconButton
-            edge="end"
-            aria-label="account of current user"
-            aria-controls="menuId"
-            aria-haspopup="true"
-            color="inherit">
-            <AccountCircle />
-          </IconButton>
         </div>
       </div>
     </Drawer>
