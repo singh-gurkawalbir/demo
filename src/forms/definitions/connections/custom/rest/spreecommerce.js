@@ -19,7 +19,8 @@ export default {
       label: 'Base URI:',
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
-        const subdomain = baseUri.substring(0, baseUri.indexOf('/api'));
+        const subdomain =
+          baseUri && baseUri.substring(0, baseUri.indexOf('/api'));
 
         return subdomain;
       },

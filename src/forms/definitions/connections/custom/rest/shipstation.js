@@ -12,7 +12,7 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'rest.basicAuth.username',
-      label: 'API Key',
+      label: 'API Key:',
       helpText: 'The API Key of your ShipStation account.',
     },
     {

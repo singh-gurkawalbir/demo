@@ -12,22 +12,22 @@
 const connectors = [
   // tech connectors
   {
-    id: 'HTTP',
+    id: 'http',
     name: 'HTTP',
     type: 'http',
     keywords: 'technology,protocol',
     group: 'tech',
   },
   {
-    id: 'REST',
+    id: 'rest',
     name: 'REST API',
     type: 'rest',
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  { id: 'FTP', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
+  { id: 'ftp', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
   {
-    id: 'Webhook',
+    id: 'webhook',
     name: 'Webhook',
     type: 'webhook',
     keywords: 'technology,protocol',

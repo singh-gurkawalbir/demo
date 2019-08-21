@@ -34,6 +34,9 @@ const StandaloneResource = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
+const Agents = loadable(() =>
+  import(/* webpackChunkName: 'Agents' */ '../../views/Agents')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -48,6 +51,9 @@ const IntegrationSettings = loadable(() =>
 );
 const AccessTokens = loadable(() =>
   import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
+);
+const Connections = loadable(() =>
+  import(/* webpackChunkName: 'Connections' */ '../../views/Connections')
 );
 
 @hot(module)
@@ -74,8 +80,10 @@ export default class AppRouting extends Component {
         />
         <Route path="/pg/exports" component={Exports} />
         <Route path="/pg/imports" component={Imports} />
+        <Route path="/pg/agents" component={Agents} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
+        <Route path="/pg/connections" component={Connections} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

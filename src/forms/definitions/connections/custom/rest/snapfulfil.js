@@ -17,7 +17,7 @@ export default {
         "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -26,10 +26,12 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.snapfulfil.net/')
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.snapfulfil.net/')
+          );
 
         return subdomain;
       },
