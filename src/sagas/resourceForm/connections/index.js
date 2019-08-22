@@ -9,6 +9,7 @@ import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
+import { isNewId } from '../../../utils/resource';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -38,6 +39,7 @@ export function* netsuiteUserRoles({ connectionId, values }) {
   if (!values && !connectionId) return;
 
   if (!values) {
+    if (isNewId(connectionId)) return;
     // retrieving existing userRoles for a connection
     reqPayload = { _connectionId: connectionId };
   } else {

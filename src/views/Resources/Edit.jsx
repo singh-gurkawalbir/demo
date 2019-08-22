@@ -23,7 +23,8 @@ import getRoutePath from '../../utils/routePaths';
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const metaChanges = selectors.resourceData(state, resourceType, id, 'meta');
-  const { _connectionId } = metaChanges.merged ? metaChanges.merged : {};
+  const valueChanges = selectors.resourceData(state, resourceType, id, 'value');
+  const { _connectionId } = valueChanges.merged ? valueChanges.merged : {};
   // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
@@ -36,7 +37,7 @@ const mapStateToProps = (state, { match }) => {
 
   return {
     resourceType,
-    // valueChanges,
+    valueChanges,
     metaPatches,
     metaChanges,
     connection,
@@ -122,6 +123,7 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
+      valueChanges,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
@@ -149,8 +151,10 @@ class Edit extends Component {
       );
     }
 
-    let type = connection ? connection.type : merged.type;
-    const assistant = connection ? connection.assistant : merged.assistant;
+    let type = connection ? connection.type : valueChanges.merged.type;
+    const assistant = connection
+      ? connection.assistant
+      : valueChanges.merged.assistant;
     const formMeta = merged.customForm ? merged.customForm.form : {};
 
     if (assistant) {
@@ -181,11 +185,11 @@ class Edit extends Component {
             <Typography variant="h5">
               {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
             </Typography>
-
-            <Typography variant="caption" className={classes.dates}>
-              Last Modified: {prettyDate(merged.lastModified)}
-            </Typography>
-
+            {merged.lastModified && (
+              <Typography variant="caption" className={classes.dates}>
+                Last Modified: {prettyDate(merged.lastModified)}
+              </Typography>
+            )}
             {metaPatches > 0 && (
               <Typography variant="caption" className={classes.dates}>
                 Unsaved changes made <TimeAgo date={lastChange} />.

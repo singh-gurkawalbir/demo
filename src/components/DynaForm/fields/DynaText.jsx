@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 
@@ -22,14 +22,18 @@ export default function DynaText(props) {
     endAdornment,
     inputType,
     options,
-    touched,
   } = props;
+  const [valueChanged, setValueChanged] = useState(false);
 
   useEffect(() => {
-    if (!touched && options && typeof options === 'string') {
+    setValueChanged(true);
+  }, [options]);
+  useEffect(() => {
+    if (valueChanged && options && typeof options === 'string') {
       onFieldChange(id, options);
+      setValueChanged(false);
     }
-  }, [id, onFieldChange, options, touched]);
+  }, [id, onFieldChange, options, valueChanged]);
 
   const handleFieldChange = event => {
     const { value } = event.target;

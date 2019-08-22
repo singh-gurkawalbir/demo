@@ -98,23 +98,23 @@ export const getMissingPatchSet = (paths, resource) => {
     // console.log(segments);
     // only deep paths have reference errors.
     // length >2 because first is empty root node.
-    if (segments.length > 2) {
+    if (segments.length > 1) {
       let r = resource;
       let path = '';
 
-      for (let i = 1; i <= segments.length - 2; i += 1) {
+      for (let i = 1; i <= segments.length - 1; i += 1) {
         const segment = segments[i];
 
         path = `${path}/${segment}`;
+        const missingSegments = segments.slice(i + 1, segments.length);
 
         if (
           r === undefined ||
           r[segment] === undefined ||
-          typeof r[segment] !== 'object'
+          (typeof r[segment] !== 'object' && missingSegments.length !== 0)
         ) {
           addMissing(path);
 
-          const missingSegments = segments.slice(i + 1, segments.length);
           let missingPath = `${path}/${missingSegments[0]}`;
 
           for (let j = 1; j <= missingSegments.length; j += 1) {
