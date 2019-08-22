@@ -69,7 +69,7 @@ class CommStatus extends Component {
       commStatusHandler,
     } = nextProps;
 
-    commStatusHandler(toMonitor);
+    if (JSON.stringify(toMonitor) !== '{}') commStatusHandler(toMonitor);
 
     let action;
 

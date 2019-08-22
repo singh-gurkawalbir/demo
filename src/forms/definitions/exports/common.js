@@ -34,5 +34,4 @@ export default {
     { fieldId: 'useTechAdaptorForm' },
     { fieldId: 'adaptorType' },
   ],
-  fieldSets: [],
 };

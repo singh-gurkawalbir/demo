@@ -8,6 +8,8 @@ import { resourceSagas } from './resources';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { accessTokenSagas } from './accessTokens';
+import { jobSagas } from './jobs';
+import { flowSagas } from './flows';
 import editorSagas from './editor';
 import {
   onRequestSaga,
@@ -82,6 +84,8 @@ export default function* rootSaga() {
     ...authenticationSagas,
     ...resourceFormSagas,
     ...accessTokenSagas,
+    ...jobSagas,
+    ...flowSagas,
     ...agentSagas,
   ]);
 }

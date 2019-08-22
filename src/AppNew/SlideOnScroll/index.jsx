@@ -8,10 +8,13 @@ const SlideOnScroll = React.forwardRef((props, ref) => {
 
   return (
     <Slide
+      ref={ref}
       appear={false}
       direction="down"
       in={!useScrollTrigger({ threshold })}>
-      {React.cloneElement(children, { ref })}
+      {
+        children // React.cloneElement(children, { ref })}}
+      }
     </Slide>
   );
 });
