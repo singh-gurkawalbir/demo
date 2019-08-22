@@ -311,6 +311,28 @@ describe('resourceDetailsMap selector', () => {
         _connectorId: 'connector4',
         something: 'something',
       },
+      {
+        _id: 'flow5',
+        name: 'flow_Five',
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+      },
+      {
+        _id: 'flow6',
+        name: 'flow_Six',
+        _connectorId: 'connector4',
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+          {
+            _importId: 'i2',
+          },
+        ],
+      },
     ];
     const published = [
       { _id: 'pub1', name: 'pub 1' },
@@ -331,14 +353,17 @@ describe('resourceDetailsMap selector', () => {
         int2: { name: 'int_Two', _connectorId: 'connector2' },
       },
       flows: {
-        flow1: { name: 'flow_One' },
-        flow2: { name: 'flow_Two', _integrationId: 'int2' },
+        flow1: { name: 'flow_One', numImports: 1 },
+        flow2: { name: 'flow_Two', _integrationId: 'int2', numImports: 1 },
         flow3: {
           name: 'flow_Three',
           _integrationId: 'int3',
           _connectorId: 'connector3',
+          numImports: 1,
         },
-        flow4: { name: 'flow_Four', _connectorId: 'connector4' },
+        flow4: { name: 'flow_Four', _connectorId: 'connector4', numImports: 1 },
+        flow5: { name: 'flow_Five', numImports: 1 },
+        flow6: { name: 'flow_Six', _connectorId: 'connector4', numImports: 2 },
       },
     });
   });

@@ -10,6 +10,7 @@ import Search from '../Search';
 import TextToggle from '../../components/TextToggle';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
+import ProfileMenuButton from '../ProfileMenuButton';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -33,17 +34,14 @@ const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1,
   },
-  actions: {
-    display: 'flex',
-  },
 }));
 
 export default function CeligoAppBar({ shift = false }) {
   const classes = useStyles();
 
   return (
-    <SlideOnScroll threshold={250}>
-      <ElevateOnScroll threshold={100}>
+    <SlideOnScroll threshold={500}>
+      <ElevateOnScroll threshold={250}>
         <AppBar
           color="secondary"
           position="fixed"
@@ -61,17 +59,16 @@ export default function CeligoAppBar({ shift = false }) {
               ]}
             />
             <div className={classes.grow} />
-            <div className={classes.actions}>
-              <Search />
-              <IconButton
-                size="small"
-                aria-label="show 17 new notifications"
-                color="inherit">
-                <Badge variant="dot" badgeContent={17} color="primary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-            </div>
+            <Search />
+            <IconButton
+              size="small"
+              aria-label="show 17 new notifications"
+              color="inherit">
+              <Badge badgeContent={17} color="primary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <ProfileMenuButton />
           </Toolbar>
         </AppBar>
       </ElevateOnScroll>
