@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Badge from '@material-ui/core/Badge';
@@ -11,6 +12,7 @@ import TextToggle from '../../components/TextToggle';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
 import ProfileMenuButton from '../ProfileMenuButton';
+import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -36,8 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoAppBar({ shift = false }) {
+export default function CeligoAppBar() {
   const classes = useStyles();
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <SlideOnScroll threshold={500}>
@@ -46,7 +49,7 @@ export default function CeligoAppBar({ shift = false }) {
           color="secondary"
           position="fixed"
           className={clsx(classes.appBar, {
-            [classes.appBarShift]: shift,
+            [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar>
             <TextToggle

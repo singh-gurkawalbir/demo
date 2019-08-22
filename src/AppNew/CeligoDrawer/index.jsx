@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,6 +17,8 @@ import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 import menuItems from './menuItems';
 import getRoutePath from '../../utils/routePaths';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -97,14 +100,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoDrawer(props) {
-  const { open = false, handleDrawerToggle } = props;
+export default function CeligoDrawer() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [expand, setExpand] = React.useState(null);
+  const handleDrawerToggle = () => {
+    dispatch(actions.toggleDrawer());
+  };
+
   const handleExpandClick = label => () => {
     setExpand(label === expand ? null : label);
 
-    if (!open) handleDrawerToggle();
+    if (!drawerOpened) handleDrawerToggle();
   };
 
   return (
@@ -112,20 +120,20 @@ export default function CeligoDrawer(props) {
       variant="permanent"
       anchor="left"
       className={clsx(classes.drawer, {
-        [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+        [classes.drawerOpen]: drawerOpened,
+        [classes.drawerClose]: !drawerOpened,
       })}
       classes={{
         paper: clsx({
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerOpen]: drawerOpened,
+          [classes.drawerClose]: !drawerOpened,
         }),
       }}
-      open={open}>
+      open={drawerOpened}>
       <div className={classes.menuContainer}>
         <div>
           <div className={classes.logoContainer}>
-            {open ? (
+            {drawerOpened ? (
               <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
                 <CeligoLogo aria-label="open drawer" />
               </ButtonBase>
@@ -184,7 +192,7 @@ export default function CeligoDrawer(props) {
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton color="inherit" onClick={handleDrawerToggle}>
-              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {drawerOpened ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
         </div>

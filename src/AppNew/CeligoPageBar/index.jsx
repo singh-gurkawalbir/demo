@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -13,6 +14,7 @@ import CeligoIconButton from '../../components/IconButton';
 import AddIcon from '../../components/icons/AddIcon';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
+import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -33,8 +35,9 @@ const useStyles = makeStyles(theme => ({
   pageBarOffset: { height: theme.pageBarHeight },
 }));
 
-export default function CeligoPageBar({ shift = false }) {
+export default function CeligoPageBar({ title }) {
   const classes = useStyles();
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <Fragment>
@@ -42,7 +45,7 @@ export default function CeligoPageBar({ shift = false }) {
         <ElevateOnScroll threshold={0}>
           <Paper
             className={clsx(classes.pageHeader, {
-              [classes.pageHeaderShift]: shift,
+              [classes.pageHeaderShift]: drawerOpened,
             })}
             elevation={0}
             square>
@@ -60,7 +63,7 @@ export default function CeligoPageBar({ shift = false }) {
             </Breadcrumbs>
             <Grid container justify="space-between">
               <Grid item>
-                <Typography variant="h5">Subscription Add-ons</Typography>
+                <Typography variant="h5">{title}</Typography>
               </Grid>
               <Grid item>
                 <Button variant="text">

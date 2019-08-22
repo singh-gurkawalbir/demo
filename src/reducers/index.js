@@ -60,6 +60,10 @@ export default rootReducer;
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region app selectors
+export function drawerOpened(state) {
+  return fromApp.drawerOpened(state && state.app);
+}
+
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }

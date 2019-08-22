@@ -11,14 +11,15 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 }));
 
-export default function PageContent({ shift = false }) {
+export default function PageContent(props) {
+  const { shift = false } = props;
   const classes = useStyles();
 
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
       <CeligoPageBar shift={shift} />
-      <AppRouting />
+      <AppRouting {...props} />
     </main>
   );
 }

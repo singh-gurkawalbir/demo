@@ -296,9 +296,10 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
-const reloadApp = () => action(actionTypes.RELOAD_APP);
+const reloadApp = () => action(actionTypes.APP_RELOAD);
 const appErrored = () => action(actionTypes.APP_ERRORED);
 const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
+const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -491,6 +492,7 @@ const flow = {
 export default {
   clearAppError,
   appErrored,
+  toggleDrawer,
   metadata,
   cancelTask,
   reloadApp,
