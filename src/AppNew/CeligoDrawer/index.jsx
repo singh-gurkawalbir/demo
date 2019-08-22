@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Divider, List, Collapse, ButtonBase } from '@material-ui/core';
@@ -14,6 +15,7 @@ import clsx from 'clsx';
 import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 import menuItems from './menuItems';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -95,10 +97,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoDrawer({ open = false, handleDrawerToggle }) {
+export default function CeligoDrawer(props) {
+  const { open = false, handleDrawerToggle } = props;
   const classes = useStyles();
   const [expand, setExpand] = React.useState(null);
-  const handleItemClick = label => () => {
+  const handleExpandClick = label => () => {
     setExpand(label === expand ? null : label);
 
     if (!open) handleDrawerToggle();
@@ -138,12 +141,14 @@ export default function CeligoDrawer({ open = false, handleDrawerToggle }) {
         </div>
         <div className={classes.menuList}>
           <List className={classes.list}>
-            {menuItems.map(({ label, Icon, children }) => (
+            {menuItems.map(({ label, Icon, path, children }) => (
               <Fragment key={label}>
                 <ListItem
                   button
                   className={classes.listItem}
-                  onClick={children ? handleItemClick(label) : undefined}>
+                  component={children ? undefined : Link}
+                  to={getRoutePath(path)}
+                  onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
                   </ListItemIcon>
@@ -154,10 +159,12 @@ export default function CeligoDrawer({ open = false, handleDrawerToggle }) {
                 {children && (
                   <Collapse in={expand === label} unmountOnExit timeout="auto">
                     <List className={classes.list} disablePadding>
-                      {children.map(({ label, Icon }) => (
+                      {children.map(({ label, Icon, path }) => (
                         <ListItem
                           className={classes.listItem}
                           key={label}
+                          component={Link}
+                          to={getRoutePath(path)}
                           button>
                           <ListItemIcon
                             classes={{ root: classes.itemIconRoot }}>
