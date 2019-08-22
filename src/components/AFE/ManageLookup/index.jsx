@@ -1,137 +1,69 @@
 import React, { useState } from 'react';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { makeStyles } from '@material-ui/core/styles';
-// import stringUtil from '../../../utils/string';
-import FormDialog from '../../FormDialog';
-import HttpDynamicImport from './HttpDynamicImport';
-import HttpStaticImport from './HttpStaticImport';
-import DynaForm from '../../DynaForm';
+import _ from 'lodash';
+import ModalDialog from '../../ModalDialog';
+import NewLookup from './NewLookup';
+import LookupListing from './LookupListing';
 
-const useStyles = makeStyles(() => ({
-  formControl: {
-    width: '100%',
-  },
-}));
-
-function optionsHandler() {
-  return ['something1', 'something2'];
-}
-
-export default function ManageLookup() {
-  // props
-  // const { importId = '5d106e39e6150a7c62ce5188' } = props;
-  const classes = useStyles();
-  const [mode, setMode] = useState('dynamic');
-  const fieldMeta = {
-    fields: [
-      {
-        id: 'failFields',
-        name: 'failFields',
-        type: 'select',
-        label: 'Action to take if unique match not found:',
-        defaultValue: '',
-        options: [
-          {
-            heading: 'Select Http Method:',
-            items: [
-              {
-                label: 'Fail Record',
-                value: 'allowFailures',
-              },
-              {
-                label: 'Use Empty String as Default Value',
-                value: 'useEmptyString',
-              },
-              {
-                label: 'Use Null as Default Value',
-                value: 'useNull',
-              },
-              {
-                label: 'Use Custom Default Value',
-                value: 'defaultLookup',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'default',
-        name: 'default',
-        type: 'text',
-        label: 'Enter Default Value:',
-        placeholder: 'Enter Default Value',
-        visibleWhen: [
-          {
-            id: 'default',
-            field: 'failFields',
-            is: ['defaultLookup'],
-          },
-        ],
-      },
-    ],
-  };
-  const handleSubmit = data => {
-    // eslint-disable-next-line
-    console.log(data);
+export default function ManageLookup(props) {
+  const { lookups, onUpdate, onAdd, onClose, onCancelClick } = props;
+  const [isNewLookup, setIsNewLookup] = useState(false);
+  const [mode, setMode] = useState('create');
+  const [lookupObj, setLookupObj] = useState({});
+  const addNewLookup = val => {
+    onAdd(val);
+    setIsNewLookup(!isNewLookup);
   };
 
-  const onClose = () => {
-    // eslint-disable-next-line
-    console.log("http import form closed");
+  const cancelHandler = () => {
+    if (isNewLookup) {
+      setIsNewLookup(false);
+    } else {
+      onCancelClick();
+    }
   };
 
-  const handleModeChange = val => {
-    setMode(val);
+  const editLookupHandler = val => {
+    setLookupObj(val);
+    setMode('edit');
+    setIsNewLookup(true);
   };
 
-  const changeData = val => {
-    // eslint-disable-next-line
-    console.log(val);
-  };
+  const deleteLookup = lookupObj => {
+    if (lookupObj && lookupObj.name) {
+      const modifiedLookups = _.filter(
+        lookups,
+        obj => obj.name !== lookupObj.name
+      );
 
-  const onFieldChange = val => {
-    // eslint-disable-next-line
-    console.log(val);
+      onUpdate(modifiedLookups);
+    }
   };
 
   return (
-    <FormDialog submitLabel="Save" onClose={onClose} onSubmit={handleSubmit}>
-      <div>
-        <RadioGroup
-          aria-label="position"
-          name="position"
-          value={mode}
-          onChange={e => handleModeChange(e.target.value)}
-          row>
-          <FormControlLabel
-            value="dynamic"
-            control={<Radio color="primary" />}
-            label="Dynamic Search"
-            labelPlacement="end"
-          />
-          <FormControlLabel
-            value="static"
-            control={<Radio color="primary" />}
-            label="Static: Value to Value"
-            labelPlacement="start"
-          />
-        </RadioGroup>
-        <FormControl className={classes.formControl}>
-          {mode === 'dynamic' ? (
-            <HttpDynamicImport onFieldChange={onFieldChange} />
-          ) : (
-            <HttpStaticImport />
-          )}
-          <DynaForm
-            fieldMeta={fieldMeta}
-            optionsHandler={optionsHandler}
-            onChange={changeData}
-          />
-        </FormControl>
-      </div>
-    </FormDialog>
+    <ModalDialog
+      show
+      actionLabel={isNewLookup ? 'Back to Lookup' : 'New Lookup'}
+      actionHandler={() => {
+        setIsNewLookup(!isNewLookup);
+      }}>
+      <span>Manage Lookups</span>
+      {isNewLookup ? (
+        <NewLookup
+          mode={mode}
+          lookupObj={lookupObj}
+          onCancelClick={cancelHandler}
+          onSubmit={addNewLookup}
+        />
+      ) : (
+        <LookupListing
+          lookups={lookups}
+          editLookupHandler={editLookupHandler}
+          deleteLookup={deleteLookup}
+          lookupUpdateHandler={onUpdate}
+          onCancelClick={cancelHandler}
+          onClose={onClose}
+        />
+      )}
+    </ModalDialog>
   );
 }

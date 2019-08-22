@@ -21,6 +21,8 @@ import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaLookupEditor from './DynaLookupEditor';
+import DynaKeyWithAction from './DynaKeyWithAction';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -34,7 +36,9 @@ export default {
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
+  dynakeywithaction: DynaKeyWithAction,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,

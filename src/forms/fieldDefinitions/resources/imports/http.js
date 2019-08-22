@@ -105,6 +105,10 @@ export default {
       },
     ],
   },
+  'http.lookups': {
+    type: 'importLookup',
+    label: 'Manage Lookups',
+  },
   'http.relativeUri': {
     type: 'text',
     label: 'Relative URI',
@@ -237,6 +241,7 @@ export default {
       },
     ],
   },
+
   'http.errorMediaType': {
     type: 'select',
     label: 'Error Media Type',
