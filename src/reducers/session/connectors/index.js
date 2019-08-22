@@ -13,13 +13,16 @@ export default (state = {}, action) => {
       newState[_integrationId][id] = { isLoading: true };
 
       return newState;
-    case actionTypes.CONNECTORS.RECEIVED_METADATA:
-      if (!newState[_integrationId]) newState[_integrationId] = {};
+    case actionTypes.CONNECTORS.METADATA_RECEIVED:
       newState[_integrationId][id] = { isLoading: false, data: metadata };
 
       return newState;
     case actionTypes.CONNECTORS.METADATA_FAILURE:
       newState[_integrationId][id] = { isLoading: false };
+
+      return newState;
+    case actionTypes.CONNECTORS.METADATA_CLEAR:
+      newState[_integrationId][id] = {};
 
       return newState;
     default:
@@ -30,9 +33,21 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   if (!state || !state[_integrationId]) {
-    return {};
+    return { isLoading: false };
   }
 
-  return state[_integrationId][fieldName];
+  const toReturn = state[_integrationId][fieldName];
+
+  if (typeof toReturn === 'object') {
+    return toReturn;
+  } else if (
+    Array.isArray(toReturn) &&
+    toReturn.length &&
+    typeof toReturn[0] === 'object'
+  ) {
+    return toReturn[0];
+  }
+
+  return { isLoading: false };
 }
 // #endregion

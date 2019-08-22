@@ -74,10 +74,17 @@ const KeyValueTable = props => {
   );
 
   useEffect(() => {
-    if (response) {
+    if (response && response.optionsMap && Array.isArray(response.optionsMap)) {
       setOptionsMap(response.optionsMap);
     }
   }, [response]);
+
+  useEffect(
+    () => () => {
+      dispatch(actions.connectors.clearMetadata(id, _integrationId));
+    },
+    [_integrationId, dispatch, id]
+  );
 
   // If Value is present, check if there are required fields missing in the last row
   if (valueData && valueData.length) {

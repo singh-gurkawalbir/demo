@@ -3,31 +3,30 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
-function* fetchMetadata({ fieldName, id, _integrationId }) {
+export function* fetchMetadata({ fieldType, fieldName, _integrationId }) {
   const path = `/integrations/${_integrationId}/settings/refreshMetadata`;
+  let metadata;
 
   try {
-    const metadata = yield call(apiCallWithRetry, {
+    metadata = yield call(apiCallWithRetry, {
       path,
-      opts: { body: { fieldName: id, type: fieldName }, method: 'PUT' },
+      opts: { body: { type: fieldType, fieldName }, method: 'PUT' },
       message: `Fetching metadata`,
     });
-
-    yield put(
-      actions.connectors.receivedMetadata(
-        metadata,
-        fieldName,
-        id,
-        _integrationId
-      )
-    );
-
-    return metadata;
   } catch (error) {
-    yield put(actions.connectors.failedMetadata());
+    yield put(actions.connectors.failedMetadata(fieldName, _integrationId));
 
     return undefined;
   }
+
+  yield put(
+    actions.connectors.receivedMetadata(
+      metadata,
+      fieldType,
+      fieldName,
+      _integrationId
+    )
+  );
 }
 
 export default [

@@ -191,13 +191,22 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
-  refreshMetadata: (fieldName, id, _integrationId) =>
+  refreshMetadata: (fieldType, id, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_REQUEST, {
-      fieldName,
+      fieldType,
       id,
       _integrationId,
     }),
-  failedMetadata: () => action(actionTypes.CONNECTORS.METADATA_FAILURE),
+  failedMetadata: (id, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_FAILURE, {
+      id,
+      _integrationId,
+    }),
+  clearMetadata: (id, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_CLEAR, {
+      id,
+      _integrationId,
+    }),
   receivedMetadata: (metadata, fieldName, id, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
       metadata,
