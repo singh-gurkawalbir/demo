@@ -36,7 +36,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
 }));
-const ProfileMenuButton = React.forwardRef((props, ref) => {
+
+export default function ProfileMenuButton() {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const theme = useTheme();
@@ -75,7 +76,6 @@ const ProfileMenuButton = React.forwardRef((props, ref) => {
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
       </IconButton>
       <ArrowPopper
-        ref={ref}
         zIndex={theme.zIndex.drawer + 1}
         id="profileOptions"
         className={classes.popperContent}
@@ -98,7 +98,6 @@ const ProfileMenuButton = React.forwardRef((props, ref) => {
           </Grid>
         </Grid>
         <Button
-          // ref={ref}
           onClick={handleClose}
           variant="contained"
           color="primary"
@@ -123,6 +122,4 @@ const ProfileMenuButton = React.forwardRef((props, ref) => {
       </ArrowPopper>
     </Fragment>
   );
-});
-
-export default ProfileMenuButton;
+}
