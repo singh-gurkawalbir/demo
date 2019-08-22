@@ -1049,6 +1049,8 @@ export default {
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    inputType: 'password',
+    defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1080,7 +1082,6 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
           { label: 'UNIX', value: 'UNIX' },
           { label: 'UNIX-TRIM', value: 'UNIX-TRIM' },
           { label: 'VMS', value: 'VMS' },
