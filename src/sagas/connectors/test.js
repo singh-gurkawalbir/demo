@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { fetchMetadata } from './';
 
 describe('evaluateProcessor saga', () => {
-  test('should return the correct selector and handle the repsone correctly', () => {
+  test('should return the correct selector and handle the respone correctly', () => {
     const _integrationId = 1;
     const metadata = { a: 1 };
     const path = `/integrations/${_integrationId}/settings/refreshMetadata`;

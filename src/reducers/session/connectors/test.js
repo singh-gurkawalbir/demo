@@ -64,7 +64,7 @@ describe('Connector metadata', () => {
     });
   });
 
-  test('should set isLoading to false when error occurs for refreshed metadata', () => {
+  test('should clear the metadata when clearMetadata is called', () => {
     const type = 'rest.headers';
     const _integrationId = '123123';
     const requestState = reducer(
