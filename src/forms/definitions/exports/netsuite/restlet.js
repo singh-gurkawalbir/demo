@@ -47,6 +47,7 @@ export default {
     },
     // Search Criteria
     // Sample Data
+    { fieldId: 'sampleData' },
     //  Transform  Data
     { fieldId: 'transform.expression.rules' },
     // Filter  Data

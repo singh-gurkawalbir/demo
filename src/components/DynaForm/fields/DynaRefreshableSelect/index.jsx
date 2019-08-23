@@ -18,8 +18,11 @@ export default function DynaSelectOptionsGenerator(props) {
   );
   const handleFetchResource = useCallback(() => {
     const resource = (options && options.resourceToFetch) || resourceType;
+    const isResourceAvailableToFetch = !(
+      options && options.isResourceAvailableToFetch === false
+    );
 
-    if (resource && !data) {
+    if (isResourceAvailableToFetch && resource && !data) {
       dispatch(
         actions.metadata.request(connectionId, resource, mode, filterKey)
       );
@@ -27,8 +30,11 @@ export default function DynaSelectOptionsGenerator(props) {
   }, [connectionId, data, dispatch, filterKey, mode, options, resourceType]);
   const handleRefreshResource = () => {
     const resource = (options && options.resourceToFetch) || resourceType;
+    const isResourceAvailableToFetch = !(
+      options && options.isResourceAvailableToFetch === false
+    );
 
-    if (resource) {
+    if (isResourceAvailableToFetch && resource) {
       dispatch(
         actions.metadata.refresh(connectionId, resource, mode, filterKey)
       );

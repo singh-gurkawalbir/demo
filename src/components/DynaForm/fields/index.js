@@ -21,6 +21,7 @@ import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaSampleData from './DynaSampleData';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -37,6 +38,7 @@ export default {
   keyvalue: DynaKeyValue,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
+  sampledata: DynaSampleData,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,

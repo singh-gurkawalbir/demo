@@ -8,6 +8,7 @@ import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import resource, * as fromResource from './resource';
+import sampleData, * as fromSampleData from './sampleData';
 
 export default combineReducers({
   stage,
@@ -19,6 +20,7 @@ export default combineReducers({
   agentAccessTokens,
   resource,
   netsuiteUserRole,
+  sampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -107,5 +109,9 @@ export function createdResourceId(state, tempId) {
 
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
+}
+
+export function getSampleData(state, resourceId) {
+  return fromSampleData.fetchData(state && state.sampleData, resourceId);
 }
 // #endregion

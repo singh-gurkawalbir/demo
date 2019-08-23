@@ -35,7 +35,7 @@ export default {
     { fieldId: 'type' },
     { fieldId: 'delta.dateFormat' },
     { fieldId: 'delta.lagOffset' },
-    { fieldId: 'once.booleanField' },
+    // { fieldId: 'once.booleanField' },
     { fieldId: 'rest.once.relativeURI' },
     { fieldId: 'rest.once.method' },
     { fieldId: 'rest.once.postBody' },

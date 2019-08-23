@@ -17,6 +17,7 @@ export const SCOPES = {
   META: 'meta',
   VALUE: 'value',
   SCRIPT: 'script',
+  SAMPLE_DATA: 'sampledata',
 };
 Object.freeze(SCOPES);
 

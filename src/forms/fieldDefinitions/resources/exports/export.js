@@ -85,8 +85,11 @@ export default {
     label: 'Path To Many',
   },
   sampleData: {
-    type: 'editor',
+    type: 'sampledata',
     label: 'Sample Data',
+    mode: 'json',
+    defaultValue: r => r && r.sampleData,
+    connectionId: r => r && r._connectionId,
   },
   originSampleData: {
     type: 'text',

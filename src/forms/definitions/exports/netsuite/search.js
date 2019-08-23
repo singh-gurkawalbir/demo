@@ -61,6 +61,7 @@ export default {
     },
     // Search Criteria
     // Sample Data
+    { fieldId: 'sampleData' },
     //  Tranform  Data
     { fieldId: 'transform.expression.rules' },
     // Filter  Data
@@ -73,10 +74,7 @@ export default {
       );
       let record = recordTypeField && recordTypeField.value;
 
-      if (
-        recordTypeField &&
-        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
-      ) {
+      if (record && record.toLowerCase().indexOf('customrecord') === 0) {
         record = 'customRecord';
       }
 
@@ -84,6 +82,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          record &&
           `searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
     }
@@ -94,10 +93,7 @@ export default {
       );
       let record = recordTypeField && recordTypeField.value;
 
-      if (
-        recordTypeField &&
-        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
-      ) {
+      if (record && record.toLowerCase().indexOf('customrecord') === 0) {
         record = 'customRecord';
       }
 
@@ -105,6 +101,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          record &&
           `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:
           recordTypeField &&

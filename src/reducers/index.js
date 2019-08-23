@@ -103,6 +103,10 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function getSampleData(state, resourceId) {
+  return fromSession.getSampleData(state && state.session, resourceId);
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }

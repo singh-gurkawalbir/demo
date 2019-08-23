@@ -358,6 +358,16 @@ const resourceForm = {
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };
+const exportData = {
+  fetch: (resourceId, resourceType, values) =>
+    action(actionTypes.SAMPLEDATA.FETCH, {
+      resourceId,
+      resourceType,
+      values,
+    }),
+  received: (resourceId, data) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, data }),
+};
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
   generateToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
@@ -506,6 +516,7 @@ export default {
   ashares,
   auth,
   auditLogs,
+  exportData,
   accessToken,
   job,
   flow,
