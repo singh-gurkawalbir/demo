@@ -19,9 +19,6 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
-const CustomForms = loadable(() =>
-  import(/* webpackChunkName: 'CustomForms' */ '../../views/CustomForms')
-);
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
@@ -39,6 +36,11 @@ const Agents = loadable(() =>
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
+);
+const IntegrationDashboard = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
+  )
 );
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
@@ -60,13 +62,16 @@ export default class AppRouting extends Component {
     return (
       <Switch>
         <Route
+          path="/pg/integrations/:integrationId/dashboard"
+          component={IntegrationDashboard}
+        />
+        <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
         <Route exact path="/pg/signin" component={SignIn} />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
-        <Route path="/pg/forms" component={CustomForms} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route
           path="/pg/:resourceType/:operation/:id"
