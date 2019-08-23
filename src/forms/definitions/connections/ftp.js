@@ -46,10 +46,12 @@ export default {
     { fieldId: 'type', disabled: true },
     {
       fieldId: 'ftp.hostURI',
+      required: true,
     },
-    { fieldId: 'ftp.type' },
+    { fieldId: 'ftp.type', required: true },
     {
       fieldId: 'ftp.username',
+      required: true,
     },
     {
       fieldId: 'ftp.password',
@@ -105,13 +107,7 @@ export default {
         },
         {
           fieldId: 'ftp.entryParser',
-          required: true,
-          validWhen: {
-            isNot: {
-              values: [''],
-              message: 'An option must be selected',
-            },
-          },
+          required: false,
         },
         {
           fieldId: 'ftp.requireSocketReUse',
