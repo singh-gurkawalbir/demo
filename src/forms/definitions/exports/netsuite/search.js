@@ -84,6 +84,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          record &&
           `searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
     }
@@ -108,6 +109,7 @@ export default {
           `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:
           recordTypeField &&
+          record &&
           recordTypeField.value !== recordTypeField.defaultValue,
       };
     }

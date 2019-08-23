@@ -41,7 +41,9 @@ export default {
       // returns corresponding relative uri path
       return {
         resourceToFetch:
-          recordTypeField && `recordTypes/${recordTypeField.value}/sublists`,
+          recordTypeField &&
+          recordTypeField.value &&
+          `recordTypes/${recordTypeField.value}/sublists`,
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,

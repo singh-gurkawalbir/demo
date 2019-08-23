@@ -62,6 +62,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          recordTypeField.value &&
           `recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
         resetValue:
           recordTypeField &&
