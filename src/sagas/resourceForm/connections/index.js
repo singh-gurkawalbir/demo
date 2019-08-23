@@ -103,7 +103,6 @@ export function* configureDebugger({ id, timeInMins }) {
     yield put(
       actions.resource.connections.updateConnection(id, connectionResp)
     );
-    console.log('connection', connectionResp);
   } catch (error) {
     return undefined;
   }
