@@ -7,9 +7,15 @@ const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    backgroundColor: props =>
+      props.variant === 'light'
+        ? fade(theme.palette.common.black, 0.04)
+        : fade(theme.palette.common.white, 0.1),
     '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+      backgroundColor: props =>
+        props.variant === 'light'
+          ? fade(theme.palette.common.black, 0.15)
+          : fade(theme.palette.common.white, 0.25),
     },
     marginRight: theme.spacing(1),
     marginLeft: 0,
@@ -37,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: 50,
+      width: 70,
       '&:focus': {
         width: 200,
       },
@@ -45,8 +51,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SearchInput(props) {
-  const classes = useStyles();
+export default function SearchInput({ variant = 'light', ...rest }) {
+  const classes = useStyles({ variant });
 
   return (
     <Fragment>
@@ -55,7 +61,7 @@ export default function SearchInput(props) {
           <SearchIcon />
         </div>
         <InputBase
-          {...props}
+          {...rest}
           placeholder="Search…"
           classes={{
             root: classes.inputRoot,
