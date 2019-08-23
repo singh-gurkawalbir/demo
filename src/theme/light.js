@@ -16,7 +16,7 @@ export default {
     background: colors.celigoWhite,
     hover: colors.celigoNeutral1,
     text: colors.celigoNeutral8,
-    separator: colors.celigoNeutral3,
+    separator: colors.celigoNeutral2,
   },
   palette: {
     type: 'light',

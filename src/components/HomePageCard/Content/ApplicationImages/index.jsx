@@ -1,0 +1,34 @@
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  root: {
+    height: 48,
+    display: 'flex',
+    color: theme.palette.background.default,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    maxWidth: 185,
+    overflow: 'hidden',
+    '& img': {
+      maxWidth: '84px',
+      maxHeight: '84px',
+    },
+    '& span': {
+      // Adding arrowafter which is not meaningfull need direction
+      color: theme.palette.background.arrowAfter,
+      width: 24,
+      height: 24,
+      '& svg': {
+        fontSize: 24,
+      },
+    },
+  },
+});
+
+function ApplicationImages(props) {
+  const { classes, children } = props;
+
+  return <div className={classes.root}>{children}</div>;
+}
+
+export default withStyles(styles)(ApplicationImages);

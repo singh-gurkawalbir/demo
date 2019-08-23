@@ -1,3 +1,4 @@
+import { darken } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
 export default {
@@ -14,7 +15,7 @@ export default {
   selectFormControl: {
     color: colors.celigoNeutral1,
     background: colors.celigoNeutral8,
-    hover: colors.celigoNeutral4,
+    hover: darken(colors.celigoNeutral7, 0.6),
     text: colors.celigoNeutral8,
     separator: colors.celigoNeutral6,
   },

@@ -7,6 +7,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import getRenderer from './renderer';
+import ButtonGroup from '../ButtonGroup';
 
 @withStyles(theme => ({
   fieldContainer: {
@@ -22,9 +23,13 @@ import getRenderer from './renderer';
     display: 'block',
     paddingRight: theme.spacing(1),
   },
+  expansionPanel: {
+    width: '100%',
+    overflow: 'hidden',
+  },
   actions: {
     textAlign: 'right',
-    padding: theme.spacing(0.5),
+    padding: [[theme.spacing(2), theme.spacing(0), theme.spacing(0)]],
   },
 }))
 export default class DynaForm extends Component {
@@ -51,7 +56,10 @@ export default class DynaForm extends Component {
           {fields && <FormFragment defaultFields={fields} />}
           {fieldSets &&
             fieldSets.map(set => (
-              <ExpansionPanel defaultExpanded={!set.collapsed} key={set.header}>
+              <ExpansionPanel
+                defaultExpanded={!set.collapsed}
+                key={set.header}
+                className={classes.expansionPanel}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>
                     {set.header}
@@ -65,7 +73,9 @@ export default class DynaForm extends Component {
         </div>
         {/* The children are action buttons for the form */}
 
-        <div className={classes.actions}>{children}</div>
+        <div className={classes.actions}>
+          <ButtonGroup>{children}</ButtonGroup>
+        </div>
       </Form>
     );
   }

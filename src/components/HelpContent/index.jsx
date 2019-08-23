@@ -3,9 +3,9 @@ import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 
 const styles = theme => ({
-  root: {
+  wrapper: {
     padding: '12px',
-    minWidth: '200px',
+    minWidth: '212px',
     maxWidth: '270px',
     border: '1px solid',
     borderColor: theme.palette.background.arrowAfter,
@@ -31,6 +31,7 @@ const styles = theme => ({
     borderColor: theme.palette.divider,
     paddingTop: '8px',
     width: '100%',
+    overflow: 'hidden',
   },
   actionTitle: {
     float: 'left',
@@ -62,11 +63,11 @@ function HelpContent(props) {
   const { classes, children, title, caption } = props;
 
   return (
-    <div className={classes.root}>
+    <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
-      {caption && <Typography variant="caption">{caption}</Typography>}
+      <Typography variant="caption">{caption}</Typography>
       <div className={classes.content}>{children}</div>
       <div className={classes.action}>
         <Typography className={classes.actionTitle}>
