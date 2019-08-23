@@ -9,7 +9,7 @@ import SuiteScriptTile from './SuiteScriptTile';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import sortTiles from './util';
-import CeligoPageBar from '../../AppNew/CeligoPageBar';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 const styles = theme => ({
   root: {

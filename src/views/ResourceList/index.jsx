@@ -6,7 +6,7 @@ import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import CeligoPageBar from '../../AppNew/CeligoPageBar';
+import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
 import CeligoIconButton from '../../components/IconButton';
@@ -14,22 +14,16 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import SearchInput from '../../components/SearchInput';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
   },
   resultContainer: {
-    backgroundColor: 'yellow',
-    // overflow: 'hidden',
-    height: '100%',
+    padding: theme.spacing(3, 3, 12, 3),
   },
-  gridContainer: {
-    display: 'grid',
-    height: '100%',
-    // gridTemplateRows: `1fr 0fr`,
-    gridTemplateRows: `auto ${theme.spacing(3)}px`,
-  },
+
   pagingBar: {
     position: 'fixed',
     padding: theme.spacing(2),
@@ -40,9 +34,6 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     textAlign: 'center',
     zIndex: theme.zIndex.appBar,
-  },
-  tail: {
-    height: theme.spacing(8),
   },
 }));
 
@@ -90,27 +81,27 @@ function PageContent(props) {
           </CeligoIconButton>
         </div>
       </CeligoPageBar>
-      <ReactJson
-        // theme="google"
-        collapsed={1}
-        displayDataTypes={false}
-        src={list}
-      />
-
+      <div className={classes.resultContainer}>
+        <LoadResources resources={resourceType}>
+          <ReactJson
+            // theme="google"
+            collapsed={2}
+            displayDataTypes={false}
+            src={list}
+          />
+        </LoadResources>
+      </div>
       {list.filtered > list.count && (
-        <Fragment>
-          <div className={classes.tail} />
-          <Paper elevation={10} className={classes.pagingBar}>
-            <Button
-              onClick={handleMore}
-              variant="text"
-              size="medium"
-              color="primary"
-              className={classes.button}>
-              Show more results ({list.filtered - list.count} left)
-            </Button>
-          </Paper>
-        </Fragment>
+        <Paper elevation={10} className={classes.pagingBar}>
+          <Button
+            onClick={handleMore}
+            variant="text"
+            size="medium"
+            color="primary"
+            className={classes.button}>
+            Show more results ({list.filtered - list.count} left)
+          </Button>
+        </Paper>
       )}
     </Fragment>
   );

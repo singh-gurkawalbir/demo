@@ -11,8 +11,8 @@ import {
   Grid,
   IconButton,
 } from '@material-ui/core';
-import ArrowPopper from '../../components/ArrowPopper';
-import TooltipContent from '../../components/TooltipContent';
+import ArrowPopper from '../ArrowPopper';
+import TooltipContent from '../TooltipContent';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
 import * as selectors from '../../reducers';
@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 3),
     height: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
-    margin: theme.spacing(-3, -3, 0),
     position: 'fixed',
   },
   pageHeaderShift: {
