@@ -211,7 +211,7 @@ export function* initFormValues({
 
     // i could have patched that change but i wanted the tmp id to show up
     if (isNewId(resourceId)) {
-      resource = { ...resource, ...{ _id: resourceId } };
+      resource._id = resourceId;
     }
   }
 

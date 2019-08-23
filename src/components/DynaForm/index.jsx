@@ -24,7 +24,7 @@ import getRenderer from './renderer';
   },
   actions: {
     textAlign: 'right',
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing(0.5),
   },
 }))
 export default class DynaForm extends Component {

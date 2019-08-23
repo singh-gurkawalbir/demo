@@ -15,9 +15,10 @@ function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   let connectionResource = yield select(
-    selectors.resource,
+    selectors.resourceData,
     resourceType,
-    resourceId
+    resourceId,
+    'value'
   );
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
@@ -29,7 +30,7 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
+  return jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {
@@ -294,18 +295,26 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     return;
   }
 
-  const { conflict } = yield select(
-    selectors.resourceData,
-    'connections',
-    resourceId
-  );
+  let id = resourceId;
 
-  // if there is conflict let conflict dialog show up
-  // and oauth authorize be skipped
-  if (conflict) return;
+  if (isNewId(resourceId)) {
+    // if its a new connection id the submitFormValues saga would update with a new resourceReference
+    // resourceId in this case is tmp id and id is the created resource id
+    id = yield select(selectors.createdResourceId, resourceId);
+  } else {
+    const { conflict } = yield select(
+      selectors.resourceData,
+      'connections',
+      resourceId
+    );
+
+    // if there is conflict let conflict dialog show up
+    // and oauth authorize be skipped
+    if (conflict) return;
+  }
 
   try {
-    yield call(openOAuthWindowForConnection, [resourceId]);
+    yield call(openOAuthWindowForConnection, id);
   } catch (e) {
     // could not close the window
   }
