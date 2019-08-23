@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -8,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ShareStackUserTable from './ShareStackUserTable';
+import actions from '../../actions';
 
 const styles = theme => ({
   title: {
@@ -21,8 +23,14 @@ const styles = theme => ({
   },
   closeButton: {
     position: 'absolute',
-    right: theme.spacing,
-    top: theme.spacing,
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+  },
+  textField: {
+    width: theme.spacing(50),
+  },
+  form: {
+    marginLeft: theme.spacing(3),
   },
 });
 
@@ -33,9 +41,18 @@ function StackShareDialog(props) {
     width = '70vw',
     stackId,
     onClose,
+    stackShareCollectionById,
   } = props;
+  const dispatch = useDispatch();
   const handleOnInviteClick = e => {
     e.preventDefault();
+    const shareWithUserEmail = e.target.email.value;
+
+    if (!shareWithUserEmail) {
+      return;
+    }
+
+    dispatch(actions.stack.inviteStackShareUser(shareWithUserEmail, stackId));
   };
 
   return (
@@ -47,15 +64,16 @@ function StackShareDialog(props) {
         <CloseIcon />
       </IconButton>
       <DialogTitle className={classes.title}>
-        <Typography variant="h6">{title}</Typography>
+        <Typography>{title}</Typography>
       </DialogTitle>
       <DialogContent style={{ width }}>
-        <form onSubmit={handleOnInviteClick}>
+        <form onSubmit={handleOnInviteClick} className={classes.form}>
           <TextField
             id="email"
             label="Share Stack With: "
             placeholder="user@domain.com"
             type="email"
+            className={classes.textField}
             margin="normal"
           />
           <Button
@@ -67,7 +85,7 @@ function StackShareDialog(props) {
             Invite
           </Button>
         </form>
-        <ShareStackUserTable stackId={stackId} />
+        <ShareStackUserTable stackShareCollection={stackShareCollectionById} />
       </DialogContent>
     </Dialog>
   );

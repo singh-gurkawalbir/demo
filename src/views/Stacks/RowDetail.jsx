@@ -24,7 +24,7 @@ const styles = theme => ({
 });
 
 function StacksData(props) {
-  const { classes, item } = props;
+  const { classes, item, stackShareCollection } = props;
   const isServerStack = item.type === 'server';
   const dispatch = useDispatch();
   const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
@@ -103,7 +103,14 @@ function StacksData(props) {
         />
       )}
       {showStackShareDialog && (
-        <ShareStackDialog stackId={item._id} onClose={handleShareStackClose} />
+        <ShareStackDialog
+          stackId={item._id}
+          onClose={handleShareStackClose}
+          stackShareCollectionById={
+            stackShareCollection &&
+            stackShareCollection.filter(stack => stack._stackId === item._id)
+          }
+        />
       )}
       <Typography className={classes.stackDetails}>
         Type: {item.type}

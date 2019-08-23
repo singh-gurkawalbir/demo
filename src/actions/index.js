@@ -257,8 +257,18 @@ const stack = {
   maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
   requestStackShareCollection: () =>
     action(actionTypes.STACK.STACK_SHARE_COLLECTION_REQUEST),
-  receivedStackShareCollection: collection =>
+  receivedStackShareCollection: ({ collection }) =>
     action(actionTypes.STACK.STACK_SHARE_COLLECTION_RECEIVED, { collection }),
+  deleteStackShareUser: userId =>
+    action(actionTypes.STACK.STACK_SHARE_USER_DELETE, { userId }),
+  deletedStackShareUser: ({ userId }) =>
+    action(actionTypes.STACK.STACK_SHARE_USER_DELETED, { userId }),
+  inviteStackShareUser: (email, stackId) =>
+    action(actionTypes.STACK.STACK_SHARE_USER_INVITE, { email, stackId }),
+  toggleUserStackSharing: userId =>
+    action(actionTypes.STACK.USER_STACK_SHARING_TOGGLE, { userId }),
+  toggledUserStackSharing: ({ userId }) =>
+    action(actionTypes.STACK.USER_STACK_SHARING_TOGGLED, { userId }),
 };
 const user = {
   profile: {
