@@ -10,7 +10,11 @@ import TimeAgo from 'react-timeago';
 import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import prettyDate from '../../utils/date';
-import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../utils/resource';
+import {
+  MODEL_PLURAL_TO_LABEL,
+  isNewId,
+  getResourceSubType,
+} from '../../utils/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
@@ -23,7 +27,13 @@ import getRoutePath from '../../utils/routePaths';
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const metaChanges = selectors.resourceData(state, resourceType, id, 'meta');
-  const { _connectionId } = metaChanges.merged ? metaChanges.merged : {};
+  const valueChanges = selectors.resourceData(state, resourceType, id, 'value');
+  let resType;
+  const { assistant, type } = getResourceSubType(valueChanges.merged);
+
+  if (assistant) resType = assistant;
+  else resType = type;
+  const { _connectionId } = valueChanges.merged ? valueChanges.merged : {};
   // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
@@ -35,8 +45,8 @@ const mapStateToProps = (state, { match }) => {
     0;
 
   return {
+    type: resType,
     resourceType,
-    // valueChanges,
     metaPatches,
     metaChanges,
     connection,
@@ -122,6 +132,7 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
+      type,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
@@ -149,13 +160,7 @@ class Edit extends Component {
       );
     }
 
-    let type = connection ? connection.type : merged.type;
-    const assistant = connection ? connection.assistant : merged.assistant;
     const formMeta = merged.customForm ? merged.customForm.form : {};
-
-    if (assistant) {
-      type = assistant;
-    }
 
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
 
@@ -181,11 +186,11 @@ class Edit extends Component {
             <Typography variant="h5">
               {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
             </Typography>
-
-            <Typography variant="caption" className={classes.dates}>
-              Last Modified: {prettyDate(merged.lastModified)}
-            </Typography>
-
+            {merged.lastModified && (
+              <Typography variant="caption" className={classes.dates}>
+                Last Modified: {prettyDate(merged.lastModified)}
+              </Typography>
+            )}
             {metaPatches > 0 && (
               <Typography variant="caption" className={classes.dates}>
                 Unsaved changes made <TimeAgo date={lastChange} />.
@@ -258,8 +263,6 @@ class Edit extends Component {
             resourceType={resourceType}
             resourceId={id}
             connectionType={type}
-            connection={connection}
-            cancelButtonLabel="Reset"
           />
 
           {conflict && (
