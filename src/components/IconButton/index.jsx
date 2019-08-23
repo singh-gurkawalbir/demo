@@ -12,7 +12,7 @@ const styledChildren = (children, classes) => {
   return React.Children.map(children, child => {
     let element = child;
 
-    if (typeof child !== 'string') {
+    if (typeof child !== 'string' && child !== null) {
       element = React.cloneElement(child, {
         key: 'icon',
         className: classes[position],

@@ -15,7 +15,13 @@ const theme = {
     },
   },
   // global overrides for MUI styles...
-  overrides: {},
+  overrides: {
+    MuiButton: {
+      root: {
+        textTransform: 'none',
+      },
+    },
+  },
 };
 
 export default () => createMuiTheme(theme);
