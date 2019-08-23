@@ -28,9 +28,8 @@ export default function DynaText(props) {
   useEffect(() => {
     setValueChanged(true);
   }, [options]);
-  // onFieldChange is a bound function and causing endless recursive calls
   useEffect(() => {
-    if (valueChanged) {
+    if (valueChanged && options && typeof options === 'string') {
       onFieldChange(id, options);
       setValueChanged(false);
     }
