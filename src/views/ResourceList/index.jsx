@@ -62,7 +62,9 @@ function PageContent(props) {
     })
   );
   const handleMore = () => {
-    dispatch(actions.patchFilter(resourceType, { take: +filter.take + 2 }));
+    dispatch(
+      actions.patchFilter(resourceType, { take: (filter.take || 3) + 2 })
+    );
   };
 
   const handleKeywordChange = e => {
