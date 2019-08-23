@@ -179,7 +179,6 @@ export default function SelectApplication(props) {
         defaultValue={value}
         options={options}
         onChange={e => {
-          console.log(e);
           onFieldChange && onFieldChange(id, e.value);
         }}
         styles={customStyles}
