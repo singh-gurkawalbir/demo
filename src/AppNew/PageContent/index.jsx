@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import CeligoPageBar from '../CeligoPageBar';
 import AppRouting from '../../App/AppRoutingWithAuth';
 
 const useStyles = makeStyles(theme => ({
@@ -11,15 +10,13 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 }));
 
-export default function PageContent(props) {
-  const { shift = false } = props;
+export default function PageContent() {
   const classes = useStyles();
 
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
-      <CeligoPageBar shift={shift} />
-      <AppRouting {...props} />
+      <AppRouting />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import SuiteScriptTile from './SuiteScriptTile';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import sortTiles from './util';
+import CeligoPageBar from '../../AppNew/CeligoPageBar';
 
 const styles = theme => ({
   root: {
@@ -71,24 +72,30 @@ function Dashboard(props) {
   );
 
   return (
-    <LoadResources required resources="published,integrations,connections">
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-          {sortedTiles.map(t => (
-            <Grid
-              key={t._ioConnectionId ? t._id : t._integrationId}
-              item
-              xs={3}>
-              {t._ioConnectionId ? (
-                <SuiteScriptTile tile={t} />
-              ) : (
-                <Tile tile={t} />
-              )}
-            </Grid>
-          ))}
-        </Grid>
-      </div>
-    </LoadResources>
+    <Fragment>
+      <CeligoPageBar title="My integrations" />
+      <LoadResources required resources="published,integrations,connections">
+        <div className={classes.root}>
+          <Grid container spacing={3}>
+            {sortedTiles.map(t => (
+              <Grid
+                key={t._ioConnectionId ? t._id : t._integrationId}
+                item
+                lg={3}
+                md={4}
+                sm={6}
+                xs={12}>
+                {t._ioConnectionId ? (
+                  <SuiteScriptTile tile={t} />
+                ) : (
+                  <Tile tile={t} />
+                )}
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+      </LoadResources>
+    </Fragment>
   );
 }
 
