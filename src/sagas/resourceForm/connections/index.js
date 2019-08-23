@@ -1,5 +1,6 @@
 import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
+import moment from 'moment';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -31,6 +32,81 @@ function* createPayload({ values, resourceId }) {
   }
 
   return jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
+}
+
+export function* downloadDebugLogs({ id }) {
+  const options = 'scrollbars=1,height=600,width=800';
+  let url = `/api/connections/${id}/debug`;
+  const additionalHeaders = yield call(getAdditionalHeaders, url);
+
+  if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
+  }
+
+  const win = window.open(url, '_blank', options);
+
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    // POPUP BLOCKED
+    // eslint-disable-next-line no-alert
+    window.alert('POPUP blocked');
+
+    try {
+      win.close();
+    } catch (ex) {
+      throw ex;
+    }
+
+    return false;
+  }
+
+  win.focus();
+}
+
+export function* configureDebugger({ id, timeInMins }) {
+  const path = `/connections/${id}`;
+  let debugTime = moment()
+    .add('1', 'h')
+    .toISOString();
+
+  if (timeInMins) {
+    debugTime = moment()
+      .add(timeInMins, 'm')
+      .toISOString();
+  }
+
+  const reqPayload = [
+    {
+      op: timeInMins !== '0' ? 'replace' : 'remove',
+      path: '/debugDate',
+      value: timeInMins !== '0' ? debugTime : undefined,
+    },
+  ];
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      message: 'Loading Data',
+      opts: {
+        method: 'PATCH',
+        body: reqPayload,
+      },
+      op: 'remove',
+      value: debugTime,
+    });
+  } catch (error) {
+    return undefined;
+  }
+
+  try {
+    const connectionResp = yield call(apiCallWithRetry, { path });
+
+    yield put(
+      actions.resource.connections.updateConnection(id, connectionResp)
+    );
+    console.log('connection', connectionResp);
+  } catch (error) {
+    return undefined;
+  }
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {
@@ -363,4 +439,6 @@ export default [
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection
   ),
+  takeEvery(actionTypes.RESOURCE_FORM.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
+  takeEvery(actionTypes.RESOURCE_FORM.CONFIGURE_DEBUGGER, configureDebugger),
 ];

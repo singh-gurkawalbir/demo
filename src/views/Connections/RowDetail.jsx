@@ -24,9 +24,8 @@ const styles = theme => ({
 });
 
 function ConnectionsData(props) {
-  const { classes, item, handleReferencesClick } = props;
+  const { classes, item, handleReferencesClick, handleSetDebugClick } = props;
   const dispatch = useDispatch();
-  const handleConfigureDebugger = () => {};
   const handleDeleteClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -115,14 +114,19 @@ function ConnectionsData(props) {
           <Fragment>
             <Button
               onClick={() =>
-                dispatch(actions.resource.downloadDebugLogs(item._id))
+                dispatch(actions.resourceForm.downloadDebugLogs(item._id))
               }>
               Download debug logs
             </Button>
             <br />
           </Fragment>
         )}
-        <Button onClick={handleConfigureDebugger}>Configure debugger</Button>
+        <Button
+          onClick={() =>
+            handleSetDebugClick(item._id, item.name, item.debugDate)
+          }>
+          Configure debugger
+        </Button>
         <br />
         <Button onClick={handleViewAuditLog}>View audit log</Button>
         <br />

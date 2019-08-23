@@ -82,11 +82,6 @@ const resource = {
       id,
     }),
 
-  downloadDebugLogs: id =>
-    action(actionTypes.RESOURCE.DOWNLOAD_DEBUGLOGS, {
-      id,
-    }),
-
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
 
   receivedReferences: resourceReferences =>
@@ -156,6 +151,11 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+    updateConnection: (id, connectionData) =>
+      action(actionTypes.RESOURCE.UPDATE_CONNECTION, {
+        id,
+        connectionData,
+      }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>
@@ -362,6 +362,15 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
+  downloadDebugLogs: id =>
+    action(actionTypes.RESOURCE_FORM.DOWNLOAD_DEBUGLOGS, {
+      id,
+    }),
+  configureDebugger: (id, timeInMins) =>
+    action(actionTypes.RESOURCE_FORM.CONFIGURE_DEBUGGER, {
+      id,
+      timeInMins,
+    }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
