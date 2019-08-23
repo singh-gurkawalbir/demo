@@ -185,6 +185,14 @@ export function resourceDetailsMap(state) {
             allResources[resourceType][resource._id]._connectorId =
               resource._connectorId;
           }
+
+          if (resourceType === 'flows') {
+            allResources[resourceType][
+              resource._id
+            ].numImports = resource.pageProcessors
+              ? resource.pageProcessors.length
+              : 1;
+          }
         });
       }
     }
