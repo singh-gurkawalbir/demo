@@ -16,7 +16,11 @@ export default {
     {
       fieldId: 'delta.dateField',
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
-      visibleWhen: [
+      visibleWhenAll: [
+        {
+          field: 'netsuite.restlet.recordType',
+          isNot: [''],
+        },
         {
           field: 'type',
           is: ['delta'],
@@ -35,7 +39,11 @@ export default {
     {
       fieldId: 'once.booleanField',
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
-      visibleWhen: [
+      visibleWhenAll: [
+        {
+          field: 'netsuite.restlet.recordType',
+          isNot: [''],
+        },
         {
           field: 'type',
           is: ['once'],

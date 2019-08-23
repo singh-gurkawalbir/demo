@@ -18,7 +18,6 @@ export default {
       refreshOptionsOnChangesTo: ['netsuite.distributed.recordType'],
       visibleWhen: [
         {
-          id: 'hasRecord',
           field: 'netsuite.distributed.recordType',
           isNot: [''],
         },
