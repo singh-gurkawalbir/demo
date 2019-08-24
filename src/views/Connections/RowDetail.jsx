@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { withStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
@@ -8,6 +8,8 @@ import moment from 'moment';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 import applications from '../../constants/applications';
+import ResourceReferences from '../../components/ResourceReferences';
+import ConfigureDebugger from '../../components/ConfigureDebugger';
 
 const styles = theme => ({
   secondaryHeading: {
@@ -24,8 +26,27 @@ const styles = theme => ({
 });
 
 function ConnectionsData(props) {
-  const { classes, item, handleReferencesClick, handleSetDebugClick } = props;
+  const { classes, item } = props;
   const dispatch = useDispatch();
+  const [id, setId] = useState(null);
+  const [debugId, setDebugId] = useState(null);
+
+  function handleReferencesClick(id) {
+    setId(id);
+  }
+
+  function handleReferencesClose() {
+    setId(null);
+  }
+
+  function handleSetDebugClick(id) {
+    setDebugId(id);
+  }
+
+  function handleSetDebugClose() {
+    setDebugId(null);
+  }
+
   const handleDeleteClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -121,10 +142,8 @@ function ConnectionsData(props) {
             <br />
           </Fragment>
         )}
-        <Button
-          onClick={() =>
-            handleSetDebugClick(item._id, item.name, item.debugDate)
-          }>
+
+        <Button onClick={() => handleSetDebugClick(item._id)}>
           Configure debugger
         </Button>
         <br />
@@ -135,6 +154,21 @@ function ConnectionsData(props) {
         </Button>
         <br />
         <Button onClick={handleDeleteClick}>Delete connection</Button>
+        {id && (
+          <ResourceReferences
+            type="connections"
+            id={id}
+            onClose={handleReferencesClose}
+          />
+        )}
+        {debugId && (
+          <ConfigureDebugger
+            id={item._id}
+            name={item.name}
+            debugDate={item.debugDate}
+            onClose={handleSetDebugClose}
+          />
+        )}
       </Typography>
     </Fragment>
   );

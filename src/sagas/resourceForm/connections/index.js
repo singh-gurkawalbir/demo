@@ -62,7 +62,7 @@ export function* downloadDebugLogs({ id }) {
   win.focus();
 }
 
-export function* configureDebugger({ id, timeInMins }) {
+export function* configureDebugger({ id, timeInMins, onClose }) {
   const path = `/connections/${id}`;
   let debugTime = moment()
     .add('1', 'h')
@@ -85,7 +85,6 @@ export function* configureDebugger({ id, timeInMins }) {
   try {
     yield call(apiCallWithRetry, {
       path,
-      message: 'Loading Data',
       opts: {
         method: 'PATCH',
         body: reqPayload,
@@ -97,15 +96,9 @@ export function* configureDebugger({ id, timeInMins }) {
     return undefined;
   }
 
-  try {
-    const connectionResp = yield call(apiCallWithRetry, { path });
-
-    yield put(
-      actions.resource.connections.updateConnection(id, connectionResp)
-    );
-  } catch (error) {
-    return undefined;
-  }
+  yield put(
+    actions.resource.connections.updateConnection(id, debugTime, onClose)
+  );
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {

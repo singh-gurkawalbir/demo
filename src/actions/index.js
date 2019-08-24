@@ -151,10 +151,11 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
-    updateConnection: (id, connectionData) =>
+    updateConnection: (id, debugDate, onClose) =>
       action(actionTypes.RESOURCE.UPDATE_CONNECTION, {
         id,
-        connectionData,
+        debugDate,
+        onClose,
       }),
 
     netsuite: {
@@ -366,10 +367,11 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.DOWNLOAD_DEBUGLOGS, {
       id,
     }),
-  configureDebugger: (id, timeInMins) =>
+  configureDebugger: (id, timeInMins, onClose) =>
     action(actionTypes.RESOURCE_FORM.CONFIGURE_DEBUGGER, {
       id,
       timeInMins,
+      onClose,
     }),
 };
 const accessToken = {

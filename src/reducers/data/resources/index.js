@@ -40,7 +40,8 @@ export default (state = {}, action) => {
     resource,
     collection,
     resourceType,
-    connectionData,
+    debugDate,
+    onClose,
   } = action;
   const newState = { ...state };
   let index;
@@ -69,7 +70,12 @@ export default (state = {}, action) => {
   switch (type) {
     case actionTypes.RESOURCE.UPDATE_CONNECTION:
       index = newState.connections.findIndex(r => r._id === id);
-      newState.connections[index] = connectionData;
+
+      if (newState.connections[index]) {
+        newState.connections[index].debugDate = debugDate;
+      }
+
+      onClose();
 
       return newState;
 

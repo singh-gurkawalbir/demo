@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { useState } from 'react';
+import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 
@@ -26,21 +27,30 @@ const styles = theme => ({
   },
   closeButton: {
     position: 'absolute',
-    right: theme.spacing,
-    top: theme.spacing,
+    right: '10px',
+    top: '10px',
   },
 });
 
 function ConfigureDebugger(props) {
-  const { id, classes, width = '70vw', onClose } = props;
+  const { id, classes, width = '70vw', name, debugDate, onClose } = props;
   const [debugValue, setDebugValue] = useState(0);
   const dispatch = useDispatch();
   const handleOnSubmit = e => {
     e.preventDefault();
-    // alert(e.target);
-    dispatch(actions.resourceForm.configureDebugger(id, debugValue));
-    onClose();
+    dispatch(actions.resourceForm.configureDebugger(id, debugValue, onClose));
   };
+
+  let minutes;
+  let defaultVal;
+
+  if (debugDate) {
+    minutes = moment(debugDate).diff(moment(), 'minutes');
+  }
+
+  if (!(debugDate && moment().isBefore(moment(debugDate)))) {
+    defaultVal = '0';
+  }
 
   const handleChange = evt => {
     // Resets value on change of search type
@@ -56,7 +66,7 @@ function ConfigureDebugger(props) {
         <CloseIcon />
       </IconButton>
       <DialogTitle>
-        <Typography>{props.id}</Typography>
+        <Typography>{name}</Typography>
       </DialogTitle>
       <DialogContent style={{ width }}>
         <form onSubmit={handleOnSubmit}>
@@ -64,7 +74,7 @@ function ConfigureDebugger(props) {
             <FormLabel component="legend">Debug Duration:</FormLabel>
             <RadioGroup
               name="debugDuration"
-              defaultValue="0"
+              defaultValue={defaultVal}
               // value={searchType}
               onChange={handleChange}>
               <FormControlLabel value="0" control={<Radio />} label="Off" />
@@ -90,7 +100,11 @@ function ConfigureDebugger(props) {
               />
             </RadioGroup>
           </FormControl>
-          <Typography>Ashok is good</Typography>
+          {debugDate && minutes > 1 && (
+            <Typography>
+              Debug mode is enabled for next {minutes} minutes.
+            </Typography>
+          )}
           <div>
             <Button
               variant="contained"
