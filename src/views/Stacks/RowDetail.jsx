@@ -24,7 +24,12 @@ const styles = theme => ({
 });
 
 function StacksData(props) {
-  const { classes, item, stackShareCollection } = props;
+  const {
+    classes,
+    item,
+    stackShareCollection,
+    systemTokenTitle = 'System Token: ',
+  } = props;
   const isServerStack = item.type === 'server';
   const dispatch = useDispatch();
   const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
@@ -112,51 +117,67 @@ function StacksData(props) {
           }
         />
       )}
-      <Typography className={classes.stackDetails}>
-        Type: {item.type}
-        <br />
-        {isServerStack && item.server && (
-          <Fragment>
-            Host: {item.server.hostURI}
+      {!item.shared && (
+        <Fragment>
+          <Typography className={classes.stackDetails}>
+            Type: {item.type}
             <br />
-            <Fragment>
-              System Token:
-              {systemToken && (
+            {isServerStack && item.server && (
+              <Fragment>
+                Host: {item.server.hostURI}
+                <br />
                 <Fragment>
-                  <Typography> {systemToken}</Typography>
-                  <Button onClick={changeSystemToken}>
-                    Click to generate new token
-                  </Button>
+                  {systemTokenTitle}
+                  {systemToken && (
+                    <Fragment>
+                      {systemToken}
+                      <br />
+                      <Button onClick={changeSystemToken} color="primary">
+                        Click to generate new token
+                      </Button>
+                    </Fragment>
+                  )}
+                  {!systemToken && (
+                    <Button onClick={displaySystemToken} color="primary">
+                      Click to Display
+                    </Button>
+                  )}
                 </Fragment>
-              )}
-              {!systemToken && (
-                <Button onClick={displaySystemToken}>Click to Display</Button>
-              )}
-            </Fragment>
-          </Fragment>
-        )}
-        {!isServerStack && item.lambda && (
-          <Fragment>
-            Function Name: {item.lambda.functionName}
+              </Fragment>
+            )}
+            {!isServerStack && item.lambda && (
+              <Fragment>
+                Function Name: {item.lambda.functionName}
+                <br />
+                Access Key Id: {item.lambda.accessKeyId}
+                <br />
+              </Fragment>
+            )}
+          </Typography>
+          <Typography className={classes.stackActions}>
+            <Button
+              component={Link}
+              to={getRoutePath(`stacks/edit/${item._id}`)}>
+              Edit Stack
+            </Button>
             <br />
-            Access Key Id: {item.lambda.accessKeyId}
+            <Button onClick={handleShareStackClick}>Share Stack</Button>
             <br />
-          </Fragment>
-        )}
-      </Typography>
-      <Typography className={classes.stackActions}>
-        <Button component={Link} to={getRoutePath(`stacks/edit/${item._id}`)}>
-          Edit Stack
-        </Button>
-        <br />
-        <Button onClick={handleShareStackClick}>Share Stack</Button>
-        <br />
-        <Button onClick={handleAuditLogClick}>View audit log</Button>
-        <br />
-        <Button onClick={handleReferencesClick}>View references</Button>
-        <br />
-        <Button onClick={handleDeleteClick}>Delete stack</Button>
-      </Typography>
+            <Button onClick={handleAuditLogClick}>View audit log</Button>
+            <br />
+            <Button onClick={handleReferencesClick}>View references</Button>
+            <br />
+            <Button onClick={handleDeleteClick}>Delete stack</Button>
+          </Typography>
+        </Fragment>
+      )}
+      {item.shared && (
+        <Typography color="primary" className={classes.stackDetails}>
+          Shared
+          <br />
+          Type: {item.type}
+        </Typography>
+      )}
     </Fragment>
   );
 }
