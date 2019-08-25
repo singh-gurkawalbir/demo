@@ -37,6 +37,12 @@ export default {
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
   },
+  'rest.once.booleanField': {
+    type: 'text',
+    label: 'Boolean Field',
+    id: 'once.booleanField',
+    helpkey: 'once.booleanField',
+  },
   // #region paging
   'rest.pagingMethod': {
     type: 'select',
