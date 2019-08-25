@@ -30,28 +30,50 @@ describe('Form Utils', () => {
         },
       });
     });
+    describe('missing patches for an empty resource ', () => {
+      test('should find all missing node against empty obj where some paths share lineage', () => {
+        const resource = {};
+        const paths = ['/a/e/f', '/a/e/g', '/a/b', 'a/b/c'];
+        const patchResult = getMissingPatchSet(paths, resource);
 
-    test('should find all missing node against empty obj where some paths share lineage', () => {
-      const resource = {};
-      const paths = ['/a/e/f', '/a/e/g', '/a/b', 'a/b/c'];
-      const patchResult = getMissingPatchSet(paths, resource);
+        expect(patchResult).toEqual([
+          { path: '/a', op: 'add', value: {} },
+          { path: '/a/b', op: 'add', value: {} },
+          { path: '/a/e', op: 'add', value: {} },
+          { path: '/a/e/f', op: 'add', value: {} },
+          { path: '/a/e/g', op: 'add', value: {} },
+          { path: '/b', op: 'add', value: {} },
+          { path: '/b/c', op: 'add', value: {} },
+        ]);
 
-      expect(patchResult).toEqual([
-        { path: '/a', op: 'add', value: {} },
-        { path: '/a/b', op: 'add', value: {} },
-        { path: '/a/e', op: 'add', value: {} },
-        { path: '/a/e/f', op: 'add', value: {} },
-        { path: '/a/e/g', op: 'add', value: {} },
-        { path: '/b', op: 'add', value: {} },
-        { path: '/b/c', op: 'add', value: {} },
-      ]);
+        const merged = jsonPatch.applyPatch(resource, patchResult, false, true)
+          .newDocument;
 
-      const merged = jsonPatch.applyPatch(resource, patchResult, false, true)
-        .newDocument;
+        expect(merged).toEqual({
+          a: { b: {}, e: { f: {}, g: {} } },
+          b: { c: {} },
+        });
+      });
 
-      expect(merged).toEqual({
-        a: { b: {}, e: { f: {}, g: {} } },
-        b: { c: {} },
+      test('should find all missing nodes against empty obj for one forward slash delimiter paths', () => {
+        const resource = {};
+        const paths = ['/a', '/b', '/c'];
+        const patchResult = getMissingPatchSet(paths, resource);
+
+        expect(patchResult).toEqual([
+          { path: '/a', op: 'add', value: {} },
+          { path: '/b', op: 'add', value: {} },
+          { path: '/c', op: 'add', value: {} },
+        ]);
+
+        const merged = jsonPatch.applyPatch(resource, patchResult, false, true)
+          .newDocument;
+
+        expect(merged).toEqual({
+          a: {},
+          b: {},
+          c: {},
+        });
       });
     });
 
