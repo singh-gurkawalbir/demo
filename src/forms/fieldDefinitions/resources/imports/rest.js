@@ -46,48 +46,64 @@ export default {
       },
     ],
   },
-  'rest.compositeMethod': {
-    type: 'select',
-    label: 'rest Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'rest.method',
-        is: ['COMPOSITE'],
-      },
-    ],
-  },
   'rest.relativeUri': {
     type: 'text',
     label: 'Relative URI',
+    required: true,
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'rest.responseIdPath': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
-  'rest.compositeMethodUpdate': {
+  'rest.createNewData': {
+    type: 'labeltitle',
+    label: 'Create New Data',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.compositeMethodCreate': {
     type: 'select',
-    label: 'rest Method',
+    label: 'HTTP Method',
     options: [
       {
         items: [
@@ -100,18 +116,93 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.relativeUriCreate': {
+    type: 'text',
+    label: 'Relative URI',
+    required: true,
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.successPathCreate': {
+    type: 'text',
+    label: 'Success Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.successValuesCreate': {
+    type: 'text',
+    label: 'Success Values',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.responseIdPathCreate': {
+    type: 'text',
+    label: 'Response Id Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.upateExistingData': {
+    type: 'labeltitle',
+    label: 'Upate Existing Data',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.compositeMethodUpdate': {
+    type: 'select',
+    label: 'HTTP Method',
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
   'rest.relativeUriUpdate': {
     type: 'text',
     label: 'Relative URI',
+    required: true,
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -122,7 +213,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -133,7 +224,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -144,7 +235,17 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'rest.ignoreExistingData': {
+    type: 'labeltitle',
+    label: 'Ignore Existing Data',
+    visibleWhen: [
+      {
+        field: 'rest.compositeType',
+        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -159,26 +260,20 @@ export default {
       },
     ],
   },
-  'http.ifSoPleasePasteItHere': {
+  'rest.ifSoPleasePasteItHere': {
     type: 'textarea',
     label: 'If so,please paste it here',
-    visibleWhen: [
-      {
-        field: 'rest.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
-      },
-    ],
   },
-  'rest.advanceOption': {
+  'rest.parentOption': {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'N',
+    defaultValue: 'false',
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'Y' },
-          { label: 'No', value: 'N' },
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
         ],
       },
     ],
@@ -190,8 +285,8 @@ export default {
     placeholder: 'Optional. Not needed for row/array formats.',
     visibleWhen: [
       {
-        field: 'rest.advanceOption',
-        is: ['Y'],
+        field: 'rest.parentOption',
+        is: ['true'],
       },
     ],
   },
@@ -203,174 +298,5 @@ export default {
     type: 'text',
     label: 'Data URI Template',
     placeholder: 'Optional',
-  },
-  hookType: {
-    type: 'radiogroup',
-    label: 'Hook Type',
-    defaultValue: 'script',
-    options: [
-      {
-        items: [
-          { label: 'Script', value: 'script' },
-          { label: 'Stack', value: 'stack' },
-        ],
-      },
-    ],
-  },
-  'hooks.preMap.function': {
-    type: 'text',
-    label: 'Pre Map',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.preMap._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.preMap._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.preMap._scriptId': {
-    type: 'selectresource',
-    placeholder: 'Please select a script',
-    resourceType: 'scripts',
-    label: 'Pre Map Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.preMap._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Pre Map Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postMap.function': {
-    type: 'text',
-    label: 'Post Map',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postMap._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postMap._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postMap._scriptId': {
-    type: 'selectresource',
-    placeholder: 'Please select a script',
-    resourceType: 'scripts',
-    label: 'Post Map Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postMap._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Map Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postSubmit.function': {
-    type: 'text',
-    label: 'Post Submit',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postSubmit._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postSubmit._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postSubmit._scriptId': {
-    type: 'selectresource',
-    resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Post Submit Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postSubmit._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Submit Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postAggregate.function': {
-    type: 'text',
-    label: 'Post Aggregate',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postAggregate._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postAggregate._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postAggregate._scriptId': {
-    type: 'selectresource',
-    resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Post Aggregate Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postAggregate._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Aggregate Stack Id',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
   },
 };
