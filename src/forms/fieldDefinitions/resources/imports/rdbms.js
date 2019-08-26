@@ -1,54 +1,118 @@
 export default {
-  'rdbms.query[*]s': {
-    type: 'text',
-    label: 'Rdbms query[*]',
-    name: 'undefineds',
-    validWhen: [],
+  'rdbms.queryType': {
+    type: 'radiogroup',
+    label: 'Query Type',
+    options: [
+      {
+        items: [
+          { label: 'Insert', value: 'INSERT' },
+          { label: 'Update', value: 'UPDATE' },
+          { label: 'Insert or Update', value: 'COMPOSITE' },
+        ],
+      },
+    ],
   },
-  'rdbms.queryType[*]s': {
-    type: 'text',
-    label: 'Rdbms query Type[*]',
-    name: 'undefineds',
-    validWhen: [],
+  'rdbms.ignoreExistingRecords': {
+    type: 'checkbox',
+    label: 'Ignore Existing Records',
+    validWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['INSERT'],
+      },
+    ],
   },
-  'rdbms.updateLookupName': {
-    type: 'text',
-    label: 'Rdbms update Lookup Name',
+  'rdbms.ignoreMissingRecords': {
+    type: 'checkbox',
+    label: 'Ignore Missing Records',
+    validWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['UPDATE'],
+      },
+    ],
   },
-  'rdbms.updateExtract': {
+  'rdbms.existingDataId': {
     type: 'text',
-    label: 'Rdbms update Extract',
+    label: 'Existing Data Id',
+    validWhenAll: [
+      {
+        field: 'rdbms.queryType',
+        is: ['INSERT', 'UPDATE', 'COMPOSITE'],
+      },
+      {
+        field: 'rdbms.ignoreExistingRecords',
+        is: [true],
+      },
+      {
+        field: 'rdbms.ignoreMissingRecords',
+        is: [true],
+      },
+    ],
   },
-  'rdbms.ignoreLookupName': {
-    type: 'text',
-    label: 'Rdbms ignore Lookup Name',
+  'rdbms.parentOption': {
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed translate to multiple records in the import application?',
+    defaultValue: 'false',
+    options: [
+      {
+        items: [
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
+        ],
+      },
+    ],
   },
-  'rdbms.ignoreExtract': {
+  'rdbms.childRecords': {
     type: 'text',
-    label: 'Rdbms ignore Extract',
+    label:
+      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'ftp.parentOption',
+        is: ['true'],
+      },
+    ],
   },
-  'rdbms.lookups[*].name': {
+  'hooks.postAggregate.function': {
     type: 'text',
-    label: 'Rdbms lookups[*] name',
+    label: 'Post Aggregate',
+    placeholder: 'Function Name',
+    requiredWhen: [
+      {
+        field: 'hooks.postAggregate._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postAggregate._stackId',
+        isNot: [''],
+      },
+    ],
   },
-  'rdbms.lookups[*].map': {
-    type: 'text',
-    label: 'Rdbms lookups[*] map',
+  'hooks.postAggregate._scriptId': {
+    type: 'selectresource',
+    resourceType: 'scripts',
+    placeholder: 'Please select a script',
+    label: 'Post Aggregate Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
-  'rdbms.lookups[*].default': {
-    type: 'text',
-    label: 'Rdbms lookups[*] default',
-  },
-  'rdbms.lookups[*].query': {
-    type: 'text',
-    label: 'Rdbms lookups[*] query',
-  },
-  'rdbms.lookups[*].extract': {
-    type: 'text',
-    label: 'Rdbms lookups[*] extract',
-  },
-  'rdbms.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'Rdbms lookups[*] allow Failures',
+  'hooks.postAggregate._stackId': {
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
+    label: 'Post Aggregate Stack Id',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
 };
