@@ -16,7 +16,7 @@ export function* displayToken({ id }) {
       message: 'Getting Stack Token',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.stack.tokenReceived({ ...response, _id: id }));
@@ -45,7 +45,7 @@ export function* generateToken({ id }) {
       message: 'Generating Stack Token',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.stack.tokenReceived({ ...response, _id: id }));
@@ -66,7 +66,7 @@ export function* getStackShareCollection() {
       message: 'Getting Stack Share Collection',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.stack.receivedStackShareCollection({ collection }));
@@ -84,7 +84,7 @@ export function* deleteStackShareUser({ userId }) {
       message: 'Deleting Stack Share User',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.stack.deletedStackShareUser({ userId }));
@@ -103,7 +103,7 @@ export function* inviteStackShareUser({ email, stackId }) {
       message: 'Inviting Stack Share User',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield call(getStackShareCollection);
@@ -122,7 +122,7 @@ export function* toggleUserStackSharing({ userId }) {
       message: 'Toggling User Stack Sharing',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.stack.toggledUserStackSharing({ userId }));
