@@ -10,6 +10,7 @@ import actions from '../../actions';
 import applications from '../../constants/applications';
 import ResourceReferences from '../../components/ResourceReferences';
 import ConfigureDebugger from '../../components/ConfigureDebugger';
+import AuditLogDialog from '../../components/AuditLog/AuditLogDialog';
 
 const styles = theme => ({
   secondaryHeading: {
@@ -26,10 +27,15 @@ const styles = theme => ({
 });
 
 function ConnectionsData(props) {
+  const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
   const { classes, item } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState(null);
   const [debugId, setDebugId] = useState(null);
+
+  function handleAuditLogDialogClose() {
+    setShowAuditLogDialog(false);
+  }
 
   function handleReferencesClick(id) {
     setId(id);
@@ -107,8 +113,26 @@ function ConnectionsData(props) {
     return toReturn;
   };
 
-  const handleRefreshMetadataClick = () => {};
-  const handleViewAuditLog = () => {};
+  const handleRefreshMetadataClick = () => {
+    if (item.type === 'netsuite') {
+      dispatch(
+        actions.metadata.request(item._id, 'recordTypes', 'suitescript', '', {
+          refreshCache: true,
+        })
+      );
+      dispatch(
+        actions.metadata.request(item._id, 'savedSearches', 'suitescript', '', {
+          refreshCache: true,
+        })
+      );
+      dispatch(
+        actions.metadata.request(item._id, 'recordTypes', 'webservices', '', {
+          refreshCache: true,
+          recordTypeOnly: true,
+        })
+      );
+    }
+  };
 
   return (
     <Fragment>
@@ -127,10 +151,14 @@ function ConnectionsData(props) {
           Edit Connection
         </Button>
         <br />
-        <Button onClick={() => handleRefreshMetadataClick(item._id)}>
-          Refresh metadata
-        </Button>
-        <br />
+        {item && (item.type === 'netsuite' || item.type === 'salesforce') && (
+          <Fragment>
+            <Button onClick={() => handleRefreshMetadataClick()}>
+              Refresh metadata
+            </Button>
+            <br />
+          </Fragment>
+        )}
         {showDownloadbutton() && (
           <Fragment>
             <Button
@@ -147,7 +175,12 @@ function ConnectionsData(props) {
           Configure debugger
         </Button>
         <br />
-        <Button onClick={handleViewAuditLog}>View audit log</Button>
+        <Button
+          onClick={() => {
+            setShowAuditLogDialog(true);
+          }}>
+          View audit log
+        </Button>
         <br />
         <Button onClick={() => handleReferencesClick(item._id)}>
           View references
@@ -167,6 +200,13 @@ function ConnectionsData(props) {
             name={item.name}
             debugDate={item.debugDate}
             onClose={handleSetDebugClose}
+          />
+        )}
+        {showAuditLogDialog && (
+          <AuditLogDialog
+            resourceType="connections"
+            resourceId={item._id}
+            onClose={handleAuditLogDialogClose}
           />
         )}
       </Typography>

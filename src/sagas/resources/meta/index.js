@@ -9,6 +9,7 @@ function* getNetsuiteOrSalesforceMeta({
   metadataType,
   mode,
   filterKey,
+  addInfo,
 }) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = connection.type;
@@ -16,7 +17,8 @@ function* getNetsuiteOrSalesforceMeta({
     applicationType,
     connectionId,
     metadataType,
-    mode
+    mode,
+    addInfo
   );
   const path = `/${commMetadataPath}`;
 

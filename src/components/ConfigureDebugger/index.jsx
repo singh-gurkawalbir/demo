@@ -35,9 +35,11 @@ const styles = theme => ({
 function ConfigureDebugger(props) {
   const { id, classes, width = '70vw', name, debugDate, onClose } = props;
   const [debugValue, setDebugValue] = useState(0);
+  const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
   const handleOnSubmit = e => {
     e.preventDefault();
+    setSaveLabel('Saving');
     dispatch(actions.resourceForm.configureDebugger(id, debugValue, onClose));
   };
 
@@ -53,7 +55,6 @@ function ConfigureDebugger(props) {
   }
 
   const handleChange = evt => {
-    // Resets value on change of search type
     setDebugValue(evt.target.value);
   };
 
@@ -112,7 +113,7 @@ function ConfigureDebugger(props) {
               type="submit"
               className={classes.submit}
               value="Save">
-              Save
+              {saveLabel}
             </Button>
           </div>
         </form>

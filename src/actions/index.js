@@ -197,12 +197,19 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const metadata = {
-  request: (connectionId, metadataType, mode, filterKey) =>
+  request: (
+    connectionId,
+    metadataType,
+    mode = '',
+    filterKey = '',
+    addInfo = {}
+  ) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
       mode,
       filterKey,
+      addInfo,
     }),
   refresh: (connectionId, metadataType, mode, filterKey) =>
     action(actionTypes.METADATA.REFRESH, {

@@ -965,7 +965,8 @@ export function commMetadataPathGen(
   applicationType,
   connectionId,
   metadataType,
-  mode
+  mode,
+  addInfo
 ) {
   let commMetadataPath;
 
@@ -976,9 +977,21 @@ export function commMetadataPathGen(
       commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
     }
   } else if (applicationType === 'salesforce') {
-    commMetadataPath = `${applicationType}/metadata/webservices/connections/${connectionId}/${metadataType}`;
+    commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
   } else {
     throw Error('Invalid application type...cannot support it');
+  }
+
+  if (addInfo) {
+    if (addInfo.refreshCache === true) {
+      commMetadataPath += '?refreshCache=true';
+    }
+
+    if (addInfo.recordTypeOnly === true) {
+      commMetadataPath += `${
+        addInfo.refreshCache === true ? '&' : '?'
+      }recordTypeOnly=true`;
+    }
   }
 
   return commMetadataPath;
