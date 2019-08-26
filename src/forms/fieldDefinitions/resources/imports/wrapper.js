@@ -1,26 +1,50 @@
 export default {
   'wrapper.function': {
     type: 'text',
-    label: 'Wrapper function',
+    label: 'Function',
+    required: true,
   },
   'wrapper.configuration': {
     type: 'text',
-    label: 'Wrapper configuration',
+    label: 'Configuration',
   },
-  'wrapper.lookups[*].name': {
-    type: 'text',
-    label: 'Wrapper lookups[*] name',
+  'wrapper.ifSoPleasePasteItHere': {
+    type: 'textarea',
+    label: 'If so,please paste it here',
   },
-  'wrapper.lookups[*].map': {
-    type: 'text',
-    label: 'Wrapper lookups[*] map',
+  'wrapper.parentOption': {
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed translate to multiple records in the import application?',
+    defaultValue: 'false',
+    options: [
+      {
+        items: [
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
+        ],
+      },
+    ],
   },
-  'wrapper.lookups[*].default': {
+  'wrapper.childRecords': {
     type: 'text',
-    label: 'Wrapper lookups[*] default',
+    label:
+      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'wrapper.parentOption',
+        is: ['true'],
+      },
+    ],
   },
-  'wrapper.lookups[*].allowFailures': {
+  'wrapper.concurrencyIdLockTemplate': {
+    type: 'textarea',
+    label: 'Concurrency Id Lock Template',
+  },
+  'wrapper.dataUriTemplate': {
     type: 'text',
-    label: 'Wrapper lookups[*] allow Failures',
+    label: 'Data URI Template',
+    placeholder: 'Optional',
   },
 };
