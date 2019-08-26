@@ -2,6 +2,7 @@ export default {
   'wrapper.function': {
     type: 'text',
     label: 'Wrapper function',
+    required: true,
   },
   'wrapper.configuration': {
     type: 'text',
@@ -10,6 +11,7 @@ export default {
   type: {
     type: 'select',
     label: 'Export Type',
+    required: true,
     options: [
       {
         items: [
@@ -24,6 +26,7 @@ export default {
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',
+    required: true,
     visibleWhen: [
       {
         field: 'type',
@@ -34,6 +37,7 @@ export default {
   'once.booleanField': {
     type: 'text',
     label: 'Boolean Field',
+    required: true,
     visibleWhen: [
       {
         field: 'type',

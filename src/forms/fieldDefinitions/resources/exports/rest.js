@@ -25,6 +25,13 @@ export default {
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT'],
+      },
+    ],
   },
   'rest.resourcePath': {
     type: 'text',
@@ -58,6 +65,7 @@ export default {
   'rest.nextPagePath': {
     type: 'text',
     label: 'Next Page Path',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -88,6 +96,7 @@ export default {
   'rest.pageArgument': {
     type: 'text',
     label: 'Page Argument',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -98,6 +107,7 @@ export default {
   'rest.pagingPostBody': {
     type: 'text',
     label: 'Build Paging Post Body',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',

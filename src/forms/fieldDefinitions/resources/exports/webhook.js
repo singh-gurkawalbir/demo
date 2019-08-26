@@ -2,6 +2,7 @@ export default {
   'webhook.provider': {
     type: 'select',
     label: 'Provider',
+    required: true,
     options: [
       {
         items: [
@@ -74,6 +75,7 @@ export default {
   'webhook.verify': {
     type: 'select',
     label: 'Verification Type',
+    required: true,
     options: [
       {
         items: [
@@ -112,6 +114,7 @@ export default {
   'webhook.header': {
     type: 'text',
     label: 'Header (Containing HMAC)',
+    required: true,
     options: [
       {
         items: [
@@ -130,6 +133,7 @@ export default {
   'webhook.encoding': {
     type: 'select',
     label: 'Encoding',
+    required: true,
     options: [
       {
         items: [
@@ -148,6 +152,7 @@ export default {
   'webhook.username': {
     type: 'text',
     label: 'Username',
+    required: true,
     visibleWhenAll: [
       {
         field: 'webhook.provider',
@@ -162,6 +167,7 @@ export default {
   'webhook.password': {
     type: 'text',
     label: 'Password',
+    required: true,
     visibleWhenAll: [
       {
         field: 'webhook.provider',
@@ -176,6 +182,7 @@ export default {
   'webhook.path': {
     type: 'text',
     label: 'Path',
+    required: true,
     visibleWhenAll: [
       {
         field: 'webhook.provider',
