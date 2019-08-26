@@ -1,14 +1,14 @@
 export default {
-  'http.advanceOption': {
+  'http.parentOption': {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'N',
+    defaultValue: 'false',
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'Y' },
-          { label: 'No', value: 'N' },
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
         ],
       },
     ],
@@ -20,8 +20,8 @@ export default {
     placeholder: 'Optional. Not needed for row/array formats.',
     visibleWhen: [
       {
-        field: 'http.advanceOption',
-        is: ['Y'],
+        field: 'http.parentOption',
+        is: ['true'],
       },
     ],
   },
@@ -86,29 +86,16 @@ export default {
       },
     ],
   },
-  'http.compositeMethod': {
-    type: 'select',
-    label: 'HTTP Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'http.method',
-        is: ['COMPOSITE'],
-      },
-    ],
-  },
   'http.relativeUri': {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'http.successPath': {
     type: 'text',
@@ -136,10 +123,22 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'http.responsePath': {
     type: 'text',
     label: 'Response Path',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
   },
   'http.errorPath': {
     type: 'text',
@@ -163,6 +162,77 @@ export default {
       },
     ],
   },
+  'http.createNewData': {
+    type: 'labeltitle',
+    label: 'Create New Data',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.compositeMethodCreate': {
+    type: 'select',
+    label: 'HTTP Method',
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.relativeUriCreate': {
+    type: 'text',
+    label: 'Relative URI',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.responseIdPathCreate': {
+    type: 'text',
+    label: 'Response Id Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.responsePathCreate': {
+    type: 'text',
+    label: 'Response Path',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.upateExistingData': {
+    type: 'labeltitle',
+    label: 'Upate Existing Data',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+      },
+    ],
+  },
   'http.compositeMethodUpdate': {
     type: 'select',
     label: 'HTTP Method',
@@ -178,7 +248,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -189,7 +259,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -200,7 +270,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -210,7 +280,17 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+      },
+    ],
+  },
+  'http.ignoreExistingData': {
+    type: 'labeltitle',
+    label: 'Ignore Existing Data',
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -254,6 +334,12 @@ export default {
     label: 'Sample File (that would be imported)',
     resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.columnDelimiter': {
     type: 'select',
@@ -269,25 +355,43 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.includeHeader': {
     type: 'checkbox',
     label: 'Include Header',
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.customHeaderRows': {
     type: 'textarea',
     label: 'Custom Header Rows',
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
-  'http.advanceOptionMapping': {
+  'http.parentOptionMapping': {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'N',
+    defaultValue: 'false',
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'Y' },
-          { label: 'No', value: 'N' },
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
         ],
       },
     ],
@@ -299,8 +403,8 @@ export default {
     placeholder: 'Optional. Not needed for row/array formats.',
     visibleWhen: [
       {
-        field: 'http.advanceOption',
-        is: ['Y'],
+        field: 'http.parentOptionMapping',
+        is: ['true'],
       },
     ],
   },
@@ -316,18 +420,42 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.wrapWithQuotes': {
     type: 'checkbox',
     label: 'Wrap with quotes',
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.replaceTabWithSpace': {
     type: 'checkbox',
     label: 'Replace tab with space',
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.replaceNewLineWithSpace': {
     type: 'checkbox',
     label: 'Replace new line with space',
+    visibleWhen: [
+      {
+        field: 'http.requestMediaType',
+        is: ['csv'],
+      },
+    ],
   },
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
@@ -345,174 +473,5 @@ export default {
   'http.configureAsyncHelper': {
     type: 'checkbox',
     label: 'Configure Async Helper',
-  },
-  hookType: {
-    type: 'radiogroup',
-    label: 'Hook Type',
-    defaultValue: 'script',
-    options: [
-      {
-        items: [
-          { label: 'Script', value: 'script' },
-          { label: 'Stack', value: 'stack' },
-        ],
-      },
-    ],
-  },
-  'hooks.preMap.function': {
-    type: 'text',
-    label: 'Pre Map',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.preMap._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.preMap._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.preMap._scriptId': {
-    type: 'selectresource',
-    placeholder: 'Please select a script',
-    resourceType: 'scripts',
-    label: 'Pre Map Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.preMap._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Pre Map Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postMap.function': {
-    type: 'text',
-    label: 'Post Map',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postMap._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postMap._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postMap._scriptId': {
-    type: 'selectresource',
-    placeholder: 'Please select a script',
-    resourceType: 'scripts',
-    label: 'Post Map Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postMap._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Map Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postSubmit.function': {
-    type: 'text',
-    label: 'Post Submit',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postSubmit._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postSubmit._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postSubmit._scriptId': {
-    type: 'selectresource',
-    resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Post Submit Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postSubmit._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Submit Stack',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
-  },
-  'hooks.postAggregate.function': {
-    type: 'text',
-    label: 'Post Aggregate',
-    placeholder: 'Function Name',
-    requiredWhen: [
-      {
-        field: 'hooks.postAggregate._scriptId',
-        isNot: [''],
-      },
-      {
-        field: 'hooks.postAggregate._stackId',
-        isNot: [''],
-      },
-    ],
-  },
-  'hooks.postAggregate._scriptId': {
-    type: 'selectresource',
-    resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Post Aggregate Script',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['script'],
-      },
-    ],
-  },
-  'hooks.postAggregate._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Post Aggregate Stack Id',
-    visibleWhen: [
-      {
-        field: 'hookType',
-        is: ['stack'],
-      },
-    ],
   },
 };
