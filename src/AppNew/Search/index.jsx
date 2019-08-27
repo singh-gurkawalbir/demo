@@ -1,16 +1,21 @@
-import { useState, Fragment } from 'react';
+import { Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+    '&:focus': {
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
     },
     marginRight: theme.spacing(1),
     marginLeft: 0,
@@ -38,7 +43,8 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: 100,
+      width: 0,
+      backgroundColor: 'none',
       '&:focus': {
         width: 200,
       },
@@ -59,28 +65,58 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: fade(theme.palette.secondary.light, 0.9),
     color: theme.palette.common.white,
   },
+  searchItem: {
+    display: 'flex',
+    '& > *:first-child': {
+      marginRight: theme.spacing(1),
+    },
+  },
 }));
 
 export default function Search() {
   const classes = useStyles();
-  const [searchTerm, setSearchTerm] = useState(null);
+  const dispatch = useDispatch();
+  const filter = useSelector(state => selectors.filter(state, 'global'));
+  const searchResults = useSelector(state => {
+    const results = [];
+    const resourceTypes = ['exports', 'imports', 'connections'];
+
+    resourceTypes.forEach(type => {
+      selectors
+        .resourceList(state, { type, take: 5, keyword: filter.keyword })
+        .resources.forEach(r =>
+          results.push({ type, id: r._id, name: r.name })
+        );
+    });
+
+    return results.sort((a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+  });
   const handleChange = e => {
-    setSearchTerm(e.target.value);
+    dispatch(actions.patchFilter('global', { keyword: e.target.value }));
   };
 
   return (
     <Fragment>
       <div className={classes.search}>
-        {searchTerm && (
+        {filter.keyword && searchResults.length && (
           <div className={classes.searchResults}>
-            <Typography>Exports</Typography>
-            <Typography variant="body2">Export {searchTerm}</Typography>
-            <Typography variant="body2">{searchTerm} exp</Typography>
-            <Typography style={{ marginTop: 8 }}>Imports</Typography>
-            <Typography variant="body2">{searchTerm} import</Typography>
-            <Typography variant="body2">import {searchTerm}</Typography>
-            <Typography variant="body2">import {searchTerm}</Typography>
-            <Typography variant="body2">import {searchTerm}</Typography>
+            {searchResults.map(r => (
+              <div className={classes.searchItem} key={r._id}>
+                <Typography>{r.name}</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {r.type}
+                </Typography>
+              </div>
+            ))}
           </div>
         )}
         <div className={classes.searchIcon}>

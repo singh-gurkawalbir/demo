@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   popper: {
-    zIndex: props => props.zIndex,
+    zIndex: props => props.zIndex || theme.zIndex.modal + 1,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,

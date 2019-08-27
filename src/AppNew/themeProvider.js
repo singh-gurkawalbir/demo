@@ -6,6 +6,7 @@ const theme = {
   drawerWidth: 240,
   pageBarHeight: 72,
   palette: {
+    type: 'light',
     primary: {
       main: colors.celigoAccent3,
     },
@@ -18,7 +19,7 @@ const theme = {
   overrides: {
     MuiButton: {
       root: {
-        textTransform: 'none',
+        textTransform: 'unset',
       },
     },
   },
