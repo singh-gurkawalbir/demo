@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import Search from '../Search';
+import GlobalSearch from '../GlobalSearch';
 import TextToggle from '../../components/TextToggle';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
@@ -62,7 +62,7 @@ export default function CeligoAppBar() {
               ]}
             />
             <div className={classes.grow} />
-            <Search />
+            <GlobalSearch />
             <IconButton
               size="small"
               aria-label="show 17 new notifications"
