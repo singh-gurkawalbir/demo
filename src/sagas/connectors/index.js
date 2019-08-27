@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -30,5 +30,5 @@ export function* fetchMetadata({ fieldType, fieldName, _integrationId }) {
 }
 
 export default [
-  takeEvery(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
+  takeLatest(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
 ];

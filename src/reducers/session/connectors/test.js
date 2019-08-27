@@ -10,7 +10,7 @@ describe('Connector metadata', () => {
     expect(state).toEqual({});
   });
 
-  test('should return empty state', () => {
+  test('should return isLoading flag set to true when metdata request is sent', () => {
     const fieldId = 'rest.headers';
     const id = 'id';
     const _integrationId = 1;
@@ -19,7 +19,6 @@ describe('Connector metadata', () => {
       actions.connectors.refreshMetadata(fieldId, id, _integrationId)
     );
 
-    //
     expect(requestReducer).toEqual({ '1': { id: { isLoading: true } } });
   });
 

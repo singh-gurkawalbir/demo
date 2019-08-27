@@ -39,16 +39,16 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
     return { isLoading: false };
   }
 
-  const toReturn = state[_integrationId][fieldName];
+  const metadata = state[_integrationId][fieldName];
 
-  if (typeof toReturn === 'object') {
-    return toReturn;
+  if (typeof metadata === 'object') {
+    return metadata;
   } else if (
-    Array.isArray(toReturn) &&
-    toReturn.length &&
-    typeof toReturn[0] === 'object'
+    Array.isArray(metadata) &&
+    metadata.length &&
+    typeof metadata[0] === 'object'
   ) {
-    return toReturn[0];
+    return metadata[0];
   }
 
   return { isLoading: false };
