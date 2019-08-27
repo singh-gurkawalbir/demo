@@ -9,6 +9,8 @@ function* getNetsuiteOrSalesforceMeta({
   metadataType,
   mode,
   filterKey,
+  recordType,
+  selectField,
 }) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = connection.type;
@@ -16,7 +18,9 @@ function* getNetsuiteOrSalesforceMeta({
     applicationType,
     connectionId,
     metadataType,
-    mode
+    mode,
+    recordType,
+    selectField
   );
   const path = `/${commMetadataPath}`;
 
@@ -35,7 +39,9 @@ function* getNetsuiteOrSalesforceMeta({
           metadataType,
           connectionId,
           mode,
-          filterKey
+          filterKey,
+          recordType,
+          selectField
         )
       );
     } else if (applicationType === 'netsuite') {
@@ -45,7 +51,9 @@ function* getNetsuiteOrSalesforceMeta({
           metadataType,
           connectionId,
           mode,
-          filterKey
+          filterKey,
+          recordType,
+          selectField
         )
       );
     }
@@ -62,7 +70,9 @@ function* getNetsuiteOrSalesforceMeta({
           metadataType,
           connectionId,
           mode,
-          filterKey
+          filterKey,
+          recordType,
+          selectField
         )
       );
     }

@@ -191,44 +191,62 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
-  refreshMetadata: (fieldType, id, _integrationId) =>
+  refreshMetadata: (fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_REQUEST, {
       fieldType,
-      id,
+      fieldName,
       _integrationId,
     }),
-  failedMetadata: (id, _integrationId) =>
+  failedMetadata: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_FAILURE, {
-      id,
+      fieldName,
       _integrationId,
     }),
-  clearMetadata: (id, _integrationId) =>
+  clearMetadata: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_CLEAR, {
-      id,
+      fieldName,
       _integrationId,
     }),
-  receivedMetadata: (metadata, fieldName, id, _integrationId) =>
+  receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
       metadata,
+      fieldType,
       fieldName,
-      id,
       _integrationId,
     }),
 };
 const metadata = {
-  request: (connectionId, metadataType, mode, filterKey) =>
+  request: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
       mode,
       filterKey,
+      recordType,
+      selectField,
     }),
-  refresh: (connectionId, metadataType, mode, filterKey) =>
+  refresh: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       metadataType,
       mode,
       filterKey,
+      recordType,
+      selectField,
     }),
   netsuite: {
     receivedCollection: (
@@ -236,7 +254,9 @@ const metadata = {
       metadataType,
       connectionId,
       mode,
-      filterKey
+      filterKey,
+      recordType,
+      selectField
     ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
@@ -244,13 +264,17 @@ const metadata = {
         connectionId,
         mode,
         filterKey,
+        recordType,
+        selectField,
       }),
     receivedError: (
       metadataError,
       metadataType,
       connectionId,
       mode,
-      filterKey
+      filterKey,
+      recordType,
+      selectField
     ) =>
       action(actionTypes.METADATA.RECEIVED_ERROR, {
         metadataError,
@@ -258,6 +282,8 @@ const metadata = {
         connectionId,
         mode,
         filterKey,
+        recordType,
+        selectField,
       }),
   },
 };

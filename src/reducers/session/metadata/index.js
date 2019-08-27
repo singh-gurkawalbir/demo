@@ -1,6 +1,12 @@
 import actionTypes from '../../../actions/types';
 
-function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
+function generateNetsuiteOptions(
+  data,
+  metadataType,
+  mode,
+  filterKey,
+  isFieldMetadata = false
+) {
   let options = null;
 
   if (mode === 'webservices') {
@@ -55,7 +61,9 @@ function generateNetsuiteOptions(data, metadataType, mode, filterKey) {
       // userPermission: "4"}
       options = data.map(item => ({
         label: item.name,
-        value: item.scriptId && item.scriptId.toLowerCase(),
+        value: isFieldMetadata
+          ? item.id
+          : item.scriptId && item.scriptId.toLowerCase(),
       }));
     } else if (metadataType === 'savedSearches') {
       // {id: "2615", name: "1mb data"}
@@ -95,6 +103,8 @@ export default (
     metadataType,
     mode,
     filterKey,
+    recordType,
+    selectField,
   } = action;
   const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
   let newState;
@@ -111,6 +121,26 @@ export default (
         [key]: { status: 'requested' },
       };
 
+      if (recordType && selectField) {
+        specificMode[connectionId] = {
+          ...specificMode[connectionId],
+        };
+
+        // jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
+        if (!specificMode[connectionId][recordType]) {
+          specificMode[connectionId][recordType] = {};
+        }
+
+        if (!specificMode[connectionId][recordType][selectField]) {
+          specificMode[connectionId][recordType][selectField] = {};
+        }
+
+        specificMode[connectionId][recordType][selectField] = {
+          ...specificMode[connectionId][recordType][selectField],
+          [key]: { status: 'requested' },
+        };
+      }
+
       return { ...state, ...{ netsuite: newState } };
     }
 
@@ -120,7 +150,18 @@ export default (
       const specificMode = newState[mode];
 
       // Updates Object with status as 'requested' incase of Refresh Request
-      if (
+      if (selectField && recordType) {
+        if (
+          specificMode[connectionId] &&
+          specificMode[connectionId][recordType] &&
+          specificMode[connectionId][recordType][selectField] &&
+          specificMode[connectionId][recordType][selectField][key] &&
+          specificMode[connectionId][recordType][selectField][key].status
+        ) {
+          specificMode[connectionId][recordType][selectField][key].status =
+            'refreshed';
+        }
+      } else if (
         specificMode[connectionId] &&
         specificMode[connectionId][key] &&
         specificMode[connectionId][key].status
@@ -144,13 +185,25 @@ export default (
         metadata,
         metadataType,
         mode,
-        filterKey
+        filterKey,
+        !!(selectField && recordType)
       );
 
-      specificMode[connectionId] = {
-        ...specificMode[connectionId],
-        [key]: { status: 'received', data: options },
-      };
+      if (recordType && selectField) {
+        if (!specificMode[connectionId][recordType]) {
+          specificMode[connectionId][recordType] = {};
+        }
+
+        specificMode[connectionId][recordType][selectField] = {
+          ...specificMode[connectionId][recordType][selectField],
+          [key]: { status: 'received', data: options },
+        };
+      } else {
+        specificMode[connectionId] = {
+          ...specificMode[connectionId],
+          [key]: { status: 'received', data: options },
+        };
+      }
 
       return { ...state, ...{ netsuite: newState } };
     }
@@ -162,7 +215,31 @@ export default (
       const specificMode = newState[mode];
       const defaultError = 'Error occured';
 
-      if (
+      if (selectField && recordType) {
+        if (
+          specificMode[connectionId] &&
+          specificMode[connectionId][recordType] &&
+          specificMode[connectionId][recordType][selectField] &&
+          specificMode[connectionId][recordType][selectField][key] &&
+          specificMode[connectionId][recordType][selectField][key].status ===
+            'refreshed'
+        ) {
+          specificMode[connectionId][recordType][selectField][key].status =
+            'error';
+          specificMode[connectionId][recordType][selectField][
+            key
+          ].errorMessage = metadataError || defaultError;
+        } else {
+          specificMode[connectionId][recordType][selectField] = {
+            ...specificMode[connectionId][recordType][selectField],
+            [key]: {
+              status: 'error',
+              data: [],
+              errorMessage: metadataError || defaultError,
+            },
+          };
+        }
+      } else if (
         specificMode[connectionId] &&
         specificMode[connectionId][key] &&
         specificMode[connectionId][key].status === 'refreshed'
@@ -194,18 +271,28 @@ export const optionsFromMetadata = (
   connectionId,
   applicationType,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) => {
   const applicationResource = (state && state[applicationType]) || null;
 
   if (applicationType === 'netsuite') {
-    return (
-      (applicationResource &&
-        applicationResource[mode] &&
-        applicationResource[mode][connectionId] &&
-        applicationResource[mode][connectionId][metadataType]) ||
-      null
-    );
+    return recordType && selectField
+      ? (applicationResource &&
+          applicationResource[mode] &&
+          applicationResource[mode][connectionId] &&
+          applicationResource[mode][connectionId][recordType] &&
+          applicationResource[mode][connectionId][recordType][selectField] &&
+          applicationResource[mode][connectionId][recordType][selectField][
+            metadataType
+          ]) ||
+          null
+      : (applicationResource &&
+          applicationResource[mode] &&
+          applicationResource[mode][connectionId] &&
+          applicationResource[mode][connectionId][metadataType]) ||
+          null;
   }
 
   return (
@@ -214,4 +301,37 @@ export const optionsFromMetadata = (
       applicationResource[connectionId][metadataType]) ||
     null
   );
+};
+
+export const optionsMapFromMetadata = (
+  state,
+  connectionId,
+  applicationType,
+  recordType,
+  selectField,
+  optionsMap
+) => {
+  const options =
+    optionsFromMetadata(
+      state,
+      connectionId,
+      applicationType,
+      'recordTypes',
+      'suitescript',
+      recordType,
+      selectField
+    ) || {};
+
+  return {
+    isLoading: options.status === 'requested',
+    shouldReset: options.status === 'received',
+    data: {
+      optionsMap: [
+        optionsMap[0],
+        Object.assign({}, optionsMap[1], {
+          options: options.data || optionsMap[1].options,
+        }),
+      ],
+    },
+  };
 };

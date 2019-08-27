@@ -6,10 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import deepClone from 'lodash/cloneDeep';
-import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
-import DynaSelect from './DynaSelect';
-import actions from '../../../actions';
+import Spinner from '../../../Spinner';
+import DynaSelect from '../DynaSelect';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,31 +52,44 @@ function reducer(state, action) {
   }
 }
 
-const KeyValueTable = props => {
+export default function KeyValueTable(props) {
   const classes = useStyles();
   const {
     label,
     value,
     optionsMap: optionsMapInit,
+    initSelector,
+    handleRefreshClickHandler,
+    hideHeaders = false,
     _integrationId,
     id,
   } = props;
   const dispatch = useDispatch();
+  const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
   const [state, dispatchLocalAction] = useReducer(reducer, value || []);
   const valueData = deepClone(state);
   const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
   let requiredFieldsMissing = false;
-  const { isLoading, data: response } = useSelector(state =>
-    selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
-  );
+  const { isLoading, shouldReset, data: metadata } =
+    useSelector(initSelector) || {};
 
   useEffect(() => {
-    if (response && response.optionsMap && Array.isArray(response.optionsMap)) {
-      setOptionsMap(response.optionsMap);
+    setShouldResetOptions(true);
+  }, [shouldReset]);
+
+  useEffect(() => {
+    if (
+      shouldResetOptions &&
+      metadata &&
+      metadata.optionsMap &&
+      Array.isArray(metadata.optionsMap)
+    ) {
+      setOptionsMap(metadata.optionsMap);
+      setShouldResetOptions(false);
     }
-  }, [response]);
+  }, [metadata, shouldResetOptions]);
 
   useEffect(
     () => () => {
@@ -88,8 +100,8 @@ const KeyValueTable = props => {
 
   // If Value is present, check if there are required fields missing in the last row
   if (valueData && valueData.length) {
-    (requiredFields || []).forEach(f => {
-      if (!valueData[valueData.length - 1][f.id]) {
+    (requiredFields || []).forEach(field => {
+      if (!valueData[valueData.length - 1][field.id]) {
         requiredFieldsMissing = true;
       }
     });
@@ -116,8 +128,8 @@ const KeyValueTable = props => {
           options: [
             {
               items: data.options.map(opt => ({
-                label: opt.text,
-                value: opt.id,
+                label: opt.text || opt.label,
+                value: opt.id || opt.value,
               })),
             },
           ],
@@ -147,7 +159,9 @@ const KeyValueTable = props => {
   };
 
   function handleRefreshClick(e, fieldId) {
-    dispatch(actions.connectors.refreshMetadata(fieldId, id, _integrationId));
+    if (handleRefreshClickHandler) {
+      handleRefreshClickHandler(fieldId);
+    }
   }
 
   function dispatchActionToDelete(e, index) {
@@ -162,20 +176,22 @@ const KeyValueTable = props => {
     <div className={classes.container}>
       <Typography variant="h6">{label}</Typography>
       <Grid container className={classes.root} spacing={2}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {optionsMap.map(r => (
-              <Grid key={r.id} item xs>
-                <span className={classes.alignLeft}>{r.label}</span>
-                {r.supportsRefresh && !isLoading && (
-                  <RefreshIcon onClick={onFetchResource(r.id)} />
-                )}
-                {r.supportsRefresh && isLoading && <Spinner />}
-              </Grid>
-            ))}
-            <Grid key={100} item />
+        {!hideHeaders && (
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {optionsMap.map(r => (
+                <Grid key={r.id} item xs>
+                  <span className={classes.alignLeft}>{r.label}</span>
+                  {r.supportsRefresh && !isLoading && (
+                    <RefreshIcon onClick={onFetchResource(r.id)} />
+                  )}
+                  {r.supportsRefresh && isLoading && <Spinner />}
+                </Grid>
+              ))}
+              <Grid key={100} item />
+            </Grid>
           </Grid>
-        </Grid>
+        )}
         <Grid container spacing={2} direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
@@ -184,7 +200,6 @@ const KeyValueTable = props => {
                   <Grid item key={r.id} xs>
                     {r.type !== 'select' && (
                       <Input
-                        autoFocus
                         defaultValue={r.value}
                         placeholder={r.id}
                         className={classes.input}
@@ -219,6 +234,4 @@ const KeyValueTable = props => {
       </Grid>
     </div>
   );
-};
-
-export default KeyValueTable;
+}

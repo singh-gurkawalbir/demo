@@ -77,14 +77,36 @@ export function optionsFromMetadata(
   connectionId,
   applicationType,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) {
   return fromMetadata.optionsFromMetadata(
     state && state.metadata,
     connectionId,
     applicationType,
     metadataType,
-    mode
+    mode,
+    recordType,
+    selectField
+  );
+}
+
+export function optionsMapFromMetadata(
+  state,
+  connectionId,
+  applicationType,
+  recordType,
+  selectField,
+  optionsMap
+) {
+  return fromMetadata.optionsMapFromMetadata(
+    state && state.metadata,
+    connectionId,
+    applicationType,
+    recordType,
+    selectField,
+    optionsMap
   );
 }
 
