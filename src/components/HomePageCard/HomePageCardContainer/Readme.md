@@ -17,8 +17,8 @@ const FooterActions = require('../Footer/FooterActions').default;
 const Manage = require('../Footer/Manage').default;
 const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').default;
 
-<Grid container spacing={2}>
-  <Grid item>
+<Grid container spacing={1}>
+  <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
         <Status label="success">
@@ -47,7 +47,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
       </Footer>
     </HomePageCardContainer>
   </Grid>
-  <Grid item>
+  <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
         <Status label="errors" count="445">
@@ -76,7 +76,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
       </Footer>
     </HomePageCardContainer>
   </Grid>
-  <Grid item>
+  <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
         <Status label="continue setup">

@@ -2,6 +2,13 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
 export default {
+  breakpoints: {
+    values: {
+      sm: 768,
+      md: 968,
+      lg: 1370,
+    },
+  },
   typography: {
     useNextVariants: true,
     fontFamily: 'Roboto, sans-serif',

@@ -37,12 +37,18 @@ const styles = theme => ({
       borderColor: theme.palette.divider,
       position: 'absolute',
     },
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '80%',
+    },
   },
   label: {
-    maxWidth: 190,
+    maxWidth: 175,
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+    },
   },
 });
 

@@ -14,10 +14,18 @@ const styles = theme => ({
     cursor: 'pointer',
     borderColor: theme.palette.background.arrowAfter,
     transition: `all .4s ease`,
+    overflow: 'hidden',
     '&:hover': {
       margin: [[-5, 0, -5, 0]],
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
       borderColor: theme.palette.background.main,
+    },
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: '100%',
+    },
+    [theme.breakpoints.between('sm', 'md')]: {
+      minWidth: '100%',
+      maxWidth: '100%',
     },
   },
   center: {
@@ -30,7 +38,7 @@ function HomePageCardContainer(props) {
 
   return (
     <Paper className={classNames(classes.wrapper)} elevation={0}>
-      {children}
+      <div>{children}</div>
     </Paper>
   );
 }
