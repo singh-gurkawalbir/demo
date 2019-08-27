@@ -23,6 +23,7 @@ import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
+import DynaHttpRequestBody from './DynaHttpRequestBody';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -36,6 +37,7 @@ export default {
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  httprequestbody: DynaHttpRequestBody,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   dynakeywithaction: DynaKeyWithAction,

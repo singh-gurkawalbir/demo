@@ -1,30 +1,33 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import ModalDialog from '../../ModalDialog';
-import NewLookup from './NewLookup';
+import Lookup from './Lookup';
 import LookupListing from './LookupListing';
 
 export default function ManageLookup(props) {
-  const { lookups, onUpdate, onAdd, onClose, onCancelClick } = props;
+  const { lookups, updateLookups, onCancelClick } = props;
   const [isNewLookup, setIsNewLookup] = useState(false);
-  const [mode, setMode] = useState('create');
-  const [lookupObj, setLookupObj] = useState({});
-  const addNewLookup = val => {
-    onAdd(val);
+  const [lookup, setLookup] = useState({});
+  const onSave = (isEdit, val) => {
+    if (!isEdit) {
+      if (!_.find(lookups, { name: val.name })) {
+        lookups.push(val);
+        updateLookups(lookups);
+      } else {
+        // to be checked if we show any alert. Currently In case of adding new Lookup,  we dont add the record if we have existing lookup with same name.
+      }
+    } else {
+      const obj = _.find(lookups, { name: lookup && lookup.name });
+
+      Object.assign(obj, val);
+      updateLookups(lookups);
+    }
+
     setIsNewLookup(!isNewLookup);
   };
 
-  const cancelHandler = () => {
-    if (isNewLookup) {
-      setIsNewLookup(false);
-    } else {
-      onCancelClick();
-    }
-  };
-
   const editLookupHandler = val => {
-    setLookupObj(val);
-    setMode('edit');
+    setLookup(val);
     setIsNewLookup(true);
   };
 
@@ -35,33 +38,36 @@ export default function ManageLookup(props) {
         obj => obj.name !== lookupObj.name
       );
 
-      onUpdate(modifiedLookups);
+      updateLookups(modifiedLookups);
     }
+  };
+
+  const toggleLookupMode = () => {
+    setLookup({});
+    setIsNewLookup(!isNewLookup);
   };
 
   return (
     <ModalDialog
       show
       actionLabel={isNewLookup ? 'Back to Lookup' : 'New Lookup'}
-      actionHandler={() => {
-        setIsNewLookup(!isNewLookup);
-      }}>
+      actionHandler={toggleLookupMode}>
       <span>Manage Lookups</span>
       {isNewLookup ? (
-        <NewLookup
-          mode={mode}
-          lookupObj={lookupObj}
-          onCancelClick={cancelHandler}
-          onSubmit={addNewLookup}
+        <Lookup
+          lookupObj={lookup}
+          onCancelClick={() => {
+            setIsNewLookup(false);
+          }}
+          onSave={onSave}
         />
       ) : (
         <LookupListing
           lookups={lookups}
-          editLookupHandler={editLookupHandler}
+          updateLookup={editLookupHandler}
           deleteLookup={deleteLookup}
-          lookupUpdateHandler={onUpdate}
-          onCancelClick={cancelHandler}
-          onClose={onClose}
+          lookupUpdateHandler={onSave}
+          onCancelClick={onCancelClick}
         />
       )}
     </ModalDialog>

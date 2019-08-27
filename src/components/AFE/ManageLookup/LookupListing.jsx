@@ -7,21 +7,15 @@ function optionsHandler() {
 }
 
 export default function LookupListing(props) {
-  const {
-    lookups,
-    editLookupHandler,
-    deleteLookup,
-    onClose,
-    onCancelClick,
-  } = props;
-  const editLookup = lookupObj => {
-    editLookupHandler(lookupObj);
-  };
-
+  const { lookups, updateLookup, deleteLookup, onCancelClick } = props;
   const [key, setKey] = useState(1);
-  const handleDeleteLookup = obj => {
+  const deleteLookupHandler = obj => {
     setKey(key + 1);
     deleteLookup(obj);
+  };
+
+  const editLookup = lookupObj => {
+    updateLookup(lookupObj);
   };
 
   const lookuplistingFieldMeta = {
@@ -30,12 +24,11 @@ export default function LookupListing(props) {
         id: 'lookup_list',
         type: 'dynakeywithaction',
         keyName: 'name',
-        // valueName: 'value',
         valueType: 'dynakeywithaction',
         label: 'Lookups',
         value: lookups,
         editHandler: editLookup,
-        deleteHandler: handleDeleteLookup,
+        deleteHandler: deleteLookupHandler,
       },
     ],
   };
@@ -45,8 +38,7 @@ export default function LookupListing(props) {
       key={key}
       fieldMeta={lookuplistingFieldMeta}
       optionsHandler={optionsHandler}>
-      <Button onClick={onCancelClick}>Cancel</Button>
-      <Button onClick={onClose}>Save</Button>
+      <Button onClick={onCancelClick}>Close</Button>
     </DynaForm>
   );
 }

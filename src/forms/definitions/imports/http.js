@@ -1,4 +1,22 @@
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'http.body') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+
+      if (recordTypeField) {
+        return {
+          lookups: {
+            fieldId: recordTypeField.fieldId,
+            data: recordTypeField && recordTypeField.value,
+          },
+        };
+      }
+    }
+
+    return null;
+  },
   fields: [
     { formId: 'common' },
     { fieldId: 'http.advanceOption' },
@@ -8,7 +26,8 @@ export default {
     { fieldId: 'http.requestMediaType' },
     { fieldId: 'http.compositeType' },
     { fieldId: 'http.compositeMethod' },
-    { fieldId: 'http.lookups' },
+    { fieldId: 'http.lookups', visible: false },
+    { fieldId: 'http.body' },
     { fieldId: 'http.relativeUri' },
     { fieldId: 'http.successPath' },
     { fieldId: 'http.successValues' },
