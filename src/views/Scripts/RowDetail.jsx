@@ -87,10 +87,6 @@ function ScriptsData(props) {
           Edit script
         </Button>
         <br />
-        <Button component={Link} to={getRoutePath(`scripts/edit/${item._id}`)}>
-          Edit script content
-        </Button>
-        <br />
         <Button onClick={handleAuditLogClick}>View audit log</Button>
         <br />
         <Button onClick={handleReferencesClick}>View references</Button>
