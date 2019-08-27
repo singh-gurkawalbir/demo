@@ -8,7 +8,10 @@ import actions from '../actions';
 import { apiCallWithRetry } from './';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
-import { netsuiteUserRoles } from './resourceForm/connections';
+import {
+  netsuiteUserRoles,
+  configureDebugger,
+} from './resourceForm/connections';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
@@ -329,5 +332,88 @@ describe(`apiCallWithRetry saga`, () => {
       expect(saga.next(resp).value).toEqual('some response');
       expect(saga.next().done).toBe(true);
     });
+  });
+});
+
+describe('configureDebugger(id, timeInMins, onClose) saga', () => {
+  const id = '123';
+  const timeInMins = '123';
+  const onClose = () => {};
+
+  test('should succeed on successful api call', () => {
+    // assign
+    const saga = configureDebugger(
+      actions.resourceForm.configureDebugger(id, timeInMins, onClose)
+    );
+    const path = `/connections/${id}`;
+    const callEffect = saga.next().value;
+    const debugTime =
+      callEffect &&
+      callEffect.payload &&
+      callEffect.payload.args &&
+      callEffect.payload.args[0] &&
+      callEffect.payload.args[0].value;
+    const reqPayload = [
+      {
+        op: timeInMins !== '0' ? 'replace' : 'remove',
+        path: '/debugDate',
+        value: debugTime,
+      },
+    ];
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'PATCH',
+          body: reqPayload,
+        },
+        op: 'remove',
+        value: debugTime,
+      })
+    );
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(
+      put(actions.resource.connections.updateConnection(id, debugTime, onClose))
+    );
+    const final = saga.next();
+
+    expect(final.done).toBe(true);
+  });
+  test('should return undefined if api call fails', () => {
+    const saga = configureDebugger(
+      actions.resourceForm.configureDebugger(id, timeInMins, onClose)
+    );
+    const path = `/connections/${id}`;
+    const callEffect = saga.next().value;
+    const debugTime =
+      callEffect &&
+      callEffect.payload &&
+      callEffect.payload.args &&
+      callEffect.payload.args[0] &&
+      callEffect.payload.args[0].value;
+    const reqPayload = [
+      {
+        op: timeInMins !== '0' ? 'replace' : 'remove',
+        path: '/debugDate',
+        value: debugTime,
+      },
+    ];
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'PATCH',
+          body: reqPayload,
+        },
+        op: 'remove',
+        value: debugTime,
+      })
+    );
+    const final = saga.throw(new Error('some API exception'));
+
+    expect(final.done).toBe(true);
   });
 });

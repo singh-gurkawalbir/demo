@@ -113,6 +113,38 @@ describe('resources reducer', () => {
     });
   });
 });
+describe(`configure debugger action`, () => {
+  test('should update connection debug date value', () => {
+    const onClose = () => {};
+    const collection = [{ _id: 'id1', name: 'rob', debugDate: '123' }];
+    let state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', collection)
+    );
+
+    state = reducer(
+      state,
+      actions.resource.connections.updateConnection('id1', '456', onClose)
+    );
+    const resCollection = [{ _id: 'id1', name: 'rob', debugDate: '456' }];
+
+    expect(state.connections).toEqual([resCollection[0]]);
+  });
+  test('should not update connection debug date value if there is no connection exists with given id', () => {
+    const onClose = () => {};
+    const collection = [{ _id: 'id1', name: 'rob', debugDate: '123' }];
+    let state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', collection)
+    );
+
+    state = reducer(
+      state,
+      actions.resource.connections.updateConnection('id2', '456', onClose)
+    );
+    expect(state.connections).toEqual(collection);
+  });
+});
 
 describe('resources selectors', () => {
   describe('resource', () => {
