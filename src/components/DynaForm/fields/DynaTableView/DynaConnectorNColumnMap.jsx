@@ -21,10 +21,15 @@ export default function DynaConnectorNColumnMap(props) {
     dispatch(actions.connectors.refreshMetadata(fieldId, id, _integrationId));
   }
 
+  function handleCleanup() {
+    dispatch(actions.connectors.clearMetadata(id, _integrationId));
+  }
+
   return (
     <DynaTableView
       {...props}
       initSelector={initSelector}
+      handleCleanupHandler={handleCleanup}
       handleRefreshClickHandler={handleRefreshClick}
     />
   );

@@ -1,6 +1,6 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -8,7 +8,6 @@ import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import deepClone from 'lodash/cloneDeep';
 import Spinner from '../../../Spinner';
 import DynaSelect from '../DynaSelect';
-import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -69,11 +68,10 @@ export default function DynaTable(props) {
     optionsMap: optionsMapInit,
     initSelector,
     handleRefreshClickHandler,
+    handleCleanupHandler,
     hideHeaders = false,
-    _integrationId,
     id,
   } = props;
-  const dispatch = useDispatch();
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
@@ -103,9 +101,11 @@ export default function DynaTable(props) {
 
   useEffect(
     () => () => {
-      dispatch(actions.connectors.clearMetadata(id, _integrationId));
+      if (handleCleanupHandler) {
+        handleCleanupHandler();
+      }
     },
-    [_integrationId, dispatch, id]
+    [handleCleanupHandler, id]
   );
 
   // If Value is present, check if there are required fields missing in the last row
