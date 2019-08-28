@@ -16,7 +16,7 @@ export default {
     color: colors.celigoNeutral1,
     background: colors.celigoNeutral8,
     hover: darken(colors.celigoNeutral7, 0.6),
-    text: colors.celigoNeutral8,
+    text: colors.celigoNeutral2,
     separator: colors.celigoNeutral6,
   },
   palette: {
@@ -185,6 +185,17 @@ export default {
     MuiListItem: {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral7 },
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral3,
+        '&$selected': {
+          backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          '&:hover': {
+            backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          },
+        },
       },
     },
   },

@@ -182,5 +182,17 @@ export default {
         '&:hover': { backgroundColor: colors.celigoNeutral2 },
       },
     },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral3,
+        '&$selected': {
+          backgroundColor: colors.celigoNeutral2,
+          borderLeftColor: colors.celigoAccent3,
+          '&:hover': {
+            backgroundColor: colors.celigoNeutral3,
+          },
+        },
+      },
+    },
   },
 };

@@ -13,10 +13,6 @@ const useStyles = makeStyles(theme => ({
     },
     '& ul': {
       padding: 0,
-      '& li.Mui-selected': {
-        background: theme.palette.background.editorInner,
-        borderLeftColor: theme.palette.background.main,
-      },
     },
   },
   menuitem: {
@@ -25,21 +21,10 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'normal',
     fontSize: 15,
     transition: `all .4s ease`,
-    borderStyle: 'solid',
-    borderLeftWidth: '6px',
-    borderBottomWidth: '1px',
-    borderBottomColor: theme.palette.divider,
-    borderLeftColor: 'transparent',
     padding: '8px 10px',
     fontFamily: 'source sans pro',
     minHeight: 'unset',
     lineHeight: '19px',
-    '&:hover': {
-      borderLeftColor: theme.palette.background.main,
-    },
-    '&:last-child': {
-      borderBottom: 'none',
-    },
   },
 
   item: {

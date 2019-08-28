@@ -197,6 +197,33 @@ export default {
         backgroundColor: 'transparent',
       },
     },
+    MuiMenuItem: {
+      root: {
+        borderBottom: '1px solid',
+        '&$selected': {
+          backgroundColor: 'transparent',
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:last-child': {
+          borderBottom: 'none',
+        },
+        '&:hover': {
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: '0px',
+        },
+      },
+    },
   },
   props: {
     // Name of the component ⚛️
