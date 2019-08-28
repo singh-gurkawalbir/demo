@@ -5,6 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 import deepClone from 'lodash/cloneDeep';
 import Spinner from '../../../Spinner';
 import DynaSelect from '../DynaSelect';
@@ -202,7 +204,7 @@ export default function DynaTable(props) {
                   {r.supportsRefresh && isLoading && <Spinner />}
                 </Grid>
               ))}
-              <Grid key={100} item />
+              <Grid key="delete_button_header" item />
             </Grid>
           </Grid>
         )}
@@ -238,8 +240,13 @@ export default function DynaTable(props) {
                     )}
                   </Grid>
                 ))}
-                <Grid item key={100}>
-                  <button onClick={handleRemoveRow(arr.row)}>X</button>
+                <Grid item key="delete_button">
+                  <IconButton
+                    aria-label="delete"
+                    onClick={handleRemoveRow(arr.row)}
+                    className={classes.margin}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
                 </Grid>
               </Grid>
             </Grid>
