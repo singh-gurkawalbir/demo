@@ -3,7 +3,7 @@ import EditorDialog from '../EditorDialog';
 import HttpRequestBodyEditor from './';
 
 export default function HttpRequestBodyDialog(props) {
-  const { id, rule, data, actionComponents, ...rest } = props;
+  const { id, rule, data, ...rest } = props;
   const defaults = {
     layout: 'compact',
     width: '80vw',

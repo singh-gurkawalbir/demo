@@ -8,8 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const withStyles = makeStyles(() => ({
   contentContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    height: props => props.height || '50vh',
-    width: props => props.width || '75vh',
+    height: '50vh',
+    width: '75vh',
   },
 }));
 
@@ -23,7 +23,7 @@ export default function FormDialog(props) {
     submitLabel = 'Save',
     isValid = true,
   } = props;
-  const classes = withStyles(props);
+  const classes = withStyles();
 
   return (
     <Dialog open onClose={onClose} aria-labelledby="form-dialog-title">

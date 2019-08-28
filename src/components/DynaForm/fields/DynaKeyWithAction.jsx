@@ -10,6 +10,9 @@ const useStyles = makeStyles(() => ({
   container: {
     minWidth: '500px',
   },
+  helpText: {
+    whiteSpace: 'pre-line',
+  },
   label: {
     marginTop: 'auto',
     marginBottom: 'auto',
@@ -60,8 +63,8 @@ export default function DynaKeyWithAction(props) {
 
             {deleteHandler && (
               <IconButton
-                key="Close"
-                aria-label="Close"
+                key="Delete"
+                aria-label="Delete"
                 color="inherit"
                 onClick={() => deleteHandler(r)}>
                 <DeleteOutlinedIcon />

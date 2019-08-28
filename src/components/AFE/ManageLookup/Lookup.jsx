@@ -43,8 +43,6 @@ export default function Lookup(props) {
 
     if (lookupObj.mode === 'static') {
       lookupObj.map = {};
-      lookupObj.mapList.splice(-1, 1);
-
       lookupObj.mapList.forEach(obj => {
         lookupObj.map[obj.export] = obj.import;
       });
