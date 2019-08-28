@@ -157,6 +157,16 @@ const resource = {
         debugDate,
         onClose,
       }),
+    downloadDebugLogs: id =>
+      action(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, {
+        id,
+      }),
+    configureDebugger: (id, timeInMins, onClose) =>
+      action(actionTypes.CONNECTIONS.CONFIGURE_DEBUGGER, {
+        id,
+        timeInMins,
+        onClose,
+      }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>
@@ -197,13 +207,7 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const metadata = {
-  request: (
-    connectionId,
-    metadataType,
-    mode = '',
-    filterKey = '',
-    addInfo = {}
-  ) =>
+  request: (connectionId, metadataType, mode, filterKey, addInfo) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       metadataType,
@@ -370,16 +374,6 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
-  downloadDebugLogs: id =>
-    action(actionTypes.RESOURCE_FORM.DOWNLOAD_DEBUGLOGS, {
-      id,
-    }),
-  configureDebugger: (id, timeInMins, onClose) =>
-    action(actionTypes.RESOURCE_FORM.CONFIGURE_DEBUGGER, {
-      id,
-      timeInMins,
-      onClose,
-    }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),

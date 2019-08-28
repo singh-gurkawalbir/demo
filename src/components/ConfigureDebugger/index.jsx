@@ -40,7 +40,9 @@ function ConfigureDebugger(props) {
   const handleOnSubmit = e => {
     e.preventDefault();
     setSaveLabel('Saving');
-    dispatch(actions.resourceForm.configureDebugger(id, debugValue, onClose));
+    dispatch(
+      actions.resource.connections.configureDebugger(id, debugValue, onClose)
+    );
   };
 
   let minutes;
@@ -53,10 +55,6 @@ function ConfigureDebugger(props) {
   if (!(debugDate && moment().isBefore(moment(debugDate)))) {
     defaultVal = '0';
   }
-
-  const handleChange = evt => {
-    setDebugValue(evt.target.value);
-  };
 
   return (
     <Dialog open maxWidth={false}>
@@ -77,31 +75,19 @@ function ConfigureDebugger(props) {
               name="debugDuration"
               defaultValue={defaultVal}
               // value={searchType}
-              onChange={handleChange}>
+              onChange={evt => setDebugValue(evt.target.value)}>
               <FormControlLabel value="0" control={<Radio />} label="Off" />
-              <FormControlLabel
-                value="15"
-                control={<Radio />}
-                label="Next 15 mins"
-              />
-              <FormControlLabel
-                value="30"
-                control={<Radio />}
-                label="Next 30 mins"
-              />
-              <FormControlLabel
-                value="45"
-                control={<Radio />}
-                label="Next 45 mins"
-              />
-              <FormControlLabel
-                value="60"
-                control={<Radio />}
-                label="Next 60 mins"
-              />
+              {['15', '30', '45', '60'].map(duration => (
+                <FormControlLabel
+                  key={duration}
+                  value={duration}
+                  control={<Radio />}
+                  label={`Next ${duration} mins`}
+                />
+              ))}
             </RadioGroup>
           </FormControl>
-          {debugDate && minutes > 1 && (
+          {minutes > 1 && (
             <Typography>
               Debug mode is enabled for next {minutes} minutes.
             </Typography>

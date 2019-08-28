@@ -431,6 +431,6 @@ export default [
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection
   ),
-  takeEvery(actionTypes.RESOURCE_FORM.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
-  takeEvery(actionTypes.RESOURCE_FORM.CONFIGURE_DEBUGGER, configureDebugger),
+  takeEvery(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
+  takeEvery(actionTypes.CONNECTIONS.CONFIGURE_DEBUGGER, configureDebugger),
 ];

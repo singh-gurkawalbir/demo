@@ -163,7 +163,9 @@ function ConnectionsData(props) {
           <Fragment>
             <Button
               onClick={() =>
-                dispatch(actions.resourceForm.downloadDebugLogs(item._id))
+                dispatch(
+                  actions.resource.connections.downloadDebugLogs(item._id)
+                )
               }>
               Download debug logs
             </Button>

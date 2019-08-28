@@ -343,7 +343,7 @@ describe('configureDebugger(id, timeInMins, onClose) saga', () => {
   test('should succeed on successful api call', () => {
     // assign
     const saga = configureDebugger(
-      actions.resourceForm.configureDebugger(id, timeInMins, onClose)
+      actions.resource.connections.configureDebugger(id, timeInMins, onClose)
     );
     const path = `/connections/${id}`;
     const callEffect = saga.next().value;
@@ -377,27 +377,19 @@ describe('configureDebugger(id, timeInMins, onClose) saga', () => {
     expect(effect).toEqual(
       put(actions.resource.connections.updateConnection(id, debugTime, onClose))
     );
-    const final = saga.next();
-
-    expect(final.done).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should return undefined if api call fails', () => {
     const saga = configureDebugger(
-      actions.resourceForm.configureDebugger(id, timeInMins, onClose)
+      actions.resource.connections.configureDebugger(id, timeInMins, onClose)
     );
     const path = `/connections/${id}`;
     const callEffect = saga.next().value;
-    const debugTime =
-      callEffect &&
-      callEffect.payload &&
-      callEffect.payload.args &&
-      callEffect.payload.args[0] &&
-      callEffect.payload.args[0].value;
     const reqPayload = [
       {
         op: timeInMins !== '0' ? 'replace' : 'remove',
         path: '/debugDate',
-        value: debugTime,
+        value: expect.any(String),
       },
     ];
 
@@ -409,7 +401,7 @@ describe('configureDebugger(id, timeInMins, onClose) saga', () => {
           body: reqPayload,
         },
         op: 'remove',
-        value: debugTime,
+        value: expect.any(String),
       })
     );
     const final = saga.throw(new Error('some API exception'));

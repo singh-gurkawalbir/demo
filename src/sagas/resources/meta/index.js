@@ -7,9 +7,9 @@ import { resource, commMetadataPathGen } from '../../../reducers/index';
 function* getNetsuiteOrSalesforceMeta({
   connectionId,
   metadataType,
-  mode,
-  filterKey,
-  addInfo,
+  mode = '',
+  filterKey = '',
+  addInfo = {},
 }) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = connection.type;
