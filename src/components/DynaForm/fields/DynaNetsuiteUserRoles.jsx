@@ -48,9 +48,8 @@ export default function DynaNetsuiteUserRolesOptions(props) {
             const nonBetaOption = optionsArr.find(ele => ele.value !== 'beta');
 
             onFieldChange(id, nonBetaOption.value);
+            setValueChanged(true);
           }
-
-          setValueChanged(true);
         }
       }
 
@@ -61,10 +60,9 @@ export default function DynaNetsuiteUserRolesOptions(props) {
         if (optionsArr) {
           if (optionsArr.length === 1) {
             onFieldChange(id, optionsArr[0].value);
+            setValueChanged(true);
           }
         }
-
-        setValueChanged(true);
       }
     }
   }, [

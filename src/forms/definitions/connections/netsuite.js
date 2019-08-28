@@ -103,7 +103,7 @@ export default {
     {
       fieldId: 'netsuite.account',
       netsuiteResourceType: 'account',
-      refreshOptionsOnChangesTo: ['netsuite.environment'],
+      refreshOptionsOnChangesTo: ['validate', 'netsuite.environment'],
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -114,7 +114,11 @@ export default {
     {
       fieldId: 'netsuite.roleId',
       netsuiteResourceType: 'role',
-      refreshOptionsOnChangesTo: ['netsuite.account', 'netsuite.environment'],
+      refreshOptionsOnChangesTo: [
+        'validate',
+        'netsuite.account',
+        'netsuite.environment',
+      ],
       visibleWhen: [
         {
           field: 'netsuite.authType',
