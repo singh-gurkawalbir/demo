@@ -13,11 +13,36 @@ export default function DynaHttpRequestBody(props) {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      onFieldChange(id, [template]);
+      if (
+        options &&
+        typeof options.effectIndex === 'number' &&
+        value &&
+        value.length
+      ) {
+        const valueTmp = value;
+
+        valueTmp[options.effectIndex] = template;
+        onFieldChange(id, valueTmp);
+      } else {
+        onFieldChange(id, template);
+      }
     }
 
     handleEditorClick();
   };
+
+  let template;
+
+  if (
+    options &&
+    typeof options.effectIndex === 'number' &&
+    value &&
+    value.length
+  ) {
+    template = value[options.effectIndex];
+  } else {
+    template = value;
+  }
 
   return (
     <Fragment>
@@ -26,8 +51,7 @@ export default function DynaHttpRequestBody(props) {
           title="Build HTTP Request Body"
           id={id}
           lookupId={options && options.lookups && options.lookups.fieldId}
-          // data={}
-          rule={value[0]}
+          rule={template}
           lookups={options && options.lookups && options.lookups.data}
           onFieldChange={onFieldChange}
           onClose={handleClose}

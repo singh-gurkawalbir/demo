@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-// import _ from 'lodash';
+import _ from 'lodash';
 import { FormContext } from 'react-forms-processor/dist';
 import DynaForm from '../../DynaForm';
 
@@ -41,13 +41,15 @@ const SubmitButton = props => (
 export default function Lookup(props) {
   const { onSave, lookupObj, onCancelClick } = props;
   const isEdit = !!(lookupObj && lookupObj.name);
-  // let mapListDefualtValues = [];
-  // if (isEdit && lookupObj && lookupObj.map) {
-  //   mapListDefualtValues = _.map(lookupObj.map, (val, key) => ({
-  //     export: key,
-  //     import: val,
-  //   }));
-  // }
+  let mapListDefualtValues = [];
+
+  if (isEdit && lookupObj && lookupObj.map) {
+    mapListDefualtValues = _.map(lookupObj.map, (val, key) => ({
+      export: key,
+      import: val,
+    }));
+  }
+
   const save = formVal => {
     const lookup = formVal;
 
@@ -58,6 +60,13 @@ export default function Lookup(props) {
       lookup.mapList.forEach(obj => {
         lookup.map[obj.export] = obj.import;
       });
+      delete lookup.method;
+      delete lookup.relativeURI;
+      delete lookup.body;
+      delete lookup.extract;
+    } else {
+      delete lookup.mapList;
+      delete lookup.map;
     }
 
     switch (lookup.failRecord) {
@@ -161,6 +170,23 @@ export default function Lookup(props) {
         ],
       },
       {
+        id: 'body',
+        name: 'body',
+        type: 'httprequestbody',
+        label: 'Build HTTP Request Body',
+        defaultValue: lookupObj.body || undefined,
+        visibleWhenAll: [
+          {
+            field: 'mode',
+            is: ['dynamic'],
+          },
+          {
+            field: 'method',
+            is: ['POST'],
+          },
+        ],
+      },
+      {
         id: 'extract',
         name: 'extract',
         type: 'text',
@@ -174,35 +200,36 @@ export default function Lookup(props) {
           },
         ],
       },
-      // {
-      //   id: 'mapList',
-      //   name: 'mapList',
-      //   type: 'staticMap',
-      //   label: '',
-      //   optionsMap: [
-      //     {
-      //       id: 'export',
-      //       label: 'Export Field',
-      //       required: true,
-      //       type: 'input',
-      //       supportsRefresh: false,
-      //     },
-      //     {
-      //       id: 'import',
-      //       label: 'Import Field (HTTP)',
-      //       required: true,
-      //       type: 'input',
-      //       supportsRefresh: false,
-      //     },
-      //   ],
-      //   value: mapListDefualtValues || [],
-      //   visibleWhen: [
-      //     {
-      //       field: 'mode',
-      //       is: ['static'],
-      //     },
-      //   ],
-      // },
+
+      {
+        id: 'mapList',
+        name: 'mapList',
+        type: 'staticMap',
+        label: '',
+        optionsMap: [
+          {
+            id: 'export',
+            label: 'Export Field',
+            required: true,
+            type: 'input',
+            supportsRefresh: false,
+          },
+          {
+            id: 'import',
+            label: 'Import Field (HTTP)',
+            required: true,
+            type: 'input',
+            supportsRefresh: false,
+          },
+        ],
+        value: mapListDefualtValues || [],
+        visibleWhen: [
+          {
+            field: 'mode',
+            is: ['static'],
+          },
+        ],
+      },
 
       {
         id: 'name',
