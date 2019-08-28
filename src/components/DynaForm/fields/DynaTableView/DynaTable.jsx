@@ -29,11 +29,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function reducer(state, action) {
-  const { type, value, index, field, lastRowData = {}, setCount } = action;
+  const {
+    type,
+    value,
+    index,
+    field,
+    lastRowData = {},
+    setChangeIdentifier,
+  } = action;
 
   switch (type) {
     case 'remove':
-      setCount(count => count + 1);
+      setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
       return [
         ...state.slice(0, index),
@@ -67,7 +74,7 @@ export default function DynaTable(props) {
     id,
   } = props;
   const dispatch = useDispatch();
-  const [count, setCount] = useState(0);
+  const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
   const [state, dispatchLocalAction] = useReducer(reducer, value || []);
@@ -154,7 +161,7 @@ export default function DynaTable(props) {
       index: row,
       field,
       value,
-      setCount,
+      setChangeIdentifier,
       lastRowData: (valueData || {}).length
         ? valueData[valueData.length - 1]
         : {},
@@ -171,7 +178,7 @@ export default function DynaTable(props) {
   function dispatchActionToDelete(e, index) {
     const { id, onFieldChange } = props;
 
-    dispatchLocalAction({ type: 'remove', index, setCount });
+    dispatchLocalAction({ type: 'remove', index, setChangeIdentifier });
     onFieldChange(id, state);
   }
 
@@ -199,7 +206,7 @@ export default function DynaTable(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={2} key={count} direction="column">
+        <Grid container spacing={2} key={changeIdentifier} direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
