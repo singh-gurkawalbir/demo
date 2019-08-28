@@ -11,7 +11,6 @@ const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
   <Button size="small" variant="contained" color="primary">primary</Button>
   <Button variant="contained" color="primary" disabled>primary</Button>
   <IconButton variant="contained" color="primary">Primary <ArrowDownIcon /></IconButton>
-  <IconButton variant="contained" color="primary"> Primary</IconButton>
   <br />
   <Button variant="contained" color="secondary">Secondary</Button>
   <Button variant="contained" color="secondary" size="small">Secondary</Button>
@@ -75,7 +74,6 @@ const ButtonsGroup = require('../src/components/ButtonGroup').default;
     </ButtonsGroup>
   <ButtonsGroup>
     <Button variant="text" color="primary">Cancel</Button>
-    <span style={{color: '#677A89'}}> | </span>
     <Button variant="text" color="primary">Install</Button>
   </ButtonsGroup>
 </SpacedContainer>
