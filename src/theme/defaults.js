@@ -204,10 +204,5 @@ export default {
       // The default props to change
       // variant: 'contained',
     },
-    MuiSvgIcon: {
-      // viewBox: '0 0 24 24',
-      // viewBox: '0 0 32 32',
-      fontSize: 'inherit',
-    },
   },
 };
