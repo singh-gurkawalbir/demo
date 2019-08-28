@@ -75,6 +75,7 @@ class WaffleBox extends Component {
       { title: 'Connections', path: '/pg/connections' },
       { title: 'Agents', path: '/pg/agents' },
       { title: 'Templates', path: '/pg/templates' },
+      { title: 'Scripts', path: '/pg/scripts' },
     ];
 
     return (
