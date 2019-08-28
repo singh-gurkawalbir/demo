@@ -66,7 +66,7 @@ function TemplatesData(props) {
       <Typography className={classes.templateActions}>
         <Button
           component={RouterLink}
-          to={getRoutePath(`scripts/edit/${item._id}`)}>
+          to={getRoutePath(`templates/edit/${item._id}`)}>
           Edit
         </Button>
         <br />
