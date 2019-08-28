@@ -6,7 +6,7 @@ import LookupListing from './LookupListing';
 
 export default function ManageLookup(props) {
   const { lookups, updateLookups, onCancelClick } = props;
-  const [isNewLookup, setIsNewLookup] = useState(false);
+  const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
   const onSave = (isEdit, val) => {
     const lookupsTmp = Object.assign([], lookups);
@@ -26,12 +26,12 @@ export default function ManageLookup(props) {
       updateLookups(lookupsTmp);
     }
 
-    setIsNewLookup(!isNewLookup);
+    showListView(!isListView);
   };
 
   const editLookupHandler = val => {
     setLookup(val);
-    setIsNewLookup(true);
+    showListView(false);
   };
 
   const deleteLookup = lookupObj => {
@@ -47,30 +47,28 @@ export default function ManageLookup(props) {
 
   const toggleLookupMode = () => {
     setLookup({});
-    setIsNewLookup(!isNewLookup);
+    showListView(!isListView);
   };
 
   return (
     <ModalDialog
       show
-      actionLabel={isNewLookup ? 'Back to Lookup' : 'New Lookup'}
+      actionLabel={isListView ? 'New Lookup' : 'Back to Lookup'}
       actionHandler={toggleLookupMode}>
       <span>Manage Lookups</span>
-      {isNewLookup ? (
-        <Lookup
-          lookupObj={lookup}
-          onCancelClick={() => {
-            setIsNewLookup(false);
-          }}
-          onSave={onSave}
-        />
-      ) : (
+      {isListView ? (
         <LookupListing
           lookups={lookups}
           updateLookup={editLookupHandler}
           deleteLookup={deleteLookup}
           lookupUpdateHandler={onSave}
           onCancelClick={onCancelClick}
+        />
+      ) : (
+        <Lookup
+          lookup={lookup}
+          onCancelClick={toggleLookupMode}
+          onSave={onSave}
         />
       )}
     </ModalDialog>

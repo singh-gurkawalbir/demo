@@ -22,9 +22,9 @@ export default function LookupListing(props) {
     fields: [
       {
         id: 'lookup_list',
-        type: 'dynakeywithaction',
+        type: 'keywithaction',
         keyName: 'name',
-        valueType: 'dynakeywithaction',
+        valueType: 'keywithaction',
         label: 'Lookups',
         value: lookups,
         editHandler: editLookup,

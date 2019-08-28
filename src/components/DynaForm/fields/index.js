@@ -40,7 +40,7 @@ export default {
   httprequestbody: DynaHttpRequestBody,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
-  dynakeywithaction: DynaKeyWithAction,
+  keywithaction: DynaKeyWithAction,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,

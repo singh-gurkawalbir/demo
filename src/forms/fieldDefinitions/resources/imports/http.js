@@ -105,10 +105,6 @@ export default {
       },
     ],
   },
-  'http.lookups': {
-    type: 'importLookup',
-    label: 'Manage Lookups',
-  },
   'http.body': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',

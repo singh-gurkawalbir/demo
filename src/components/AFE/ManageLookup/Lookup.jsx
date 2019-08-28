@@ -5,26 +5,11 @@ import _ from 'lodash';
 import { FormContext } from 'react-forms-processor/dist';
 import DynaForm from '../../DynaForm';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   container: {
     minWidth: '500px',
   },
-  input: {
-    flex: '1 1 auto',
-    marginRight: theme.spacing(2),
-  },
-  rowContainer: {
-    display: 'flex',
-  },
-  label: {
-    fontSize: '12px',
-  },
 }));
-
-function optionsHandler() {
-  return ['something1', 'something2'];
-}
-
 const SubmitButton = props => (
   <FormContext.Consumer>
     {form => (
@@ -39,66 +24,69 @@ const SubmitButton = props => (
 );
 
 export default function Lookup(props) {
-  const { onSave, lookupObj, onCancelClick } = props;
-  const isEdit = !!(lookupObj && lookupObj.name);
-  let mapListDefualtValues = [];
+  const { onSave, lookup, onCancelClick } = props;
+  const classes = useStyles();
+  const isEdit = !!(lookup && lookup.name);
+  // Lookup is a map. Converting map to list
+  // TODO: After DynaStaticMap changes to handle map directly in progress. Change to use map directly later
+  let lookupList = [];
 
-  if (isEdit && lookupObj && lookupObj.map) {
-    mapListDefualtValues = _.map(lookupObj.map, (val, key) => ({
+  if (isEdit && lookup && lookup.map) {
+    lookupList = _.map(lookup.map, (val, key) => ({
       export: key,
       import: val,
     }));
   }
 
   const save = formVal => {
-    const lookup = formVal;
+    const lookupObj = formVal;
 
-    if (lookup.mode === 'static') {
-      lookup.map = {};
-      lookup.mapList.splice(-1, 1);
+    if (lookupObj.mode === 'static') {
+      lookupObj.map = {};
+      lookupObj.mapList.splice(-1, 1);
 
-      lookup.mapList.forEach(obj => {
-        lookup.map[obj.export] = obj.import;
+      lookupObj.mapList.forEach(obj => {
+        lookupObj.map[obj.export] = obj.import;
       });
-      delete lookup.method;
-      delete lookup.relativeURI;
-      delete lookup.body;
-      delete lookup.extract;
+      delete lookupObj.method;
+      delete lookupObj.relativeURI;
+      delete lookupObj.body;
+      delete lookupObj.extract;
     } else {
-      delete lookup.mapList;
-      delete lookup.map;
+      delete lookupObj.mapList;
+      delete lookupObj.map;
     }
 
-    switch (lookup.failRecord) {
+    switch (lookupObj.failRecord) {
       case 'disallowFailure':
-        lookup.allowFailures = false;
-        delete lookup.default;
+        lookupObj.allowFailures = false;
+        delete lookupObj.default;
         break;
       case 'useEmptyString':
-        lookup.allowFailures = true;
-        lookup.default = '';
+        lookupObj.allowFailures = true;
+        lookupObj.default = '';
         break;
       case 'useNull':
-        lookup.allowFailures = true;
-        lookup.default = null;
+        lookupObj.allowFailures = true;
+        lookupObj.default = null;
         break;
       case 'default':
-        lookup.allowFailures = true;
+        lookupObj.allowFailures = true;
         break;
       default:
     }
 
-    delete lookup.failRecord;
-    delete lookup.mode;
-    onSave(isEdit, lookup);
+    delete lookupObj.failRecord;
+    delete lookupObj.mode;
+    onSave(isEdit, lookupObj);
   };
 
-  const getFailRecordDefault = () => {
-    if (!isEdit || !lookupObj.allowFailures) {
+  const getFailedRecordDefault = () => {
+    if (!isEdit || !lookup || !lookup.allowFailures) {
       return 'disallowFailure';
     }
 
-    switch (lookupObj.default) {
+    switch (lookup.default) {
       case '':
         return 'useEmptyString';
       case null:
@@ -115,8 +103,7 @@ export default function Lookup(props) {
         name: 'mode',
         type: 'radiogroup',
         label: '',
-        defaultValue:
-          isEdit && lookupObj && lookupObj.map ? 'static' : 'dynamic',
+        defaultValue: isEdit && lookup && lookup.map ? 'static' : 'dynamic',
         options: [
           {
             items: [
@@ -132,7 +119,7 @@ export default function Lookup(props) {
         type: 'text',
         label: 'Relative URI:',
         placeholder: 'Relative URI',
-        defaultValue: lookupObj.relativeURI || undefined,
+        defaultValue: lookup.relativeURI || undefined,
         visibleWhen: [
           {
             field: 'mode',
@@ -146,7 +133,7 @@ export default function Lookup(props) {
         type: 'select',
         label: 'HTTP Method:',
         placeholder: 'Required',
-        defaultValue: lookupObj.method || undefined,
+        defaultValue: lookup.method || undefined,
         options: [
           {
             heading: 'Select Http Method:',
@@ -174,7 +161,7 @@ export default function Lookup(props) {
         name: 'body',
         type: 'httprequestbody',
         label: 'Build HTTP Request Body',
-        defaultValue: lookupObj.body || undefined,
+        defaultValue: lookup.body || undefined,
         visibleWhenAll: [
           {
             field: 'mode',
@@ -192,7 +179,7 @@ export default function Lookup(props) {
         type: 'text',
         label: 'Resource Identifier Path:',
         placeholder: 'Resource Identifier Path',
-        defaultValue: lookupObj.extract || undefined,
+        defaultValue: lookup.extract || undefined,
         visibleWhen: [
           {
             field: 'mode',
@@ -222,7 +209,7 @@ export default function Lookup(props) {
             supportsRefresh: false,
           },
         ],
-        value: mapListDefualtValues || [],
+        value: lookupList || [],
         visibleWhen: [
           {
             field: 'mode',
@@ -230,13 +217,12 @@ export default function Lookup(props) {
           },
         ],
       },
-
       {
         id: 'name',
         name: 'name',
         type: 'text',
         label: 'Name:',
-        defaultValue: lookupObj.name || undefined,
+        defaultValue: lookup.name || undefined,
         placeholder: 'Alphanumeric characters only please',
       },
       {
@@ -244,10 +230,9 @@ export default function Lookup(props) {
         name: 'failRecord',
         type: 'radiogroup',
         label: 'Action to take if unique match not found:',
-        defaultValue: getFailRecordDefault(),
+        defaultValue: getFailedRecordDefault(),
         options: [
           {
-            heading: '',
             items: [
               {
                 label: 'Fail Record',
@@ -274,7 +259,7 @@ export default function Lookup(props) {
         name: 'default',
         type: 'text',
         label: 'Enter Default Value:',
-        defaultValue: lookupObj.default || undefined,
+        defaultValue: lookup.default || undefined,
         placeholder: 'Enter Default Value',
         visibleWhen: [
           {
@@ -285,22 +270,11 @@ export default function Lookup(props) {
       },
     ],
   };
-  const classes = useStyles();
-  // const [lookup, setLookupData] = useState([]);
-
-  // const { importId = '5d106e39e6150a7c62ce5188' } = props;
-  // console.log(lookup);
 
   return (
     <div className={classes.container}>
-      <DynaForm
-        fieldMeta={fieldMeta}
-        optionsHandler={optionsHandler}
-        // onChange={changeData}
-      >
-        <Button onClick={onCancelClick} className={classes.actionButton}>
-          Cancel
-        </Button>
+      <DynaForm fieldMeta={fieldMeta}>
+        <Button onClick={onCancelClick}>Cancel</Button>
         {<SubmitButton onSubmit={save} />}
       </DynaForm>
     </div>

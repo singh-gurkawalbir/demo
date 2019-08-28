@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -64,7 +64,7 @@ export default function DynaKeyWithAction(props) {
                 aria-label="Close"
                 color="inherit"
                 onClick={() => deleteHandler(r)}>
-                <CloseOutlinedIcon />
+                <DeleteOutlinedIcon />
               </IconButton>
             )}
           </div>
