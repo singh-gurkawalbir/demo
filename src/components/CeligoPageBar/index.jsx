@@ -3,14 +3,7 @@ import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
-import {
-  Typography,
-  Breadcrumbs,
-  Paper,
-  Link,
-  Grid,
-  IconButton,
-} from '@material-ui/core';
+import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
 import ElevateOnScroll from '../ElevateOnScroll';
@@ -20,7 +13,7 @@ import * as selectors from '../../reducers';
 const useStyles = makeStyles(theme => ({
   pageHeader: {
     zIndex: theme.zIndex.appBar - 1,
-    padding: theme.spacing(1, 3),
+    padding: theme.spacing(3),
     height: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
     position: 'fixed',
@@ -59,18 +52,6 @@ export default function CeligoPageBar({ children, title, infoText }) {
             })}
             elevation={0}
             square>
-            <Breadcrumbs maxItems={3} aria-label="breadcrumb">
-              <Link color="inherit" href="/pg">
-                Home
-              </Link>
-              <Link color="inherit" href="/pg">
-                Profile
-              </Link>
-              <Link color="inherit" href="/pg">
-                Subscription
-              </Link>
-              <Typography color="textPrimary">Add-ons</Typography>
-            </Breadcrumbs>
             <Grid container justify="space-between">
               <Grid item>
                 <Typography variant="h5">

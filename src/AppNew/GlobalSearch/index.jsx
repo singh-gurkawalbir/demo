@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
     '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.15),
+      backgroundColor: fade(theme.palette.common.black, 0.15),
     },
     marginRight: theme.spacing(1),
     marginLeft: 0,
@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     maxHeight: '75vh',
     overflow: 'auto',
     width: '100%',
-    marginTop: theme.spacing(6) + 1,
+    marginTop: theme.appBarHeight - 1,
     // border: `solid 1px ${fade(theme.palette.common.black, 0.87)}`,
     // borderTop: 0,
     borderBottomLeftRadius: 8,
@@ -117,7 +117,7 @@ export default function Search() {
                   <Typography
                     color="inherit"
                     component={Link}
-                    to={`/pg/${r.type}/${r.id}`}>
+                    to={`/pg/${r.type}/edit/${r.id}`}>
                     {r.name}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
@@ -135,7 +135,7 @@ export default function Search() {
         </div>
         <InputBase
           onChange={handleChange}
-          placeholder="Search…"
+          placeholder="Global search…"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

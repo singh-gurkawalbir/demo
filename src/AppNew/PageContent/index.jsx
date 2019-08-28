@@ -6,7 +6,9 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    height: theme.appBarHeight,
+  },
 }));
 
 export default function PageContent() {

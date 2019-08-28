@@ -72,12 +72,16 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
   list: {
-    backgroundColor: fade(theme.palette.common.white, 0.07),
+    backgroundColor: fade(theme.palette.secondary.light, 0.25),
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   listItem: {
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main,
+      borderLeft: 'solid 3px',
       color: theme.palette.common.white,
+      paddingLeft: theme.spacing(2) - 3,
     },
     '&:not(:last-child)': {
       borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
@@ -92,11 +96,16 @@ const useStyles = makeStyles(theme => ({
   },
   logoContainer: {
     textAlign: 'center',
+    fill: theme.palette.primary.dark,
+    color: theme.palette.primary.dark,
   },
   logo: {
     width: 90,
     display: 'inline-block',
-    fill: fade(theme.palette.primary.main, 0.8),
+  },
+  itemText: {
+    fontSize: 14,
+    fontFamily: 'unset',
   },
 }));
 
@@ -142,7 +151,7 @@ export default function CeligoDrawer() {
                 color="inherit"
                 aria-label="close drawer"
                 onClick={handleDrawerToggle}>
-                <CeligoMarkIcon color="primary" />
+                <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
           </div>
@@ -160,7 +169,12 @@ export default function CeligoDrawer() {
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
                   </ListItemIcon>
-                  <ListItemText primary={label} />
+                  <ListItemText
+                    primaryTypographyProps={{
+                      className: classes.itemText,
+                    }}
+                    primary={label}
+                  />
                   {children &&
                     (expand === label ? <ExpandLess /> : <ExpandMore />)}
                 </ListItem>
