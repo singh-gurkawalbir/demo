@@ -42,7 +42,10 @@ function TemplatesData(props) {
   };
 
   const handleUploadZipFileClick = () => {};
-  const handleDownloadClick = () => {};
+  const handleDownloadClick = () => {
+    dispatch(actions.template.downloadZip(item._id));
+  };
+
   const handlePublishClick = () => {};
 
   return (

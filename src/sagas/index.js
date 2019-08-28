@@ -20,6 +20,7 @@ import {
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
+import { templateSagas } from './template';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -87,5 +88,6 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
+    ...templateSagas,
   ]);
 }

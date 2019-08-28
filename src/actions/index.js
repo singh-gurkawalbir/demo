@@ -11,6 +11,7 @@ export const availableResources = [
   'integrations',
   'tiles',
   'flows',
+  'templates',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -248,6 +249,9 @@ const agent = {
   maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
+};
+const template = {
+  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
 };
 const user = {
   profile: {
@@ -510,4 +514,5 @@ export default {
   job,
   flow,
   agent,
+  template,
 };
