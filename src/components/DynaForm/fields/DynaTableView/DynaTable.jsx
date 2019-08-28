@@ -29,10 +29,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function reducer(state, action) {
-  const { type, value, index, field, lastRowData = {} } = action;
+  const { type, value, index, field, lastRowData = {}, setCount } = action;
 
   switch (type) {
     case 'remove':
+      setCount(count => count + 1);
+
       return [
         ...state.slice(0, index),
         ...state.slice(index + 1, state.length),
@@ -52,7 +54,7 @@ function reducer(state, action) {
   }
 }
 
-export default function KeyValueTable(props) {
+export default function DynaTable(props) {
   const classes = useStyles();
   const {
     label,
@@ -65,6 +67,7 @@ export default function KeyValueTable(props) {
     id,
   } = props;
   const dispatch = useDispatch();
+  const [count, setCount] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
   const [state, dispatchLocalAction] = useReducer(reducer, value || []);
@@ -151,6 +154,7 @@ export default function KeyValueTable(props) {
       index: row,
       field,
       value,
+      setCount,
       lastRowData: (valueData || {}).length
         ? valueData[valueData.length - 1]
         : {},
@@ -165,7 +169,10 @@ export default function KeyValueTable(props) {
   }
 
   function dispatchActionToDelete(e, index) {
-    dispatchLocalAction({ type: 'remove', index });
+    const { id, onFieldChange } = props;
+
+    dispatchLocalAction({ type: 'remove', index, setCount });
+    onFieldChange(id, state);
   }
 
   const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
@@ -192,7 +199,7 @@ export default function KeyValueTable(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={2} direction="column">
+        <Grid container spacing={2} key={count} direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>

@@ -1,10 +1,10 @@
 import { useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import DynaTableView from './';
+import DynaTableView from './DynaTable';
 
 export default function DynaConnectorNColumnMap(props) {
-  const { optionsMap, id, _integrationId = '59e0645e0ae62504287461ce' } = props;
+  const { optionsMap, id, _integrationId } = props;
   const dispatch = useDispatch();
 
   function initSelector(state) {

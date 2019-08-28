@@ -1,5 +1,29 @@
 import actionTypes from '../../../actions/types';
 
+function generateSalesforceOptions(data = {}, sObjectType, selectField) {
+  let options = [];
+
+  if (sObjectType && selectField) {
+    const field = (data.fields || []).find(f => f.name === selectField);
+
+    if (field) {
+      options = field.picklistValues.map(plv => ({
+        label: plv.label,
+        value: plv.value,
+      }));
+    }
+  } else {
+    options = data.map(d => ({
+      label: d.label,
+      value: d.name,
+      custom: d.custom,
+      triggerable: d.triggerable,
+    }));
+  }
+
+  return options;
+}
+
 function generateNetsuiteOptions(
   data,
   metadataType,
@@ -110,7 +134,7 @@ export default (
   let newState;
 
   switch (type) {
-    case actionTypes.METADATA.REQUEST: {
+    case actionTypes.METADATA.NETSUITE_REQUEST: {
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
@@ -126,7 +150,6 @@ export default (
           ...specificMode[connectionId],
         };
 
-        // jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
         if (!specificMode[connectionId][recordType]) {
           specificMode[connectionId][recordType] = {};
         }
@@ -142,6 +165,26 @@ export default (
       }
 
       return { ...state, ...{ netsuite: newState } };
+    }
+
+    case actionTypes.METADATA.SALESFORCE_REQUEST: {
+      newState = { ...state.salesforce };
+
+      // Creates Object with status as 'requested' incase of New Request
+
+      if (recordType) {
+        newState[connectionId] = {
+          ...newState[connectionId],
+          [recordType]: { status: 'requested' },
+        };
+      } else {
+        newState[connectionId] = {
+          ...newState[connectionId],
+          [key]: { status: 'requested' },
+        };
+      }
+
+      return { ...state, ...{ salesforce: newState } };
     }
 
     case actionTypes.METADATA.REFRESH: {
@@ -208,8 +251,31 @@ export default (
       return { ...state, ...{ netsuite: newState } };
     }
 
+    case actionTypes.METADATA.RECEIVED_SALESFORCE: {
+      newState = { ...state.salesforce };
+      const options = generateSalesforceOptions(
+        metadata,
+        recordType,
+        selectField
+      );
+
+      if (recordType) {
+        newState[connectionId] = {
+          ...newState[connectionId],
+          [recordType]: { status: 'received', data: options },
+        };
+      } else {
+        newState[connectionId] = {
+          ...newState[connectionId],
+          [key]: { status: 'received', data: options },
+        };
+      }
+
+      return { ...state, ...{ salesforce: newState } };
+    }
+
     // Error handler
-    case actionTypes.METADATA.RECEIVED_ERROR: {
+    case actionTypes.METADATA.RECEIVED_NETSUITE_ERROR: {
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };
       const specificMode = newState[mode];
@@ -261,6 +327,51 @@ export default (
       return { ...state, ...{ netsuite: newState } };
     }
 
+    case actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR: {
+      newState = { ...state.salesforce };
+      const defaultError = 'Error occured';
+
+      if (selectField && recordType) {
+        if (
+          newState[connectionId] &&
+          newState[connectionId][recordType] &&
+          newState[connectionId][recordType].status === 'refreshed'
+        ) {
+          newState[connectionId][recordType].status = 'error';
+          newState[connectionId][recordType].errorMessage =
+            metadataError || defaultError;
+        } else {
+          newState[connectionId] = {
+            ...newState[connectionId],
+            [recordType]: {
+              status: 'error',
+              data: [],
+              errorMessage: metadataError || defaultError,
+            },
+          };
+        }
+      } else if (
+        newState[connectionId] &&
+        newState[connectionId][key] &&
+        newState[connectionId][key].status === 'refreshed'
+      ) {
+        newState[connectionId][key].status = 'error';
+        newState[connectionId][key].errorMessage =
+          metadataError || defaultError;
+      } else {
+        newState[connectionId] = {
+          ...newState[connectionId],
+          [key]: {
+            status: 'error',
+            data: [],
+            errorMessage: metadataError || defaultError,
+          },
+        };
+      }
+
+      return { ...state, ...{ salesforce: newState } };
+    }
+
     default:
       return state;
   }
@@ -295,12 +406,15 @@ export const optionsFromMetadata = (
           null;
   }
 
-  return (
-    (applicationResource &&
-      applicationResource[connectionId] &&
-      applicationResource[connectionId][metadataType]) ||
-    null
-  );
+  return recordType && selectField
+    ? (applicationResource &&
+        applicationResource[connectionId] &&
+        applicationResource[connectionId][recordType]) ||
+        null
+    : (applicationResource &&
+        applicationResource[connectionId] &&
+        applicationResource[connectionId][metadataType]) ||
+        null;
 };
 
 export const optionsMapFromMetadata = (
@@ -311,25 +425,40 @@ export const optionsMapFromMetadata = (
   selectField,
   optionsMap
 ) => {
-  const options =
-    optionsFromMetadata(
-      state,
-      connectionId,
-      applicationType,
-      'recordTypes',
-      'suitescript',
-      recordType,
-      selectField
-    ) || {};
+  let options;
+
+  if (applicationType === 'netsuite') {
+    options =
+      optionsFromMetadata(
+        state,
+        connectionId,
+        applicationType,
+        'recordTypes',
+        'suitescript',
+        recordType,
+        selectField
+      ) || {};
+  } else {
+    options =
+      optionsFromMetadata(
+        state,
+        connectionId,
+        applicationType,
+        'sObjectTypes',
+        null,
+        recordType,
+        selectField
+      ) || {};
+  }
 
   return {
     isLoading: options.status === 'requested',
     shouldReset: options.status === 'received',
     data: {
       optionsMap: [
-        optionsMap[0],
+        { ...optionsMap[0] },
         Object.assign({}, optionsMap[1], {
-          options: options.data || optionsMap[1].options,
+          options: options.data || optionsMap[1].options || [],
         }),
       ],
     },

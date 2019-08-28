@@ -3,7 +3,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
 
-export default function DynaNSStaticMap(props) {
+export default function DynaSFStaticMap(props) {
   const {
     connectionId,
     recordType,
@@ -12,7 +12,7 @@ export default function DynaNSStaticMap(props) {
     keyLabel = 'Export',
     map,
     value,
-    valueLabel = 'Import (NetSuite)',
+    valueLabel = 'Import (Salesforce)',
     valueName = 'generate',
   } = props;
   const optionsMap = [
@@ -48,7 +48,7 @@ export default function DynaNSStaticMap(props) {
     selectors.optionsMapFromMetadata(
       state,
       connectionId,
-      'netsuite',
+      'salesforce',
       recordType,
       selectField,
       optionsMap
@@ -57,8 +57,8 @@ export default function DynaNSStaticMap(props) {
     dispatch(
       actions.metadata.request(
         connectionId,
-        'recordTypes',
-        'suitescript',
+        'sObjectTypes',
+        null,
         null,
         recordType,
         selectField

@@ -223,15 +223,25 @@ const metadata = {
     filterKey,
     recordType,
     selectField
-  ) =>
-    action(actionTypes.METADATA.REQUEST, {
+  ) => {
+    if (mode) {
+      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
+        connectionId,
+        metadataType,
+        mode,
+        filterKey,
+        recordType,
+        selectField,
+      });
+    }
+
+    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
       connectionId,
       metadataType,
-      mode,
-      filterKey,
       recordType,
       selectField,
-    }),
+    });
+  },
   refresh: (
     connectionId,
     metadataType,
@@ -276,12 +286,42 @@ const metadata = {
       recordType,
       selectField
     ) =>
-      action(actionTypes.METADATA.RECEIVED_ERROR, {
+      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
         metadataError,
         metadataType,
         connectionId,
         mode,
         filterKey,
+        recordType,
+        selectField,
+      }),
+  },
+  salesforce: {
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
+        metadata,
+        metadataType,
+        connectionId,
+        recordType,
+        selectField,
+      }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
+        metadataError,
+        metadataType,
+        connectionId,
         recordType,
         selectField,
       }),

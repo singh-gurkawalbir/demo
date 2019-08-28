@@ -1013,7 +1013,11 @@ export function commMetadataPathGen(
       }
     }
   } else if (applicationType === 'salesforce') {
-    commMetadataPath = `${applicationType}/metadata/webservices/connections/${connectionId}/${metadataType}`;
+    commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
+
+    if (recordType) {
+      commMetadataPath += `/${recordType}`;
+    }
   } else {
     throw Error('Invalid application type...cannot support it');
   }
