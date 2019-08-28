@@ -26,8 +26,8 @@ export default function FormDialog(props) {
   const classes = withStyles();
 
   return (
-    <Dialog open onClose={onClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{title}</DialogTitle>
+    <Dialog open onClose={onClose}>
+      <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>
         <div className={classes.contentContainer}>{children}</div>

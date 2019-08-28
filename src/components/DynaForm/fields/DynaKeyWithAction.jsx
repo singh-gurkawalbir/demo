@@ -74,7 +74,7 @@ export default function DynaKeyWithAction(props) {
         </div>
       ))}
 
-      <FormHelperText className={classes.helpText}>
+      <FormHelperText className={classes.helpText} error={!isValid}>
         {isValid ? description : errorMessages}
       </FormHelperText>
     </div>

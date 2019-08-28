@@ -9,17 +9,17 @@ export default function ManageLookup(props) {
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
   const onSave = (isEdit, val) => {
-    const lookupsTmp = Object.assign([], lookups);
+    const lookupsTmp = [...lookups];
 
     if (!isEdit) {
-      if (!_.find(lookupsTmp, { name: val.name })) {
+      if (!lookupsTmp.find(ele => ele.name === val.name)) {
         lookupsTmp.push(val);
         updateLookups(lookupsTmp);
       } else {
         // to be checked if we show any alert. Currently In case of adding new Lookup,  we dont add the record if we have existing lookup with same name.
       }
-    } else {
-      const index = _.findIndex(lookupsTmp, { name: lookup && lookup.name });
+    } else if (lookup) {
+      const index = lookupsTmp.findIndex(ele => ele.name === lookup.name);
 
       lookupsTmp[index] = val;
 

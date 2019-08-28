@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
 
-function optionsHandler() {
-  return ['something1', 'something2'];
-}
-
 export default function LookupListing(props) {
   const { lookups, updateLookup, deleteLookup, onCancelClick } = props;
   const [key, setKey] = useState(1);
@@ -34,10 +30,7 @@ export default function LookupListing(props) {
   };
 
   return (
-    <DynaForm
-      key={key}
-      fieldMeta={lookuplistingFieldMeta}
-      optionsHandler={optionsHandler}>
+    <DynaForm key={key} fieldMeta={lookuplistingFieldMeta}>
       <Button onClick={onCancelClick}>Close</Button>
     </DynaForm>
   );

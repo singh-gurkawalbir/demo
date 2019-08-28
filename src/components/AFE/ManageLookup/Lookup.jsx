@@ -2,26 +2,14 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import _ from 'lodash';
-import { FormContext } from 'react-forms-processor/dist';
 import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 
 const useStyles = makeStyles(() => ({
   container: {
     minWidth: '500px',
   },
 }));
-const SubmitButton = props => (
-  <FormContext.Consumer>
-    {form => (
-      <Button
-        onClick={() => {
-          props.onSubmit(form.value);
-        }}>
-        Save
-      </Button>
-    )}
-  </FormContext.Consumer>
-);
 
 export default function Lookup(props) {
   const { onSave, lookup, onCancelClick } = props;
@@ -39,7 +27,7 @@ export default function Lookup(props) {
   }
 
   const save = formVal => {
-    const lookupObj = formVal;
+    const lookupObj = { ...formVal };
 
     if (lookupObj.mode === 'static') {
       lookupObj.map = {};
@@ -273,7 +261,7 @@ export default function Lookup(props) {
     <div className={classes.container}>
       <DynaForm fieldMeta={fieldMeta}>
         <Button onClick={onCancelClick}>Cancel</Button>
-        {<SubmitButton onSubmit={save} />}
+        <DynaSubmit onClick={save}>Save</DynaSubmit>
       </DynaForm>
     </div>
   );
