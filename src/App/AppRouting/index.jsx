@@ -52,6 +52,9 @@ const AccessTokens = loadable(() =>
 const Connections = loadable(() =>
   import(/* webpackChunkName: 'Connections' */ '../../views/Connections')
 );
+const Templates = loadable(() =>
+  import(/* webpackChunkName: 'Templates' */ '../../views/Templates')
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -80,6 +83,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
         <Route path="/pg/connections" component={Connections} />
+        <Route path="/pg/templates" component={Templates} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />
