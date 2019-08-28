@@ -72,7 +72,7 @@ function PageContent(props) {
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
-          <SearchInput variant="dark" onChange={handleKeywordChange} />
+          <SearchInput variant="light" onChange={handleKeywordChange} />
           <CeligoIconButton
             component={Link}
             to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}

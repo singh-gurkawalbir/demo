@@ -6,7 +6,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
-    borderRadius: theme.shape.borderRadius,
+    borderRadius: 32,
     backgroundColor: props =>
       props.variant === 'light'
         ? fade(theme.palette.common.black, 0.04)
