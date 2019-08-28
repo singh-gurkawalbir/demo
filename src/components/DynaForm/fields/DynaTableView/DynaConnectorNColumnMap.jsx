@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
@@ -6,16 +6,9 @@ import DynaTableView from './DynaTable';
 export default function DynaConnectorNColumnMap(props) {
   const { optionsMap, id, _integrationId } = props;
   const dispatch = useDispatch();
-
-  function initSelector(state) {
-    return selectors.connectorMetadata(
-      state,
-      id,
-      null,
-      _integrationId,
-      optionsMap
-    );
-  }
+  const { isLoading, shouldReset, data: metadata } = useSelector(state =>
+    selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
+  );
 
   function handleRefreshClick(fieldId) {
     dispatch(actions.connectors.refreshMetadata(fieldId, id, _integrationId));
@@ -28,7 +21,9 @@ export default function DynaConnectorNColumnMap(props) {
   return (
     <DynaTableView
       {...props}
-      initSelector={initSelector}
+      isLoading={isLoading}
+      shouldReset={shouldReset}
+      metadata={metadata}
       handleCleanupHandler={handleCleanup}
       handleRefreshClickHandler={handleRefreshClick}
     />

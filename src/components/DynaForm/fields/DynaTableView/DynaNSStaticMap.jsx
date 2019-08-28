@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
@@ -43,8 +43,7 @@ export default function DynaNSStaticMap(props) {
     computedValue = value;
   }
 
-  const dispatch = useDispatch();
-  const initSelector = state =>
+  const { isLoading, shouldReset, data: metadata } = useSelector(state =>
     selectors.optionsMapFromMetadata(
       state,
       connectionId,
@@ -52,7 +51,9 @@ export default function DynaNSStaticMap(props) {
       recordType,
       selectField,
       optionsMap
-    );
+    )
+  );
+  const dispatch = useDispatch();
   const handleRefreshClick = () => {
     dispatch(
       actions.metadata.request(
@@ -69,8 +70,10 @@ export default function DynaNSStaticMap(props) {
   return (
     <DynaTableView
       {...props}
+      isLoading={isLoading}
+      shouldReset={shouldReset}
+      metadata={metadata}
       optionsMap={optionsMap}
-      initSelector={initSelector}
       value={computedValue}
       handleRefreshClickHandler={handleRefreshClick}
     />

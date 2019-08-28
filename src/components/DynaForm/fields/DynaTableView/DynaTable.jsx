@@ -1,6 +1,5 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -68,10 +67,12 @@ export default function DynaTable(props) {
     label,
     value,
     optionsMap: optionsMapInit,
-    initSelector,
     handleRefreshClickHandler,
     handleCleanupHandler,
     hideHeaders = false,
+    isLoading = false,
+    shouldReset = false,
+    metadata = {},
     id,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
@@ -82,8 +83,6 @@ export default function DynaTable(props) {
   const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
   let requiredFieldsMissing = false;
-  const { isLoading, shouldReset, data: metadata } =
-    useSelector(initSelector) || {};
 
   useEffect(() => {
     setShouldResetOptions(true);
