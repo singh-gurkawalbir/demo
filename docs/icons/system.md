@@ -18,9 +18,8 @@ const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon').default;
 
 const sizes = [12, 16, 20, 24, 32, 64];
-const containerStyle = (size) => {
+const containerStyle = () => {
   return {
-    fontSize: size,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -28,27 +27,32 @@ const containerStyle = (size) => {
     marginBottom: '15px',
   };
 };
+const svgFontSizes = (size) => {
+  return{
+    fontSize: size,
+  };
+};
 
 <div>
   {sizes.map(size => (
-    <div key={size} style={containerStyle(size)}>
-      <AddIcon />
-      <AdjustInventoryIcon />
-      <ArrowLeftIcon />
-      <ArrowRightIcon />
-      <ArrowDownIcon />
-      <ArrowUpIcon />
-      <AuditLogIcon />
-      <CloseIcon />
-      <ErrorIcon />
-      <EllipsisHorizontalIcon />
-      <EllipsisVerticalIcon />
-      <ExitIcon />
-      <GettingStartedIcon />
-      <HookIcon />
-      <PermissionsManageIcon />
-      <SubtractIcon />
-      <TransferOrderIcon />
+    <div key={size} style={containerStyle()}>
+      <AddIcon style={svgFontSizes(size)}/>
+      <AdjustInventoryIcon style={svgFontSizes(size)}/>
+      <ArrowLeftIcon style={svgFontSizes(size)} />
+      <ArrowRightIcon style={svgFontSizes(size)}/>
+      <ArrowDownIcon style={svgFontSizes(size)} />
+      <ArrowUpIcon style={svgFontSizes(size)}/>
+      <AuditLogIcon style={svgFontSizes(size)} />
+      <CloseIcon style={svgFontSizes(size)} />
+      <ErrorIcon style={svgFontSizes(size)} />
+      <EllipsisHorizontalIcon style={svgFontSizes(size)} />
+      <EllipsisVerticalIcon style={svgFontSizes(size)}/>
+      <ExitIcon style={svgFontSizes(size)} />
+      <GettingStartedIcon style={svgFontSizes(size)} />
+      <HookIcon style={svgFontSizes(size)} />
+      <PermissionsManageIcon style={svgFontSizes(size)} />
+      <SubtractIcon style={svgFontSizes(size)} />
+      <TransferOrderIcon style={svgFontSizes(size)} />
     </div>    
     ))
   }

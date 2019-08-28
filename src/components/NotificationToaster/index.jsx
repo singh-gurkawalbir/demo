@@ -63,9 +63,6 @@ const styles = theme => ({
       color: theme.palette.background.warning,
     },
   },
-  icon: {
-    fontSize: 32,
-  },
   iconVariant: {
     opacity: 0.9,
     marginRight: theme.spacing(1),
@@ -76,12 +73,9 @@ const styles = theme => ({
     color: theme.palette.text.primary,
   },
   actionButton: {
-    color: theme.palette.text.primary,
+    padding: '8px',
     '& svg': {
-      width: '10px',
-      height: '10px',
       color: theme.palette.text.primary,
-      fontSize: 16,
     },
   },
 });
