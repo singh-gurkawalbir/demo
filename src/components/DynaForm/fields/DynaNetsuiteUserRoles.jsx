@@ -32,13 +32,14 @@ export default function DynaNetsuiteUserRolesOptions(props) {
     )
   );
   const { optionsArr } = netSuiteUserRoles;
-  const matchingOption = (optionsArr || []).find(ele => ele.value === value);
-  const [valueChanged, setValueChanged] = useState(false);
+  const matchingOption =
+    optionsArr && optionsArr.find(ele => ele.value === value);
+  const [autofill, setAutofill] = useState(false);
 
   useEffect(() => {
-    if (!valueChanged && !matchingOption) {
-      if (netsuiteResourceType === 'environment') {
-        if (optionsArr) {
+    if (!autofill && optionsArr) {
+      if (!matchingOption) {
+        if (netsuiteResourceType === 'environment') {
           if (optionsArr.length === 1) {
             onFieldChange(id, optionsArr[0].value);
           } else if (
@@ -48,35 +49,43 @@ export default function DynaNetsuiteUserRolesOptions(props) {
             const nonBetaOption = optionsArr.find(ele => ele.value !== 'beta');
 
             onFieldChange(id, nonBetaOption.value);
-            setValueChanged(true);
+          }
+        }
+
+        if (
+          netsuiteResourceType === 'account' ||
+          netsuiteResourceType === 'role'
+        ) {
+          if (optionsArr.length === 1) {
+            onFieldChange(id, optionsArr[0].value);
           }
         }
       }
 
-      if (
-        netsuiteResourceType === 'account' ||
-        netsuiteResourceType === 'role'
-      ) {
-        if (optionsArr) {
-          if (optionsArr.length === 1) {
-            onFieldChange(id, optionsArr[0].value);
-            setValueChanged(true);
-          }
-        }
-      }
+      setAutofill(true);
     }
   }, [
+    autofill,
     id,
     matchingOption,
     netsuiteResourceType,
     onFieldChange,
     optionsArr,
-    valueChanged,
   ]);
+  const onFieldChangeMaterialUi = (id, value) => {
+    onFieldChange(id, value);
+
+    if (netsuiteResourceType === 'environment') {
+      ['netsuite.account', 'netsuite.roleId'].forEach(id =>
+        onFieldChange(id, '')
+      );
+    }
+  };
 
   return (
     <MaterialUiSelect
       {...props}
+      onFieldChange={onFieldChangeMaterialUi}
       classes={classes}
       options={[{ items: optionsArr || [] }]}
     />
