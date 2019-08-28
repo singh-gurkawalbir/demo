@@ -76,6 +76,12 @@ const resource = {
 
   deleted: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
+  update: (resourceType, id, resourceFieldUpdates) =>
+    action(actionTypes.RESOURCE.UPDATE, {
+      resourceType,
+      id,
+      resourceFieldUpdates,
+    }),
 
   requestReferences: (resourceType, id) =>
     action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
@@ -252,6 +258,8 @@ const agent = {
 };
 const template = {
   downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
+  publish: (item, resourceType) =>
+    action(actionTypes.TEMPLATE.PUBLISH, { item, resourceType }),
 };
 const user = {
   profile: {

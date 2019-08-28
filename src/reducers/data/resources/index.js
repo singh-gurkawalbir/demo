@@ -34,7 +34,14 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { id, type, resource, collection, resourceType } = action;
+  const {
+    id,
+    type,
+    resource,
+    collection,
+    resourceType,
+    resourceFieldUpdates,
+  } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -57,6 +64,9 @@ export default (state = {}, action) => {
     return state;
   }
 
+  let resourceIndex;
+  let newState;
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
@@ -68,6 +78,22 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
+    case actionTypes.RESOURCE.UPDATE:
+      resourceIndex = state[resourceType].findIndex(r => r._id === id);
+
+      if (resourceIndex > -1) {
+        newState = [
+          ...state[resourceType].slice(0, resourceIndex),
+          { ...state[resourceType][resourceIndex], ...resourceFieldUpdates },
+          ...state[resourceType].slice(resourceIndex + 1),
+        ];
+        newState = { ...state, [resourceType]: newState };
+
+        return newState;
+      }
+
+      return state;
+
     default:
       return state;
   }

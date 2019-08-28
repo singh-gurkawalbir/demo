@@ -46,7 +46,9 @@ function TemplatesData(props) {
     dispatch(actions.template.downloadZip(item._id));
   };
 
-  const handlePublishClick = () => {};
+  const handlePublishClick = () => {
+    dispatch(actions.template.publish(item, 'templates'));
+  };
 
   return (
     <Fragment>
