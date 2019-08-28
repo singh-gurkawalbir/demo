@@ -207,6 +207,7 @@ describe('request interceptors...testing the various stages of an api request on
         meta: {
           path,
           method: 'POST',
+          origReq: request,
         },
       };
 
@@ -256,6 +257,7 @@ describe('request interceptors...testing the various stages of an api request on
         meta: {
           path,
           method: 'POST',
+          origReq: request,
         },
       };
 
@@ -476,9 +478,35 @@ describe('request interceptors...testing the various stages of an api request on
 
       process.env.REATTEMPT_INTERVAL = retryInterval;
       test('should retry when the retry count is less than 3', () => {
+        const path = '/somePath';
+        const method = 'POST';
+        const hidden = true;
+        const message = 'some message';
+        const someRequestBody = { a: 1 };
+        const opts = {
+          method,
+          body: someRequestBody,
+        };
+        const request = { url: path, args: { path, opts, hidden, message } };
+        const some500ResponseCreatingRequest = {
+          request: {
+            path,
+            hidden,
+            message,
+            opts: {
+              method,
+              body: JSON.stringify(someRequestBody),
+            },
+            meta: {
+              path,
+              method,
+              origReq: request,
+            },
+          },
+        };
         const saga = onErrorSaga(
           some500Response,
-          actionWithMetaProxiedFromRequestAction
+          some500ResponseCreatingRequest
         );
 
         expect(saga.next().value).toEqual(select(resourceStatus, path, method));
@@ -492,9 +520,14 @@ describe('request interceptors...testing the various stages of an api request on
         // sendRequest to dispatch redux actions
         // otherwise its defaulted to true in an interceptor
         expect(saga.next().value).toEqual(
-          call(sendRequest, actionWithMetaProxiedFromRequestAction, {
-            silent: false,
-          })
+          call(
+            sendRequest,
+            { request, type: 'API_WATCHER' },
+            {
+              runOnError: true,
+              silent: false,
+            }
+          )
         );
         expect(saga.next().done).toBe(true);
       });

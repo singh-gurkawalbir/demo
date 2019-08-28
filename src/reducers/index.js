@@ -813,7 +813,11 @@ export function resourceStatus(
   origResourceType,
   resourceReqMethod = 'GET'
 ) {
-  const resourceType = `/${origResourceType}`;
+  let resourceType;
+
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
+  else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
   const hasData = fromData.hasData(state.data, origResourceType);
