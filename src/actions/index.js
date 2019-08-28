@@ -486,6 +486,16 @@ const job = {
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
 };
+const assistantMetadata = {
+  request: ({ adaptorType, assistant }) =>
+    action(actionTypes.ASSISTANT_METADATA.REQUEST, { adaptorType, assistant }),
+  received: ({ adaptorType, assistant, metadata }) =>
+    action(actionTypes.ASSISTANT_METADATA.RECEIVED, {
+      adaptorType,
+      assistant,
+      metadata,
+    }),
+};
 // #endregion
 
 export default {
@@ -510,4 +520,5 @@ export default {
   job,
   flow,
   agent,
+  assistantMetadata,
 };

@@ -115,6 +115,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
+    resource.assistantMetadata,
   ]);
 
   // once the form successfully completes submission (could be async)

@@ -49,7 +49,12 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
   return optionsHandler;
 };
 
-const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
+const getResourceFormAssets = ({
+  resourceType,
+  resource,
+  isNew = false,
+  assistantData,
+}) => {
   let fields;
   let fieldSets = [];
   let preSubmit;
@@ -86,6 +91,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'exports':
       meta = formMeta[resourceType];
       // console.log('type', type);
+      console.log(`meta ${JSON.stringify(meta)}`);
 
       if (meta) {
         if (isNew) {
@@ -94,6 +100,12 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuite[resource.netsuite.type];
+        } else if (resource && resource.assistant) {
+          meta = meta.custom[type];
+
+          if (meta) {
+            meta = meta.assistantDefinition(resource, assistantData);
+          }
         } else {
           meta = meta[type];
         }

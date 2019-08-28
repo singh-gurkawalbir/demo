@@ -12,6 +12,7 @@ import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
+import { requestMetadata } from '../assistantMetadata';
 
 export const SCOPES = {
   META: 'meta',
@@ -210,11 +211,27 @@ export function* initFormValues({
   }
 
   if (!resource) return; // nothing to do.
+  let assistantData;
+
+  if (resource.assistant) {
+    assistantData = yield select(selectors.assistantData, {
+      adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+      assistant: resource.assistant,
+    });
+
+    if (!assistantData) {
+      assistantData = yield call(requestMetadata, {
+        adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+        assistant: resource.assistant,
+      });
+    }
+  }
 
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
     isNew,
+    assistantData,
   });
   const { customForm } = resource;
   const form =
