@@ -242,7 +242,6 @@ export default {
       },
     ],
   },
-
   'http.errorMediaType': {
     type: 'select',
     label: 'Error Media Type',

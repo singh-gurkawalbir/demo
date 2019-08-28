@@ -16,6 +16,7 @@ import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
+
 @hot(module)
 @withStyles(theme => ({
   appFrame: {
