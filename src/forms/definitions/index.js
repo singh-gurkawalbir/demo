@@ -4,8 +4,8 @@ import exports from './exports';
 import scripts from './scripts';
 import imports from './imports';
 import agents from './agents';
-import stacks from './stacks';
 import connectors from './connectors';
+import stacks from './stacks';
 import templates from './templates';
 
 export default {

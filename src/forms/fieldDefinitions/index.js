@@ -10,8 +10,8 @@ export default {
   connections,
   exports,
   imports,
-  scripts,
   connectors,
+  scripts,
   templates,
   stacks,
 };
