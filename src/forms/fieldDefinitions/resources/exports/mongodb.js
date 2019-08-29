@@ -2,6 +2,7 @@ export default {
   'mongodb.collection': {
     type: 'text',
     label: 'Collection',
+    required: true,
   },
   'mongodb.filter': {
     type: 'editor',
@@ -25,6 +26,7 @@ export default {
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',
+    required: true,
     visibleWhen: [
       {
         field: 'type',

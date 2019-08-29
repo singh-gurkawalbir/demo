@@ -39,6 +39,12 @@ export default (state = {}, action) => {
   }
 };
 
+function sortElements(a, b) {
+  if (!a || !b || !a.label || !b.label) return 0;
+
+  return a.label.localeCompare(b.label);
+}
+
 // #region PUBLIC SELECTORS
 export function netsuiteUserRoles(
   state,
@@ -52,7 +58,9 @@ export function netsuiteUserRoles(
 
   // all environments
   if (!userRoles) return state[connectionId];
-  const envs = Object.keys(userRoles).map(env => ({ label: env, value: env }));
+  const envs = Object.keys(userRoles)
+    .map(env => ({ label: env, value: env }))
+    .sort(sortElements);
 
   if (netsuiteResourceType === 'environment')
     return { ...state[connectionId], optionsArr: envs };
@@ -71,7 +79,8 @@ export function netsuiteUserRoles(
       .map(account => ({
         label: account.account.name,
         value: account.account.internalId,
-      }));
+      }))
+      .sort(sortElements);
 
   if (netsuiteResourceType === 'account')
     return { ...state[connectionId], optionsArr: accounts };
@@ -85,7 +94,8 @@ export function netsuiteUserRoles(
       .map(account => ({
         label: account.role.name,
         value: account.role.internalId,
-      }));
+      }))
+      .sort(sortElements);
 
   if (netsuiteResourceType === 'role')
     return { ...state[connectionId], optionsArr: roles };

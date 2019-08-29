@@ -19,7 +19,7 @@ export default {
       ],
     },
     { fieldId: 'rest.headers' },
-    { fieldId: 'rest.relativeURI' },
+    { fieldId: 'rest.relativeuri' },
     {
       fieldId: 'rest.postBody',
       visibleWhen: [
@@ -32,10 +32,25 @@ export default {
     { fieldId: 'rest.resourcePath' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
-    { fieldId: 'type' },
+    {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
     { fieldId: 'delta.dateFormat' },
     { fieldId: 'delta.lagOffset' },
-    // { fieldId: 'once.booleanField' },
+    { fieldId: 'rest.once.booleanField' },
     { fieldId: 'rest.once.relativeURI' },
     { fieldId: 'rest.once.method' },
     { fieldId: 'rest.once.postBody' },
