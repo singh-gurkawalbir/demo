@@ -22,6 +22,7 @@ import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaLabelValueElement from './DynaLabelValueElement';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -47,6 +48,7 @@ export default {
   scriptcontent: DynaScriptContent,
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
+  labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
 };

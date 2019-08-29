@@ -4,6 +4,9 @@ import exports from './exports';
 import scripts from './scripts';
 import imports from './imports';
 import agents from './agents';
+import connectors from './connectors';
+import stacks from './stacks';
+import templates from './templates';
 
 export default {
   default: defaultMeta,
@@ -12,4 +15,7 @@ export default {
   scripts,
   imports,
   agents,
+  connectors,
+  templates,
+  stacks,
 };
