@@ -20,12 +20,15 @@ import { withStyles } from '@material-ui/core/styles';
   },
   iconButton: {
     position: 'absolute',
-    top: '10px',
+    top: '5px',
     right: '10px',
   },
   actions: {
-    '& *': { marginRight: theme.spacing(1) },
-    margin: theme.spacing(1, 1, 2, 0),
+    '&:last-child': {
+      marginRight: theme.spacing(1),
+    },
+    // '& *': { marginRight: theme.spacing(1) },
+    // margin: theme.spacing(1, 1, 2, 0),
   },
 }))
 export default class ModalDialog extends Component {
@@ -34,14 +37,13 @@ export default class ModalDialog extends Component {
 
     return (
       <div>
-        <Dialog open={show} className={classes.modalDialog}>
+        <Dialog open={show} className={classes.modalDialog} maxWidth="lg">
           {this.props.children[0] && (
-            <DialogTitle>
+            <DialogTitle className={classes.modalTitle}>
               {this.props.children[0]}
               {handleClose && (
                 <IconButton
                   onClick={handleClose}
-                  color="primary"
                   className={classes.iconButton}
                   autoFocus>
                   <SvgIcon>

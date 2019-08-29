@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { makeStyles, useTheme } from '@material-ui/styles';
-// import Typography from '@material-ui/core/Typography';
+import { fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
@@ -13,19 +13,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     borderBottom: `1px solid ${theme.palette.divider}`,
     wordBreak: 'break-word',
+    padding: '0px',
   },
   optionImg: {
     minWidth: '120px',
     display: 'flex',
+    float: 'left',
     alignItems: 'center',
     justifyContent: 'center',
-    background: theme.selectFormControl.hover,
     borderRight: '1px solid',
     borderColor: theme.palette.divider,
+    color: theme.palette.divider,
+    height: '100%',
   },
-  groupSeparator: {
-    padding: '5px 10px',
-    background: theme.selectFormControl.separator,
+  optionLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: '10px',
+    height: '100%',
   },
 }));
 
@@ -45,6 +50,7 @@ export default function SelectApplication(props) {
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
+      padding: '0px',
       color: state.isSelected
         ? theme.selectFormControl.text
         : theme.selectFormControl.color,
@@ -52,9 +58,8 @@ export default function SelectApplication(props) {
         state.isSelected || state.isFocused
           ? theme.selectFormControl.hover
           : theme.selectFormControl.background,
+      border: 'none',
       minHeight: '48px',
-      display: 'flex',
-      alignItems: 'center',
       '&:active': {
         backgroundColor: theme.selectFormControl.hover,
         color: theme.selectFormControl.color,
@@ -78,6 +83,9 @@ export default function SelectApplication(props) {
       transition: 'all 100ms ease 0s',
       outline: `0px !important`,
     }),
+    input: () => ({
+      color: theme.selectFormControl.color,
+    }),
     placeholder: () => ({
       color: theme.selectFormControl.color,
     }),
@@ -88,6 +96,26 @@ export default function SelectApplication(props) {
       padding: '0px',
       maxHeight: '300px',
       overflowY: 'auto',
+    }),
+    group: () => ({
+      padding: '0px',
+    }),
+    groupHeading: () => ({
+      textAlign: 'center',
+      fontSize: '12px',
+      padding: '5px',
+      border: '1px solid',
+      borderColor: theme.palette.divider,
+      background: theme.selectFormControl.separator,
+      color: theme.selectFormControl.color,
+    }),
+    dropdownIndicator: () => ({
+      color: theme.selectFormControl.color,
+      padding: '8px',
+      cursor: 'pointer',
+      '&:hover': {
+        color: fade(theme.selectFormControl.color, 0.8),
+      },
     }),
     singleValue: (provided, state) => {
       const opacity = state.isDisabled ? 0.5 : 1;
@@ -116,20 +144,13 @@ export default function SelectApplication(props) {
     return (
       <Fragment>
         <div className={classes.optionRoot}>
-          <span className={classes.optionImg}>
-            <ApplicationImg type={type} assistant={icon} />
-          </span>
-          <components.Option {...props} />
+          <components.Option {...props}>
+            <span className={classes.optionImg}>
+              <ApplicationImg type={type} assistant={icon} />
+            </span>
+            <span className={classes.optionLabel}>{props.label}</span>
+          </components.Option>
         </div>
-        {/* <div className={classes.groupSeparator}>
-              <Typography
-                className={classes.dividerFullWidth}
-                color="textSecondary"
-                display="block"
-                variant="caption">
-                Databases
-              </Typography>
-            </div> */}
       </Fragment>
     );
   };

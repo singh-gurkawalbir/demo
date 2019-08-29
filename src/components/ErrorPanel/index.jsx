@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -9,7 +9,7 @@ import ChevronDownIcon from 'mdi-react/ChevronDownIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import ErrorBox from './ErrorBox';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   panel: {
     marginBottom: theme.spacing(1),
   },
@@ -37,14 +37,15 @@ const styles = theme => ({
   icon: {
     color: 'white',
   },
-});
+}));
 
 /**
  * Render an error in a panel. Will be expandable display stack traces
  * when in development
  */
 function ErrorPanel(props) {
-  const { classes, error, onClose } = props;
+  const classes = usestyles();
+  const { error, onClose } = props;
   const showStack =
     process.env.NODE_ENV === 'development' && error instanceof Error;
 
@@ -78,4 +79,4 @@ function ErrorPanel(props) {
   );
 }
 
-export default withStyles(styles)(ErrorPanel);
+export default ErrorPanel;
