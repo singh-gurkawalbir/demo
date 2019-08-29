@@ -72,6 +72,13 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         if (meta) {
           meta = meta[resource.assistant];
         }
+      } else if (resource && resource.type === 'rdbms') {
+        const dbConnSubtype = resource.rdbms.type;
+
+        // when editing rdms connection we lookup for the resource subtype
+        meta = formMeta.connections.rdbms[dbConnSubtype];
+      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) > 0) {
+        meta = formMeta.connections.rdbms[type];
       } else {
         meta = formMeta.connections[type];
       }
@@ -85,7 +92,6 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'imports':
     case 'exports':
       meta = formMeta[resourceType];
-      // console.log('type', type);
 
       if (meta) {
         if (isNew) {

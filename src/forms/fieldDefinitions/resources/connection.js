@@ -36,8 +36,10 @@ export default {
           { label: 'Rest', value: 'rest' },
           { label: 'Wrapper', value: 'wrapper' },
           { label: 'Http', value: 'http' },
-          { label: 'Rdbms', value: 'rdbms' },
+          { label: 'PostgreSQL', value: 'postgresql' },
           { label: 'Mongodb', value: 'mongodb' },
+          { label: 'MySQL', value: 'mysql' },
+          { label: 'Microsoft SQL', value: 'mssql' },
           { label: 'As2', value: 'as2' },
         ],
       },
@@ -257,14 +259,21 @@ export default {
   'rdbms.useSSL': {
     type: 'checkbox',
     label: 'Use SSL',
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['postgresql', 'mysql'],
+      },
+    ],
   },
   'rdbms.host': {
     type: 'text',
-    label: 'Rdbms host',
+    label: 'Host:',
+    required: true,
   },
   'rdbms.port': {
     type: 'text',
-    label: 'Rdbms port',
+    label: 'Port:',
     validWhen: [
       {
         fallsWithinNumericalRange: {
@@ -278,11 +287,12 @@ export default {
   },
   'rdbms.database': {
     type: 'text',
-    label: 'Rdbms database',
+    label: 'Database Name:',
+    required: true,
   },
   connMode: {
     type: 'radiogroup',
-    label: 'Mode',
+    label: 'Mode:',
     defaultValue: 'cloud',
     options: [
       {
@@ -295,32 +305,45 @@ export default {
   },
   'rdbms.instanceName': {
     type: 'text',
-    label: 'Rdbms instance Name',
+    label: 'Instance Name:',
+    visibleWhen: [{ field: 'type', is: ['mssql'] }],
   },
   'rdbms.user': {
     type: 'text',
-    label: 'Rdbms user',
+    label: 'Username:',
+    required: true,
   },
   'rdbms.password': {
     type: 'text',
-    label: 'Rdbms password',
+    label: 'Password:',
+    required: true,
   },
   'rdbms.ssl.ca': {
-    type: 'text',
-    label: 'Rdbms ssl ca',
+    type: 'editor',
+    mode: 'text',
+    label: 'Certificate Authority:',
   },
   'rdbms.ssl.key': {
-    type: 'text',
-    label: 'Rdbms ssl key',
+    type: 'editor',
+    mode: 'text',
+    label: 'Key:',
   },
   'rdbms.ssl.passphrase': {
     type: 'text',
-    label: 'Rdbms ssl passphrase',
+    label: 'Passphrase:',
   },
   'rdbms.ssl.cert': {
-    type: 'text',
-    label: 'Rdbms ssl cert',
+    type: 'editor',
+    mode: 'text',
+    label: 'Certificate:',
   },
+  'rdbms.version': {
+    type: 'text',
+    label: 'SQL Server Version:',
+    required: true,
+    visibleWhen: [{ field: 'type', is: ['mssql'] }],
+  },
+
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
@@ -1586,7 +1609,7 @@ export default {
   },
   'as2.userStationInfo.encrypted.userPrivateKey': {
     type: 'editor',
-    mode: 'json',
+    mode: 'text',
     label: 'X.509 Private Key:',
   },
   'as2.userStationInfo.mdn.mdnSigning': {
@@ -1674,12 +1697,12 @@ export default {
   },
   'as2.unencrypted.userPublicKey': {
     type: 'editor',
-    mode: 'json',
+    mode: 'text',
     label: 'X.509 Public Certificate:',
   },
   'as2.unencrypted.partnerCertificate': {
     type: 'editor',
-    mode: 'json',
+    mode: 'text',
     label: "Partner's Certificate:",
   },
   // #endregion as2
