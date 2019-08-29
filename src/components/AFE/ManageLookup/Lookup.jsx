@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import _ from 'lodash';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
@@ -15,17 +14,6 @@ export default function Lookup(props) {
   const { onSave, lookup, onCancelClick } = props;
   const classes = useStyles();
   const isEdit = !!(lookup && lookup.name);
-  // Lookup is a map. Converting map to list
-  // TODO: After DynaStaticMap changes to handle map directly in progress. Change to use map directly later
-  let lookupList = [];
-
-  if (isEdit && lookup && lookup.map) {
-    lookupList = _.map(lookup.map, (val, key) => ({
-      export: key,
-      import: val,
-    }));
-  }
-
   const save = formVal => {
     const lookupObj = { ...formVal };
 
@@ -34,6 +22,7 @@ export default function Lookup(props) {
       lookupObj.mapList.forEach(obj => {
         lookupObj.map[obj.export] = obj.import;
       });
+      delete lookupObj.mapList;
       delete lookupObj.method;
       delete lookupObj.relativeURI;
       delete lookupObj.body;
@@ -179,23 +168,11 @@ export default function Lookup(props) {
         name: 'mapList',
         type: 'staticMap',
         label: '',
-        optionsMap: [
-          {
-            id: 'export',
-            label: 'Export Field',
-            required: true,
-            type: 'input',
-            supportsRefresh: false,
-          },
-          {
-            id: 'import',
-            label: 'Import Field (HTTP)',
-            required: true,
-            type: 'input',
-            supportsRefresh: false,
-          },
-        ],
-        value: lookupList || [],
+        keyName: 'export',
+        keyLabel: 'Export Field',
+        valueName: 'import',
+        valueLabel: 'Import Field (HTTP)',
+        map: isEdit && lookup && lookup.map,
         visibleWhen: [
           {
             field: 'mode',

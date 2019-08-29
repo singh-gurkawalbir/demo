@@ -33,6 +33,12 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     padding: theme.spacing(2),
     display: 'flex',
   },
+  actionContainer: {
+    margin: theme.spacing(0, 1),
+    padding: theme.spacing(2),
+    display: 'flex',
+    marginRight: theme.spacing(2),
+  },
   toolbarItem: {
     flex: '1 1 auto',
   },
@@ -77,6 +83,7 @@ class EditorDialog extends Component {
     const {
       children,
       open = true,
+      actionFields,
       title,
       handlePreview,
       showLayoutOptions = true,
@@ -101,6 +108,10 @@ class EditorDialog extends Component {
         <div className={classes.toolbarContainer}>
           <div className={classes.toolbarItem}>
             <Typography variant="h5">{title}</Typography>
+          </div>
+          <div className={classes.actionContainer}>
+            {/* it expects field to be a compoenent to render */}
+            {actionFields && actionFields.map(action => action.field)}
           </div>
           <div className={classes.toggleContainer}>
             {showLayoutOptions && (

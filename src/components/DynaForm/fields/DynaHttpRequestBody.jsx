@@ -1,21 +1,11 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
-
-const useStyles = makeStyles(theme => ({
-  actionbar: {
-    width: '100%',
-    display: 'inline-block',
-    marginBottom: theme.spacing(2),
-  },
-}));
 
 export default function DynaHttpRequestBody(props) {
   const { id, onFieldChange, options, value, label } = props;
   const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles();
   const parsedData =
     options && typeof options.saveIndex === 'number' && value && value.length
       ? value[options.saveIndex]
@@ -50,6 +40,24 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
+  let actionFields = [];
+
+  if (lookupFieldId) {
+    actionFields = [
+      {
+        field: (
+          <DynaLookupEditor
+            id={lookupFieldId}
+            label="Manage Lookups"
+            value={lookups}
+            key={lookupFieldId}
+            onFieldChange={onFieldChange}
+          />
+        ),
+      },
+    ];
+  }
+
   return (
     <Fragment>
       {showEditor && (
@@ -59,18 +67,8 @@ export default function DynaHttpRequestBody(props) {
           rule={parsedData}
           onFieldChange={onFieldChange}
           onClose={handleClose}
-          showLayoutOptions={false}>
-          {lookupFieldId && (
-            <div className={classes.actionbar}>
-              <DynaLookupEditor
-                id={lookupFieldId}
-                label="Manage Lookups"
-                value={lookups}
-                onFieldChange={onFieldChange}
-              />
-            </div>
-          )}
-        </HttpRequestBodyEditorDialog>
+          actionFields={actionFields}
+        />
       )}
       <Button variant="outlined" color="secondary" onClick={handleEditorClick}>
         {label}

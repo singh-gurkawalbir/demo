@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react';
 import EditorDialog from '../EditorDialog';
 import HttpRequestBodyEditor from './';
 
@@ -13,10 +12,7 @@ export default function HttpRequestBodyDialog(props) {
 
   return (
     <EditorDialog id={id} {...defaults} {...rest}>
-      <Fragment>
-        {props.children}
-        <HttpRequestBodyEditor editorId={id} rule={rule} data={data} />
-      </Fragment>
+      <HttpRequestBodyEditor editorId={id} rule={rule} data={data} />
     </EditorDialog>
   );
 }
