@@ -10,7 +10,6 @@ import as2 from './as2';
 import rdbms from './rdbms';
 import netsuite from './netsuite';
 import netsuiteDistributed from './netsuiteDistributed';
-import distributed from './distributed';
 import salesforce from './salesforce';
 
 export default {
@@ -26,6 +25,5 @@ export default {
   rdbms,
   netsuite,
   netsuiteDistributed,
-  distributed,
   salesforce,
 };
