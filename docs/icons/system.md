@@ -14,6 +14,7 @@ const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').de
 const TransferOwnershipIcon = require('../../src/components/icons/TransferOwnershipIcon').default;
 const UpIcon = require('../../src/components/icons/UpIcon').default;
 const SearchIcon = require('../../src/components/icons/SearchIcon').default;
+const HomeIcon = require('../../src/components/icons/HomeIcon').default;
 
 const sizes = [12, 16, 20, 24, 32, 64];
 const containerStyle = (size) => {
@@ -30,6 +31,7 @@ const containerStyle = (size) => {
 <div>
   {sizes.map(size => (
     <div key={size} style={containerStyle(size)}>
+      <HomeIcon />
       <SearchIcon />
       <AddIcon />
       <ArrowLeftIcon />
