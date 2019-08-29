@@ -116,20 +116,44 @@ function ConnectionsData(props) {
   const handleRefreshMetadataClick = () => {
     if (item.type === 'netsuite') {
       dispatch(
-        actions.metadata.request(item._id, 'recordTypes', 'suitescript', '', {
-          refreshCache: true,
-        })
+        actions.metadata.request(
+          item._id,
+          'recordTypes',
+          'suitescript',
+          '',
+          '',
+          '',
+          {
+            refreshCache: true,
+          }
+        )
       );
       dispatch(
-        actions.metadata.request(item._id, 'savedSearches', 'suitescript', '', {
-          refreshCache: true,
-        })
+        actions.metadata.request(
+          item._id,
+          'savedSearches',
+          'suitescript',
+          '',
+          '',
+          '',
+          {
+            refreshCache: true,
+          }
+        )
       );
       dispatch(
-        actions.metadata.request(item._id, 'recordTypes', 'webservices', '', {
-          refreshCache: true,
-          recordTypeOnly: true,
-        })
+        actions.metadata.request(
+          item._id,
+          'recordTypes',
+          'webservices',
+          '',
+          '',
+          '',
+          {
+            refreshCache: true,
+            recordTypeOnly: true,
+          }
+        )
       );
     }
   };

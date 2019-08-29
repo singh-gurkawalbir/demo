@@ -21,6 +21,12 @@ export default {
     {
       fieldId: 'netsuite.webservices.searchId',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhen: [
+        {
+          field: 'netsuite.webservices.recordType',
+          isNot: [''],
+        },
+      ],
     },
     {
       fieldId: 'type',
@@ -38,7 +44,11 @@ export default {
       fieldId: 'delta.dateField',
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-      visibleWhen: [
+      visibleWhenAll: [
+        {
+          field: 'netsuite.webservices.recordType',
+          isNot: [''],
+        },
         {
           field: 'type',
           is: ['delta'],
@@ -49,7 +59,11 @@ export default {
       fieldId: 'once.booleanField',
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-      visibleWhen: [
+      visibleWhenAll: [
+        {
+          field: 'netsuite.webservices.recordType',
+          isNot: [''],
+        },
         {
           field: 'type',
           is: ['once'],
@@ -73,10 +87,7 @@ export default {
       );
       let record = recordTypeField && recordTypeField.value;
 
-      if (
-        recordTypeField &&
-        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
-      ) {
+      if (record && record.toLowerCase().indexOf('customrecord') === 0) {
         record = 'customRecord';
       }
 
@@ -84,6 +95,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          record &&
           `searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
     }
@@ -94,10 +106,7 @@ export default {
       );
       let record = recordTypeField && recordTypeField.value;
 
-      if (
-        recordTypeField &&
-        recordTypeField.value.toLowerCase().indexOf('customrecord') === 0
-      ) {
+      if (record && record.toLowerCase().indexOf('customrecord') === 0) {
         record = 'customRecord';
       }
 
@@ -105,6 +114,7 @@ export default {
       return {
         resourceToFetch:
           recordTypeField &&
+          record &&
           `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:
           recordTypeField &&

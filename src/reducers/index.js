@@ -103,6 +103,15 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function connectorMetadata(state, fieldName, id, _integrationId) {
+  return fromSession.connectorMetadata(
+    state && state.session,
+    fieldName,
+    id,
+    _integrationId
+  );
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }
@@ -954,14 +963,36 @@ export function optionsFromMetadata(
   connectionId,
   applicationType,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) {
   return fromSession.optionsFromMetadata(
     state && state.session,
     connectionId,
     applicationType,
     metadataType,
-    mode
+    mode,
+    recordType,
+    selectField
+  );
+}
+
+export function optionsMapFromMetadata(
+  state,
+  connectionId,
+  applicationType,
+  recordType,
+  selectField,
+  optionsMap
+) {
+  return fromSession.optionsMapFromMetadata(
+    state && state.session,
+    connectionId,
+    applicationType,
+    recordType,
+    selectField,
+    optionsMap
   );
 }
 
@@ -970,6 +1001,8 @@ export function commMetadataPathGen(
   connectionId,
   metadataType,
   mode,
+  recordType,
+  selectField,
   addInfo
 ) {
   let commMetadataPath;
@@ -979,9 +1012,17 @@ export function commMetadataPathGen(
       commMetadataPath = `netSuiteWS/${metadataType}`;
     } else {
       commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+
+      if (selectField && recordType) {
+        commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
+      }
     }
   } else if (applicationType === 'salesforce') {
     commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
+
+    if (recordType) {
+      commMetadataPath += `/${recordType}`;
+    }
   } else {
     throw Error('Invalid application type...cannot support it');
   }
@@ -1006,7 +1047,9 @@ export function metadataOptionsAndResources(
   connectionId,
   mode,
   metadataType,
-  filterKey
+  filterKey,
+  recordType,
+  selectField
 ) {
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
@@ -1014,7 +1057,15 @@ export function metadataOptionsAndResources(
   const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
   return (
-    optionsFromMetadata(state, connectionId, applicationType, key, mode) || {}
+    optionsFromMetadata(
+      state,
+      connectionId,
+      applicationType,
+      key,
+      mode,
+      recordType,
+      selectField
+    ) || {}
   );
 }
 

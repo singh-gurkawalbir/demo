@@ -9,7 +9,7 @@ const visibleWhen = [
 ];
 
 export default {
-  preSubmit: ({ application, ...rest }) => {
+  preSubmit: ({ application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     // TODO: Raghu, the below logic should move to a proper fn that uses a map.
     // This will only work for a select few adaptorTypes as others probably
@@ -25,6 +25,11 @@ export default {
 
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
+    }
+
+    if (app.type === 'netsuite') {
+      newValues['/netsuite/type'] =
+        executionType === 'scheduled' ? apiType : executionType;
     }
 
     return newValues;
@@ -68,6 +73,48 @@ export default {
       label: 'Description',
       defaultValue: '',
       visibleWhen,
+    },
+    {
+      id: 'netsuite.execution.type',
+      name: 'executionType',
+      type: 'radiogroup',
+      label: 'Execution Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'Real-time', value: 'distributed' },
+            { label: 'Scheduled', value: 'scheduled' },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'application',
+          is: ['netsuite'],
+        },
+      ],
+    },
+    {
+      id: 'netsuite.api.type',
+      name: 'apiType',
+      type: 'radiogroup',
+      label: 'Execution Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'RESTlet (Recommended)', value: 'restlet' },
+            { label: 'Web Services', value: 'search' },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'netsuite.execution.type',
+          is: ['scheduled'],
+        },
+      ],
     },
   ],
   optionsHandler: (fieldId, fields) => {

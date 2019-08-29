@@ -1,6 +1,7 @@
 export default {
   uploadFile: {
     type: 'uploadfile',
+    required: true,
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
@@ -36,6 +37,7 @@ export default {
   'ftp.directoryPath': {
     type: 'text',
     label: 'Directory Path',
+    required: true,
   },
   'ftp.fileNameStartsWith': {
     type: 'text',
