@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import connectors, * as fromConnectors from './connectors';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
@@ -14,6 +15,7 @@ export default combineReducers({
   filters,
   editors,
   metadata,
+  connectors,
   connectionToken,
   resourceForm,
   agentAccessTokens,
@@ -75,14 +77,36 @@ export function optionsFromMetadata(
   connectionId,
   applicationType,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) {
   return fromMetadata.optionsFromMetadata(
     state && state.metadata,
     connectionId,
     applicationType,
     metadataType,
-    mode
+    mode,
+    recordType,
+    selectField
+  );
+}
+
+export function optionsMapFromMetadata(
+  state,
+  connectionId,
+  applicationType,
+  recordType,
+  selectField,
+  optionsMap
+) {
+  return fromMetadata.optionsMapFromMetadata(
+    state && state.metadata,
+    connectionId,
+    applicationType,
+    recordType,
+    selectField,
+    optionsMap
   );
 }
 
@@ -91,6 +115,15 @@ export function resourceFormState(state, resourceType, resourceId) {
     state && state.resourceForm,
     resourceType,
     resourceId
+  );
+}
+
+export function connectorMetadata(state, fieldName, id, _integrationId) {
+  return fromConnectors.connectorMetadata(
+    state && state.connectors,
+    fieldName,
+    id,
+    _integrationId
   );
 }
 
