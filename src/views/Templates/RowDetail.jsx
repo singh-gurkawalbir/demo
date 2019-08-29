@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
@@ -8,6 +8,7 @@ import Link from '@material-ui/core/Link';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import UploadFileDialog from '../../components/UploadFileDialog';
 
 const styles = theme => ({
   templateActions: {
@@ -21,8 +22,15 @@ const styles = theme => ({
 });
 
 function TemplatesData(props) {
-  const { classes, item } = props;
+  const {
+    classes,
+    item,
+    resourceType = 'templates',
+    fileType = 'application/zip',
+    type = 'Zip',
+  } = props;
   const dispatch = useDispatch();
+  const [showUpoadFileDialog, setShowUploadFileDialog] = useState(false);
   const handleDeleteClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -41,17 +49,32 @@ function TemplatesData(props) {
     });
   };
 
-  const handleUploadZipFileClick = () => {};
+  const handleUploadZipFileClick = () => {
+    setShowUploadFileDialog(true);
+  };
+
+  const handleUploadFileDialogClose = () => {
+    setShowUploadFileDialog(false);
+  };
+
   const handleDownloadClick = () => {
     dispatch(actions.template.downloadZip(item._id));
   };
 
   const handlePublishClick = () => {
-    dispatch(actions.template.publish(item, 'templates'));
+    dispatch(actions.template.publish(item, resourceType));
   };
 
   return (
     <Fragment>
+      {showUpoadFileDialog && (
+        <UploadFileDialog
+          resourceType={resourceType}
+          fileType={fileType}
+          onClose={handleUploadFileDialogClose}
+          type={type}
+        />
+      )}
       <Typography className={classes.templateDetails}>
         Description: {item.description}
         <br />

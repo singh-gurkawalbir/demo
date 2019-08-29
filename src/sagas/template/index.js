@@ -31,7 +31,7 @@ export function* publish({ item, resourceType }) {
       },
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(
