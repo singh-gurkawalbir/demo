@@ -68,7 +68,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
-  NetSuiteImport: 'netsuite',
+  NetSuiteDistributedImport: 'netsuiteDistributed',
   XMLImport: 'xml',
   XMLExport: 'xml',
   FTPExport: 'ftp',
@@ -82,7 +82,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
-  SalesforceExport: 'salesforce',
+  MongodbImport: 'mongodb',
+  S3Import: 's3',
+  WrapperImport: 'wrapper',
+  AS2Import: 'as2',
+  RDBMSImport: 'rdbms',
+  SalesforceImport: 'salesforce',
 };
 
 // This method is used for only import/export/connection. Im not sure

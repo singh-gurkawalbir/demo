@@ -92,7 +92,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
           meta = meta.new;
         }
         // get edit form meta branch
-        else if (type === 'netsuite') {
+        else if (type === 'netsuite' && resourceType === 'exports') {
           meta = meta.netsuite[resource.netsuite.type];
         } else {
           meta = meta[type];

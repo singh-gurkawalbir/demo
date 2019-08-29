@@ -1,254 +1,76 @@
 export default {
-  'netsuite_da.rawOverride': {
-    type: 'text',
-    label: 'Netsuite_da raw Override',
+  'netsuite.restlet.recordType': {
+    label: 'Record Type',
+    mode: 'suitescript',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
+    required: true,
+    type: 'refreshableselect',
+    resourceType: 'recordTypes',
+    connectionId: r => r && r._connectionId,
   },
-  'netsuite_da.useRawOverride': {
-    type: 'checkbox',
-    label: 'Netsuite_da use Raw Override',
-    defaultValue: false,
-  },
-  'netsuite_da.isMigrated': {
-    type: 'checkbox',
-    label: 'Netsuite_da is Migrated',
-    defaultValue: false,
-  },
-  'netsuite_da.recordIdentifier': {
-    type: 'text',
-    label: 'Netsuite_da record Identifier',
-  },
-  'netsuite_da.batchSize': {
-    type: 'text',
-    label: 'Netsuite_da batch Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  'netsuite_da.recordType': {
-    type: 'text',
-    label: 'Netsuite_da record Type',
-  },
-  'netsuite_da.operation': {
-    type: 'select',
-    label: 'Netsuite_da operation',
+  'netsuite.operation': {
+    type: 'radiogroup',
+    label: 'Operation',
+    required: true,
     options: [
       {
         items: [
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
-          { label: 'Addupdate', value: 'addupdate' },
+          { label: 'Add or Update', value: 'addupdate' },
         ],
       },
     ],
   },
-  'netsuite_da.internalIdLookup.extract': {
-    type: 'text',
-    label: 'Netsuite_da internal Id Lookup extract',
+  'netsuite.ignoreExistingRecords': {
+    type: 'checkbox',
+    label: 'Ignore Existing Records',
+    visibleWhen: [
+      {
+        field: 'netsuite.operation',
+        is: ['add'],
+      },
+    ],
   },
-  'netsuite_da.internalIdLookup.searchField': {
-    type: 'text',
-    label: 'Netsuite_da internal Id Lookup search Field',
+  'netsuite.ignoreMissingRecords': {
+    type: 'checkbox',
+    label: 'Ignore Missing Records',
+    visibleWhen: [
+      {
+        field: 'netsuite.operation',
+        is: ['update'],
+      },
+    ],
   },
-  'netsuite_da.internalIdLookup.operator': {
+  'netsuite.suitescriptPremapFunction': {
     type: 'text',
-    label: 'Netsuite_da internal Id Lookup operator',
+    label: 'Pre Map ',
+    placeholder: 'Function Name',
   },
-  'netsuite_da.internalIdLookup.expression': {
+  'netsuite.suitescriptPremapFileInternalID': {
     type: 'text',
-    label: 'Netsuite_da internal Id Lookup expression',
+    placeholder: 'File Internal ID',
+    label: 'Pre Map File',
   },
-  'netsuite_da.hooks.preMap.fileInternalId': {
+  'netsuite.suitescriptPostmapFunction': {
     type: 'text',
-    label: 'Netsuite_da hooks pre Map file Internal Id',
+    label: 'Post Map',
+    placeholder: 'Function Name',
   },
-  'netsuite_da.hooks.preMap.function': {
+  'netsuite.suitescriptPostmapFileInternalID': {
     type: 'text',
-    label: 'Netsuite_da hooks pre Map function',
+    placeholder: 'File Internal ID',
+    label: 'Post Map File',
   },
-  'netsuite_da.hooks.preMap.configuration': {
+  'netsuite.suitescriptPostSubmitFunction': {
     type: 'text',
-    label: 'Netsuite_da hooks pre Map configuration',
+    label: 'Post Submit',
+    placeholder: 'Function Name',
   },
-  'netsuite_da.hooks.postMap.fileInternalId': {
+  'netsuite.suitescriptPostSubmitFileInternalID': {
     type: 'text',
-    label: 'Netsuite_da hooks post Map file Internal Id',
-  },
-  'netsuite_da.hooks.postMap.function': {
-    type: 'text',
-    label: 'Netsuite_da hooks post Map function',
-  },
-  'netsuite_da.hooks.postMap.configuration': {
-    type: 'text',
-    label: 'Netsuite_da hooks post Map configuration',
-  },
-  'netsuite_da.hooks.postSubmit.fileInternalId': {
-    type: 'text',
-    label: 'Netsuite_da hooks post Submit file Internal Id',
-  },
-  'netsuite_da.hooks.postSubmit.function': {
-    type: 'text',
-    label: 'Netsuite_da hooks post Submit function',
-  },
-  'netsuite_da.hooks.postSubmit.configuration': {
-    type: 'text',
-    label: 'Netsuite_da hooks post Submit configuration',
-  },
-  'netsuite_da.mapping.fields[*].extract': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] extract',
-  },
-  'netsuite_da.mapping.fields[*].extractDateFormat': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] extract Date Format',
-  },
-  'netsuite_da.mapping.fields[*].extractDateTimezone': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] extract Date Timezone',
-  },
-  'netsuite_da.mapping.fields[*].generate': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] generate',
-  },
-  'netsuite_da.mapping.fields[*].hardCodedValue': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] hard Coded Value',
-  },
-  'netsuite_da.mapping.fields[*].immutable': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] immutable',
-  },
-  'netsuite_da.mapping.fields[*].lookupName': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] lookup Name',
-  },
-  'netsuite_da.mapping.fields[*].dataType': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] data Type',
-  },
-  'netsuite_da.mapping.fields[*].internalId': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] internal Id',
-  },
-  'netsuite_da.mapping.fields[*].subRecordMapping': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] sub Record Mapping',
-  },
-  'netsuite_da.mapping.fields[*].discardIfEmpty': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] discard If Empty',
-  },
-  'netsuite_da.mapping.fields[*].conditional.lookupName': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] conditional lookup Name',
-  },
-  'netsuite_da.mapping.fields[*].conditional.when': {
-    type: 'text',
-    label: 'Netsuite_da mapping fields[*] conditional when',
-  },
-  'netsuite_da.mapping.lists[*].generate': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] generate',
-  },
-  'netsuite_da.mapping.lists[*].jsonPath': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] json Path',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].extract': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] extract',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].extractDateFormat': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] extract Date Format',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].extractDateTimezone': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] extract Date Timezone',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].generate': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] generate',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].hardCodedValue': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] hard Coded Value',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].immutable': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] immutable',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].lookupName': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] lookup Name',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].dataType': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] data Type',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].internalId': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] internal Id',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].isKey': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] is Key',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].subRecordMapping': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] sub Record Mapping',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].discardIfEmpty': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] discard If Empty',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].conditional.lookupName': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] conditional lookup Name',
-  },
-  'netsuite_da.mapping.lists[*].fields[*].conditional.when': {
-    type: 'text',
-    label: 'Netsuite_da mapping lists[*] fields[*] conditional when',
-  },
-  'netsuite_da.lookups[*].name': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] name',
-  },
-  'netsuite_da.lookups[*].map': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] map',
-  },
-  'netsuite_da.lookups[*].default': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] default',
-  },
-  'netsuite_da.lookups[*].useDefaultOnMultipleMatches': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] use Default On Multiple Matches',
-  },
-  'netsuite_da.lookups[*].recordType': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] record Type',
-  },
-  'netsuite_da.lookups[*].searchField': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] search Field',
-  },
-  'netsuite_da.lookups[*].expression': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] expression',
-  },
-  'netsuite_da.lookups[*].resultField': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] result Field',
-  },
-  'netsuite_da.lookups[*].includeInactive': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] include Inactive',
-  },
-  'netsuite_da.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'Netsuite_da lookups[*] allow Failures',
+    placeholder: 'File Internal ID',
+    label: 'Post Submit File',
   },
 };
