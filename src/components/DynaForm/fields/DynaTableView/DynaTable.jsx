@@ -128,17 +128,14 @@ export default function DynaTable(props) {
 
   // Convert the value to react form readable format
   const tableData = (valueData || []).map((value, index) => {
-    const arr = [];
-
-    Object.keys(value).forEach(field => {
-      const data = optionsMap.find(option => option.id === field);
+    const arr = optionsMap.map(op => {
       let modifiedOptions;
 
-      if (data && data.options && data.options.length) {
+      if ((op.options || {}).length) {
         modifiedOptions = {
           options: [
             {
-              items: data.options.map(opt => ({
+              items: op.options.map(opt => ({
                 label: opt.text || opt.label,
                 value: opt.id || opt.value,
               })),
@@ -147,7 +144,7 @@ export default function DynaTable(props) {
         };
       }
 
-      arr.push({ ...data, ...modifiedOptions, value: value[field] });
+      return { ...op, ...modifiedOptions, value: value[op.id] };
     });
 
     return { values: arr, row: index };
@@ -196,7 +193,7 @@ export default function DynaTable(props) {
             <Grid container spacing={2}>
               {optionsMap.map(r => (
                 <Grid key={r.id} item xs>
-                  <span className={classes.alignLeft}>{r.label}</span>
+                  <span className={classes.alignLeft}>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
