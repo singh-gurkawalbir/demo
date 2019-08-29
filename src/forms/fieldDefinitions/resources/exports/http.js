@@ -51,6 +51,7 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
+    required: true,
     options: [
       {
         items: [
