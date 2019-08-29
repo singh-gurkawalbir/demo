@@ -8,6 +8,9 @@ import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaLookupEditor from './DynaLookupEditor';
+import DynaKeyWithAction from './DynaKeyWithAction';
+import DynaHttpRequestBody from './DynaHttpRequestBody';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -21,9 +24,6 @@ import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
-import DynaLookupEditor from './DynaLookupEditor';
-import DynaKeyWithAction from './DynaKeyWithAction';
-import DynaHttpRequestBody from './DynaHttpRequestBody';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -40,7 +40,6 @@ export default {
   httprequestbody: DynaHttpRequestBody,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
-  keywithaction: DynaKeyWithAction,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
@@ -53,4 +52,5 @@ export default {
   apiidentifier: DynaApiIdentifier,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
+  keywithaction: DynaKeyWithAction,
 };
