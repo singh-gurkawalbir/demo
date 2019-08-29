@@ -1,6 +1,6 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     display: 'flex',
@@ -8,12 +8,13 @@ const styles = theme => ({
     alignItems: 'center',
     marginBottom: 5,
   },
-});
+}));
 
 function FooterActions(props) {
-  const { classes, children } = props;
+  const classes = usestyles();
+  const { children } = props;
 
   return <div className={classes.wrapper}>{children}</div>;
 }
 
-export default withStyles(styles)(FooterActions);
+export default FooterActions;

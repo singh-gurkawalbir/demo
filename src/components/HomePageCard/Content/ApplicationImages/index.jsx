@@ -1,6 +1,6 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   root: {
     height: 48,
     display: 'flex',
@@ -23,12 +23,13 @@ const styles = theme => ({
       },
     },
   },
-});
+}));
 
 function ApplicationImages(props) {
-  const { classes, children } = props;
+  const classes = usestyles();
+  const { children } = props;
 
   return <div className={classes.root}>{children}</div>;
 }
 
-export default withStyles(styles)(ApplicationImages);
+export default ApplicationImages;

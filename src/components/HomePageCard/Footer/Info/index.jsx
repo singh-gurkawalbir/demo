@@ -1,7 +1,7 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     display: 'flex',
@@ -13,10 +13,11 @@ const styles = theme => ({
     width: '100%',
     textTransform: 'capitalize',
   },
-});
+}));
 
 function Info(props) {
-  const { classes, variant, label } = props;
+  const classes = usestyles();
+  const { variant, label } = props;
 
   return (
     <div className={classes.wrapper}>
@@ -26,4 +27,4 @@ function Info(props) {
   );
 }
 
-export default withStyles(styles)(Info);
+export default Info;

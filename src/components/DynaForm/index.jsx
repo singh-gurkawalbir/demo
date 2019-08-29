@@ -29,7 +29,7 @@ import ButtonGroup from '../ButtonGroup';
   },
   actions: {
     textAlign: 'right',
-    padding: [[theme.spacing(2), theme.spacing(0), theme.spacing(0)]],
+    padding: theme.spacing(2, 0, 0),
   },
 }))
 export default class DynaForm extends Component {

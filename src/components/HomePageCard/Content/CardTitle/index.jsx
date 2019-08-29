@@ -1,15 +1,16 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = {
+const usestyles = makeStyles({
   root: {
     paddingBottom: 5,
   },
-};
+});
 
 function CardTitle(props) {
-  const { classes, children } = props;
+  const classes = usestyles();
+  const { children } = props;
 
   return <div className={classes.root}>{children}</div>;
 }
 
-export default withStyles(styles)(CardTitle);
+export default CardTitle;

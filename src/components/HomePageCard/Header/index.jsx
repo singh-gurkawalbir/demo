@@ -1,7 +1,7 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 
-const styles = {
+const usestyles = makeStyles({
   wrapper: {
     width: '100%',
     height: 50,
@@ -9,12 +9,13 @@ const styles = {
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-};
+});
 
 function Header(props) {
-  const { classes, children } = props;
+  const classes = usestyles();
+  const { children } = props;
 
   return <div className={classNames(classes.wrapper)}>{children}</div>;
 }
 
-export default withStyles(styles)(Header);
+export default Header;

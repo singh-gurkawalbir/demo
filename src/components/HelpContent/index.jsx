@@ -1,8 +1,8 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   wrapper: {
     padding: '12px',
     minWidth: '212px',
@@ -57,17 +57,18 @@ const styles = theme => ({
       marginRight: '0px',
     },
   },
-});
+}));
 
 function HelpContent(props) {
-  const { classes, children, title, caption } = props;
+  const classes = usestyles();
+  const { children, title, caption } = props;
 
   return (
     <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
-      <Typography variant="caption">{caption}</Typography>
+      {caption && <Typography variant="caption">{caption}</Typography>}
       <div className={classes.content}>{children}</div>
       <div className={classes.action}>
         <Typography className={classes.actionTitle}>
@@ -86,4 +87,4 @@ function HelpContent(props) {
   );
 }
 
-export default withStyles(styles)(HelpContent);
+export default HelpContent;

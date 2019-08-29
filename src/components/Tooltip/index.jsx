@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   arrow: {
     position: 'absolute',
     fontSize: 7,
@@ -118,15 +118,15 @@ const styles = theme => ({
       },
     },
   },
-});
+}));
 
 function Tooltip(props) {
+  const classes = usestyles();
   const {
     id,
     open,
     anchorEl,
     placement = 'bottom-end',
-    classes,
     children,
     onClose = () => {}, // default to noop.
     className,
@@ -165,4 +165,4 @@ function Tooltip(props) {
   );
 }
 
-export default withStyles(styles)(Tooltip);
+export default Tooltip;

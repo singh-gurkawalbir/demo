@@ -1,8 +1,8 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 
-const styles = () => ({
+const usestyles = makeStyles({
   left: { marginRight: 8, marginLeft: -8 },
   right: { marginLeft: 8, marginRight: -8 },
   root: {
@@ -29,7 +29,8 @@ const styledChildren = (children, classes) => {
 };
 
 function IconButton(props) {
-  const { children, classes, ...rest } = props;
+  const classes = usestyles();
+  const { children, ...rest } = props;
 
   return (
     <Button {...rest} className={classes.root}>
@@ -38,4 +39,4 @@ function IconButton(props) {
   );
 }
 
-export default withStyles(styles)(IconButton);
+export default IconButton;

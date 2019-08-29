@@ -28,7 +28,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
       </Header>
       <Content>
         <CardTitle>
-          <Typography variant="h3" component="h3">
+          <Typography variant="h3" >
               Magento & NetSuite 2018 Sales Report
           </Typography>
         </CardTitle>
@@ -57,7 +57,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
       </Header>
         <Content>
         <CardTitle>
-          <Typography variant="h3" component="h3">
+          <Typography variant="h3" >
               Ftp & Salesforce 2018 Sales Report
           </Typography>
         </CardTitle>
@@ -86,7 +86,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
       </Header>
         <Content>
         <CardTitle>
-          <Typography variant="h3" component="h3">
+          <Typography variant="h3" >
               Http & postgres sql 2018 Sales Report
           </Typography>
         </CardTitle>

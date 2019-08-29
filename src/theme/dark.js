@@ -189,7 +189,7 @@ export default {
     },
     MuiMenuItem: {
       root: {
-        borderBottomColor: colors.celigoNeutral3,
+        borderBottomColor: colors.celigoNeutral5,
         '&$selected': {
           backgroundColor: darken(colors.celigoNeutral7, 0.6),
           '&:hover': {

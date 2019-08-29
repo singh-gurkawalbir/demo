@@ -1,6 +1,6 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     display: 'inline-flex',
@@ -50,10 +50,11 @@ const styles = theme => ({
       maxWidth: '100%',
     },
   },
-});
+}));
 
 function Tag(props) {
-  const { classes, variant } = props;
+  const classes = usestyles();
+  const { variant } = props;
 
   return (
     <div className={classes.wrapper}>
@@ -62,4 +63,4 @@ function Tag(props) {
   );
 }
 
-export default withStyles(styles)(Tag);
+export default Tag;

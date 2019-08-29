@@ -2,14 +2,14 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import classNames from 'classnames';
-import { fade, withStyles } from '@material-ui/core/styles';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
 import InfoIcon from '../icons/InfoIcon';
 import ErrorIcon from '../icons/ErrorIcon';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   root: {
     position: 'relative',
     left: '0px',
@@ -78,7 +78,7 @@ const styles = theme => ({
       color: theme.palette.text.primary,
     },
   },
-});
+}));
 const variantIcon = {
   success: SuccessIcon,
   warning: WarningIcon,
@@ -87,9 +87,9 @@ const variantIcon = {
 };
 
 function NotificationToaster(props) {
+  const classes = usestyles();
   const {
     className,
-    classes,
     message,
     children,
     onClose,
@@ -127,4 +127,4 @@ function NotificationToaster(props) {
   );
 }
 
-export default withStyles(styles)(NotificationToaster);
+export default NotificationToaster;

@@ -1,8 +1,8 @@
 import Paper from '@material-ui/core/Paper';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
@@ -31,10 +31,11 @@ const styles = theme => ({
   center: {
     textAlign: 'center',
   },
-});
+}));
 
 function HomePageCardContainer(props) {
-  const { classes, children } = props;
+  const classes = usestyles();
+  const { children } = props;
 
   return (
     <Paper className={classNames(classes.wrapper)} elevation={0}>
@@ -43,4 +44,4 @@ function HomePageCardContainer(props) {
   );
 }
 
-export default withStyles(styles)(HomePageCardContainer);
+export default HomePageCardContainer;

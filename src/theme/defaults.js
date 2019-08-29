@@ -1,4 +1,4 @@
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
 
 export default {
@@ -48,12 +48,14 @@ export default {
       },
       h1: {
         fontSize: '48px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '50px',
         letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '40px',
         letterSpacing: '-0.5px',
@@ -61,6 +63,7 @@ export default {
 
       h3: {
         fontSize: '24px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '26px',
         letterSpacing: 'normal',
@@ -103,6 +106,9 @@ export default {
       },
     },
     MuiButton: {
+      root: {
+        fontFamily: 'Roboto500, sans-serif',
+      },
       // text Buttons
       text: {
         letterSpacing: '1px',

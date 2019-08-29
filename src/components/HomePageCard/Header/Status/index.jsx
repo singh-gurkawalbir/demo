@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   root: {
     height: 48,
     display: 'flex',
@@ -24,10 +24,11 @@ const styles = theme => ({
   icon: {
     fontSize: 20,
   },
-});
+}));
 
 function Status(props) {
-  const { classes, children, count, label } = props;
+  const classes = usestyles();
+  const { children, count, label } = props;
 
   return (
     <div className={classNames(classes.root)}>
@@ -43,4 +44,4 @@ function Status(props) {
   );
 }
 
-export default withStyles(styles)(Status);
+export default Status;
