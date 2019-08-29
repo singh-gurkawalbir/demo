@@ -11,6 +11,7 @@ import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
+import openExternalUrl from '../../../utils/window';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -35,7 +36,6 @@ function* createPayload({ values, resourceId }) {
 }
 
 export function* downloadDebugLogs({ id }) {
-  const options = 'scrollbars=1,height=600,width=800';
   let url = `/api/connections/${id}/debug`;
   const additionalHeaders = yield call(getAdditionalHeaders, url);
 
@@ -43,23 +43,7 @@ export function* downloadDebugLogs({ id }) {
     url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
   }
 
-  const win = window.open(url, '_blank', options);
-
-  if (!win || win.closed || typeof win.closed === 'undefined') {
-    // POPUP BLOCKED
-    // eslint-disable-next-line no-alert
-    window.alert('POPUP blocked');
-
-    try {
-      win.close();
-    } catch (ex) {
-      throw ex;
-    }
-
-    return false;
-  }
-
-  win.focus();
+  yield call(openExternalUrl, { url });
 }
 
 export function* configureDebugger({ id, timeInMins }) {
