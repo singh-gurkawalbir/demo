@@ -17,6 +17,7 @@ import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
@@ -31,6 +32,8 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  subsidiaryMapWidget: DynaStaticMap,
+  csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   multiselect: DynaMultiSelect,
