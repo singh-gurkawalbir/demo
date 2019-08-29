@@ -124,7 +124,7 @@ describe(`configure debugger action`, () => {
 
     state = reducer(
       state,
-      actions.resource.connections.updateConnection('id1', '456', onClose)
+      actions.resource.connections.update('id1', '456', onClose)
     );
     const resCollection = [{ _id: 'id1', name: 'rob', debugDate: '456' }];
 
@@ -140,7 +140,7 @@ describe(`configure debugger action`, () => {
 
     state = reducer(
       state,
-      actions.resource.connections.updateConnection('id2', '456', onClose)
+      actions.resource.connections.update('id2', '456', onClose)
     );
     expect(state.connections).toEqual(collection);
   });

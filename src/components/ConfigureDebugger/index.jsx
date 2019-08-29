@@ -6,7 +6,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -14,9 +13,10 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import { useState } from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   title: {
     marginLeft: 35,
     padding: theme.spacing(2),
@@ -30,19 +30,19 @@ const styles = theme => ({
     right: '10px',
     top: '10px',
   },
-});
+}));
 
-function ConfigureDebugger(props) {
-  const { id, classes, width = '70vw', name, debugDate, onClose } = props;
+export default function ConfigureDebugger(props) {
+  const classes = useStyles(props);
+  const { id, name, debugDate, onClose } = props;
   const [debugValue, setDebugValue] = useState(0);
   const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
   const handleOnSubmit = e => {
     e.preventDefault();
     setSaveLabel('Saving');
-    dispatch(
-      actions.resource.connections.configureDebugger(id, debugValue, onClose)
-    );
+    dispatch(actions.resource.connections.configureDebugger(id, debugValue));
+    onClose();
   };
 
   let minutes;
@@ -67,7 +67,7 @@ function ConfigureDebugger(props) {
       <DialogTitle>
         <Typography>{name}</Typography>
       </DialogTitle>
-      <DialogContent style={{ width }}>
+      <DialogContent style={{ width: '70vw' }}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Debug Duration:</FormLabel>
@@ -107,5 +107,3 @@ function ConfigureDebugger(props) {
     </Dialog>
   );
 }
-
-export default withStyles(styles)(ConfigureDebugger);

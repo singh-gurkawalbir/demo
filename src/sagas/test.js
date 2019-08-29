@@ -335,15 +335,14 @@ describe(`apiCallWithRetry saga`, () => {
   });
 });
 
-describe('configureDebugger(id, timeInMins, onClose) saga', () => {
+describe('configureDebugger(id, timeInMins) saga', () => {
   const id = '123';
   const timeInMins = '123';
-  const onClose = () => {};
 
   test('should succeed on successful api call', () => {
     // assign
     const saga = configureDebugger(
-      actions.resource.connections.configureDebugger(id, timeInMins, onClose)
+      actions.resource.connections.configureDebugger(id, timeInMins)
     );
     const path = `/connections/${id}`;
     const callEffect = saga.next().value;
@@ -375,13 +374,13 @@ describe('configureDebugger(id, timeInMins, onClose) saga', () => {
     const effect = saga.next().value;
 
     expect(effect).toEqual(
-      put(actions.resource.connections.updateConnection(id, debugTime, onClose))
+      put(actions.resource.connections.update(id, debugTime))
     );
     expect(saga.next().done).toBe(true);
   });
   test('should return undefined if api call fails', () => {
     const saga = configureDebugger(
-      actions.resource.connections.configureDebugger(id, timeInMins, onClose)
+      actions.resource.connections.configureDebugger(id, timeInMins)
     );
     const path = `/connections/${id}`;
     const callEffect = saga.next().value;

@@ -62,7 +62,7 @@ export function* downloadDebugLogs({ id }) {
   win.focus();
 }
 
-export function* configureDebugger({ id, timeInMins, onClose }) {
+export function* configureDebugger({ id, timeInMins }) {
   const path = `/connections/${id}`;
   let debugTime = moment()
     .add('1', 'h')
@@ -96,9 +96,7 @@ export function* configureDebugger({ id, timeInMins, onClose }) {
     return undefined;
   }
 
-  yield put(
-    actions.resource.connections.updateConnection(id, debugTime, onClose)
-  );
+  yield put(actions.resource.connections.update(id, debugTime));
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {

@@ -34,15 +34,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const {
-    id,
-    type,
-    resource,
-    collection,
-    resourceType,
-    debugDate,
-    onClose,
-  } = action;
+  const { id, type, resource, collection, resourceType, debugDate } = action;
   const newState = { ...state };
   let index;
 
@@ -68,14 +60,12 @@ export default (state = {}, action) => {
   }
 
   switch (type) {
-    case actionTypes.RESOURCE.UPDATE_CONNECTION:
+    case actionTypes.RESOURCE.CONNECTION_UPDATE:
       index = newState.connections.findIndex(r => r._id === id);
 
       if (newState.connections[index]) {
         newState.connections[index].debugDate = debugDate;
       }
-
-      onClose();
 
       return newState;
 
