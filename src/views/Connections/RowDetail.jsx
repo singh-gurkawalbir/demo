@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
@@ -12,7 +12,7 @@ import ResourceReferences from '../../components/ResourceReferences';
 import ConfigureDebugger from '../../components/ConfigureDebugger';
 import AuditLogDialog from '../../components/AuditLog/AuditLogDialog';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(12),
     color: theme.palette.text.secondary,
@@ -24,11 +24,12 @@ const styles = theme => ({
     flexBasis: '66.66%',
     flexShrink: 0,
   },
-});
+}));
 
-function ConnectionsData(props) {
+export default function ConnectionsData(props) {
   const [showAuditLogDialog, setShowAuditLogDialog] = useState(false);
-  const { classes, item } = props;
+  const classes = useStyles(props);
+  const { item } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState(null);
   const [debugId, setDebugId] = useState(null);
@@ -155,6 +156,20 @@ function ConnectionsData(props) {
           }
         )
       );
+    } else if (item.type === 'salesforce') {
+      dispatch(
+        actions.metadata.request(
+          item._id,
+          'sObjectTypes',
+          'webservices',
+          '',
+          '',
+          '',
+          {
+            refreshCache: true,
+          }
+        )
+      );
     }
   };
 
@@ -239,5 +254,3 @@ function ConnectionsData(props) {
     </Fragment>
   );
 }
-
-export default withStyles(styles)(ConnectionsData);
