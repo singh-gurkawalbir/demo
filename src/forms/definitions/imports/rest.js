@@ -13,19 +13,49 @@ export default {
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
     { fieldId: 'rest.responseIdPath' },
-    { fieldId: 'rest.createNewData' },
+    {
+      id: 'createNewData',
+      type: 'labeltitle',
+      label: 'Create New Data',
+      visibleWhen: [
+        {
+          field: 'rest.compositeType',
+          is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'rest.compositeMethodCreate' },
     { fieldId: 'rest.relativeUriCreate' },
     { fieldId: 'rest.successPathCreate' },
     { fieldId: 'rest.successValuesCreate' },
     { fieldId: 'rest.responseIdPathCreate' },
-    { fieldId: 'rest.upateExistingData' },
+    {
+      id: 'upateExistingData',
+      type: 'labeltitle',
+      label: 'Upate Existing Data',
+      visibleWhen: [
+        {
+          field: 'rest.compositeType',
+          is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'rest.compositeMethodUpdate' },
     { fieldId: 'rest.relativeUriUpdate' },
     { fieldId: 'rest.successPathUpdate' },
     { fieldId: 'rest.successValuesUpdate' },
     { fieldId: 'rest.responseIdPathUpdate' },
-    { fieldId: 'rest.ignoreExistingData' },
+    {
+      id: 'ignoreExistingData',
+      type: 'labeltitle',
+      label: 'Ignore Existing Data',
+      visibleWhen: [
+        {
+          field: 'rest.compositeType',
+          is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'rest.existingDataId' },
     {
       id: 'sampleData',
@@ -38,8 +68,8 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'rest.parentOption' },
-    { fieldId: 'rest.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {

@@ -15,16 +15,16 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'as2.parentOption' },
-    { fieldId: 'as2.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
       fields: [
-        { fieldId: 'as2.compressFiles' },
-        { fieldId: 'as2.compressionFormat' },
+        { fieldId: 'file.compressFiles' },
+        { fieldId: 'file.compressionFormat' },
         { fieldId: 'as2.maxRetries' },
       ],
     },

@@ -15,8 +15,8 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'rdbms.parentOption' },
-    { fieldId: 'rdbms.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {

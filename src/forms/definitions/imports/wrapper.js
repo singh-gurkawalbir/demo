@@ -19,8 +19,8 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'wrapper.parentOption' },
-    { fieldId: 'wrapper.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {

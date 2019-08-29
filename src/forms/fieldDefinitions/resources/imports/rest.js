@@ -1,7 +1,8 @@
 export default {
   'rest.method': {
     type: 'radiogroup',
-    label: 'rest request Media Type',
+    label: 'Method',
+    required: true,
     options: [
       {
         items: [
@@ -91,16 +92,6 @@ export default {
       },
     ],
   },
-  'rest.createNewData': {
-    type: 'labeltitle',
-    label: 'Create New Data',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
-      },
-    ],
-  },
   'rest.compositeMethodCreate': {
     type: 'select',
     label: 'HTTP Method',
@@ -162,16 +153,6 @@ export default {
       {
         field: 'rest.compositeType',
         is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
-      },
-    ],
-  },
-  'rest.upateExistingData': {
-    type: 'labeltitle',
-    label: 'Upate Existing Data',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -239,16 +220,6 @@ export default {
       },
     ],
   },
-  'rest.ignoreExistingData': {
-    type: 'labeltitle',
-    label: 'Ignore Existing Data',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
-      },
-    ],
-  },
   'rest.existingDataId': {
     type: 'text',
     label: 'Existing Data Id',
@@ -263,32 +234,6 @@ export default {
   'rest.ifSoPleasePasteItHere': {
     type: 'textarea',
     label: 'If so,please paste it here',
-  },
-  'rest.parentOption': {
-    type: 'radiogroup',
-    label:
-      'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'false',
-    options: [
-      {
-        items: [
-          { label: 'Yes(Advanced)', value: 'true' },
-          { label: 'No', value: 'false' },
-        ],
-      },
-    ],
-  },
-  'rest.childRecords': {
-    type: 'text',
-    label:
-      'if records being processed are represented by Objects then please specify the JSON path to be child records',
-    placeholder: 'Optional. Not needed for row/array formats.',
-    visibleWhen: [
-      {
-        field: 'rest.parentOption',
-        is: ['true'],
-      },
-    ],
   },
   'rest.concurrencyIdLockTemplate': {
     type: 'textarea',

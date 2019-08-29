@@ -21,8 +21,8 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'mongodb.parentOption' },
-    { fieldId: 'mongodb.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {

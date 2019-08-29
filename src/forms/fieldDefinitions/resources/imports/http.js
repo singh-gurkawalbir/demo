@@ -1,30 +1,4 @@
 export default {
-  'http.parentOption': {
-    type: 'radiogroup',
-    label:
-      'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'false',
-    options: [
-      {
-        items: [
-          { label: 'Yes(Advanced)', value: 'true' },
-          { label: 'No', value: 'false' },
-        ],
-      },
-    ],
-  },
-  'http.childRecords': {
-    type: 'text',
-    label:
-      'if records being processed are represented by Objects then please specify the JSON path to be child records',
-    placeholder: 'Optional. Not needed for row/array formats.',
-    visibleWhen: [
-      {
-        field: 'http.parentOption',
-        is: ['true'],
-      },
-    ],
-  },
   'http.method': {
     type: 'radiogroup',
     label: 'Http request Media Type',
@@ -162,16 +136,6 @@ export default {
       },
     ],
   },
-  'http.createNewData': {
-    type: 'labeltitle',
-    label: 'Create New Data',
-    visibleWhen: [
-      {
-        field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
-      },
-    ],
-  },
   'http.compositeMethodCreate': {
     type: 'select',
     label: 'HTTP Method',
@@ -223,16 +187,6 @@ export default {
       },
     ],
   },
-  'http.upateExistingData': {
-    type: 'labeltitle',
-    label: 'Upate Existing Data',
-    visibleWhen: [
-      {
-        field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
-      },
-    ],
-  },
   'http.compositeMethodUpdate': {
     type: 'select',
     label: 'HTTP Method',
@@ -281,16 +235,6 @@ export default {
       {
         field: 'http.compositeType',
         is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
-      },
-    ],
-  },
-  'http.ignoreExistingData': {
-    type: 'labeltitle',
-    label: 'Ignore Existing Data',
-    visibleWhen: [
-      {
-        field: 'http.compositeType',
-        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
       },
     ],
   },
@@ -379,32 +323,6 @@ export default {
       {
         field: 'http.requestMediaType',
         is: ['csv'],
-      },
-    ],
-  },
-  'http.parentOptionMapping': {
-    type: 'radiogroup',
-    label:
-      'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: 'false',
-    options: [
-      {
-        items: [
-          { label: 'Yes(Advanced)', value: 'true' },
-          { label: 'No', value: 'false' },
-        ],
-      },
-    ],
-  },
-  'http.childRecordsMapping': {
-    type: 'text',
-    label:
-      'if records being processed are represented by Objects then please specify the JSON path to be child records',
-    placeholder: 'Optional. Not needed for row/array formats.',
-    visibleWhen: [
-      {
-        field: 'http.parentOptionMapping',
-        is: ['true'],
       },
     ],
   },

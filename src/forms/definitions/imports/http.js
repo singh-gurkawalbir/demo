@@ -6,8 +6,8 @@ export default {
       type: 'labeltitle',
       label: 'What would you like the data imported?',
     },
-    { fieldId: 'http.parentOption' },
-    { fieldId: 'http.childRecords' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
     { fieldId: 'http.method' },
     { fieldId: 'http.headers' },
     { fieldId: 'http.requestMediaType' },
@@ -19,17 +19,47 @@ export default {
     { fieldId: 'http.responsePath' },
     { fieldId: 'http.errorPath' },
     { fieldId: 'http.batchSizeLimit' },
-    { fieldId: 'http.createNewData' },
+    {
+      id: 'createNewData',
+      type: 'labeltitle',
+      label: 'Create New Data',
+      visibleWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'http.compositeMethodCreate' },
     { fieldId: 'http.relativeUriCreate' },
     { fieldId: 'http.responseIdPathCreate' },
     { fieldId: 'http.responsePathCreate' },
-    { fieldId: 'http.upateExistingData' },
+    {
+      id: 'upateExistingData',
+      type: 'labeltitle',
+      label: 'Upate Existing Data',
+      visibleWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'http.compositeMethodUpdate' },
     { fieldId: 'http.relativeUriUpdate' },
     { fieldId: 'http.responseIdPathUpdate' },
     { fieldId: 'http.responsePathUpdate' },
-    { fieldId: 'http.ignoreExistingData' },
+    {
+      id: 'ignoreExistingData',
+      type: 'labeltitle',
+      label: 'Ignore Existing Data',
+      visibleWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+        },
+      ],
+    },
     { fieldId: 'http.existingDataId' },
     {
       id: 'mediatypeInformation',
@@ -47,8 +77,8 @@ export default {
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'http.parentOptionMapping' },
-    { fieldId: 'http.childRecordsMapping' },
+    { fieldId: 'file.parentOption' },
+    { fieldId: 'file.childRecords' },
   ],
   fieldSets: [
     {

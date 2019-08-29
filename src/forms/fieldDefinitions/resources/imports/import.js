@@ -298,69 +298,234 @@ export default {
   },
   // #endregion parsers[*]
   // #region hooks
+  hookType: {
+    type: 'radiogroup',
+    label: 'Hook Type',
+    defaultValue: 'script',
+    options: [
+      {
+        items: [
+          { label: 'Script', value: 'script' },
+          { label: 'Stack', value: 'stack' },
+        ],
+      },
+    ],
+  },
   'hooks.preMap.function': {
     type: 'text',
-    label: 'Hooks pre Map function',
+    label: 'Pre Map',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'hooks.preMap._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.preMap._stackId',
+        isNot: [''],
+      },
+    ],
   },
   'hooks.preMap._scriptId': {
-    type: 'text',
-    label: 'Hooks pre Map _script Id',
+    type: 'selectresource',
+    label: 'Pre Map Script',
+    resourceType: 'scripts',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.preMap._stackId': {
-    type: 'text',
-    label: 'Hooks pre Map _stack Id',
+    label: 'Pre Map Stack',
+    type: 'selectresource',
+    resourceType: 'stacks',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.preMap.configuration': {
     type: 'text',
-    label: 'Hooks pre Map configuration',
+    label: 'Pre Map',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postMap.function': {
     type: 'text',
-    label: 'Hooks post Map function',
+    label: 'Post Map',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'hooks.postMap._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postMap._stackId',
+        isNot: [''],
+      },
+    ],
   },
   'hooks.postMap._scriptId': {
-    type: 'text',
-    label: 'Hooks post Map _script Id',
+    label: 'Post Map Script',
+    type: 'selectresource',
+    resourceType: 'scripts',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.postMap._stackId': {
-    type: 'text',
-    label: 'Hooks post Map _stack Id',
+    label: 'Post Map Stack',
+    type: 'selectresource',
+    resourceType: 'stacks',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postMap.configuration': {
     type: 'text',
-    label: 'Hooks post Map configuration',
+    label: 'Post Map',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postSubmit.function': {
     type: 'text',
-    label: 'Hooks post Submit function',
+    label: 'Post Submit',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'hooks.postSubmit._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postSubmit._stackId',
+        isNot: [''],
+      },
+    ],
   },
   'hooks.postSubmit._scriptId': {
-    type: 'text',
-    label: 'Hooks post Submit _script Id',
+    label: 'Post Submit Script',
+    type: 'selectresource',
+    resourceType: 'scripts',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.postSubmit._stackId': {
-    type: 'text',
-    label: 'Hooks post Submit _stack Id',
+    label: 'Post Submit Stack',
+    type: 'selectresource',
+    resourceType: 'stacks',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postSubmit.configuration': {
     type: 'text',
-    label: 'Hooks post Submit configuration',
+    label: 'Post Submit',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postAggregate.function': {
     type: 'text',
-    label: 'Hooks post Aggregate function',
+    label: 'Post Aggregate',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'hooks.postAggregate._scriptId',
+        isNot: [''],
+      },
+      {
+        field: 'hooks.postAggregate._stackId',
+        isNot: [''],
+      },
+    ],
   },
   'hooks.postAggregate._scriptId': {
-    type: 'text',
-    label: 'Hooks post Aggregate _script Id',
+    type: 'selectresource',
+    resourceType: 'scripts',
+    label: 'Post Aggregate Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.postAggregate._stackId': {
-    type: 'text',
-    label: 'Hooks post Aggregate _stack Id',
+    type: 'selectresource',
+    resourceType: 'stacks',
+    label: 'Post Aggregate Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   'hooks.postAggregate.configuration': {
     type: 'text',
-    label: 'Hooks post Aggregate configuration',
+    label: 'Post Aggregate',
+    placeholder: 'Function Name',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
   // #endregion hooks
   // #region responseTransform
