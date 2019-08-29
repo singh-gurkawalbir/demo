@@ -123,9 +123,7 @@ export function agentAccessToken(state, id) {
 }
 
 export function stackSystemToken(state, id) {
-  if (!state) return {};
-
-  return fromSession.stackSystemToken(state.session, id);
+  return fromSession.stackSystemToken(state && state.session, id);
 }
 
 export function editor(state, id) {
@@ -416,10 +414,6 @@ export function processors(state) {
 
 export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
-}
-
-export function getStackShareCollection(state) {
-  return fromData.getStackShareCollection(state && state.data);
 }
 
 // #endregion

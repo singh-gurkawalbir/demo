@@ -80,8 +80,7 @@ function StackShareDialog(props) {
             variant="contained"
             color="primary"
             type="submit"
-            className={classes.submit}
-            value="Invite">
+            className={classes.submit}>
             Invite
           </Button>
         </form>

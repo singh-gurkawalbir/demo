@@ -3,21 +3,14 @@ import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import actions from '../../actions';
 import { confirmDialog } from '../../components/ConfirmDialog';
 
-const styles = theme => ({
-  deleteIcon: {
-    margin: theme.spacing(1),
-    fontSize: 32,
-  },
-});
-
-function ShareStackUserDetail(props) {
-  const { classes, user } = props;
+export default function ShareStackUserDetail(props) {
+  const { user } = props;
   const dispatch = useDispatch();
   const handleDeleteUserClick = () => {
     confirmDialog({
@@ -30,7 +23,7 @@ function ShareStackUserDetail(props) {
         {
           label: 'Yes',
           onClick: () => {
-            dispatch(actions.stack.deleteStackShareUser(user._id));
+            dispatch(actions.resource.delete('sshares', user._id));
           },
         },
       ],
@@ -77,13 +70,10 @@ function ShareStackUserDetail(props) {
         )}
       </TableCell>
       <TableCell>
-        <DeleteIcon
-          className={classes.deleteIcon}
-          onClick={handleDeleteUserClick}
-        />
+        <IconButton aria-label="delete" onClick={handleDeleteUserClick}>
+          <DeleteIcon />
+        </IconButton>
       </TableCell>
     </TableRow>
   );
 }
-
-export default withStyles(styles)(ShareStackUserDetail);

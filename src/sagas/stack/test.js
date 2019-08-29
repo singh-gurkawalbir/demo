@@ -5,11 +5,10 @@ import { apiCallWithRetry } from '../index';
 import {
   displayToken,
   generateToken,
-  getStackShareCollection,
-  deleteStackShareUser,
   inviteStackShareUser,
   toggleUserStackSharing,
 } from './';
+import { getResourceCollection } from '../resources/index';
 
 describe('system token sagas', () => {
   const tokenId = 'something';
@@ -81,35 +80,8 @@ describe('system token sagas', () => {
           message: 'Deleting Stack Token',
         })
       );
-      expect(saga.next().value).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'GET',
-          },
-          message: 'Generating Stack Token',
-        })
-      );
-      expect(
-        saga.next({ _id: tokenId, token: tokenInPlainText }).value
-      ).toEqual(
-        put(
-          actions.stack.tokenReceived({
-            _id: tokenId,
-            token: tokenInPlainText,
-          })
-        )
-      );
-      expect(saga.next().value).toEqual(
-        delay(process.env.MASK_SENSITIVE_INFO_DELAY)
-      );
-      expect(saga.next().value).toEqual(
-        put(
-          actions.stack.maskToken({
-            _id: tokenId,
-          })
-        )
-      );
+      expect(saga.next().value).toEqual(call(displayToken, { id: tokenId }));
+
       expect(saga.next().done).toEqual(true);
     });
     test('should handle api error properly while deleting or generating token', () => {
@@ -124,111 +96,12 @@ describe('system token sagas', () => {
           message: 'Deleting Stack Token',
         })
       );
-      expect(saga.next().value).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'GET',
-          },
-          message: 'Generating Stack Token',
-        })
-      );
       expect(saga.throw(new Error()).value).toEqual(undefined);
       expect(saga.next().done).toEqual(true);
     });
   });
 });
 describe('stack sharing sagas', () => {
-  describe('getStackShareCollection saga', () => {
-    const path = '/sshares';
-    const mockStackShareCollection = [{ id: 1 }, { id: 2 }];
-
-    test('should succeed on successful api call', () => {
-      const saga = getStackShareCollection();
-      const callEffect = saga.next().value;
-
-      expect(callEffect).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'GET',
-          },
-          message: 'Getting Stack Share Collection',
-        })
-      );
-      const effect = saga.next(mockStackShareCollection).value;
-
-      expect(effect).toEqual(
-        put(
-          actions.stack.receivedStackShareCollection({
-            collection: mockStackShareCollection,
-          })
-        )
-      );
-      expect(saga.next().done).toBe(true);
-    });
-    test('should return undefined if api call fails', () => {
-      const saga = getStackShareCollection();
-      const callEffect = saga.next().value;
-
-      expect(callEffect).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'GET',
-          },
-          message: 'Getting Stack Share Collection',
-        })
-      );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
-    });
-  });
-  describe('deleteStackShareUser saga', () => {
-    const userId = '123';
-    const path = `/sshares/${userId}`;
-
-    test('should succeed on successful api call', () => {
-      const saga = deleteStackShareUser({ userId });
-      const callEffect = saga.next().value;
-
-      expect(callEffect).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'DELETE',
-          },
-          message: 'Deleting Stack Share User',
-        })
-      );
-      const effect = saga.next().value;
-
-      expect(effect).toEqual(
-        put(
-          actions.stack.deletedStackShareUser({
-            userId,
-          })
-        )
-      );
-      expect(saga.next().done).toBe(true);
-    });
-    test('should return undefined if api call fails', () => {
-      const saga = deleteStackShareUser({ userId });
-      const callEffect = saga.next().value;
-
-      expect(callEffect).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts: {
-            method: 'DELETE',
-          },
-          message: 'Deleting Stack Share User',
-        })
-      );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
-    });
-  });
   describe('inviteStackShareUser sagas', () => {
     const stackId = '123';
     const email = 'abc@celigo.com';
@@ -250,7 +123,9 @@ describe('stack sharing sagas', () => {
       );
       const effect = saga.next().value;
 
-      expect(effect).toEqual(call(getStackShareCollection));
+      expect(effect).toEqual(
+        call(getResourceCollection, { resourceType: 'sshares' })
+      );
       expect(saga.next().done).toBe(true);
     });
     test('should return undefined if api call fails', () => {

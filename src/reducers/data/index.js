@@ -7,7 +7,6 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
-import stackShares, * as fromStackShares from './stackShares';
 
 export default combineReducers({
   resources,
@@ -16,7 +15,6 @@ export default combineReducers({
   accessTokens,
   jobs,
   suiteScript,
-  stackShares,
 });
 
 // #region resource selectors
@@ -159,10 +157,6 @@ export function suiteScriptTiles(state, connectionId) {
 
 export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
-}
-
-export function getStackShareCollection(state) {
-  return fromStackShares.getStackShareCollection(state && state.stackShares);
 }
 
 export function flowJobsPagingDetails(state) {

@@ -6,17 +6,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { IconButton } from '@material-ui/core';
 import ShareStackUserDetail from './ShareStackUserDetail';
 import actions from '../../actions';
 
 const styles = theme => ({
   root: {
-    width: '98%',
+    width: `calc(100% - ${theme.spacing(1)}px)`,
     marginLeft: theme.spacing(1),
     overflowX: 'auto',
-  },
-  refreshIcon: {
-    marginLeft: theme.spacing(2),
   },
   table: {
     marginTop: theme.spacing(3),
@@ -27,7 +25,7 @@ function ShareStackUserTable(props) {
   const { classes, stackShareCollection } = props;
   const dispatch = useDispatch();
   const handleRefreshClick = () =>
-    dispatch(actions.stack.requestStackShareCollection());
+    dispatch(actions.resource.requestCollection('sshares'));
 
   return (
     <div className={classes.root}>
@@ -37,10 +35,9 @@ function ShareStackUserTable(props) {
             <TableCell>Currently Shared With</TableCell>
             <TableCell>
               Status
-              <RefreshIcon
-                className={classes.refreshIcon}
-                onClick={handleRefreshClick}
-              />
+              <IconButton onClick={handleRefreshClick}>
+                <RefreshIcon />
+              </IconButton>
             </TableCell>
             <TableCell>Off/On</TableCell>
             <TableCell>Remove</TableCell>

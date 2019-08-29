@@ -2,6 +2,7 @@ import { call, put, takeEvery, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { getResourceCollection } from '../resources/index';
 
 export function* displayToken({ id }) {
   const path = `/stacks/${id}/systemToken`;
@@ -26,7 +27,6 @@ export function* displayToken({ id }) {
 
 export function* generateToken({ id }) {
   const path = `/stacks/${id}/systemToken`;
-  let response;
 
   try {
     yield call(apiCallWithRetry, {
@@ -36,58 +36,11 @@ export function* generateToken({ id }) {
       },
       message: 'Deleting Stack Token',
     });
-
-    response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'GET',
-      },
-      message: 'Generating Stack Token',
-    });
   } catch (e) {
     return;
   }
 
-  yield put(actions.stack.tokenReceived({ ...response, _id: id }));
-  yield delay(process.env.MASK_SENSITIVE_INFO_DELAY);
-  yield put(actions.stack.maskToken({ _id: id }));
-}
-
-export function* getStackShareCollection() {
-  const path = '/sshares';
-  let collection;
-
-  try {
-    collection = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'GET',
-      },
-      message: 'Getting Stack Share Collection',
-    });
-  } catch (e) {
-    return;
-  }
-
-  yield put(actions.stack.receivedStackShareCollection({ collection }));
-}
-
-export function* deleteStackShareUser({ userId }) {
-  const path = `/sshares/${userId}`;
-
-  try {
-    yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'DELETE',
-      },
-      message: 'Deleting Stack Share User',
-    });
-  } catch (e) {
-    return;
-  }
-
-  yield put(actions.stack.deletedStackShareUser({ userId }));
+  yield call(displayToken, { id });
 }
 
 export function* inviteStackShareUser({ email, stackId }) {
@@ -106,7 +59,7 @@ export function* inviteStackShareUser({ email, stackId }) {
     return;
   }
 
-  yield call(getStackShareCollection);
+  yield call(getResourceCollection, { resourceType: 'sshares' });
 }
 
 export function* toggleUserStackSharing({ userId }) {
@@ -131,14 +84,6 @@ export function* toggleUserStackSharing({ userId }) {
 export const stackSagas = [
   takeEvery(actionTypes.STACK.TOKEN_DISPLAY, displayToken),
   takeEvery(actionTypes.STACK.TOKEN_GENERATE, generateToken),
-  takeEvery(
-    actionTypes.STACK.STACK_SHARE_COLLECTION_REQUEST,
-    getStackShareCollection
-  ),
-  takeEvery(actionTypes.STACK.STACK_SHARE_USER_DELETE, deleteStackShareUser),
-  takeEvery(actionTypes.STACK.STACK_SHARE_USER_INVITE, inviteStackShareUser),
-  takeEvery(
-    actionTypes.STACK.USER_STACK_SHARING_TOGGLE,
-    toggleUserStackSharing
-  ),
+  takeEvery(actionTypes.STACK.SHARE_USER_INVITE, inviteStackShareUser),
+  takeEvery(actionTypes.STACK.USER_SHARING_TOGGLE, toggleUserStackSharing),
 ];

@@ -8,18 +8,18 @@ import * as selectors from '../../reducers';
 
 export default function Stacks() {
   const dispatch = useDispatch();
-  const stackShareCollection = useSelector(state =>
-    selectors.getStackShareCollection(state)
+  const resourceList = useSelector(state =>
+    selectors.resourceList(state, { type: 'sshares' })
   );
 
   useEffect(() => {
-    dispatch(actions.stack.requestStackShareCollection());
+    dispatch(actions.resource.requestCollection('sshares'));
   }, [dispatch]);
 
   return (
     <LoadResources resources={['stacks']}>
       <ResourceList resourceType="stacks" displayName="Stacks">
-        <RowDetail stackShareCollection={stackShareCollection} />
+        <RowDetail stackShareCollection={resourceList.resources} />
       </ResourceList>
     </LoadResources>
   );

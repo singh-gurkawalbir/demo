@@ -57,6 +57,9 @@ export default (state = {}, action) => {
     return state;
   }
 
+  let resourceIndex;
+  let newState;
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
@@ -68,6 +71,25 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
+    case actionTypes.STACK.USER_SHARING_TOGGLED:
+      resourceIndex = state.sshares.findIndex(user => user._id === id);
+
+      if (resourceIndex > -1) {
+        newState = [
+          ...state.sshares.slice(0, resourceIndex),
+          {
+            ...state.sshares[resourceIndex],
+            disabled: !state.sshares[resourceIndex].disabled,
+          },
+          ...state.sshares.slice(resourceIndex + 1),
+        ];
+
+        newState = { ...state, sshares: newState };
+
+        return newState;
+      }
+
+      return state;
     default:
       return state;
   }
