@@ -18,7 +18,12 @@ export function ResourceTypeFilter(props) {
     resourceDetails,
     onChange,
   } = props;
-  const hideFilterForResourceTypes = ['accesstokens', 'connections', 'stacks'];
+  const hideFilterForResourceTypes = [
+    'accesstokens',
+    'connections',
+    'stacks',
+    'scripts',
+  ];
   const resource =
     resourceType &&
     resourceDetails[resourceType] &&

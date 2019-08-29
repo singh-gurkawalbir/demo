@@ -82,6 +82,7 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  SalesforceExport: 'salesforce',
 };
 
 // This method is used for only import/export/connection. Im not sure

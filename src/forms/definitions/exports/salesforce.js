@@ -1,20 +1,60 @@
 export default {
   fields: [
-    { fieldId: 'salesforce.sObjectType' },
-    { fieldId: 'salesforce.id' },
-    { fieldId: 'salesforce.api' },
+    { formId: 'common' },
+    { fieldId: 'salesforce.executionType' },
+    {
+      id: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to export from Salesforce?',
+      visibleWhen: [
+        {
+          field: 'salesforce.executionType',
+          is: ['scheduled', 'realtime'],
+        },
+      ],
+    },
     { fieldId: 'salesforce.soql.query' },
+    {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'salesforce.executionType',
+          is: ['scheduled'],
+        },
+      ],
+    },
+    { fieldId: 'delta.dateField' },
+    { fieldId: 'delta.lagOffset' },
+    { fieldId: 'once.booleanField' },
+    { fieldId: 'salesforce.sObjectType' },
+    { fieldId: 'salesforce.distributed.requiredTrigger' },
     { fieldId: 'salesforce.distributed.referencedFields' },
-    { fieldId: 'salesforce.distributed.disabled' },
-    { fieldId: 'salesforce.distributed.connectorId' },
-    { fieldId: 'salesforce.distributed.userDefinedReferencedFields' },
+    { fieldId: 'salesforce.distributed.relatedLists' },
     { fieldId: 'salesforce.distributed.qualifier' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].referencedFields' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].parentField' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].sObjectType' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].filter' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].orderBy' },
-    { fieldId: 'salesforce.distributed.relatedLists[*].userDefined' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Hooks (Optional, Developers Only)',
+      collapsed: true,
+      fields: [{ formId: 'hooks' }],
+    },
+    {
+      header: 'Advanced',
+      collapsed: true,
+      fields: [{ formId: 'advancedSettings' }],
+    },
+  ],
 };
