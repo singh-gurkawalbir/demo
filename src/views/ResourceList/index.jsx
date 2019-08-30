@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import ReactJson from 'react-json-view';
+// import ReactJson from 'react-json-view';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
@@ -88,12 +88,12 @@ function PageContent(props) {
             resourceType={resourceType}
             resources={list.resources}
           />
-          <ReactJson
+          {/* <ReactJson
             // theme="google"
             collapsed={2}
             displayDataTypes={false}
             src={list}
-          />
+          /> */}
         </LoadResources>
       </div>
       {list.filtered > list.count && (

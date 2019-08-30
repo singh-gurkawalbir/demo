@@ -38,7 +38,7 @@ export default function ResourceTable({ resourceType, resources }) {
     dispatch(actions.patchFilter(resourceType, { sort: { order, orderBy } }));
   };
 
-  const columns = metadata[resourceType] || metadata.default;
+  const columns = metadata(resourceType);
 
   return (
     <Table className={classes.table}>
