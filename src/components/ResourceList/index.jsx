@@ -136,9 +136,11 @@ class ResourceList extends Component {
                   {r.connection &&
                     (r.connection.assistant || r.connection.type)}
                 </Typography>
-                <Typography className={classes.secondaryHeading}>
-                  Last modified <TimeAgo date={r.lastModified} />.
-                </Typography>
+                {r.lastModified && (
+                  <Typography className={classes.secondaryHeading}>
+                    Last modified <TimeAgo date={r.lastModified} />.
+                  </Typography>
+                )}
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 {cloneElement(children, { item: r })}
