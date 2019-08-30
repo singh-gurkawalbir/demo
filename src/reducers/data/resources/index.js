@@ -93,6 +93,25 @@ export default (state = {}, action) => {
       }
 
       return state;
+    case actionTypes.STACK.USER_SHARING_TOGGLED:
+      resourceIndex = state.sshares.findIndex(user => user._id === id);
+
+      if (resourceIndex > -1) {
+        newState = [
+          ...state.sshares.slice(0, resourceIndex),
+          {
+            ...state.sshares[resourceIndex],
+            disabled: !state.sshares[resourceIndex].disabled,
+          },
+          ...state.sshares.slice(resourceIndex + 1),
+        ];
+
+        newState = { ...state, sshares: newState };
+
+        return newState;
+      }
+
+      return state;
 
     default:
       return state;

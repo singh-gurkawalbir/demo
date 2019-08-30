@@ -5,6 +5,7 @@ import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
+import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { accessTokenSagas } from './accessTokens';
@@ -22,6 +23,7 @@ import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { uploadFileSagas } from './uploadFileDialog';
+import { stackSagas } from './stack';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -81,6 +83,7 @@ export default function* rootSaga() {
   });
   yield all([
     ...resourceSagas,
+    ...connectorSagas,
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
@@ -91,5 +94,6 @@ export default function* rootSaga() {
     ...agentSagas,
     ...templateSagas,
     ...uploadFileSagas,
+    ...stackSagas,
   ]);
 }

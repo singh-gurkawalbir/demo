@@ -19,8 +19,10 @@ import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaLabelValueElement from './DynaLabelValueElement';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -35,6 +37,7 @@ export default {
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   keyvalue: DynaKeyValue,
+  staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
@@ -45,6 +48,7 @@ export default {
   scriptcontent: DynaScriptContent,
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
+  labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
 };
