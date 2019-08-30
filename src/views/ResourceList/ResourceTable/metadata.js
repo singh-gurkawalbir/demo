@@ -1,3 +1,6 @@
+import TimeAgo from 'react-timeago';
+// import { Link } from 'react-router-dom';
+// import getRoutePath from '../../../utils/routePaths';
 import { getApp } from '../../../constants/applications';
 import { getResourceSubType } from '../../../utils/resource';
 
@@ -18,19 +21,25 @@ const getConnectorName = resource => {
   return app.name;
 };
 
+const formatLastModified = lastModified => {
+  const formatter = (value, unit, suffix) => `${value}${unit[0]} ${suffix}`;
+
+  return <TimeAgo formatter={formatter} date={lastModified} />;
+};
+
 export default {
   exports: [
-    { heading: 'Name', value: r => r.name, sortOn: 'name' },
+    { heading: 'Name', value: r => r.name, orderBy: 'name' },
     { heading: 'Connector', value: r => getConnectorName(r) },
     {
       heading: 'Updated on',
-      value: r => r.lastModified,
-      sortOn: 'lastModified',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
     },
   ],
 
   connections: [
-    { heading: 'Name', value: r => r.name, sortOn: 'name' },
+    { heading: 'Name', value: r => r.name, orderBy: 'name' },
     { heading: 'Status', value: r => (r.offline ? 'Offline' : 'Online') },
     { heading: 'Connector', value: r => getConnectorName(r) },
     {
@@ -45,8 +54,8 @@ export default {
     },
     {
       heading: 'Updated on',
-      value: r => r.lastModified,
-      sortOn: 'lastModified',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
     },
     {
       heading: 'Queue Size',
@@ -61,21 +70,21 @@ export default {
   ],
 
   agents: [
-    { heading: 'Name', value: r => r.name, sortOn: 'name' },
+    { heading: 'Name', value: r => r.name, orderBy: 'name' },
     { heading: 'Status', value: r => (r.offline ? 'Offline' : 'Online') },
     {
       heading: 'Updated on',
-      value: r => r.lastModified,
-      sortOn: 'lastModified',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
     },
   ],
 
   default: [
-    { heading: 'Name', value: r => r.name, sortOn: 'name' },
+    { heading: 'Name', value: r => r.name, orderBy: 'name' },
     {
       heading: 'Updated on',
-      value: r => r.lastModified,
-      sortOn: 'lastModified',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
     },
   ],
 };

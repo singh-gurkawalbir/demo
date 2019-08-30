@@ -11288,10 +11288,10 @@ react-textarea-autosize@^6.1.0:
   dependencies:
     prop-types "^15.6.0"
 
-react-timeago@4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-4.3.0.tgz#ff47bb12c3c2a40bc31e6b3e457f5ac4a690a3ec"
-  integrity sha512-q89RXb4K16xyDdy2GR/mIRYrDw8ll/RlohSIgjCr1J85eHKeL/XEl4XPKICMdJnJpaXwRzOjlsdnEuxWsi61RQ==
+react-timeago@4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-4.4.0.tgz#4520dd9ba63551afc4d709819f52b14b9343ba2b"
+  integrity sha512-Zj8RchTqZEH27LAANemzMR2RpotbP2aMd+UIajfYMZ9KW4dMcViUVKzC7YmqfiqlFfz8B0bjDw2xUBjmcxDngA==
 
 react-transition-group@^2.2.1:
   version "2.9.0"
