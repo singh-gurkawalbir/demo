@@ -1,7 +1,14 @@
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
 
 export default {
+  breakpoints: {
+    values: {
+      sm: 768,
+      md: 968,
+      lg: 1370,
+    },
+  },
   typography: {
     useNextVariants: true,
     fontFamily: 'Roboto, sans-serif',
@@ -41,12 +48,14 @@ export default {
       },
       h1: {
         fontSize: '48px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '50px',
         letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '40px',
         letterSpacing: '-0.5px',
@@ -54,6 +63,7 @@ export default {
 
       h3: {
         fontSize: '24px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '26px',
         letterSpacing: 'normal',
@@ -96,6 +106,9 @@ export default {
       },
     },
     MuiButton: {
+      root: {
+        fontFamily: 'Roboto500, sans-serif',
+      },
       // text Buttons
       text: {
         letterSpacing: '1px',
@@ -190,6 +203,33 @@ export default {
         backgroundColor: 'transparent',
       },
     },
+    MuiMenuItem: {
+      root: {
+        borderBottom: '1px solid',
+        '&$selected': {
+          backgroundColor: 'transparent',
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:last-child': {
+          borderBottom: 'none',
+        },
+        '&:hover': {
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: '0px',
+        },
+      },
+    },
   },
   props: {
     // Name of the component ⚛️
@@ -197,10 +237,5 @@ export default {
       // The default props to change
       // variant: 'contained',
     },
-    // MuiSvgIcon: {
-    //   // viewBox: '0 0 24 24',
-    //   // viewBox: '0 0 32 32',
-    //   // fontSize: 'inherit',
-    // },
   },
 };

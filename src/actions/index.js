@@ -340,6 +340,19 @@ const agent = {
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
+const stack = {
+  displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
+  generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
+  tokenReceived: stackToken =>
+    action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
+  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  inviteStackShareUser: (email, stackId) =>
+    action(actionTypes.STACK.SHARE_USER_INVITE, { email, stackId }),
+  toggleUserStackSharing: userId =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
+  toggledUserStackSharing: ({ userId }) =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
+};
 const user = {
   profile: {
     request: message => resource.request('profile', undefined, message),
@@ -613,4 +626,5 @@ export default {
   job,
   flow,
   agent,
+  stack,
 };
