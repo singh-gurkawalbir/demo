@@ -214,10 +214,12 @@ export default function DynaTable(props) {
               <Grid container direction="row" spacing={2}>
                 {arr.values.map(r => (
                   <Grid item key={r.id} xs={r.space || true}>
-                    {['input', 'text'].includes(r.type) && (
+                    {['input', 'text', 'number'].includes(r.type) && (
                       <Input
                         defaultValue={r.value}
                         placeholder={r.id}
+                        readOnly={!!r.readOnly}
+                        type={r.type === 'input' ? 'text' : r.type}
                         className={classes.input}
                         onChange={handleAllUpdate(arr.row, r.id)}
                       />
