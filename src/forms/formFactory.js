@@ -50,8 +50,8 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
 };
 
 const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
-  let fields;
-  let fieldSets = [];
+  let fieldReferences;
+  let containers = [];
   let preSubmit;
   let init;
   let actions;
@@ -77,7 +77,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       }
 
       if (meta) {
-        ({ fields, fieldSets, preSubmit, init, actions } = meta);
+        ({ fieldReferences, containers, preSubmit, init, actions } = meta);
       }
 
       break;
@@ -99,7 +99,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         }
 
         if (meta) {
-          ({ fields, fieldSets, init, preSubmit, actions } = meta);
+          ({ fieldReferences, containers, init, preSubmit, actions } = meta);
         }
       }
 
@@ -109,7 +109,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'scripts':
     case 'stacks':
       meta = formMeta[resourceType];
-      ({ fields } = meta);
+      ({ fieldReferences } = meta);
 
       break;
 
@@ -118,17 +118,17 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       break;
   }
 
-  const optionsHandler = getAmalgamatedOptionsHandler(
-    meta,
-    fields,
-    resourceType
-  );
+  // const optionsHandler = getAmalgamatedOptionsHandler(
+  //   meta,
+  //   fieldReferences,
+  //   resourceType
+  // );
 
   return {
-    fieldMeta: { fields, fieldSets, actions },
+    fieldMeta: { fieldReferences, containers, actions },
     init,
     preSubmit,
-    optionsHandler,
+    optionsHandler: null,
   };
 };
 
@@ -206,22 +206,29 @@ const applyingMissedOutFieldMetaProperties = (
   return field;
 };
 
-const setDefaults = (fields, resourceType, resource) => {
+const setDefaults = (fields, resourceType, resource, fieldReferences) => {
   if (!fields || fields.length === 0) return fields;
 
   return fields
-    .map(f => {
-      if (f.formId) {
+    .map(fieldReferenceName => {
+      let f;
+
+      if (typeof fieldReferenceName === 'object') f = fieldReferenceName;
+      else f = fieldReferences[fieldReferenceName];
+
+      if (f && f.formId) {
         const fieldMetaHavingVisibilityRules = applyVisibilityRulesToSubForm(
           f,
           resourceType
         );
-
-        return setDefaults(
+        const returnedValue = setDefaults(
           fieldMetaHavingVisibilityRules,
           resourceType,
-          resource
+          resource,
+          fieldReferences
         );
+
+        return returnedValue;
       }
 
       const masterFields = masterFieldHash[resourceType]
@@ -243,24 +250,59 @@ const setDefaults = (fields, resourceType, resource) => {
     .flat();
 };
 
-const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
-  const filled = [];
-  const { fields, fieldSets, actions } = fieldMeta;
+const setDefaultsToContainer = (
+  containers,
+  resourceType,
+  resource,
+  fieldReferences
+) => {
+  if (containers) {
+    return containers.map(container => {
+      const { fieldSets, type } = container;
+      const transformedFieldSets = fieldSets.map(fieldSet => {
+        const { fields, containers, ...rest } = fieldSet;
+        const transformedFields = setDefaults(
+          fields,
+          resourceType,
+          resource,
+          fieldReferences
+        );
+        const transformedContainers = setDefaultsToContainer(
+          containers,
+          resourceType,
+          resource,
+          fieldReferences
+        );
 
-  if (fieldSets && fieldSets.length > 0) {
-    fieldSets.forEach(set => {
-      const { fields, ...rest } = set;
-
-      filled.push({
-        ...rest,
-        fields: setDefaults(fields, resourceType, resource),
+        return {
+          ...rest,
+          fields: transformedFields,
+          containers: transformedContainers,
+        };
       });
+
+      return {
+        type,
+        fieldSets: transformedFieldSets,
+      };
     });
   }
 
+  return null;
+};
+
+const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
+  const { containers, fieldReferences, actions } = fieldMeta;
+  const transformed = setDefaultsToContainer(
+    containers,
+    resourceType,
+    resource,
+    fieldReferences
+  );
+
   return {
-    fields: setDefaults(fields, resourceType, resource),
-    fieldSets: filled,
+    containers: transformed,
+    fieldReferences,
     actions,
   };
 };
