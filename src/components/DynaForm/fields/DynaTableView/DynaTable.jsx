@@ -144,7 +144,11 @@ export default function DynaTable(props) {
         };
       }
 
-      return { ...op, ...modifiedOptions, value: value[op.id] };
+      return {
+        ...op,
+        ...modifiedOptions,
+        value: value[op.id],
+      };
     });
 
     return { values: arr, row: index };
@@ -192,7 +196,7 @@ export default function DynaTable(props) {
           <Grid item xs={12}>
             <Grid container spacing={2}>
               {optionsMap.map(r => (
-                <Grid key={r.id} item xs>
+                <Grid key={r.id} item xs={r.space || true}>
                   <span className={classes.alignLeft}>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
@@ -209,8 +213,8 @@ export default function DynaTable(props) {
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
                 {arr.values.map(r => (
-                  <Grid item key={r.id} xs>
-                    {r.type !== 'select' && (
+                  <Grid item key={r.id} xs={r.space || true}>
+                    {['input', 'text'].includes(r.type) && (
                       <Input
                         defaultValue={r.value}
                         placeholder={r.id}
@@ -218,7 +222,9 @@ export default function DynaTable(props) {
                         onChange={handleAllUpdate(arr.row, r.id)}
                       />
                     )}
-
+                    {r.type === 'readOnly' && (
+                      <Typography>{r.value}</Typography>
+                    )}
                     {r.type === 'select' && (
                       <DynaSelect
                         value={r.value}
