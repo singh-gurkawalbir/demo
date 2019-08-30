@@ -351,6 +351,8 @@ const template = {
   downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
   publish: (item, resourceType) =>
     action(actionTypes.TEMPLATE.PUBLISH, { item, resourceType }),
+  generateZip: integrationId =>
+    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
 const file = {
   upload: (resourceType, resourceId, fileType, file) =>

@@ -45,6 +45,10 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
     fontSize: theme.typography.pxToRem(12),
     color: theme.palette.text.secondary,
   },
+  createResource: {
+    position: 'absolute',
+    right: theme.spacing(3),
+  },
 }))
 class TitleBar extends Component {
   // TODO: see this gist for how to bind window events to react components
@@ -78,8 +82,9 @@ class TitleBar extends Component {
           />
         </div>
         <Button
+          color="primary"
+          className={classes.createResource}
           component={Link}
-          // className={classes.link}
           to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>
           + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
         </Button>

@@ -3,7 +3,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
 export function* uploadFile({ resourceType, resourceId, fileType, file }) {
-  let path = `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
+  const path = `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
   let response;
 
   try {
@@ -11,7 +11,6 @@ export function* uploadFile({ resourceType, resourceId, fileType, file }) {
       path,
       message: 'Getting signedURL for file upload',
     });
-    path = response.signedURL;
 
     fetch(response.signedURL, {
       method: 'PUT',
