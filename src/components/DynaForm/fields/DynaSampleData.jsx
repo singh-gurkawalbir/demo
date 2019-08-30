@@ -21,8 +21,6 @@ export default function DynaSampleData(props) {
   const rawData = useSelector(state => {
     const exportData = getSampleData(state, resourceId, stage);
 
-    console.log(exportData);
-
     return exportData && exportData[0];
   });
   const RefreshData = props => (

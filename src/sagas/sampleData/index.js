@@ -46,7 +46,7 @@ export function* fetchSampleData({ resourceId, resourceType, values }) {
   }
 }
 
-export function* updateSampleData({ resourceId, resourceType, data }) {
+export function* updateSampleData({ resourceId, data }) {
   const sampleData = yield select(getSampleData, resourceId);
   const path = `/processors/${data.processor}`;
   const body = {
