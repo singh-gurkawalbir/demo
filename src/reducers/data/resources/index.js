@@ -34,9 +34,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { id, type, resource, collection, resourceType, debugDate } = action;
-  const newState = { ...state };
-  let index;
+  const { id, type, resource, collection, resourceType } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -60,15 +58,6 @@ export default (state = {}, action) => {
   }
 
   switch (type) {
-    case actionTypes.RESOURCE.CONNECTION_UPDATE:
-      index = newState.connections.findIndex(r => r._id === id);
-
-      if (newState.connections[index]) {
-        newState.connections[index].debugDate = debugDate;
-      }
-
-      return newState;
-
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
 

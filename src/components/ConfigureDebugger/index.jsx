@@ -38,10 +38,22 @@ export default function ConfigureDebugger(props) {
   const [debugValue, setDebugValue] = useState(0);
   const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
-  const handleOnSubmit = e => {
-    e.preventDefault();
+  const handleOnSubmit = () => {
     setSaveLabel('Saving');
-    dispatch(actions.resource.connections.configureDebugger(id, debugValue));
+
+    const debugTime = moment()
+      .add(debugValue, 'm')
+      .toISOString();
+    const patchSet = [
+      {
+        op: debugValue !== '0' ? 'replace' : 'remove',
+        path: '/debugDate',
+        value: debugTime,
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(id, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged('connections', id, 'value'));
     onClose();
   };
 

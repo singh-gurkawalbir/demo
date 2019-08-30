@@ -151,19 +151,9 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
-    update: (id, debugDate) =>
-      action(actionTypes.RESOURCE.CONNECTION_UPDATE, {
-        id,
-        debugDate,
-      }),
     downloadDebugLogs: id =>
       action(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, {
         id,
-      }),
-    configureDebugger: (id, timeInMins) =>
-      action(actionTypes.CONNECTIONS.CONFIGURE_DEBUGGER, {
-        id,
-        timeInMins,
       }),
 
     netsuite: {

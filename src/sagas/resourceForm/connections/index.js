@@ -1,6 +1,5 @@
 import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
-import moment from 'moment';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -44,43 +43,6 @@ export function* downloadDebugLogs({ id }) {
   }
 
   yield call(openExternalUrl, { url });
-}
-
-export function* configureDebugger({ id, timeInMins }) {
-  const path = `/connections/${id}`;
-  let debugTime = moment()
-    .add('1', 'h')
-    .toISOString();
-
-  if (timeInMins) {
-    debugTime = moment()
-      .add(timeInMins, 'm')
-      .toISOString();
-  }
-
-  const reqPayload = [
-    {
-      op: timeInMins !== '0' ? 'replace' : 'remove',
-      path: '/debugDate',
-      value: timeInMins !== '0' ? debugTime : undefined,
-    },
-  ];
-
-  try {
-    yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'PATCH',
-        body: reqPayload,
-      },
-      op: 'remove',
-      value: debugTime,
-    });
-  } catch (error) {
-    return undefined;
-  }
-
-  yield put(actions.resource.connections.update(id, debugTime));
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {
@@ -414,5 +376,4 @@ export default [
     commitAndAuthorizeConnection
   ),
   takeEvery(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
-  takeEvery(actionTypes.CONNECTIONS.CONFIGURE_DEBUGGER, configureDebugger),
 ];
