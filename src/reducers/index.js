@@ -103,8 +103,13 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
-export function getSampleData(state, resourceId) {
-  return fromSession.getSampleData(state && state.session, resourceId);
+export function getSampleData(state, resourceId, stage, index) {
+  return fromSession.getSampleData(
+    state && state.session,
+    resourceId,
+    stage,
+    index
+  );
 }
 
 export function connectorMetadata(state, fieldName, id, _integrationId) {

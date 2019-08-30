@@ -188,12 +188,12 @@ export default {
   },
   // #endregion paging
   // #region transform
-  'transform.expression.rules': {
-    type: 'transformeditor',
-    label: 'Transform expression rules',
-    sampleData: r => r.sampleData,
-    rules: r => r && r.transform && r.transform.rules,
-  },
+  // 'transform.expression.rules': {
+  //   type: 'transformeditor',
+  //   label: 'Transform expression rules',
+  //   sampleData: r => r.sampleData,
+  //   rules: r => r && r.transform && r.transform.rules,
+  // },
   'transform.script._scriptId': {
     type: 'text',
     label: 'Transform script _script Id',

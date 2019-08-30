@@ -17,11 +17,13 @@ const useStyles = makeStyles(() => ({
 export default function DynaSampleData(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { defaultValue, label, mode, resourceId } = props;
+  const { defaultValue, label, mode, resourceId, stage } = props;
   const rawData = useSelector(state => {
-    const exportData = getSampleData(state, resourceId);
+    const exportData = getSampleData(state, resourceId, stage);
 
-    return exportData && exportData.data && exportData.data[0];
+    console.log(exportData);
+
+    return exportData && exportData[0];
   });
   const RefreshData = props => (
     <FormContext.Consumer {...props}>
@@ -47,12 +49,8 @@ export default function DynaSampleData(props) {
           mode={mode || 'json'}
           readOnly
         />
-        <RefreshData />
+        {stage === 'raw' && <RefreshData />}
       </div>
     </div>
   );
 }
-
-/*
-rId: [{stage1}, {s2}, {s3}]
-*/

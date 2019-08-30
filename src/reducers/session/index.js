@@ -153,7 +153,12 @@ export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }
 
-export function getSampleData(state, resourceId) {
-  return fromSampleData.fetchData(state && state.sampleData, resourceId);
+export function getSampleData(state, resourceId, stage, index) {
+  return fromSampleData.fetchData(
+    state && state.sampleData,
+    resourceId,
+    stage,
+    index
+  );
 }
 // #endregion

@@ -1,19 +1,37 @@
 import { useState, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialog';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
 export default function DynaTransformEditor(props) {
   const { id, rules, label, sampleData, resourceId, onFieldChange } = props;
   const [showEditor, setShowEditor] = useState(false);
+  const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
+  // Get raw data from state
+  const rawData = useSelector(state => {
+    const exportData = selectors.getSampleData(state, resourceId, 'transform');
+
+    return exportData && exportData[0];
+  });
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, { rule });
+
+      dispatch(
+        actions.exportData.update(resourceId, 'exports', {
+          processor: 'transform',
+          rules: [rule],
+          data: rawData || sampleData,
+        })
+      );
     }
 
     setShowEditor(false);
@@ -33,7 +51,7 @@ export default function DynaTransformEditor(props) {
         <TransformEditorDialog
           title="Transform Mapping"
           id={id + resourceId}
-          data={sampleData}
+          data={rawData || sampleData}
           rule={firstRuleSet}
           onClose={handleClose}
         />

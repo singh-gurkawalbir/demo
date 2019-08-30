@@ -86,14 +86,19 @@ export default {
   },
   sampleData: {
     type: 'sampledata',
-    label: 'Sample Data',
+    label: 'Raw Data',
     mode: 'json',
+    stage: 'raw',
     defaultValue: r => r && r.sampleData,
     connectionId: r => r && r._connectionId,
   },
   originSampleData: {
-    type: 'text',
-    label: 'Origin Sample Data',
+    type: 'sampledata',
+    label: 'Sample Data',
+    mode: 'json',
+    stage: 'sample',
+    defaultValue: r => r && r.sampleData,
+    connectionId: r => r && r._connectionId,
   },
   // not using it
   assistant: {
@@ -547,6 +552,7 @@ export default {
     sampleData: r => r.sampleData,
     rules: r => r && r.transform && r.transform.rules,
   },
+
   'transform.script._scriptId': {
     type: 'text',
     label: 'Transform script _script Id',

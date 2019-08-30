@@ -81,16 +81,16 @@ export default {
       },
     ],
   },
-  'file.csv': {
-    type: 'csvparse',
-    label: 'Configure CSV parse options',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
+  // 'file.csv': {
+  //   type: 'csvparse',
+  //   label: 'Configure CSV parse options',
+  //   visibleWhen: [
+  //     {
+  //       field: 'file.type',
+  //       is: ['csv'],
+  //     },
+  //   ],
+  // },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File Has Header',

@@ -74,12 +74,19 @@ export default {
       fieldId: 'netsuite.skipGrouping',
     },
     // Search Criteria
-    // Sample Data
+    // Raw Data
     { fieldId: 'sampleData' },
-    //  Tranform  Data
-    { fieldId: 'transform.expression.rules' },
+    // Sample Data
+    { fieldId: 'originSampleData' },
     // Filter  Data
     // Advanced
+  ],
+  fieldSets: [
+    {
+      header: 'Would you like to transform the records?',
+      collapsed: false,
+      fields: [{ fieldId: 'transform.expression.rules' }],
+    },
   ],
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'netsuite.webservices.searchId') {

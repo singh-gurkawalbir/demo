@@ -471,6 +471,10 @@ const exportData = {
     }),
   received: (resourceId, data) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, data }),
+  update: (resourceId, resourceType, data) =>
+    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, resourceType, data }),
+  updateStage: (resourceId, stage, data) =>
+    action(actionTypes.SAMPLEDATA.UPDATE_STAGE, { resourceId, stage, data }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
