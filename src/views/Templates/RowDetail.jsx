@@ -73,6 +73,7 @@ function TemplatesData(props) {
           fileType={fileType}
           onClose={handleUploadFileDialogClose}
           type={type}
+          resourceId={item._id}
         />
       )}
       <Typography className={classes.templateDetails}>

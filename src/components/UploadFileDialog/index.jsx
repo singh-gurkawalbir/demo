@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,6 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import actions from '../../actions';
 
 const styles = theme => ({
   title: {
@@ -27,9 +29,13 @@ const styles = theme => ({
 });
 
 function UploadFileDialog(props) {
-  const { resourceType, fileType, onClose, classes, type } = props;
+  const { resourceType, fileType, onClose, classes, type, resourceId } = props;
+  const dispatch = useDispatch();
   const handleUploadFileChange = e => {
     console.log(JSON.stringify(e.target.value));
+    const file = e.target.files[0];
+
+    dispatch(actions.file.upload(resourceType, resourceId, file));
   };
 
   return (

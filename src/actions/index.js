@@ -261,6 +261,10 @@ const template = {
   publish: (item, resourceType) =>
     action(actionTypes.TEMPLATE.PUBLISH, { item, resourceType }),
 };
+const file = {
+  upload: (resourceType, resourceId, file) =>
+    action(actionTypes.FILE.UPLOAD, { resourceType, resourceId, file }),
+};
 const user = {
   profile: {
     request: message => resource.request('profile', undefined, message),
@@ -523,4 +527,5 @@ export default {
   flow,
   agent,
   template,
+  file,
 };

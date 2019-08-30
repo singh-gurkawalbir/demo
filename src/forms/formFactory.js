@@ -108,6 +108,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'agents':
     case 'scripts':
     case 'stacks':
+    case 'templates':
       meta = formMeta[resourceType];
       ({ fields } = meta);
 
