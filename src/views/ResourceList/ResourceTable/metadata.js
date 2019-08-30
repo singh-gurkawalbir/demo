@@ -1,5 +1,6 @@
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
+import StatusCircle from '../../../components/HomePageCard/Header/Status/StatusCircle';
 import getRoutePath from '../../../utils/routePaths';
 import { getApp } from '../../../constants/applications';
 import { getResourceSubType } from '../../../utils/resource';
@@ -32,6 +33,13 @@ const formatLastModified = lastModified => {
   return <TimeAgo formatter={formatter} date={lastModified} />;
 };
 
+const onlineStatus = r => (
+  <div style={{ display: 'flex' }}>
+    <StatusCircle variant={r.offline ? 'success' : 'error'} />
+    {r.offline ? 'Offline' : 'Online'}
+  </div>
+);
+
 export default function(resourceType) {
   const metadata = {
     exports: [
@@ -54,7 +62,7 @@ export default function(resourceType) {
         value: r => getResourceLink(resourceType, r),
         orderBy: 'name',
       },
-      { heading: 'Status', value: r => (r.offline ? 'Offline' : 'Online') },
+      { heading: 'Status', value: r => onlineStatus(r) },
       { heading: 'Connector', value: r => getConnectorName(r) },
       {
         heading: 'API',
@@ -89,7 +97,10 @@ export default function(resourceType) {
         value: r => getResourceLink(resourceType, r),
         orderBy: 'name',
       },
-      { heading: 'Status', value: r => (r.offline ? 'Offline' : 'Online') },
+      {
+        heading: 'Status',
+        value: r => onlineStatus(r),
+      },
       {
         heading: 'Updated on',
         value: r => formatLastModified(r.lastModified),

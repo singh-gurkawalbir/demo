@@ -12,16 +12,16 @@ const usestyles = makeStyles(theme => ({
     display: 'inline-block',
   },
   success: {
-    backgroundColor: theme.palette.background.success,
+    backgroundColor: theme.palette.success.main,
   },
   error: {
-    backgroundColor: theme.palette.background.error,
+    backgroundColor: theme.palette.error.main,
   },
   info: {
     backgroundColor: theme.palette.background.info,
   },
   warning: {
-    backgroundColor: theme.palette.background.warning,
+    backgroundColor: theme.palette.warning.main,
   },
 }));
 

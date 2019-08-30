@@ -55,4 +55,15 @@ const theme = {
   },
 };
 
-export default () => createMuiTheme(theme);
+export default () => {
+  const muiTheme = createMuiTheme(theme);
+
+  muiTheme.palette.success = muiTheme.palette.augmentColor({
+    main: colors.celigoSuccess,
+  });
+  muiTheme.palette.warning = muiTheme.palette.augmentColor({
+    main: colors.celigoWarning,
+  });
+
+  return muiTheme;
+};
