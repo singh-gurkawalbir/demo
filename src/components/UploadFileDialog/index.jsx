@@ -32,10 +32,10 @@ function UploadFileDialog(props) {
   const { resourceType, fileType, onClose, classes, type, resourceId } = props;
   const dispatch = useDispatch();
   const handleUploadFileChange = e => {
-    console.log(JSON.stringify(e.target.value));
     const file = e.target.files[0];
 
-    dispatch(actions.file.upload(resourceType, resourceId, file));
+    dispatch(actions.file.upload(resourceType, resourceId, fileType, file));
+    onClose();
   };
 
   return (

@@ -262,8 +262,13 @@ const template = {
     action(actionTypes.TEMPLATE.PUBLISH, { item, resourceType }),
 };
 const file = {
-  upload: (resourceType, resourceId, file) =>
-    action(actionTypes.FILE.UPLOAD, { resourceType, resourceId, file }),
+  upload: (resourceType, resourceId, fileType, file) =>
+    action(actionTypes.FILE.UPLOAD, {
+      resourceType,
+      resourceId,
+      fileType,
+      file,
+    }),
 };
 const user = {
   profile: {

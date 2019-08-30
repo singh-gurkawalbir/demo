@@ -1,18 +1,29 @@
-// import { call, takeEvery, put } from 'redux-saga/effects';
-// import actionTypes from '../../actions/types';
-// import actions from '../../actions';
-// import { apiCallWithRetry } from '../index';
+import { call, takeEvery } from 'redux-saga/effects';
+import actionTypes from '../../actions/types';
+import { apiCallWithRetry } from '../index';
 
-// export function* uploadFile({ resourceType, resourceId, file }) {
-//   const path = `/templates/${id}/download/signedURL`;
-//   let response;
+export function* uploadFile({ resourceType, resourceId, fileType, file }) {
+  let path = `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
+  let response;
 
-//   try {
-//     response = yield call(apiCallWithRetry, {
-//       path,
-//       message: 'Downloading zip',
-//     });
-//   } catch (e) {}
-// }
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: 'Getting signedURL for file upload',
+    });
+    path = response.signedURL;
 
-// export const uploadFileSagas = [takeEvery(actionTypes.FILE.UPLOAD, uploadFile)];
+    fetch(response.signedURL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': fileType,
+        'x-amz-server-side-encryption': 'AES256',
+      },
+      body: file,
+    });
+  } catch (e) {
+    return true;
+  }
+}
+
+export const uploadFileSagas = [takeEvery(actionTypes.FILE.UPLOAD, uploadFile)];
