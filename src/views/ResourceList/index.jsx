@@ -15,6 +15,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
+import ResourceTable from './ResourceTable';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -83,6 +84,10 @@ function PageContent(props) {
       </CeligoPageBar>
       <div className={classes.resultContainer}>
         <LoadResources resources={resourceType}>
+          <ResourceTable
+            resourceType={resourceType}
+            resources={list.resources}
+          />
           <ReactJson
             // theme="google"
             collapsed={2}
