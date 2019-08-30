@@ -719,7 +719,7 @@ export default {
     label: 'Http disable Strict SSL',
   },
   'http.concurrencyLevel': {
-    label: 'Http concurrency Level',
+    label: 'Concurrency Level',
     type: 'select',
     options: [
       {
@@ -1049,6 +1049,8 @@ export default {
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    inputType: 'password',
+    defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1080,7 +1082,6 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
           { label: 'UNIX', value: 'UNIX' },
           { label: 'UNIX-TRIM', value: 'UNIX-TRIM' },
           { label: 'VMS', value: 'VMS' },
@@ -1120,6 +1121,25 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
+  'ftp.pgpKeyAlgorithm': {
+    type: 'select',
+    label: 'PGP Encryption Algorithm',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    options: [
+      {
+        items: [
+          { label: 'Please Select (Optional)', value: '' },
+          { label: 'AES-256', value: 'AES-256' },
+          { label: 'AES-192', value: 'AES-192' },
+          { label: 'AES-128', value: 'AES-128' },
+          { label: '3DES', value: '3DES' },
+          { label: 'CAST5', value: 'CAST5' },
+        ],
+      },
+    ],
+    defaultValue: 'CAST5',
+  },
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP Private Key',
@@ -1150,27 +1170,41 @@ export default {
   // #region as2
   'as2.as2Id': {
     type: 'text',
-    label: 'As2 as2Id',
+    label: 'AS2 Identifier:',
+    required: true,
+  },
+  configureTokenRefresh: {
+    label: 'Configure Token Refresh:',
+    type: 'checkbox',
+    defaultValue: r =>
+      !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        is: ['token'],
+      },
+    ],
   },
   'as2.partnerId': {
     type: 'text',
-    label: 'As2 partner Id',
-  },
-  'as2.contentBasedFlowRouter.function': {
-    type: 'text',
-    label: 'As2 content Based Flow Router function',
-  },
-  'as2.contentBasedFlowRouter._scriptId': {
-    type: 'text',
-    label: 'As2 content Based Flow Router _script Id',
+    label: "Partner's AS2 Identifier:",
+    required: true,
   },
   'as2.partnerStationInfo.as2URI': {
     type: 'text',
-    label: 'As2 partner Station Info as2URI',
+    label: "Partner's AS2 URL:",
+    required: true,
   },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
-    label: 'As2 partner Station Info mdn mdn URL',
+    label: "Partner's URL for Asynchronous MDN:",
+    required: true,
+    visibleWhen: [
+      {
+        field: 'partnerrequireasynchronousmdns',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.mdn.signatureProtocol': {
     type: 'radiogroup',
@@ -1181,7 +1215,8 @@ export default {
   },
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
-    label: 'As2 partner Station Info mdn mdn Signing',
+    label: 'MDN Verification Algorithm:',
+    required: true,
     options: [
       {
         items: [
@@ -1195,96 +1230,214 @@ export default {
   },
   'as2.partnerStationInfo.auth.failStatusCode': {
     type: 'text',
-    label: 'As2 partner Station Info auth fail Status Code',
+    label: 'Authentication Fail Status Code:',
     validWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        isNot: ['none'],
+      },
+    ],
+  },
+  'as2.partnerStationInfo.auth.type': {
+    type: 'select',
+    label: 'Authentication Type:',
+    options: [
+      {
+        items: [
+          { label: 'Basic', value: 'basic' },
+          { label: 'Token', value: 'token' },
+          { label: 'None', value: 'none' },
+        ],
       },
     ],
   },
   'as2.partnerStationInfo.auth.failPath': {
     type: 'text',
-    label: 'As2 partner Station Info auth fail Path',
+    label: 'Authentication Fail Path:',
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        isNot: ['none'],
+      },
+    ],
   },
-  'as2.partnerStationInfo.auth.failValuess': {
+  'as2.partnerStationInfo.auth.failValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'As2 partner Station Info auth fail Values',
-    validWhen: [],
+    label: 'Authentication Fail Values:',
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        isNot: ['none'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.basic.username': {
     type: 'text',
-    label: 'As2 partner Station Info auth basic username',
+    label: 'Username:',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        is: ['basic'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.basic.password': {
     type: 'text',
-    label: 'As2 partner Station Info auth basic password',
+    label: 'Password:',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        is: ['basic'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.token': {
     type: 'text',
-    label: 'As2 partner Station Info auth token token',
+    label: 'Token:',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        is: ['token'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.location': {
     type: 'select',
-    label: 'As2 partner Station Info auth token location',
+    label: 'Location:',
     options: [
       {
         items: [
-          { label: 'Url', value: 'url' },
+          { label: 'URL Parameter', value: 'url' },
           { label: 'Header', value: 'header' },
           { label: 'Body', value: 'body' },
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.type',
+        is: ['token'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
-    label: 'As2 partner Station Info auth token header Name',
+    label: 'Header Name:',
+    defaultValue: 'Authorization',
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.token.location',
+        is: ['header'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.scheme': {
-    type: 'text',
-    label: 'As2 partner Station Info auth token scheme',
+    type: 'select',
+    label: 'Scheme:',
+    options: [
+      {
+        items: [
+          { label: 'Bearer', value: 'bearer' },
+          { label: 'MAC', value: 'mac' },
+          { label: 'OAuth', value: 'oauth' },
+          { label: 'None', value: 'none' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.token.location',
+        is: ['header'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.paramName': {
     type: 'text',
-    label: 'As2 partner Station Info auth token param Name',
+    label: 'Parameter Name:',
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.token.location',
+        is: ['url'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.refreshMethod': {
-    type: 'radiogroup',
-    label: 'As2 partner Station Info auth token refresh Method',
+    type: 'select',
+    label: 'Refresh Method:',
     options: [
       {
         items: [
           { label: 'GET', value: 'GET' },
           { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
       },
     ],
   },
   'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'As2 partner Station Info auth token refresh Relative URI',
+    label: 'Refresh Relative URI:',
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.refreshBody': {
-    type: 'text',
-    label: 'As2 partner Station Info auth token refresh Body',
+    type: 'editor',
+    mode: 'json',
+    label: 'Refresh Body:',
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.auth.token.refreshMethod',
+        is: ['POST', 'PUT'],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'As2 partner Station Info auth token refresh Token Path',
+    label: 'Refresh Token Path:',
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'As2 partner Station Info auth token refresh Media Type',
+    label: 'Refresh Media Type:',
     options: [
       {
         items: [
-          { label: 'Json', value: 'json' },
-          { label: 'Urlencoded', value: 'urlencoded' },
-          { label: 'Xml', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'XML', value: 'xml' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
       },
     ],
   },
@@ -1293,39 +1446,50 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'As2 partner Station Info auth token refresh Headers',
+    label: 'Refresh Token Headers',
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.auth.token.refreshToken': {
     type: 'text',
-    label: 'As2 partner Station Info auth token refresh Token',
+    label: 'Refresh Token',
+    visibleWhen: [
+      {
+        field: 'configureTokenRefresh',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'As2 partner Station Info rate Limit fail Status Code',
+    label: 'Fail Status Code:',
     validWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
       },
     ],
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'As2 partner Station Info rate Limit fail Path',
+    label: 'Fail Path:',
   },
-  'as2.partnerStationInfo.rateLimit.failValuess': {
+  'as2.partnerStationInfo.rateLimit.failValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'As2 partner Station Info rate Limit fail Values',
-    validWhen: [],
+    label: 'Fail Values:',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
-    label: 'As2 partner Station Info rate Limit limit',
+    label: 'Limit:',
     validWhen: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
       },
       {
         fallsWithinNumericalRange: {
@@ -1335,16 +1499,11 @@ export default {
       },
     ],
   },
-  'as2.partnerStationInfo.SMIMEVersion': {
-    type: 'radiogroup',
-    label: 'As2 partner Station Info SMIMEVersion',
-    options: [
-      { items: [{ label: 'V2', value: 'v2' }, { label: 'V3', value: 'v3' }] },
-    ],
-  },
+
   'as2.partnerStationInfo.encryptionType': {
     type: 'select',
-    label: 'As2 partner Station Info encryption Type',
+    label: 'Encryption Type:',
+    required: true,
     options: [
       {
         items: [
@@ -1358,9 +1517,34 @@ export default {
       },
     ],
   },
+  as2url: {
+    type: 'labelvalue',
+    label: 'AS2 URL',
+    value: 'https://api.staging.integrator.io/v1/as2',
+  },
+  requiremdnspartners: {
+    type: 'labelvalue',
+    label: 'Require MDNs from Partners?',
+    value: 'Yes',
+  },
+  requireasynchronousmdns: {
+    type: 'labelvalue',
+    label: 'Require Asynchronous MDNs?',
+    value: 'No',
+  },
+  partnerrequireasynchronousmdns: {
+    type: 'checkbox',
+    label: 'Partner Requires Asynchronous MDNs?',
+  },
+  'as2.userStationInfo.ipAddresses': {
+    type: 'labelvalue',
+    label: 'AS2 IP Addresses:',
+    value: 'Click here to see the list of IP Addresses.',
+  },
   'as2.partnerStationInfo.signing': {
     type: 'select',
-    label: 'As2 partner Station Info signing',
+    label: 'Signing:',
+    required: true,
     options: [
       {
         items: [
@@ -1373,8 +1557,20 @@ export default {
     ],
   },
   'as2.partnerStationInfo.encoding': {
-    type: 'radiogroup',
-    label: 'As2 partner Station Info encoding',
+    type: 'select',
+    label: 'Encoding:',
+    options: [
+      {
+        items: [
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+        ],
+      },
+    ],
+  },
+  'as2.partnerStationInfo.signatureEncoding': {
+    type: 'select',
+    label: 'Signature Encoding:',
     options: [
       {
         items: [
@@ -1388,16 +1584,15 @@ export default {
     type: 'text',
     label: 'As2 user Station Info mdn mdn URL',
   },
-  'as2.userStationInfo.mdn.signatureProtocol': {
-    type: 'radiogroup',
-    label: 'As2 user Station Info mdn signature Protocol',
-    options: [
-      { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
-    ],
+  'as2.userStationInfo.encrypted.userPrivateKey': {
+    type: 'editor',
+    mode: 'json',
+    label: 'X.509 Private Key:',
   },
   'as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
-    label: 'As2 user Station Info mdn mdn Signing',
+    label: 'MDN Signing:',
+    required: true,
     options: [
       {
         items: [
@@ -1409,9 +1604,22 @@ export default {
       },
     ],
   },
+  'as2.userStationInfo.mdn.mdnEncoding': {
+    type: 'select',
+    label: 'Incoming Message Encoding:',
+    options: [
+      {
+        items: [
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+        ],
+      },
+    ],
+  },
   'as2.userStationInfo.encryptionType': {
     type: 'select',
-    label: 'As2 user Station Info encryption Type',
+    label: 'Decryption Algorithm:',
+    required: true,
     options: [
       {
         items: [
@@ -1427,7 +1635,8 @@ export default {
   },
   'as2.userStationInfo.signing': {
     type: 'select',
-    label: 'As2 user Station Info signing',
+    label: 'Signature Verification Algorithm:',
+    required: true,
     options: [
       {
         items: [
@@ -1439,9 +1648,9 @@ export default {
       },
     ],
   },
-  'as2.userStationInfo.encoding': {
-    type: 'radiogroup',
-    label: 'As2 user Station Info encoding',
+  'as2.partnerStationInfo.mdnSigning': {
+    type: 'select',
+    label: 'Signature Encoding:',
     options: [
       {
         items: [
@@ -1451,24 +1660,27 @@ export default {
       },
     ],
   },
-  'as2.encrypted': {
-    type: 'editor',
-    mode: 'json',
-    label: 'Encrypted:',
-  },
-  'as2.concurrencyLevel': {
-    type: 'text',
-    label: 'Concurrency Level:',
-    validWhen: [
+  'as2.userStationInfo.encoding': {
+    type: 'select',
+    label: 'MDN Encoding:',
+    options: [
       {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+        items: [
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+        ],
       },
     ],
   },
-  'as2.unencrypted': {
+  'as2.unencrypted.userPublicKey': {
     type: 'editor',
     mode: 'json',
-    label: 'Unencrypted:',
+    label: 'X.509 Public Certificate:',
+  },
+  'as2.unencrypted.partnerCertificate': {
+    type: 'editor',
+    mode: 'json',
+    label: "Partner's Certificate:",
   },
   // #endregion as2
   // #region netsuite

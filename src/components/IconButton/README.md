@@ -1,9 +1,7 @@
 ```js
 const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 const AddIcon = require('../icons/AddIcon').default;
-const ScheduleIcon = require('../icons/ScheduleIcon').default;
 const CloseIcon = require('../icons/CloseIcon').default;
-const MenuBarsIcon = require('../icons/MenuBarsIcon').default;
 
 <SpacedContainer>
   <IconButton variant="contained">
@@ -11,15 +9,15 @@ const MenuBarsIcon = require('../icons/MenuBarsIcon').default;
   </IconButton>
 
   <IconButton color="primary" variant="contained">
-    <CloseIcon /> Click Me Again <MenuBarsIcon />
+    <AddIcon /> Click Me Again <CloseIcon />
   </IconButton>
 
   <IconButton color="primary" variant="contained">
-    Click Me <ScheduleIcon />
+    Click Me <CloseIcon />
   </IconButton>
 
   <IconButton color="secondary" variant="outlined">
-    <CloseIcon /> Click Me <MenuBarsIcon />
+    <AddIcon /> Click Me <CloseIcon />
   </IconButton>
 </SpacedContainer>
 ```

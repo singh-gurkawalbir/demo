@@ -53,8 +53,14 @@ const IntegrationSettings = loadable(() =>
 const AccessTokens = loadable(() =>
   import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
 );
+const Stacks = loadable(() =>
+  import(/* webpackChunkName: 'Stacks' */ '../../views/Stacks')
+);
 const Connections = loadable(() =>
   import(/* webpackChunkName: 'Connections' */ '../../views/Connections')
+);
+const Scripts = loadable(() =>
+  import(/* webpackChunkName: 'Scripts' */ '../../views/Scripts')
 );
 
 @hot(module)
@@ -84,7 +90,9 @@ export default class AppRouting extends Component {
         <Route path="/pg/agents" component={Agents} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
+        <Route path="/pg/stacks" component={Stacks} />
         <Route path="/pg/connections" component={Connections} />
+        <Route path="/pg/scripts" component={Scripts} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

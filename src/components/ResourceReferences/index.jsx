@@ -17,7 +17,7 @@ import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 
 const styles = theme => ({
-  ReferenceLink: {
+  referenceLink: {
     margin: theme.spacing(1),
     marginTop: theme.spacing(3),
     float: 'right',
@@ -60,7 +60,7 @@ function ResourceReferences(props) {
                             `${refObject.resourceType}/edit/${reference.id}`
                           )}
                           onClick={onClose}
-                          className={classes.ReferenceLink}>
+                          className={classes.referenceLink}>
                           <ListItemText primary={reference.name} />
                         </Link>
                         <Divider />

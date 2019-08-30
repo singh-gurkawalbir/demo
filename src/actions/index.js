@@ -190,20 +190,73 @@ const auditLogs = {
   },
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
+const connectors = {
+  refreshMetadata: (fieldType, fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_REQUEST, {
+      fieldType,
+      fieldName,
+      _integrationId,
+    }),
+  failedMetadata: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_FAILURE, {
+      fieldName,
+      _integrationId,
+    }),
+  clearMetadata: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_CLEAR, {
+      fieldName,
+      _integrationId,
+    }),
+  receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
+      metadata,
+      fieldType,
+      fieldName,
+      _integrationId,
+    }),
+};
 const metadata = {
-  request: (connectionId, metadataType, mode, filterKey) =>
-    action(actionTypes.METADATA.REQUEST, {
+  request: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) => {
+    if (mode) {
+      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
+        connectionId,
+        metadataType,
+        mode,
+        filterKey,
+        recordType,
+        selectField,
+      });
+    }
+
+    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
       connectionId,
       metadataType,
-      mode,
-      filterKey,
-    }),
-  refresh: (connectionId, metadataType, mode, filterKey) =>
+      recordType,
+      selectField,
+    });
+  },
+  refresh: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       metadataType,
       mode,
       filterKey,
+      recordType,
+      selectField,
     }),
   netsuite: {
     receivedCollection: (
@@ -211,7 +264,9 @@ const metadata = {
       metadataType,
       connectionId,
       mode,
-      filterKey
+      filterKey,
+      recordType,
+      selectField
     ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
@@ -219,20 +274,56 @@ const metadata = {
         connectionId,
         mode,
         filterKey,
+        recordType,
+        selectField,
       }),
     receivedError: (
       metadataError,
       metadataType,
       connectionId,
       mode,
-      filterKey
+      filterKey,
+      recordType,
+      selectField
     ) =>
-      action(actionTypes.METADATA.RECEIVED_ERROR, {
+      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
         metadataError,
         metadataType,
         connectionId,
         mode,
         filterKey,
+        recordType,
+        selectField,
+      }),
+  },
+  salesforce: {
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
+        metadata,
+        metadataType,
+        connectionId,
+        recordType,
+        selectField,
+      }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
+        metadataError,
+        metadataType,
+        connectionId,
+        recordType,
+        selectField,
       }),
   },
 };
@@ -248,6 +339,19 @@ const agent = {
   maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
+};
+const stack = {
+  displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
+  generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
+  tokenReceived: stackToken =>
+    action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
+  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  inviteStackShareUser: (email, stackId) =>
+    action(actionTypes.STACK.SHARE_USER_INVITE, { email, stackId }),
+  toggleUserStackSharing: userId =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
+  toggledUserStackSharing: ({ userId }) =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
 };
 const user = {
   profile: {
@@ -494,6 +598,7 @@ export default {
   appErrored,
   toggleDrawer,
   metadata,
+  connectors,
   cancelTask,
   reloadApp,
   clearComms,
@@ -512,4 +617,5 @@ export default {
   job,
   flow,
   agent,
+  stack,
 };

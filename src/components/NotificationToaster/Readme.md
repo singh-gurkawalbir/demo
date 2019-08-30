@@ -1,64 +1,54 @@
 System  Toasters
 ```js
-const SpacedContainer = require('../../styleguide/SpacedContainer').default;
+const Grid = require('@material-ui/core/Grid').default;
 const Typography = require('@material-ui/core/Typography').default;
-const wrapper = {
-display: 'flex',
-justifyContent: 'flex-start',
-flexFlow: 'column',
-};
-<div style={wrapper}>
-  <SpacedContainer>
+<Grid container justify-content="center" spacing={2}>
+  <Grid item>
     <NotificationToaster variant="error" size="small">
-      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. </Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item>
     <NotificationToaster variant="success">
-    <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. I love Pineapplecake. I love sweets.</Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. I love Pineapplecake. I love sweets.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item>
     <NotificationToaster variant="warning">
       <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. I love Pineapplecake. I love sweets.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item>
     <NotificationToaster variant="info">
       <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. I love Pineapplecake. I love sweets.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-</div>
+  </Grid>
+</Grid>
 ```
 Notification Banners
 ```js
-const SpacedContainer = require('../../styleguide/SpacedContainer').default;
+const Grid = require('@material-ui/core/Grid').default;
 const Typography = require('@material-ui/core/Typography').default;
-const wrapper = {
-display: 'flex',
-justifyContent: 'flex-start',
-flexFlow: 'column',
-};
-<div style={wrapper}>
-  <SpacedContainer>
+<Grid container justify-content="center" spacing={2}>
+  <Grid item xs={12}>
     <NotificationToaster variant="error" size="large">
-      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. </Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item xs={12}>
     <NotificationToaster variant="success" size="large">
-      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. </Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item xs={12}>
     <NotificationToaster variant="warning" size="large">
-     <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. </Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-  <SpacedContainer>
+  </Grid>
+  <Grid item xs={12}>
     <NotificationToaster variant="info" size="large">
-   <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake. </Typography>
+      <Typography>I love candy. I love cookies. I love cupcakes. I love cheesecake.</Typography>
     </NotificationToaster>
-  </SpacedContainer>
-</div>
+  </Grid>
+</Grid>
 ```

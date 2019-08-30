@@ -17,6 +17,7 @@ export default {
   's3.region': {
     type: 'select',
     label: 'Region',
+    required: true,
     options: [
       {
         items: [
@@ -55,6 +56,7 @@ export default {
   'file.type': {
     type: 'select',
     label: 'File Type',
+    required: true,
     options: [
       {
         items: [
@@ -174,6 +176,7 @@ export default {
   's3.bucket': {
     type: 'text',
     label: 'Bucket Name',
+    required: true,
   },
   's3.keyStartsWith': {
     type: 'text',
