@@ -4,8 +4,8 @@ import StatusCircle from '../../../components/HomePageCard/Header/Status/StatusC
 import getRoutePath from '../../../utils/routePaths';
 import { getApp } from '../../../constants/applications';
 import { getResourceSubType } from '../../../utils/resource';
-import AuditLogIcon from '../../../components/icons/AuditLogIcon';
-import MenuBarsIcon from '../../../components/icons/MenuBarsIcon';
+import Delete from './actions/Delete';
+import References from './actions/References';
 
 const getResourceLink = (resourceType, resource) => (
   <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
@@ -58,7 +58,7 @@ export default function(resourceType) {
           orderBy: 'lastModified',
         },
       ],
-      actions: [AuditLogIcon, MenuBarsIcon],
+      actions: [Delete, References],
     },
 
     connections: {
@@ -96,6 +96,7 @@ export default function(resourceType) {
           },
         },
       ],
+      actions: [Delete, References],
     },
 
     agents: {
@@ -119,6 +120,7 @@ export default function(resourceType) {
           value: r => onlineStatus(r),
         },
       ],
+      actions: [Delete, References],
     },
 
     default: {
@@ -134,6 +136,7 @@ export default function(resourceType) {
           orderBy: 'lastModified',
         },
       ],
+      actions: [Delete, References],
     },
   };
 

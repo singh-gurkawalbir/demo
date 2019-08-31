@@ -52,11 +52,12 @@ const theme = {
         paddingTop: 5,
       },
     },
+    // .MuiTableRow-root.MuiTableRow-hover:hover
     MuiTableRow: {
-      hover: {
-        '&:hover': {
-          backgroundColor: `inherit`,
-          boxShadow: `2px 2px 4px rgba(0,0,0,0.15)`,
+      root: {
+        '&$hover:hover': {
+          backgroundColor: '#eee',
+          boxShadow: `2px 2px 4px rgba(0,0,0,0.1)`,
         },
       },
     },

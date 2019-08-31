@@ -36,8 +36,13 @@ const useStyles = makeStyles(theme => ({
   },
   actionCell: {
     position: 'absolute',
-    right: theme.spacing(4),
-    paddingTop: theme.spacing(1.5),
+    right: theme.spacing(3),
+    padding: theme.spacing(1),
+    marginTop: 1,
+    backgroundColor: '#eee',
+  },
+  action: {
+    padding: theme.spacing(0, 0),
   },
 }));
 
@@ -111,8 +116,11 @@ export default function ResourceTable({ resourceType, resources }) {
             )}
             {rowActions && (
               <div className={classes.actionCell}>
-                {rowActions.map(Action => (
-                  <Action key={1} resource={r} />
+                {rowActions.map((Action, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <div key={index} className={classes.action}>
+                    <Action resourceType={resourceType} resource={r} />
+                  </div>
                 ))}
               </div>
             )}
