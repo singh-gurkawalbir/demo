@@ -34,6 +34,7 @@ export default {
     { fieldId: 'http.compositeType' },
     { fieldId: 'http.compositeMethod' },
     // Manage lookup option is not visible directly  in form
+    { fieldId: 'http.mapping' },
     { fieldId: 'http.lookups', visible: false },
     { fieldId: 'http.body' },
     { fieldId: 'http.relativeUri' },
