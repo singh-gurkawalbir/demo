@@ -13,7 +13,7 @@ import metadata from './metadata';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   visuallyHidden: {
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -24,6 +24,20 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     top: 20,
     width: 1,
+  },
+
+  row: {
+    '& > div': {
+      display: 'none',
+    },
+    '&:hover > div': {
+      display: 'flex',
+    },
+  },
+  actionCell: {
+    position: 'absolute',
+    right: theme.spacing(4),
+    paddingTop: theme.spacing(1.5),
   },
 }));
 
@@ -38,7 +52,7 @@ export default function ResourceTable({ resourceType, resources }) {
     dispatch(actions.patchFilter(resourceType, { sort: { order, orderBy } }));
   };
 
-  const columns = metadata(resourceType);
+  const { columns = [], actions: rowActions } = metadata(resourceType);
 
   return (
     <Table className={classes.table}>
@@ -72,11 +86,14 @@ export default function ResourceTable({ resourceType, resources }) {
               </TableCell>
             )
           )}
+          {
+            // rowActions && <TableCell className={classes.actionColHead} />
+          }
         </TableRow>
       </TableHead>
       <TableBody>
         {resources.map(r => (
-          <TableRow key={r._id}>
+          <TableRow hover key={r._id} className={classes.row}>
             {columns.map((col, index) =>
               index === 0 ? (
                 <TableCell
@@ -91,6 +108,13 @@ export default function ResourceTable({ resourceType, resources }) {
                   {col.value(r)}
                 </TableCell>
               )
+            )}
+            {rowActions && (
+              <div className={classes.actionCell}>
+                {rowActions.map(Action => (
+                  <Action key={1} resource={r} />
+                ))}
+              </div>
             )}
           </TableRow>
         ))}

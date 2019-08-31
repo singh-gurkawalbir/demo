@@ -52,6 +52,14 @@ const theme = {
         paddingTop: 5,
       },
     },
+    MuiTableRow: {
+      hover: {
+        '&:hover': {
+          backgroundColor: `inherit`,
+          boxShadow: `2px 2px 4px rgba(0,0,0,0.15)`,
+        },
+      },
+    },
   },
 };
 

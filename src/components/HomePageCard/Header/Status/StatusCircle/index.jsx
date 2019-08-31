@@ -5,11 +5,17 @@ import classNames from 'classnames';
 const usestyles = makeStyles(theme => ({
   root: {
     margin: [[0, 5]],
-    width: 24,
-    height: 24,
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
+  },
+  large: {
+    width: 24,
+    height: 24,
+  },
+  small: {
+    width: 12,
+    height: 12,
   },
   success: {
     backgroundColor: theme.palette.success.main,
@@ -25,11 +31,14 @@ const usestyles = makeStyles(theme => ({
   },
 }));
 
-function StatusCircle(props) {
+function StatusCircle({ variant, size = 'large' }) {
   const classes = usestyles();
-  const { variant } = props;
 
-  return <span className={classNames(classes[variant], classes.root)} />;
+  return (
+    <span
+      className={classNames(classes[size], classes[variant], classes.root)}
+    />
+  );
 }
 
 StatusCircle.propTypes = {
