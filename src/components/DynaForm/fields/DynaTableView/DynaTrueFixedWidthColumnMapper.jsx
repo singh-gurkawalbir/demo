@@ -16,6 +16,28 @@ export default function DynaCSVColumnMapper(props) {
     });
   }
 
+  const rowChangeListener = (state, row, field, newValue) => {
+    if (state[row]) {
+      if (['startPosition', 'endPosition'].includes(field)) {
+        const newRow = Object.assign({}, state[row], { [field]: newValue });
+
+        return [
+          ...state.slice(0, row),
+          Object.assign({}, newRow, {
+            length: state[row].endPosition - state[row].startPosition,
+          }),
+          ...state.slice(row + 1, state.length),
+        ];
+      }
+
+      return [
+        ...state.slice(0, row),
+        Object.assign({}, state[row], { [field]: newValue }),
+        ...state.slice(row + 1, state.length),
+      ];
+    }
+  };
+
   const fieldChangeHandler = (id, val) => {
     if (val && Array.isArray(val)) {
       onFieldChange(
@@ -75,6 +97,7 @@ export default function DynaCSVColumnMapper(props) {
       {...props}
       optionsMap={optionsMap}
       value={newValue}
+      rowChangeListener={rowChangeListener}
       onFieldChange={fieldChangeHandler}
     />
   );

@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
-import deepClone from 'lodash/cloneDeep';
 import Spinner from '../../../Spinner';
 import DynaSelect from '../DynaSelect';
 
@@ -39,6 +38,7 @@ function reducer(state, action) {
     field,
     lastRowData = {},
     setChangeIdentifier,
+    rowChangeListener,
   } = action;
 
   switch (type) {
@@ -49,8 +49,14 @@ function reducer(state, action) {
         ...state.slice(0, index),
         ...state.slice(index + 1, state.length),
       ];
+    case 'addNew':
+      return [...state, lastRowData];
     case 'updateField':
       if (state[index]) {
+        if (rowChangeListener) {
+          return rowChangeListener(state, index, field, value);
+        }
+
         return [
           ...state.slice(0, index),
           Object.assign({}, state[index], { [field]: value }),
@@ -81,10 +87,19 @@ export default function DynaTable(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
-  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
-  const valueData = deepClone(state);
   const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
+  const preSubmit = (stateValue = []) =>
+    stateValue.filter(val => {
+      let allRequiredFieldsPresent = true;
+
+      optionsMap.forEach(op => {
+        if (op.required)
+          allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
+      });
+
+      return allRequiredFieldsPresent;
+    });
   let requiredFieldsMissing = false;
 
   useEffect(() => {
@@ -111,11 +126,12 @@ export default function DynaTable(props) {
     },
     [handleCleanupHandler, id]
   );
+  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
 
   // If Value is present, check if there are required fields missing in the last row
-  if (valueData && valueData.length) {
+  if (state.length) {
     (requiredFields || []).forEach(field => {
-      if (!valueData[valueData.length - 1][field.id]) {
+      if (!state[state.length - 1][field.id]) {
         requiredFieldsMissing = true;
       }
     });
@@ -126,11 +142,11 @@ export default function DynaTable(props) {
     optionsMap.forEach(option => {
       lastRow[option.id] = option.type === 'select' ? undefined : '';
     });
-    valueData.push(lastRow);
+    dispatchLocalAction({ type: 'addNew', lastRowData: lastRow });
   }
 
   // Convert the value to react form readable format
-  const tableData = (valueData || []).map((value, index) => {
+  const tableData = state.map((value, index) => {
     const arr = optionsMap.map(op => {
       let modifiedOptions;
 
@@ -158,21 +174,30 @@ export default function DynaTable(props) {
   });
   // Update handler. Listens to change in any field and dispatches action to update state
   const handleUpdate = (row, event, field) => {
-    const { value } = event.target;
-    const { id, onFieldChange } = props;
+    const newValue = event.target.value;
+    const { id, onFieldChange, rowChangeListener } = props;
 
     dispatchLocalAction({
       type: 'updateField',
       index: row,
       field,
-      value,
+      value: newValue,
       setChangeIdentifier,
-      lastRowData: (valueData || {}).length
-        ? valueData[valueData.length - 1]
-        : {},
+      lastRowData: (value || []).length ? value[value.length - 1] : {},
+      rowChangeListener,
     });
 
-    onFieldChange(id, state);
+    if (state[row]) {
+      const fieldValueToSet = rowChangeListener
+        ? rowChangeListener(state, row, field, newValue)
+        : preSubmit([
+            ...state.slice(0, row),
+            Object.assign({}, state[row], { [field]: newValue }),
+            ...state.slice(row + 1, state.length),
+          ]);
+
+      onFieldChange(id, fieldValueToSet);
+    }
   };
 
   function handleRefreshClick(e, fieldId) {
@@ -185,7 +210,7 @@ export default function DynaTable(props) {
     const { id, onFieldChange } = props;
 
     dispatchLocalAction({ type: 'remove', index, setChangeIdentifier });
-    onFieldChange(id, state);
+    onFieldChange(id, preSubmit(state));
   }
 
   const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
