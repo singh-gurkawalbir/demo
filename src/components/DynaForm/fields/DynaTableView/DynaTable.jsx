@@ -218,6 +218,7 @@ export default function DynaTable(props) {
           </Grid>
         )}
         <Grid
+          container
           spacing={2}
           key={changeIdentifier}
           className={classes.paddingLeft}
