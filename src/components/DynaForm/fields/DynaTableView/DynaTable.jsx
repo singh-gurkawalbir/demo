@@ -91,10 +91,6 @@ export default function DynaTable(props) {
     setShouldResetOptions(true);
   }, [shouldReset]);
 
-  //     onFieldChange(id, state);
-  //     setUpdateValue(false);
-  //   }
-  // }, [id, onFieldChange, state, updateValue]);
   useEffect(() => {
     if (
       shouldResetOptions &&
@@ -138,7 +134,7 @@ export default function DynaTable(props) {
     const arr = optionsMap.map(op => {
       let modifiedOptions;
 
-      if ((op.options || {}).length) {
+      if ((op.options || []).length) {
         modifiedOptions = {
           options: [
             {
@@ -171,7 +167,6 @@ export default function DynaTable(props) {
       field,
       value,
       setChangeIdentifier,
-      // setUpdateValue,
       lastRowData: (valueData || {}).length
         ? valueData[valueData.length - 1]
         : {},
