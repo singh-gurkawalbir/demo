@@ -49,8 +49,8 @@ function PageContent(props) {
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      take: filter.take || 3,
-      keyword: filter.keyword,
+      take: 3,
+      ...filter,
     })
   );
   const handleMore = () => {
