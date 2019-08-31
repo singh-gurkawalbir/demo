@@ -75,6 +75,7 @@ export default function DynaTable(props) {
   const {
     label,
     value,
+    hideLabel = false,
     optionsMap: optionsMapInit,
     handleRefreshClickHandler,
     handleCleanupHandler,
@@ -219,7 +220,7 @@ export default function DynaTable(props) {
 
   return (
     <div className={classes.container}>
-      <Typography variant="h6">{label}</Typography>
+      {!hideLabel && <Typography variant="h6">{label}</Typography>}
       <Grid container className={classes.root} spacing={2}>
         {!hideHeaders && (
           <Grid item xs={12}>
