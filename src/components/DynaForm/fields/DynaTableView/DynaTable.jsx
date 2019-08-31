@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing.unit,
     overflowY: 'off',
   },
+  paddingLeft: {
+    'padding-left': '7px',
+  },
   root: {
     flexGrow: 1,
   },
@@ -88,6 +91,10 @@ export default function DynaTable(props) {
     setShouldResetOptions(true);
   }, [shouldReset]);
 
+  //     onFieldChange(id, state);
+  //     setUpdateValue(false);
+  //   }
+  // }, [id, onFieldChange, state, updateValue]);
   useEffect(() => {
     if (
       shouldResetOptions &&
@@ -164,10 +171,12 @@ export default function DynaTable(props) {
       field,
       value,
       setChangeIdentifier,
+      // setUpdateValue,
       lastRowData: (valueData || {}).length
         ? valueData[valueData.length - 1]
         : {},
     });
+
     onFieldChange(id, state);
   };
 
@@ -208,12 +217,19 @@ export default function DynaTable(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={2} key={changeIdentifier} direction="column">
+        <Grid
+          spacing={2}
+          key={changeIdentifier}
+          className={classes.paddingLeft}
+          direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
                 {arr.values.map(r => (
-                  <Grid item key={r.id} xs={r.space || true}>
+                  <Grid
+                    item
+                    key={r.readOnly ? r.value || r.id : r.id}
+                    xs={r.space || true}>
                     {['input', 'text', 'number'].includes(r.type) && (
                       <Input
                         defaultValue={r.value}
@@ -223,9 +239,6 @@ export default function DynaTable(props) {
                         className={classes.input}
                         onChange={handleAllUpdate(arr.row, r.id)}
                       />
-                    )}
-                    {r.type === 'readOnly' && (
-                      <Typography>{r.value}</Typography>
                     )}
                     {r.type === 'select' && (
                       <DynaSelect
