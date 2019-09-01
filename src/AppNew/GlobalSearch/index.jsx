@@ -6,6 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -79,9 +80,16 @@ export default function Search() {
   // TECH DEBT: This resource merge and sort code below should be move to
   // a custom global search selector and tests added to ensure below
   // code is robust.
+  const resourceTypes = [
+    'exports',
+    'imports',
+    'connections',
+    'agents',
+    'scripts',
+    'stacks',
+  ];
   const searchResults = useSelector(state => {
     const results = [];
-    const resourceTypes = ['exports', 'imports', 'connections'];
 
     resourceTypes.forEach(type => {
       selectors
@@ -110,25 +118,27 @@ export default function Search() {
     <Fragment>
       <div className={classes.search}>
         {filter.keyword && (
-          <div className={classes.searchResults}>
-            {searchResults.length ? (
-              searchResults.map(r => (
-                <div className={classes.searchItem} key={r.id}>
-                  <Typography
-                    color="inherit"
-                    component={Link}
-                    to={`/pg/${r.type}/edit/${r.id}`}>
-                    {r.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {r.type}
-                  </Typography>
-                </div>
-              ))
-            ) : (
-              <Typography>No Match</Typography>
-            )}
-          </div>
+          <LoadResources resources={resourceTypes}>
+            <div className={classes.searchResults}>
+              {searchResults.length ? (
+                searchResults.map(r => (
+                  <div className={classes.searchItem} key={r.id}>
+                    <Typography
+                      color="inherit"
+                      component={Link}
+                      to={`/pg/${r.type}/edit/${r.id}`}>
+                      {r.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {r.type}
+                    </Typography>
+                  </div>
+                ))
+              ) : (
+                <Typography>No Match</Typography>
+              )}
+            </div>
+          </LoadResources>
         )}
         <div className={classes.searchIcon}>
           <SearchIcon />

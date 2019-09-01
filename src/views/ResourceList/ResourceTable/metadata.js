@@ -6,6 +6,8 @@ import { getApp } from '../../../constants/applications';
 import { getResourceSubType } from '../../../utils/resource';
 import Delete from './actions/Delete';
 import References from './actions/References';
+import AgentDownloadInstaller from '../../../components/AgentList/AgentDownloadInstaller';
+import AgentToken from '../../../components/AgentToken';
 
 const getResourceLink = (resourceType, resource) => (
   <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
@@ -35,6 +37,10 @@ const formatLastModified = lastModified => {
   return <TimeAgo formatter={formatter} date={lastModified} />;
 };
 
+const getAgentDownloadInstaller = agent => (
+  <AgentDownloadInstaller agentId={agent._id} />
+);
+const getAgentToken = agent => <AgentToken agentId={agent._id} />;
 const onlineStatus = r => (
   <div style={{ display: 'flex' }}>
     <StatusCircle size="small" variant={r.offline ? 'error' : 'success'} />
@@ -117,7 +123,11 @@ export default function(resourceType) {
         },
         {
           heading: 'Access Token',
-          value: r => onlineStatus(r),
+          value: r => getAgentToken(r),
+        },
+        {
+          heading: 'Install',
+          value: r => getAgentDownloadInstaller(r),
         },
       ],
       actions: [Delete, References],

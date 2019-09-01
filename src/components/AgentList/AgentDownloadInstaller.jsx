@@ -1,13 +1,14 @@
 import { Fragment, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Button, MenuItem } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
+import actions from '../../actions';
 
-export default function AgentDownloadInstaller(props) {
-  const { onInstallerClick } = props;
+export default function AgentDownloadInstaller({ agentId }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
 
   function handleMenuClose() {
     setAnchorEl(null);
@@ -20,7 +21,7 @@ export default function AgentDownloadInstaller(props) {
   function handleInstallerClick(osType) {
     return () => {
       handleMenuClose();
-      onInstallerClick(osType);
+      dispatch(actions.agent.downloadInstaller(osType, agentId));
     };
   }
 
@@ -37,9 +38,9 @@ export default function AgentDownloadInstaller(props) {
           Mac OS (BETA)
         </MenuItem>
       </Menu>
-      <IconButton onClick={handleMenuClick}>
-        <MoreVertIcon />
-      </IconButton>
+      <Button onClick={handleMenuClick}>
+        Download <ArrowDownIcon />
+      </Button>
     </Fragment>
   );
 }

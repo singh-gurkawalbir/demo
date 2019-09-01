@@ -32,14 +32,6 @@ export default function AgentDetail(props) {
     dispatch(actions.resource.delete('agents', agent._id));
   };
 
-  const downloadAgentInstaller = (osType, id) => {
-    dispatch(actions.agent.downloadInstaller(osType, id));
-  };
-
-  const handleInstallerClick = osType => {
-    downloadAgentInstaller(osType, agent._id);
-  };
-
   const handleActionClick = action => {
     const { onReferencesClick } = props;
 
@@ -94,7 +86,7 @@ export default function AgentDetail(props) {
         </Fragment>
       </TableCell>
       <TableCell>
-        <AgentDownloadInstaller onInstallerClick={handleInstallerClick} />
+        <AgentDownloadInstaller agentId={agent._id} />
       </TableCell>
       <TableCell>{agentStatus ? 'Online' : 'Offline'}</TableCell>
 
