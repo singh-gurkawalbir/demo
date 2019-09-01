@@ -12,6 +12,9 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
   },
+  token: {
+    fontFamily: 'Courier',
+  },
 });
 
 export default function AgentToken({ agentId }) {
@@ -39,7 +42,9 @@ export default function AgentToken({ agentId }) {
 
   return (
     <div className={classes.root}>
-      <Typography>{accessToken || '****************'}</Typography>
+      <Typography variant="caption" className={classes.token}>
+        {accessToken || '********************************'}
+      </Typography>
       {accessToken && (
         <IconButton
           title="Copy ot clipboard"
