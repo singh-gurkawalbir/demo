@@ -66,6 +66,7 @@ export default function ResourceTable({ resourceType, resources }) {
           {columns.map(col =>
             col.orderBy ? (
               <TableCell
+                style={col.width ? { width: col.width } : undefined}
                 key={col.heading}
                 align={col.align || 'left'}
                 sortDirection={orderBy === col.orderBy ? order : false}>
@@ -86,7 +87,10 @@ export default function ResourceTable({ resourceType, resources }) {
                 </TableSortLabel>
               </TableCell>
             ) : (
-              <TableCell key={col.heading} align={col.align || 'left'}>
+              <TableCell
+                key={col.heading}
+                style={col.width ? { width: col.width } : undefined}
+                align={col.align || 'left'}>
                 {col.heading}
               </TableCell>
             )

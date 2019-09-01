@@ -123,10 +123,12 @@ export default function(resourceType) {
         },
         {
           heading: 'Access Token',
+          width: '250px',
           value: r => getAgentToken(r),
         },
         {
           heading: 'Install',
+          width: '175px',
           value: r => getAgentDownloadInstaller(r),
         },
       ],

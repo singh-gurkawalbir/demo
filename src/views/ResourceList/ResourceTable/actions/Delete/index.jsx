@@ -10,9 +10,7 @@ export default function Delete({ resourceType, resource }) {
   const handleClick = () => {
     confirmDialog({
       title: 'Confirm',
-      message: `Are you sure you want to delete this ${MODEL_PLURAL_TO_LABEL(
-        resourceType
-      )}?`,
+      message: `Are you sure you want to delete this ${MODEL_PLURAL_TO_LABEL[resourceType]}?`,
       buttons: [
         {
           label: 'Cancel',
