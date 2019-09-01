@@ -27,19 +27,22 @@ const useStyles = makeStyles(theme => ({
   },
 
   row: {
-    '& > div': {
+    '& > td:last-child': {
       display: 'none',
     },
-    '&:hover > div': {
+    '&:hover > td:last-child': {
       display: 'flex',
     },
   },
+
   actionCell: {
-    position: 'absolute',
-    right: theme.spacing(3),
+    position: 'sticky',
+    right: 0,
     padding: theme.spacing(1),
     marginTop: 1,
+    marginLeft: -92,
     backgroundColor: '#eee',
+    border: 0,
   },
   action: {
     padding: theme.spacing(0, 0),
@@ -119,14 +122,14 @@ export default function ResourceTable({ resourceType, resources }) {
               )
             )}
             {rowActions && (
-              <div className={classes.actionCell}>
+              <TableCell className={classes.actionCell}>
                 {rowActions.map((Action, index) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <div key={index} className={classes.action}>
                     <Action resourceType={resourceType} resource={r} />
                   </div>
                 ))}
-              </div>
+              </TableCell>
             )}
           </TableRow>
         ))}
