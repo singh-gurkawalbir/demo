@@ -105,10 +105,6 @@ export default {
       },
     ],
   },
-  'http.mapping': {
-    type: 'dynarestmapping',
-    label: 'Mapping Dummy',
-  },
   'http.body': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',

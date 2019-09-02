@@ -26,8 +26,6 @@ import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaLabelValueElement from './DynaLabelValueElement';
-import DynaRestMapping from './DynaRestMapping';
-import DynaMappingSettings from './DynaMappingSettings';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -48,7 +46,6 @@ export default {
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
-  dynarestmapping: DynaRestMapping,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
@@ -60,5 +57,4 @@ export default {
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
   keywithaction: DynaKeyWithAction,
-  dynamappingsettings: DynaMappingSettings,
 };
