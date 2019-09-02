@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,6 +17,8 @@ import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 import menuItems from './menuItems';
 import getRoutePath from '../../utils/routePaths';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -69,12 +72,16 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
   list: {
-    backgroundColor: fade(theme.palette.common.white, 0.07),
+    backgroundColor: fade(theme.palette.secondary.light, 0.25),
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   listItem: {
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main,
+      borderLeft: 'solid 3px',
       color: theme.palette.common.white,
+      paddingLeft: theme.spacing(2) - 3,
     },
     '&:not(:last-child)': {
       borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
@@ -89,22 +96,32 @@ const useStyles = makeStyles(theme => ({
   },
   logoContainer: {
     textAlign: 'center',
+    fill: theme.palette.primary.dark,
+    color: theme.palette.primary.dark,
   },
   logo: {
     width: 90,
     display: 'inline-block',
-    fill: fade(theme.palette.primary.main, 0.8),
+  },
+  itemText: {
+    fontSize: 14,
+    fontFamily: 'unset',
   },
 }));
 
-export default function CeligoDrawer(props) {
-  const { open = false, handleDrawerToggle } = props;
+export default function CeligoDrawer() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [expand, setExpand] = React.useState(null);
+  const handleDrawerToggle = () => {
+    dispatch(actions.toggleDrawer());
+  };
+
   const handleExpandClick = label => () => {
     setExpand(label === expand ? null : label);
 
-    if (!open) handleDrawerToggle();
+    if (!drawerOpened) handleDrawerToggle();
   };
 
   return (
@@ -112,20 +129,20 @@ export default function CeligoDrawer(props) {
       variant="permanent"
       anchor="left"
       className={clsx(classes.drawer, {
-        [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+        [classes.drawerOpen]: drawerOpened,
+        [classes.drawerClose]: !drawerOpened,
       })}
       classes={{
         paper: clsx({
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerOpen]: drawerOpened,
+          [classes.drawerClose]: !drawerOpened,
         }),
       }}
-      open={open}>
+      open={drawerOpened}>
       <div className={classes.menuContainer}>
         <div>
           <div className={classes.logoContainer}>
-            {open ? (
+            {drawerOpened ? (
               <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
                 <CeligoLogo aria-label="open drawer" />
               </ButtonBase>
@@ -134,7 +151,7 @@ export default function CeligoDrawer(props) {
                 color="inherit"
                 aria-label="close drawer"
                 onClick={handleDrawerToggle}>
-                <CeligoMarkIcon color="primary" />
+                <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
           </div>
@@ -152,7 +169,12 @@ export default function CeligoDrawer(props) {
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
                   </ListItemIcon>
-                  <ListItemText primary={label} />
+                  <ListItemText
+                    primaryTypographyProps={{
+                      className: classes.itemText,
+                    }}
+                    primary={label}
+                  />
                   {children &&
                     (expand === label ? <ExpandLess /> : <ExpandMore />)}
                 </ListItem>
@@ -184,7 +206,7 @@ export default function CeligoDrawer(props) {
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton color="inherit" onClick={handleDrawerToggle}>
-              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {drawerOpened ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
         </div>
