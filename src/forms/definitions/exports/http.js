@@ -31,13 +31,29 @@ export default {
         },
       ],
     },
-    { fieldId: 'delta.dateFormat' },
-    { fieldId: 'delta.lagOffset' },
+    {
+      fieldId: 'delta.dateFormat',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    {
+      fieldId: 'delta.lagOffset',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
   ],
   fieldSets: [
     {
       header: 'Does this API support paging?',
-      collapsed: false,
+      collapsed: true,
       fields: [
         { fieldId: 'http.paging.method' },
         { fieldId: 'http.paging.skip' },
@@ -57,12 +73,12 @@ export default {
     },
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {

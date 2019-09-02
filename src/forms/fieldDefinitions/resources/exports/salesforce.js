@@ -3,27 +3,21 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realTime'],
+      },
+    ],
   },
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',
     required: true,
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'salesforce.executionType': {
     type: 'radiogroup',
@@ -84,7 +78,7 @@ export default {
       },
     ],
   },
-  'salesforce.distributed.relatedLists.referencedFieldss': {
+  'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',

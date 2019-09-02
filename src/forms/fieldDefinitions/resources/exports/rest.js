@@ -2,12 +2,6 @@ export default {
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'rest.method': {
     type: 'select',
@@ -201,12 +195,6 @@ export default {
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
   },
   'rest.once.method': {
     type: 'select',
@@ -217,12 +205,6 @@ export default {
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
         ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
       },
     ],
   },
@@ -243,11 +225,5 @@ export default {
   'rest.once.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
   },
 };

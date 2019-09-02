@@ -11,7 +11,7 @@ export default {
     { fieldId: 'file.output' },
     { fieldId: 's3.keyStartsWith' },
     { fieldId: 's3.keyEndsWith' },
-    { fieldId: 'ftp.type' },
+    { fieldId: 'file.type' },
     { fieldId: 'uploadFile' },
     { fieldId: 'file.csv' },
     { fieldId: 'file.json.resourcePath' },
@@ -24,12 +24,12 @@ export default {
   fieldSets: [
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {

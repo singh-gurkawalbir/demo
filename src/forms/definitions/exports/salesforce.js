@@ -9,7 +9,7 @@ export default {
       visibleWhen: [
         {
           field: 'salesforce.executionType',
-          is: ['scheduled', 'realtime'],
+          is: ['scheduled', 'realTime'],
         },
       ],
     },
@@ -36,13 +36,37 @@ export default {
         },
       ],
     },
-    { fieldId: 'delta.dateField' },
-    { fieldId: 'delta.lagOffset' },
-    { fieldId: 'once.booleanField' },
+    {
+      fieldId: 'delta.dateField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    {
+      fieldId: 'delta.lagOffset',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    {
+      fieldId: 'once.booleanField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
     { fieldId: 'salesforce.sObjectType' },
     { fieldId: 'salesforce.distributed.requiredTrigger' },
     { fieldId: 'salesforce.distributed.referencedFields' },
-    { fieldId: 'salesforce.distributed.relatedLists' },
+    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' },
     { fieldId: 'salesforce.distributed.qualifier' },
   ],
   fieldSets: [
