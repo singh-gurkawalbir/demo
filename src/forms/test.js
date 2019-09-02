@@ -1,8 +1,8 @@
-/* global describe, test, expect, jest */
+/* global describe, test, expect, jest, fail */
 
 import jsonPatch from 'fast-json-patch';
 import { getMissingPatchSet, sanitizePatchSet } from './utils';
-import formFactory from './formFactory';
+import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
 
 // common: { formId: 'common' },
 // exportData: { fieldId: 'exportData' },
@@ -18,7 +18,49 @@ jest.mock('./definitions/index', () => ({
   default: {
     someResourceType: {
       subForms: {
-        common: { fields: [{ fieldId: 'someField', someProp: 'blah' }] },
+        common: {
+          fieldReferences: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
+          },
+        },
+        bunchOfFieldsWithoutFieldReferences: {
+          layout: {
+            fields: ['bunchOfFieldsWithoutFieldReferences'],
+          },
+        },
+        bunchOfFieldsWithoutLayoutFields: {
+          fieldReferences: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+        },
+        bunchOffieldsWithOptionsHanlders: {
+          optionsHandler: (fieldId, fields) => {
+            if (fieldId === 'someField') {
+              return fields.find(field => field.id === 'someField').value;
+            }
+          },
+          fieldReferences: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
+          },
+        },
       },
     },
   },
@@ -192,19 +234,21 @@ describe('form factory new layout', () => {
         fieldReferences: {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
         },
-        containers: [
-          {
-            type: 'tab||col||collapse',
-            fieldSets: [
-              {
-                label: 'optional some label or tab name',
-                fields: ['exportData'],
-                containers: [],
-              },
-              // either or containers or fields
-            ],
-          },
-        ],
+        layout: {
+          fields: ['exportData'],
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
       };
       const val = formFactory.getFieldsWithDefaults(
         testMeta,
@@ -212,84 +256,180 @@ describe('form factory new layout', () => {
         resource
       );
 
-      expect(val.containers).toEqual([
-        {
-          type: 'tab||col||collapse',
-
-          fieldSets: [
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'exportData',
-                  helpKey: 'someResourceType.exportData',
-                  id: 'exportData',
-                  name: '/exportData',
-                  resourceId: undefined,
-                  resourceType: 'someResourceType',
-                  someProp: 'blah',
-                },
-              ],
-              containers: [],
-            },
-            // either or containers or fields
-          ],
-        },
-      ]);
+      expect(val.layout).toEqual({
+        fields: [
+          {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'blah',
+          },
+        ],
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'exportData',
+                    helpKey: 'someResourceType.exportData',
+                    id: 'exportData',
+                    name: '/exportData',
+                    resourceId: undefined,
+                    resourceType: 'someResourceType',
+                    someProp: 'blah',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
     });
-
-    test('should pick up references for a formId fields correctly', () => {
-      const resourceType = 'someResourceType';
-      const resource = {};
-      const testMeta = {
-        fieldReferences: {
-          common: { formId: 'common' },
-        },
-        containers: [
-          {
-            type: 'tab||col||collapse',
-            fieldSets: [
+    describe('formId fields', () => {
+      test('should pick up references for a formId fields correctly and cascade visibility rules', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldReferences: {
+            common: {
+              formId: 'common',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+          },
+          layout: {
+            containers: [
               {
-                label: 'optional some label or tab name',
-                fields: ['common'],
-                containers: [],
+                type: 'tab||col||collapse',
+                fieldSets: [
+                  {
+                    label: 'optional some label or tab name',
+                    fields: ['common'],
+                  },
+                  // either or containers or fields
+                ],
               },
-              // either or containers or fields
             ],
           },
-        ],
-      };
-      const val = formFactory.getFieldsWithDefaults(
-        testMeta,
-        resourceType,
-        resource
-      );
+        };
+        const val = formFactory.getFieldsWithDefaults(
+          testMeta,
+          resourceType,
+          resource
+        );
 
-      expect(val.containers).toEqual([
-        {
-          type: 'tab||col||collapse',
-          fieldSets: [
+        expect(val.layout).toEqual({
+          containers: [
             {
-              label: 'optional some label or tab name',
-              fields: [
+              type: 'tab||col||collapse',
+              fieldSets: [
                 {
-                  defaultValue: '',
-                  fieldId: 'someField',
-                  helpKey: 'someResourceType.someField',
-                  id: 'someField',
-                  name: '/someField',
-                  resourceId: undefined,
-                  someProp: 'blah',
-                  resourceType: 'someResourceType',
+                  label: 'optional some label or tab name',
+                  fields: [
+                    {
+                      defaultValue: '',
+                      fieldId: 'someField',
+                      helpKey: 'someResourceType.someField',
+                      id: 'someField',
+                      name: '/someField',
+                      resourceId: undefined,
+                      someProp: 'foo',
+                      resourceType: 'someResourceType',
+                      visibleWhenAll: [
+                        { field: 'fieldA', is: ['someValue'] },
+                        { field: 'someOtherField', is: ['foo'] },
+                      ],
+                    },
+                  ],
                 },
+                // either or containers or fields
               ],
-              containers: [],
             },
-            // either or containers or fields
           ],
-        },
-      ]);
+        });
+      });
+
+      test('should throw an error when fieldReferences do not exist for the subform', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldReferences: {
+            bunchOfFieldsWithoutFieldReferences: {
+              formId: 'bunchOfFieldsWithoutFieldReferences',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+          },
+          layout: {
+            containers: [
+              {
+                type: 'tab||col||collapse',
+                fieldSets: [
+                  {
+                    label: 'optional some label or tab name',
+                    fields: ['bunchOfFieldsWithoutFieldReferences'],
+                  },
+                  // either or containers or fields
+                ],
+              },
+            ],
+          },
+        };
+
+        try {
+          formFactory.getFieldsWithDefaults(testMeta, resourceType, resource);
+          fail();
+        } catch (e) {
+          expect(e.message).toEqual(
+            'could not find fieldReferences for given form id bunchOfFieldsWithoutFieldReferences'
+          );
+        }
+      });
+
+      test('should throw an error when the layout fields do not exist for the subform', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldReferences: {
+            bunchOfFieldsWithoutLayoutFields: {
+              formId: 'bunchOfFieldsWithoutLayoutFields',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+          },
+          layout: {
+            containers: [
+              {
+                type: 'tab||col||collapse',
+                fieldSets: [
+                  {
+                    label: 'optional some label or tab name',
+                    fields: ['bunchOfFieldsWithoutLayoutFields'],
+                  },
+                  // either or containers or fields
+                ],
+              },
+            ],
+          },
+        };
+
+        try {
+          formFactory.getFieldsWithDefaults(testMeta, resourceType, resource);
+          fail();
+        } catch (e) {
+          expect(e.message).toEqual(
+            'could not find fields for given form id bunchOfFieldsWithoutLayoutFields'
+          );
+        }
+      });
     });
 
     test('should pick up references for fields within other containers and setDefaults correctly', () => {
@@ -300,23 +440,76 @@ describe('form factory new layout', () => {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
+        layout: {
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                  containers: [
+                    {
+                      type: 'tab||col||collapse',
+                      fieldSets: [
+                        {
+                          label: 'optional some label or tab name',
+                          fields: ['file.decompressFiles'],
+                        },
+                        // either or containers or fields
+                      ],
+                    },
+                  ],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource
+      );
+
+      expect(val.layout).toEqual({
         containers: [
           {
             type: 'tab||col||collapse',
             fieldSets: [
               {
                 label: 'optional some label or tab name',
-                fields: ['exportData'],
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'exportData',
+                    helpKey: 'someResourceType.exportData',
+                    id: 'exportData',
+                    name: '/exportData',
+                    resourceId: undefined,
+                    someProp: 'blah',
+                    resourceType: 'someResourceType',
+                  },
+                ],
                 containers: [
                   {
                     type: 'tab||col||collapse',
                     fieldSets: [
                       {
                         label: 'optional some label or tab name',
-                        fields: ['file.decompressFiles'],
-                        containers: [],
+                        fields: [
+                          {
+                            defaultValue: '',
+                            fieldId: 'file.decompressFiles',
+                            helpKey: 'someResourceType.file.decompressFiles',
+                            id: 'file.decompressFiles',
+                            name: '/file/decompressFiles',
+                            resourceId: undefined,
+                            resourceType: 'someResourceType',
+                          },
+                        ],
                       },
-                      // either or containers or fields
                     ],
                   },
                 ],
@@ -325,58 +518,7 @@ describe('form factory new layout', () => {
             ],
           },
         ],
-      };
-      const val = formFactory.getFieldsWithDefaults(
-        testMeta,
-        resourceType,
-        resource
-      );
-
-      expect(val.containers).toEqual([
-        {
-          type: 'tab||col||collapse',
-          fieldSets: [
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'exportData',
-                  helpKey: 'someResourceType.exportData',
-                  id: 'exportData',
-                  name: '/exportData',
-                  resourceId: undefined,
-                  someProp: 'blah',
-                  resourceType: 'someResourceType',
-                },
-              ],
-              containers: [
-                {
-                  type: 'tab||col||collapse',
-                  fieldSets: [
-                    {
-                      label: 'optional some label or tab name',
-                      fields: [
-                        {
-                          defaultValue: '',
-                          fieldId: 'file.decompressFiles',
-                          helpKey: 'someResourceType.file.decompressFiles',
-                          id: 'file.decompressFiles',
-                          name: '/file/decompressFiles',
-                          resourceId: undefined,
-                          resourceType: 'someResourceType',
-                        },
-                      ],
-                      containers: [],
-                    },
-                  ],
-                },
-              ],
-            },
-            // either or containers or fields
-          ],
-        },
-      ]);
+      });
     });
 
     test('should pick up references for fields and setDefaults for a collection of containers', () => {
@@ -387,28 +529,32 @@ describe('form factory new layout', () => {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
-        containers: [
-          {
-            type: 'tab||col||collapse',
-            fieldSets: [
-              {
-                label: 'optional some label or tab name',
-                fields: ['exportData'],
-              },
-              // either or containers or fields
-            ],
-          },
-          {
-            type: 'tab||col||collapse',
-            fieldSets: [
-              {
-                label: 'optional some label or tab name',
-                fields: ['file.decompressFiles'],
-              },
-              // either or containers or fields
-            ],
-          },
-        ],
+
+        layout: {
+          fields: ['exportData'],
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                },
+                // either or containers or fields
+              ],
+            },
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['file.decompressFiles'],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
       };
       const val = formFactory.getFieldsWithDefaults(
         testMeta,
@@ -416,50 +562,61 @@ describe('form factory new layout', () => {
         resource
       );
 
-      expect(val.containers).toEqual([
-        {
-          type: 'tab||col||collapse',
-          fieldSets: [
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'exportData',
-                  helpKey: 'someResourceType.exportData',
-                  id: 'exportData',
-                  name: '/exportData',
-                  resourceId: undefined,
-                  someProp: 'blah',
-                  resourceType: 'someResourceType',
-                },
-              ],
-              containers: null,
-            },
-            // either or containers or fields
-          ],
-        },
-        {
-          type: 'tab||col||collapse',
-          fieldSets: [
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'file.decompressFiles',
-                  helpKey: 'someResourceType.file.decompressFiles',
-                  id: 'file.decompressFiles',
-                  name: '/file/decompressFiles',
-                  resourceId: undefined,
-                  resourceType: 'someResourceType',
-                },
-              ],
-              containers: null,
-            },
-          ],
-        },
-      ]);
+      expect(val.layout).toEqual({
+        fields: [
+          {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            someProp: 'blah',
+            resourceType: 'someResourceType',
+          },
+        ],
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'exportData',
+                    helpKey: 'someResourceType.exportData',
+                    id: 'exportData',
+                    name: '/exportData',
+                    resourceId: undefined,
+                    someProp: 'blah',
+                    resourceType: 'someResourceType',
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'file.decompressFiles',
+                    helpKey: 'someResourceType.file.decompressFiles',
+                    id: 'file.decompressFiles',
+                    name: '/file/decompressFiles',
+                    resourceId: undefined,
+                    resourceType: 'someResourceType',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
     });
 
     test('should pick up references for fields and setDefaults for allFieldSets', () => {
@@ -470,6 +627,184 @@ describe('form factory new layout', () => {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
+        layout: {
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                },
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['file.decompressFiles'],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource
+      );
+
+      expect(val.layout).toEqual({
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'exportData',
+                    helpKey: 'someResourceType.exportData',
+                    id: 'exportData',
+                    name: '/exportData',
+                    resourceId: undefined,
+                    someProp: 'blah',
+                    resourceType: 'someResourceType',
+                  },
+                ],
+              },
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    defaultValue: '',
+                    fieldId: 'file.decompressFiles',
+                    helpKey: 'someResourceType.file.decompressFiles',
+                    id: 'file.decompressFiles',
+                    name: '/file/decompressFiles',
+                    resourceId: undefined,
+                    resourceType: 'someResourceType',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+    });
+
+    test('should throw an error when corresponding field reference does not exist', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldReferences: {
+          exportData: { fieldId: 'exportData', someProp: 'blah' },
+        },
+        layout: {
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                },
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['file.decompressFiles'],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+
+      try {
+        formFactory.getFieldsWithDefaults(testMeta, resourceType, resource);
+
+        fail('it should have thrown a field references not found exception');
+      } catch (e) {
+        expect(e.message).toEqual(
+          `Could not corresponding field reference for file.decompressFiles Please check fieldReferences definitions`
+        );
+      }
+    });
+  });
+});
+
+describe('getFlattenedFieldMetaWithRules ', () => {
+  test('should flatten fields with just visibility rules for a form meta with formId fields', () => {
+    const resourceType = 'someResourceType';
+    const testMeta = {
+      fieldReferences: {
+        common: {
+          formId: 'common',
+          visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+        },
+        exportData: { fieldId: 'exportData' },
+      },
+      layout: {
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: ['common', 'exportData'],
+              },
+              // either or containers or fields
+            ],
+          },
+        ],
+      },
+    };
+    const val = formFactory.getFlattenedFieldMetaWithRules(
+      testMeta.layout,
+      resourceType,
+      testMeta.fieldReferences
+    );
+
+    expect(val).toEqual({
+      fieldReferences: testMeta.fieldReferences,
+      layout: {
+        fields: undefined,
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: [
+                  {
+                    fieldId: 'someField',
+                    visibleWhenAll: [
+                      { field: 'fieldA', is: ['someValue'] },
+                      { field: 'someOtherField', is: ['foo'] },
+                    ],
+                  },
+                  {
+                    fieldId: 'exportData',
+                  },
+                ],
+              },
+              // either or containers or fields
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  test('should flatten fields with just visibility rules for a form meta without formId fields', () => {
+    const resourceType = 'someResourceType';
+    const testMeta = {
+      fieldReferences: {
+        exportData: {
+          fieldId: 'exportData',
+          visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+        },
+      },
+      layout: {
         containers: [
           {
             type: 'tab||col||collapse',
@@ -478,59 +813,86 @@ describe('form factory new layout', () => {
                 label: 'optional some label or tab name',
                 fields: ['exportData'],
               },
+              // either or containers or fields
+            ],
+          },
+        ],
+      },
+    };
+    const val = formFactory.getFlattenedFieldMetaWithRules(
+      testMeta.layout,
+      resourceType,
+      testMeta.fieldReferences
+    );
+
+    expect(val).toEqual({
+      fieldReferences: testMeta.fieldReferences,
+      layout: {
+        fields: undefined,
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
               {
                 label: 'optional some label or tab name',
-                fields: ['file.decompressFiles'],
+                fields: [
+                  {
+                    fieldId: 'exportData',
+                    visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+                  },
+                ],
               },
               // either or containers or fields
             ],
           },
         ],
-      };
-      const val = formFactory.getFieldsWithDefaults(
-        testMeta,
-        resourceType,
-        resource
-      );
-
-      expect(val.containers).toEqual([
-        {
-          type: 'tab||col||collapse',
-          fieldSets: [
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'exportData',
-                  helpKey: 'someResourceType.exportData',
-                  id: 'exportData',
-                  name: '/exportData',
-                  resourceId: undefined,
-                  someProp: 'blah',
-                  resourceType: 'someResourceType',
-                },
-              ],
-              containers: null,
-            },
-            {
-              label: 'optional some label or tab name',
-              fields: [
-                {
-                  defaultValue: '',
-                  fieldId: 'file.decompressFiles',
-                  helpKey: 'someResourceType.file.decompressFiles',
-                  id: 'file.decompressFiles',
-                  name: '/file/decompressFiles',
-                  resourceId: undefined,
-                  resourceType: 'someResourceType',
-                },
-              ],
-              containers: null,
-            },
-          ],
-        },
-      ]);
+      },
     });
+  });
+});
+
+describe('form factory options handler amalgamation getAmalgamatedOptionsHandler', () => {
+  test('should club options handlers both in the root metadata as well within the containers', () => {
+    const resourceType = 'someResourceType';
+    // metadata with a form visibility rule
+    const testMeta = {
+      optionsHandler: fieldId => {
+        if (fieldId === 'anotherFieldId') {
+          return 'someValue';
+        }
+      },
+      fieldReferences: {
+        bunchOffieldsWithOptionsHanlders: {
+          formId: 'bunchOffieldsWithOptionsHanlders',
+          visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+        },
+      },
+      layout: {
+        containers: [
+          {
+            type: 'tab||col||collapse',
+            fieldSets: [
+              {
+                label: 'optional some label or tab name',
+                fields: ['bunchOffieldsWithOptionsHanlders'],
+              },
+              // either or containers or fields
+            ],
+          },
+        ],
+      },
+    };
+    const amalgamatedOptionsHandlers = getAmalgamatedOptionsHandler(
+      testMeta,
+      resourceType
+    );
+
+    // checking for the optionsHandler within the meta
+    expect(amalgamatedOptionsHandlers('anotherFieldId')).toEqual('someValue');
+    expect(
+      amalgamatedOptionsHandlers('someField', [
+        { id: 'someField', value: 'hi' },
+      ])
+    ).toEqual('hi');
   });
 });

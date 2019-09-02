@@ -15,43 +15,51 @@ export default {
       fieldId: 'ftp.username',
     },
   },
-  containers: [
-    {
-      type: 'tab',
-      fieldSets: [
-        {
-          label: 'first col',
-          fields: ['name', 'ftp.username'],
-          containers: [
-            {
-              type: 'collapse',
-              fieldSets: [
-                {
-                  label: 'first col',
-                  fields: ['name'],
-                },
-              ],
-            },
-            {
-              type: 'collapse',
-              fieldSets: [
-                {
-                  label: 'first col',
-                  fields: ['ftp.username'],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'second col',
-          fields: ['type'],
-        },
-        {
-          label: 'third col',
-          fields: ['ftp.hostURI'],
-        },
-      ],
-    },
-  ],
+
+  layout: {
+    fields: ['ftp.username'],
+    containers: [
+      {
+        type: 'tab',
+        fieldSets: [
+          {
+            label: 'first col',
+            fields: ['name', 'ftp.username'],
+            containers: [
+              {
+                type: 'collapse',
+                fieldSets: [
+                  {
+                    label: 'first col',
+                    fields: ['name'],
+                  },
+                  {
+                    label: 'second col',
+                    fields: ['name'],
+                  },
+                ],
+              },
+              {
+                type: 'collapse',
+                fieldSets: [
+                  {
+                    label: 'first col',
+                    fields: ['ftp.username'],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            label: 'second col',
+            fields: ['type'],
+          },
+          {
+            label: 'third col',
+            fields: ['ftp.hostURI'],
+          },
+        ],
+      },
+    ],
+  },
 };

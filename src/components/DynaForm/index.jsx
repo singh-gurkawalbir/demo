@@ -34,19 +34,17 @@ export default class DynaForm extends Component {
       resourceType,
       ...rest
     } = this.props;
-    const { containers } = fieldMeta;
+    const { layout } = fieldMeta;
     const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
 
-    console.log('containers ', containers);
-
-    if (!containers) {
+    if (!layout) {
       return null;
     }
 
     return (
       <Form {...rest} renderer={renderer}>
         <div className={classes.fieldContainer}>
-          <DynaFormGenerator containers={containers} />
+          <DynaFormGenerator layout={layout} />
         </div>
         {/* The children are action buttons for the form */}
 

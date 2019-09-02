@@ -287,8 +287,13 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resource,
   });
   const flattenedFields = factory.getFlattenedFieldMetaWithRules(
-    defaultFormAssets.fieldMeta,
-    resourceType
+    defaultFormAssets &&
+      defaultFormAssets.fieldMeta &&
+      defaultFormAssets.fieldMeta.layout,
+    resourceType,
+    defaultFormAssets &&
+      defaultFormAssets.fieldMeta &&
+      defaultFormAssets.fieldMeta.fieldReferences
   );
   // I have fixed it with a flattened fields...but it does cascade
   // form visibility rules to its children
