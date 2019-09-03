@@ -34,14 +34,6 @@ export default function(state = {}, action) {
 
   switch (type) {
     case actionTypes.SAMPLEDATA.REQUEST: {
-      console.log('came', {
-        ...state,
-        [resourceId]: {
-          ...state[resourceId],
-          status: 'requested',
-        },
-      });
-
       return {
         ...state,
         [resourceId]: {

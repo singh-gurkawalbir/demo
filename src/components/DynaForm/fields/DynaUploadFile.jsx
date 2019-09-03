@@ -2,7 +2,6 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
-import { getFileReaderOptions } from '../../../utils/file';
 
 export default function DynaUploadFile(props) {
   const {
@@ -13,22 +12,15 @@ export default function DynaUploadFile(props) {
     name,
     resourceId,
     resourceType,
-    onFieldChange,
     placeholder,
     required,
     value = '',
     label,
   } = props;
   const dispatch = useDispatch();
-  // const handleFieldChange = event => {
-  //   const { value, files } = event.target;
-  //   const fileContent = getFileContent(files, options);
-  //   onFieldChange(id, value);
-  // };
   const handleFileRead = event => {
     const { result: fileContent } = event.target;
 
-    console.log(fileContent);
     dispatch(
       actions.sampleData.request(
         resourceId,
