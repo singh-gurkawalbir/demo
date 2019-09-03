@@ -1,27 +1,57 @@
 import { useState, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialog';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
 export default function DynaTransformEditor(props) {
-  const { id, rules, label, sampleData, resourceId, onFieldChange } = props;
+  const {
+    id,
+    label,
+    sampleData,
+    resourceId,
+    resourceType,
+    onFieldChange,
+    value,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
+  const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
+  const constructTransformData = rule => ({
+    version: 1,
+    rules: [rule],
+    rulesCollection: { mappings: [rule] },
+  });
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
-      onFieldChange(id, { rule });
+      onFieldChange(id, constructTransformData(rule));
+      // Dispatch an action to save processor data
+      dispatch(
+        actions.sampleData.request(
+          resourceId,
+          resourceType,
+          [rule],
+          'transform'
+        )
+      );
     }
 
     setShowEditor(false);
   };
 
+  // Gets data to be Transformed
+  const { data: preTransformData } = useSelector(state =>
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'transform')
+  );
   // when we launch the editor we are only going to entertain the first
   // rule set
-  const firstRuleSet = rules ? rules[0] : null;
+  const firstRuleSet = value && value.rules ? value.rules[0] : null;
 
   // We are deliberately concat the id and resourceId, in order to create
   // a more unique key for the transform editor launch per resource. This will
@@ -33,7 +63,7 @@ export default function DynaTransformEditor(props) {
         <TransformEditorDialog
           title="Transform Mapping"
           id={id + resourceId}
-          data={sampleData}
+          data={preTransformData || sampleData}
           rule={firstRuleSet}
           onClose={handleClose}
         />

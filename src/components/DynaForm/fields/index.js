@@ -23,6 +23,8 @@ import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaLabelValueElement from './DynaLabelValueElement';
+import DynaRawData from './DynaRawData';
+import DynaSampleData from './DynaSampleData';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -51,4 +53,6 @@ export default {
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
+  rawdata: DynaRawData,
+  sampledata: DynaSampleData,
 };

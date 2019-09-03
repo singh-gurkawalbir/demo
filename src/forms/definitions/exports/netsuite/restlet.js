@@ -54,9 +54,12 @@ export default {
       fieldId: 'netsuite.skipGrouping',
     },
     // Search Criteria
+    // Raw Data
+    { fieldId: 'rawData' },
     // Sample Data
+    { fieldId: 'sampleData' },
     //  Transform  Data
-    { fieldId: 'transform.expression.rules' },
+    { fieldId: 'transform' },
     // Filter  Data
     // Advanced
   ],

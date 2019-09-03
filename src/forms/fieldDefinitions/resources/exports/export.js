@@ -31,6 +31,7 @@ export default {
     label: 'Configure Async Helper',
   },
   allConnectionsExportType: {
+    id: 'type',
     type: 'select',
     helpId: 'export.type',
     label: 'Type',
@@ -84,10 +85,10 @@ export default {
     type: 'text',
     label: 'Path To Many',
   },
-  sampleData: {
-    type: 'editor',
-    label: 'Sample Data',
-  },
+  // sampleData: {
+  //   type: 'editor',
+  //   label: 'Sample Data',
+  // },
   originSampleData: {
     type: 'text',
     label: 'Origin Sample Data',
@@ -538,11 +539,10 @@ export default {
 
   // #endregion hooks
   // #region transform
-  'transform.expression.rules': {
+  transform: {
     type: 'transformeditor',
     label: 'Transform expression rules',
-    sampleData: r => r.sampleData,
-    rules: r => r && r.transform && r.transform.rules,
+    defaultValue: r => r && r.transform,
   },
   'transform.script._scriptId': {
     type: 'text',
@@ -581,5 +581,15 @@ export default {
   'filter.script.function': {
     type: 'text',
     label: 'Filter script function',
+  },
+  rawData: {
+    type: 'rawdata',
+    label: 'Raw Data',
+    defaultValue: r => r && r.rawData,
+  },
+  sampleData: {
+    type: 'sampledata',
+    label: 'Sample Data',
+    defaultValue: r => r && r.sampleData,
   },
 };

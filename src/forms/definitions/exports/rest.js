@@ -19,7 +19,7 @@ export default {
       ],
     },
     { fieldId: 'rest.headers' },
-    { fieldId: 'rest.relativeuri' },
+    { fieldId: 'rest.relativeURI', required: true },
     {
       fieldId: 'rest.postBody',
       visibleWhen: [
@@ -32,28 +32,15 @@ export default {
     { fieldId: 'rest.resourcePath' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
-    {
-      id: 'type',
-      type: 'select',
-      label: 'Export Type',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
-          ],
-        },
-      ],
-    },
-    { fieldId: 'delta.dateFormat' },
-    { fieldId: 'delta.lagOffset' },
-    { fieldId: 'rest.once.booleanField' },
-    { fieldId: 'rest.once.relativeURI' },
-    { fieldId: 'rest.once.method' },
-    { fieldId: 'rest.once.postBody' },
+    { fieldId: 'allConnectionsExportType' },
+    // { fieldId: 'delta.dateFormat' },
+    // { fieldId: 'delta.lagOffset' },
+    // { fieldId: 'rest.once.booleanField' },
+    // { fieldId: 'rest.once.relativeURI' },
+    // { fieldId: 'rest.once.method' },
+    // { fieldId: 'rest.once.postBody' },
+    { fieldId: 'rawData' },
+    { fieldId: 'sampleData' },
   ],
   fieldSets: [
     {
@@ -77,7 +64,7 @@ export default {
     {
       header: 'Would you like to transform the records?',
       collapsed: false,
-      fields: [{ fieldId: 'transform.expression.rules' }],
+      fields: [{ fieldId: 'transform' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

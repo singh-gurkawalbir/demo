@@ -130,6 +130,14 @@ export function stackSystemToken(state, id) {
   return fromSession.stackSystemToken(state && state.session, id);
 }
 
+export function getResourceSampleDataWithStatus(state, resourceId, stage) {
+  return fromSession.getResourceSampleDataWithStatus(
+    state && state.session,
+    resourceId,
+    stage
+  );
+}
+
 export function editor(state, id) {
   if (!state) return {};
 

@@ -401,6 +401,19 @@ const user = {
   },
 };
 const reloadApp = () => action(actionTypes.APP_RELOAD);
+const sampleData = {
+  request: (resourceId, resourceType, values, stage) =>
+    action(actionTypes.SAMPLEDATA.REQUEST, {
+      resourceId,
+      resourceType,
+      values,
+      stage,
+    }),
+  received: (resourceId, previewData) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
+  update: (resourceId, processedData, stage) =>
+    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+};
 const appErrored = () => action(actionTypes.APP_ERRORED);
 const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
@@ -618,4 +631,5 @@ export default {
   flow,
   agent,
   stack,
+  sampleData,
 };

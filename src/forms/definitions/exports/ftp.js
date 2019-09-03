@@ -1,4 +1,12 @@
 export default {
+  presubmit: formValues => {
+    const submitFormValues = { ...formValues };
+
+    delete submitFormValues['/uploadFile'];
+
+    return submitFormValues;
+  },
+
   fields: [
     { formId: 'common' },
     {
@@ -11,14 +19,20 @@ export default {
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
     { fieldId: 'file.type' },
-    { fieldId: 'uploadFile' },
+    {
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: 'file.type',
+      isFTP: true,
+    },
     { fieldId: 'file.csv' },
     { fieldId: 'file.json.resourcePath' },
     { fieldId: 'file.xml.resourcePath' },
     { fieldId: 'file.xlsx.hasHeaderRow' },
     { fieldId: 'file.xlsx.rowsPerRecord' },
     { fieldId: 'file.xlsx.keyColumns' },
-    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
+    { fieldId: 'rawData', isFTP: true },
+    { fieldId: 'sampleData' },
+    { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
   ],
   fieldSets: [
     {
@@ -43,4 +57,11 @@ export default {
       ],
     },
   ],
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'uploadFile') {
+      const fileType = fields.find(field => field.id === 'file.type');
+
+      return fileType.value;
+    }
+  },
 };
