@@ -36,6 +36,8 @@ export default function DynaCSVColumnMapper(props) {
         ...state.slice(row + 1, state.length),
       ];
     }
+
+    return [...state];
   };
 
   const fieldChangeHandler = (id, val) => {
