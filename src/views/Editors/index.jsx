@@ -1,7 +1,6 @@
 import { hot } from 'react-hot-loader';
-import { Component } from 'react';
+import { Fragment, Component } from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
@@ -16,6 +15,7 @@ import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 @hot(module)
 @withStyles(theme => ({
@@ -35,7 +35,7 @@ import JsonEditorDialog from '../../components/JsonEditorDialog';
   drawerPaper: {
     position: 'relative',
     width: theme.drawerWidth,
-    height: `calc(100vh - ${theme.spacing(7)}px)`,
+    height: `calc(100vh - ${theme.spacing(17.5)}px)`,
     padding: theme.spacing(1),
   },
 
@@ -249,33 +249,34 @@ export default class Editors extends Component {
     ];
 
     return (
-      <div className={classes.appFrame}>
-        <Drawer
-          variant="permanent"
-          anchor="left"
-          classes={{
-            paper: classes.drawerPaper,
-          }}>
-          <Typography align="center" variant="h6">
-            Available Editors
-          </Typography>
-          <List>
-            {editors.map(p => (
-              <EditorListItem
-                key={p.name}
-                item={p}
-                onClick={this.handleEditorChange}
-              />
-            ))}
-          </List>
-        </Drawer>
+      <Fragment>
+        <CeligoPageBar title="Editor Playground" />
 
-        {editorName && this.getEditor()}
+        <div className={classes.appFrame}>
+          <Drawer
+            variant="permanent"
+            anchor="left"
+            classes={{
+              paper: classes.drawerPaper,
+            }}>
+            <List>
+              {editors.map(p => (
+                <EditorListItem
+                  key={p.name}
+                  item={p}
+                  onClick={this.handleEditorChange}
+                />
+              ))}
+            </List>
+          </Drawer>
 
-        <main className={classes.content}>
-          <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
-        </main>
-      </div>
+          {editorName && this.getEditor()}
+
+          <main className={classes.content}>
+            <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
+          </main>
+        </div>
+      </Fragment>
     );
   }
 }

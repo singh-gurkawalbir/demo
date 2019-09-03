@@ -137,7 +137,7 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function resourceList(state, { type, take, keyword, sandbox }) {
+export function resourceList(state, { type, take, keyword, sort, sandbox }) {
   const result = {
     resources: [],
     type,
@@ -170,7 +170,25 @@ export function resourceList(state, { type, take, keyword, sandbox }) {
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const filtered = resources.filter(matchTest);
+  function desc(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  const comparer = ({ order, orderBy }) =>
+    order === 'desc'
+      ? (a, b) => desc(a, b, orderBy)
+      : (a, b) => -desc(a, b, orderBy);
+  // console.log('sort:', sort, resources.sort(comparer, sort));
+  const sorted = sort ? resources.sort(comparer(sort)) : resources;
+  const filtered = sorted.filter(matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;

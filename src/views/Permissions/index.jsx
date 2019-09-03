@@ -1,25 +1,32 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Fragment } from 'react';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import ReactJson from 'react-json-view';
 import * as selectors from '../../reducers';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
-const mapStateToProps = state => ({
-  permissions: selectors.userPermissions(state),
-});
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(3),
+  },
+}));
 
-class Permissions extends Component {
-  render() {
-    const { permissions } = this.props;
+export default function Permissions() {
+  const theme = useTheme();
+  const classes = useStyles();
+  const permissions = useSelector(state => selectors.userPermissions(state));
 
-    return (
-      <ReactJson
-        theme="google"
-        collapsed={1}
-        displayDataTypes={false}
-        src={permissions}
-      />
-    );
-  }
+  return (
+    <Fragment>
+      <CeligoPageBar title="Permission Explorer" />
+      <div className={classes.root}>
+        <ReactJson
+          theme={theme.palette.type === 'dark' ? 'google' : undefined}
+          collapsed={1}
+          displayDataTypes={false}
+          src={permissions}
+        />
+      </div>
+    </Fragment>
+  );
 }
-
-export default connect(mapStateToProps)(Permissions);
