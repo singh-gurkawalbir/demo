@@ -61,10 +61,6 @@ export default class WorkArea extends Component {
 
     return (
       <Fragment>
-        <Typography className={classes.title} variant="h5">
-          Editor Playground!!!
-        </Typography>
-
         <Paper className={classes.paper}>
           <Typography variant="body1">
             Click on any editor in the left margin to launch it. The raw data

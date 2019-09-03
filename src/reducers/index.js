@@ -60,6 +60,10 @@ export default rootReducer;
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region app selectors
+export function drawerOpened(state) {
+  return fromApp.drawerOpened(state && state.app);
+}
+
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
@@ -120,6 +124,10 @@ export function agentAccessToken(state, id) {
   if (!state) return {};
 
   return fromSession.agentAccessToken(state.session, id);
+}
+
+export function stackSystemToken(state, id) {
+  return fromSession.stackSystemToken(state && state.session, id);
 }
 
 export function editor(state, id) {
