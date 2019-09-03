@@ -82,6 +82,17 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  SalesforceExport: 'salesforce',
+};
+
+const inferResourceType = adaptorType => {
+  if (!adaptorType) return 'connections';
+
+  if (adaptorType.toLowerCase().indexOf('import') > 0) {
+    return 'imports';
+  }
+
+  return 'exports';
 };
 
 // This method is used for only import/export/connection. Im not sure
@@ -93,12 +104,14 @@ export function getResourceSubType(resource) {
   const { adaptorType, assistant, type } = resource;
 
   // Since this function is intended to be used for only imp/exp/conn,
-  // we should have an adaptorType... if not, we cant proceed.
+  // we should have an adaptorType(imp/exp) or type for connection...
+  // if not, we cant proceed.
   if (!adaptorType && !type) return {};
 
   return {
     type: adaptorTypeMap[adaptorType] || type,
     assistant,
+    resourceType: inferResourceType(adaptorType),
   };
 }
 

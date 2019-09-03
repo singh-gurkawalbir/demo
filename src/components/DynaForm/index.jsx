@@ -3,6 +3,7 @@ import { Form } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import getRenderer from './renderer';
 import DynaFormGenerator from './DynaFormGenarator';
+import ButtonGroup from '../ButtonGroup';
 
 @withStyles(theme => ({
   fieldContainer: {
@@ -18,9 +19,13 @@ import DynaFormGenerator from './DynaFormGenarator';
     display: 'block',
     paddingRight: theme.spacing(1),
   },
+  expansionPanel: {
+    width: '100%',
+    overflow: 'hidden',
+  },
   actions: {
     textAlign: 'right',
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(2, 0, 0),
   },
 }))
 export default class DynaForm extends Component {
@@ -48,7 +53,9 @@ export default class DynaForm extends Component {
         </div>
         {/* The children are action buttons for the form */}
 
-        <div className={classes.actions}>{children}</div>
+        <div className={classes.actions}>
+          <ButtonGroup>{children}</ButtonGroup>
+        </div>
       </Form>
     );
   }

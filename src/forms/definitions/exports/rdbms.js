@@ -12,6 +12,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      required: true,
       options: [
         {
           items: [

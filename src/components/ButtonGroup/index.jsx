@@ -1,7 +1,7 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles = {
+const usestyles = makeStyles({
   wrapper: {
     margin: '0px',
     padding: '0px',
@@ -13,10 +13,10 @@ const styles = {
       marginRight: '0px',
     },
   },
-};
+});
 
 function ButtonsGroup(props) {
-  const { classes } = props;
+  const classes = usestyles();
 
   return (
     <div>
@@ -25,4 +25,4 @@ function ButtonsGroup(props) {
   );
 }
 
-export default withStyles(styles)(ButtonsGroup);
+export default ButtonsGroup;

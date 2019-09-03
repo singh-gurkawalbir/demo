@@ -10,7 +10,11 @@ import TimeAgo from 'react-timeago';
 import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import prettyDate from '../../utils/date';
-import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../utils/resource';
+import {
+  MODEL_PLURAL_TO_LABEL,
+  isNewId,
+  getResourceSubType,
+} from '../../utils/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
@@ -24,6 +28,11 @@ const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const metaChanges = selectors.resourceData(state, resourceType, id, 'meta');
   const valueChanges = selectors.resourceData(state, resourceType, id, 'value');
+  let resType;
+  const { assistant, type } = getResourceSubType(valueChanges.merged);
+
+  if (assistant) resType = assistant;
+  else resType = type;
   const { _connectionId } = valueChanges.merged ? valueChanges.merged : {};
   // TODO: this should be resourceType instead of connections
   const connection = _connectionId
@@ -36,8 +45,8 @@ const mapStateToProps = (state, { match }) => {
     0;
 
   return {
+    type: resType,
     resourceType,
-    valueChanges,
     metaPatches,
     metaChanges,
     connection,
@@ -123,7 +132,7 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
-      valueChanges,
+      type,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
@@ -151,15 +160,7 @@ class Edit extends Component {
       );
     }
 
-    let type = connection ? connection.type : valueChanges.merged.type;
-    const assistant = connection
-      ? connection.assistant
-      : valueChanges.merged.assistant;
     const formMeta = merged.customForm ? merged.customForm.form : {};
-
-    if (assistant) {
-      type = assistant;
-    }
 
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
 
@@ -262,8 +263,6 @@ class Edit extends Component {
             resourceType={resourceType}
             resourceId={id}
             connectionType={type}
-            connection={connection}
-            cancelButtonLabel="Reset"
           />
 
           {conflict && (

@@ -1,15 +1,12 @@
 export default {
-  // TODO: options handler forces a values when text field is empty
-  // it should only do that when the user selects another protocol type
-  // as well
-  // The optionsHandler handler runs for every field
+  // TODO: revert to older ftp connection meta...this is just to verify the new layout
   fieldReferences: {
     name: { fieldId: 'name' },
     type: { fieldId: 'type', disabled: true },
     'ftp.hostURI': {
       fieldId: 'ftp.hostURI',
+      required: true,
     },
-
     'ftp.type': { fieldId: 'ftp.type' },
     'ftp.username': {
       fieldId: 'ftp.username',
