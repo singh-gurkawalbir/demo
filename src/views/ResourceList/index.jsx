@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 // import ReactJson from 'react-json-view';
@@ -16,6 +16,7 @@ import getRoutePath from '../../utils/routePaths';
 import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from './ResourceTable';
+import GenerateTemplateZip from '../../components/GenerateTemplateZip';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -66,14 +67,36 @@ function PageContent(props) {
   };
 
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
+  const isTemplatesPage = resourceType === 'templates';
+  const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
+  const handleGenerateZipDialogClose = () => {
+    setShowGenerateZipDialog(false);
+  };
+
+  const resourceList = useSelector(state =>
+    selectors.resourceList(state, { type: 'integrations' })
+  );
 
   return (
     <Fragment>
+      {showGenerateZipDialog && (
+        <GenerateTemplateZip
+          onClose={handleGenerateZipDialogClose}
+          integrations={resourceList.resources}
+        />
+      )}
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
           <SearchInput variant="light" onChange={handleKeywordChange} />
+          {isTemplatesPage && (
+            <CeligoIconButton
+              onClick={() => setShowGenerateZipDialog(true)}
+              variant="text">
+              Generate Template Zip
+            </CeligoIconButton>
+          )}
           <CeligoIconButton
             component={Link}
             to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}
@@ -83,7 +106,10 @@ function PageContent(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources resources={resourceType}>
+        <LoadResources
+          resources={
+            isTemplatesPage ? [resourceType, 'integrations'] : resourceType
+          }>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
