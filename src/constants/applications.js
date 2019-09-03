@@ -549,4 +549,10 @@ export const groupApplications = () => [
   },
 ];
 
+export const getApp = (type, assistant) => {
+  const id = assistant || type;
+
+  return connectors.find(c => c.id === id) || {};
+};
+
 export default connectors;
