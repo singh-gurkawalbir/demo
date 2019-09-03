@@ -13,6 +13,8 @@ export const availableResources = [
   'flows',
 ];
 
+export const availableOSTypes = ['windows', 'linux', 'macOS'];
+
 // These are redux action "creators". Actions are reusable by any
 // component and as such we want creators to ensure all actions of
 // a type are symmetrical in shape by generating them via "action creator"
@@ -66,6 +68,25 @@ const resource = {
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+    }),
+
+  delete: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
+
+  deleted: (resourceType, id) =>
+    action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
+
+  requestReferences: (resourceType, id) =>
+    action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
+      resourceType,
+      id,
+    }),
+
+  clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
+
+  receivedReferences: resourceReferences =>
+    action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
+      resourceReferences,
     }),
 
   clearStaged: (id, scope) =>
@@ -130,6 +151,26 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+
+    netsuite: {
+      requestUserRoles: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+        }),
+      receivedUserRoles: (connectionId, userRoles) =>
+        action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
+          connectionId,
+          userRoles,
+        }),
+      requestUserRolesFailed: (connectionId, message) =>
+        action(actionTypes.NETSUITE_USER_ROLES.FAILED, {
+          connectionId,
+          message,
+        }),
+      clearUserRoles: connectionId =>
+        action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
+    },
   },
 };
 // #endregion
@@ -149,26 +190,168 @@ const auditLogs = {
   },
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
+const connectors = {
+  refreshMetadata: (fieldType, fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_REQUEST, {
+      fieldType,
+      fieldName,
+      _integrationId,
+    }),
+  failedMetadata: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_FAILURE, {
+      fieldName,
+      _integrationId,
+    }),
+  clearMetadata: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_CLEAR, {
+      fieldName,
+      _integrationId,
+    }),
+  receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
+      metadata,
+      fieldType,
+      fieldName,
+      _integrationId,
+    }),
+};
 const metadata = {
-  request: (connectionId, metadataType, mode) =>
-    action(actionTypes.METADATA.REQUEST, {
+  request: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) => {
+    if (mode) {
+      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
+        connectionId,
+        metadataType,
+        mode,
+        filterKey,
+        recordType,
+        selectField,
+      });
+    }
+
+    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
+      connectionId,
+      metadataType,
+      recordType,
+      selectField,
+    });
+  },
+  refresh: (
+    connectionId,
+    metadataType,
+    mode,
+    filterKey,
+    recordType,
+    selectField
+  ) =>
+    action(actionTypes.METADATA.REFRESH, {
       connectionId,
       metadataType,
       mode,
+      filterKey,
+      recordType,
+      selectField,
     }),
   netsuite: {
-    receivedCollection: (metadata, metadataType, connectionId, mode) =>
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey,
+      recordType,
+      selectField
+    ) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
         metadataType,
         connectionId,
         mode,
+        filterKey,
+        recordType,
+        selectField,
+      }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      mode,
+      filterKey,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
+        metadataError,
+        metadataType,
+        connectionId,
+        mode,
+        filterKey,
+        recordType,
+        selectField,
+      }),
+  },
+  salesforce: {
+    receivedCollection: (
+      metadata,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
+        metadata,
+        metadataType,
+        connectionId,
+        recordType,
+        selectField,
+      }),
+    receivedError: (
+      metadataError,
+      metadataType,
+      connectionId,
+      recordType,
+      selectField
+    ) =>
+      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
+        metadataError,
+        metadataType,
+        connectionId,
+        recordType,
+        selectField,
       }),
   },
 };
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
+};
+const agent = {
+  displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
+  changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
+  tokenReceived: agentToken =>
+    action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
+  downloadInstaller: (osType, id) =>
+    action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
+};
+const stack = {
+  displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
+  generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
+  tokenReceived: stackToken =>
+    action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
+  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  inviteStackShareUser: (email, stackId) =>
+    action(actionTypes.STACK.SHARE_USER_INVITE, { email, stackId }),
+  toggleUserStackSharing: userId =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
+  toggledUserStackSharing: ({ userId }) =>
+    action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
 };
 const user = {
   profile: {
@@ -218,6 +401,8 @@ const user = {
   },
 };
 const reloadApp = () => action(actionTypes.RELOAD_APP);
+const appErrored = () => action(actionTypes.APP_ERRORED);
+const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -298,10 +483,120 @@ const accessToken = {
   deleted: id =>
     action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
 };
+const job = {
+  requestCollection: ({ integrationId, flowId, filters }) =>
+    action(actionTypes.JOB.REQUEST_COLLECTION, {
+      integrationId,
+      flowId,
+      filters,
+    }),
+  receivedCollection: ({ collection }) =>
+    action(actionTypes.JOB.RECEIVED_COLLECTION, {
+      collection,
+    }),
+  requestFamily: ({ jobId }) =>
+    action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
+  receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
+
+  requestInProgressJobStatus: () =>
+    action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
+  noInProgressJobs: () => action(actionTypes.JOB.NO_IN_PROGRESS_JOBS),
+  downloadDiagnosticsFile: ({ jobId }) =>
+    action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
+  clear: () => action(actionTypes.JOB.CLEAR),
+
+  cancel: ({ jobId, flowJobId }) =>
+    action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
+
+  resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
+  resolve: ({ jobId, parentJobId }) =>
+    action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
+  resolveSelected: ({ jobs }) =>
+    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
+  resolveAll: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
+  resolveInit: ({ parentJobId, childJobId }) =>
+    action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
+  resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
+  resolveUndo: ({ parentJobId, childJobId }) =>
+    action(actionTypes.JOB.RESOLVE_UNDO, { parentJobId, childJobId }),
+  resolveAllUndo: () => action(actionTypes.JOB.RESOLVE_ALL_UNDO),
+  resolveCommit: () => action(actionTypes.JOB.RESOLVE_COMMIT),
+  resolveAllCommit: () => action(actionTypes.JOB.RESOLVE_ALL_COMMIT),
+  retryAllPending: () => action(actionTypes.JOB.RETRY_ALL_PENDING),
+  retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
+  retryFlowJob: ({ jobId }) =>
+    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
+  retryInit: ({ parentJobId, childJobId }) =>
+    action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
+  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
+  retryUndo: ({ parentJobId, childJobId }) =>
+    action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
+  retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
+  retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
+  retryAll: ({ flowId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
+  retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
+  requestRetryObjects: ({ jobId }) =>
+    action(actionTypes.JOB.REQUEST_RETRY_OBJECTS, { jobId }),
+  receivedRetryObjects: ({ collection, jobId }) =>
+    action(actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION, {
+      collection,
+      jobId,
+    }),
+  requestErrors: ({ jobType, jobId, parentJobId }) =>
+    action(actionTypes.JOB.ERROR.REQUEST_COLLECTION, {
+      jobType,
+      jobId,
+      parentJobId,
+    }),
+  receivedErrors: ({ collection, jobId }) =>
+    action(actionTypes.JOB.ERROR.RECEIVED_COLLECTION, { collection, jobId }),
+  resolveSelectedErrorsInit: ({ selectedErrorIds }) =>
+    action(actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT, {
+      selectedErrorIds,
+    }),
+  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+    action(actionTypes.JOB.ERROR.RESOLVE_SELECTED, {
+      jobId,
+      flowJobId,
+      selectedErrorIds,
+    }),
+  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds }) =>
+    action(actionTypes.JOB.ERROR.RETRY_SELECTED, {
+      jobId,
+      flowJobId,
+      selectedRetryIds,
+    }),
+  downloadErrorFile: ({ jobId }) =>
+    action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
+  requestRetryData: ({ retryId }) =>
+    action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
+  receivedRetryData: ({ retryData, retryId }) =>
+    action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
+  updateRetryData: ({ retryData, retryId }) =>
+    action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  paging: {
+    setRowsPerPage: rowsPerPage =>
+      action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
+    setCurrentPage: currentPage =>
+      action(actionTypes.JOB.PAGING.SET_CURRENT_PAGE, { currentPage }),
+  },
+  error: {
+    clear: () => action(actionTypes.JOB.ERROR.CLEAR),
+  },
+};
+const flow = {
+  run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
+};
 // #endregion
 
 export default {
+  clearAppError,
+  appErrored,
   metadata,
+  connectors,
   cancelTask,
   reloadApp,
   clearComms,
@@ -317,4 +612,8 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  job,
+  flow,
+  agent,
+  stack,
 };

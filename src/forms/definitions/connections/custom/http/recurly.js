@@ -26,11 +26,13 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.http.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.recurly.com')
-        );
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.recurly.com')
+          );
 
         return subdomain;
       },
@@ -43,6 +45,13 @@ export default {
     },
     {
       fieldId: 'http.auth.basic.password',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

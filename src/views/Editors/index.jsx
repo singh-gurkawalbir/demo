@@ -14,6 +14,8 @@ import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
+import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import JsonEditorDialog from '../../components/JsonEditorDialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -33,14 +35,14 @@ import EditorListItem from './EditorListItem';
   drawerPaper: {
     position: 'relative',
     width: theme.drawerWidth,
-    height: `calc(100vh - ${theme.spacing.unit * 7}px)`,
-    padding: theme.spacing.unit,
+    height: `calc(100vh - ${theme.spacing(7)}px)`,
+    padding: theme.spacing(1),
   },
 
   content: {
     flexGrow: 1,
     // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
   },
 }))
 export default class Editors extends Component {
@@ -147,6 +149,33 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'SQLQueryBuilderEditor':
+        return (
+          <SqlQueryBuilderEditorDialog
+            title="SQL Query Builder"
+            id={editorName}
+            sampleData={rawData}
+            rule="Select * from {{orderId}}"
+            data={rawData}
+            defaultData={JSON.stringify({}, null, 2)}
+            onClose={this.handleClose}
+          />
+        );
+      case 'JSONEditor':
+        return (
+          <JsonEditorDialog
+            value={rawData}
+            title="JSON Editor"
+            id={editorName}
+            onClose={() => {
+              this.handleEditorChange(null);
+            }}
+            onChange={value => {
+              // eslint-disable-next-line
+              console.log(value);
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -205,6 +234,17 @@ export default class Editors extends Component {
         label: 'File-Definition Parser',
         description:
           'This processor allows a user to parse junk data into readable json format by applying file definition sturcture on it',
+      },
+      {
+        name: 'SQLQueryBuilderEditor',
+        label: 'SQL Query Builder Editor',
+        description:
+          'This processor allows user to build Sql Query using handlerbars and json as input to it',
+      },
+      {
+        name: 'JSONEditor',
+        label: 'JSON Editor',
+        description: 'This processor allows user to edit JSON Object',
       },
     ];
 

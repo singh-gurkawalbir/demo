@@ -51,8 +51,11 @@ export function* getAdditionalHeaders(path) {
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
+  const { retryCount = 0 } = yield select(resourceStatus, path, method);
 
-  yield put(actions.api.request(path, method, message, hidden));
+  // check if you are retrying ...if you are not retrying make a brand new request
+  if (retryCount === 0)
+    yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
   const additionalHeaders = yield call(getAdditionalHeaders, path);
@@ -77,6 +80,7 @@ export function* onRequestSaga(request) {
     meta: {
       path,
       method,
+      origReq: request,
     },
     responseType: 'text',
   };
@@ -129,7 +133,7 @@ export function* onSuccessSaga(response, action) {
 }
 
 export function* onErrorSaga(error, action) {
-  const { path, method } = action.request.meta;
+  const { path, method, origReq } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
@@ -164,7 +168,18 @@ export function* onErrorSaga(error, action) {
   if (retryCount < tryCount) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
-    yield call(sendRequest, action, { silent: false });
+
+    // resend the request ..silent false meta allows the
+    // sendRequest to dispatch redux actions
+    // otherwise its defaulted to true in an interceptor
+
+    // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
+    // we already check the retry count onErrorHook for an exit case to prevent it from happening
+    yield call(
+      sendRequest,
+      { request: origReq, type: 'API_WATCHER' },
+      { silent: false, runOnError: true }
+    );
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...

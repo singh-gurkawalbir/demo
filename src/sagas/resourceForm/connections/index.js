@@ -9,14 +9,16 @@ import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
+import { isNewId } from '../../../utils/resource';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   let connectionResource = yield select(
-    selectors.resource,
+    selectors.resourceData,
     resourceType,
-    resourceId
+    resourceId,
+    'value'
   );
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
@@ -28,7 +30,82 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  return jsonpatch.applyPatch(connectionResource, patchSet).newDocument;
+  return jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
+}
+
+export function* netsuiteUserRoles({ connectionId, values }) {
+  // '/netsuite/alluserroles'
+  let reqPayload = {};
+
+  if (!values && !connectionId) return;
+
+  if (!values) {
+    if (isNewId(connectionId)) return;
+    // retrieving existing userRoles for a connection
+    reqPayload = { _connectionId: connectionId };
+  } else {
+    // retrieving userRoles for a new connection
+    const { '/netsuite/email': email, '/netsuite/password': password } = values;
+
+    reqPayload = { email, password };
+  }
+
+  try {
+    const resp = yield call(apiCallWithRetry, {
+      path: '/netsuite/alluserroles',
+      opts: { body: reqPayload, method: 'POST' },
+      hidden: true,
+    });
+    const respSuccess =
+      resp &&
+      Object.keys(resp).reduce(
+        (acc, env) => acc || (resp[env] && resp[env].success),
+        false
+      );
+
+    if (!respSuccess)
+      yield put(
+        actions.resource.connections.netsuite.requestUserRolesFailed(
+          connectionId,
+          'Invalid netsuite credentials provided'
+        )
+      );
+    else if (values) {
+      // for a new connection we fetch userRoles
+      // remove non success user environments
+      const successOnlyEnvs = Object.keys(resp)
+        .filter(env => resp[env].success)
+        .map(env => ({ [env]: resp[env] }))
+        .reduce((acc, env) => ({ ...acc, ...env }), {});
+
+      yield put(
+        actions.resource.connections.netsuite.receivedUserRoles(
+          connectionId,
+          successOnlyEnvs
+        )
+      );
+    } else
+      yield put(
+        actions.resource.connections.netsuite.receivedUserRoles(
+          connectionId,
+          resp
+        )
+      );
+  } catch (e) {
+    if (e.status === 403 || e.status === 401) {
+      return;
+    }
+
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
+    yield put(
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        connectionId,
+        errors[0].message
+      )
+    );
+  }
 }
 
 export function* requestToken({ resourceId, values }) {
@@ -128,7 +205,7 @@ export function* pingConnection({ resourceId, values }) {
     });
     // Either apiResp or cancelTask can race successfully
     // , both will never happen
-    const { apiResp } = yield race({
+    const { apiResp, cancelTask } = yield race({
       apiResp: call(apiCallWithRetry, {
         path: pingConnectionParams.path,
         opts: {
@@ -147,6 +224,16 @@ export function* pingConnection({ resourceId, values }) {
           pingConnectionParams.path,
           pingConnectionParams.opts.method,
           'Connection is working fine!'
+        )
+      );
+    }
+
+    if (cancelTask) {
+      yield put(
+        actions.api.failure(
+          pingConnectionParams.path,
+          pingConnectionParams.opts.method,
+          'Request Cancelled'
         )
       );
     }
@@ -208,18 +295,26 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     return;
   }
 
-  const { conflict } = yield select(
-    selectors.resourceData,
-    'connections',
-    resourceId
-  );
+  let id = resourceId;
 
-  // if there is conflict let conflict dialog show up
-  // and oauth authorize be skipped
-  if (conflict) return;
+  if (isNewId(resourceId)) {
+    // if its a new connection id the submitFormValues saga would update with a new resourceReference
+    // resourceId in this case is tmp id and id is the created resource id
+    id = yield select(selectors.createdResourceId, resourceId);
+  } else {
+    const { conflict } = yield select(
+      selectors.resourceData,
+      'connections',
+      resourceId
+    );
+
+    // if there is conflict let conflict dialog show up
+    // and oauth authorize be skipped
+    if (conflict) return;
+  }
 
   try {
-    yield call(openOAuthWindowForConnection, [resourceId]);
+    yield call(openOAuthWindowForConnection, id);
   } catch (e) {
     // could not close the window
   }
@@ -263,7 +358,7 @@ export default [
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
     saveAndAuthorizeConnection
   ),
-
+  takeEvery(actionTypes.NETSUITE_USER_ROLES.REQUEST, netsuiteUserRoles),
   takeEvery(
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection

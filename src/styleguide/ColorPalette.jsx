@@ -24,7 +24,7 @@ const styles = theme => ({
     flexWrap: 'wrap',
     marginBottom: '24px',
     '& div': {
-      marginRight: theme.spacing.quad * 2,
+      marginRight: theme.spacing(8),
       color: colors.celigoNeutral6,
       '& div': {
         borderRadius: '4px',
@@ -40,7 +40,7 @@ const styles = theme => ({
           textTransform: 'capitalize',
           fontWeight: 400,
           '& span': {
-            paddingRight: theme.spacing.unit - 3,
+            paddingRight: theme.spacing(1) - 3,
             fontWeight: 600,
             textTransform: 'uppercase',
           },

@@ -1,19 +1,27 @@
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
 
-const unit = 8;
-
 export default {
+  breakpoints: {
+    values: {
+      sm: 768,
+      md: 968,
+      lg: 1370,
+    },
+  },
   typography: {
     useNextVariants: true,
     fontFamily: 'Roboto, sans-serif',
   },
-  spacing: {
-    unit,
-    double: unit * 2,
-    triple: unit * 3,
-    quad: unit * 4,
+  palette: {
+    background: {
+      success: colors.celigoSuccess,
+      warning: colors.celigoWarning,
+      error: colors.celigoError,
+      info: colors.celigoAccent1,
+    },
   },
+  spacing: 8,
   drawerWidth: 300,
 
   overrides: {
@@ -40,18 +48,21 @@ export default {
       },
       h1: {
         fontSize: '48px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '53px',
         letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '40px',
         letterSpacing: '-0.5px',
       },
       h3: {
         fontSize: '24px',
+        fontFamily: 'Roboto300',
         fontWeight: '300',
         lineHeight: '28px',
         letterSpacing: 'normal',
@@ -94,6 +105,9 @@ export default {
       },
     },
     MuiButton: {
+      root: {
+        fontFamily: 'Roboto500, sans-serif',
+      },
       // text Buttons
       text: {
         textTransform: 'none',
@@ -187,16 +201,39 @@ export default {
         backgroundColor: 'transparent',
       },
     },
+    MuiMenuItem: {
+      root: {
+        borderBottom: '1px solid',
+        '&$selected': {
+          backgroundColor: 'transparent',
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:last-child': {
+          borderBottom: 'none',
+        },
+        '&:hover': {
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: '0px',
+        },
+      },
+    },
   },
   props: {
     // Name of the component ⚛️
     MuiButtonBase: {
       // The default props to change
       // variant: 'contained',
-    },
-    MuiSvgIcon: {
-      viewBox: '0 0 32 32',
-      fontSize: 'inherit',
     },
   },
 };

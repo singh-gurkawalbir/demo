@@ -11,7 +11,8 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import pingConnectionSaga from '../resourceForm/connections';
+import connectionSagas from '../resourceForm/connections';
+import { isNewId } from '../../utils/resource';
 
 export const SCOPES = {
   META: 'meta',
@@ -207,6 +208,11 @@ export function* initFormValues({
       resourceType,
       resourceId
     ));
+
+    // i could have patched that change but i wanted the tmp id to show up
+    if (isNewId(resourceId)) {
+      resource._id = resourceId;
+    }
   }
 
   if (!resource) return; // nothing to do.
@@ -304,5 +310,5 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
-  ...pingConnectionSaga,
+  ...connectionSagas,
 ];

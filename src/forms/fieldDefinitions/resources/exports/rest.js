@@ -1,31 +1,7 @@
 export default {
-  type: {
-    type: 'select',
-    label: 'Export Type',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-        ],
-      },
-    ],
-  },
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
-  },
-  'delta.lagOffset': {
-    type: 'text',
-    label: 'Offset',
     visibleWhen: [
       {
         field: 'type',
@@ -49,6 +25,13 @@ export default {
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT'],
+      },
+    ],
   },
   'rest.resourcePath': {
     type: 'text',
@@ -60,6 +43,12 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
+  },
+  'rest.once.booleanField': {
+    type: 'text',
+    label: 'Boolean Field',
+    id: 'once.booleanField',
+    helpkey: 'once.booleanField',
   },
   // #region paging
   'rest.pagingMethod': {
@@ -82,6 +71,7 @@ export default {
   'rest.nextPagePath': {
     type: 'text',
     label: 'Next Page Path',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -112,6 +102,7 @@ export default {
   'rest.pageArgument': {
     type: 'text',
     label: 'Page Argument',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -122,6 +113,7 @@ export default {
   'rest.pagingPostBody': {
     type: 'text',
     label: 'Build Paging Post Body',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -211,17 +203,7 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-  // #region once
-  'once.booleanField': {
-    type: 'text',
-    label: 'Boolean Field',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
-  },
+
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',

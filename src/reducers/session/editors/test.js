@@ -213,33 +213,193 @@ describe('editor selectors', () => {
       },
       {
         processor: 'handlebars',
-        valid: {
-          initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
-          expectedRequest: {
-            body: {
-              data: { a: 123 },
-              rules: { strict: true, template: '{{a}}' },
+        valid: [
+          {
+            initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: { a: 123 },
+                rules: { strict: true, template: '{{a}}' },
+              },
+              processor: 'handlebars',
             },
-            processor: 'handlebars',
           },
-        },
+          {
+            initOpts: { template: 'Test', strict: true, data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: { a: 123 },
+                rules: { strict: true, template: 'Test' },
+              },
+              processor: 'handlebars',
+            },
+          },
+        ],
         invalid: {
           initOpts: { template: '{{a}', data: '{a: xxx}' },
           violations: { dataError: 'Unexpected token a in JSON at position 1' },
         },
       },
       {
-        processor: 'merge',
-        valid: {
-          initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
-          expectedRequest: {
-            body: {
-              data: [{ a: 123 }],
-              rules: { b: true },
+        processor: 'sql',
+        valid: [
+          {
+            initOpts: {
+              template: 'Select * from {{id}}',
+              strict: true,
+              sampleData: '{"age": 33}',
+              defaultData: '{"id": 99}',
             },
-            processor: 'merge',
+            expectedRequest: {
+              body: {
+                data: { age: 33, id: 99 },
+                rules: { strict: true, template: 'Select * from {{id}}' },
+              },
+              processor: 'handlebars',
+            },
           },
-        },
+          {
+            initOpts: {
+              template: 'Select * from {{id}}',
+              strict: true,
+              sampleData: '{"id": 33}',
+              defaultData: '{"id": 99}',
+            },
+            expectedRequest: {
+              body: {
+                data: { id: 33 },
+                rules: { strict: true, template: 'Select * from {{id}}' },
+              },
+              processor: 'handlebars',
+            },
+          },
+          {
+            initOpts: {
+              template: 'Select * from {{id}}',
+              strict: true,
+              sampleData: '{"age": 33}',
+              defaultData: '{"id": 99, "age": 1}',
+            },
+            expectedRequest: {
+              body: {
+                data: { age: 33, id: 99 },
+                rules: { strict: true, template: 'Select * from {{id}}' },
+              },
+              processor: 'handlebars',
+            },
+          },
+          {
+            initOpts: {
+              template: 'Select * from {{id}}',
+              strict: true,
+              sampleData: '',
+              defaultData: '',
+            },
+            expectedRequest: {
+              body: {
+                data: {},
+                rules: { strict: true, template: 'Select * from {{id}}' },
+              },
+              processor: 'handlebars',
+            },
+          },
+          {
+            initOpts: {
+              template: 'Select * from {{id}}',
+              strict: true,
+              sampleData: '{}',
+              defaultData: '{}',
+            },
+            expectedRequest: {
+              body: {
+                data: {},
+                rules: { strict: true, template: 'Select * from {{id}}' },
+              },
+              processor: 'handlebars',
+            },
+          },
+        ],
+        invalid: [
+          {
+            initOpts: {
+              template: '{{a}}',
+              sampleData: '{a: xxx}',
+              defaultData: '',
+            },
+            violations: {
+              dataError:
+                'Sample Data: Unexpected token a in JSON at position 1',
+            },
+          },
+          {
+            initOpts: {
+              template: '{{a}}',
+              sampleData: '',
+              defaultData: '{a: xxx}',
+            },
+            violations: {
+              dataError:
+                'Default Data: Unexpected token a in JSON at position 1',
+            },
+          },
+          {
+            initOpts: {
+              template: '{{a}}',
+              sampleData: '{"a": 1}',
+              defaultData: '{a: xxx}',
+            },
+            violations: {
+              dataError:
+                'Default Data: Unexpected token a in JSON at position 1',
+            },
+          },
+          {
+            initOpts: {
+              template: '{{a}}',
+              sampleData: '{',
+              defaultData: '{"a": "xxx"}',
+            },
+            violations: {
+              dataError: 'Sample Data: Unexpected end of JSON input',
+            },
+          },
+          {
+            initOpts: {
+              template: '{{a}}',
+              sampleData: '{{',
+              defaultData: '{',
+            },
+            violations: {
+              dataError:
+                'Sample Data: Unexpected token { in JSON at position 1\nDefault Data: Unexpected end of JSON input',
+            },
+          },
+        ],
+      },
+      {
+        processor: 'merge',
+        valid: [
+          {
+            initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: [{ a: 123 }],
+                rules: { b: true },
+              },
+              processor: 'merge',
+            },
+          },
+          {
+            initOpts: { rule: '[{"a": 1}]', data: '{"a": 123}' },
+            expectedRequest: {
+              body: {
+                data: [{ a: 123 }],
+                rules: [{ a: 1 }],
+              },
+              processor: 'merge',
+            },
+          },
+        ],
         invalid: {
           initOpts: { rule: '{a: xx}', data: '{"b": t}' },
           violations: {
@@ -330,28 +490,44 @@ describe('editor selectors', () => {
       describe(`${testData.processor}`, () => {
         test(`should return correct opts for valid editor.`, () => {
           const id = 1;
-          const state = reducer(
-            undefined,
-            actions.editor.init(id, testData.processor, testData.valid.initOpts)
-          );
-          const requestOpts = selectors.processorRequestOptions(state, id);
+          let validCases;
 
-          expect(requestOpts).toEqual(testData.valid.expectedRequest);
+          if (testData.valid instanceof Array) {
+            validCases = testData.valid;
+          } else validCases = [testData.valid];
+          validCases.forEach(validCase => {
+            const state = reducer(
+              undefined,
+              actions.editor.init(id, testData.processor, validCase.initOpts)
+            );
+            const requestOpts = selectors.processorRequestOptions(state, id);
+
+            expect(requestOpts).toEqual(validCase.expectedRequest);
+          });
         });
 
         test(`should return errors for invalid editor.`, () => {
           const id = 1;
-          const state = reducer(
-            undefined,
-            actions.editor.init(
-              id,
-              testData.processor,
-              testData.invalid.initOpts
-            )
-          );
-          const requestOpts = selectors.processorRequestOptions(state, id);
+          let invalidCases;
 
-          expect(requestOpts.violations).toEqual(testData.invalid.violations);
+          if (testData.invalid instanceof Array) {
+            invalidCases = testData.invalid;
+          } else invalidCases = [testData.invalid];
+          invalidCases.forEach(invalidCaseTestData => {
+            const state = reducer(
+              undefined,
+              actions.editor.init(
+                id,
+                testData.processor,
+                invalidCaseTestData.initOpts
+              )
+            );
+            const requestOpts = selectors.processorRequestOptions(state, id);
+
+            expect(requestOpts.violations).toEqual(
+              invalidCaseTestData.violations
+            );
+          });
         });
       });
     });

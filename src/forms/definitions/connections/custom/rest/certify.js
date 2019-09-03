@@ -37,4 +37,11 @@ export default {
       helpText: 'The API Secret of your Certify account.',
     },
   ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
+    },
+  ],
 };

@@ -12,16 +12,16 @@ import sampleData from './sampleData';
 @hot(module)
 @withStyles(theme => ({
   paper: {
-    padding: `${theme.spacing.double}px`,
+    padding: theme.spacing(2),
   },
   rawDataContainer: {
     height: '25vh',
   },
   caption: {
-    marginTop: `${theme.spacing.unit * 2}px`,
+    marginTop: theme.spacing(2),
   },
   title: {
-    marginBottom: `${theme.spacing.unit}px`,
+    marginBottom: theme.spacing(1),
   },
   rawDataTitleBar: {
     display: 'flex',
@@ -31,7 +31,7 @@ import sampleData from './sampleData';
   },
   sampleType: {
     float: 'right',
-    paddingBottom: `${theme.spacing.unit}px`,
+    paddingBottom: theme.spacing(1),
   },
 }))
 export default class WorkArea extends Component {

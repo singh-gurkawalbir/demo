@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   arrow: {
     position: 'absolute',
     fontSize: 7,
@@ -29,7 +29,7 @@ const styles = theme => ({
     },
   },
   popper: {
-    zIndex: 2,
+    zIndex: 1400,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
@@ -113,27 +113,27 @@ const styles = theme => ({
       },
     },
   },
-});
+}));
 
-function ArrowPopper(props) {
+export default function ArrowPopper(props) {
   const {
     id,
     open,
     anchorEl,
     placement = 'bottom-end',
-    classes,
     children,
     onClose = () => {}, // default to noop.
     className,
   } = props;
   const [arrowEl, setArrowEl] = useState(null);
+  const classes = useStyles(props);
 
   return (
     <Popper
       id={id}
       anchorEl={anchorEl}
       placement={placement}
-      disablePortal={false}
+      // disablePortal={false}
       open={open}
       className={classes.popper}
       onClose={onClose}
@@ -159,5 +159,3 @@ function ArrowPopper(props) {
     </Popper>
   );
 }
-
-export default withStyles(styles)(ArrowPopper);

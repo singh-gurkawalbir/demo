@@ -1,39 +1,36 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Input from '@material-ui/core/Input';
-import { withStyles } from '@material-ui/core/styles';
-// import { deepClone } from 'fast-json-patch';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const mapStateToProps = (state, { editorId }) => ({
-  editor: selectors.editor(state, editorId),
-});
-const mapDispatchToProps = (dispatch, { editorId }) => ({
-  patchEditor: value => {
-    dispatch(actions.editor.patch(editorId, { rule: value }));
-  },
-});
-
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
-    paddingLeft: theme.spacing.unit,
+    paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflowY: 'auto',
   },
   input: {
     flex: '1 1 auto',
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   rowContainer: {
     display: 'flex',
   },
-}))
-class TransformPanel extends Component {
-  handleUpdate(row, event, field) {
+}));
+
+export default function TransformPanel(props) {
+  const { editorId } = props;
+  const classes = useStyles(props);
+  const editor = useSelector(state => selectors.editor(state, editorId));
+  const dispatch = useDispatch();
+  const patchEditor = value => {
+    dispatch(actions.editor.patch(editorId, { rule: value }));
+  };
+
+  const handleUpdate = (row, event, field) => {
     const { value } = event.target;
-    const { patchEditor, editor } = this.props;
     let { rule } = editor;
 
     if (!rule) rule = [];
@@ -49,55 +46,49 @@ class TransformPanel extends Component {
     }
 
     patchEditor(rule);
-  }
+  };
 
-  render() {
-    const { editor, classes } = this.props;
-    const rule = editor.rule
-      ? editor.rule.map((rule, index) => ({ row: index, ...rule }))
-      : [];
-    const handleExtractUpdate = row => event =>
-      this.handleUpdate(row, event, 'extract');
-    const handleGenerateUpdate = row => event =>
-      this.handleUpdate(row, event, 'generate');
+  const rule = editor.rule
+    ? editor.rule.map((rule, index) => ({ row: index, ...rule }))
+    : [];
+  const handleExtractUpdate = row => event =>
+    handleUpdate(row, event, 'extract');
+  const handleGenerateUpdate = row => event =>
+    handleUpdate(row, event, 'generate');
 
-    return (
-      <div className={classes.container}>
-        {rule.map(r => (
-          <div className={classes.rowContainer} key={r.row}>
-            <Input
-              autoFocus
-              defaultValue={r.extract}
-              placeholder="extract"
-              className={classes.input}
-              onChange={handleExtractUpdate(r.row)}
-            />
-            <Input
-              defaultValue={r.generate}
-              placeholder="generate"
-              className={classes.input}
-              onChange={handleGenerateUpdate(r.row)}
-            />
-          </div>
-        ))}
-        <div key="new" className={classes.rowContainer}>
+  return (
+    <div className={classes.container}>
+      {rule.map(r => (
+        <div className={classes.rowContainer} key={r.row}>
           <Input
-            value=""
+            autoFocus
+            defaultValue={r.extract}
             placeholder="extract"
             className={classes.input}
-            onChange={handleExtractUpdate()}
+            onChange={handleExtractUpdate(r.row)}
           />
           <Input
-            value=""
+            defaultValue={r.generate}
             placeholder="generate"
             className={classes.input}
-            onChange={handleGenerateUpdate()}
+            onChange={handleGenerateUpdate(r.row)}
           />
         </div>
+      ))}
+      <div key="new" className={classes.rowContainer}>
+        <Input
+          value=""
+          placeholder="extract"
+          className={classes.input}
+          onChange={handleExtractUpdate()}
+        />
+        <Input
+          value=""
+          placeholder="generate"
+          className={classes.input}
+          onChange={handleGenerateUpdate()}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(TransformPanel);

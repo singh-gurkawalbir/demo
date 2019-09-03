@@ -1,4 +1,4 @@
-import { React, Component } from 'react';
+import { React, Component, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -10,24 +10,25 @@ import { withStyles } from '@material-ui/core/styles';
 
 @withStyles(theme => ({
   modalDialog: {
-    padding: theme.spacing.quad,
+    padding: theme.spacing(4),
     minWidth: 500,
   },
   modalContent: {
-    margin: `0 ${theme.spacing.unit}px`,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    margin: theme.spacing(0, 1),
+    padding: theme.spacing(1, 2),
     width: '100',
   },
   iconButton: {
     position: 'absolute',
-    top: '10px',
+    top: '5px',
     right: '10px',
   },
   actions: {
-    '& *': { marginRight: theme.spacing.unit },
-    marginRight: theme.spacing.unit,
-    marginTop: theme.spacing.unit, // theme.spacing.unit / 2,
-    marginBottom: theme.spacing.double,
+    '&:last-child': {
+      marginRight: theme.spacing(1),
+    },
+    // '& *': { marginRight: theme.spacing(1) },
+    // margin: theme.spacing(1, 1, 2, 0),
   },
 }))
 export default class ModalDialog extends Component {
@@ -36,28 +37,38 @@ export default class ModalDialog extends Component {
 
     return (
       <div>
-        <Dialog open={show} className={classes.modalDialog}>
-          <DialogTitle>
-            {this.props.children[0]}
-
-            <IconButton
-              onClick={handleClose}
-              color="primary"
-              className={classes.iconButton}
-              autoFocus>
-              <SvgIcon>
-                <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-              </SvgIcon>
-            </IconButton>
-          </DialogTitle>
-          <Divider />
-          <DialogContent className={classes.modalContent}>
-            {this.props.children[1]}
-          </DialogContent>
-          <Divider />
-          <DialogActions className={classes.actions}>
-            {this.props.children[2]}
-          </DialogActions>
+        <Dialog open={show} className={classes.modalDialog} maxWidth="lg">
+          {this.props.children[0] && (
+            <DialogTitle className={classes.modalTitle}>
+              {this.props.children[0]}
+              {handleClose && (
+                <IconButton
+                  onClick={handleClose}
+                  className={classes.iconButton}
+                  autoFocus>
+                  <SvgIcon>
+                    <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
+                  </SvgIcon>
+                </IconButton>
+              )}
+            </DialogTitle>
+          )}
+          {this.props.children[1] && (
+            <Fragment>
+              <Divider />
+              <DialogContent className={classes.modalContent}>
+                {this.props.children[1]}
+              </DialogContent>
+            </Fragment>
+          )}
+          {this.props.children[2] && (
+            <Fragment>
+              <Divider />
+              <DialogActions className={classes.actions}>
+                {this.props.children[2]}
+              </DialogActions>
+            </Fragment>
+          )}
         </Dialog>
       </div>
     );

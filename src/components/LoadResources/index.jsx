@@ -36,7 +36,7 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   snackbar: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
 }))
 class LoadResources extends Component {

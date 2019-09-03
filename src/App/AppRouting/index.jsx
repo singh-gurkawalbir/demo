@@ -19,9 +19,6 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
-const CustomForms = loadable(() =>
-  import(/* webpackChunkName: 'CustomForms' */ '../../views/CustomForms')
-);
 const Exports = loadable(() =>
   import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
 );
@@ -34,8 +31,16 @@ const StandaloneResource = loadable(() =>
 const Imports = loadable(() =>
   import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
+const Agents = loadable(() =>
+  import(/* webpackChunkName: 'Agents' */ '../../views/Agents')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
+);
+const IntegrationDashboard = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
+  )
 );
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
@@ -44,6 +49,15 @@ const IntegrationSettings = loadable(() =>
 const AccessTokens = loadable(() =>
   import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
 );
+const Stacks = loadable(() =>
+  import(/* webpackChunkName: 'Stacks' */ '../../views/Stacks')
+);
+const Connections = loadable(() =>
+  import(/* webpackChunkName: 'Connections' */ '../../views/Connections')
+);
+const Scripts = loadable(() =>
+  import(/* webpackChunkName: 'Scripts' */ '../../views/Scripts')
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -51,13 +65,16 @@ export default class AppRouting extends Component {
     return (
       <Switch>
         <Route
+          path="/pg/integrations/:integrationId/dashboard"
+          component={IntegrationDashboard}
+        />
+        <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
         <Route exact path="/pg/signin" component={SignIn} />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
-        <Route path="/pg/forms" component={CustomForms} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route
           path="/pg/:resourceType/:operation/:id"
@@ -65,8 +82,12 @@ export default class AppRouting extends Component {
         />
         <Route path="/pg/exports" component={Exports} />
         <Route path="/pg/imports" component={Imports} />
+        <Route path="/pg/agents" component={Agents} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
+        <Route path="/pg/stacks" component={Stacks} />
+        <Route path="/pg/connections" component={Connections} />
+        <Route path="/pg/scripts" component={Scripts} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

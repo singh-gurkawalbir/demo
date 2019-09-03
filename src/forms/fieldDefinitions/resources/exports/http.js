@@ -51,6 +51,7 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
+    required: true,
     options: [
       {
         items: [
@@ -228,7 +229,7 @@ export default {
     type: 'text',
     label: 'Success Path',
   },
-  'http.response.successValuess': {
+  'http.response.successValues': {
     type: 'text',
     valueDelimiter: ',',
     label: 'Success Values',

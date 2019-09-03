@@ -10,7 +10,11 @@ import TimeAgo from 'react-timeago';
 import Grid from '@material-ui/core/Grid';
 import actions from '../../actions';
 import prettyDate from '../../utils/date';
-import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../utils/resource';
+import {
+  MODEL_PLURAL_TO_LABEL,
+  isNewId,
+  getResourceSubType,
+} from '../../utils/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
@@ -18,11 +22,18 @@ import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 import { SCOPES } from '../../sagas/resourceForm';
+import getRoutePath from '../../utils/routePaths';
 
 const mapStateToProps = (state, { match }) => {
   const { id, resourceType } = match.params;
   const metaChanges = selectors.resourceData(state, resourceType, id, 'meta');
-  const { _connectionId } = metaChanges.merged ? metaChanges.merged : {};
+  const valueChanges = selectors.resourceData(state, resourceType, id, 'value');
+  let resType;
+  const { assistant, type } = getResourceSubType(valueChanges.merged);
+
+  if (assistant) resType = assistant;
+  else resType = type;
+  const { _connectionId } = valueChanges.merged ? valueChanges.merged : {};
   // TODO: this should be resourceType instead of connections
   const connection = _connectionId
     ? selectors.resource(state, 'connections', _connectionId)
@@ -34,8 +45,8 @@ const mapStateToProps = (state, { match }) => {
     0;
 
   return {
+    type: resType,
     resourceType,
-    // valueChanges,
     metaPatches,
     metaChanges,
     connection,
@@ -73,16 +84,10 @@ const mapDispatchToProps = (dispatch, { match }) => {
 @hot(module)
 @withStyles(theme => ({
   editableFields: {
-    paddingTop: theme.spacing.unit,
+    paddingTop: theme.spacing(1),
     minHeight: '50%',
-    // maxHeight: `calc(100vh - ${theme.spacing.unit * 27}px)`,
     overflowY: 'hidden',
   },
-  // textField: {
-  //   marginLeft: theme.spacing.unit,
-  //   marginRight: theme.spacing.unit,
-  //   width: `calc(100% - ${theme.spacing.double}px)`,
-  // },
   relatedContent: {
     textDecoration: 'none',
   },
@@ -127,6 +132,7 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
+      type,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
     } = this.props;
@@ -154,13 +160,7 @@ class Edit extends Component {
       );
     }
 
-    let type = connection ? connection.type : merged.type;
-    const assistant = connection ? connection.assistant : merged.assistant;
     const formMeta = merged.customForm ? merged.customForm.form : {};
-
-    if (assistant) {
-      type = assistant;
-    }
 
     // const conflict = [{ op: 'replace', path: '/name', value: 'Tommy Boy' }];
 
@@ -186,11 +186,11 @@ class Edit extends Component {
             <Typography variant="h5">
               {type || null} {`${MODEL_PLURAL_TO_LABEL[resourceType]}`}
             </Typography>
-
-            <Typography variant="caption" className={classes.dates}>
-              Last Modified: {prettyDate(merged.lastModified)}
-            </Typography>
-
+            {merged.lastModified && (
+              <Typography variant="caption" className={classes.dates}>
+                Last Modified: {prettyDate(merged.lastModified)}
+              </Typography>
+            )}
             {metaPatches > 0 && (
               <Typography variant="caption" className={classes.dates}>
                 Unsaved changes made <TimeAgo date={lastChange} />.
@@ -250,7 +250,7 @@ class Edit extends Component {
           <Link
             key="conn"
             className={classes.relatedContent}
-            to={`/pg/resources/connections/edit/${connection._id}`}>
+            to={getRoutePath(`/connections/edit/${connection._id}`)}>
             <Button size="small" color="primary">
               Connected to {connection.name || connection._id}
             </Button>
@@ -263,8 +263,6 @@ class Edit extends Component {
             resourceType={resourceType}
             resourceId={id}
             connectionType={type}
-            connection={connection}
-            cancelButtonLabel="Reset"
           />
 
           {conflict && (

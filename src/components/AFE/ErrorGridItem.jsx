@@ -1,17 +1,16 @@
-import { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import PanelTitle from './PanelTitle';
 import CodePanel from './GenericEditor/CodePanel';
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   gridItem: {
     border: `solid 1px ${theme.editor.panelBorder}`,
     overflow: 'hidden',
     minWidth: '150px',
     minHeight: '100px',
     gridArea: 'error',
-    marginBottom: theme.spacing.double,
+    marginBottom: theme.spacing(2),
   },
 
   flexContainer: {
@@ -22,36 +21,36 @@ import CodePanel from './GenericEditor/CodePanel';
   },
   title: { flex: '0 0 auto' },
   panel: { flex: '1 1 100px', minHeight: '50px' },
-}))
-export default class ErrorGridItem extends Component {
-  render() {
-    const { classes, error, violations } = this.props;
+}));
 
-    if (!error && !violations) return null;
+export default function ErrorGridItem(props) {
+  const { error, violations } = props;
+  const classes = useStyles(props);
 
-    const errorText = [
-      JSON.stringify(error),
-      violations && violations.ruleError,
-      violations && violations.dataError,
-    ]
-      .filter(e => !!e)
-      .join('\n');
+  if (!error && !violations) return null;
 
-    return (
-      <div className={classes.gridItem}>
-        <div className={classes.flexContainer}>
-          <PanelTitle>
-            <Typography color="error">Error</Typography>
-          </PanelTitle>
-          <CodePanel
-            readOnly
-            overrides={{ wrap: true }}
-            mode="text"
-            name="error"
-            value={errorText}
-          />
-        </div>
+  const errorText = [
+    JSON.stringify(error),
+    violations && violations.ruleError,
+    violations && violations.dataError,
+  ]
+    .filter(e => !!e)
+    .join('\n');
+
+  return (
+    <div className={classes.gridItem}>
+      <div className={classes.flexContainer}>
+        <PanelTitle>
+          <Typography color="error">Error</Typography>
+        </PanelTitle>
+        <CodePanel
+          readOnly
+          overrides={{ wrap: true }}
+          mode="text"
+          name="error"
+          value={errorText}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 }

@@ -5,9 +5,12 @@ import { Switch, Link, Route } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import shortid from 'shortid';
@@ -24,23 +27,25 @@ const mapDispatchToProps = (dispatch, { list }) => ({
 @hot(module)
 @withStyles(theme => ({
   root: {
-    marginTop: theme.spacing.unit * 3,
-    // marginLeft: theme.spacing.unit,
+    marginTop: theme.spacing(3),
   },
   resourceItems: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
   },
   listItem: {
     paddingTop: 0,
   },
   addResource: {
-    left: theme.spacing.unit * 2,
-    bottom: theme.spacing.unit / 4,
+    left: theme.spacing(2),
+    bottom: theme.spacing(0.25),
   },
   avatar: {
     backgroundColor: theme.palette.background.editorInner,
     border: '1px solid',
     borderColor: theme.palette.text.primary,
+  },
+  listName: {
+    wordBreak: 'break-word',
   },
 }))
 class FilteredResources extends Component {
@@ -94,22 +99,26 @@ class FilteredResources extends Component {
               key={r._id}
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
-              {['exports', 'imports', 'connections'].includes(resourceType) ? (
-                <Avatar className={classes.avatar}>
-                  <ApplicationImg
-                    assistant={r.assistant}
-                    type={
-                      resourceType === 'connections' ? r.type : r.adaptorType
-                    }
-                  />
-                </Avatar>
-              ) : (
-                <ResourceImage resource={r} resourceType={resourceType} />
-              )}
+              <ListItemAvatar>
+                {['exports', 'imports', 'connections'].includes(
+                  resourceType
+                ) ? (
+                  <Avatar className={classes.avatar}>
+                    <ApplicationImg
+                      assistant={r.assistant}
+                      type={
+                        resourceType === 'connections' ? r.type : r.adaptorType
+                      }
+                    />
+                  </Avatar>
+                ) : (
+                  <ResourceImage resource={r} resourceType={resourceType} />
+                )}
+              </ListItemAvatar>
               <ListItemText
                 primary={r.name || r._id}
                 secondary={daysOld(r.lastModified)}
-                secondaryTypographyProps={{ variant: 'caption' }}
+                className={classes.listName}
               />
             </ListItem>
           ))}

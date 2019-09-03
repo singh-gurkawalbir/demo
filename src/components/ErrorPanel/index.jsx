@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -9,25 +9,23 @@ import ChevronDownIcon from 'mdi-react/ChevronDownIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import ErrorBox from './ErrorBox';
 
-const styles = theme => ({
+const usestyles = makeStyles(theme => ({
   panel: {
-    marginBottom: theme.spacing.triple,
+    marginBottom: theme.spacing(1),
   },
   paper: {
-    padding: `0 ${theme.spacing.double}px`,
+    padding: theme.spacing(1, 3),
     display: 'flex',
     justifyContent: 'space-between',
+    color: 'white',
   },
   pad: {
     paddingTop: 9,
     paddingBottom: 9,
   },
   error: {
-    backgroundColor: theme.palette.error.dark,
-    borderColor: theme.palette.error.light,
-  },
-  errorText: {
-    color: theme.palette.error.contrastText,
+    backgroundColor: theme.palette.background.error,
+    color: 'white',
   },
   disabled: {
     opacity: 1,
@@ -36,14 +34,18 @@ const styles = theme => ({
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
-});
+  icon: {
+    color: 'white',
+  },
+}));
 
 /**
  * Render an error in a panel. Will be expandable display stack traces
  * when in development
  */
 function ErrorPanel(props) {
-  const { classes, error, onClose } = props;
+  const classes = usestyles();
+  const { error, onClose } = props;
   const showStack =
     process.env.NODE_ENV === 'development' && error instanceof Error;
 
@@ -53,7 +55,7 @@ function ErrorPanel(props) {
         className={classNames(classes.panel, classes.paper, classes.error)}>
         {typeof error === 'string' ? error : error.message}
         {onClose && (
-          <IconButton onClick={onClose}>
+          <IconButton onClick={onClose} className={classes.icon}>
             <CloseIcon />
           </IconButton>
         )}
@@ -67,7 +69,7 @@ function ErrorPanel(props) {
       disabled={!showStack}>
       <ExpansionPanelSummary
         classes={{ disabled: classes.disabled }}
-        expandIcon={<ChevronDownIcon />}>
+        expandIcon={<ChevronDownIcon className={classes.icon} />}>
         {typeof error === 'string' ? error : error.message}
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
@@ -77,4 +79,4 @@ function ErrorPanel(props) {
   );
 }
 
-export default withStyles(styles)(ErrorPanel);
+export default ErrorPanel;

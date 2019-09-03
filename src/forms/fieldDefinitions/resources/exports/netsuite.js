@@ -1,30 +1,188 @@
 export default {
-  'netsuite.restlet.searchType': {
-    type: 'radiogroup',
-    label: 'Saved Search Type',
+  // record types
+  'netsuite.distributed.recordType': {
+    label: 'Record type',
+    mode: 'suitescript',
+    defaultValue: r =>
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.recordType) ||
+      '',
+    required: true,
+    type: 'refreshableselect',
+    resourceType: 'recordTypes',
+    placeholder: 'Please select a record type',
+    helpKey: 'export.netsuite.recordType',
+    connectionId: r => r && r._connectionId,
+  },
+  'netsuite.restlet.recordType': {
+    label: 'Record type',
+    mode: 'suitescript',
+    defaultValue: r =>
+      (r &&
+        r.netsuite &&
+        r.netsuite.restlet &&
+        r.netsuite.restlet.recordType) ||
+      '',
+    required: true,
+    type: 'refreshableselect',
+    resourceType: 'recordTypes',
+    placeholder: 'Please select a record type',
+    connectionId: r => r && r._connectionId,
+  },
+  'netsuite.webservices.recordType': {
+    label: 'Record type',
+    mode: 'webservices',
+    defaultValue: r =>
+      (r &&
+        r.netsuite &&
+        r.netsuite.searches &&
+        r.netsuite.searches[0] &&
+        r.netsuite.searches[0].recordType) ||
+      '',
+    required: true,
+    type: 'refreshableselect',
+    resourceType: 'recordTypes',
+    placeholder: 'Please select a record type',
+    helpKey: 'export.netsuite.searches.recordType',
+    connectionId: r => r && r._connectionId,
+  },
+  // execution context
+  'netsuite.distributed.executionContext': {
+    type: 'multiselect',
+    label: 'Execution context',
     options: [
       {
         items: [
-          { label: 'Public', value: 'public' },
-          { label: 'Private', value: 'private' },
+          { label: 'CSV Import', value: 'csvimport' },
+          { label: 'Custom Mass Update', value: 'custommassupdate' },
+          { label: 'Offline Client', value: 'offlineclient' },
+          { label: 'Map/Reduce', value: 'mapreduce' },
+          { label: 'Portlet', value: 'portlet' },
+          { label: 'Restlet 2.0', value: 'restlet' },
+          { label: 'Scheduled', value: 'scheduled' },
+          { label: 'Suitelet / Restlet 1.0', value: 'suitelet' },
+          { label: 'User Event', value: 'userevent' },
+          { label: 'User Interface', value: 'userinterface' },
+          { label: 'Web Services', value: 'webservices' },
+          { label: 'Web Store', value: 'webstore' },
+          { label: 'Workflow', value: 'workflow' },
         ],
       },
     ],
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionContext,
+    required: true,
+    helpText:
+      'The invited user will have permissions to manage the integrations selected here.',
   },
-  // this should make a call to get resources
-  'netsuite.recordType': {
-    label: 'Record Type',
-    type: 'refreshoptions',
-    resourceType: 'recordTypes',
+  // executiontype
+  'netsuite.distributed.executionType': {
+    type: 'multiselect',
+    label: 'Execution type',
+    options: [
+      {
+        items: [
+          { label: 'Create', value: 'create' },
+          { label: 'Edit', value: 'edit' },
+          { label: 'Delete', value: 'delete' },
+          { label: 'Inline Edit', value: 'xedit' },
+          { label: 'Approve', value: 'approve' },
+          { label: 'Cancel', value: 'cancel' },
+          { label: 'Reject', value: 'reject' },
+          { label: 'Pack', value: 'pack' },
+          { label: 'Ship', value: 'ship' },
+          { label: 'DropShip', value: 'dropship' },
+          { label: 'Special Order', value: 'specialorder' },
+          { label: 'Order Items', value: 'orderitems' },
+          { label: 'Pay Bills', value: 'paybills' },
+        ],
+      },
+    ],
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.executionType,
+    required: true,
+    helpText:
+      'The invited user will have permissions to manage the integrations selected here.',
+  },
+  // sublists
+  'netsuite.distributed.sublists': {
+    label: 'Sublists to include',
+    type: 'refreshableselect',
     mode: 'suitescript',
-    placeholder: 'Please select a record type',
-    connectionId: r => r._connectionId,
+    multiselect: true,
+    placeholder: 'Please select Sublists',
+    helpKey: 'export.netsuite.sublists',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.distributed &&
+      r.netsuite.distributed.sublists,
+    connectionId: r => r && r._connectionId,
+  },
+  // search id
+  'netsuite.restlet.searchId': {
+    type: 'nssavedsearch',
+    mode: 'suitescript',
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
+    resourceType: 'savedSearches',
+    required: true,
+    connectionId: r => r && r._connectionId,
+  },
+  'netsuite.webservices.searchId': {
+    label: 'Saved searches',
+    type: 'refreshableselect',
+    resourceType: 'savedSearches',
+    required: true,
+    placeholder: 'Please select a saved search',
+    mode: 'webservices',
+    filterKey: 'savedSearches',
+    helpKey: 'export.netsuite.searches.searchId',
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.searches &&
+      r.netsuite.searches[0] &&
+      r.netsuite.searches[0].savedSearchId,
+    connectionId: r => r && r._connectionId,
+  },
+  // type
+  type: {
+    type: 'select',
+    label: 'Export type',
+    options: [
+      {
+        items: [
+          { label: 'All', value: 'all' },
+          { label: 'Delta', value: 'delta' },
+          { label: 'Once', value: 'once' },
+          { label: 'Test', value: 'test' },
+        ],
+      },
+    ],
+    defaultValue: r => (r && r.type) || 'all',
+  },
+  // skip grouping
+  'netsuite.skipGrouping': {
+    type: 'checkbox',
+    inverse: true,
+    label: 'Group rows',
+    defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
   },
 
-  'netsuite.searches.searchId': {
-    label: 'Record Type',
-    type: 'refreshoptions',
+  'netsuite.netsuiteExportlabel': {
+    label: 'Would you like to transform the records?',
+    type: 'labeltitle',
   },
+
   'netsuite.searches': {
     type: 'text',
     keyName: 'name',
@@ -45,10 +203,7 @@ export default {
     type: 'text',
     label: 'Netsuite custom Field Metadata',
   },
-  'netsuite.skipGrouping': {
-    type: 'checkbox',
-    label: 'Netsuite skip Grouping',
-  },
+
   'netsuite.statsOnly': {
     type: 'checkbox',
     label: 'Netsuite stats Only',
@@ -56,14 +211,6 @@ export default {
   'netsuite.internalId': {
     type: 'text',
     label: 'Netsuite internal Id',
-  },
-  'netsuite.restlet.recordType': {
-    type: 'text',
-    label: 'Netsuite restlet record Type',
-  },
-  'netsuite.restlet.searchId': {
-    type: 'text',
-    label: 'Netsuite restlet search Id',
   },
   'netsuite.restlet.criteria.field': {
     type: 'text',
@@ -115,29 +262,9 @@ export default {
     type: 'text',
     label: 'Netsuite restlet hooks pre Send configuration',
   },
-  'netsuite.distributed.recordType': {
-    type: 'text',
-    label: 'Netsuite distributed record Type',
-  },
-  'netsuite.distributed.executionContexts': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Netsuite distributed execution Context',
-    validWhen: [],
-  },
   'netsuite.distributed.disabled': {
     type: 'checkbox',
     label: 'Netsuite distributed disabled',
-  },
-  'netsuite.distributed.executionTypes': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Netsuite distributed execution Type',
-    validWhen: [],
   },
   'netsuite.distributed.qualifier': {
     type: 'text',
@@ -154,10 +281,6 @@ export default {
   'netsuite.distributed.hooks.preSend.configuration': {
     type: 'text',
     label: 'Netsuite distributed hooks pre Send configuration',
-  },
-  'netsuite.distributed.sublists': {
-    type: 'text',
-    label: 'Netsuite distributed sublists',
   },
   'netsuite.distributed.forceReload': {
     type: 'checkbox',

@@ -18,8 +18,9 @@ export default {
       endAdornment: '/api',
       label: 'Base URI:',
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
-        const subdomain = baseUri.substring(0, baseUri.indexOf('/api'));
+        const baseUri = r && r.rest && r.rest.baseURI;
+        const subdomain =
+          baseUri && baseUri.substring(0, baseUri.indexOf('/api'));
 
         return subdomain;
       },
@@ -27,6 +28,13 @@ export default {
     {
       fieldId: 'rest.bearerToken',
       required: true,
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

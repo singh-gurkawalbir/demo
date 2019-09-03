@@ -19,7 +19,7 @@ const styles = theme => ({
   },
   navLink: {
     color: theme.palette.primary.color,
-    paddingRight: theme.spacing.triple,
+    paddingRight: theme.spacing(3),
     letterSpacing: '1.3px',
     fontSize: '13px',
     fontWeight: 500,
@@ -68,6 +68,17 @@ function Tile({ classes, tile }) {
             {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
               ? 'Monitor'
               : 'Manage'}
+          </Link>
+        )}
+        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+          <Link
+            className={classes.navLink}
+            to={getRoutePath(
+              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                tile._integrationId
+              }/dashboard`
+            )}>
+            Dashboard
           </Link>
         )}
         {tile.tag && (

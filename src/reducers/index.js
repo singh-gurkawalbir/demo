@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
+import moment from 'moment';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -62,6 +63,10 @@ export default rootReducer;
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
+
+export function appErrored(state) {
+  return fromApp.appErrored(state && state.app);
+}
 // #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
@@ -98,8 +103,27 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function connectorMetadata(state, fieldName, id, _integrationId) {
+  return fromSession.connectorMetadata(
+    state && state.session,
+    fieldName,
+    id,
+    _integrationId
+  );
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
+}
+
+export function agentAccessToken(state, id) {
+  if (!state) return {};
+
+  return fromSession.agentAccessToken(state.session, id);
+}
+
+export function stackSystemToken(state, id) {
+  return fromSession.stackSystemToken(state && state.session, id);
 }
 
 export function editor(state, id) {
@@ -376,12 +400,20 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state && state.session);
+}
+
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
 }
 
 export function processors(state) {
   return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion
@@ -460,6 +492,26 @@ export function userAccessLevel(state) {
 
 export function userPermissions(state) {
   return fromUser.permissions(state.user);
+}
+
+export function resourcePermissions(state, resourceType, resourceId) {
+  const permissions = userPermissions(state);
+
+  if (resourceType === 'integrations') {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    ) {
+      return permissions.integrations.all;
+    }
+
+    return permissions.integrations[resourceId] || {};
+  }
+
+  return {};
 }
 
 export function publishedConnectors(state) {
@@ -774,7 +826,11 @@ export function resourceStatus(
   origResourceType,
   resourceReqMethod = 'GET'
 ) {
-  const resourceType = `/${origResourceType}`;
+  let resourceType;
+
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
+  else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
   const hasData = fromData.hasData(state.data, origResourceType);
@@ -885,6 +941,23 @@ export function affectedResourcesAndUsersFromAuditLogs(
 // #endregion
 
 // #region Session metadata selectors
+
+export function netsuiteUserRoles(
+  state,
+  connectionId,
+  netsuiteResourceType,
+  env,
+  acc
+) {
+  return fromSession.netsuiteUserRoles(
+    state && state.session,
+    connectionId,
+    netsuiteResourceType,
+    env,
+    acc
+  );
+}
+
 export function stagedResource(state, id, scope) {
   return fromSession.stagedResource(state && state.session, id, scope);
 }
@@ -894,14 +967,36 @@ export function optionsFromMetadata(
   connectionId,
   applicationType,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) {
   return fromSession.optionsFromMetadata(
     state && state.session,
     connectionId,
     applicationType,
     metadataType,
-    mode
+    mode,
+    recordType,
+    selectField
+  );
+}
+
+export function optionsMapFromMetadata(
+  state,
+  connectionId,
+  applicationType,
+  recordType,
+  selectField,
+  optionsMap
+) {
+  return fromSession.optionsMapFromMetadata(
+    state && state.session,
+    connectionId,
+    applicationType,
+    recordType,
+    selectField,
+    optionsMap
   );
 }
 
@@ -909,14 +1004,28 @@ export function commMetadataPathGen(
   applicationType,
   connectionId,
   metadataType,
-  mode
+  mode,
+  recordType,
+  selectField
 ) {
   let commMetadataPath;
 
   if (applicationType === 'netsuite') {
-    commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+    if (mode === 'webservices' && metadataType !== 'recordTypes') {
+      commMetadataPath = `netSuiteWS/${metadataType}`;
+    } else {
+      commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
+
+      if (selectField && recordType) {
+        commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
+      }
+    }
   } else if (applicationType === 'salesforce') {
-    commMetadataPath = `${applicationType}/metadata/webservices/connections/${connectionId}/${metadataType}`;
+    commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
+
+    if (recordType) {
+      commMetadataPath += `/${recordType}`;
+    }
   } else {
     throw Error('Invalid application type...cannot support it');
   }
@@ -928,29 +1037,33 @@ export function metadataOptionsAndResources(
   state,
   connectionId,
   mode,
-  metadataType
+  metadataType,
+  filterKey,
+  recordType,
+  selectField
 ) {
   const connection = resource(state, 'connections', connectionId);
   // determining application type from the connection
   const applicationType = connection.type;
-  const commMetadataPath = commMetadataPathGen(
-    applicationType,
-    connectionId,
-    metadataType,
-    mode
-  );
+  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
 
-  return {
-    // resourceData
-    options: optionsFromMetadata(
+  return (
+    optionsFromMetadata(
       state,
       connectionId,
       applicationType,
-      metadataType,
-      mode
-    ),
-    isLoadingData: resourceStatus(state, commMetadataPath).isLoading,
-  };
+      key,
+      mode,
+      recordType,
+      selectField
+    ) || {}
+  );
+}
+
+export function isValidatingNetsuiteUserRoles(state) {
+  const commPath = commKeyGen('/netsuite/alluserroles', 'POST');
+
+  return fromComms.isLoading(state.comms, commPath);
 }
 
 export function createdResourceId(state, tempId) {
@@ -979,4 +1092,104 @@ export function accessTokenList(state, integrationId) {
 
 export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
+}
+
+export function flowJobsPagingDetails(state) {
+  return fromData.flowJobsPagingDetails(state.data);
+}
+
+export function flowJobs(state) {
+  const jobs = fromData.flowJobs(state.data);
+  const preferences = userPreferences(state);
+  const resourceMap = resourceDetailsMap(state);
+
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          endedAtAsString:
+            cJob.endedAt &&
+            moment(cJob.endedAt).format(
+              `${preferences.dateFormat} ${preferences.timeFormat}`
+            ),
+          name: cJob._exportId
+            ? resourceMap.exports[cJob._exportId].name
+            : resourceMap.imports[cJob._importId].name,
+        };
+
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
+
+    const additionalProps = {
+      endedAtAsString:
+        job.endedAt &&
+        moment(job.endedAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      name:
+        resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
+    };
+
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
+          (job.numPagesGenerated *
+            ((resourceMap.flows[job._flowId] &&
+              resourceMap.flows[job._flowId].numImports) ||
+              1))
+      );
+    } else {
+      additionalProps.percentComplete = 0;
+    }
+
+    return { ...job, ...additionalProps };
+  });
+}
+
+export function flowJob(state, { jobId }) {
+  const jobList = flowJobs(state);
+
+  return jobList.find(j => j._id === jobId);
+}
+
+export function inProgressJobIds(state) {
+  return fromData.inProgressJobIds(state.data);
+}
+
+export function job(state, { type, jobId, parentJobId }) {
+  const resourceMap = resourceDetailsMap(state);
+  const j = fromData.job(state.data, { type, jobId, parentJobId });
+
+  if (!j) {
+    return j;
+  }
+
+  return {
+    ...j,
+    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+  };
+}
+
+export function isBulkRetryInProgress(state) {
+  return fromData.isBulkRetryInProgress(state.data);
+}
+
+export function jobErrors(state, jobId) {
+  const jErrors = fromData.jobErrors(state.data, jobId);
+  const preferences = userPreferences(state);
+
+  return jErrors.map(je => ({
+    ...je,
+    createdAtAsString:
+      je.createdAt &&
+      moment(je.createdAt).format(
+        `${preferences.dateFormat} ${preferences.timeFormat}`
+      ),
+  }));
+}
+
+export function jobErrorRetryObject(state, retryId) {
+  return fromData.jobErrorRetryObject(state.data, retryId);
 }

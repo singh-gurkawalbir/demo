@@ -1,19 +1,37 @@
 export default {
-  'mongodb.method': {
-    type: 'radiogroup',
-    label: 'Mongodb method',
-    options: [{ items: [{ label: 'Find', value: 'find' }] }],
-  },
   'mongodb.collection': {
     type: 'text',
-    label: 'Mongodb collection',
+    label: 'Collection',
+    required: true,
   },
   'mongodb.filter': {
-    type: 'text',
-    label: 'Mongodb filter',
+    type: 'editor',
+    mode: 'json',
+    label: 'Filter',
   },
   'mongodb.projection': {
+    type: 'editor',
+    mode: 'json',
+    label: 'Projection',
+  },
+  pageSize: {
     type: 'text',
-    label: 'Mongodb projection',
+    label: 'Page Size',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
+  'delta.dateField': {
+    type: 'text',
+    label: 'Date Field',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['delta'],
+      },
+    ],
   },
 };

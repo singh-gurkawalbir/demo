@@ -1,8 +1,7 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import ModalDialog from '../../ModalDialog';
-import TransferList from '../../TransferListComponent';
+import TransferList from '../../TransferList';
 
 const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
@@ -39,6 +38,7 @@ const TransferListModal = props => {
         </Button>
         <Button
           variant="contained"
+          color="primary"
           onClick={() => {
             onFieldChange(id, selectedScopes);
             handleClose();
@@ -50,7 +50,7 @@ const TransferListModal = props => {
   );
 };
 
-const DynaScopesDialog = props => {
+export default function DynaSelectScopesDialog(props) {
   const { label, scopes, value, onFieldChange, id } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
   const defaultAvailableScopes = excludeSelectedScopes(scopes, value);
@@ -70,18 +70,10 @@ const DynaScopesDialog = props => {
       )}
       <Button
         variant="contained"
-        // color="secondary"
+        color="primary"
         onClick={() => setShowScopesModal(true)}>
         {label}
       </Button>
     </Fragment>
   );
-};
-
-const FieldWrappedScopesDialog = props => (
-  <FieldWrapper {...props}>
-    <DynaScopesDialog />
-  </FieldWrapper>
-);
-
-export default FieldWrappedScopesDialog;
+}

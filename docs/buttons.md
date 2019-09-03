@@ -3,8 +3,7 @@ Round button
 const Button = require('@material-ui/core/Button').default;
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const IconButton =  require('../src/components/IconButton').default;
-const DownIcon = require('../src/components/icons/DownIcon').default;
-const StacksIcon = require('../src/components/icons/StacksIcon').default;
+const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
 
 
 <SpacedContainer>
@@ -28,7 +27,7 @@ Rectangle Buttons
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
 const IconButton =  require('../src/components/IconButton').default;
-const DownIcon = require('../src/components/icons/DownIcon').default;
+const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
 
 <SpacedContainer>
   <Button variant="outlined" color="primary">Primary</Button>
@@ -47,7 +46,7 @@ Text Buttons
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
 const IconButton =  require('../src/components/IconButton').default;
-const DownIcon = require('../src/components/icons/DownIcon').default;
+const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
 
 <SpacedContainer>
   <Button variant="text" color="primary">Link button</Button>
@@ -77,7 +76,6 @@ const ButtonsGroup = require('../src/components/ButtonGroup').default;
     </ButtonsGroup>
   <ButtonsGroup>
     <Button variant="text" color="primary">Cancel</Button>
-    <span style={{color: '#677A89'}}> | </span>
     <Button variant="text" color="primary">Install</Button>
   </ButtonsGroup>
 </SpacedContainer>

@@ -5,6 +5,7 @@ import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
 import structuredFileParser from './structuredFileParser';
+import sql from './sql';
 
 const logicMap = {
   xmlParser,
@@ -14,6 +15,7 @@ const logicMap = {
   handlebars,
   javascript,
   structuredFileParser,
+  sql,
 };
 
 function getLogic(editor) {
@@ -44,7 +46,7 @@ const requestOptions = editor => {
   }
 
   return {
-    processor: editor.processor,
+    processor: getLogic(editor).processor || editor.processor,
     body: getLogic(editor).requestBody(editor),
   };
 };

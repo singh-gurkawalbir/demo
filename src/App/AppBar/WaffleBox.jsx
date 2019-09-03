@@ -24,7 +24,7 @@ const mapStateToProps = state => ({
   wafflePopper: {
     width: '300px',
     maxHeight: '450px',
-    padding: `${theme.spacing.unit}px ${theme.spacing.double}px`,
+    padding: theme.spacing(1, 2),
     display: 'flex',
     flexWrap: 'wrap',
     overflowY: 'auto',
@@ -32,7 +32,7 @@ const mapStateToProps = state => ({
   buttonContainer: {
     flex: 'auto',
     width: 70,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
 }))
 class WaffleBox extends Component {
@@ -72,6 +72,10 @@ class WaffleBox extends Component {
       { title: 'Resources', path: '/pg/resources' },
       { title: 'Forms', path: '/pg/forms' },
       { title: 'API Tokens', path: '/pg/tokens' },
+      { title: 'Stacks', path: '/pg/stacks' },
+      { title: 'Connections', path: '/pg/connections' },
+      { title: 'Agents', path: '/pg/agents' },
+      { title: 'Scripts', path: '/pg/scripts' },
     ];
 
     return (

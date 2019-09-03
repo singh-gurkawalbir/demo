@@ -15,10 +15,17 @@ export default {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The API key of your Insightly account.',
       inputType: 'password',
-      label: 'API Key',
+      label: 'API Key:',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

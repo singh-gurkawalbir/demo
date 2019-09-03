@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DownIcon from '../../../components/icons/DownIcon';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 
@@ -69,7 +69,7 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   currentAccount: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     color: theme.appBar.contrast,
   },
   currentContainer: {
@@ -179,7 +179,7 @@ class AccountList extends Component {
             {selectedAccount && selectedAccount.label}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
-            <DownIcon className={classes.arrow} />
+            <ArrowDownIcon className={classes.arrow} />
           </RootRef>
         </span>
 

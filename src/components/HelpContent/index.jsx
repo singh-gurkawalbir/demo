@@ -1,11 +1,11 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 
-const styles = theme => ({
-  root: {
+const usestyles = makeStyles(theme => ({
+  wrapper: {
     padding: '12px',
-    minWidth: '120px',
+    minWidth: '212px',
     maxWidth: '270px',
     border: '1px solid',
     borderColor: theme.palette.background.arrowAfter,
@@ -14,19 +14,24 @@ const styles = theme => ({
     overflow: 'hidden',
   },
   title: {
-    paddingBottom: '10px',
     textTransform: 'capitalize',
     color: theme.palette.text.title,
   },
   content: {
-    lineHeight: 'inherit',
+    paddingTop: '10px',
     paddingBottom: '8px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+    color: theme.palette.text.primary,
+    fontSize: '14px',
+    lineHeight: '22px',
   },
   action: {
     borderTop: '1px solid',
     borderColor: theme.palette.divider,
     paddingTop: '8px',
     width: '100%',
+    overflow: 'hidden',
   },
   actionTitle: {
     float: 'left',
@@ -52,16 +57,18 @@ const styles = theme => ({
       marginRight: '0px',
     },
   },
-});
+}));
 
 function HelpContent(props) {
-  const { classes, children, title } = props;
+  const classes = usestyles();
+  const { children, title, caption } = props;
 
   return (
-    <div className={classes.root}>
+    <div className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
+      {caption && <Typography variant="caption">{caption}</Typography>}
       <div className={classes.content}>{children}</div>
       <div className={classes.action}>
         <Typography className={classes.actionTitle}>
@@ -80,4 +87,4 @@ function HelpContent(props) {
   );
 }
 
-export default withStyles(styles)(HelpContent);
+export default HelpContent;

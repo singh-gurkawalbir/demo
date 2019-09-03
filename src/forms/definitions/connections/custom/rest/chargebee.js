@@ -29,11 +29,13 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.chargebee.com/api')
-        );
+        const baseUri = r && r.rest && r.rest.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.chargebee.com/api')
+          );
 
         return subdomain;
       },
@@ -42,6 +44,13 @@ export default {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key:',
       helpText: 'The API Key of your Chargebee account.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

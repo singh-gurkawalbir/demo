@@ -30,7 +30,7 @@ export default {
       helpText:
         'Please enter the subdomain of your account here which can be obtained from the login url.',
       endAdornment: '.coupacloud.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain:',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -38,11 +38,13 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.coupacloud.com')
-        );
+        const baseUri = r && r.rest && r.rest.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.coupacloud.com')
+          );
 
         return subdomain;
       },
@@ -54,6 +56,13 @@ export default {
       label: 'API Key:',
       helpText:
         'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. A token can be created from the API Keys section of the Administration tab by an admin user. The token is a 40-character long case-sensitive alphanumeric code.',
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

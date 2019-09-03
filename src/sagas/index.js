@@ -5,9 +5,12 @@ import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
+import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { accessTokenSagas } from './accessTokens';
+import { jobSagas } from './jobs';
+import { flowSagas } from './flows';
 import editorSagas from './editor';
 import {
   onRequestSaga,
@@ -17,6 +20,8 @@ import {
 } from './api/requestInterceptors';
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
+import { agentSagas } from './agent';
+import { stackSagas } from './stack';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -76,10 +81,15 @@ export default function* rootSaga() {
   });
   yield all([
     ...resourceSagas,
+    ...connectorSagas,
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,
     ...accessTokenSagas,
+    ...jobSagas,
+    ...flowSagas,
+    ...agentSagas,
+    ...stackSagas,
   ]);
 }

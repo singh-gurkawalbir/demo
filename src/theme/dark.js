@@ -1,3 +1,4 @@
+import { darken } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
 export default {
@@ -10,6 +11,13 @@ export default {
   editor: {
     panelBackground: colors.celigoNeutral7,
     panelBorder: colors.celigoNeutral6,
+  },
+  selectFormControl: {
+    color: colors.celigoNeutral1,
+    background: colors.celigoNeutral8,
+    hover: darken(colors.celigoNeutral7, 0.6),
+    text: colors.celigoNeutral2,
+    separator: colors.celigoNeutral6,
   },
   palette: {
     type: 'dark',
@@ -56,6 +64,7 @@ export default {
       subtitle1: { color: colors.celigoNeutral1 },
       subtitle2: { color: colors.celigoNeutral1 },
       overline: { color: colors.celigoWhite },
+      caption: { color: colors.celigoNeutral1 },
     },
     MuiButton: {
       textPrimary: {
@@ -176,6 +185,17 @@ export default {
     MuiListItem: {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral7 },
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral5,
+        '&$selected': {
+          backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          '&:hover': {
+            backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          },
+        },
       },
     },
   },

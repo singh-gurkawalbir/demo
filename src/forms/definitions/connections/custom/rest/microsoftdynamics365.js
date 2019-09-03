@@ -30,14 +30,23 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
-        const subdomain = baseUri.substring(
-          baseUri.indexOf('https://') + 8,
-          baseUri.indexOf('.dynamics.com')
-        );
+        const baseUri = r && r.rest && r.rest.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.dynamics.com')
+          );
 
         return subdomain;
       },
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'restAdvanced' }],
     },
   ],
 };

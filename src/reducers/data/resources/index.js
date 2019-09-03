@@ -34,7 +34,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { type, resource, collection, resourceType } = action;
+  const { id, type, resource, collection, resourceType } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -57,13 +57,39 @@ export default (state = {}, action) => {
     return state;
   }
 
+  let resourceIndex;
+  let newState;
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
+    case actionTypes.RESOURCE.DELETED:
+      return {
+        ...state,
+        [resourceType]: state[resourceType].filter(r => r._id !== id),
+      };
+    case actionTypes.STACK.USER_SHARING_TOGGLED:
+      resourceIndex = state.sshares.findIndex(user => user._id === id);
 
+      if (resourceIndex > -1) {
+        newState = [
+          ...state.sshares.slice(0, resourceIndex),
+          {
+            ...state.sshares[resourceIndex],
+            disabled: !state.sshares[resourceIndex].disabled,
+          },
+          ...state.sshares.slice(resourceIndex + 1),
+        ];
+
+        newState = { ...state, sshares: newState };
+
+        return newState;
+      }
+
+      return state;
     default:
       return state;
   }
@@ -181,11 +207,32 @@ export function resourceDetailsMap(state) {
             allResources[resourceType][resource._id]._connectorId =
               resource._connectorId;
           }
+
+          if (resourceType === 'flows') {
+            allResources[resourceType][
+              resource._id
+            ].numImports = resource.pageProcessors
+              ? resource.pageProcessors.length
+              : 1;
+          }
         });
       }
     }
   });
 
   return allResources;
+}
+
+export function isAgentOnline(state, agentId) {
+  if (!state) return false;
+  const matchingAgent =
+    state.agents && state.agents.find(r => r._id === agentId);
+
+  return !!(
+    matchingAgent &&
+    matchingAgent.lastHeartbeatAt &&
+    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+      process.env.AGENT_STATUS_INTERVAL
+  );
 }
 // #endregion

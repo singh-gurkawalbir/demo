@@ -104,7 +104,6 @@ export const PERMISSIONS = Object.freeze({
 });
 
 export const PASSWORD_MASK = '******';
-export const MASK_ACCESSTOKEN_TOKEN_DELAY = 5000; // milliseconds
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -133,3 +132,18 @@ export const SUITESCRIPT_CONNECTORS = Object.freeze([
     },
   },
 ]);
+export const JOB_TYPES = Object.freeze({
+  FLOW: 'flow',
+  IMPORT: 'import',
+  EXPORT: 'export',
+  RETRY: 'retry',
+  BULK_RETRY: 'bulk_retry',
+});
+export const JOB_STATUS = Object.freeze({
+  COMPLETED: 'completed',
+  CANCELED: 'canceled',
+  FAILED: 'failed',
+  QUEUED: 'queued',
+  RUNNING: 'running',
+  RETRYING: 'retrying',
+});

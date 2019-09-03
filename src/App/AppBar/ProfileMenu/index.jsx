@@ -34,26 +34,26 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   popperContent: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
 
   avatarButton: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
   },
   avatar: {
-    width: theme.spacing.quad,
-    height: theme.spacing.quad,
+    width: theme.spacing(4),
+    height: theme.spacing(4),
   },
   bigAvatar: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
     width: 60,
     height: 60,
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
 }))
-class AppBar extends Component {
+class ProfileMenu extends Component {
   state = {
     anchorEl: null,
   };
@@ -112,7 +112,7 @@ class AppBar extends Component {
           onClose={this.handleClose}>
           <Grid
             container
-            spacing={16}
+            spacing={2}
             direction="row"
             justify="flex-start"
             alignItems="flex-start">
@@ -171,4 +171,4 @@ class AppBar extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(AppBar);
+export default connect(mapStateToProps,mapDispatchToProps)(ProfileMenu);

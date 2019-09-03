@@ -11,6 +11,13 @@ export default {
     panelBackground: colors.celigoNeutral2,
     panelBorder: colors.celigoNeutral2,
   },
+  selectFormControl: {
+    color: colors.celigoNeutral6,
+    background: colors.celigoWhite,
+    hover: colors.celigoNeutral1,
+    text: colors.celigoNeutral8,
+    separator: colors.celigoNeutral2,
+  },
   palette: {
     type: 'light',
     background: {
@@ -20,17 +27,12 @@ export default {
       sideBar: colors.celigoNeutral1,
       editorInner: colors.celigoNeutral2,
       arrowAfter: colors.celigoNeutral3,
-      // success:
-      // warning: celigo.celigoWarning
-      // error:
     },
     primary: {
-      main: colors.celigoAccent1,
-      color: colors.celigoNeutral6,
+      main: colors.celigoAccent2,
     },
     secondary: {
-      light: colors.celigoAccent3,
-      main: colors.celigoAccent1,
+      main: colors.celigoNeutral6,
     },
     text: {
       primary: colors.celigoNeutral6,
@@ -57,6 +59,7 @@ export default {
       subtitle1: { color: colors.celigoNeutral6 },
       subtitle2: { color: colors.celigoNeutral6 },
       overline: { color: colors.celigoNeutral6 },
+      caption: { color: colors.celigoNeutral6 },
     },
     MuiButton: {
       textPrimary: {
@@ -177,6 +180,18 @@ export default {
     MuiListItem: {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral2 },
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral3,
+        '&$selected': {
+          backgroundColor: colors.celigoNeutral2,
+          borderLeftColor: colors.celigoAccent3,
+          '&:hover': {
+            backgroundColor: colors.celigoNeutral3,
+          },
+        },
       },
     },
   },
