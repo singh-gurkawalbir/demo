@@ -8,6 +8,7 @@ export default {
     { fieldId: 'http.requestMediaType' },
     { fieldId: 'http.compositeType' },
     { fieldId: 'http.compositeMethod' },
+    { fieldId: 'http.mapping' },
     { fieldId: 'http.relativeUri' },
     { fieldId: 'http.successPath' },
     { fieldId: 'http.successValues' },
