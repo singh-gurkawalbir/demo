@@ -1,5 +1,9 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
+import ConfigureDebugger from '../../actions/ConfigDebugger';
+import DownLoadDebugLogs from '../../actions/DownLoadDebugLogs';
+import AuditLogs from '../../actions/AuditLogs';
+import RefreshMetadata from '../../actions/RefreshMetadata';
 import {
   getResourceLink,
   onlineStatus,
@@ -33,7 +37,7 @@ export default {
     },
     {
       heading: 'Queue Size',
-      align: 'right',
+      // align: 'right',
       value: r => {
         if (!r.queues) return 0;
         const queue = r.queues.find(q => q.name === r._id);
@@ -42,5 +46,12 @@ export default {
       },
     },
   ],
-  actions: [Delete, References],
+  actions: [
+    Delete,
+    References,
+    ConfigureDebugger,
+    DownLoadDebugLogs,
+    AuditLogs,
+    RefreshMetadata,
+  ],
 };

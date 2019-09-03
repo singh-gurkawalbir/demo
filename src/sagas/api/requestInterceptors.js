@@ -8,9 +8,8 @@ import {
   throwExceptionUsingTheResponse,
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
-import { resourceStatus, userPreferences } from '../../reducers/index';
+import { resourceStatus, getAdditionalHeaders } from '../../reducers/index';
 import { pingConnectionParams } from '../api/apiPaths';
-import { ACCOUNT_IDS } from '../../utils/constants';
 
 const tryCount = 3;
 
@@ -23,31 +22,6 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'shared/ashares',
 ];
 
-export function* getAdditionalHeaders(path) {
-  const headers = {};
-  const preferences = yield select(userPreferences);
-
-  if (
-    !preferences ||
-    !preferences.defaultAShareId ||
-    preferences.defaultAShareId === ACCOUNT_IDS.OWN
-  ) {
-    return headers;
-  }
-
-  if (
-    PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.includes(
-      path.charAt(0) === '/' ? path.replace('/', '') : path
-    )
-  ) {
-    return headers;
-  }
-
-  headers['integrator-ashareid'] = preferences.defaultAShareId;
-
-  return headers;
-}
-
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
@@ -58,7 +32,7 @@ export function* onRequestSaga(request) {
     yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
-  const additionalHeaders = yield call(getAdditionalHeaders, path);
+  const additionalHeaders = yield select(getAdditionalHeaders, path);
 
   options.headers = { ...options.headers, ...additionalHeaders };
 

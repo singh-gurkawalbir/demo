@@ -10,6 +10,14 @@ export const GLOBAL_PREFERENCES = [
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
 ];
+export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
+  'ashares',
+  'licenses',
+  'preferences',
+  'profile',
+  'published',
+  'shared/ashares',
+];
 
 export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -80,5 +88,29 @@ export function editorTheme(state) {
   };
 
   return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
+}
+
+export function getAdditionalHeaders(preferences, path) {
+  const headers = {};
+
+  if (
+    !preferences ||
+    !preferences.defaultAShareId ||
+    preferences.defaultAShareId === ACCOUNT_IDS.OWN
+  ) {
+    return headers;
+  }
+
+  if (
+    PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.includes(
+      path.charAt(0) === '/' ? path.replace('/', '') : path
+    )
+  ) {
+    return headers;
+  }
+
+  headers['integrator-ashareid'] = preferences.defaultAShareId;
+
+  return headers;
 }
 // #endregion PUBLIC SELECTORS

@@ -164,6 +164,10 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
+export function getAdditionalHeaders(state, path) {
+  return fromUser.getAdditionalHeaders(state && state.user, path);
+}
+
 export function userOwnPreferences(state) {
   return fromUser.userOwnPreferences(state && state.user);
 }
