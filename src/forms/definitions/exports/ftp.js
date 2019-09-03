@@ -32,7 +32,7 @@ export default {
     { fieldId: 'file.xlsx.keyColumns' },
     { fieldId: 'rawData', isFTP: true },
     { fieldId: 'sampleData' },
-    { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
+    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
   ],
   fieldSets: [
     {

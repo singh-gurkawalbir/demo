@@ -1,5 +1,8 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
+import { useDispatch } from 'react-redux';
+import actions from '../../../actions';
+import { getFileReaderOptions } from '../../../utils/file';
 
 export default function DynaUploadFile(props) {
   const {
@@ -8,16 +11,46 @@ export default function DynaUploadFile(props) {
     id,
     isValid,
     name,
+    resourceId,
+    resourceType,
     onFieldChange,
     placeholder,
     required,
     value = '',
     label,
   } = props;
-  const handleFieldChange = event => {
-    const { value } = event.target;
+  const dispatch = useDispatch();
+  // const handleFieldChange = event => {
+  //   const { value, files } = event.target;
+  //   const fileContent = getFileContent(files, options);
+  //   onFieldChange(id, value);
+  // };
+  const handleFileRead = event => {
+    const { result: fileContent } = event.target;
 
-    onFieldChange(id, value);
+    console.log(fileContent);
+    dispatch(
+      actions.sampleData.request(
+        resourceId,
+        resourceType,
+        {
+          type: options,
+          file: fileContent,
+        },
+        'file'
+      )
+    );
+  };
+
+  const handleFileChosen = event => {
+    const file = event.target.files[0];
+    // if (!file) return;
+    // const fileReaderOptions = getFileReaderOptions(file, options);
+    const fileReader = new FileReader();
+
+    fileReader.onload = handleFileRead;
+
+    fileReader.readAsText(file);
   };
 
   let acceptFileType = '.txt';
@@ -39,7 +72,7 @@ export default function DynaUploadFile(props) {
       required={required}
       error={!isValid}
       value={value}
-      onChange={handleFieldChange}
+      onChange={handleFileChosen}
     />
   );
 }

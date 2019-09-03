@@ -4,7 +4,7 @@
  */
 import actionTypes from '../../../actions/types';
 
-const DEFAULT_VALUE = {};
+const DEFAULT_VALUE = undefined;
 
 function extractStages(sampleData) {
   const stagesInSampleData = sampleData.stages || [];
@@ -34,6 +34,14 @@ export default function(state = {}, action) {
 
   switch (type) {
     case actionTypes.SAMPLEDATA.REQUEST: {
+      console.log('came', {
+        ...state,
+        [resourceId]: {
+          ...state[resourceId],
+          status: 'requested',
+        },
+      });
+
       return {
         ...state,
         [resourceId]: {
@@ -66,7 +74,9 @@ export default function(state = {}, action) {
       };
       newState[resourceId].data = {
         ...newState[resourceId].data,
-        [stage]: processedData.data && processedData.data[0],
+        [stage]:
+          (processedData.data && processedData.data[0]) ||
+          (processedData.records && processedData.records[0]),
       };
 
       return {
@@ -96,7 +106,7 @@ function getSampleData(resourceData) {
   return (
     resourceData.transform ||
     resourceData.parse ||
-    (resourceData.raw && resourceData.body) ||
+    (resourceData.raw && resourceData.raw.body) ||
     DEFAULT_VALUE
   );
 }

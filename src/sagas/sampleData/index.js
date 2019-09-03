@@ -1,7 +1,7 @@
-/*
+/* TODO:
  * After ftp related processor functions we must include transform to json
- * Doubt: What data to be shown on first load - make a preview call on load of export form? or make a preview call on first load of rawData field
  * Handle errors in transform/preview/parsers
+ * Ultimately saga should be concerned regarding what processor calls to make and update based on stages
  */
 
 import { takeLatest, put, select, call } from 'redux-saga/effects';
@@ -11,6 +11,11 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+
+const PARSERS = {
+  csv: '/processors/csvParser',
+  xml: '/xmlToJson',
+};
 
 function* getPreviewData(resourceId, resourceType, values) {
   const { patchSet } = yield call(createFormValuesPatchSet, {
@@ -74,13 +79,58 @@ function* getProcessorData(resourceId, resourceType, values, stage) {
   yield put(actions.sampleData.update(resourceId, processedData, stage));
 }
 
+function* processFileData(resourceId, resourceType, values) {
+  if (!values) return undefined;
+  let body;
+  const { file, type, rules } = values;
+
+  if (['json', 'csv', 'xml'].includes(type)) {
+    // Update Raw Data with the file uploaded before parsing
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')
+    );
+  }
+
+  if (['csv', 'xml'].includes(type)) {
+    // Parse file content using processors
+    if (type === 'csv') {
+      body = {
+        rules: rules || {},
+        data: file,
+        options: {
+          includeEmptyValues: true,
+        },
+      };
+    }
+
+    if (type === 'xml') {
+      body = {
+        xml: file,
+      };
+    }
+
+    const opts = {
+      method: 'POST',
+      body,
+    };
+    const path = PARSERS[type];
+    const processedData = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    yield put(actions.sampleData.update(resourceId, processedData, 'parse'));
+  }
+  // TODO: Call Transform processor if rules exist for this resource
+}
+
 function* requestSampleData({ resourceId, resourceType, values, stage }) {
   // Call preview/processor based on stage
   // If stage is specified make a processor call else preview
   // Takes a different route for File processors
   if (stage) {
     if (stage === 'file') {
-      // console.log('test', values, stage);
+      yield processFileData(resourceId, resourceType, values);
     } else {
       yield getProcessorData(resourceId, resourceType, values, stage);
     }
