@@ -9,15 +9,10 @@ export default function DynaCSVColumnMapper(props) {
   } = props;
   let generates = [];
 
-  if (value) {
-    value.forEach(el => {
-      if (!maxNumberOfColumns && el.column) {
-        generates.push({
-          id: el.column.toString(),
-          text: el.column.toString(),
-        });
-      }
-    });
+  if (value && !maxNumberOfColumns) {
+    generates = value
+      .filter(el => el.column)
+      .map(el => ({ id: el.column.toString(), text: el.column.toString() }));
   }
 
   if (maxNumberOfColumns) {

@@ -59,12 +59,12 @@ function reducer(state, action) {
 
         return [
           ...state.slice(0, index),
-          Object.assign({}, state[index], { [field]: value }),
+          { ...state[index], ...{ [field]: value } },
           ...state.slice(index + 1, state.length),
         ];
       }
 
-      return [...state, Object.assign({}, lastRowData, { [field]: value })];
+      return [...state, { ...lastRowData, ...{ [field]: value } }];
     default:
       return state;
   }
@@ -193,7 +193,7 @@ export default function DynaTable(props) {
         ? rowChangeListener(state, row, field, newValue)
         : preSubmit([
             ...state.slice(0, row),
-            Object.assign({}, state[row], { [field]: newValue }),
+            { ...state[row], ...{ [field]: newValue } },
             ...state.slice(row + 1, state.length),
           ]);
 
