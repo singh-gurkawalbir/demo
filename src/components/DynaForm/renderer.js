@@ -10,6 +10,7 @@ import * as selectors from '../../reducers';
 const styles = {
   helpIcon: { float: 'right' },
   editIcon: { float: 'right' },
+  inlineElements: { display: 'inline-block' },
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
 const FieldActions = withStyles(styles)(props => {
@@ -27,7 +28,7 @@ const FieldActions = withStyles(styles)(props => {
   const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
-    <Fragment>
+    <div className={classes.inlineElements}>
       {editMode && (
         <EditFieldButton
           key={`edit-${field.id}`}
@@ -48,7 +49,7 @@ const FieldActions = withStyles(styles)(props => {
         />
       )}
       {children}
-    </Fragment>
+    </div>
   );
 });
 
