@@ -70,8 +70,12 @@ export function mergeArrays(arr1 = [], arr2 = []) {
   arr1.forEach(elem => mergedArray.push(elem));
 
   arr2.forEach(elem => {
-    if (!arr1.find(e => elem.id === e.id)) {
+    const index = arr1.findIndex(e => elem.id === e.id);
+
+    if (index === -1) {
       mergedArray.push(elem);
+    } else {
+      mergedArray[index] = elem;
     }
   });
 
@@ -125,8 +129,8 @@ export function getVersionDetails(version, assistantData) {
   );
 
   versionDetails.queryParameters = mergeArrays(
-    versionDetails.queryParameters,
-    assistantData.queryParameters
+    assistantData.queryParameters,
+    versionDetails.queryParameters
   );
 
   return { ...versionDetails };
@@ -172,8 +176,8 @@ export function getExportResourceDetails(version, resource, assistantData) {
       );
 
       resourceDetails.queryParameters = mergeArrays(
-        resourceDetails.queryParameters,
-        versionDetails.queryParameters
+        versionDetails.queryParameters,
+        resourceDetails.queryParameters
       );
     }
   }
@@ -245,30 +249,45 @@ export function getExportOperationDetails(
       );
 
       operationDetails.queryParameters = mergeArrays(
-        operationDetails.queryParameters,
-        resourceDetails.queryParameters
+        resourceDetails.queryParameters,
+        operationDetails.queryParameters
       );
     }
   }
 
-  return operationDetails;
+  return {
+    paging: {},
+    queryParameters: [],
+    pathParameters: [],
+    headers: [],
+    ...operationDetails,
+  };
 }
 
 export function convertFromRestExport(exportDoc, assistantData) {
-  let { version, resource, operation } = exportDoc.assistantMetadata || {};
+  const exportResource = { ...exportDoc };
+  let { version, resource, operation } = exportResource.assistantMetadata || {};
+  const assistantMetadata = {
+    pathParams: {},
+    queryParams: {},
+    bodyParams: {},
+  };
 
   if (!resource || !operation) {
-    if (exportDoc && exportDoc.rest && exportDoc.rest.relativeURI) {
+    if (
+      exportResource &&
+      exportResource.rest &&
+      exportResource.rest.relativeURI
+    ) {
       const urlMatch = getMatchingRoute(
         assistantData.export.urlResolution,
-        exportDoc.rest.relativeURI
+        exportResource.rest.relativeURI
       );
 
       if (!operation) {
         operation = urlMatch.urlMatch;
       }
 
-      console.log(`****** urlMatch ${JSON.stringify(urlMatch)}`);
       const versionAndResource = getExportVersionAndResourceFromOperation(
         urlMatch.urlMatch,
         assistantData
@@ -278,15 +297,12 @@ export function convertFromRestExport(exportDoc, assistantData) {
     }
   }
 
+  assistantMetadata.version = version;
+  assistantMetadata.resource = resource;
+  assistantMetadata.operation = operation;
+
   if (!operation) {
-    return {
-      version,
-      resource,
-      operation,
-      pathParams: {},
-      queryParams: {},
-      bodyParams: {},
-    };
+    return assistantMetadata;
   }
 
   const endpoint = getExportOperationDetails(
@@ -297,28 +313,17 @@ export function convertFromRestExport(exportDoc, assistantData) {
   );
 
   if (!endpoint || !endpoint.url) {
-    return {
-      version,
-      resource,
-      operation,
-      pathParams: {},
-      queryParams: {},
-      bodyParams: {},
-    };
+    return assistantMetadata;
   }
 
-  console.log(`endpoint ${JSON.stringify(endpoint)}`);
-
-  if (!exportDoc.rest) {
-    exportDoc.rest = {};
+  if (!exportResource.rest) {
+    exportResource.rest = {};
   }
 
   const urlMatch = getMatchingRoute(
     [endpoint.url],
-    exportDoc.rest.relativeURI || ''
+    exportResource.rest.relativeURI || ''
   );
-
-  console.log(`urlMatch ${JSON.stringify(urlMatch)}`);
   const pathParams = {};
   let queryParams = {};
   let bodyParams = {};
@@ -355,8 +360,8 @@ export function convertFromRestExport(exportDoc, assistantData) {
   }
 
   if (
-    exportDoc.rest.relativeURI &&
-    exportDoc.rest.relativeURI.indexOf('?') > 0
+    exportResource.rest.relativeURI &&
+    exportResource.rest.relativeURI.indexOf('?') > 0
   ) {
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
       queryParams = qs.parse(urlMatch.urlParts[urlMatch.urlParts.length - 1], {
@@ -366,18 +371,18 @@ export function convertFromRestExport(exportDoc, assistantData) {
     }
   }
 
-  if (exportDoc.rest.postBody) {
-    if (isObject(exportDoc.rest.postBody)) {
-      bodyParams = cloneDeep(exportDoc.rest.postBody);
-    } else if (isString(exportDoc.rest.postBody)) {
-      if (exportDoc.assistant === 'expensify') {
-        bodyParams = exportDoc.rest.postBody.replace(
+  if (exportResource.rest.postBody) {
+    if (isObject(exportResource.rest.postBody)) {
+      bodyParams = cloneDeep(exportResource.rest.postBody);
+    } else if (isString(exportResource.rest.postBody)) {
+      if (exportResource.assistant === 'expensify') {
+        bodyParams = exportResource.rest.postBody.replace(
           'requestJobDescription=',
           ''
         );
         bodyParams = JSON.parse(bodyParams);
       } else {
-        bodyParams = exportDoc.rest.postBody;
+        bodyParams = exportResource.rest.postBody;
       }
     }
   }
@@ -387,8 +392,7 @@ export function convertFromRestExport(exportDoc, assistantData) {
   }
 
   return {
-    version,
-    resource,
+    ...assistantMetadata,
     operation,
     endpoint,
     pathParams,
@@ -434,7 +438,7 @@ export function convertToRestExport(assistantMetadata) {
     headers: [],
   };
 
-  Object.keys(operationDetails.paging).forEach(
+  Object.keys(operationDetails.paging || {}).forEach(
     prop => (restExport[prop] = operationDetails.paging[prop])
   );
 

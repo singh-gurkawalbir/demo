@@ -1,13 +1,11 @@
 import { useState, Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { isObject, isArray } from 'lodash';
 import ModalDialog from '../../ModalDialog';
-import * as selectors from '../../../reducers/index';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
-const getParamValue = (data, value = {}, type) => {
+const getParamValue = (data, value = {}, paramsType) => {
   let dataIn = data;
 
   if (!isObject(dataIn)) {
@@ -19,17 +17,17 @@ const getParamValue = (data, value = {}, type) => {
   let toReturn;
 
   if (value) {
-    if (value.hasOwnProperty(dataIn.id)) {
+    if (Object.prototype.hasOwnProperty.call(value, dataIn.id)) {
       toReturn = value[dataIn.id];
 
-      if (type === 'bodyParams') {
+      if (paramsType === 'body') {
         if (dataIn.fieldType === 'select' && isArray(toReturn)) {
           [toReturn] = toReturn;
         }
       }
 
       if (
-        type === 'queryParams' &&
+        paramsType === 'query' &&
         dataIn.fieldType === 'multiselect' &&
         isArray(toReturn)
       ) {
@@ -40,15 +38,15 @@ const getParamValue = (data, value = {}, type) => {
       return toReturn;
     }
 
-    if (type === 'queryParams') {
+    if (paramsType === 'query') {
       if (dataIn.id.indexOf('[') > 0) {
         const prefix = dataIn.id.substr(0, dataIn.id.indexOf('['));
 
-        if (value.hasOwnProperty(prefix)) {
+        if (Object.prototype.hasOwnProperty.call(value, prefix)) {
           return value[prefix][dataIn.id.substr(dataIn.id.indexOf('['))];
         }
       }
-    } else if (self.type === 'bodyParams') {
+    } else if (paramsType === 'body') {
       const keyParts = dataIn.id.split('.');
 
       toReturn = value[keyParts[0]];
@@ -68,10 +66,14 @@ const getParamValue = (data, value = {}, type) => {
   return undefined;
 };
 
-const convertToFields = (fieldMeta = [], value = {}) => {
+const convertToFields = (fieldMeta = [], value = {}, paramsType) => {
   const fields = [];
 
   fieldMeta.forEach(field => {
+    if (field.readOnly) {
+      return true;
+    }
+
     let { fieldType } = field;
 
     if (fieldType === 'input') {
@@ -94,26 +96,26 @@ const convertToFields = (fieldMeta = [], value = {}) => {
       required: !!field.required,
       placeholder: field.placeholder,
       defaultValue:
-        getParamValue({ id: field.id, fieldType }, value, 'queryParams') ||
+        getParamValue({ id: field.id, fieldType }, value, paramsType) ||
         field.defaultValue,
       options: [{ items: field.options }],
+      helpText: field.description,
     });
-  });
-
-  fields.push({
-    id: 'something',
-    name: 'something',
-    label: 'something?',
-    type: 'checkbox',
-    defaultValue: true,
   });
 
   return fields;
 };
 
 const SearchParamsModal = props => {
-  const { fieldMeta, handleClose, id, onFieldChange, value } = props;
-  const updatedFields = convertToFields(fieldMeta, value);
+  const {
+    fieldMeta,
+    handleClose,
+    id,
+    onFieldChange,
+    value,
+    paramsType,
+  } = props;
+  const updatedFields = convertToFields(fieldMeta, value, paramsType);
 
   function onSaveClick(formValues) {
     onFieldChange(id, formValues);
@@ -140,9 +142,8 @@ const SearchParamsModal = props => {
 };
 
 export default function DynaAssistantSearchParams(props) {
-  const { label, value, onFieldChange, id, fieldMeta, __resourceId } = props;
+  const { label, value, onFieldChange, id, fieldMeta, paramsType } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
-  const dispatch = useDispatch();
 
   return (
     <Fragment>
@@ -151,6 +152,7 @@ export default function DynaAssistantSearchParams(props) {
           id={id}
           fieldMeta={fieldMeta}
           value={value}
+          paramsType={paramsType}
           onFieldChange={onFieldChange}
           handleClose={() => {
             setShowSearchParamsModal(false);
@@ -160,7 +162,9 @@ export default function DynaAssistantSearchParams(props) {
       <Button
         variant="contained"
         onClick={() => setShowSearchParamsModal(true)}>
-        {label || 'Configure Search Parameters'}
+        {label || paramsType === 'body'
+          ? 'Configure Body Parameters'
+          : 'Configure Search Parameters'}
       </Button>
     </Fragment>
   );

@@ -13,6 +13,6 @@ export default {
   },
   'assistantMetadata.queryParams': {
     type: 'assistantsearchparams',
-    label: 'Configure Search Parameters',
+    paramsType: 'query',
   },
 };

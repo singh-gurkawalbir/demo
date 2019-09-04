@@ -31,9 +31,6 @@ export default function assistantDefinition(
       visible: false,
     });
     const assistantConfig = convertFromRestExport(resource, assistantData);
-
-    console.log(`assistantConfig ${JSON.stringify(assistantConfig)}`);
-
     const { labels = {} } = assistantData.export;
 
     if (assistantData.export.versions.length > 1) {
@@ -132,11 +129,22 @@ export default function assistantDefinition(
           fieldMeta: assistantConfig.endpoint.queryParameters,
           __resourceId: resourceId,
         });
+      } else if (
+        assistantConfig.endpoint.bodyParameters &&
+        assistantConfig.endpoint.bodyParameters.length > 0
+      ) {
+        fields.push({
+          id: 'assistantMetadata.bodyParams',
+          label: assistantConfig.endpoint.bodyParametersLabel,
+          type: 'assistantsearchparams',
+          paramsType: 'body',
+          value: assistantConfig.bodyParams,
+          fieldMeta: assistantConfig.endpoint.bodyParameters,
+          __resourceId: resourceId,
+        });
       }
     }
   }
-
-  console.log(`********** fields ${JSON.stringify(fields)}`);
 
   return {
     fields,
@@ -148,7 +156,6 @@ export default function assistantDefinition(
       },
     ],
     optionsHandler(fieldId, fields) {
-      console.log(`iio optionsHandler ${fieldId} ${JSON.stringify(fields)}`);
       const { value: assistant } =
         fields.find(field => field.id === 'assistantMetadata.assistant') || {};
       const { value: version } =
@@ -161,7 +168,6 @@ export default function assistantDefinition(
       return { assistant, version, resource, operation };
     },
     preSubmit: formValues => {
-      console.log(`preSubmit formValues ${JSON.stringify(formValues)}`);
       const assistantMetadata = {
         assistant: formValues['/assistantMetadata/assistant'],
         version: formValues['/assistantMetadata/version'],
@@ -183,18 +189,10 @@ export default function assistantDefinition(
         }
       });
 
-      console.log(
-        `preSubmit assistantMetadata ${JSON.stringify(assistantMetadata)}`
-      );
-
       const restDoc = convertToRestExport({
         ...assistantMetadata,
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
-
-      console.log(
-        `restDoc ${JSON.stringify({ ...otherFormValues, ...restDoc })}`
-      );
 
       return { ...otherFormValues, ...restDoc };
     },
