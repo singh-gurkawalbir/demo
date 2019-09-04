@@ -187,6 +187,18 @@ export default function RestImportMappingEditor(props) {
         <div className={classes.container}>
           <Typography variant="h6">{label}</Typography>
           <Grid container className={classes.root} spacing={2}>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Grid key="heading" item xs>
+                  <span className={classes.alignLeft}>Source Record Field</span>
+                </Grid>
+                <Grid key="heading" item xs>
+                  <span className={classes.alignLeft}>REST API Field</span>
+                </Grid>
+
+                <Grid key="delete_button_header" item />
+              </Grid>
+            </Grid>
             <Grid
               container
               spacing={2}
@@ -199,7 +211,6 @@ export default function RestImportMappingEditor(props) {
                       <DynaAutoSuggest
                         value={arr.extract || arr.hardCodedValue}
                         options={exportOptions}
-                        placeholder="Source Record Field"
                         onFieldChange={(id, evt) => {
                           handleUpdate(
                             arr.index,
@@ -208,25 +219,11 @@ export default function RestImportMappingEditor(props) {
                           );
                         }}
                       />
-                      {/* <DynaSelect
-                        value={arr.extract}
-                        placeholder="Source Record Field"
-                        options={exportOptions || []}
-                        onFieldChange={(id, evt) => {
-                          handleUpdate(
-                            arr.index,
-                            { target: { value: evt } },
-                            'extract'
-                          );
-                        }}
-                        className={classes.root}
-                      /> */}
                     </Grid>
                     <Grid item xs>
                       <DynaAutoSuggest
                         value={arr.generate}
                         options={importOptions}
-                        placeholder="FTP Field"
                         onFieldChange={(id, evt) => {
                           handleUpdate(
                             arr.index,
@@ -235,19 +232,6 @@ export default function RestImportMappingEditor(props) {
                           );
                         }}
                       />
-                      {/* <DynaSelect
-                        value={arr.generate}
-                        placeholder="FTP Field"
-                        options={importOptions || []}
-                        onFieldChange={(id, evt) => {
-                          handleUpdate(
-                            arr.index,
-                            { target: { value: evt } },
-                            'generate'
-                          );
-                        }}
-                        className={classes.root}
-                      /> */}
                     </Grid>
                     <Grid item key="arr.id">
                       <DynaMappingSettings
