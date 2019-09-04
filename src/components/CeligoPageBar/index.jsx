@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     height: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
-    position: 'relative',
+    position: 'fixed',
   },
   pageHeaderShift: {
     width: `calc(100% - ${theme.drawerWidth - theme.spacing(2)}px)`,
