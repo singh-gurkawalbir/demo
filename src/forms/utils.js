@@ -88,8 +88,10 @@ const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
 };
 
 export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
-  const customFormPath = '/customForm/form/layout';
-  const res = fieldSearchQueryObj(meta, id, customFormPath, offset);
+  const baseCustomFormPath = '/customForm/form/layout';
+  const res = fieldSearchQueryObj(meta, id, baseCustomFormPath, offset);
+
+  if (!res || res === baseCustomFormPath) return null;
 
   return res;
 };

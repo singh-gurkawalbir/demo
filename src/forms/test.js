@@ -231,7 +231,22 @@ describe('Form Utils', () => {
   });
 
   describe('getPatchPathFromCustomForms', () => {
-    test('generate field path for meta having just fields in the root ', () => {
+    test('should return null for meta having a non-existent field ', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'exportData',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'non-existentField', 1);
+
+      expect(res).toEqual(null);
+    });
+    test('shoul generate field path for meta having just fields in the root ', () => {
       const testMeta = {
         layout: {
           fields: [
@@ -246,7 +261,7 @@ describe('Form Utils', () => {
 
       expect(res).toEqual('/customForm/form/layout/fields/1');
     });
-    test('generate field path for meta having fields in containers ', () => {
+    test('should generate field path for meta having fields in containers ', () => {
       const testMeta = {
         layout: {
           containers: [

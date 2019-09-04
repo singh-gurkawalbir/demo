@@ -4,9 +4,9 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import {
-  getFieldPosition,
   sanitizePatchSet,
   defaultPatchSetConverter,
+  getPatchPathForCustomForms,
 } from '../../forms/utils';
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
@@ -41,14 +41,10 @@ export function* patchFormField({
 
   if (!meta) return; // nothing to do
 
-  const { index, fieldSetIndex } = getFieldPosition({ meta, id: fieldId });
+  const path = getPatchPathForCustomForms(meta, fieldId, offset);
 
-  if (index === undefined) return; // nothing to do.
+  if (!path) return; // nothing to do.
 
-  const path =
-    fieldSetIndex === undefined
-      ? `/customForm/form/fields/${index + offset}`
-      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
   const patchSet = [{ op, path, value }];
 
   // Apply the new patch to the session
