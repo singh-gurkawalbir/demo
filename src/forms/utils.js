@@ -1,5 +1,35 @@
 import jsonPatch from 'fast-json-patch';
 
+export const searchFieldFromMetaBasedOnFindFunc = (meta, findFieldFunction) => {
+  if (!meta || !meta.layout) return null;
+
+  const { layout } = meta;
+  const { fields, containers } = layout;
+
+  if (fields && fields.length > 0) {
+    const foundField = fields.find(findFieldFunction);
+
+    if (foundField) return foundField;
+  }
+
+  if (containers && containers.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const container of containers) {
+      const { fieldSets } = container;
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const fieldSet of fieldSets) {
+        return searchFieldFromMetaBasedOnFindFunc(
+          {
+            layout: { ...fieldSet },
+          },
+          findFieldFunction
+        );
+      }
+    }
+  }
+};
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -8,6 +38,61 @@ export const defaultPatchSetConverter = values =>
   }));
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
+const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
+  if (!meta || !meta.layout) return null;
+
+  const { layout } = meta;
+  const { fields, containers } = layout;
+
+  if (fields && fields.length > 0) {
+    const foundFieldIndex = fields.findIndex(f => byId(f, id));
+
+    if (foundFieldIndex !== -1) {
+      let res = queryRes;
+
+      res += `/fields/${foundFieldIndex + offset}`;
+
+      return res;
+    }
+  }
+
+  if (containers && containers.length > 0) {
+    for (
+      let containerIndex = 0;
+      containerIndex < containers.length;
+      containerIndex += 1
+    ) {
+      const { fieldSets } = containers[containerIndex];
+
+      for (
+        let fieldSetIndex = 0;
+        fieldSetIndex < fieldSets.length;
+        fieldSetIndex += 1
+      ) {
+        let res = queryRes;
+        const fieldSet = fieldSets[fieldSetIndex];
+
+        res += `/containers/${containerIndex}/fieldSets/${fieldSetIndex}`;
+
+        return fieldSearchQueryObj(
+          {
+            layout: { ...fieldSet },
+          },
+          id,
+          res,
+          offset
+        );
+      }
+    }
+  }
+};
+
+export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
+  const customFormPath = '/customForm/form/layout';
+  const res = fieldSearchQueryObj(meta, id, customFormPath, offset);
+
+  return res;
+};
 
 export const getFieldPosition = ({ meta, id }) => {
   const pos = {};
@@ -42,47 +127,11 @@ export const getFieldPosition = ({ meta, id }) => {
   return pos;
 };
 
-export const getFieldById = ({ meta, id }) => {
-  let field;
+export const getFieldById = ({ meta, id }) =>
+  searchFieldFromMetaBasedOnFindFunc(meta, f => byId(f, id));
 
-  if (meta.fields) {
-    field = meta.fields.find(f => byId(f, id));
-
-    if (field) return field;
-  }
-
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    meta.fieldSets.some(set => {
-      field = set.fields.find(f => byId(f, id));
-
-      // break out of 'some' iterations as soon as any callback finds a field.
-      return !!field;
-    });
-  }
-
-  return field;
-};
-
-export const getFieldByName = ({ fieldMeta, name }) => {
-  let field;
-
-  if (fieldMeta.fields) {
-    field = fieldMeta.fields.find(f => f.name === name);
-
-    if (field) return field;
-  }
-
-  if (fieldMeta.fieldSets && fieldMeta.fieldSets.length > 0) {
-    fieldMeta.fieldSets.some(set => {
-      field = set.fields.find(f => f.name === name);
-
-      // break out of 'some' iterations as soon as any callback finds a field.
-      return !!field;
-    });
-  }
-
-  return field;
-};
+export const getFieldByName = ({ fieldMeta, name }) =>
+  searchFieldFromMetaBasedOnFindFunc(fieldMeta, f => f.name === name);
 
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];

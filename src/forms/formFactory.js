@@ -429,7 +429,15 @@ const fieldsWithCascadedVisibleRules = (
       let f;
 
       if (typeof fieldReferenceName === 'object') f = fieldReferenceName;
-      else f = fieldReferences[fieldReferenceName];
+      else {
+        if (!fieldReferences[fieldReferenceName]) {
+          throw new Error(
+            `Could not corresponding field reference for ${fieldReferenceName} Please check fieldReferences definitions`
+          );
+        }
+
+        f = fieldReferences[fieldReferenceName];
+      }
 
       if (f && f.formId) {
         const {

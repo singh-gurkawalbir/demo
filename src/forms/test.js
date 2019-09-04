@@ -1,7 +1,13 @@
 /* global describe, test, expect, jest, fail */
 
 import jsonPatch from 'fast-json-patch';
-import { getMissingPatchSet, sanitizePatchSet } from './utils';
+import {
+  getMissingPatchSet,
+  sanitizePatchSet,
+  getPatchPathForCustomForms,
+  getFieldById,
+  getFieldByName,
+} from './utils';
 import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
 
 // common: { formId: 'common' },
@@ -220,6 +226,183 @@ describe('Form Utils', () => {
       // console.log(merged);
       expect(merged).toEqual({
         html: { name: 'abc', rateLimit: { failValues: ['bad', 'fail'] } },
+      });
+    });
+  });
+
+  describe('getPatchPathFromCustomForms', () => {
+    test('generate field path for meta having just fields in the root ', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'exportData',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual('/customForm/form/layout/fields/1');
+    });
+    test('generate field path for meta having fields in containers ', () => {
+      const testMeta = {
+        layout: {
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: [
+                    {
+                      fieldId: 'exportData',
+                      visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+                    },
+                  ],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual(
+        '/customForm/form/layout/containers/0/fieldSets/0/fields/1'
+      );
+    });
+
+    test('generate field path for meta having just fields in the root ', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'exportData',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual('/customForm/form/layout/fields/1');
+    });
+    test('generate field path for meta having fields in containers and in the root', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'someField',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: [
+                    {
+                      fieldId: 'exportData',
+                      visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+                    },
+                  ],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual(
+        '/customForm/form/layout/containers/0/fieldSets/0/fields/1'
+      );
+    });
+  });
+
+  describe('search field by id through the layout ', () => {
+    test('should correctly search for a field in a layout where fields are there in the root as well as in the containers', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'someField',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: [
+                    {
+                      fieldId: 'exportData',
+                      visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+                    },
+                  ],
+                },
+                // either or containers or fields
+              ],
+            },
+          ],
+        },
+      };
+      const foundField = getFieldById({ meta: testMeta, id: 'someField' });
+
+      expect(foundField).toEqual({
+        fieldId: 'someField',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      });
+    });
+  });
+
+  describe('search field by name through the layout ', () => {
+    test('should correctly search for a field in a layout where fields are there in the root as well as in the containers', () => {
+      const testMeta = {
+        layout: {
+          fields: [
+            {
+              fieldId: 'someField',
+              name: '/someField',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          ],
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              fieldSets: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: [
+                    {
+                      fieldId: 'exportData',
+                      name: '/exportData',
+                      visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const foundField = getFieldByName({
+        fieldMeta: testMeta,
+        name: '/exportData',
+      });
+
+      expect(foundField).toEqual({
+        fieldId: 'exportData',
+        name: '/exportData',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
       });
     });
   });
