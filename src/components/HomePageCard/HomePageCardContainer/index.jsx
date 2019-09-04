@@ -13,7 +13,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     cursor: 'pointer',
     borderColor: theme.palette.background.arrowAfter,
-    transition: `all .4s ease`,
+    transitionProperty: 'all',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeIn,
     overflow: 'hidden',
     position: 'relative',
     '&:hover': {
