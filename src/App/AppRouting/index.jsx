@@ -56,8 +56,8 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
-        <Route path="/pg" exact component={Dashboard} />
         <Route path="/pg/:resourceType" component={ResourceList} />
+        <Route path="/pg" exact component={Dashboard} />
 
         <Route component={NotFound} />
       </Switch>

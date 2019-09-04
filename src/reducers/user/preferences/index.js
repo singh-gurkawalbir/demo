@@ -1,5 +1,8 @@
 import actionTypes from '../../../actions/types';
-import { ACCOUNT_IDS } from '../../../utils/constants';
+import {
+  ACCOUNT_IDS,
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
+} from '../../../utils/constants';
 
 export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
@@ -80,5 +83,29 @@ export function editorTheme(state) {
   };
 
   return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
+}
+
+export function getAdditionalHeaders(preferences, path) {
+  const headers = {};
+
+  if (
+    !preferences ||
+    !preferences.defaultAShareId ||
+    preferences.defaultAShareId === ACCOUNT_IDS.OWN
+  ) {
+    return headers;
+  }
+
+  if (
+    PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.includes(
+      path.charAt(0) === '/' ? path.replace('/', '') : path
+    )
+  ) {
+    return headers;
+  }
+
+  headers['integrator-ashareid'] = preferences.defaultAShareId;
+
+  return headers;
 }
 // #endregion PUBLIC SELECTORS
