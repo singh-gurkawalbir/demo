@@ -24,7 +24,7 @@ export default function DynaTrueFixedWidthColmnMapper(props) {
         return [
           ...state.slice(0, row),
           Object.assign({}, newRow, {
-            length: state[row].endPosition - state[row].startPosition,
+            length: state[row].endPosition - state[row].startPosition + 1,
           }),
           ...state.slice(row + 1, state.length),
         ];

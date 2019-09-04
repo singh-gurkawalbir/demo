@@ -1,5 +1,6 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
+import produce from 'immer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -41,33 +42,34 @@ function reducer(state, action) {
     onRowChange,
   } = action;
 
-  switch (type) {
-    case 'remove':
-      setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
-
-      return [
-        ...state.slice(0, index),
-        ...state.slice(index + 1, state.length),
-      ];
-    case 'addNew':
-      return [...state, lastRowData];
-    case 'updateField':
-      if (state[index]) {
-        if (onRowChange) {
-          return onRowChange(state, index, field, value);
+  return produce(state, draft => {
+    switch (type) {
+      case 'remove':
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+        draft.splice(index, 1);
+        break;
+      case 'addNew':
+        draft.push(lastRowData);
+        break;
+      case 'updateField':
+        if (state[index]) {
+          if (onRowChange) {
+            // eslint-disable-next-line no-param-reassign
+            draft = onRowChange(state, index, field, value);
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            draft[index] = { ...draft[index], [field]: value };
+          }
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          draft = draft.push({ ...lastRowData, [field]: value });
         }
 
-        return [
-          ...state.slice(0, index),
-          { ...state[index], ...{ [field]: value } },
-          ...state.slice(index + 1, state.length),
-        ];
-      }
-
-      return [...state, { ...lastRowData, ...{ [field]: value } }];
-    default:
-      return state;
-  }
+        break;
+      default:
+        break;
+    }
+  });
 }
 
 export default function DynaTable(props) {
