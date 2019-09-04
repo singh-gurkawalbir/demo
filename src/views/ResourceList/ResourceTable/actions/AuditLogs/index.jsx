@@ -1,22 +1,22 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../../components/icons/HookIcon';
-import ResourceReferences from '../../../../../components/ResourceReferences';
+import AuditLogIcon from '../../../../../components/icons/AuditLogIcon';
+import AuditLogDialog from '../../../../../components/AuditLog/AuditLogDialog';
 
-export default function References({ resourceType, resource }) {
+export default function AuditLogs({ resourceType, resource }) {
   const [show, setShow] = useState(false);
 
   return (
     <Fragment>
       {show && (
-        <ResourceReferences
-          type={resourceType}
-          id={resource._id}
+        <AuditLogDialog
+          resourceType={resourceType}
+          resourceId={resource._id}
           onClose={() => setShow(false)}
         />
       )}
       <IconButton size="small" onClick={() => setShow(true)}>
-        <Icon />
+        <AuditLogIcon />
       </IconButton>
     </Fragment>
   );

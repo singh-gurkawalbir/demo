@@ -19,9 +19,6 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
-const Exports = loadable(() =>
-  import(/* webpackChunkName: 'Exports' */ '../../views/Exports')
-);
 const StandaloneResource = loadable(() =>
   import(
     /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'
@@ -31,9 +28,6 @@ const ResourceList = loadable(() =>
   import(
     /* webpackChunkName: 'StandaloneResource' */ '../../views/ResourceList'
   )
-);
-const Imports = loadable(() =>
-  import(/* webpackChunkName: 'Imports' */ '../../views/Imports')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
@@ -55,9 +49,6 @@ const Stacks = loadable(() =>
 );
 const Connections = loadable(() =>
   import(/* webpackChunkName: 'Connections' */ '../../views/Connections')
-);
-const Scripts = loadable(() =>
-  import(/* webpackChunkName: 'Scripts' */ '../../views/Scripts')
 );
 
 @hot(module)
@@ -82,13 +73,10 @@ export default class AppRouting extends Component {
           component={StandaloneResource}
         />
         <Route path="/pg/:resourceType" component={ResourceList} />
-        <Route path="/pg/exports" component={Exports} />
-        <Route path="/pg/imports" component={Imports} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/tokens" component={AccessTokens} />
         <Route path="/pg/stacks" component={Stacks} />
         <Route path="/pg/connections" component={Connections} />
-        <Route path="/pg/scripts" component={Scripts} />
         <Route path="/pg" component={Dashboard} />
 
         <Route component={NotFound} />

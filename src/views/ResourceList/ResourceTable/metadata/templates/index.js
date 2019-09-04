@@ -6,7 +6,7 @@ import {
   Download,
   TogglePublish,
 } from '../../actions/Templates';
-import { getResourceLink } from '../util';
+import { getResourceLink, formatLastModified } from '../util';
 
 export default {
   columns: [
@@ -18,7 +18,12 @@ export default {
     {
       heading: 'Description',
       value: r => r.description,
-      orderBy: 'name',
+      orderBy: 'description',
+    },
+    {
+      heading: 'Updated on',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
     },
     {
       heading: 'Image',

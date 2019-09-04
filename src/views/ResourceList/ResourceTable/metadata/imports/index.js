@@ -9,7 +9,7 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('exports', r),
+      value: r => getResourceLink('imports', r),
       orderBy: 'name',
     },
     {
@@ -18,5 +18,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  actions: [Edit, Clone, AuditLogs, Delete, References],
+  actions: [Edit, Clone, AuditLogs, References, Delete],
 };

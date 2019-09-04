@@ -1,8 +1,9 @@
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import EditIcon from 'mdi-react/EditIcon';
-import Icon from '../../../../../components/icons/HookIcon';
+import HookIcon from '../../../../../components/icons/HookIcon';
+import UploadIcon from '../../../../../components/icons/ArrowUpIcon';
+import DownloadIcon from '../../../../../components/icons/ArrowDownIcon';
 import UploadFileDialog from '../../../../../components/UploadFileDialog';
 import actions from '../../../../../actions';
 
@@ -28,7 +29,7 @@ export const UploadZipFile = ({ resourceType, resource }) => {
         />
       )}
       <IconButton size="small" onClick={handleUploadZipFileClick}>
-        <EditIcon />
+        <UploadIcon />
       </IconButton>
     </Fragment>
   );
@@ -42,7 +43,7 @@ export const Download = ({ resource }) => {
 
   return (
     <IconButton size="small" onClick={handleDownloadClick}>
-      <EditIcon />
+      <DownloadIcon />
     </IconButton>
   );
 };
@@ -55,7 +56,7 @@ export const TogglePublish = ({ resourceType, resource }) => {
 
   return (
     <IconButton size="small" onClick={handleTogglePublishClick}>
-      {resource.published ? <Icon /> : <EditIcon />}
+      {resource.published ? <HookIcon /> : <HookIcon />}
     </IconButton>
   );
 };

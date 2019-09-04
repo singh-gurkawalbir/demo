@@ -1,16 +1,20 @@
 import Delete from '../../actions/Delete';
-import References from '../../actions/References';
 import Edit from '../../actions/Edit';
+import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
-import Clone from '../../actions/Clone';
 import { getResourceLink, formatLastModified } from '../util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('exports', r),
+      value: r => getResourceLink('scripts', r),
       orderBy: 'name',
+    },
+    {
+      heading: 'Description',
+      value: r => r.description,
+      orderBy: 'description',
     },
     {
       heading: 'Updated on',
@@ -18,5 +22,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  actions: [Edit, Clone, AuditLogs, Delete, References],
+  actions: [Edit, AuditLogs, References, Delete],
 };
