@@ -214,6 +214,16 @@ export function* initFormValues({
   let assistantData;
 
   if (resource.assistant) {
+    if (!resource.assistantMetadata) {
+      yield put(
+        actions.resource.patchStaged(
+          resourceId,
+          [{ op: 'add', path: '/assistantMetadata', value: {} }],
+          SCOPES.VALUE
+        )
+      );
+    }
+
     assistantData = yield select(selectors.assistantData, {
       adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
       assistant: resource.assistant,
@@ -230,6 +240,7 @@ export function* initFormValues({
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
+    resourceId,
     isNew,
     assistantData,
   });

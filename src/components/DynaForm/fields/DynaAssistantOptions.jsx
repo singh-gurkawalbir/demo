@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from './DynaSelect';
 import * as selectors from '../../../reducers/index';
 import actions from '../../../actions';
+import { SCOPES } from '../../../sagas/resourceForm';
 
 const styles = () => ({
   root: {
@@ -14,8 +14,7 @@ const styles = () => ({
 });
 
 function DynaAssistantOptions(props) {
-  const { options } = props;
-  const { label } = props;
+  const { label, __resourceId, options } = props;
 
   console.log(`DynaAssistantOptions props ${JSON.stringify(props)}`);
   const assistantData = useSelector(state =>
@@ -43,7 +42,7 @@ function DynaAssistantOptions(props) {
         [selectedVersion] = assistantData.export.versions;
       }
 
-      console.log(`selectedVersion ${JSON.stringify(selectedVersion)}`);
+      // console.log(`selectedVersion ${JSON.stringify(selectedVersion)}`);
 
       let selectedResource;
 
@@ -59,18 +58,64 @@ function DynaAssistantOptions(props) {
         });
       }
 
-      if (props.assistantFieldType === 'endpoint' && selectedResource) {
+      if (props.assistantFieldType === 'operation' && selectedResource) {
         selectedResource.endpoints.forEach(ep => {
           items.push({ label: ep.name, value: ep.id || ep.url });
         });
       }
     }
+  }
 
-    console.log(
-      `props.assistantFieldType ${
-        props.assistantFieldType
-      } items ${JSON.stringify(items)}`
-    );
+  function onFieldChange(id, value) {
+    console.log(`in onFieldChange ${id} ${value} ${__resourceId}`);
+    props.onFieldChange(id, value);
+
+    if (
+      [
+        'assistantMetadata.version',
+        'assistantMetadata.resource',
+        'assistantMetadata.operation',
+      ].includes(id)
+    ) {
+      const patch = [];
+
+      if (id === 'assistantMetadata.version') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value,
+        });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/resource',
+          value: '',
+        });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operation',
+          value: '',
+        });
+      } else if (id === 'assistantMetadata.resource') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/resource',
+          value,
+        });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operation',
+          value: '',
+        });
+      } else if (id === 'assistantMetadata.operation') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operation',
+          value,
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(__resourceId, patch, SCOPES.VALUE));
+    }
   }
 
   return (
@@ -79,6 +124,7 @@ function DynaAssistantOptions(props) {
       label={label}
       classes={props.classes}
       options={[{ items: items || [] }]}
+      onFieldChange={onFieldChange}
     />
   );
 }

@@ -1,5 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { isEqual, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -57,6 +58,33 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
       updated.content === undefined
     ) {
       updated.content = merged.content;
+    }
+
+    if (resourceType === 'exports') {
+      if (
+        merged.assistant &&
+        merged.assistantMetadata &&
+        !isEqual(merged.assistantMetadata, updated.assistantMetadata)
+      ) {
+        const assistantMetadata = isEmpty(merged.assistantMetadata)
+          ? undefined
+          : merged.assistantMetadata;
+
+        yield call(apiCallWithRetry, {
+          path: `/${resourceType}/${updated._id}`,
+          opts: {
+            method: 'PATCH',
+            body: [
+              {
+                op: assistantMetadata ? 'replace' : 'remove',
+                path: '/assistantMetadata',
+                value: assistantMetadata,
+              },
+            ],
+          },
+        });
+        updated.assistantMetadata = assistantMetadata;
+      }
     }
 
     yield put(actions.resource.received(resourceType, updated));

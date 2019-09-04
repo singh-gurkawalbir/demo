@@ -33,6 +33,10 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     formState,
     resource,
     lastPatchtimestamp,
+    resourceAssistantMetadataStringified: JSON.stringify(
+      resource.assistantMetadata || {}
+    ),
+    /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
 
@@ -101,6 +105,7 @@ export const ResourceFormFactory = props => {
     resourceId,
     isNew,
     lastPatchtimestamp,
+    resourceAssistantMetadataStringified,
   } = props;
   const [count, setCount] = useState(0);
 
@@ -115,7 +120,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
-    resource.assistantMetadata,
+    resourceAssistantMetadataStringified,
   ]);
 
   // once the form successfully completes submission (could be async)
@@ -133,8 +138,14 @@ export const ResourceFormFactory = props => {
   }, [formState.submitComplete /* , onSubmitComplete */]);
 
   const { optionsHandler } = useMemo(
-    () => formFactory.getResourceFormAssets({ resourceType, resource, isNew }),
-    [isNew, resource, resourceType]
+    () =>
+      formFactory.getResourceFormAssets({
+        resourceType,
+        resource,
+        isNew,
+        resourceId,
+      }),
+    [isNew, resource, resourceId, resourceType]
   );
   const { fieldMeta } = formState;
 

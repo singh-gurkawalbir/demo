@@ -53,6 +53,7 @@ const getResourceFormAssets = ({
   resourceType,
   resource,
   isNew = false,
+  resourceId,
   assistantData,
 }) => {
   let fields;
@@ -91,7 +92,7 @@ const getResourceFormAssets = ({
     case 'exports':
       meta = formMeta[resourceType];
       // console.log('type', type);
-      console.log(`meta ${JSON.stringify(meta)}`);
+      // console.log(`meta ${JSON.stringify(meta)}`);
 
       if (meta) {
         if (isNew) {
@@ -104,7 +105,11 @@ const getResourceFormAssets = ({
           meta = meta.custom[type];
 
           if (meta) {
-            meta = meta.assistantDefinition(resource, assistantData);
+            meta = meta.assistantDefinition(
+              resourceId,
+              resource,
+              assistantData
+            );
           }
         } else {
           meta = meta[type];

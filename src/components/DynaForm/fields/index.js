@@ -22,6 +22,7 @@ import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaAssistantOptions from './DynaAssistantOptions';
+import DynaAssistantSearchParams from './DynaAssistantSearchParams';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -49,4 +50,5 @@ export default {
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
   assistantoptions: DynaAssistantOptions,
+  assistantsearchparams: DynaAssistantSearchParams,
 };

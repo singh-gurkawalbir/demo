@@ -21,7 +21,7 @@ export function* requestMetadata({ adaptorType, assistant }) {
   );
 
   if (commStatus && commStatus.status !== COMM_STATES.ERROR) {
-    return true;
+    return;
   }
 
   let metadata;

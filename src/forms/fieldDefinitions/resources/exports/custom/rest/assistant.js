@@ -1,14 +1,18 @@
 export default {
-  'rest.assistant.version': {
+  'assistantMetadata.version': {
     type: 'assistantoptions',
     label: 'API Version',
   },
-  'rest.assistant.resource': {
+  'assistantMetadata.resource': {
     type: 'assistantoptions',
     label: 'API Name',
   },
-  'rest.assistant.endpoint': {
+  'assistantMetadata.operation': {
     type: 'assistantoptions',
     label: 'Operation',
+  },
+  'assistantMetadata.queryParams': {
+    type: 'assistantsearchparams',
+    label: 'Configure Search Parameters',
   },
 };
