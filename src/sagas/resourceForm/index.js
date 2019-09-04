@@ -13,6 +13,7 @@ import processorLogic from '../../reducers/session/editors/processorLogic/javasc
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestMetadata } from '../assistantMetadata';
+import { isNewId } from '../../utils/resource';
 
 export const SCOPES = {
   META: 'meta',
@@ -208,6 +209,11 @@ export function* initFormValues({
       resourceType,
       resourceId
     ));
+
+    // i could have patched that change but i wanted the tmp id to show up
+    if (isNewId(resourceId)) {
+      resource._id = resourceId;
+    }
   }
 
   if (!resource) return; // nothing to do.

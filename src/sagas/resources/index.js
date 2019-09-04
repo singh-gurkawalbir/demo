@@ -135,7 +135,16 @@ export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
 
   try {
-    const collection = yield call(apiCallWithRetry, { path });
+    let collection = yield call(apiCallWithRetry, { path });
+
+    if (resourceType === 'stacks') {
+      let sharedStacks = yield call(apiCallWithRetry, {
+        path: '/shared/stacks',
+      });
+
+      sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
+      collection = [...collection, ...sharedStacks];
+    }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
 

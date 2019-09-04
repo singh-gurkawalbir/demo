@@ -13,9 +13,4 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
-  content: {
-    defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
-    type: 'hook',
-    label: 'Edit Script',
-  },
 };

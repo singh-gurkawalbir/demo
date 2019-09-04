@@ -13,6 +13,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      required: true,
       options: [
         {
           items: [
@@ -29,6 +30,7 @@ export default {
       fieldId: 'once.booleanField',
       type: 'text',
       label: 'Once Boolean Field',
+      required: true,
       visibleWhen: [
         {
           field: 'type',
