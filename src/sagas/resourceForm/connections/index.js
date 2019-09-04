@@ -10,7 +10,6 @@ import { commitStagedChanges } from '../../resources';
 import { getAdditionalHeaders } from '../../../sagas/api/requestInterceptors';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
-import openExternalUrl from '../../../utils/window';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -32,17 +31,6 @@ function* createPayload({ values, resourceId }) {
   }
 
   return jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
-}
-
-export function* downloadDebugLogs({ id }) {
-  let url = `/api/connections/${id}/debug`;
-  const additionalHeaders = yield call(getAdditionalHeaders, url);
-
-  if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
-  }
-
-  yield call(openExternalUrl, { url });
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {
@@ -375,5 +363,4 @@ export default [
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection
   ),
-  takeEvery(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, downloadDebugLogs),
 ];

@@ -151,10 +151,6 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
-    downloadDebugLogs: id =>
-      action(actionTypes.CONNECTIONS.DOWNLOAD_DEBUGLOGS, {
-        id,
-      }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>
