@@ -13,15 +13,6 @@ import { pingConnectionParams } from '../api/apiPaths';
 
 const tryCount = 3;
 
-export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
-  'licenses',
-  'preferences',
-  'profile',
-  'published',
-  'shared/ashares',
-];
-
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';

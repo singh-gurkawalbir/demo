@@ -1,5 +1,8 @@
 import actionTypes from '../../../actions/types';
-import { ACCOUNT_IDS } from '../../../utils/constants';
+import {
+  ACCOUNT_IDS,
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
+} from '../../../utils/constants';
 
 export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
@@ -9,14 +12,6 @@ export const GLOBAL_PREFERENCES = [
   'timeFormat',
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
-];
-export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
-  'licenses',
-  'preferences',
-  'profile',
-  'published',
-  'shared/ashares',
 ];
 
 export const DEFAULT_THEME = 'dark';
