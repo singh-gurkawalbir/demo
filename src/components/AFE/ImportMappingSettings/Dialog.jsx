@@ -6,6 +6,24 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import dateTimezones from '../../../utils/dateTimezones';
 import fieldExpressions from '../../../utils/fieldExpressions';
+import utilityFunctions from '../../../utils/utilityFunctions';
+
+const optionsHandler = (fieldId, fields) => {
+  if (fieldId === 'expression') {
+    const functionsField = fields.find(field => field.id === 'functions');
+    const expressionField = fields.find(field => field.id === 'expression');
+    let x = '';
+
+    if (expressionField.value) x = expressionField.value;
+
+    if (functionsField.value)
+      return (
+        x + utilityFunctions.getHandlebarHelperFormat(functionsField.value)
+      );
+  }
+
+  return null;
+};
 
 export default function ImportMappingSettingsDialog(props) {
   const { value, onClose } = props;
@@ -33,6 +51,12 @@ export default function ImportMappingSettingsDialog(props) {
     }
 
     return 'standard';
+  };
+
+  const getDefaultExpression = () => {
+    if (value.extract && value.extract.indexOf('{{') !== -1) {
+      return value.extract;
+    }
   };
 
   const getDefaultValue = () => {
@@ -96,7 +120,8 @@ export default function ImportMappingSettingsDialog(props) {
             items: [
               { label: 'Standard', value: 'standard' },
               { label: 'Hard-Coded', value: 'hardCoded' },
-              { label: 'Static-Lookup', value: 'lookup' },
+              // the feature is to be enabled later
+              // { label: 'Static-Lookup', value: 'lookup' },
               { label: 'Multi-Field', value: 'multifield' },
             ],
           },
@@ -163,8 +188,10 @@ export default function ImportMappingSettingsDialog(props) {
       {
         id: 'expression',
         name: 'expression',
+        refreshOptionsOnChangesTo: ['functions'],
         type: 'text',
         label: 'Expression:',
+        defaultValue: getDefaultExpression(),
         visibleWhen: [
           {
             field: 'restImportFieldMappingSettings',
@@ -362,7 +389,7 @@ export default function ImportMappingSettingsDialog(props) {
     <Dialog open maxWidth={false}>
       <DialogTitle>Settings</DialogTitle>
       <DialogContent style={{ width: '70vw' }}>
-        <DynaForm fieldMeta={fieldMeta}>
+        <DynaForm fieldMeta={fieldMeta} optionsHandler={optionsHandler}>
           <Button
             onClick={() => {
               onClose(false);
