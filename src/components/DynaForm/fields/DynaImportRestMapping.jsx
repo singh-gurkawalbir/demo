@@ -1,10 +1,18 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import RestImportMappingEditor from '../../../components/AFE/RestImportMapping';
+import RestImportMapping from '../../../components/AFE/RestImportMapping';
 
 export default function DynaImportRestMapping(props) {
-  const { id, onFieldChange, options, label, value } = props;
-  // Lookup Functionality enhancement pending
+  const {
+    id,
+    onFieldChange,
+    options,
+    label,
+    value,
+    extractFields,
+    generateFields,
+  } = props;
+  // lookupFieldId and  lookups are to be used for lookups. Enhancement pending
   const lookupFieldId = options && options.lookups && options.lookups.fieldId;
   const lookups = options && options.lookups && options.lookups.data;
   const [showEditor, setShowEditor] = useState(false);
@@ -23,12 +31,14 @@ export default function DynaImportRestMapping(props) {
   return (
     <Fragment>
       {showEditor && (
-        <RestImportMappingEditor
+        <RestImportMapping
           title="Define Import Mapping"
           id={id}
           onFieldChange={onFieldChange}
           lookups={lookups}
           mappings={value}
+          generateFields={generateFields || []}
+          extractFields={extractFields || []}
           lookupFieldId={lookupFieldId}
           onClose={handleClose}
         />

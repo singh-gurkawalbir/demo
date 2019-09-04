@@ -101,21 +101,10 @@ function reducer(state, action) {
   }
 }
 
-export default function RestImportMappingEditor(props) {
-  const { label, onClose, mappings = {} } = props;
+export default function RestImportMapping(props) {
+  const { label, onClose, mappings, generateFields, extractFields } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const classes = useStyles();
-  const exportOptions = [];
-  const importOptions = [];
-
-  mappings &&
-    mappings.fields &&
-    mappings.fields.forEach(mapp => {
-      if (mapp.extract) exportOptions.push(mapp.extract);
-
-      if (mapp.generate) importOptions.push(mapp.generate);
-    });
-
   const [state, dispatchLocalAction] = useReducer(
     reducer,
     mappings.fields || []
@@ -124,7 +113,6 @@ export default function RestImportMappingEditor(props) {
   const onSubmit = () => {
     const mappings = state.map(({ index, ...others }) => others);
 
-    // console.log(mappings);
     onClose(true, mappings);
   };
 
@@ -176,12 +164,7 @@ export default function RestImportMappingEditor(props) {
   };
 
   return (
-    <Dialog
-      fullScreen={false}
-      open
-      // onClose={() => onClose()}
-      scroll="paper"
-      maxWidth={false}>
+    <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
       <DialogTitle>Manage Import Mapping</DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
@@ -189,10 +172,10 @@ export default function RestImportMappingEditor(props) {
           <Grid container className={classes.root} spacing={2}>
             <Grid item xs={12}>
               <Grid container spacing={2}>
-                <Grid key="heading" item xs>
+                <Grid key="heading_extract" item xs>
                   <span className={classes.alignLeft}>Source Record Field</span>
                 </Grid>
-                <Grid key="heading" item xs>
+                <Grid key="heading_generate" item xs>
                   <span className={classes.alignLeft}>REST API Field</span>
                 </Grid>
 
@@ -210,7 +193,7 @@ export default function RestImportMappingEditor(props) {
                     <Grid item xs>
                       <DynaAutoSuggest
                         value={arr.extract || arr.hardCodedValue}
-                        options={exportOptions}
+                        options={extractFields}
                         onFieldChange={(id, evt) => {
                           handleUpdate(
                             arr.index,
@@ -223,7 +206,7 @@ export default function RestImportMappingEditor(props) {
                     <Grid item xs>
                       <DynaAutoSuggest
                         value={arr.generate}
-                        options={importOptions}
+                        options={generateFields}
                         onFieldChange={(id, evt) => {
                           handleUpdate(
                             arr.index,
@@ -269,12 +252,11 @@ export default function RestImportMappingEditor(props) {
         </Button>
         <Button
           onClick={onSubmit}
-          // disabled={!isValid}
           variant="contained"
           size="small"
           color="secondary">
           Save
-        </Button>{' '}
+        </Button>
       </DialogActions>
     </Dialog>
   );
