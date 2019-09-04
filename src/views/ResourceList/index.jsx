@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, Route } from 'react-router-dom';
 // import ReactJson from 'react-json-view';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +16,7 @@ import getRoutePath from '../../utils/routePaths';
 import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from './ResourceTable';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -69,6 +70,15 @@ function PageContent(props) {
 
   return (
     <Fragment>
+      <Route
+        path={`${match.url}/edit/:resourceType/:id`}
+        // Note that we disable the eslint warning since Route
+        // uses "children" as a prop and this is the intended
+        // use (per their docs)
+        // eslint-disable-next-line react/no-children-prop
+        children={props => <ResourceDrawer {...props} />}
+      />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
@@ -83,7 +93,7 @@ function PageContent(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources resources={resourceType}>
+        <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
