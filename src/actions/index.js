@@ -222,7 +222,8 @@ const metadata = {
     mode,
     filterKey,
     recordType,
-    selectField
+    selectField,
+    addInfo
   ) => {
     if (mode) {
       return action(actionTypes.METADATA.NETSUITE_REQUEST, {
@@ -232,6 +233,7 @@ const metadata = {
         filterKey,
         recordType,
         selectField,
+        addInfo,
       });
     }
 
