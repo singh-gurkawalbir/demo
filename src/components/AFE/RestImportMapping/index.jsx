@@ -55,9 +55,29 @@ function reducer(state, action) {
       ];
     case 'updateField':
       if (state[index]) {
+        const objCopy = { ...state[index] };
+        let inputValue = value;
+
+        if (field === 'extract') {
+          if (inputValue.indexOf('"') === 0) {
+            if (inputValue.charAt(inputValue.length - 1) !== '"')
+              inputValue += '"';
+            delete objCopy.extract;
+            objCopy.hardCodedValue = inputValue.substr(
+              1,
+              inputValue.length - 2
+            );
+          } else {
+            delete objCopy.hardCodedValue;
+            objCopy.extract = inputValue;
+          }
+        } else {
+          objCopy[field] = inputValue;
+        }
+
         return [
           ...state.slice(0, index),
-          Object.assign({}, state[index], { [field]: value }),
+          objCopy,
           ...state.slice(index + 1, state.length),
         ];
       }
@@ -69,7 +89,7 @@ function reducer(state, action) {
       if (state[index]) {
         return [
           ...state.slice(0, index),
-          Object.assign({}, state[index], { ...value }),
+          Object.assign({}, { ...value }),
           ...state.slice(index + 1, state.length),
         ];
       }
@@ -177,7 +197,7 @@ export default function RestImportMappingEditor(props) {
                   <Grid container direction="row" spacing={2}>
                     <Grid item xs>
                       <DynaAutoSuggest
-                        value={arr.extract}
+                        value={arr.extract || arr.hardCodedValue}
                         options={exportOptions}
                         placeholder="Source Record Field"
                         onFieldChange={(id, evt) => {

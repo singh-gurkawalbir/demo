@@ -288,6 +288,9 @@ export default function ImportMappingSettingsDialog(props) {
   const save = formVal => {
     const mappingSettingsTmp = { ...formVal };
 
+    mappingSettingsTmp.generate = value.generate;
+    mappingSettingsTmp.extract = value.extract;
+
     if (mappingSettingsTmp.dataType !== 'date') {
       delete mappingSettingsTmp.exportDateTimeZone;
       delete mappingSettingsTmp.exportDateFormat;
@@ -311,6 +314,8 @@ export default function ImportMappingSettingsDialog(props) {
         default:
           delete mappingSettingsTmp.hardCodedValue;
       }
+
+      delete mappingSettingsTmp.extract;
     } else {
       switch (mappingSettingsTmp.failRecord) {
         case 'useEmptyString':
