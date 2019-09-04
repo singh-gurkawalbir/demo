@@ -1,9 +1,9 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import ConfigureDebugger from '../../actions/ConfigDebugger';
-import DownLoadDebugLogs from '../../actions/DownLoadDebugLogs';
+import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+import DownLoadDebugLogs from '../../actions/Connections/DownLoadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
-import RefreshMetadata from '../../actions/RefreshMetadata';
+import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
   getResourceLink,
   onlineStatus,

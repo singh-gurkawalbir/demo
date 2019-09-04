@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../../components/icons/HookIcon';
-import ConfigureDebugger from '../../../../../components/ConfigureDebugger';
+import Icon from '../../../../../../components/icons/HookIcon';
+import ConfigureDebugger from '../../../../../../components/ConfigureDebugger';
 
 export default function ConfigDebugger({ resource }) {
   const [show, setShow] = useState(false);

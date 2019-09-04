@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../../components/icons/CloseIcon';
-import actions from '../../../../../actions';
+import Icon from '../../../../../../components/icons/CloseIcon';
+import actions from '../../../../../../actions';
 
 export default function Delete({ resource }) {
   const dispatch = useDispatch();

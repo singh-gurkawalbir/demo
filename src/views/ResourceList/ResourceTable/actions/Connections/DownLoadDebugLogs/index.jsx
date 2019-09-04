@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import Icon from '../../../../../components/icons/CloseIcon';
-import openExternalUrl from '../../../../../utils/window';
+import * as selectors from '../../../../../../reducers';
+import Icon from '../../../../../../components/icons/CloseIcon';
+import openExternalUrl from '../../../../../../utils/window';
 
 export default function DownLoadDebugLogs({ resource }) {
   let url = `/api/connections/${resource._id}/debug`;
