@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
-import { makeStyles, useTheme } from '@material-ui/styles';
-import { fade } from '@material-ui/core/styles';
+import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';

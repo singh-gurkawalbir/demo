@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 
-const usestyles = makeStyles({
+const useStyles = makeStyles({
   left: { marginRight: 8, marginLeft: -8 },
   right: { marginLeft: 8, marginRight: -8 },
   root: {
@@ -29,7 +29,7 @@ const styledChildren = (children, classes) => {
 };
 
 function IconButton(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children, ...rest } = props;
 
   return (

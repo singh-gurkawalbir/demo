@@ -2,7 +2,7 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
@@ -15,6 +15,7 @@ const usestyles = makeStyles(theme => ({
     borderColor: theme.palette.background.arrowAfter,
     transition: `all .4s ease`,
     overflow: 'hidden',
+    position: 'relative',
     '&:hover': {
       margin: [[-5, 0, -5, 0]],
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
@@ -34,7 +35,7 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function HomePageCardContainer(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children } = props;
 
   return (

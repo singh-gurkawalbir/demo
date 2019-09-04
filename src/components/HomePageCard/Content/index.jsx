@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const usestyles = makeStyles({
+const useStyles = makeStyles({
   wrapper: {
     marginBottom: '20px',
     display: 'flex',
@@ -10,7 +10,7 @@ const usestyles = makeStyles({
 });
 
 function Content(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children } = props;
 
   return <div className={classes.wrapper}>{children}</div>;
