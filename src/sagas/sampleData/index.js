@@ -2,6 +2,7 @@
  * After ftp related processor functions we must include transform to json
  * Handle errors in transform/preview/parsers
  * Ultimately saga should be concerned regarding what processor calls to make and update based on stages
+ * Remaining File parsers, code cleanups and make sure exports are working fine
  */
 
 import { takeLatest, put, select, call } from 'redux-saga/effects';
@@ -14,10 +15,17 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 
 const PARSERS = {
   csv: '/processors/csvParser',
-  xml: '/xmlToJson',
+  xml: '/processors/xmlParser',
 };
 
-function* getPreviewData(resourceId, resourceType, values) {
+function getRulesFromResourceFormValues(formValues = {}) {
+  if (!formValues['/transform']) return [];
+  const transformRules = formValues['/transform'].rules;
+
+  return transformRules && transformRules.length ? transformRules : [];
+}
+
+function* getPreviewData({ resourceId, resourceType, values }) {
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
@@ -36,8 +44,6 @@ function* getPreviewData(resourceId, resourceType, values) {
   );
   const body = patchResult.newDocument;
 
-  // Removing rawData field as it is not being handled form backend
-  delete body.rawData;
   body.verbose = true;
   const path = `/${resourceType}/preview`;
 
@@ -50,11 +56,41 @@ function* getPreviewData(resourceId, resourceType, values) {
 
     yield put(actions.sampleData.received(resourceId, previewData));
   } catch (e) {
-    return undefined;
+    // Handling Errors with status code between 400 and 500
+    if (e.status >= 400 && e.status < 500) {
+      const parsedError = JSON.parse(e.message);
+
+      return yield put(
+        actions.sampleData.receivedError(resourceId, parsedError)
+      );
+    }
   }
 }
 
-function* getProcessorData(resourceId, resourceType, values, stage) {
+function* processData({ resourceId, stage, path, body }) {
+  try {
+    const processedData = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'POST',
+        body,
+      },
+    });
+
+    yield put(actions.sampleData.update(resourceId, processedData, stage));
+  } catch (e) {
+    // Handling Errors with status code between 400 and 500
+    if (e.status >= 400 && e.status < 500) {
+      const parsedError = JSON.parse(e.message);
+
+      yield put(
+        actions.sampleData.receivedError(resourceId, parsedError, stage)
+      );
+    }
+  }
+}
+
+function* getProcessorData({ resourceId, values, stage }) {
   const path = `/processors/${stage}`;
   // Get Pre Processed data from State
   const { data: preProcessedData } = yield select(
@@ -67,61 +103,47 @@ function* getProcessorData(resourceId, resourceType, values, stage) {
     rules: { rules: values },
     options: {},
   };
-  const opts = {
-    method: 'POST',
-    body,
-  };
-  const processedData = yield call(apiCallWithRetry, {
-    path,
-    opts,
-  });
 
-  yield put(actions.sampleData.update(resourceId, processedData, stage));
+  yield call(processData, { resourceId, stage, path, body });
 }
 
-function* processFileData(resourceId, resourceType, values) {
+function* processFileData({ resourceId, resourceType, values }) {
   if (!values) return undefined;
-  let body;
-  const { file, type, rules } = values;
+  const { file, type, rules, formValues } = values;
 
-  if (['json', 'csv', 'xml'].includes(type)) {
-    // Update Raw Data with the file uploaded before parsing
+  // Update Raw Data with the file uploaded before parsing
+  yield put(
+    actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')
+  );
+
+  // JSON file does not need parsing
+  if (type === 'json') return;
+  // For file types : csv and xml files
+  const body = {
+    rules: rules || {},
+    data: file,
+    options: {
+      includeEmptyValues: true,
+    },
+  };
+  const path = PARSERS[type];
+
+  // Parse file content using processors
+  yield call(processData, { resourceId, stage: 'parse', path, body });
+
+  // Call Transform processor if rules exist for this resource
+  const transformRules = getRulesFromResourceFormValues(formValues);
+
+  if (transformRules.length) {
     yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')
+      actions.sampleData.request(
+        resourceId,
+        resourceType,
+        transformRules,
+        'transform'
+      )
     );
   }
-
-  if (['csv', 'xml'].includes(type)) {
-    // Parse file content using processors
-    if (type === 'csv') {
-      body = {
-        rules: rules || {},
-        data: file,
-        options: {
-          includeEmptyValues: true,
-        },
-      };
-    }
-
-    if (type === 'xml') {
-      body = {
-        xml: file,
-      };
-    }
-
-    const opts = {
-      method: 'POST',
-      body,
-    };
-    const path = PARSERS[type];
-    const processedData = yield call(apiCallWithRetry, {
-      path,
-      opts,
-    });
-
-    yield put(actions.sampleData.update(resourceId, processedData, 'parse'));
-  }
-  // TODO: Call Transform processor if rules exist for this resource
 }
 
 function* requestSampleData({ resourceId, resourceType, values, stage }) {
@@ -130,12 +152,12 @@ function* requestSampleData({ resourceId, resourceType, values, stage }) {
   // Takes a different route for File processors
   if (stage) {
     if (stage === 'file') {
-      yield processFileData(resourceId, resourceType, values);
+      yield call(processFileData, { resourceId, resourceType, values });
     } else {
-      yield getProcessorData(resourceId, resourceType, values, stage);
+      yield call(getProcessorData, { resourceId, resourceType, values, stage });
     }
   } else {
-    yield getPreviewData(resourceId, resourceType, values);
+    yield call(getPreviewData, { resourceId, resourceType, values });
   }
 }
 

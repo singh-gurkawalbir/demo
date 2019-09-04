@@ -413,6 +413,8 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  receivedError: (resourceId, error, stage) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
 };
 const appErrored = () => action(actionTypes.APP_ERRORED);
 const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);

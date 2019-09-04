@@ -38,7 +38,7 @@ export default {
     {
       header: 'Would you like to transform the records?',
       collapsed: false,
-      fields: [{ fieldId: 'transform.expression.rules' }],
+      fields: [{ fieldId: 'transform' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

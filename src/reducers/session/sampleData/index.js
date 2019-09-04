@@ -28,7 +28,7 @@ function extractStages(sampleData) {
 }
 
 export default function(state = {}, action) {
-  const { type, resourceId, previewData, processedData, stage } = action;
+  const { type, resourceId, previewData, processedData, stage, error } = action;
 
   if (!type || !resourceId) return state;
 
@@ -78,7 +78,21 @@ export default function(state = {}, action) {
     }
 
     case actionTypes.SAMPLEDATA.RECEIVED_ERROR: {
-      return { ...state };
+      const newState = { ...state };
+
+      newState[resourceId] = { ...state[resourceId] };
+      newState[resourceId].status = 'error';
+      newState[resourceId].error = error;
+
+      // Resets the Erred Stage
+      if (stage) {
+        newState[resourceId].data = {
+          ...newState[resourceId].data,
+          [stage]: undefined,
+        };
+      }
+
+      return { ...state, [resourceId]: newState[resourceId] };
     }
 
     default:

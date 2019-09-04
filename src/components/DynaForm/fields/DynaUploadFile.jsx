@@ -1,9 +1,10 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
+import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 
-export default function DynaUploadFile(props) {
+function DynaUploadFile(props) {
   const {
     options,
     disabled,
@@ -16,6 +17,7 @@ export default function DynaUploadFile(props) {
     required,
     value = '',
     label,
+    formContext,
   } = props;
   const dispatch = useDispatch();
   const handleFileRead = event => {
@@ -28,6 +30,7 @@ export default function DynaUploadFile(props) {
         {
           type: options,
           file: fileContent,
+          formValues: formContext.value,
         },
         'file'
       )
@@ -68,3 +71,11 @@ export default function DynaUploadFile(props) {
     />
   );
 }
+
+const DynaUploadFileWithFormContext = props => (
+  <FormContext.Consumer {...props}>
+    {form => <DynaUploadFile {...props} formContext={form} />}
+  </FormContext.Consumer>
+);
+
+export default DynaUploadFileWithFormContext;
