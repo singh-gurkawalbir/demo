@@ -10,10 +10,14 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ClearOutlined from '@material-ui/icons/ClearOutlined';
 import deepClone from 'lodash/cloneDeep';
-import DynaSelect from '../../../components/DynaForm/fields/DynaSelect';
 import DynaMappingSettings from '../../../components/DynaForm/fields/DynaMappingSettings';
+import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 
 const useStyles = makeStyles(theme => ({
+  modalContent: {
+    height: '100vh',
+    width: '70vw',
+  },
   container: {
     marginTop: theme.spacing.unit,
     overflowY: 'off',
@@ -79,37 +83,31 @@ function reducer(state, action) {
 
 export default function RestImportMappingEditor(props) {
   const classes = useStyles();
-  const {
-    label,
-    onClose,
-    value = [
-      {
-        extract: '',
-        generate: '',
-      },
-    ],
-  } = props;
+  const { label, onClose, mappings = {} } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
-  const exportOptions = [
-    {
-      items: [
-        { label: 'A', value: 'A' },
-        { label: 'B', value: 'B' },
-        { label: 'C', value: 'C' },
-      ],
-    },
-  ];
-  const importOptions = [
-    {
-      items: [
-        { label: 'Column0', value: 'Column0' },
-        { label: 'Column1', value: 'Column1' },
-        { label: 'Column2', value: 'Column2' },
-      ],
-    },
-  ];
-  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
+  const exportOptions = [];
+  const importOptions = [];
+
+  mappings &&
+    mappings.fields &&
+    mappings.fields.forEach(mapp => {
+      if (mapp.extract) exportOptions.push(mapp.extract);
+
+      if (mapp.generate) importOptions.push(mapp.generate);
+    });
+
+  const [state, dispatchLocalAction] = useReducer(
+    reducer,
+    mappings.fields || []
+  );
   const mappingsTmp = deepClone(state);
+  const onSubmit = () => {
+    const mappings = state.map(({ index, ...others }) => others);
+
+    // console.log(mappings);
+    onClose(true, mappings);
+  };
+
   const handleUpdate = (row, event, field) => {
     const { value } = event.target;
 
@@ -165,7 +163,7 @@ export default function RestImportMappingEditor(props) {
       scroll="paper"
       maxWidth={false}>
       <DialogTitle>Manage Import Mapping</DialogTitle>
-      <DialogContent style={{ width: '70vw' }}>
+      <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
           <Typography variant="h6">{label}</Typography>
           <Grid container className={classes.root} spacing={2}>
@@ -178,7 +176,19 @@ export default function RestImportMappingEditor(props) {
                 <Grid item className={classes.rowContainer} key={arr.index}>
                   <Grid container direction="row" spacing={2}>
                     <Grid item xs>
-                      <DynaSelect
+                      <DynaAutoSuggest
+                        value={arr.extract}
+                        options={exportOptions}
+                        placeholder="Source Record Field"
+                        onFieldChange={(id, evt) => {
+                          handleUpdate(
+                            arr.index,
+                            { target: { value: evt } },
+                            'extract'
+                          );
+                        }}
+                      />
+                      {/* <DynaSelect
                         value={arr.extract}
                         placeholder="Source Record Field"
                         options={exportOptions || []}
@@ -190,10 +200,22 @@ export default function RestImportMappingEditor(props) {
                           );
                         }}
                         className={classes.root}
-                      />
+                      /> */}
                     </Grid>
                     <Grid item xs>
-                      <DynaSelect
+                      <DynaAutoSuggest
+                        value={arr.generate}
+                        options={importOptions}
+                        placeholder="FTP Field"
+                        onFieldChange={(id, evt) => {
+                          handleUpdate(
+                            arr.index,
+                            { target: { value: evt } },
+                            'generate'
+                          );
+                        }}
+                      />
+                      {/* <DynaSelect
                         value={arr.generate}
                         placeholder="FTP Field"
                         options={importOptions || []}
@@ -205,7 +227,7 @@ export default function RestImportMappingEditor(props) {
                           );
                         }}
                         className={classes.root}
-                      />
+                      /> */}
                     </Grid>
                     <Grid item key="arr.id">
                       <DynaMappingSettings
@@ -242,7 +264,7 @@ export default function RestImportMappingEditor(props) {
           Cancel
         </Button>
         <Button
-          // onClick={onSubmit}
+          onClick={onSubmit}
           // disabled={!isValid}
           variant="contained"
           size="small"

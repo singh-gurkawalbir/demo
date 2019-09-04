@@ -1,4 +1,24 @@
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'rest.mapping') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'rest.lookups'
+      );
+
+      if (recordTypeField) {
+        return {
+          lookups: {
+            // passing lookupId fieldId and data since for modifying lookups inside
+            //  Mapping page
+            fieldId: recordTypeField.fieldId,
+            data: recordTypeField && recordTypeField.value,
+          },
+        };
+      }
+    }
+
+    return null;
+  },
   fields: [
     { formId: 'common' },
     { fieldId: 'rest.method' },
@@ -6,6 +26,7 @@ export default {
     { fieldId: 'rest.requestMediaType' },
     { fieldId: 'rest.compositeType' },
     { fieldId: 'rest.compositeMethod' },
+    { fieldId: 'mapping' },
     { fieldId: 'rest.relativeUri' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },

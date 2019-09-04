@@ -65,6 +65,10 @@ export default {
       },
     ],
   },
+  mapping: {
+    type: 'dynarestmapping',
+    label: 'Manage Import Mapping',
+  },
   'rest.relativeUri': {
     type: 'text',
     label: 'Relative URI',

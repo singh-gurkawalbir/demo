@@ -10,6 +10,44 @@ import fieldExpressions from '../../../utils/fieldExpressions';
 export default function ImportMappingSettingsDialog(props) {
   const { value, onClose } = props;
   const { extractFields = ['billing_address', 'name', 'age'] } = props;
+  const getDataType = () => {
+    if (
+      value.extractDateFormat ||
+      value.extractDateTimezone ||
+      value.generateDateFormat ||
+      value.generateDateTimezone
+    ) {
+      return 'date';
+    }
+
+    return value.dataType;
+  };
+
+  const getFieldMappingType = () => {
+    if (value.lookupName) {
+      return 'lookup';
+    } else if ('hardCodedValue' in value) {
+      return 'hardCoded';
+    } else if (value.extract && value.extract.indexOf('{{') !== -1) {
+      return 'multifield';
+    }
+
+    return 'standard';
+  };
+
+  const getDefaultValue = () => {
+    if ('default' in value) {
+      switch (value.default) {
+        case '':
+          return 'useEmptyString';
+        case null:
+          return 'useNull';
+        default:
+          return 'default';
+      }
+    }
+  };
+
   const fieldMeta = {
     fields: [
       {
@@ -17,7 +55,7 @@ export default function ImportMappingSettingsDialog(props) {
         name: 'dataType',
         type: 'select',
         label: 'Data Type:',
-        defaultValue: value.dataType || undefined,
+        defaultValue: getDataType(),
         options: [
           {
             items: [
@@ -35,15 +73,22 @@ export default function ImportMappingSettingsDialog(props) {
         id: 'discardIfEmpty',
         name: 'discardIfEmpty',
         type: 'checkbox',
-        defaultValue: value.discardIfEmpty,
+        defaultValue: value.discardIfEmpty || false,
         label: 'Discard If Empty:',
+      },
+      {
+        id: 'immutable',
+        name: 'immutable',
+        type: 'checkbox',
+        defaultValue: value.immutable || false,
+        label: 'Immutable (Advanced):',
       },
       {
         id: 'restImportFieldMappingSettings',
         name: 'restImportFieldMappingSettings',
         type: 'radiogroup',
         label: 'Field Mapping Type:',
-        defaultValue: value.restImportFieldMappingSettings,
+        defaultValue: getFieldMappingType(),
         showOptionsHorizontally: true,
         fullWidth: true,
         options: [
@@ -131,17 +176,7 @@ export default function ImportMappingSettingsDialog(props) {
         id: 'failRecord',
         name: 'failRecord',
         type: 'radiogroup',
-        defaultValue: () => {
-          switch (value.default) {
-            case '':
-              return 'useEmptyString';
-            case null:
-              return 'useNull';
-            default:
-              return 'useEmptyString';
-            // default case to be handled
-          }
-        },
+        defaultValue: getDefaultValue(),
         label: 'Action to take if unique match not found:',
         options: [
           {
@@ -168,6 +203,7 @@ export default function ImportMappingSettingsDialog(props) {
         type: 'text',
         label: 'Enter Default Value:',
         placeholder: 'Enter Default Value',
+        defaultValue: value.default,
         visibleWhen: [
           {
             field: 'failRecord',
@@ -257,9 +293,11 @@ export default function ImportMappingSettingsDialog(props) {
       delete mappingSettingsTmp.exportDateFormat;
       delete mappingSettingsTmp.importDateFormat;
       delete mappingSettingsTmp.importDateTimeZone;
+    } else {
+      mappingSettingsTmp.dataType = 'string';
     }
 
-    if (mappingSettingsTmp.dataType === 'hardcoded') {
+    if (mappingSettingsTmp.restImportFieldMappingSettings === 'hardCoded') {
       switch (mappingSettingsTmp.failRecord) {
         case 'useEmptyString':
           mappingSettingsTmp.hardCodedValue = '';
@@ -271,7 +309,7 @@ export default function ImportMappingSettingsDialog(props) {
           mappingSettingsTmp.hardCodedValue = mappingSettingsTmp.default;
           break;
         default:
-          mappingSettingsTmp.hardCodedValue = '';
+          delete mappingSettingsTmp.hardCodedValue;
       }
     } else {
       switch (mappingSettingsTmp.failRecord) {
@@ -285,8 +323,16 @@ export default function ImportMappingSettingsDialog(props) {
           mappingSettingsTmp.default = mappingSettingsTmp.default;
           break;
         default:
-          mappingSettingsTmp.default = '';
+          delete mappingSettingsTmp.default;
       }
+    }
+
+    if (mappingSettingsTmp.restImportFieldMappingSettings === 'multifield') {
+      mappingSettingsTmp.extract = mappingSettingsTmp.expression;
+    }
+
+    if (!mappingSettingsTmp.dataType) {
+      delete mappingSettingsTmp.dataType;
     }
 
     const lookups = {};
@@ -296,6 +342,13 @@ export default function ImportMappingSettingsDialog(props) {
         lookups[obj.export] = obj.import;
       });
     }
+
+    delete mappingSettingsTmp.restImportFieldMappingSettings;
+    delete mappingSettingsTmp.lookups;
+    delete mappingSettingsTmp.failRecord;
+    delete mappingSettingsTmp.field;
+    delete mappingSettingsTmp.functions;
+    delete mappingSettingsTmp.expression;
 
     onClose(true, mappingSettingsTmp);
   };

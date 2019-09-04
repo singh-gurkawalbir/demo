@@ -4,17 +4,17 @@ import RestImportMappingEditor from '../../../components/AFE/RestImportMapping';
 // import RestImportMappingDialog from '../../../components/AFE/ImportMappingSettings/Dialog';
 
 export default function DynaRestMapping(props) {
-  const { id, onFieldChange, label } = props;
+  const { id, onFieldChange, options, label, value } = props;
+  const lookupFieldId = options && options.lookups && options.lookups.fieldId;
+  const lookups = options && options.lookups && options.lookups.data;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleClose = (shouldCommit, mappings) => {
     if (shouldCommit) {
-      const { template } = editorValues;
-
-      onFieldChange(id, template);
+      onFieldChange(id, { fields: mappings });
     }
 
     handleEditorClick();
@@ -27,6 +27,9 @@ export default function DynaRestMapping(props) {
           title="Define Import Mapping"
           id={id}
           onFieldChange={onFieldChange}
+          lookups={lookups}
+          mappings={value}
+          lookupFieldId={lookupFieldId}
           onClose={handleClose}
         />
       )}
