@@ -22,7 +22,7 @@ export default function DynaStaticMap(props) {
   let computedValue;
 
   if (map && !value) {
-    computedValue = Object.keys(map || {}).map(key => ({
+    computedValue = Object.keys(map).map(key => ({
       [keyName]: key,
       [valueName]: map[key],
     }));

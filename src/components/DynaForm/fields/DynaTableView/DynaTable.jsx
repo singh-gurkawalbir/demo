@@ -14,8 +14,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing.unit,
     overflowY: 'off',
   },
-  paddingLeft: {
-    'padding-left': '7px',
+  tableBody: {
+    paddingLeft: '7px',
   },
   root: {
     flexGrow: 1,
@@ -38,7 +38,7 @@ function reducer(state, action) {
     field,
     lastRowData = {},
     setChangeIdentifier,
-    rowChangeListener,
+    onRowChange,
   } = action;
 
   switch (type) {
@@ -53,8 +53,8 @@ function reducer(state, action) {
       return [...state, lastRowData];
     case 'updateField':
       if (state[index]) {
-        if (rowChangeListener) {
-          return rowChangeListener(state, index, field, value);
+        if (onRowChange) {
+          return onRowChange(state, index, field, value);
         }
 
         return [
@@ -176,7 +176,7 @@ export default function DynaTable(props) {
   // Update handler. Listens to change in any field and dispatches action to update state
   const handleUpdate = (row, event, field) => {
     const newValue = event.target.value;
-    const { id, onFieldChange, rowChangeListener } = props;
+    const { id, onFieldChange, onRowChange } = props;
 
     dispatchLocalAction({
       type: 'updateField',
@@ -185,12 +185,12 @@ export default function DynaTable(props) {
       value: newValue,
       setChangeIdentifier,
       lastRowData: (value || []).length ? value[value.length - 1] : {},
-      rowChangeListener,
+      onRowChange,
     });
 
     if (state[row]) {
-      const fieldValueToSet = rowChangeListener
-        ? rowChangeListener(state, row, field, newValue)
+      const fieldValueToSet = onRowChange
+        ? onRowChange(state, row, field, newValue)
         : preSubmit([
             ...state.slice(0, row),
             { ...state[row], ...{ [field]: newValue } },
@@ -227,7 +227,7 @@ export default function DynaTable(props) {
             <Grid container spacing={2}>
               {optionsMap.map(r => (
                 <Grid key={r.id} item xs={r.space || true}>
-                  <span className={classes.alignLeft}>{r.label || r.name}</span>
+                  <span>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
@@ -242,7 +242,7 @@ export default function DynaTable(props) {
           container
           spacing={2}
           key={changeIdentifier}
-          className={classes.paddingLeft}
+          className={classes.tableBody}
           direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>

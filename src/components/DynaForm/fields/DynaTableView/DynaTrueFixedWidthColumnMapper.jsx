@@ -1,6 +1,6 @@
 import DynaTableView from './DynaTable';
 
-export default function DynaCSVColumnMapper(props) {
+export default function DynaTrueFixedWidthColmnMapper(props) {
   const { value, onFieldChange } = props;
   let newValue;
 
@@ -16,7 +16,7 @@ export default function DynaCSVColumnMapper(props) {
     });
   }
 
-  const rowChangeListener = (state, row, field, newValue) => {
+  const onRowChange = (state, row, field, newValue) => {
     if (state[row]) {
       if (['startPosition', 'endPosition'].includes(field)) {
         const newRow = Object.assign({}, state[row], { [field]: newValue });
@@ -45,7 +45,6 @@ export default function DynaCSVColumnMapper(props) {
       onFieldChange(
         id,
         val.map(({ fieldName, startPosition, endPosition, regex }) => ({
-          ...{},
           fieldName,
           startPosition,
           endPosition,
@@ -99,7 +98,7 @@ export default function DynaCSVColumnMapper(props) {
       {...props}
       optionsMap={optionsMap}
       value={newValue}
-      rowChangeListener={rowChangeListener}
+      onRowChange={onRowChange}
       onFieldChange={fieldChangeHandler}
     />
   );

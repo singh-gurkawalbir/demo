@@ -7,16 +7,16 @@ export default function DynaCSVColumnMapper(props) {
     extractFieldHeader,
     generateFieldHeader,
   } = props;
-  let generates = [];
+  let columnOptions = [];
 
   if (value && !maxNumberOfColumns) {
-    generates = value
+    columnOptions = value
       .filter(el => el.column)
       .map(el => ({ id: el.column.toString(), text: el.column.toString() }));
   }
 
   if (maxNumberOfColumns) {
-    generates = [...Array(maxNumberOfColumns).keys()].map(a => ({
+    columnOptions = [...Array(maxNumberOfColumns).keys()].map(a => ({
       id: `${a + 1}`,
       text: `${a + 1}`,
     }));
@@ -33,7 +33,7 @@ export default function DynaCSVColumnMapper(props) {
     {
       id: 'column',
       label: generateFieldHeader || 'Column Index',
-      options: generates,
+      options: columnOptions,
       required: false,
       type: 'select',
       supportsRefresh: false,
