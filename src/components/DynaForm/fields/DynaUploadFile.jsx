@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
+import { getFileReaderOptions, getCsvFromXlsx } from '../../../utils/file';
 
 function DynaUploadFile(props) {
   const {
@@ -22,6 +23,11 @@ function DynaUploadFile(props) {
   const dispatch = useDispatch();
   const handleFileRead = event => {
     const { result: fileContent } = event.target;
+    let csvFileContent;
+
+    if (options === 'xlsx') {
+      csvFileContent = getCsvFromXlsx(fileContent);
+    }
 
     dispatch(
       actions.sampleData.request(
@@ -29,7 +35,7 @@ function DynaUploadFile(props) {
         resourceType,
         {
           type: options,
-          file: fileContent,
+          file: csvFileContent || fileContent,
           formValues: formContext.value,
         },
         'file'
@@ -39,13 +45,19 @@ function DynaUploadFile(props) {
 
   const handleFileChosen = event => {
     const file = event.target.files[0];
-    // if (!file) return;
-    // const fileReaderOptions = getFileReaderOptions(file, options);
+
+    if (!file) return;
+    const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 
     fileReader.onload = handleFileRead;
 
-    fileReader.readAsText(file);
+    if (fileReaderOptions.readAsArrayBuffer) {
+      // Incase of XLSX file
+      fileReader.readAsArrayBuffer(file);
+    } else {
+      fileReader.readAsText(file);
+    }
   };
 
   let acceptFileType = '.txt';

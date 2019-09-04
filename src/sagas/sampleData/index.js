@@ -13,8 +13,14 @@ import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 
+/*
+ * Parsers for different file types used for converting into JSON format
+ * For XLSX Files , this saga receives converted csv content as input
+ * so it uses same csv parser
+ */
 const PARSERS = {
   csv: '/processors/csvParser',
+  xlsx: '/processors/csvParser',
   xml: '/processors/xmlParser',
 };
 
@@ -118,7 +124,7 @@ function* processFileData({ resourceId, resourceType, values }) {
 
   // JSON file does not need parsing
   if (type === 'json') return;
-  // For file types : csv and xml files
+  // For file types : csv, xlsx and xml files
   const body = {
     rules: rules || {},
     data: file,

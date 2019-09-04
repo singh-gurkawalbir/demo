@@ -66,9 +66,7 @@ export default function(state = {}, action) {
       };
       newState[resourceId].data = {
         ...newState[resourceId].data,
-        [stage]:
-          (processedData.data && processedData.data[0]) ||
-          (processedData.records && processedData.records[0]),
+        [stage]: processedData.data && processedData.data[0],
       };
 
       return {
@@ -126,9 +124,7 @@ function getTransformData(resourceData) {
 }
 
 export function getResourceSampleData(state, resourceId, stage) {
-  if (!resourceId) return DEFAULT_VALUE;
-
-  if (!state[resourceId]) return DEFAULT_VALUE;
+  if (!resourceId || !state[resourceId]) return DEFAULT_VALUE;
 
   const resourceData = state[resourceId].data;
 
