@@ -89,7 +89,7 @@ function reducer(state, action) {
       if (state[index]) {
         return [
           ...state.slice(0, index),
-          Object.assign({}, { ...value }),
+          { ...value },
           ...state.slice(index + 1, state.length),
         ];
       }
@@ -102,9 +102,9 @@ function reducer(state, action) {
 }
 
 export default function RestImportMappingEditor(props) {
-  const classes = useStyles();
   const { label, onClose, mappings = {} } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
+  const classes = useStyles();
   const exportOptions = [];
   const importOptions = [];
 

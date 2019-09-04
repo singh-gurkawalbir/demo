@@ -23,7 +23,7 @@ import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaLabelValueElement from './DynaLabelValueElement';
-import DynaRestMapping from './DynaRestMapping';
+import DynaImportRestMapping from './DynaImportRestMapping';
 import DynaMappingSettings from './DynaMappingSettings';
 
 export default {
@@ -53,6 +53,6 @@ export default {
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
-  dynarestmapping: DynaRestMapping,
+  dynarestmapping: DynaImportRestMapping,
   dynamappingsettings: DynaMappingSettings,
 };
