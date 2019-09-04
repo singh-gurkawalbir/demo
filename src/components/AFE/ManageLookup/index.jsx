@@ -5,16 +5,16 @@ import Lookup from './Lookup';
 import LookupListing from './LookupListing';
 
 export default function ManageLookup(props) {
-  const { lookups, updateLookups, onCancelClick } = props;
+  const { lookups, onUpdate, onCancel } = props;
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
-  const onSave = (isEdit, val) => {
+  const handleSubmit = (isEdit, val) => {
     const lookupsTmp = [...lookups];
 
     if (!isEdit) {
       if (!lookupsTmp.find(ele => ele.name === val.name)) {
         lookupsTmp.push(val);
-        updateLookups(lookupsTmp);
+        onUpdate(lookupsTmp);
       } else {
         // to be checked if we show any alert. Currently In case of adding new Lookup,  we dont add the record if we have existing lookup with same name.
       }
@@ -23,25 +23,25 @@ export default function ManageLookup(props) {
 
       lookupsTmp[index] = val;
 
-      updateLookups(lookupsTmp);
+      onUpdate(lookupsTmp);
     }
 
     showListView(!isListView);
   };
 
-  const editLookupHandler = val => {
+  const handleEdit = val => {
     setLookup(val);
     showListView(false);
   };
 
-  const deleteLookup = lookupObj => {
+  const handleDelete = lookupObj => {
     if (lookupObj && lookupObj.name) {
       const modifiedLookups = _.filter(
         lookups,
         obj => obj.name !== lookupObj.name
       );
 
-      updateLookups(modifiedLookups);
+      onUpdate(modifiedLookups);
     }
   };
 
@@ -59,16 +59,15 @@ export default function ManageLookup(props) {
       {isListView ? (
         <LookupListing
           lookups={lookups}
-          updateLookup={editLookupHandler}
-          deleteLookup={deleteLookup}
-          lookupUpdateHandler={onSave}
-          onCancelClick={onCancelClick}
+          onUpdate={handleEdit}
+          onDelete={handleDelete}
+          onCancel={onCancel}
         />
       ) : (
         <Lookup
           lookup={lookup}
-          onCancelClick={toggleLookupMode}
-          onSave={onSave}
+          onCancel={toggleLookupMode}
+          onSave={handleSubmit}
         />
       )}
     </ModalDialog>

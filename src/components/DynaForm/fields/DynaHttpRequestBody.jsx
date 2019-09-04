@@ -40,22 +40,17 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  let actionFields = [];
+  let lookupField;
 
   if (lookupFieldId) {
-    actionFields = [
-      {
-        field: (
-          <DynaLookupEditor
-            id={lookupFieldId}
-            label="Manage Lookups"
-            value={lookups}
-            key={lookupFieldId}
-            onFieldChange={onFieldChange}
-          />
-        ),
-      },
-    ];
+    lookupField = (
+      <DynaLookupEditor
+        id={lookupFieldId}
+        label="Manage Lookups"
+        value={lookups}
+        onFieldChange={onFieldChange}
+      />
+    );
   }
 
   return (
@@ -67,7 +62,7 @@ export default function DynaHttpRequestBody(props) {
           rule={parsedData}
           onFieldChange={onFieldChange}
           onClose={handleClose}
-          actionFields={actionFields}
+          action={lookupField}
         />
       )}
       <Button variant="outlined" color="secondary" onClick={handleEditorClick}>

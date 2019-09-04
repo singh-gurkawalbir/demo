@@ -83,7 +83,7 @@ class EditorDialog extends Component {
     const {
       children,
       open = true,
-      actionFields,
+      action,
       title,
       handlePreview,
       showLayoutOptions = true,
@@ -110,8 +110,8 @@ class EditorDialog extends Component {
             <Typography variant="h5">{title}</Typography>
           </div>
           <div className={classes.actionContainer}>
-            {/* it expects field to be a compoenent to render */}
-            {actionFields && actionFields.map(action => action.field)}
+            {/* it expects field to be a component to render */}
+            {action}
           </div>
           <div className={classes.toggleContainer}>
             {showLayoutOptions && (

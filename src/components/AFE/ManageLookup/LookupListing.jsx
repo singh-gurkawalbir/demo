@@ -3,15 +3,15 @@ import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
 
 export default function LookupListing(props) {
-  const { lookups, updateLookup, deleteLookup, onCancelClick } = props;
+  const { lookups, onUpdate, onDelete, onCancel } = props;
   const [key, setKey] = useState(1);
-  const deleteLookupHandler = obj => {
+  const handleDelete = obj => {
     setKey(key + 1);
-    deleteLookup(obj);
+    onDelete(obj);
   };
 
-  const editLookup = lookupObj => {
-    updateLookup(lookupObj);
+  const handleEdit = lookupObj => {
+    onUpdate(lookupObj);
   };
 
   const lookuplistingFieldMeta = {
@@ -23,15 +23,15 @@ export default function LookupListing(props) {
         valueType: 'keywithaction',
         label: 'Lookups',
         value: lookups,
-        editHandler: editLookup,
-        deleteHandler: deleteLookupHandler,
+        onEditClick: handleEdit,
+        onDeleteClick: handleDelete,
       },
     ],
   };
 
   return (
     <DynaForm key={key} fieldMeta={lookuplistingFieldMeta}>
-      <Button onClick={onCancelClick}>Close</Button>
+      <Button onClick={onCancel}>Close</Button>
     </DynaForm>
   );
 }

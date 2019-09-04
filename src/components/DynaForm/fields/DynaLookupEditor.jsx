@@ -9,7 +9,7 @@ export default function DynaLookupEditor(props) {
     setShowEditor(!showEditor);
   };
 
-  const updateLookups = lookups => {
+  const handleUpdate = lookups => {
     onFieldChange(id, lookups);
   };
 
@@ -19,8 +19,8 @@ export default function DynaLookupEditor(props) {
         <ManageLookup
           id={id}
           lookups={value}
-          onCancelClick={handleEditorClick}
-          updateLookups={updateLookups}
+          onCancel={handleEditorClick}
+          onUpdate={handleUpdate}
         />
       )}
       <Button variant="outlined" color="secondary" onClick={handleEditorClick}>

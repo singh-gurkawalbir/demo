@@ -27,8 +27,8 @@ const useStyles = makeStyles(() => ({
 export default function DynaKeyWithAction(props) {
   const {
     value,
-    editHandler,
-    deleteHandler,
+    onEditClick,
+    onDeleteClick,
     keyName = 'key',
     description,
     errorMessages,
@@ -51,22 +51,22 @@ export default function DynaKeyWithAction(props) {
         <div className={classes.rowContainer} key={r.row}>
           <Typography className={classes.label}>{r[keyName]}</Typography>
           <div>
-            {editHandler && (
+            {onEditClick && (
               <IconButton
                 key="Edit"
                 aria-label="Edit"
                 color="inherit"
-                onClick={() => editHandler(r)}>
+                onClick={() => onEditClick(r)}>
                 <EditOutlinedIcon />
               </IconButton>
             )}
 
-            {deleteHandler && (
+            {onDeleteClick && (
               <IconButton
                 key="Delete"
                 aria-label="Delete"
                 color="inherit"
-                onClick={() => deleteHandler(r)}>
+                onClick={() => onDeleteClick(r)}>
                 <DeleteOutlinedIcon />
               </IconButton>
             )}

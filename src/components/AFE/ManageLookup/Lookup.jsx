@@ -6,33 +6,30 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 
 const useStyles = makeStyles(() => ({
   container: {
-    minWidth: '500px',
+    minWidth: '60vw',
   },
 }));
 
 export default function Lookup(props) {
-  const { onSave, lookup, onCancelClick } = props;
+  const { onSave, lookup, onCancel } = props;
   const classes = useStyles();
   const isEdit = !!(lookup && lookup.name);
-  const save = formVal => {
-    const lookupObj = { ...formVal };
+  const handleSubmit = formVal => {
+    const lookupObj = {};
 
-    if (lookupObj.mode === 'static') {
+    if (formVal.mode === 'static') {
       lookupObj.map = {};
-      lookupObj.mapList.forEach(obj => {
+      formVal.mapList.forEach(obj => {
         lookupObj.map[obj.export] = obj.import;
       });
-      delete lookupObj.mapList;
-      delete lookupObj.method;
-      delete lookupObj.relativeURI;
-      delete lookupObj.body;
-      delete lookupObj.extract;
     } else {
-      delete lookupObj.mapList;
-      delete lookupObj.map;
+      lookupObj.method = formVal.method;
+      lookupObj.relativeURI = formVal.relativeURI;
+      lookupObj.body = formVal.body;
+      lookupObj.extract = formVal.extract;
     }
 
-    switch (lookupObj.failRecord) {
+    switch (formVal.failRecord) {
       case 'disallowFailure':
         lookupObj.allowFailures = false;
         delete lookupObj.default;
@@ -47,12 +44,12 @@ export default function Lookup(props) {
         break;
       case 'default':
         lookupObj.allowFailures = true;
+        lookupObj.default = formVal.default;
         break;
       default:
     }
 
-    delete lookupObj.failRecord;
-    delete lookupObj.mode;
+    lookupObj.name = formVal.name;
     onSave(isEdit, lookupObj);
   };
 
@@ -94,7 +91,7 @@ export default function Lookup(props) {
         type: 'text',
         label: 'Relative URI:',
         placeholder: 'Relative URI',
-        defaultValue: lookup.relativeURI || undefined,
+        defaultValue: lookup.relativeURI,
         visibleWhen: [
           {
             field: 'mode',
@@ -108,7 +105,7 @@ export default function Lookup(props) {
         type: 'select',
         label: 'HTTP Method:',
         placeholder: 'Required',
-        defaultValue: lookup.method || undefined,
+        defaultValue: lookup.method,
         options: [
           {
             heading: 'Select Http Method:',
@@ -136,7 +133,7 @@ export default function Lookup(props) {
         name: 'body',
         type: 'httprequestbody',
         label: 'Build HTTP Request Body',
-        defaultValue: lookup.body || undefined,
+        defaultValue: lookup.body,
         visibleWhenAll: [
           {
             field: 'mode',
@@ -154,7 +151,7 @@ export default function Lookup(props) {
         type: 'text',
         label: 'Resource Identifier Path:',
         placeholder: 'Resource Identifier Path',
-        defaultValue: lookup.extract || undefined,
+        defaultValue: lookup.extract,
         visibleWhen: [
           {
             field: 'mode',
@@ -185,7 +182,7 @@ export default function Lookup(props) {
         name: 'name',
         type: 'text',
         label: 'Name:',
-        defaultValue: lookup.name || undefined,
+        defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
       },
       {
@@ -222,7 +219,7 @@ export default function Lookup(props) {
         name: 'default',
         type: 'text',
         label: 'Enter Default Value:',
-        defaultValue: lookup.default || undefined,
+        defaultValue: lookup.default,
         placeholder: 'Enter Default Value',
         visibleWhen: [
           {
@@ -237,8 +234,8 @@ export default function Lookup(props) {
   return (
     <div className={classes.container}>
       <DynaForm fieldMeta={fieldMeta}>
-        <Button onClick={onCancelClick}>Cancel</Button>
-        <DynaSubmit onClick={save}>Save</DynaSubmit>
+        <Button onClick={onCancel}>Cancel</Button>
+        <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>
     </div>
   );
