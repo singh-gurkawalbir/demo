@@ -223,14 +223,15 @@ const connectors = {
     }),
 };
 const metadata = {
-  request: (
+  request: ({
     connectionId,
     metadataType,
     mode,
     filterKey,
     recordType,
-    selectField
-  ) => {
+    selectField,
+    addInfo,
+  }) => {
     if (mode) {
       return action(actionTypes.METADATA.NETSUITE_REQUEST, {
         connectionId,
@@ -239,6 +240,7 @@ const metadata = {
         filterKey,
         recordType,
         selectField,
+        addInfo,
       });
     }
 
