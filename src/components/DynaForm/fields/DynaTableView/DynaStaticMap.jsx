@@ -2,7 +2,6 @@ import DynaTableView from './DynaTable';
 
 export default function DynaStaticMap(props) {
   const { keyName, keyLabel, valueLabel, valueName, map, value } = props;
-  const initSelector = () => ({});
   const handleRefreshClick = () => {};
   const optionsMap = [
     {
@@ -23,7 +22,7 @@ export default function DynaStaticMap(props) {
   let computedValue;
 
   if (map && !value) {
-    computedValue = Object.keys(map || {}).map(key => ({
+    computedValue = Object.keys(map).map(key => ({
       [keyName]: key,
       [valueName]: map[key],
     }));
@@ -35,7 +34,6 @@ export default function DynaStaticMap(props) {
     <DynaTableView
       {...props}
       optionsMap={optionsMap}
-      initSelector={initSelector}
       value={computedValue}
       handleRefreshClickHandler={handleRefreshClick}
     />
