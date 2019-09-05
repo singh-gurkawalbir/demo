@@ -888,7 +888,7 @@ export default {
   'integration._id':
     'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
-    "Name your integration so that you can easily reference it from other parts of the application.  For example: 'Netsuite Flows'",
+    "Name your integration so that you can easily reference it from other parts of the application.  For example: 'NetSuite Flows'",
   'integration.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'integration.description':
