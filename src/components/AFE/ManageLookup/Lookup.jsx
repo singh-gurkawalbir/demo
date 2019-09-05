@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
@@ -11,7 +12,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Lookup(props) {
-  const { onSave, lookup, onCancel } = props;
+  const { onSave, lookup, onCancel, error } = props;
   const classes = useStyles();
   const isEdit = !!(lookup && lookup.name);
   const handleSubmit = formVal => {
@@ -234,6 +235,16 @@ export default function Lookup(props) {
   return (
     <div className={classes.container}>
       <DynaForm fieldMeta={fieldMeta}>
+        {error && (
+          <div>
+            <Typography
+              color="error"
+              variant="h5"
+              className={classes.errorContainer}>
+              {error}
+            </Typography>
+          </div>
+        )}
         <Button onClick={onCancel}>Cancel</Button>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>

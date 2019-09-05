@@ -8,17 +8,24 @@ export default function ManageLookup(props) {
   const { lookups, onUpdate, onCancel } = props;
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
+  const [error, setError] = useState();
   const handleSubmit = (isEdit, val) => {
     const lookupsTmp = [...lookups];
 
     if (!isEdit) {
       if (!lookupsTmp.find(ele => ele.name === val.name)) {
+        setError();
         lookupsTmp.push(val);
         onUpdate(lookupsTmp);
       } else {
-        // to be checked if we show any alert. Currently In case of adding new Lookup,  we dont add the record if we have existing lookup with same name.
+        // showing error for duplicate name
+
+        setError('Lookup with same name is already present!');
+
+        return;
       }
     } else if (lookup) {
+      setError();
       const index = lookupsTmp.findIndex(ele => ele.name === lookup.name);
 
       lookupsTmp[index] = val;
@@ -46,6 +53,7 @@ export default function ManageLookup(props) {
   };
 
   const toggleLookupMode = () => {
+    setError();
     setLookup({});
     showListView(!isListView);
   };
@@ -66,6 +74,7 @@ export default function ManageLookup(props) {
       ) : (
         <Lookup
           lookup={lookup}
+          error={error}
           onCancel={toggleLookupMode}
           onSave={handleSubmit}
         />
