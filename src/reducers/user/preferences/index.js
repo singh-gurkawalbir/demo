@@ -85,7 +85,7 @@ export function editorTheme(state) {
   return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
 }
 
-export function getAdditionalHeaders(preferences, path) {
+export function accountShareHeader(preferences, path) {
   const headers = {};
 
   if (

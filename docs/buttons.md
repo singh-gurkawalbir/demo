@@ -4,7 +4,7 @@ const Button = require('@material-ui/core/Button').default;
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const IconButton =  require('../src/components/IconButton').default;
 const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
-
+const StacksIcon = require('../src/components/icons/StacksIcon').default;
 
 <SpacedContainer>
   <Button size="small" variant="contained" color="primary">Small</Button>
@@ -12,7 +12,10 @@ const ArrowDownIcon = require('../src/components/icons/ArrowDownIcon').default;
   <Button size="large" variant="contained" color="primary">Large</Button>
   <br />
   <br />
+
   <IconButton variant="contained" color="primary">Icon Button<ArrowDownIcon /></IconButton>
+  <IconButton variant="contained" color="primary"><StacksIcon />Primary</IconButton>
+
   <br />
   <br />
   <Button variant="contained" color="secondary">Secondary</Button>

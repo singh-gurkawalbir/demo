@@ -1,6 +1,7 @@
 import { React, Component, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
+import { Button } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,6 +19,10 @@ import CloseIcon from '../icons/CloseIcon';
     padding: theme.spacing(1, 2),
     width: '100',
   },
+  actionButton: {
+    float: 'right',
+    textTransform: 'inherit',
+  },
   iconButton: {
     position: 'absolute',
     top: theme.spacing(1),
@@ -34,7 +39,13 @@ import CloseIcon from '../icons/CloseIcon';
 }))
 export default class ModalDialog extends Component {
   render() {
-    const { classes, show, handleClose } = this.props;
+    const {
+      classes,
+      show,
+      handleClose,
+      actionLabel,
+      actionHandler,
+    } = this.props;
 
     return (
       <div>
@@ -49,6 +60,13 @@ export default class ModalDialog extends Component {
                   autoFocus>
                   <CloseIcon />
                 </IconButton>
+              )}
+              {!handleClose && actionHandler && (
+                <Button
+                  className={classes.actionButton}
+                  onClick={actionHandler}>
+                  {actionLabel}
+                </Button>
               )}
             </DialogTitle>
           )}
