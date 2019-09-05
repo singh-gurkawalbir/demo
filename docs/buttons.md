@@ -12,8 +12,10 @@ const StacksIcon = require('../src/components/icons/StacksIcon').default;
   <Button size="large" variant="contained" color="primary">Large</Button>
   <br />
   <br />
-  <IconButton variant="contained" color="primary">Primary<ArrowDownIcon /></IconButton>
+
+  <IconButton variant="contained" color="primary">Icon Button<ArrowDownIcon /></IconButton>
   <IconButton variant="contained" color="primary"><StacksIcon />Primary</IconButton>
+
   <br />
   <br />
   <Button variant="contained" color="secondary">Secondary</Button>
@@ -70,13 +72,5 @@ const ButtonsGroup = require('../src/components/ButtonGroup').default;
       <Button variant="contained" color="primary" >Save</Button>
       <Button variant="text" color="primary">Cancel</Button>
     </ButtonsGroup>
-    <ButtonsGroup>
-      <Button variant="text" color="primary">Cancel</Button>
-      <Button variant="contained" color="primary" >Save</Button>
-    </ButtonsGroup>
-  <ButtonsGroup>
-    <Button variant="text" color="primary">Cancel</Button>
-    <Button variant="text" color="primary">Install</Button>
-  </ButtonsGroup>
 </SpacedContainer>
 ```

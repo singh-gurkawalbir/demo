@@ -5,9 +5,9 @@ import { Button } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
+import CloseIcon from '../icons/CloseIcon';
 
 @withStyles(theme => ({
   modalDialog: {
@@ -25,8 +25,9 @@ import { withStyles } from '@material-ui/core/styles';
   },
   iconButton: {
     position: 'absolute',
-    top: '5px',
-    right: '10px',
+    top: theme.spacing(1),
+    right: theme.spacing(1) + 2,
+    padding: theme.spacing(1) - 3,
   },
   actions: {
     '&:last-child': {
@@ -57,9 +58,7 @@ export default class ModalDialog extends Component {
                   onClick={handleClose}
                   className={classes.iconButton}
                   autoFocus>
-                  <SvgIcon>
-                    <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-                  </SvgIcon>
+                  <CloseIcon />
                 </IconButton>
               )}
               {!handleClose && actionHandler && (

@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     margin: [[0, 5]],
     background: theme.palette.background.default,
@@ -18,21 +18,21 @@ const usestyles = makeStyles(theme => ({
     height: 12,
   },
   success: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.background.success,
   },
   error: {
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: theme.palette.background.error,
   },
   info: {
     backgroundColor: theme.palette.background.info,
   },
   warning: {
-    backgroundColor: theme.palette.warning.main,
+    backgroundColor: theme.palette.background.warning,
   },
 }));
 
 function StatusCircle({ variant, size = 'large' }) {
-  const classes = usestyles();
+  const classes = useStyles();
 
   return (
     <span

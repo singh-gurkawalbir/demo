@@ -4,8 +4,6 @@ resource type.
 Examples:
 ```js
 const SpacedContainer = require('../../../../src/styleguide/SpacedContainer').default;
-// I added few of the Resource type which are pointing to same END POINT in the existing application, so I included them
-// Some of the Resource types are being duplicated in the "system Icon Component" so do we remove from there ?
 <SpacedContainer>
   <ResourceImg resourceType="connections" />
   <ResourceImg resourceType="exports" />

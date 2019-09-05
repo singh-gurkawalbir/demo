@@ -77,8 +77,8 @@ class FilteredResources extends Component {
                 render={() => (
                   <Button
                     size="small"
-                    variant="contained"
-                    // color="secondary"
+                    variant="outlined"
+                    color="primary"
                     aria-label="Add"
                     component={Link}
                     to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}

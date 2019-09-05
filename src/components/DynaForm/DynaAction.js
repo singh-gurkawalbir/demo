@@ -43,7 +43,7 @@ function DynaAction(props) {
   return (
     <Button
       variant="contained"
-      color="secondary"
+      color="primary"
       className={className}
       disabled={disabled || !isValid}
       onClick={() => onClick(value)}>
