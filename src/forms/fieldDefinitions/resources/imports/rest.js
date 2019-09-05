@@ -65,6 +65,7 @@ export default {
       },
     ],
   },
+  // TODO: To be removed later
   mapping: {
     type: 'dynarestmapping',
     label: 'Manage Import Mapping',

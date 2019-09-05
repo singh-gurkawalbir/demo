@@ -1,6 +1,6 @@
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'rest.mapping') {
+    if (fieldId === 'mapping') {
       const recordTypeField = fields.find(
         field => field.fieldId === 'rest.lookups'
       );
@@ -26,6 +26,7 @@ export default {
     { fieldId: 'rest.requestMediaType' },
     { fieldId: 'rest.compositeType' },
     { fieldId: 'rest.compositeMethod' },
+    // TODO: be removed later
     { fieldId: 'mapping' },
     { fieldId: 'rest.relativeUri' },
     { fieldId: 'rest.successPath' },

@@ -6,15 +6,15 @@ export default function DynaImportRestMapping(props) {
   const {
     id,
     onFieldChange,
-    options,
+    // options,
     label,
     value,
     extractFields,
     generateFields,
   } = props;
   // lookupFieldId and  lookups are to be used for lookups. Enhancement pending
-  const lookupFieldId = options && options.lookups && options.lookups.fieldId;
-  const lookups = options && options.lookups && options.lookups.data;
+  // const lookupFieldId = options && options.lookups && options.lookups.fieldId;
+  // const lookups = options && options.lookups && options.lookups.data;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -35,11 +35,11 @@ export default function DynaImportRestMapping(props) {
           title="Define Import Mapping"
           id={id}
           onFieldChange={onFieldChange}
-          lookups={lookups}
+          // lookups={lookups}
           mappings={value}
           generateFields={generateFields || []}
           extractFields={extractFields || []}
-          lookupFieldId={lookupFieldId}
+          // lookupFieldId={lookupFieldId}
           onClose={handleClose}
         />
       )}

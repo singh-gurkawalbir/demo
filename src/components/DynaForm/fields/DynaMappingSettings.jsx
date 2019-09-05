@@ -22,6 +22,7 @@ export default function DynaMappingSettings(props) {
     <Fragment>
       {showEditor && (
         <ImportMappingSettings
+          id={id}
           title="Settings"
           value={value}
           onClose={handleClose}

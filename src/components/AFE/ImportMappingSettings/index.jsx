@@ -2,24 +2,35 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import dateTimezones from '../../../utils/dateTimezones';
 import fieldExpressions from '../../../utils/fieldExpressions';
 import utilityFunctions from '../../../utils/utilityFunctions';
 
+const useStyles = makeStyles(() => ({
+  modalContent: {
+    width: '70vw',
+  },
+}));
 const optionsHandler = (fieldId, fields) => {
   if (fieldId === 'expression') {
     const functionsField = fields.find(field => field.id === 'functions');
+    const extractField = fields.find(field => field.id === 'extract');
     const expressionField = fields.find(field => field.id === 'expression');
-    let x = '';
+    let expressionValue = '';
 
-    if (expressionField.value) x = expressionField.value;
+    if (expressionField.value) expressionValue = expressionField.value;
+
+    if (extractField.value) expressionValue += extractField.value;
 
     if (functionsField.value)
-      return (
-        x + utilityFunctions.getHandlebarHelperFormat(functionsField.value)
+      expressionValue += utilityFunctions.getHandlebarHelperFormat(
+        functionsField.value
       );
+
+    return expressionValue;
   }
 
   return null;
@@ -27,7 +38,8 @@ const optionsHandler = (fieldId, fields) => {
 
 export default function ImportMappingSettings(props) {
   const { title, value, onClose, extractFields } = props;
-  const getDataType = () => {
+  const classes = useStyles();
+  const getDefaultDataType = () => {
     if (
       value.extractDateFormat ||
       value.extractDateTimezone ||
@@ -78,7 +90,7 @@ export default function ImportMappingSettings(props) {
         name: 'dataType',
         type: 'select',
         label: 'Data Type:',
-        defaultValue: getDataType(),
+        defaultValue: getDefaultDataType(),
         options: [
           {
             items: [
@@ -165,8 +177,8 @@ export default function ImportMappingSettings(props) {
         ],
       },
       {
-        id: 'field',
-        name: 'field',
+        id: 'extract',
+        name: 'extract',
         type: 'select',
         label: 'Field:',
         options: [
@@ -187,7 +199,7 @@ export default function ImportMappingSettings(props) {
       {
         id: 'expression',
         name: 'expression',
-        refreshOptionsOnChangesTo: ['functions'],
+        refreshOptionsOnChangesTo: ['functions', 'extract'],
         type: 'text',
         label: 'Expression:',
         defaultValue: getDefaultExpression(),
@@ -421,7 +433,7 @@ export default function ImportMappingSettings(props) {
   return (
     <Dialog open maxWidth={false}>
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent style={{ width: '70vw' }}>
+      <DialogContent className={classes.modalContent}>
         <DynaForm fieldMeta={fieldMeta} optionsHandler={optionsHandler}>
           <Button
             onClick={() => {

@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 
 const useStyles = makeStyles(theme => ({
@@ -35,11 +36,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.selectFormControl.color,
     padding: '2px 8px',
     fontSize: 16,
-    // TODO
-    // '&:focus': {
-    //   borderColor: theme.selectFormControl.hover,
-    //   color: theme.selectFormControl.text,
-    // },
   },
   suggestions: {
     listStyle: 'none',
@@ -117,25 +113,7 @@ export default function DynaAutoSuggest(props) {
   const handleChange = e => {
     const userInput = e.currentTarget.value;
     // Filter our suggestions that don't contain the user's input
-    const opt2 = [
-      'a',
-      'aa',
-      'aaa',
-      'aaade',
-      'aaaee',
-      'aawee',
-      'aedfv',
-      'accc',
-      'apppp',
-      'a12',
-      'a33',
-      'a245',
-      'a2345',
-      'a876',
-      'a786',
-      'a234tg',
-    ];
-    const filteredSuggestions = opt2.filter(
+    const filteredSuggestions = options.filter(
       suggestion =>
         suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
@@ -227,8 +205,8 @@ export default function DynaAutoSuggest(props) {
   }
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.root}>
-      <input
+    <FormControl disabled={disabled} className={classes.root}>
+      <Input
         ref={wrapperRef}
         placeholder={placeholder}
         type="text"

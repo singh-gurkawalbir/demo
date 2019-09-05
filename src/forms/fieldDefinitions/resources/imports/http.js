@@ -105,10 +105,6 @@ export default {
       },
     ],
   },
-  'http.mapping': {
-    type: 'dynarestmapping',
-    label: 'Mapping Dummy',
-  },
   'http.relativeUri': {
     type: 'text',
     label: 'Relative URI',

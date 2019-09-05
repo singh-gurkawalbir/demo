@@ -86,7 +86,7 @@ function reducer(state, action) {
       }
 
       return [...state, Object.assign({}, lastRowData, { [field]: value })];
-    case 'updateMapping':
+    case 'updateSettings':
       setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
       if (state[index]) {
@@ -105,6 +105,7 @@ function reducer(state, action) {
 }
 
 export default function RestImportMapping(props) {
+  // generateFields and extractFields are passed as an array of field names
   const { label, onClose, mappings, generateFields, extractFields } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const classes = useStyles();
@@ -113,7 +114,7 @@ export default function RestImportMapping(props) {
     mappings.fields || []
   );
   const mappingsTmp = deepClone(state);
-  const onSubmit = () => {
+  const handleSubmit = () => {
     const mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
@@ -157,7 +158,7 @@ export default function RestImportMapping(props) {
     }
 
     dispatchLocalAction({
-      type: 'updateMapping',
+      type: 'updateSettings',
       index: row,
       value: settings,
       setChangeIdentifier,
@@ -231,7 +232,7 @@ export default function RestImportMapping(props) {
                         }}
                       />
                     </Grid>
-                    <Grid item key="arr.id">
+                    <Grid item key="settings">
                       <DynaMappingSettings
                         id={mapping.index}
                         onSave={handleSettingsSave}
@@ -267,7 +268,7 @@ export default function RestImportMapping(props) {
           Cancel
         </Button>
         <Button
-          onClick={onSubmit}
+          onClick={handleSubmit}
           variant="contained"
           size="small"
           color="secondary">
