@@ -33,7 +33,7 @@
     "precommit": "neutrino test --no-cache --require dotenv/config && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config",
     "styleguide-build": "neutrino styleguide:build --require dotenv/config",
-    "genscript": "babel-node /Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/metaScript.js"
+    "genscript": "node -r babel-register /Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/metaScript.js"
   },
   "dependencies": {
     "@material-ui/core": "4.3.2",

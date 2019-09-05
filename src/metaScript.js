@@ -10,29 +10,45 @@ import connections from './forms/definitions/connections';
 
 // const data = fileread(join(__dirname, '..', schemaFile));
 const convertFieldsToFieldReferneceObj = (acc, curr) => {
-  if (!curr.fieldId && !curr.id) {
-    throw new Error('No fieldId or id', curr);
+  if (!curr.fieldId && !curr.id && !curr.formId) {
+    throw new Error('No fieldId , id or formId', curr);
   }
 
   if (curr.fieldId) acc[curr.fieldId] = curr;
-  else acc[curr.id] = curr;
+  else if (curr.id) acc[curr.id] = curr;
+  else if (curr.formId) acc[curr.formId] = curr;
+  else throw new Error('could not find any of the props');
 
+  // !curr.formId
   return acc;
+};
+
+const refGeneration = field => {
+  const { fieldId, id, formId } = field;
+
+  if (fieldId) return fieldId;
+  else if (id) return id;
+  else if (formId) return formId;
+  throw new Error('cant generate reference');
 };
 
 // get a particular component
 const generateFieldReferences = data => {
-  console.log(`comp data ${JSON.stringify(data)}`);
   const finalData = deepClone(data);
 
+  // if there are no fields or fieldSets
+  if (!data.fields || !data.fieldSets)
+    throw new Error(
+      `something wrong with meta no fields ${JSON.stringify(data)}`
+    );
   finalData.fieldReferences = data.fields.reduce(
     convertFieldsToFieldReferneceObj,
     {}
   );
   finalData.layout = {};
-  finalData.layout.fields = data.fields.map(field =>
-    field.fieldId ? field.fieldId : field.id
-  );
+
+  // formId
+  finalData.layout.fields = data.fields.map(refGeneration);
 
   if (finalData.fieldSets) {
     finalData.fieldSets.forEach(fieldSet => {
@@ -43,18 +59,18 @@ const generateFieldReferences = data => {
     });
     finalData.layout.containers = finalData.fieldSets.map(fieldSet => ({
       type: 'collapse',
+      // collapse true false
       fieldSets: [
         {
+          collapse: fieldSet.collapse,
           label: fieldSet.heading,
-          fields: fieldSet.fields.map(field =>
-            field.fieldId ? field.fieldId : field.id
-          ),
+          fields: fieldSet.fields.map(refGeneration),
         },
       ],
     }));
   }
 
-  finalData;
+  return finalData;
 };
 
 const basePath =
@@ -62,9 +78,13 @@ const basePath =
 
 Object.keys(connections).forEach(key => {
   const data = generateFieldReferences(connections[key]);
-  let transferedMeta = JSON.stringify(data, (key, val) =>
-    typeof val === 'function' ? `${val}` : val
-  );
+  let transferedMeta = JSON.stringify(data, (key, val) => {
+    if (typeof val === 'function') {
+      return val;
+    }
+
+    return val;
+  });
 
   transferedMeta = `export default ${transferedMeta};`;
 
