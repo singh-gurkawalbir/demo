@@ -88,13 +88,6 @@ describe('Netsuite', () => {
           filterKey: 'dateField',
         })
       );
-      // connectionId,
-      //   metadataType,
-      //   mode,
-      //   filterKey,
-      //   recordType,
-      //   selectField,
-      //   addInfo,
 
       expect(requestReducer).toMatchObject({
         netsuite: {
@@ -818,7 +811,7 @@ describe('Netsuite', () => {
         undefined,
         actions.metadata.request({
           connectionId: '1234',
-          metadataType: '/searchFilters',
+          metadataType: '/searchMetadata',
           mode: 'webservices',
           filterKey: 'savedSearches',
         })
