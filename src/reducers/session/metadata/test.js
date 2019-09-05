@@ -13,7 +13,7 @@ import actions from '../../../actions';
  * Different metadata modes to  consider:
  * Suitescript and  Websearches
  */
-describe('Netsuite', () => {
+describe('NetSuite', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
@@ -351,7 +351,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'recordTypes',
           '1234',
           'suitescript'
@@ -366,7 +366,7 @@ describe('Netsuite', () => {
               recordTypes: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -382,7 +382,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'savedSearches',
           '1234',
           'suitescript'
@@ -397,7 +397,7 @@ describe('Netsuite', () => {
               savedSearches: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -413,7 +413,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'sublists',
           '1234',
           'suitescript'
@@ -428,7 +428,7 @@ describe('Netsuite', () => {
               sublists: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -449,7 +449,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -465,7 +465,7 @@ describe('Netsuite', () => {
               '/searchFilters-dateField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -486,7 +486,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -502,7 +502,7 @@ describe('Netsuite', () => {
               '/searchFilters-booleanField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -952,7 +952,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'recordTypes',
           '1234',
           'webservices'
@@ -966,7 +966,7 @@ describe('Netsuite', () => {
               recordTypes: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -988,7 +988,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchMetadata',
           '1234',
           'webservices',
@@ -1003,7 +1003,7 @@ describe('Netsuite', () => {
               '/searchMetadata-savedSearches': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -1025,7 +1025,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchMetadata',
           '1234',
           'webservices',
@@ -1040,7 +1040,7 @@ describe('Netsuite', () => {
               '/searchMetadata-dateField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -1062,7 +1062,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -1078,7 +1078,7 @@ describe('Netsuite', () => {
               '/searchFilters-booleanField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
