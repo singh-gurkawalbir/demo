@@ -33,21 +33,21 @@ export default {
     // Name of the component ⚛️ / style sheet
     MuiTypography: {
       body1: {
-        fontSize: '18px',
-        lineHeight: '27px',
+        fontSize: '17px',
+        lineHeight: '22px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       body2: {
         fontSize: '15px',
-        lineHeight: '22px',
+        lineHeight: '19px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       h1: {
         fontSize: '48px',
         fontFamily: 'Roboto300',
-        lineHeight: '50px',
+        lineHeight: '53px',
         letterSpacing: '-0.7px',
       },
       h2: {
@@ -59,37 +59,39 @@ export default {
       h3: {
         fontSize: '24px',
         fontFamily: 'Roboto300',
-        lineHeight: '26px',
+        lineHeight: '28px',
         letterSpacing: 'normal',
       },
       h4: {
         fontSize: '20px',
-        lineHeight: '23px',
+        lineHeight: '25px',
         letterSpacing: 'normal',
       },
       h5: {
-        fontSize: '18px',
-        lineHeight: '16px',
+        fontSize: '17px',
+        lineHeight: '22px',
         letterSpacing: 'normal',
       },
       h6: {
-        fontSize: '16px',
-        lineHeight: '20px',
+        fontSize: '15px',
+        lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       subtitle1: {
-        fontSize: '22px',
-        lineHeight: '30px',
+        fontSize: '18px',
+        lineHeight: '23px',
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '16px',
-        lineHeight: '24px',
+        fontSize: '15px',
+        lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       overline: {
         fontSize: '12px',
-        lineHeight: '20px',
+        lineHeight: '16px',
         letterSpacing: '1px',
       },
     },
