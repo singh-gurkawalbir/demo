@@ -6,6 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import clsx from 'clsx';
 import getRenderer from './renderer';
 import ButtonGroup from '../ButtonGroup';
 
@@ -36,11 +37,13 @@ export default class DynaForm extends Component {
   render() {
     const {
       classes,
+      className,
       children,
       editMode,
       fieldMeta,
       resourceId,
       resourceType,
+      full,
       ...rest
     } = this.props;
     const { fields, fieldSets } = fieldMeta;
@@ -52,7 +55,7 @@ export default class DynaForm extends Component {
 
     return (
       <Form {...rest} renderer={renderer}>
-        <div className={classes.fieldContainer}>
+        <div className={clsx(classes.fieldContainer, className)}>
           {fields && <FormFragment defaultFields={fields} />}
           {fieldSets &&
             fieldSets.map(set => (

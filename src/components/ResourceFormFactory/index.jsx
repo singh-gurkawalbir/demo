@@ -52,8 +52,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function ActionsFactory(props) {
-  const { resourceType, isNew, connectionType } = props;
+  const { resourceType, isNew, connectionType, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
+
+  if (variant === 'view') {
+    return <DynaForm {...props} />;
+  }
 
   // When action buttons is provided in the metadata then we generate the action buttons for you
   if (actions) {
@@ -147,11 +151,11 @@ export const ResourceFormFactory = props => {
 
   return (
     <ActionsFactory
+      onCancel={() => setCount(count => count + 1)}
       {...props}
       {...formState}
       connectionType={connectionType}
       optionsHandler={optionsHandler}
-      onCancel={() => setCount(count => count + 1)}
       key={count}
     />
   );
