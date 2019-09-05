@@ -147,3 +147,11 @@ export const JOB_STATUS = Object.freeze({
   RUNNING: 'running',
   RETRYING: 'retrying',
 });
+export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
+  'ashares',
+  'licenses',
+  'preferences',
+  'profile',
+  'published',
+  'shared/ashares',
+];
