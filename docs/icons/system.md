@@ -25,8 +25,10 @@ const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').de
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
+const SettingsIcon = require('../../src/components/icons/SettingsIcon').default;
 const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
+const StacksIcon = require('../../src/components/icons/StacksIcon').default;
 const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon').default;
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
@@ -35,15 +37,14 @@ const sizes = [24, 48];
 const containerStyle = () => {
   return {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     flexWrap: 'wrap',
-    marginBottom: '15px',
+    marginBottom: '25px',
   };
 };
 const svgFontSizes = (size) => {
   return{
     fontSize: size,
+    marginRight: 10,
   };
 };
 
@@ -76,6 +77,8 @@ const svgFontSizes = (size) => {
       <NotificationsIcon style={svgFontSizes(size)} />
       <PermissionsManageIcon style={svgFontSizes(size)} />
       <ResourcesIcon style={svgFontSizes(size)} />
+      <SettingsIcon style={svgFontSizes(size)} />
+      <StacksIcon style={svgFontSizes(size)} />
       <SubtractIcon style={svgFontSizes(size)} />
       <SupportIcon style={svgFontSizes(size)} />
       <TransferOrderIcon style={svgFontSizes(size)} />
