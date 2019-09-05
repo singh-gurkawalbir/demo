@@ -29,7 +29,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Netsuite', value: 'netsuite' },
+          { label: 'NetSuite', value: 'netsuite' },
           { label: 'Salesforce', value: 'salesforce' },
           { label: 'Ftp', value: 'ftp' },
           { label: 'S3', value: 's3' },
@@ -117,7 +117,7 @@ export default {
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
-          { label: 'Netsuite', value: 'netsuite' },
+          { label: 'NetSuite', value: 'netsuite' },
           { label: 'Newegg', value: 'newegg' },
           { label: 'Newrelic', value: 'newrelic' },
           { label: 'Okta', value: 'okta' },
@@ -303,6 +303,10 @@ export default {
   },
   'rdbms.password': {
     type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
     label: 'Rdbms password',
   },
   'rdbms.ssl.ca': {
@@ -544,7 +548,10 @@ export default {
   },
   'rest.oauth.password': {
     type: 'text',
+    inputType: 'password',
     label: 'Rest oauth password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   'rest.refreshTokenMethod': {
     type: 'select',
@@ -876,6 +883,10 @@ export default {
   },
   'http.auth.oauth.password': {
     type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
     label: 'Http auth oauth password',
   },
   'http.auth.token.token': {
@@ -1293,6 +1304,8 @@ export default {
   'as2.partnerStationInfo.auth.basic.password': {
     type: 'text',
     label: 'Password:',
+    inputType: 'password',
+    defaultValue: '',
     required: true,
     visibleWhen: [
       {
@@ -1698,51 +1711,55 @@ export default {
   },
   'netsuite.account': {
     type: 'netsuiteuserroles',
-    label: 'Netsuite account',
+    label: 'NetSuite account',
   },
   'netsuite.tokenId': {
     type: 'text',
-    label: 'Netsuite token Id',
+    label: 'NetSuite token Id',
   },
   'netsuite.tokenSecret': {
     type: 'text',
-    label: 'Netsuite token Secret',
+    label: 'NetSuite token Secret',
   },
   'netsuite.environment': {
     type: 'netsuiteuserroles',
-    label: 'Netsuite environment',
+    label: 'NetSuite environment',
   },
   'netsuite.roleId': {
     type: 'netsuiteuserroles',
-    label: 'Netsuite role Id',
+    label: 'NetSuite role Id',
   },
   'netsuite.email': {
     type: 'text',
-    label: 'Netsuite email',
+    label: 'NetSuite email',
   },
   'netsuite.password': {
     type: 'text',
-    label: 'Netsuite password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    inputType: 'password',
+    label: 'NetSuite password',
   },
   'netsuite.requestLevelCredentials': {
     type: 'checkbox',
-    label: 'Netsuite request Level Credentials',
+    label: 'NetSuite request Level Credentials',
   },
   'netsuite.dataCenterURLs': {
     type: 'text',
-    label: 'Netsuite data Center URLs',
+    label: 'NetSuite data Center URLs',
   },
   'netsuite.accountName': {
     type: 'text',
-    label: 'Netsuite account Name',
+    label: 'NetSuite account Name',
   },
   'netsuite.roleName': {
     type: 'text',
-    label: 'Netsuite role Name',
+    label: 'NetSuite role Name',
   },
   'netsuite.concurrencyLevelRESTlet': {
     type: 'text',
-    label: 'Netsuite concurrency Level RESTlet',
+    label: 'NetSuite concurrency Level RESTlet',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1751,7 +1768,7 @@ export default {
   },
   'netsuite.concurrencyLevelWebServices': {
     type: 'text',
-    label: 'Netsuite concurrency Level Web Services',
+    label: 'NetSuite concurrency Level Web Services',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1800,7 +1817,7 @@ export default {
   },
   'netsuite.wsdlVersion': {
     type: 'radiogroup',
-    label: 'Netsuite wsdl Version',
+    label: 'NetSuite wsdl Version',
     options: [
       {
         items: [
@@ -1812,7 +1829,7 @@ export default {
   },
   'netsuite.applicationId': {
     type: 'text',
-    label: 'Netsuite application Id',
+    label: 'NetSuite application Id',
   },
   // #endregion netsuite
   // #region netSuiteDistributedAdaptor
@@ -1976,6 +1993,10 @@ export default {
   },
   'mongodb.password': {
     type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
     label: 'Mongodb password',
   },
   'mongodb.replicaSet': {
