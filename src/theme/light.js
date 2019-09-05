@@ -83,15 +83,15 @@ export default {
           color: colors.celigoAccent1,
         },
         '&:hover': {
-          color: colors.celigoAccent3,
+          color: colors.celigoAccent2,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
         },
       },
       outlinedPrimary: {
-        backgroundColor: colors.celigoAccent3,
-        borderColor: colors.celigoAccent3,
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
         color: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
@@ -109,7 +109,7 @@ export default {
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoNeutral6,
+        borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -138,12 +138,12 @@ export default {
         },
       },
       containedPrimary: {
-        backgroundColor: colors.celigoAccent3,
-        borderColor: colors.celigoAccent3,
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
         color: colors.celigoWhite,
         '&:hover': {
-          backgroundColor: colors.celigoAccent4,
-          borderColor: colors.celigoAccent4,
+          backgroundColor: colors.celigoAccent3,
+          borderColor: colors.celigoAccent3,
           color: colors.celigoWhite,
         },
         '&:focus': {
@@ -157,12 +157,12 @@ export default {
         },
       },
       containedSecondary: {
-        borderColor: colors.celigoNeutral6,
+        borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
