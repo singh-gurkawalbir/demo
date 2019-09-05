@@ -1,10 +1,10 @@
 import { useState, Fragment } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import BuildOutlined from '@material-ui/icons/BuildOutlined';
-import ImportMappingSettingsDialog from '../../../components/AFE/ImportMappingSettings/Dialog';
+import ImportMappingSettings from '../../../components/AFE/ImportMappingSettings';
 
 export default function DynaMappingSettings(props) {
-  const { id, onSave, value } = props;
+  const { id, onSave, extractFields, value } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -21,10 +21,11 @@ export default function DynaMappingSettings(props) {
   return (
     <Fragment>
       {showEditor && (
-        <ImportMappingSettingsDialog
+        <ImportMappingSettings
           title="Settings"
           value={value}
           onClose={handleClose}
+          extractFields={extractFields}
         />
       )}
       <IconButton

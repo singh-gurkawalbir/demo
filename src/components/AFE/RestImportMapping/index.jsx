@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     width: '70vw',
   },
   container: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   root: {
@@ -67,6 +67,7 @@ function reducer(state, action) {
               1,
               inputValue.length - 2
             );
+            objCopy.hardCodedValueTmp = inputValue;
           } else {
             delete objCopy.hardCodedValue;
             objCopy.extract = inputValue;
@@ -74,6 +75,8 @@ function reducer(state, action) {
         } else {
           objCopy[field] = inputValue;
         }
+
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
         return [
           ...state.slice(0, index),
@@ -83,7 +86,7 @@ function reducer(state, action) {
       }
 
       return [...state, Object.assign({}, lastRowData, { [field]: value })];
-    case 'updateSettings':
+    case 'updateMapping':
       setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
       if (state[index]) {
@@ -111,12 +114,14 @@ export default function RestImportMapping(props) {
   );
   const mappingsTmp = deepClone(state);
   const onSubmit = () => {
-    const mappings = state.map(({ index, ...others }) => others);
+    const mappings = state.map(
+      ({ index, hardCodedValueTmp, ...others }) => others
+    );
 
     onClose(true, mappings);
   };
 
-  const handleUpdate = (row, event, field) => {
+  const handleFieldUpdate = (row, event, field) => {
     const { value } = event.target;
 
     dispatchLocalAction({
@@ -138,11 +143,21 @@ export default function RestImportMapping(props) {
 
     obj.index = index;
 
+    if (obj.hardCodedValue) {
+      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
+    }
+
     return obj;
   });
-  const updateSettings = (row, settings) => {
+  const handleSettingsSave = (row, settings) => {
+    const settingsCopy = { ...settings };
+
+    if (settingsCopy.hardCodedValue) {
+      settingsCopy.hardCodedValueTmp = `"${settingsCopy.hardCodedValue}"`;
+    }
+
     dispatchLocalAction({
-      type: 'updateSettings',
+      type: 'updateMapping',
       index: row,
       value: settings,
       setChangeIdentifier,
@@ -187,16 +202,16 @@ export default function RestImportMapping(props) {
               spacing={2}
               key={changeIdentifier}
               direction="column">
-              {tableData.map(arr => (
-                <Grid item className={classes.rowContainer} key={arr.index}>
+              {tableData.map(mapping => (
+                <Grid item className={classes.rowContainer} key={mapping.index}>
                   <Grid container direction="row" spacing={2}>
                     <Grid item xs>
                       <DynaAutoSuggest
-                        value={arr.extract || arr.hardCodedValue}
+                        value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
-                        onFieldChange={(id, evt) => {
-                          handleUpdate(
-                            arr.index,
+                        onBlur={(id, evt) => {
+                          handleFieldUpdate(
+                            mapping.index,
                             { target: { value: evt } },
                             'extract'
                           );
@@ -205,11 +220,11 @@ export default function RestImportMapping(props) {
                     </Grid>
                     <Grid item xs>
                       <DynaAutoSuggest
-                        value={arr.generate}
+                        value={mapping.generate}
                         options={generateFields}
-                        onFieldChange={(id, evt) => {
-                          handleUpdate(
-                            arr.index,
+                        onBlur={(id, evt) => {
+                          handleFieldUpdate(
+                            mapping.index,
                             { target: { value: evt } },
                             'generate'
                           );
@@ -218,16 +233,17 @@ export default function RestImportMapping(props) {
                     </Grid>
                     <Grid item key="arr.id">
                       <DynaMappingSettings
-                        id={arr.index}
-                        onSave={updateSettings}
-                        value={arr}
+                        id={mapping.index}
+                        onSave={handleSettingsSave}
+                        value={mapping}
+                        extractFields={extractFields}
                       />
                     </Grid>
                     <Grid item key="edit_button">
                       <IconButton
                         aria-label="delete"
                         onClick={() => {
-                          handledelete(arr.index);
+                          handledelete(mapping.index);
                         }}
                         key="settings"
                         className={classes.margin}>

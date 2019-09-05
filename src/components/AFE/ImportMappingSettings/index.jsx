@@ -25,9 +25,8 @@ const optionsHandler = (fieldId, fields) => {
   return null;
 };
 
-export default function ImportMappingSettingsDialog(props) {
-  const { value, onClose } = props;
-  const { extractFields = ['billing_address', 'name', 'age'] } = props;
+export default function ImportMappingSettings(props) {
+  const { title, value, onClose, extractFields } = props;
   const getDataType = () => {
     if (
       value.extractDateFormat ||
@@ -200,11 +199,11 @@ export default function ImportMappingSettingsDialog(props) {
         ],
       },
       {
-        id: 'failRecord',
-        name: 'failRecord',
+        id: 'standardAction',
+        name: 'standardAction',
         type: 'radiogroup',
         defaultValue: getDefaultValue(),
-        label: 'Action to take if unique match not found:',
+        label: 'Action to take if value not found:',
         options: [
           {
             items: [
@@ -223,7 +222,49 @@ export default function ImportMappingSettingsDialog(props) {
             ],
           },
         ],
+        visibleWhen: [
+          {
+            field: 'restImportFieldMappingSettings',
+            is: ['standard'],
+          },
+          {
+            field: 'restImportFieldMappingSettings',
+            is: ['multifield'],
+          },
+        ],
       },
+      {
+        id: 'hardCodedAction',
+        name: 'hardCodedAction',
+        type: 'radiogroup',
+        defaultValue: getDefaultValue(),
+        label: 'Options:',
+        options: [
+          {
+            items: [
+              {
+                label: `Use Empty String as hardcoded Value`,
+                value: 'useEmptyString',
+              },
+              {
+                label: 'Use Null as hardcoded Value',
+                value: 'useNull',
+              },
+              {
+                label: 'Use Custom Value',
+                value: 'default',
+              },
+            ],
+          },
+        ],
+        visibleWhen: [
+          {
+            field: 'restImportFieldMappingSettings',
+            is: ['hardCoded'],
+          },
+        ],
+      },
+
       {
         id: 'default',
         name: 'default',
@@ -233,7 +274,11 @@ export default function ImportMappingSettingsDialog(props) {
         defaultValue: value.default,
         visibleWhen: [
           {
-            field: 'failRecord',
+            field: 'standardAction',
+            is: ['default'],
+          },
+          {
+            field: 'hardCodedAction',
             is: ['default'],
           },
         ],
@@ -312,23 +357,24 @@ export default function ImportMappingSettingsDialog(props) {
       },
     ],
   };
-  const save = formVal => {
-    const mappingSettingsTmp = { ...formVal };
+  const handleSubmit = formVal => {
+    const mappingSettingsTmp = {};
 
     mappingSettingsTmp.generate = value.generate;
-    mappingSettingsTmp.extract = value.extract;
 
-    if (mappingSettingsTmp.dataType !== 'date') {
-      delete mappingSettingsTmp.exportDateTimeZone;
-      delete mappingSettingsTmp.exportDateFormat;
-      delete mappingSettingsTmp.importDateFormat;
-      delete mappingSettingsTmp.importDateTimeZone;
-    } else {
+    if (formVal.dataType === 'date') {
       mappingSettingsTmp.dataType = 'string';
+      mappingSettingsTmp.exportDateTimeZone = formVal.exportDateTimeZone;
+      mappingSettingsTmp.exportDateFormat = formVal.exportDateFormat;
+      mappingSettingsTmp.importDateFormat = formVal.importDateFormat;
+      mappingSettingsTmp.importDateTimeZone = formVal.importDateTimeZone;
+    } else if (formVal.dataType) {
+      mappingSettingsTmp.dataType = formVal.dataType;
     }
 
-    if (mappingSettingsTmp.restImportFieldMappingSettings === 'hardCoded') {
-      switch (mappingSettingsTmp.failRecord) {
+    if (formVal.restImportFieldMappingSettings === 'hardCoded') {
+      // in case of hardcoded value, we dont save extract property
+      switch (formVal.hardCodedAction) {
         case 'useEmptyString':
           mappingSettingsTmp.hardCodedValue = '';
           break;
@@ -336,15 +382,18 @@ export default function ImportMappingSettingsDialog(props) {
           mappingSettingsTmp.hardCodedValue = null;
           break;
         case 'default':
-          mappingSettingsTmp.hardCodedValue = mappingSettingsTmp.default;
+          mappingSettingsTmp.hardCodedValue = formVal.default;
           break;
         default:
-          delete mappingSettingsTmp.hardCodedValue;
+      }
+    } else {
+      if (formVal.restImportFieldMappingSettings === 'multifield') {
+        mappingSettingsTmp.extract = formVal.expression;
+      } else {
+        mappingSettingsTmp.extract = value.extract;
       }
 
-      delete mappingSettingsTmp.extract;
-    } else {
-      switch (mappingSettingsTmp.failRecord) {
+      switch (formVal.standardAction) {
         case 'useEmptyString':
           mappingSettingsTmp.default = '';
           break;
@@ -352,42 +401,26 @@ export default function ImportMappingSettingsDialog(props) {
           mappingSettingsTmp.default = null;
           break;
         case 'default':
-          mappingSettingsTmp.default = mappingSettingsTmp.default;
+          mappingSettingsTmp.default = formVal.default;
           break;
         default:
-          delete mappingSettingsTmp.default;
       }
-    }
-
-    if (mappingSettingsTmp.restImportFieldMappingSettings === 'multifield') {
-      mappingSettingsTmp.extract = mappingSettingsTmp.expression;
-    }
-
-    if (!mappingSettingsTmp.dataType) {
-      delete mappingSettingsTmp.dataType;
     }
 
     const lookups = {};
 
-    if (mappingSettingsTmp.restImportFieldMappingSettings === 'lookup') {
-      mappingSettingsTmp.lookups.forEach(obj => {
+    if (formVal.restImportFieldMappingSettings === 'lookup') {
+      formVal.lookups.forEach(obj => {
         lookups[obj.export] = obj.import;
       });
     }
-
-    delete mappingSettingsTmp.restImportFieldMappingSettings;
-    delete mappingSettingsTmp.lookups;
-    delete mappingSettingsTmp.failRecord;
-    delete mappingSettingsTmp.field;
-    delete mappingSettingsTmp.functions;
-    delete mappingSettingsTmp.expression;
 
     onClose(true, mappingSettingsTmp);
   };
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle>Settings</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent style={{ width: '70vw' }}>
         <DynaForm fieldMeta={fieldMeta} optionsHandler={optionsHandler}>
           <Button
@@ -396,7 +429,7 @@ export default function ImportMappingSettingsDialog(props) {
             }}>
             Cancel
           </Button>
-          <DynaSubmit onClick={save}>Save</DynaSubmit>
+          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
         </DynaForm>
       </DialogContent>
     </Dialog>

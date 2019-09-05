@@ -35,6 +35,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.selectFormControl.color,
     padding: '2px 8px',
     fontSize: 16,
+    // TODO
+    // '&:focus': {
+    //   borderColor: theme.selectFormControl.hover,
+    //   color: theme.selectFormControl.text,
+    // },
   },
   suggestions: {
     listStyle: 'none',
@@ -68,6 +73,7 @@ export default function DynaAutoSuggest(props) {
     value,
     placeholder,
     onFieldChange,
+    onBlur,
     options = [],
   } = props;
   const wrapperRef = useRef(null);
@@ -108,10 +114,28 @@ export default function DynaAutoSuggest(props) {
     };
   }, [handleClickOutside]);
 
-  const onChange = e => {
+  const handleChange = e => {
     const userInput = e.currentTarget.value;
     // Filter our suggestions that don't contain the user's input
-    const filteredSuggestions = options.filter(
+    const opt2 = [
+      'a',
+      'aa',
+      'aaa',
+      'aaade',
+      'aaaee',
+      'aawee',
+      'aedfv',
+      'accc',
+      'apppp',
+      'a12',
+      'a33',
+      'a245',
+      'a2345',
+      'a876',
+      'a786',
+      'a234tg',
+    ];
+    const filteredSuggestions = opt2.filter(
       suggestion =>
         suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
@@ -124,7 +148,12 @@ export default function DynaAutoSuggest(props) {
       showSuggestions: true,
       userInput,
     });
-    onFieldChange(id, e.currentTarget.value);
+
+    if (onFieldChange) onFieldChange(id, e.currentTarget.value);
+  };
+
+  const handleBlur = () => {
+    onBlur(id, userInput);
   };
 
   // Event fired when the user clicks on a suggestion
@@ -140,7 +169,7 @@ export default function DynaAutoSuggest(props) {
   };
 
   // Event fired when the user presses a key down
-  const onKeyDown = e => {
+  const handleKeyDown = e => {
     const { activeSuggestion, filteredSuggestions } = state;
 
     // User pressed the enter key, update the input and close the
@@ -176,7 +205,7 @@ export default function DynaAutoSuggest(props) {
   if (showSuggestions && userInput) {
     if (filteredSuggestions.length) {
       suggestionsListComponent = (
-        <ul className={classes.suggestions}>
+        <ul key="suggestions" className={classes.suggestions}>
           {filteredSuggestions.map((suggestion, index) => {
             let className;
 
@@ -204,8 +233,9 @@ export default function DynaAutoSuggest(props) {
         placeholder={placeholder}
         type="text"
         className={classes.input}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         value={userInput}
       />
       {suggestionsListComponent}
