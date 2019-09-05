@@ -19,7 +19,7 @@ export default {
       ],
     },
     { fieldId: 'rest.headers' },
-    { fieldId: 'rest.relativeURI' },
+    { fieldId: 'rest.relativeuri' },
     {
       fieldId: 'rest.postBody',
       visibleWhen: [
@@ -127,6 +127,7 @@ export default {
       collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
+
     {
       header: 'Hooks (Optional, Developers Only)',
       collapsed: true,

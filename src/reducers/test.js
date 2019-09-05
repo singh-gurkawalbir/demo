@@ -155,6 +155,32 @@ describe('global selectors', () => {
       state = reducer(state, actions.api.complete('/exports', 'POST'));
       expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
     });
+    test(`shouldn't re-add the forward slash in the resourceStatus selector to determine comm status for non resource calls`, () => {
+      let state = reducer(
+        {},
+        actions.api.request(
+          '/processor/handlebars/',
+          'POST',
+          'some message',
+          true
+        )
+      );
+
+      state = reducer(
+        state,
+        actions.api.retry('/processor/handlebars/', 'POST')
+      );
+      // with resource starting with forward slash
+      expect(
+        selectors.resourceStatus(state, '/processor/handlebars/', 'POST')
+          .retryCount
+      ).toBe(1);
+      // with resource starting without forward slash
+      expect(
+        selectors.resourceStatus(state, 'processor/handlebars/', 'POST')
+          .retryCount
+      ).toBe(1);
+    });
   });
 });
 describe('authentication selectors', () => {
@@ -274,7 +300,7 @@ describe('Reducers in the root reducer', () => {
     const state = reducer(someInitialState, actions.auth.clearStore());
 
     expect(state).toEqual({
-      app: { count: 1 },
+      app: { drawerOpened: true, count: 1 },
       auth: {
         commStatus: COMM_STATES.LOADING,
         initialized: false,

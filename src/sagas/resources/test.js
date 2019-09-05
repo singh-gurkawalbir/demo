@@ -215,14 +215,28 @@ availableResources.forEach(type => {
         actions.resource.requestCollection(type)
       );
       const path = `/${type}`;
-      const mockCollection = [{ id: 1 }, { id: 2 }];
+      let mockCollection = [{ id: 1 }, { id: 2 }];
+      let mockSharedStacks = [{ id: 3 }, { id: 4 }];
+      let effect;
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
-      const effect = saga.next(mockCollection).value;
+      if (type === 'stacks') {
+        expect(saga.next(mockCollection).value).toEqual(
+          call(apiCallWithRetry, { path: '/shared/stacks' })
+        );
+        mockSharedStacks = mockSharedStacks.map(stack => ({
+          ...stack,
+          shared: true,
+        }));
+        mockCollection = [...mockCollection, ...mockSharedStacks];
+        effect = saga.next(mockSharedStacks).value;
+      } else {
+        effect = saga.next(mockCollection).value;
+      }
 
       expect(effect).toEqual(
         put(actions.resource.receivedCollection(type, mockCollection))

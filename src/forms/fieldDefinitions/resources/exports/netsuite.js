@@ -4,10 +4,11 @@ export default {
     label: 'Record type',
     mode: 'suitescript',
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.recordType,
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.recordType) ||
+      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -19,7 +20,11 @@ export default {
     label: 'Record type',
     mode: 'suitescript',
     defaultValue: r =>
-      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
+      (r &&
+        r.netsuite &&
+        r.netsuite.restlet &&
+        r.netsuite.restlet.recordType) ||
+      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -30,11 +35,12 @@ export default {
     label: 'Record type',
     mode: 'webservices',
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.searches &&
-      r.netsuite.searches[0] &&
-      r.netsuite.searches[0].recordType,
+      (r &&
+        r.netsuite &&
+        r.netsuite.searches &&
+        r.netsuite.searches[0] &&
+        r.netsuite.searches[0].recordType) ||
+      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',

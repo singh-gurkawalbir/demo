@@ -5,10 +5,7 @@ export default theme => ({
       minHeight: '100vh',
     },
     content: {
-      maxWidth: 1260,
-      padding: [[15, 30]],
-      margin: [[0, 0]],
-      display: 'block',
+      maxWidth: '100%',
     },
   },
   fontFamily: {
