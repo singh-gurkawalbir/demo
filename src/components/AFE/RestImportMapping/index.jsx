@@ -25,11 +25,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
   },
-  input: {
-    flex: '1 1 auto',
-    width: '100%',
-    marginRight: theme.spacing.double,
-  },
   rowContainer: {
     display: 'flex',
   },
