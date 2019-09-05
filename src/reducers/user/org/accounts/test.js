@@ -396,8 +396,7 @@ describe('account (ashares) reducers', () => {
             hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
-            // @Shiva, I was getting 61 days? Code looks good though. Not sure what is going on...
-            expiresInDays: 61,
+            expiresInDays: 60,
           })
         );
 
