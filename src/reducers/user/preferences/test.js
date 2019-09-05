@@ -261,7 +261,7 @@ describe('user reducers', () => {
     });
   });
 });
-describe('getAdditionalHeaders reducers', () => {
+describe('accountShareHeader reducers', () => {
   const testCases = [];
 
   PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.forEach(path => {
@@ -299,9 +299,7 @@ describe('getAdditionalHeaders reducers', () => {
   each(testCases).test(
     'should return %o for an %s when path is "%s"',
     (expected, userType, path, preferences) => {
-      expect(selectors.getAdditionalHeaders(preferences, path)).toEqual(
-        expected
-      );
+      expect(selectors.accountShareHeader(preferences, path)).toEqual(expected);
     }
   );
 });
