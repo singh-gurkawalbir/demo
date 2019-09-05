@@ -22,7 +22,7 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    marginBottom: '20px',
+    marginBottom: '24px',
     '& div': {
       marginRight: theme.spacing(8),
       color: colors.celigoNeutral6,
@@ -49,7 +49,7 @@ const styles = theme => ({
     },
   },
   title: {
-    marginBottom: '20px ',
+    marginBottom: '32px ',
   },
 });
 const other = {
@@ -97,19 +97,19 @@ function ColorPalette(props) {
 
   return (
     <Fragment>
-      <Typography variant="h3" className={classes.title}>
+      <Typography variant="h4" className={classes.title}>
         Celigo Accent Colors
       </Typography>
       <div className={classes.root}>
         <Tiles colors={accent} />
       </div>
-      <Typography variant="h3" className={classes.title}>
+      <Typography variant="h4" className={classes.title}>
         Celigo Neutral Colors
       </Typography>
       <div className={classes.root}>
         <Tiles colors={neutral} />
       </div>
-      <Typography variant="h3" className={classes.title}>
+      <Typography variant="h4" className={classes.title}>
         Celigo Other Colors
       </Typography>
       <div className={classes.root}>
