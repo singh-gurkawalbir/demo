@@ -29,7 +29,11 @@ describe('Connector metadata', () => {
     };
     const requestState = reducer(
       undefined,
-      actions.metadata.request('id', 'rest.headers', '1')
+      actions.metadata.request({
+        connectionId: 'id',
+        metadataType: 'rest.headers',
+        mode: '1',
+      })
     );
     const receivedState = reducer(
       requestState,
@@ -51,7 +55,11 @@ describe('Connector metadata', () => {
     const _integrationId = '123123';
     const requestState = reducer(
       undefined,
-      actions.metadata.request('id', 'rest.headers', '1')
+      actions.metadata.request({
+        connectionId: 'id',
+        metadataType: 'rest.headers',
+        mode: '1',
+      })
     );
     const receivedState = reducer(
       requestState,
@@ -68,7 +76,11 @@ describe('Connector metadata', () => {
     const _integrationId = '123123';
     const requestState = reducer(
       undefined,
-      actions.metadata.request('id', 'rest.headers', '1')
+      actions.metadata.request({
+        connectionId: 'id',
+        metadataType: 'rest.headers',
+        mode: '1',
+      })
     );
     const receivedState = reducer(
       requestState,

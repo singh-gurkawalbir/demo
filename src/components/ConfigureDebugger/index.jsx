@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ConfigureDebugger(props) {
-  const classes = useStyles(props);
+  const classes = useStyles();
   const { id, name, debugDate, onClose } = props;
   const [debugValue, setDebugValue] = useState(0);
   const [saveLabel, setSaveLabel] = useState('Save');
