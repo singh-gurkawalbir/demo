@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    marginBottom: '24px',
+    marginBottom: theme.spacing(3),
     '& div': {
       marginRight: theme.spacing(8),
       color: colors.celigoNeutral6,
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   title: {
-    marginBottom: '32px ',
+    marginBottom: theme.spacing(4),
   },
 }));
 const other = {
