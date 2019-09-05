@@ -8,10 +8,6 @@ export default {
     contrast: colors.celigoWhite,
     hover: colors.celigoWhite,
   },
-  editor: {
-    panelBackground: colors.celigoNeutral7,
-    panelBorder: colors.celigoNeutral6,
-  },
   selectFormControl: {
     color: colors.celigoNeutral1,
     background: colors.celigoNeutral8,
