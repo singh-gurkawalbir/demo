@@ -1,7 +1,7 @@
 import HandlebarsEditor from '../HandlebarsEditor';
 
 export default function HttpRequestBodyEditor(props) {
-  const { editorId, contentType, layout = 'row', rule, data } = props;
+  const { editorId, contentType, layout = 'compact', rule, data } = props;
   const mode = contentType || 'json';
 
   return (

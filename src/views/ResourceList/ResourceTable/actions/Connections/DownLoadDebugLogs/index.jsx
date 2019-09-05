@@ -7,7 +7,7 @@ import openExternalUrl from '../../../../../../utils/window';
 export default function DownLoadDebugLogs({ resource }) {
   let url = `/api/connections/${resource._id}/debug`;
   const additionalHeaders = useSelector(state =>
-    selectors.getAdditionalHeaders(state, url)
+    selectors.accountShareHeader(state, url)
   );
   const onDownloadDebugLogClick = () => {
     if (additionalHeaders && additionalHeaders['integrator-ashareid']) {

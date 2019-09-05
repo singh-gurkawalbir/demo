@@ -22,7 +22,7 @@ export default {
       default: colors.celigoNeutral6,
       editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
-      arrowAfter: colors.celigoNeutral7,
+      arrowAfter: colors.celigoNeutral6,
       // success:
       // warning: celigo.celigoWarning
       // error:

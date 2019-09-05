@@ -188,53 +188,53 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Netsuite searches',
+    label: 'NetSuite searches',
     validWhen: [],
   },
   'netsuite.metadata': {
     type: 'text',
-    label: 'Netsuite metadata',
+    label: 'NetSuite metadata',
   },
   'netsuite.selectoption': {
     type: 'text',
-    label: 'Netsuite selectoption',
+    label: 'NetSuite selectoption',
   },
   'netsuite.customFieldMetadata': {
     type: 'text',
-    label: 'Netsuite custom Field Metadata',
+    label: 'NetSuite custom Field Metadata',
   },
 
   'netsuite.statsOnly': {
     type: 'checkbox',
-    label: 'Netsuite stats Only',
+    label: 'NetSuite stats Only',
   },
   'netsuite.internalId': {
     type: 'text',
-    label: 'Netsuite internal Id',
+    label: 'NetSuite internal Id',
   },
   'netsuite.restlet.criteria.field': {
     type: 'text',
-    label: 'Netsuite restlet criteria field',
+    label: 'NetSuite restlet criteria field',
   },
   'netsuite.restlet.criteria.join': {
     type: 'text',
-    label: 'Netsuite restlet criteria join',
+    label: 'NetSuite restlet criteria join',
   },
   'netsuite.restlet.criteria.operator': {
     type: 'text',
-    label: 'Netsuite restlet criteria operator',
+    label: 'NetSuite restlet criteria operator',
   },
   'netsuite.restlet.criteria.searchValue': {
     type: 'text',
-    label: 'Netsuite restlet criteria search Value',
+    label: 'NetSuite restlet criteria search Value',
   },
   'netsuite.restlet.criteria.searchValue2': {
     type: 'text',
-    label: 'Netsuite restlet criteria search Value2',
+    label: 'NetSuite restlet criteria search Value2',
   },
   'netsuite.restlet.batchSize': {
     type: 'text',
-    label: 'Netsuite restlet batch Size',
+    label: 'NetSuite restlet batch Size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -243,7 +243,7 @@ export default {
   },
   'netsuite.restlet.hooks.batchSize': {
     type: 'text',
-    label: 'Netsuite restlet hooks batch Size',
+    label: 'NetSuite restlet hooks batch Size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -252,71 +252,71 @@ export default {
   },
   'netsuite.restlet.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'Netsuite restlet hooks pre Send file Internal Id',
+    label: 'NetSuite restlet hooks pre Send file Internal Id',
   },
   'netsuite.restlet.hooks.preSend.function': {
     type: 'text',
-    label: 'Netsuite restlet hooks pre Send function',
+    label: 'NetSuite restlet hooks pre Send function',
   },
   'netsuite.restlet.hooks.preSend.configuration': {
     type: 'text',
-    label: 'Netsuite restlet hooks pre Send configuration',
+    label: 'NetSuite restlet hooks pre Send configuration',
   },
   'netsuite.distributed.disabled': {
     type: 'checkbox',
-    label: 'Netsuite distributed disabled',
+    label: 'NetSuite distributed disabled',
   },
   'netsuite.distributed.qualifier': {
     type: 'text',
-    label: 'Netsuite distributed qualifier',
+    label: 'NetSuite distributed qualifier',
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'Netsuite distributed hooks pre Send file Internal Id',
+    label: 'NetSuite distributed hooks pre Send file Internal Id',
   },
   'netsuite.distributed.hooks.preSend.function': {
     type: 'text',
-    label: 'Netsuite distributed hooks pre Send function',
+    label: 'NetSuite distributed hooks pre Send function',
   },
   'netsuite.distributed.hooks.preSend.configuration': {
     type: 'text',
-    label: 'Netsuite distributed hooks pre Send configuration',
+    label: 'NetSuite distributed hooks pre Send configuration',
   },
   'netsuite.distributed.forceReload': {
     type: 'checkbox',
-    label: 'Netsuite distributed force Reload',
+    label: 'NetSuite distributed force Reload',
   },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',
-    label: 'Netsuite distributed io Environment',
+    label: 'NetSuite distributed io Environment',
   },
   'netsuite.distributed.lastSyncedDate': {
     type: 'text',
-    label: 'Netsuite distributed last Synced Date',
+    label: 'NetSuite distributed last Synced Date',
   },
   'netsuite.distributed.settings': {
     type: 'text',
-    label: 'Netsuite distributed settings',
+    label: 'NetSuite distributed settings',
   },
   'netsuite.getList[].typeId': {
     type: 'text',
-    label: 'Netsuite get List type Id',
+    label: 'NetSuite get List type Id',
   },
   'netsuite.getList.internalId': {
     type: 'text',
-    label: 'Netsuite get List internal Id',
+    label: 'NetSuite get List internal Id',
   },
   'netsuite.getList.externalId': {
     type: 'text',
-    label: 'Netsuite get List external Id',
+    label: 'NetSuite get List external Id',
   },
   'netsuite.searchPreferences.bodyFieldsOnly': {
     type: 'checkbox',
-    label: 'Netsuite search Preferences body Fields Only',
+    label: 'NetSuite search Preferences body Fields Only',
   },
   'netsuite.searchPreferences.pageSize': {
     type: 'text',
-    label: 'Netsuite search Preferences page Size',
+    label: 'NetSuite search Preferences page Size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -325,6 +325,6 @@ export default {
   },
   'netsuite.searchPreferences.returnSearchColumns': {
     type: 'checkbox',
-    label: 'Netsuite search Preferences return Search Columns',
+    label: 'NetSuite search Preferences return Search Columns',
   },
 };

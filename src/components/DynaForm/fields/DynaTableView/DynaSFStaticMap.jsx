@@ -56,14 +56,12 @@ export default function DynaSFStaticMap(props) {
   );
   const handleRefreshClick = () => {
     dispatch(
-      actions.metadata.request(
+      actions.metadata.request({
         connectionId,
-        'sObjectTypes',
-        null,
-        null,
+        metadataType: 'sObjectTypes',
         recordType,
-        selectField
-      )
+        selectField,
+      })
     );
   };
 
