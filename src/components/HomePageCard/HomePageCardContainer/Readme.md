@@ -16,6 +16,7 @@ const Tag = require('../Footer/Tag').default;
 const FooterActions = require('../Footer/FooterActions').default;
 const Manage = require('../Footer/Manage').default;
 const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').default;
+const TrialExpireNotification = require('../TrialExpireNotification').default;
 
 <Grid container spacing={1}>
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -103,6 +104,7 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
         </FooterActions> 
         <Info variant="Integration app" label="celigo" />
       </Footer>
+      <TrialExpireNotification />
     </HomePageCardContainer>
   </Grid>
 </Grid>

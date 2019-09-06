@@ -8,7 +8,7 @@ import {
   throwExceptionUsingTheResponse,
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
-import { resourceStatus, getAdditionalHeaders } from '../../reducers/index';
+import { resourceStatus, accountShareHeader } from '../../reducers/index';
 import { pingConnectionParams } from '../api/apiPaths';
 
 const tryCount = 3;
@@ -23,7 +23,7 @@ export function* onRequestSaga(request) {
     yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
-  const additionalHeaders = yield select(getAdditionalHeaders, path);
+  const additionalHeaders = yield select(accountShareHeader, path);
 
   options.headers = { ...options.headers, ...additionalHeaders };
 

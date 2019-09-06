@@ -8,6 +8,9 @@ import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaLookupEditor from './DynaLookupEditor';
+import DynaKeyWithAction from './DynaKeyWithAction';
+import DynaHttpRequestBody from './DynaHttpRequestBody';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -45,6 +48,8 @@ export default {
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  httprequestbody: DynaHttpRequestBody,
+  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
@@ -62,4 +67,5 @@ export default {
   nssavedsearch: DynaNSSavedSearch,
   rawdata: DynaRawData,
   sampledata: DynaSampleData,
+  keywithaction: DynaKeyWithAction,
 };

@@ -172,8 +172,8 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
-export function getAdditionalHeaders(state, path) {
-  return fromUser.getAdditionalHeaders(state && state.user, path);
+export function accountShareHeader(state, path) {
+  return fromUser.accountShareHeader(state && state.user, path);
 }
 
 export function userOwnPreferences(state) {
