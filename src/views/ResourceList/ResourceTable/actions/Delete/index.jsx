@@ -1,12 +1,20 @@
-import { useDispatch } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { confirmDialog } from '../../../../../components/ConfirmDialog';
 import Icon from '../../../../../components/icons/CloseIcon';
 import actions from '../../../../../actions';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../utils/resource';
+import * as selectors from '../../../../../reducers';
+import ResourceReferences from '../../../../../components/ResourceReferences';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default function Delete({ resourceType, resource }) {
   const dispatch = useDispatch();
+  const [showRef, setShowRef] = useState(false);
+  const resourceReferences = useSelector(state =>
+    selectors.resourceReferences(state)
+  );
   const handleClick = () => {
     confirmDialog({
       title: 'Confirm',
@@ -19,6 +27,7 @@ export default function Delete({ resourceType, resource }) {
           label: 'Yes',
           onClick: () => {
             dispatch(actions.resource.delete(resourceType, resource._id));
+            setShowRef(true);
           },
         },
       ],
@@ -26,8 +35,18 @@ export default function Delete({ resourceType, resource }) {
   };
 
   return (
-    <IconButton size="small" onClick={handleClick}>
-      <Icon />
-    </IconButton>
+    <Fragment>
+      <IconButton size="small" onClick={handleClick}>
+        <Icon />
+      </IconButton>
+      {showRef && resourceReferences && resourceReferences.length > 0 && (
+        <ResourceReferences
+          title={`Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]} as`}
+          type={resourceType}
+          id={resource._id}
+          onClose={() => setShowRef(false)}
+        />
+      )}
+    </Fragment>
   );
 }
