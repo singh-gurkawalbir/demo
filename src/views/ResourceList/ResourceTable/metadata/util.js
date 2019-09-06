@@ -1,15 +1,21 @@
+import { Fragment } from 'react';
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 import StatusCircle from '../../../../components/HomePageCard/Header/Status/StatusCircle';
 import getRoutePath from '../../../../utils/routePaths';
 import { getApp } from '../../../../constants/applications';
 import { getResourceSubType } from '../../../../utils/resource';
 
 export const getResourceLink = (resourceType, resource) => (
-  <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
-    {resource.name}
-  </Link>
+  <Fragment>
+    <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
+      {resource.name || resource._id}
+    </Link>
+    <Typography>{resource.shared ? 'Shared' : ''}</Typography>
+  </Fragment>
 );
+
 export const getConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
   let app;

@@ -3,7 +3,7 @@ import References from '../../actions/References';
 import Edit from '../../actions/Edit';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
-import { getResourceLink, formatLastModified } from '../util';
+import { getResourceLink, formatLastModified, getConnectorName } from '../util';
 
 export default {
   columns: [
@@ -12,11 +12,12 @@ export default {
       value: r => getResourceLink('exports', r),
       orderBy: 'name',
     },
+    { heading: 'Connector', value: r => getConnectorName(r) },
     {
       heading: 'Updated on',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
   ],
-  actions: [Edit, Clone, AuditLogs, Delete, References],
+  actions: [Edit, Clone, AuditLogs, References, Delete],
 };

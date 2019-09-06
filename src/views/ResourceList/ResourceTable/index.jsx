@@ -121,7 +121,7 @@ export default function ResourceTable({ resourceType, resources }) {
                 </TableCell>
               )
             )}
-            {rowActions && (
+            {!r.shared && rowActions && (
               <TableCell className={classes.actionCell}>
                 {rowActions.map((Action, index) => (
                   // eslint-disable-next-line react/no-array-index-key
