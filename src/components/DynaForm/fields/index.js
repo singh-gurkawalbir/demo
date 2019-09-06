@@ -27,6 +27,8 @@ import DynaImportRestMapping from './DynaImportRestMapping';
 import DynaMappingSettings from './DynaMappingSettings';
 
 export default {
+  dynarestmapping: DynaImportRestMapping,
+  dynamappingsettings: DynaMappingSettings,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
@@ -53,6 +55,4 @@ export default {
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
-  dynarestmapping: DynaImportRestMapping,
-  dynamappingsettings: DynaMappingSettings,
 };
