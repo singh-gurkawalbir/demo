@@ -13,7 +13,7 @@ import ButtonGroup from '../ButtonGroup';
 @withStyles(theme => ({
   fieldContainer: {
     border: 'solid 1px',
-    backgroundColor: theme.palette.background.editorInner,
+    backgroundColor: theme.palette.background.paper2,
     borderColor: 'rgb(0,0,0,0.1)',
     minHeight: '30vh',
     maxHeight: `60vh`,

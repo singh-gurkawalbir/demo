@@ -22,8 +22,8 @@ export default theme => ({
     linkHover: theme.palette.text.linkHover,
     linkActive: theme.palette.text.linkActive,
     border: theme.palette.divider,
-    sidebarBackground: theme.palette.background.sideBar,
-    codeBackground: theme.palette.background.main,
+    sidebarBackground: theme.palette.secondary.lightest,
+    codeBackground: theme.palette.primary.light,
   },
   sidebarWidth: theme.drawerWidth,
 });

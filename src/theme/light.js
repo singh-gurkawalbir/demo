@@ -21,7 +21,6 @@ export default {
       default: colors.celigoNeutral1,
       main: colors.celigoAccent3,
       sideBar: colors.celigoNeutral1,
-      editorInner: colors.celigoNeutral2,
       arrowAfter: colors.celigoNeutral3,
     },
     primary: {
@@ -44,18 +43,7 @@ export default {
   },
   overrides: {
     MuiTypography: {
-      body2: { color: colors.celigoNeutral6 },
-      body1: { color: colors.celigoNeutral6 },
-      h1: { color: colors.celigoNeutral6 },
-      h2: { color: colors.celigoNeutral6 },
-      h3: { color: colors.celigoNeutral6 },
-      h4: { color: colors.celigoNeutral6 },
-      h5: { color: colors.celigoNeutral6 },
-      h6: { color: colors.celigoNeutral6 },
-      subtitle1: { color: colors.celigoNeutral6 },
-      subtitle2: { color: colors.celigoNeutral6 },
-      overline: { color: colors.celigoNeutral6 },
-      caption: { color: colors.celigoNeutral6 },
+      root: { color: colors.celigoNeutral6 },
     },
     MuiButton: {
       textPrimary: {

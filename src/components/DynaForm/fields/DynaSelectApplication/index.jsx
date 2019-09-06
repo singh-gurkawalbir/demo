@@ -1,10 +1,13 @@
 import React, { Fragment } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
 import { groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
+import actions from '../../../../actions';
+import { SCOPES } from '../../../../sagas/resourceForm';
 
 const groupedApps = groupApplications();
 const useStyles = makeStyles(theme => ({
@@ -42,26 +45,28 @@ export default function SelectApplication(props) {
     value = '',
     placeholder,
     onFieldChange,
+    resourceContext,
   } = props;
   // Custom styles for Select Control
   const classes = useStyles();
   const theme = useTheme();
+  const dispatch = useDispatch();
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
       padding: '0px',
       color: state.isSelected
-        ? theme.selectFormControl.text
-        : theme.selectFormControl.color,
+        ? theme.palette.secondary.main
+        : theme.palette.secondary.light,
       backgroundColor:
         state.isSelected || state.isFocused
-          ? theme.selectFormControl.hover
-          : theme.selectFormControl.background,
+          ? theme.palette.background.default
+          : theme.palette.background.paper,
       border: 'none',
       minHeight: '48px',
       '&:active': {
-        backgroundColor: theme.selectFormControl.hover,
-        color: theme.selectFormControl.color,
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.secondary.light,
       },
     }),
     control: () => ({
@@ -70,7 +75,7 @@ export default function SelectApplication(props) {
       border: '1px solid',
       borderColor: theme.palette.divider,
       borderRadius: '2px',
-      backgroundColor: theme.selectFormControl.background,
+      backgroundColor: theme.palette.background.paper,
       alignItems: 'center',
       cursor: 'default',
       display: 'flex',
@@ -83,10 +88,10 @@ export default function SelectApplication(props) {
       outline: `0px !important`,
     }),
     input: () => ({
-      color: theme.selectFormControl.color,
+      color: theme.palette.secondary.light,
     }),
     placeholder: () => ({
-      color: theme.selectFormControl.color,
+      color: theme.palette.secondary.light,
     }),
     indicatorSeparator: () => ({
       display: 'none',
@@ -103,30 +108,27 @@ export default function SelectApplication(props) {
       textAlign: 'center',
       fontSize: '12px',
       padding: '5px',
-      border: '1px solid',
+      borderBottom: '1px solid',
       borderColor: theme.palette.divider,
-      background: theme.selectFormControl.separator,
-      color: theme.selectFormControl.color,
+      background: theme.palette.background.paper2,
+      color: theme.palette.secondary.light,
     }),
     dropdownIndicator: () => ({
-      color: theme.selectFormControl.color,
+      color: theme.palette.secondary.light,
       padding: '8px',
       cursor: 'pointer',
       '&:hover': {
-        color: fade(theme.selectFormControl.color, 0.8),
+        color: fade(theme.palette.secondary.light, 0.8),
       },
     }),
     singleValue: (provided, state) => {
       const opacity = state.isDisabled ? 0.5 : 1;
       const transition = 'opacity 300ms';
-      const color = `${theme.selectFormControl.color}`;
+      const color = theme.palette.secondary.light;
 
       return { ...provided, opacity, transition, color };
     },
   };
-  // TODO: use the documentation below to customize this component:
-  // we are missing styles for "grouping" of applications.
-  // https://react-select.com/components#replacing-components
   const options = groupedApps.map(group => ({
     label: group.label,
     options: group.connectors.map(app => ({
@@ -168,6 +170,19 @@ export default function SelectApplication(props) {
     return true;
   };
 
+  const handleChange = e => {
+    const patchSet = [{ op: 'replace', path: name, value: e.value }];
+
+    onFieldChange && onFieldChange(id, e.value);
+    dispatch(
+      actions.resource.patchStaged(
+        resourceContext.resourceId,
+        patchSet,
+        SCOPES.VALUE
+      )
+    );
+  };
+
   return (
     <FormControl key={id} disabled={disabled} className={classes.formControl}>
       <Select
@@ -177,9 +192,7 @@ export default function SelectApplication(props) {
         components={{ Option }}
         defaultValue={value}
         options={options}
-        onChange={e => {
-          onFieldChange && onFieldChange(id, e.value);
-        }}
+        onChange={handleChange}
         styles={customStyles}
         filterOption={filterOptions}
       />

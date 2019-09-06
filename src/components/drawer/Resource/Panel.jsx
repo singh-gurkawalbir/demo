@@ -1,9 +1,14 @@
+import { Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { Fragment } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+// import actions from '../../../actions';
+import * as selectors from '../../../reducers';
+// import { SCOPES } from '../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -12,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.3)',
     borderLeft: 0,
     height: '100vh',
-    width: props => (props.match.isExact ? 400 : 150),
+    width: props => (props.match.isExact ? 450 : 150),
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     padding: theme.spacing(2, 2, 0, 2),
@@ -27,35 +32,90 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Panel(props) {
-  const classes = useStyles(props);
-  const { match, onClose, zIndex } = props;
+  const { match, location, onClose, zIndex } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
+  const classes = useStyles(props);
+  const dispatch = useDispatch();
+  const newResourceId = useSelector(state =>
+    selectors.createdResourceId(state, id)
+  );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  const getEditUrl = id => {
+    // console.log(location);
+    const segments = location.pathname.split('/');
+    const { length } = segments;
+
+    segments[length - 1] = id;
+    segments[length - 3] = 'edit';
+
+    const url = segments.join('/');
+
+    return url;
+  };
+
+  useEffect(() => {
+    // once a new resource (id.startsWith('new-')), has been committed,
+    // we need to redirect to the resource using the correct id from
+    // the persistence layer...
+    if (newResourceId) {
+      enqueueSnackbar({
+        message: `${resourceLabel} created`,
+        variant: 'success',
+      });
+
+      // const { resourceId, patchPath } = location.state;
+      // const patchSet = [
+      //   { op: 'replace', path: patchPath, value: newResourceId },
+      // ];
+
+      // console.log(`patching ${resourceId}`, patchSet);
+      // Apply the new patch to the session
+      // dispatch(
+      //   actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE)
+      // );
+
+      onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, newResourceId]);
+
+  function handleSubmitComplete() {
+    if (isNew) {
+      props.history.replace(getEditUrl(id), location.state);
+    }
+  }
+
+  const submitButtonLabel =
+    isNew && ['imports', 'exports', 'connections'].includes(resourceType)
+      ? 'Next'
+      : 'Save';
 
   return (
     <Fragment>
       <div className={classes.root}>
-        <Typography variant="h4">
-          {MODEL_PLURAL_TO_LABEL[resourceType]}
+        <Typography variant="h5">
+          {isNew ? `Create` : 'Edit'} {resourceLabel}
         </Typography>
         <LoadResources required resources={resourceType}>
           <ResourceForm
+            className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}
             key={`${isNew}-${id}`}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
-            onSubmitComplete={onClose}
-            onCancel={onClose}
-            submitButtonLabel="Save"
             cancelButtonLabel="Cancel"
-            className={classes.form}
+            submitButtonLabel={submitButtonLabel}
+            onSubmitComplete={handleSubmitComplete}
+            onCancel={onClose}
           />
         </LoadResources>
       </div>
 
       <Route
-        path={`${match.url}/edit/:resourceType/:id`}
+        path={`${match.url}/:operation/:resourceType/:id`}
         render={props => (
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}

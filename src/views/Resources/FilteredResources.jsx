@@ -40,7 +40,7 @@ const mapDispatchToProps = (dispatch, { list }) => ({
     bottom: theme.spacing(0.25),
   },
   avatar: {
-    backgroundColor: theme.palette.background.editorInner,
+    backgroundColor: theme.palette.background.paper2,
     border: '1px solid',
     borderColor: theme.palette.text.primary,
   },

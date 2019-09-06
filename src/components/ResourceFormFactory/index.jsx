@@ -83,14 +83,15 @@ function ActionsFactory(props) {
     actionButtons = ['cancel', 'save'];
   }
 
-  const actionButtonsCreator = actions =>
-    actions.map(id => {
-      const Action = consolidatedActions[id];
+  return (
+    <DynaForm {...props}>
+      {actionButtons.map(key => {
+        const Action = consolidatedActions[key];
 
-      return <Action key={id} {...props} />;
-    });
-
-  return <DynaForm {...props}>{actionButtonsCreator(actionButtons)}</DynaForm>;
+        return <Action key={key} {...props} />;
+      })}
+    </DynaForm>
+  );
 }
 
 export const ResourceFormFactory = props => {

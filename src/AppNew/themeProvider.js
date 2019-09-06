@@ -7,14 +7,22 @@ const theme = {
   drawerWidth: 240,
   appBarHeight,
   pageBarHeight: 64,
+
   palette: {
     type: 'light',
+    background: {
+      paper: colors.celigoWhite,
+      paper2: colors.celigoNeutral2,
+      default: colors.celigoNeutral1,
+      arrowAfter: colors.celigoNeutral3,
+    },
     primary: {
       light: colors.celigoAccent3,
       main: colors.celigoAccent2,
       dark: colors.celigoAccent1,
     },
     secondary: {
+      lightest: colors.celigoNeutral1,
       light: colors.celigoNeutral6,
       main: colors.celigoNeutral8,
       dark: colors.celigoNeutral9,
