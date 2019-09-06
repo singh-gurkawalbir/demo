@@ -358,7 +358,7 @@ const connectors = [
     assistant: 'myobessentials',
   },
   { id: 'namely', name: 'Namely', type: 'rest', assistant: 'namely' },
-  { id: 'netsuite', name: 'Netsuite', type: 'netsuite' },
+  { id: 'netsuite', name: 'NetSuite', type: 'netsuite' },
   { id: 'newegg', name: 'Newegg', type: 'rest', assistant: 'newegg' },
   { id: 'newrelic', name: 'Newrelic', type: 'rest', assistant: 'newrelic' },
   { id: 'nextag', name: 'Nextag', type: 'rest', assistant: 'nextag' },
@@ -548,5 +548,11 @@ export const groupApplications = () => [
     connectors: connectors.filter(c => !c.group),
   },
 ];
+
+export const getApp = (type, assistant) => {
+  const id = assistant || type;
+
+  return connectors.find(c => c.id === id) || {};
+};
 
 export default connectors;

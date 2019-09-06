@@ -60,6 +60,10 @@ export default rootReducer;
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region app selectors
+export function drawerOpened(state) {
+  return fromApp.drawerOpened(state && state.app);
+}
+
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
@@ -122,6 +126,10 @@ export function agentAccessToken(state, id) {
   return fromSession.agentAccessToken(state.session, id);
 }
 
+export function stackSystemToken(state, id) {
+  return fromSession.stackSystemToken(state && state.session, id);
+}
+
 export function editor(state, id) {
   if (!state) return {};
 
@@ -154,6 +162,10 @@ export function userProfile(state) {
 
 export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
+}
+
+export function accountShareHeader(state, path) {
+  return fromUser.accountShareHeader(state && state.user, path);
 }
 
 export function userOwnPreferences(state) {
@@ -1002,7 +1014,8 @@ export function commMetadataPathGen(
   metadataType,
   mode,
   recordType,
-  selectField
+  selectField,
+  addInfo
 ) {
   let commMetadataPath;
 
@@ -1024,6 +1037,18 @@ export function commMetadataPathGen(
     }
   } else {
     throw Error('Invalid application type...cannot support it');
+  }
+
+  if (addInfo) {
+    if (addInfo.refreshCache === true) {
+      commMetadataPath += '?refreshCache=true';
+    }
+
+    if (addInfo.recordTypeOnly === true) {
+      commMetadataPath += `${
+        addInfo.refreshCache === true ? '&' : '?'
+      }recordTypeOnly=true`;
+    }
   }
 
   return commMetadataPath;

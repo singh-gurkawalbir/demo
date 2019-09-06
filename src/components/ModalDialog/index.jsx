@@ -1,12 +1,13 @@
 import { React, Component, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
+import { Button } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
+import CloseIcon from '../icons/CloseIcon';
 
 @withStyles(theme => ({
   modalDialog: {
@@ -18,36 +19,54 @@ import { withStyles } from '@material-ui/core/styles';
     padding: theme.spacing(1, 2),
     width: '100',
   },
+  actionButton: {
+    float: 'right',
+    textTransform: 'inherit',
+  },
   iconButton: {
     position: 'absolute',
-    top: '10px',
-    right: '10px',
+    top: theme.spacing(1),
+    right: theme.spacing(1) + 2,
+    padding: theme.spacing(1) - 3,
   },
   actions: {
-    '& *': { marginRight: theme.spacing(1) },
-    margin: theme.spacing(1, 1, 2, 0),
+    '&:last-child': {
+      marginRight: theme.spacing(1),
+    },
+    // '& *': { marginRight: theme.spacing(1) },
+    // margin: theme.spacing(1, 1, 2, 0),
   },
 }))
 export default class ModalDialog extends Component {
   render() {
-    const { classes, show, handleClose } = this.props;
+    const {
+      classes,
+      show,
+      handleClose,
+      actionLabel,
+      actionHandler,
+    } = this.props;
 
     return (
       <div>
-        <Dialog open={show} className={classes.modalDialog}>
+        <Dialog open={show} className={classes.modalDialog} maxWidth="lg">
           {this.props.children[0] && (
-            <DialogTitle>
+            <DialogTitle className={classes.modalTitle}>
               {this.props.children[0]}
               {handleClose && (
                 <IconButton
                   onClick={handleClose}
-                  color="primary"
                   className={classes.iconButton}
                   autoFocus>
-                  <SvgIcon>
-                    <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-                  </SvgIcon>
+                  <CloseIcon />
                 </IconButton>
+              )}
+              {!handleClose && actionHandler && (
+                <Button
+                  className={classes.actionButton}
+                  onClick={actionHandler}>
+                  {actionLabel}
+                </Button>
               )}
             </DialogTitle>
           )}

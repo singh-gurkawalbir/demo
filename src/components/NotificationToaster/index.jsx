@@ -2,15 +2,14 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
 import InfoIcon from '../icons/InfoIcon';
 import ErrorIcon from '../icons/ErrorIcon';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
     left: '0px',
@@ -41,31 +40,28 @@ const styles = theme => ({
     },
   },
   success: {
-    backgroundColor: lighten(theme.palette.background.success, 0.9),
+    backgroundColor: fade(theme.palette.background.success, 0.1),
     '& svg': {
       color: theme.palette.background.success,
     },
   },
   error: {
-    backgroundColor: lighten(theme.palette.background.error, 0.9),
+    backgroundColor: fade(theme.palette.background.error, 0.1),
     '& svg': {
       color: theme.palette.background.error,
     },
   },
   info: {
-    backgroundColor: lighten(theme.palette.background.info, 0.9),
+    backgroundColor: fade(theme.palette.background.info, 0.1),
     '& svg': {
       color: theme.palette.background.info,
     },
   },
   warning: {
-    backgroundColor: lighten(theme.palette.background.warning, 0.9),
+    backgroundColor: fade(theme.palette.background.warning, 0.1),
     '& svg': {
       color: theme.palette.background.warning,
     },
-  },
-  icon: {
-    fontSize: 24,
   },
   iconVariant: {
     opacity: 0.9,
@@ -77,15 +73,12 @@ const styles = theme => ({
     color: theme.palette.text.primary,
   },
   actionButton: {
-    color: theme.palette.text.primary,
+    padding: '8px',
     '& svg': {
-      width: '10px',
-      height: '10px',
       color: theme.palette.text.primary,
-      fontSize: 16,
     },
   },
-});
+}));
 const variantIcon = {
   success: SuccessIcon,
   warning: WarningIcon,
@@ -94,9 +87,9 @@ const variantIcon = {
 };
 
 function NotificationToaster(props) {
+  const classes = useStyles();
   const {
     className,
-    classes,
     message,
     children,
     onClose,
@@ -134,4 +127,4 @@ function NotificationToaster(props) {
   );
 }
 
-export default withStyles(styles)(NotificationToaster);
+export default NotificationToaster;

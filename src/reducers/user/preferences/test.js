@@ -1,7 +1,11 @@
 /* global describe, test, expect */
+import each from 'jest-each';
 import reducer, * as selectors from './';
 import actions from '../../../actions';
-import { ACCOUNT_IDS } from '../../../utils/constants';
+import {
+  ACCOUNT_IDS,
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
+} from '../../../utils/constants';
 
 describe('user reducers', () => {
   const defaultDateFormat = 'MM/DD/YYYY';
@@ -256,4 +260,46 @@ describe('user reducers', () => {
       );
     });
   });
+});
+describe('accountShareHeader reducers', () => {
+  const testCases = [];
+
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.forEach(path => {
+    testCases.push([
+      {},
+      'account owner',
+      `/${path}`,
+      { defaultAShareId: ACCOUNT_IDS.OWN },
+    ]);
+  });
+  testCases.push([
+    {},
+    'account owner',
+    'any thing',
+    { defaultAShareId: ACCOUNT_IDS.OWN },
+  ]);
+  PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.forEach(path => {
+    testCases.push([
+      {},
+      'org user',
+      `/${path}`,
+      { defaultAShareId: 'some thing' },
+    ]);
+  });
+
+  ['/tiles', '/exports', 'any thing'].forEach(path => {
+    testCases.push([
+      { 'integrator-ashareid': 'some thing' },
+      'org user',
+      path,
+      { defaultAShareId: 'some thing' },
+    ]);
+  });
+
+  each(testCases).test(
+    'should return %o for an %s when path is "%s"',
+    (expected, userType, path, preferences) => {
+      expect(selectors.accountShareHeader(preferences, path)).toEqual(expected);
+    }
+  );
 });

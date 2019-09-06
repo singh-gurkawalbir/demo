@@ -29,7 +29,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
   popper: {
-    zIndex: props => props.zIndex,
+    zIndex: props => props.zIndex || theme.zIndex.modal + 1,
+    border: '1px solid',
+    borderColor: theme.palette.background.arrowAfter,
+    borderRadius: '4px',
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
@@ -78,6 +81,7 @@ const useStyles = makeStyles(theme => ({
       height: '3em',
       width: '1em',
       '&::before': {
+        marginTop: '0.4em',
         borderWidth: '1em 1em 1em 0',
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
@@ -87,7 +91,7 @@ const useStyles = makeStyles(theme => ({
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.background.arrowAfter} transparent transparent`,
         position: 'absolute',
-        top: '-2px',
+        top: '1px',
         left: '-2px',
         zIndex: '-2',
       },
@@ -101,13 +105,14 @@ const useStyles = makeStyles(theme => ({
         borderWidth: '1em 0 1em 1em',
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
+        marginTop: '0.5em',
       },
       '&::after': {
         borderWidth: '1.3em 0 1.3em 1.3em',
         // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.background.arrowAfter}`,
         position: 'absolute',
-        top: '-2px',
+        top: '2px',
         left: '0px',
         zIndex: '-2',
       },

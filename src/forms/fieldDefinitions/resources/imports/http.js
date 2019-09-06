@@ -105,6 +105,11 @@ export default {
       },
     ],
   },
+  'http.body': {
+    type: 'httprequestbody',
+    label: 'Build HTTP Request Body',
+    refreshOptionsOnChangesTo: ['http.lookups'],
+  },
   'http.relativeUri': {
     type: 'text',
     label: 'Relative URI',
