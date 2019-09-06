@@ -219,7 +219,7 @@ export function* initFormValues({
   if (!resource) return; // nothing to do.
   let assistantData;
 
-  if (resource.assistant) {
+  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
     if (!resource.assistantMetadata) {
       yield put(
         actions.resource.patchStaged(

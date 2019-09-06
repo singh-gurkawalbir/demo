@@ -102,15 +102,11 @@ const getResourceFormAssets = ({
         else if (type === 'netsuite') {
           meta = meta.netsuite[resource.netsuite.type];
         } else if (resource && resource.assistant) {
-          meta = meta.custom[type];
-
-          if (meta) {
-            meta = meta.assistantDefinition(
-              resourceId,
-              resource,
-              assistantData
-            );
-          }
+          meta = meta.custom.http.assistantDefinition(
+            resourceId,
+            resource,
+            assistantData
+          );
         } else {
           meta = meta[type];
         }

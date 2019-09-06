@@ -1,5 +1,14 @@
 import qs from 'qs';
-import { isObject, isString, cloneDeep, isEmpty, defaultsDeep } from 'lodash';
+import {
+  isObject,
+  isString,
+  cloneDeep,
+  isEmpty,
+  defaultsDeep,
+  isNaN,
+  last,
+  each,
+} from 'lodash';
 
 export function routeToRegExp(route) {
   const optionalParam = /\((.*?)\)/g;
@@ -114,13 +123,18 @@ export function getVersionDetails(version, assistantData) {
   }
 
   if (versionDetails) {
-    ['paging', 'successPath', 'allowUndefinedResource', 'delta'].forEach(
-      prop => {
-        if (!versionDetails[prop]) {
-          versionDetails[prop] = assistantData[prop];
-        }
+    [
+      'paging',
+      'successPath',
+      'allowUndefinedResource',
+      'delta',
+      'successMediaType',
+      'errorMediaType',
+    ].forEach(prop => {
+      if (!versionDetails[prop]) {
+        versionDetails[prop] = assistantData[prop];
       }
-    );
+    });
   }
 
   versionDetails.headers = mergeHeaders(
@@ -162,13 +176,15 @@ export function getExportResourceDetails(version, resource, assistantData) {
         }
       }
 
-      ['successPath', 'delta'].forEach(prop => {
-        if (!resourceDetails[prop]) {
-          if (versionDetails[prop]) {
-            resourceDetails[prop] = versionDetails[prop];
+      ['successPath', 'delta', 'successMediaType', 'errorMediaType'].forEach(
+        prop => {
+          if (!resourceDetails[prop]) {
+            if (versionDetails[prop]) {
+              resourceDetails[prop] = versionDetails[prop];
+            }
           }
         }
-      });
+      );
 
       resourceDetails.headers = mergeHeaders(
         resourceDetails.headers,
@@ -219,6 +235,17 @@ export function getExportOperationDetails(
         }
       }
 
+      ['successPath', 'successMediaType', 'errorMediaType'].forEach(prop => {
+        if (
+          !operationDetails[prop] &&
+          !Object.prototype.hasOwnProperty.call(operationDetails, prop)
+        ) {
+          if (resourceDetails[prop]) {
+            operationDetails[prop] = resourceDetails[prop];
+          }
+        }
+      });
+
       if (
         !operationDetails.allowUndefinedResource &&
         !Object.prototype.hasOwnProperty.call(
@@ -264,24 +291,30 @@ export function getExportOperationDetails(
   };
 }
 
-export function convertFromRestExport(exportDoc, assistantData) {
+export function convertFromExport(exportDoc, assistantData, adaptorType) {
   const exportResource = { ...exportDoc };
   let { version, resource, operation } = exportResource.assistantMetadata || {};
+  const { exportType } = exportResource.assistantMetadata;
   const assistantMetadata = {
     pathParams: {},
     queryParams: {},
     bodyParams: {},
+    exportType,
   };
+
+  if (!assistantMetadata.exportType && exportDoc) {
+    assistantMetadata.exportType = exportDoc.type;
+  }
 
   if (!resource || !operation) {
     if (
       exportResource &&
-      exportResource.rest &&
-      exportResource.rest.relativeURI
+      exportResource[adaptorType] &&
+      exportResource[adaptorType].relativeURI
     ) {
       const urlMatch = getMatchingRoute(
         assistantData.export.urlResolution,
-        exportResource.rest.relativeURI
+        exportResource[adaptorType].relativeURI
       );
 
       if (!operation) {
@@ -316,13 +349,14 @@ export function convertFromRestExport(exportDoc, assistantData) {
     return assistantMetadata;
   }
 
-  if (!exportResource.rest) {
-    exportResource.rest = {};
+  if (!exportResource[adaptorType]) {
+    exportResource[adaptorType] = {};
   }
 
+  const exportAdaptorSubSchema = exportResource[adaptorType];
   const urlMatch = getMatchingRoute(
     [endpoint.url],
-    exportResource.rest.relativeURI || ''
+    exportAdaptorSubSchema.relativeURI || ''
   );
   const pathParams = {};
   let queryParams = {};
@@ -360,8 +394,8 @@ export function convertFromRestExport(exportDoc, assistantData) {
   }
 
   if (
-    exportResource.rest.relativeURI &&
-    exportResource.rest.relativeURI.indexOf('?') > 0
+    exportAdaptorSubSchema.relativeURI &&
+    exportAdaptorSubSchema.relativeURI.indexOf('?') > 0
   ) {
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
       queryParams = qs.parse(urlMatch.urlParts[urlMatch.urlParts.length - 1], {
@@ -371,18 +405,18 @@ export function convertFromRestExport(exportDoc, assistantData) {
     }
   }
 
-  if (exportResource.rest.postBody) {
-    if (isObject(exportResource.rest.postBody)) {
-      bodyParams = cloneDeep(exportResource.rest.postBody);
-    } else if (isString(exportResource.rest.postBody)) {
+  if (exportAdaptorSubSchema.postBody) {
+    if (isObject(exportAdaptorSubSchema.postBody)) {
+      bodyParams = cloneDeep(exportAdaptorSubSchema.postBody);
+    } else if (isString(exportAdaptorSubSchema.postBody)) {
       if (exportResource.assistant === 'expensify') {
-        bodyParams = exportResource.rest.postBody.replace(
+        bodyParams = exportAdaptorSubSchema.postBody.replace(
           'requestJobDescription=',
           ''
         );
         bodyParams = JSON.parse(bodyParams);
       } else {
-        bodyParams = exportResource.rest.postBody;
+        bodyParams = exportAdaptorSubSchema.postBody;
       }
     }
   }
@@ -583,5 +617,248 @@ export function convertToRestExport(assistantMetadata) {
     '/type': exportType || undefined,
     '/delta': !isEmpty(deltaConfig) ? deltaConfig : undefined,
     '/assistant': assistant,
+  };
+}
+
+export function convertToExport(assistantConfig) {
+  const {
+    adaptorType,
+    assistant,
+    version,
+    resource,
+    operation,
+    pathParams,
+    queryParams,
+    bodyParams,
+    assistantData,
+  } = assistantConfig;
+  const operationDetails = getExportOperationDetails(
+    version,
+    resource,
+    operation,
+    assistantData
+  );
+  const exportDefaults = {
+    rest: {
+      resourcePath: operationDetails.resourcePath,
+      successPath: operationDetails.successPath,
+      allowUndefinedResource: operationDetails.allowUndefinedResource,
+      pagingMethod: undefined,
+      nextPagePath: undefined,
+      nextPageRelativeURI: undefined,
+      pageArgument: undefined,
+      maxPagePath: undefined,
+      maxCountPath: undefined,
+      skipArgument: undefined,
+      lastPageStatusCode: undefined,
+      lastPagePath: undefined,
+      lastPageValue: undefined,
+    },
+    http: {
+      successMediaType: operationDetails.successMediaType,
+      errorMediaType: operationDetails.errorMediaType,
+      relativeURI: undefined,
+      body: undefined,
+      paging: {
+        method: undefined,
+        skip: undefined,
+        page: undefined,
+      },
+      response: {
+        resourcePath: undefined,
+        resourceIdPath: undefined,
+        successPath: undefined,
+        successValues: [],
+        errorPath: undefined,
+        blobFormat: undefined,
+      },
+    },
+  };
+  const exportDoc = {
+    method: operationDetails.method || 'GET',
+    relativeURI: undefined,
+    headers: [],
+    ...exportDefaults[adaptorType],
+  };
+
+  Object.keys(operationDetails.response || {}).forEach(
+    prop => (exportDoc.response[prop] = operationDetails.response[prop])
+  );
+
+  Object.keys(operationDetails.paging || {}).forEach(prop => {
+    if (adaptorType === 'rest') {
+      exportDoc[prop] = operationDetails.paging[prop];
+    } else {
+      exportDoc.paging[prop] = operationDetails.paging[prop];
+    }
+  });
+
+  let { url: relativeURI } = { ...operationDetails };
+
+  operationDetails.pathParameters.forEach(pathParam => {
+    if (pathParams) {
+      let pathParamValue = pathParams[pathParam.id];
+
+      if (pathParamValue && pathParam.config) {
+        if (pathParam.config.prefix) {
+          pathParamValue = pathParam.config + pathParamValue;
+        }
+
+        if (pathParam.config.suffix) {
+          pathParamValue += pathParam.config.suffix;
+        }
+      }
+
+      relativeURI = relativeURI.replace(
+        new RegExp(`:_${pathParam.id}`, 'g'),
+        pathParamValue
+      );
+    }
+  });
+
+  let exportType;
+  const allQueryParams = {};
+
+  operationDetails.queryParameters.forEach(queryParam => {
+    allQueryParams[queryParam.id] = queryParam.defaultValue;
+
+    if (!queryParam.readOnly) {
+      if (queryParam.type === 'repeat') {
+        allQueryParams[queryParam.id] = queryParams[queryParam.id];
+        each(queryParams, (v, k) => {
+          if (
+            k &&
+            k.startsWith(queryParam.id) &&
+            k.split('.').length > 1 &&
+            !isNaN(parseInt(last(k.split('.')), 10))
+          ) {
+            allQueryParams[k] = v;
+          }
+        });
+      } else {
+        allQueryParams[queryParam.id] = queryParams[queryParam.id];
+      }
+    }
+
+    if (
+      allQueryParams[queryParam.id] &&
+      allQueryParams[queryParam.id].includes('lastExportDateTime')
+    ) {
+      exportType = 'delta';
+    }
+  });
+  const queryString = qs.stringify(allQueryParams, {
+    encode: false,
+    indices: false,
+  }); /* indices should be false to handle IO-1776 */
+
+  if (queryString) {
+    relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+  }
+
+  exportDoc.relativeURI = relativeURI;
+
+  if (['POST', 'PUT'].includes(exportDoc.method)) {
+    if (!isEmpty(bodyParams)) {
+      exportDoc.postBody = defaultsDeep(
+        cloneDeep(operationDetails.postBody),
+        bodyParams
+      );
+
+      if (operationDetails.postBodyParamsOrder) {
+        // IO-4570
+        exportDoc.postBody = JSON.parse(
+          JSON.stringify(
+            exportDoc.postBody,
+            operationDetails.postBodyParamsOrder
+          )
+        );
+      }
+    } else if (operationDetails.postBody) {
+      exportDoc.postBody = cloneDeep(operationDetails.postBody);
+    } else {
+      exportDoc.postBody = queryParams;
+    }
+
+    if (exportDoc.postBody) {
+      if (isString(exportDoc.postBody)) {
+        if (exportDoc.postBody.includes('lastExportDateTime')) {
+          exportType = 'delta';
+        }
+      } else if (isObject(exportDoc.postBody)) {
+        if (JSON.stringify(exportDoc.postBody).includes('lastExportDateTime')) {
+          exportType = 'delta';
+        }
+      }
+
+      if (assistant === 'expensify') {
+        exportDoc.postBody = `requestJobDescription=${JSON.stringify(
+          exportDoc.postBody
+        )}`;
+      }
+    }
+  }
+
+  Object.keys(operationDetails.headers).forEach(headerName => {
+    if (operationDetails.headers[headerName] !== null) {
+      exportDoc.headers.push({
+        name: headerName,
+        value: operationDetails.headers[headerName],
+      });
+
+      if (
+        operationDetails.headers[headerName].includes &&
+        operationDetails.headers[headerName].includes('lastExportDateTime')
+      ) {
+        exportType = 'delta';
+      }
+    }
+  });
+
+  if (
+    !exportType &&
+    assistantConfig.exportType &&
+    ['delta', 'test'].includes(assistantConfig.exportType)
+  ) {
+    ({ exportType } = assistantConfig);
+  }
+
+  const deltaConfig = {};
+  const testConfig = {};
+
+  if (exportType === 'delta' && operationDetails.delta) {
+    ['dateFormat', 'lagOffset'].forEach(v => {
+      if (operationDetails.delta[v]) {
+        deltaConfig[v] = operationDetails.delta[v];
+      }
+    });
+  } else if (exportType === 'test') {
+    testConfig.limit = 1;
+  }
+
+  if (operationDetails.mergePostBodyToPagingPostBody && exportDoc.postBody) {
+    // IO-7630
+    exportDoc.pagingPostBody = defaultsDeep(
+      exportDoc.pagingPostBody || {},
+      exportDoc.postBody
+    );
+  }
+
+  const assistantMetadata = { version, resource };
+
+  /** We need to set operation only if id is set on endpoint in metadata. Otherwise, the conversion logic in ampersand app fails */
+  if (operationDetails.id) {
+    assistantMetadata.operation = operationDetails.id;
+  } else if (operationDetails.url) {
+    assistantMetadata.operationUrl = operationDetails.url;
+  }
+
+  return {
+    [`/${adaptorType}`]: exportDoc,
+    '/type': exportType || undefined,
+    '/delta': !isEmpty(deltaConfig) ? deltaConfig : undefined,
+    '/test': !isEmpty(testConfig) ? testConfig : undefined,
+    '/assistant': assistant,
+    '/assistantMetadata': assistantMetadata,
   };
 }

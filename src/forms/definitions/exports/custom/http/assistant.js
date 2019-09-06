@@ -1,15 +1,15 @@
 import { omitBy } from 'lodash';
 import {
-  convertFromRestExport,
-  convertToRestExport,
-} from '../../../../../utils/assistants';
+  convertFromExport,
+  convertToExport,
+} from '../../../../../utils/assistant';
 
 export default function assistantDefinition(
   resourceId,
   resource,
   assistantData
 ) {
-  const { assistant } = resource;
+  const { assistant, adaptorType } = resource;
   // console.log(`resourceId in assistantDefinition ${resourceId}`);
   // console.log(`resource in assistantDefinition ${JSON.stringify(resource)}`);
   const fields = [
@@ -21,6 +21,13 @@ export default function assistantDefinition(
       value: assistant,
       visible: false,
     },
+    {
+      id: 'assistantMetadata.adaptorType',
+      type: 'text',
+      // defaultValue: r => r && r.assistant,
+      value: adaptorType === 'HTTPExport' ? 'http' : 'rest',
+      visible: false,
+    },
   ];
 
   if (assistantData && assistantData.export) {
@@ -30,15 +37,18 @@ export default function assistantDefinition(
       value: assistantData,
       visible: false,
     });
-    const assistantConfig = convertFromRestExport(resource, assistantData);
+    const assistantConfig = convertFromExport(
+      resource,
+      assistantData,
+      adaptorType === 'HTTPExport' ? 'http' : 'rest'
+    );
     const { labels = {} } = assistantData.export;
 
     if (assistantData.export.versions.length > 1) {
       const versionField = {
         fieldId: 'assistantMetadata.version',
-        assistantFieldType: 'version',
         value: assistantConfig.version,
-        __resourceId: resourceId,
+        required: true,
       };
 
       if (labels.version) {
@@ -50,10 +60,9 @@ export default function assistantDefinition(
 
     const resourceField = {
       fieldId: 'assistantMetadata.resource',
-      assistantFieldType: 'resource',
       refreshOptionsOnChangesTo: ['assistantMetadata.version'],
       value: assistantConfig.resource,
-      __resourceId: resourceId,
+      required: true,
     };
 
     if (labels.resource) {
@@ -64,13 +73,12 @@ export default function assistantDefinition(
 
     const endpointField = {
       fieldId: 'assistantMetadata.operation',
-      assistantFieldType: 'operation',
       refreshOptionsOnChangesTo: [
         'assistantMetadata.version',
         'assistantMetadata.resource',
       ],
-      value: assistantConfig.operation,
-      __resourceId: resourceId,
+      value: assistantConfig.operation || assistantConfig.operationUrl,
+      required: true,
     };
 
     if (labels.endpoint) {
@@ -85,6 +93,37 @@ export default function assistantDefinition(
 
     if (assistantConfig.endpoint) {
       if (
+        assistantConfig.endpoint.supportedExportTypes &&
+        assistantConfig.endpoint.supportedExportTypes.length > 0
+      ) {
+        const exportTypeOptions = [{ value: 'all', label: 'All' }];
+
+        if (assistantConfig.endpoint.supportedExportTypes.includes('delta')) {
+          exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+        }
+
+        if (assistantConfig.endpoint.supportedExportTypes.includes('test')) {
+          exportTypeOptions.push({ value: 'test', label: 'Test' });
+        }
+
+        fields.push({
+          fieldId: 'assistantMetadata.exportType',
+          options: [
+            {
+              items: exportTypeOptions,
+            },
+          ],
+          value: assistantConfig.exportType || 'all',
+          refreshOptionsOnChangesTo: [
+            'assistantMetadata.version',
+            'assistantMetadata.resource',
+            'assistantMetadata.operation',
+          ],
+          required: true,
+        });
+      }
+
+      if (
         assistantConfig.endpoint.pathParameters &&
         assistantConfig.endpoint.pathParameters.length > 0
       ) {
@@ -94,6 +133,7 @@ export default function assistantDefinition(
             label: pathParam.name,
             type: 'text',
             value: assistantConfig.pathParams[pathParam.id],
+            required: !!pathParam.required,
             refreshOptionsOnChangesTo: [
               'assistantMetadata.version',
               'assistantMetadata.resource',
@@ -127,7 +167,12 @@ export default function assistantDefinition(
           type: 'assistantsearchparams',
           value: assistantConfig.queryParams,
           fieldMeta: assistantConfig.endpoint.queryParameters,
-          __resourceId: resourceId,
+          defaultValuesForDeltaExport:
+            assistantConfig.exportType === 'delta' &&
+            assistantConfig.endpoint.delta &&
+            assistantConfig.endpoint.delta.defaults
+              ? assistantConfig.endpoint.delta.defaults
+              : {},
         });
       } else if (
         assistantConfig.endpoint.bodyParameters &&
@@ -140,7 +185,6 @@ export default function assistantDefinition(
           paramsType: 'body',
           value: assistantConfig.bodyParams,
           fieldMeta: assistantConfig.endpoint.bodyParameters,
-          __resourceId: resourceId,
         });
       }
     }
@@ -156,23 +200,31 @@ export default function assistantDefinition(
       },
     ],
     optionsHandler(fieldId, fields) {
-      const { value: assistant } =
-        fields.find(field => field.id === 'assistantMetadata.assistant') || {};
-      const { value: version } =
-        fields.find(field => field.id === 'assistantMetadata.version') || {};
-      const { value: resource } =
-        fields.find(field => field.id === 'assistantMetadata.resource') || {};
-      const { value: operation } =
-        fields.find(field => field.id === 'assistantMetadata.operation') || {};
+      const values = {};
 
-      return { assistant, version, resource, operation };
+      [
+        'assistant',
+        'adaptorType',
+        'version',
+        'resource',
+        'operation',
+        'exportType',
+      ].forEach(key => {
+        values[key] = (
+          fields.find(field => field.id === `assistantMetadata.${key}`) || {}
+        ).value;
+      });
+
+      return values;
     },
     preSubmit: formValues => {
       const assistantMetadata = {
+        adaptorType: formValues['/assistantMetadata/adaptorType'],
         assistant: formValues['/assistantMetadata/assistant'],
         version: formValues['/assistantMetadata/version'],
         resource: formValues['/assistantMetadata/resource'],
         operation: formValues['/assistantMetadata/operation'],
+        exportType: formValues['/assistantMetadata/exportType'],
         pathParams: {},
         queryParams: formValues['/assistantMetadata/queryParams'],
         bodyParams: formValues['/assistantMetadata/bodyParams'],
@@ -189,12 +241,12 @@ export default function assistantDefinition(
         }
       });
 
-      const restDoc = convertToRestExport({
+      const exportDoc = convertToExport({
         ...assistantMetadata,
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
-      return { ...otherFormValues, ...restDoc };
+      return { ...otherFormValues, ...exportDoc };
     },
   };
 }

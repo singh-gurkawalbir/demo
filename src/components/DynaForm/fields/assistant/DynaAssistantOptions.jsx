@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
-import MaterialUiSelect from './DynaSelect';
-import * as selectors from '../../../reducers/index';
-import actions from '../../../actions';
-import { SCOPES } from '../../../sagas/resourceForm';
+import MaterialUiSelect from '../DynaSelect';
+import * as selectors from '../../../../reducers/index';
+import actions from '../../../../actions';
+import { SCOPES } from '../../../../sagas/resourceForm';
 
 const styles = () => ({
   root: {
@@ -14,17 +14,17 @@ const styles = () => ({
 });
 
 function DynaAssistantOptions(props) {
-  const { label, __resourceId, options } = props;
-
-  console.log(`DynaAssistantOptions props ${JSON.stringify(props)}`);
+  // console.log(`DynaAssistantOptions props ${JSON.stringify(props)}`);
+  const { label, resourceId, options } = props;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: 'rest',
+      adaptorType: options.adaptorType,
       assistant: options.assistant,
     })
   );
   const dispatch = useDispatch();
-  const items = [];
+  const items =
+    options && options[0] && options[0].items ? options[0].items : [];
 
   if (assistantData && assistantData.export) {
     if (props.assistantFieldType === 'version') {
@@ -41,8 +41,6 @@ function DynaAssistantOptions(props) {
       if (!selectedVersion && assistantData.export.versions.length === 1) {
         [selectedVersion] = assistantData.export.versions;
       }
-
-      // console.log(`selectedVersion ${JSON.stringify(selectedVersion)}`);
 
       let selectedResource;
 
@@ -67,19 +65,16 @@ function DynaAssistantOptions(props) {
   }
 
   function onFieldChange(id, value) {
-    console.log(`in onFieldChange ${id} ${value} ${__resourceId}`);
     props.onFieldChange(id, value);
 
     if (
-      [
-        'assistantMetadata.version',
-        'assistantMetadata.resource',
-        'assistantMetadata.operation',
-      ].includes(id)
+      ['version', 'resource', 'operation', 'exportType'].includes(
+        props.assistantFieldType
+      )
     ) {
       const patch = [];
 
-      if (id === 'assistantMetadata.version') {
+      if (props.assistantFieldType === 'version') {
         patch.push({
           op: 'replace',
           path: '/assistantMetadata/version',
@@ -95,7 +90,12 @@ function DynaAssistantOptions(props) {
           path: '/assistantMetadata/operation',
           value: '',
         });
-      } else if (id === 'assistantMetadata.resource') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/exportType',
+          value: '',
+        });
+      } else if (props.assistantFieldType === 'resource') {
         patch.push({
           op: 'replace',
           path: '/assistantMetadata/resource',
@@ -106,15 +106,31 @@ function DynaAssistantOptions(props) {
           path: '/assistantMetadata/operation',
           value: '',
         });
-      } else if (id === 'assistantMetadata.operation') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/exportType',
+          value: '',
+        });
+      } else if (props.assistantFieldType === 'operation') {
         patch.push({
           op: 'replace',
           path: '/assistantMetadata/operation',
           value,
         });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/exportType',
+          value: '',
+        });
+      } else if (props.assistantFieldType === 'exportType') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/exportType',
+          value,
+        });
       }
 
-      dispatch(actions.resource.patchStaged(__resourceId, patch, SCOPES.VALUE));
+      dispatch(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
     }
   }
 
@@ -123,7 +139,7 @@ function DynaAssistantOptions(props) {
       {...props}
       label={label}
       classes={props.classes}
-      options={[{ items: items || [] }]}
+      options={[{ items }]}
       onFieldChange={onFieldChange}
     />
   );

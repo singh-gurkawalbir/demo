@@ -22,8 +22,8 @@ import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
-import DynaAssistantOptions from './DynaAssistantOptions';
-import DynaAssistantSearchParams from './DynaAssistantSearchParams';
+import DynaAssistantOptions from './assistant/DynaAssistantOptions';
+import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 
 export default {
