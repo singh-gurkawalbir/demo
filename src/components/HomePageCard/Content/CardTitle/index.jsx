@@ -1,13 +1,13 @@
 import { makeStyles } from '@material-ui/styles';
 
-const usestyles = makeStyles({
+const useStyles = makeStyles({
   root: {
     paddingBottom: 5,
   },
 });
 
 function CardTitle(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children } = props;
 
   return <div className={classes.root}>{children}</div>;

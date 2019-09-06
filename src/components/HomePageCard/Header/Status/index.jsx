@@ -1,9 +1,10 @@
 import classNames from 'classnames';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     height: 48,
     display: 'flex',
@@ -16,10 +17,7 @@ const usestyles = makeStyles(theme => ({
     marginRight: 5,
   },
   label: {
-    lineHeight: '19px',
     textTransform: 'initial',
-    fontSize: 15,
-    fontFamily: 'Source Sans Pro',
   },
   icon: {
     fontSize: 20,
@@ -27,15 +25,24 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function Status(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children, count, label } = props;
 
   return (
     <div className={classNames(classes.root)}>
       <Button variant="text" className={classes.wrapper}>
-        <span>{children} </span>
-        <span className={classes.counts}>{count}</span>
-        <span className={classes.label}>{label}</span>
+        {children}
+        {count && (
+          <Typography
+            variant="body2"
+            component="span"
+            className={classes.counts}>
+            {count}
+          </Typography>
+        )}
+        <Typography variant="body2" component="span" className={classes.label}>
+          {label}
+        </Typography>
         <span className={classes.icon}>
           <NavigateNext />
         </span>

@@ -1,12 +1,12 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
+import produce from 'immer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
-import deepClone from 'lodash/cloneDeep';
 import Spinner from '../../../Spinner';
 import DynaSelect from '../DynaSelect';
 
@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing.unit,
     overflowY: 'off',
+  },
+  tableBody: {
+    paddingLeft: '7px',
   },
   root: {
     flexGrow: 1,
@@ -36,29 +39,36 @@ function reducer(state, action) {
     field,
     lastRowData = {},
     setChangeIdentifier,
+    onRowChange,
   } = action;
 
-  switch (type) {
-    case 'remove':
-      setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+  return produce(state, d => {
+    let draft = d;
 
-      return [
-        ...state.slice(0, index),
-        ...state.slice(index + 1, state.length),
-      ];
-    case 'updateField':
-      if (state[index]) {
-        return [
-          ...state.slice(0, index),
-          Object.assign({}, state[index], { [field]: value }),
-          ...state.slice(index + 1, state.length),
-        ];
-      }
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case 'remove':
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+        draft.splice(index, 1);
+        break;
+      case 'addNew':
+        draft.push(lastRowData);
+        break;
+      case 'updateField':
+        if (state[index]) {
+          if (onRowChange) {
+            draft = onRowChange(state, index, field, value);
+          } else {
+            draft[index][field] = value;
+          }
+        } else {
+          lastRowData[field] = value;
+          draft.push(lastRowData);
+        }
 
-      return [...state, Object.assign({}, lastRowData, { [field]: value })];
-    default:
-      return state;
-  }
+        break;
+    }
+  });
 }
 
 export default function DynaTable(props) {
@@ -66,6 +76,7 @@ export default function DynaTable(props) {
   const {
     label,
     value,
+    hideLabel = false,
     optionsMap: optionsMapInit,
     handleRefreshClickHandler,
     handleCleanupHandler,
@@ -78,10 +89,19 @@ export default function DynaTable(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
-  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
-  const valueData = deepClone(state);
   const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
+  const preSubmit = (stateValue = []) =>
+    stateValue.filter(val => {
+      let allRequiredFieldsPresent = true;
+
+      optionsMap.forEach(op => {
+        if (op.required)
+          allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
+      });
+
+      return allRequiredFieldsPresent;
+    });
   let requiredFieldsMissing = false;
 
   useEffect(() => {
@@ -108,11 +128,12 @@ export default function DynaTable(props) {
     },
     [handleCleanupHandler, id]
   );
+  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
 
   // If Value is present, check if there are required fields missing in the last row
-  if (valueData && valueData.length) {
+  if (state.length) {
     (requiredFields || []).forEach(field => {
-      if (!valueData[valueData.length - 1][field.id]) {
+      if (!state[state.length - 1][field.id]) {
         requiredFieldsMissing = true;
       }
     });
@@ -123,22 +144,19 @@ export default function DynaTable(props) {
     optionsMap.forEach(option => {
       lastRow[option.id] = option.type === 'select' ? undefined : '';
     });
-    valueData.push(lastRow);
+    dispatchLocalAction({ type: 'addNew', lastRowData: lastRow });
   }
 
   // Convert the value to react form readable format
-  const tableData = (valueData || []).map((value, index) => {
-    const arr = [];
-
-    Object.keys(value).forEach(field => {
-      const data = optionsMap.find(option => option.id === field);
+  const tableData = state.map((value, index) => {
+    const arr = optionsMap.map(op => {
       let modifiedOptions;
 
-      if (data && data.options && data.options.length) {
+      if ((op.options || []).length) {
         modifiedOptions = {
           options: [
             {
-              items: data.options.map(opt => ({
+              items: op.options.map(opt => ({
                 label: opt.text || opt.label,
                 value: opt.id || opt.value,
               })),
@@ -147,27 +165,41 @@ export default function DynaTable(props) {
         };
       }
 
-      arr.push({ ...data, ...modifiedOptions, value: value[field] });
+      return {
+        ...op,
+        ...modifiedOptions,
+        value: value[op.id],
+      };
     });
 
     return { values: arr, row: index };
   });
   // Update handler. Listens to change in any field and dispatches action to update state
   const handleUpdate = (row, event, field) => {
-    const { value } = event.target;
-    const { id, onFieldChange } = props;
+    const newValue = event.target.value;
+    const { id, onFieldChange, onRowChange } = props;
 
     dispatchLocalAction({
       type: 'updateField',
       index: row,
       field,
-      value,
+      value: newValue,
       setChangeIdentifier,
-      lastRowData: (valueData || {}).length
-        ? valueData[valueData.length - 1]
-        : {},
+      lastRowData: (value || []).length ? value[value.length - 1] : {},
+      onRowChange,
     });
-    onFieldChange(id, state);
+
+    if (state[row]) {
+      const fieldValueToSet = onRowChange
+        ? onRowChange(state, row, field, newValue)
+        : preSubmit([
+            ...state.slice(0, row),
+            { ...state[row], ...{ [field]: newValue } },
+            ...state.slice(row + 1, state.length),
+          ]);
+
+      onFieldChange(id, fieldValueToSet);
+    }
   };
 
   function handleRefreshClick(e, fieldId) {
@@ -180,7 +212,7 @@ export default function DynaTable(props) {
     const { id, onFieldChange } = props;
 
     dispatchLocalAction({ type: 'remove', index, setChangeIdentifier });
-    onFieldChange(id, state);
+    onFieldChange(id, preSubmit(state));
   }
 
   const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
@@ -189,14 +221,14 @@ export default function DynaTable(props) {
 
   return (
     <div className={classes.container}>
-      <Typography variant="h6">{label}</Typography>
+      {!hideLabel && <Typography variant="h6">{label}</Typography>}
       <Grid container className={classes.root} spacing={2}>
         {!hideHeaders && (
           <Grid item xs={12}>
             <Grid container spacing={2}>
               {optionsMap.map(r => (
-                <Grid key={r.id} item xs>
-                  <span className={classes.alignLeft}>{r.label}</span>
+                <Grid key={r.id} item xs={r.space || true}>
+                  <span>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
@@ -207,21 +239,30 @@ export default function DynaTable(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={2} key={changeIdentifier} direction="column">
+        <Grid
+          container
+          spacing={2}
+          key={changeIdentifier}
+          className={classes.tableBody}
+          direction="column">
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
                 {arr.values.map(r => (
-                  <Grid item key={r.id} xs>
-                    {r.type !== 'select' && (
+                  <Grid
+                    item
+                    key={r.readOnly ? r.value || r.id : r.id}
+                    xs={r.space || true}>
+                    {['input', 'text', 'number'].includes(r.type) && (
                       <Input
                         defaultValue={r.value}
                         placeholder={r.id}
+                        readOnly={!!r.readOnly}
+                        type={r.type === 'input' ? 'text' : r.type}
                         className={classes.input}
                         onChange={handleAllUpdate(arr.row, r.id)}
                       />
                     )}
-
                     {r.type === 'select' && (
                       <DynaSelect
                         value={r.value}

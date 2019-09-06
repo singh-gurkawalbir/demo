@@ -1,7 +1,7 @@
 An example of a help Icon with help text identified by a predefined key
 ```js
 <Help 
-  title="Netsuite Execution Context" 
+  title="NetSuite Execution Context" 
   caption="export.netsuite.executionContext" 
   helpKey="export.netsuite.executionContext" />
 ```

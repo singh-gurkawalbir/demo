@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     marginRight: 10,
@@ -13,7 +13,7 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function Manage(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children } = props;
 
   return (
