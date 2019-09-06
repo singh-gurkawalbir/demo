@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Typography } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import colors from '../theme/colors';
 
 // input: '#RRGGBB'
@@ -18,11 +18,11 @@ const hexToRgb = hex => {
   return rgb.join(', ');
 };
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    marginBottom: '24px',
+    marginBottom: theme.spacing(3),
     '& div': {
       marginRight: theme.spacing(8),
       color: colors.celigoNeutral6,
@@ -40,7 +40,7 @@ const styles = theme => ({
           textTransform: 'capitalize',
           fontWeight: 400,
           '& span': {
-            paddingRight: theme.spacing(1) - 3,
+            paddingRight: 5,
             fontWeight: 600,
             textTransform: 'uppercase',
           },
@@ -49,9 +49,9 @@ const styles = theme => ({
     },
   },
   title: {
-    marginBottom: '32px ',
+    marginBottom: theme.spacing(4),
   },
-});
+}));
 const other = {
   celigoWhite: colors.celigoWhite,
   celigoError: colors.celigoError,
@@ -92,8 +92,8 @@ const Tiles = ({ colors }) =>
     </div>
   ));
 
-function ColorPalette(props) {
-  const { classes } = props;
+function ColorPalette() {
+  const classes = useStyles();
 
   return (
     <Fragment>
@@ -119,4 +119,4 @@ function ColorPalette(props) {
   );
 }
 
-export default withStyles(styles)(ColorPalette);
+export default ColorPalette;
