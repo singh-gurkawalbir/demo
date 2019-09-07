@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-// import ReactJson from 'react-json-view';
+import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
@@ -12,10 +11,10 @@ import infoText from './infoText';
 import CeligoIconButton from '../../components/IconButton';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import getRoutePath from '../../utils/routePaths';
 import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from './ResourceTable';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -39,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PageContent(props) {
-  const { match } = props;
+  const { match, location } = props;
   const { resourceType } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -69,6 +68,15 @@ function PageContent(props) {
 
   return (
     <Fragment>
+      <Route
+        path={`${match.url}/:operation/:resourceType/:id`}
+        // Note that we disable the eslint warning since Route
+        // uses "children" as a prop and this is the intended
+        // use (per their docs)
+        // eslint-disable-next-line react/no-children-prop
+        children={props => <ResourceDrawer {...props} />}
+      />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
@@ -76,24 +84,20 @@ function PageContent(props) {
           <SearchInput variant="light" onChange={handleKeywordChange} />
           <CeligoIconButton
             component={Link}
-            to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}
+            to={`${
+              location.pathname
+            }/add/${resourceType}/new-${shortid.generate()}`}
             variant="text">
             <AddIcon /> New {resourceName}
           </CeligoIconButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources resources={resourceType}>
+        <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
           />
-          {/* <ReactJson
-            // theme="google"
-            collapsed={2}
-            displayDataTypes={false}
-            src={list}
-          /> */}
         </LoadResources>
       </div>
       {list.filtered > list.count && (

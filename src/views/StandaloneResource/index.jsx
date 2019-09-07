@@ -8,11 +8,6 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import * as selectors from '../../reducers';
 
 const styles = theme => ({
-  content: {
-    flexGrow: 1,
-    // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
   paper: {
     padding: theme.spacing(2),
   },

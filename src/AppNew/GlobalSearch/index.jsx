@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Search() {
+function Search({ location }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, 'global'));
@@ -126,11 +126,11 @@ export default function Search() {
                     <Typography
                       color="inherit"
                       component={Link}
-                      to={`/pg/${r.type}/edit/${r.id}`}>
+                      to={`${location.pathname}/edit/${r.type}/${r.id}`}>
                       {r.name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {r.type}
+                      [{r.type}]
                     </Typography>
                   </div>
                 ))
@@ -156,3 +156,5 @@ export default function Search() {
     </Fragment>
   );
 }
+
+export default withRouter(Search);

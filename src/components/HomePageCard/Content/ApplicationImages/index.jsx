@@ -14,8 +14,7 @@ const useStyles = makeStyles(theme => ({
       maxHeight: '84px',
     },
     '& span': {
-      // Adding arrowafter which is not meaningfull need direction
-      color: theme.palette.background.arrowAfter,
+      color: theme.palette.secondary.contrastText,
       width: 24,
       height: 24,
       '& svg': {

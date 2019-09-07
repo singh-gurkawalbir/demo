@@ -1,22 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import { withRouter, Link } from 'react-router-dom';
+import {
+  Select,
+  FormControl,
+  MenuItem,
+  Input,
+  InputLabel,
+  IconButton,
+  FormHelperText,
+} from '@material-ui/core';
 import * as selectors from '../../../reducers';
+import AddIcon from '../../icons/AddIcon';
+import LoadResources from '../../../components/LoadResources';
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
+    flexDirection: 'row !important',
+    display: 'flex',
+  },
+  select: {
+    display: 'flex',
+    width: '100%',
+  },
+  iconButton: {
+    height: 'fit-content',
+    alignSelf: 'flex-end',
   },
 });
+const newId = () => `new-${shortid.generate()}`;
 
-export default function DynaSelectResource(props) {
+function DynaSelectResource(props) {
   const {
     description,
     disabled,
@@ -27,11 +43,29 @@ export default function DynaSelectResource(props) {
     placeholder,
     onFieldChange,
     resourceType,
+    allowNew,
+    location,
+    resourceContext,
   } = props;
   const classes = useStyles();
+  const [newResourceId, setNewResourceId] = useState(newId());
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, { type: resourceType })
   );
+  const createdId = useSelector(state =>
+    selectors.createdResourceId(state, newResourceId)
+  );
+
+  useEffect(() => {
+    // console.log('select resource createdId:', createdId);
+
+    if (createdId) {
+      onFieldChange(id, createdId);
+      // in case someone clicks + again to add another resource...
+      setNewResourceId(newId());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdId]);
   const filteredResources = () => {
     const { resourceType, filter, excludeFilter, options } = props;
 
@@ -84,19 +118,37 @@ export default function DynaSelectResource(props) {
   resourceItems = [defaultItem, ...resourceItems];
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.root}>
-      <InputLabel shrink={!!value} htmlFor={id}>
-        {label}
-      </InputLabel>
-      <Select
-        value={value}
-        onChange={evt => {
-          onFieldChange(id, evt.target.value);
-        }}
-        input={<Input name={name} id={id} />}>
-        {resourceItems}
-      </Select>
-      {<FormHelperText>{description}</FormHelperText>}
-    </FormControl>
+    <div className={classes.root}>
+      <FormControl key={id} disabled={disabled} className={classes.select}>
+        <InputLabel shrink={!!value} htmlFor={id}>
+          {label}
+        </InputLabel>
+        <LoadResources required resources={resourceType}>
+          <Select
+            value={value}
+            onChange={evt => {
+              onFieldChange(id, evt.target.value);
+            }}
+            input={<Input name={name} id={id} />}>
+            {resourceItems}
+          </Select>
+        </LoadResources>
+        {description && <FormHelperText>{description}</FormHelperText>}
+      </FormControl>
+      {allowNew && (
+        <IconButton
+          className={classes.iconButton}
+          component={Link}
+          to={{
+            state: { ...resourceContext, patchPath: name },
+            pathname: `${location.pathname}/add/${resourceType}/${newResourceId}`,
+          }}
+          size="small">
+          <AddIcon />
+        </IconButton>
+      )}
+    </div>
   );
 }
+
+export default withRouter(DynaSelectResource);
