@@ -5,7 +5,10 @@ import getRoutePath from '../../../../../utils/routePaths';
 
 export default function Edit({ resourceType, resource }) {
   return (
-    <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
+    <Link
+      to={getRoutePath(
+        `/${resourceType}/edit/${resourceType}/${resource._id}`
+      )}>
       <IconButton size="small">
         <EditIcon />
       </IconButton>

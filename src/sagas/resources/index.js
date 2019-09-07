@@ -108,7 +108,7 @@ export function* deleteResource({ resourceType, id }) {
       id,
     });
 
-    if (Object.keys(resourceReferences).length > 0) {
+    if (resourceReferences && Object.keys(resourceReferences).length > 0) {
       return;
     }
 
