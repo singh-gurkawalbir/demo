@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     display: 'inline-flex',
@@ -53,7 +53,7 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function Tag(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { variant } = props;
 
   return (

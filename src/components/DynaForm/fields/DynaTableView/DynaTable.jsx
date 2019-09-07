@@ -42,7 +42,10 @@ function reducer(state, action) {
     onRowChange,
   } = action;
 
-  return produce(state, draft => {
+  return produce(state, d => {
+    let draft = d;
+
+    // eslint-disable-next-line default-case
     switch (type) {
       case 'remove':
         setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
@@ -54,19 +57,15 @@ function reducer(state, action) {
       case 'updateField':
         if (state[index]) {
           if (onRowChange) {
-            // eslint-disable-next-line no-param-reassign
             draft = onRowChange(state, index, field, value);
           } else {
-            // eslint-disable-next-line no-param-reassign
-            draft[index] = { ...draft[index], [field]: value };
+            draft[index][field] = value;
           }
         } else {
-          // eslint-disable-next-line no-param-reassign
-          draft = draft.push({ ...lastRowData, [field]: value });
+          lastRowData[field] = value;
+          draft.push(lastRowData);
         }
 
-        break;
-      default:
         break;
     }
   });

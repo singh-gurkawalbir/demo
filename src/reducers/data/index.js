@@ -19,33 +19,33 @@ export default combineReducers({
 
 // #region resource selectors
 export function resource(state, resourceType, id) {
-  return fromResources.resource(state.resources, resourceType, id);
+  return fromResources.resource(state && state.resources, resourceType, id);
 }
 
 export function resourceList(state, options) {
-  return fromResources.resourceList(state.resources, options);
+  return fromResources.resourceList(state && state.resources, options);
 }
 
 export function resourceDetailsMap(state, options) {
-  return fromResources.resourceDetailsMap(state.resources, options);
+  return fromResources.resourceDetailsMap(state && state.resources, options);
 }
 
 export function processors(state) {
-  return fromResources.processors(state.resources);
+  return fromResources.processors(state && state.resources);
 }
 
 export function hasData(state, resourceType) {
-  return fromResources.hasData(state.resources, resourceType);
+  return fromResources.hasData(state && state.resources, resourceType);
 }
 
 export function isAgentOnline(state, agentId) {
-  return fromResources.isAgentOnline(state.resources, agentId);
+  return fromResources.isAgentOnline(state && state.resources, agentId);
 }
 // #endregion
 
 export function integrationUsers(state, integrationId) {
   return fromIntegrationAShares.integrationUsers(
-    state.integrationAShares,
+    state && state.integrationAShares,
     integrationId
   );
 }

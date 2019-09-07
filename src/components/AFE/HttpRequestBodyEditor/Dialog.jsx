@@ -4,7 +4,7 @@ import HttpRequestBodyEditor from './';
 export default function HttpRequestBodyDialog(props) {
   const { id, rule, data, ...rest } = props;
   const defaults = {
-    layout: 'row',
+    layout: 'compact',
     width: '80vw',
     height: '50vh',
     open: true,

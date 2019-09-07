@@ -48,7 +48,6 @@ module.exports.sections = [
           'src/components/Dynaform/fields/DynaSelectApplication/index.jsx',
           'src/components/Spinner/index.jsx',
           'src/components/TextToggle/index.jsx',
-          'src/components/Tooltip/index.jsx',
         ],
       },
     ],

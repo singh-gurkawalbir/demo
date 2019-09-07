@@ -1,7 +1,7 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-const styles = {
+const useStyles = makeStyles({
   root: {
     padding: '3px 5px',
     textAlign: 'center',
@@ -12,10 +12,11 @@ const styles = {
     textTransform: 'capitalize',
     lineHeight: 'inherit',
   },
-};
+});
 
 function TooltipContent(props) {
-  const { classes, children } = props;
+  const classes = useStyles();
+  const { children } = props;
 
   return (
     <div className={classes.root}>
@@ -24,4 +25,4 @@ function TooltipContent(props) {
   );
 }
 
-export default withStyles(styles)(TooltipContent);
+export default TooltipContent;

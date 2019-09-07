@@ -163,7 +163,7 @@ export default {
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
-          { label: 'Netsuite', value: 'netsuite' },
+          { label: 'NetSuite', value: 'netsuite' },
           { label: 'Newegg', value: 'newegg' },
           { label: 'Newrelic', value: 'newrelic' },
           { label: 'Okta', value: 'okta' },

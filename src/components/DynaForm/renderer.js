@@ -1,28 +1,36 @@
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 import * as selectors from '../../reducers';
 
-const styles = {
-  helpIcon: { float: 'right' },
-  editIcon: { float: 'right' },
+const useStyles = makeStyles({
+  iconButton: {
+    marginLeft: 5,
+  },
+});
+const wrapper = {
+  display: 'flex',
+  alignItems: 'center',
+};
+const fieldStyle = {
+  flexGrow: '1',
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldActions = withStyles(styles)(props => {
+const FieldActions = props => {
   const {
     field,
     editMode,
     helpKey,
     helpText,
-    classes,
     formFieldsMeta,
     resourceContext,
     children,
   } = props;
+  const classes = useStyles();
   const { type: fieldType } = field;
   const { developer } = useSelector(state => selectors.userProfile(state));
 
@@ -33,7 +41,7 @@ const FieldActions = withStyles(styles)(props => {
           key={`edit-${field.id}`}
           formFieldsMeta={formFieldsMeta}
           field={field}
-          className={classes.editIcon}
+          className={classes.iconButton}
           resourceContext={resourceContext}
         />
       )}
@@ -41,7 +49,7 @@ const FieldActions = withStyles(styles)(props => {
         <Help
           key={`help-${field.id}`}
           title={field.label || 'Field Help'}
-          className={classes.helpIcon}
+          className={classes.iconButton}
           caption={developer && helpKey}
           helpKey={helpKey}
           helpText={helpText}
@@ -50,7 +58,7 @@ const FieldActions = withStyles(styles)(props => {
       {children}
     </Fragment>
   );
-});
+};
 
 function getRenderer(
   editMode = false,
@@ -71,18 +79,25 @@ function getRenderer(
     }
 
     return (
-      <FieldActions
-        key={fid}
-        editMode={editMode}
-        field={field}
-        helpKey={helpKey}
-        formFieldsMeta={formFieldsMeta}
-        resourceContext={context}
-        helpText={helpText}>
-        <FieldWrapper {...field}>
-          <DynaField />
-        </FieldWrapper>
-      </FieldActions>
+      /* Unable to add class in the makestyle because it is throwing and error that this 
+         function is not a react function neither hook so added inline. */
+
+      <div style={wrapper}>
+        <div style={fieldStyle}>
+          <FieldWrapper {...field}>
+            <DynaField resourceContext={context} />
+          </FieldWrapper>
+        </div>
+        <FieldActions
+          key={fid}
+          editMode={editMode}
+          field={field}
+          helpKey={helpKey}
+          formFieldsMeta={formFieldsMeta}
+          resourceContext={context}
+          helpText={helpText}
+        />
+      </div>
     );
   };
 }

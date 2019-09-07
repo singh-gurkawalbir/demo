@@ -6,7 +6,8 @@ import { getApp } from '../../../../constants/applications';
 import { getResourceSubType } from '../../../../utils/resource';
 
 export const getResourceLink = (resourceType, resource) => (
-  <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
+  <Link
+    to={getRoutePath(`/${resourceType}/edit/${resourceType}/${resource._id}`)}>
     {resource.name}
   </Link>
 );

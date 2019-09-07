@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     display: 'flex',
@@ -16,7 +16,7 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function Info(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { variant, label } = props;
 
   return (

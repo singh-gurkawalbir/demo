@@ -11,7 +11,7 @@ export default {
   },
   typography: {
     useNextVariants: true,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: 'Roboto400, sans-serif',
   },
   palette: {
     background: {
@@ -34,14 +34,12 @@ export default {
     MuiTypography: {
       body1: {
         fontSize: '17px',
-        fontWeight: '400',
         lineHeight: '22px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       body2: {
         fontSize: '15px',
-        fontWeight: '400',
         lineHeight: '19px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
@@ -49,57 +47,50 @@ export default {
       h1: {
         fontSize: '48px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
         lineHeight: '53px',
         letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
         lineHeight: '40px',
         letterSpacing: '-0.5px',
       },
       h3: {
         fontSize: '24px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
         lineHeight: '28px',
         letterSpacing: 'normal',
       },
       h4: {
         fontSize: '20px',
-        fontWeight: '400',
         lineHeight: '25px',
         letterSpacing: 'normal',
       },
       h5: {
         fontSize: '17px',
-        fontWeight: '400',
         lineHeight: '22px',
         letterSpacing: 'normal',
       },
       h6: {
         fontSize: '15px',
-        fontWeight: '500',
         lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       subtitle1: {
         fontSize: '18px',
-        fontWeight: '400',
         lineHeight: '23px',
         letterSpacing: 'normal',
       },
       subtitle2: {
         fontSize: '15px',
-        fontWeight: '500',
         lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       overline: {
         fontSize: '12px',
-        fontWeight: '400',
         lineHeight: '16px',
         letterSpacing: '1px',
       },
