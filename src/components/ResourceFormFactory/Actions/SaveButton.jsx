@@ -10,7 +10,12 @@ const styles = theme => ({
   },
 });
 const SaveButton = props => {
-  const { label = 'Submit', resourceType, resourceId, classes } = props;
+  const {
+    submitButtonLabel = 'Submit',
+    resourceType,
+    resourceId,
+    classes,
+  } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = values => {
     dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
@@ -21,7 +26,7 @@ const SaveButton = props => {
       {...props}
       className={classes.actionButton}
       onClick={handleSubmitForm}>
-      {label || 'Save'}
+      {submitButtonLabel}
     </DynaAction>
   );
 };
