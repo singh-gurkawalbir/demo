@@ -22,6 +22,13 @@ function DynaFileDefinitionEditor(props) {
     setShowEditor(!showEditor);
   };
 
+  /*
+   * @TODO
+   * Note: On edit case, pass fileDefinitionId as props
+   * check in state for user supported fds based on this id
+   * fetch rules and save
+   */
+
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
@@ -39,7 +46,10 @@ function DynaFileDefinitionEditor(props) {
           'file'
         )
       );
-      onFieldChange(id, rule);
+
+      if (rule) {
+        onFieldChange(id, JSON.parse(rule));
+      }
     }
 
     setShowEditor(false);

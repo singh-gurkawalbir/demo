@@ -368,8 +368,24 @@ const fileDefinitions = {
         }),
     },
     userSupported: {
-      request: () => {},
-      received: () => {},
+      request: (definitionRules, formValues) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.REQUEST, {
+          definitionRules,
+          formValues,
+        }),
+      update: (definitionId, definitionRules) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE, {
+          definitionId,
+          definitionRules,
+        }),
+      received: (definition, definitionId) =>
+        action(
+          actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.RECEIVED,
+          {
+            definition,
+            definitionId,
+          }
+        ),
     },
   },
 };

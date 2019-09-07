@@ -70,30 +70,30 @@ export default {
       ],
     },
   ],
-  // actions: [
-  //   {
-  //     id: 'cancel',
-  //   },
-  //   {
-  //     id: 'save',
-  //     visibleWhen: [
-  //       {
-  //         field: 'file.type',
-  //         isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     // will be button that saves file defs and then submit resource
-  //     id: 'testandsave',
-  //     visibleWhen: [
-  //       {
-  //         field: 'file.type',
-  //         is: ['filedefinition', 'fixed', 'delimited/edifact'],
-  //       },
-  //     ],
-  //   },
-  // ],
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'save',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // will be button that saves file defs and then submit resource
+      id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+  ],
   optionsHandler: (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
 

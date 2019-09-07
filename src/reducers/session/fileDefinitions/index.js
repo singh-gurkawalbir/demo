@@ -103,6 +103,12 @@ export default (
       return { ...state, ...{ supportedFileDefinitions: newState } };
     }
 
+    case actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.RECEIVED: {
+      newState = [...state.userSupportedFileDefinitions, definition];
+
+      return { ...state, ...{ userSupportedFileDefinitions: newState } };
+    }
+
     // Error handlers for all the requested actions
     case actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED_ERROR: {
       newState = { ...state.supportedFileDefinitions };
