@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: 10,
     padding: 7,
     '&:hover': {
-      background: theme.palette.background.editorInner,
+      background: theme.palette.background.default,
     },
   },
 }));

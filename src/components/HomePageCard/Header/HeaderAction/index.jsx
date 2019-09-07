@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     padding: 6,
     marginTop: 5,
     '&:hover': {
-      background: theme.palette.background.editorInner,
+      background: theme.palette.background.paper2,
     },
   },
 }));

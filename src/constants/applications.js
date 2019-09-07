@@ -166,9 +166,9 @@ const connectors = [
   { id: 'dropbox', name: 'Dropbox', type: 'rest', assistant: 'dropbox' },
   {
     id: 'dunandbradstreet',
-    name: 'dunandbradstreet',
+    name: 'Dun & Bradstreet',
     type: 'rest',
-    assistant: 'Dun & Bradstreet',
+    assistant: 'dunandbradstreet',
   },
   { id: 'easypost', name: 'EasyPost', type: 'rest', assistant: 'easypost' },
   { id: 'easyship', name: 'Easyship', type: 'http', assistant: 'easyship' },
@@ -424,7 +424,7 @@ const connectors = [
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'RetailOps', type: 'rest', assistant: 'retailops' },
   { id: 'returnly', name: 'Returnly', type: 'rest', assistant: 'returnly' },
-  { id: 's3', name: 's3', type: 'Amazon S3' },
+  { id: 's3', name: 'Amazon S3', type: 's3' },
   { id: 'sageone', name: 'Sage One', type: 'rest', assistant: 'sageone' },
   {
     id: 'salesforce',
