@@ -7,13 +7,14 @@ const useStyles = makeStyles(theme => ({
   actionContainer: {
     position: 'sticky',
     display: 'flex',
+    overflow: 'hidden',
   },
   action: {
     padding: theme.spacing(0, 0),
   },
   actionColHead: {
     // any smaller and table "giggles" when transitioning to/from hover state
-    width: 110,
+    width: 115,
   },
   ellipsisContainer: {
     padding: theme.spacing(2),
@@ -52,16 +53,18 @@ export default function ActionMenu({ actions }) {
         <EllipsisIcon />
       </IconButton>
       <Popover
+        elevation={1}
         id={id}
         open={open}
         anchorEl={anchorEl}
+        container={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: 'center',
           horizontal: 'center',
         }}>
         <div className={classes.ellipsisContainer}>{actions.slice(2)}</div>
