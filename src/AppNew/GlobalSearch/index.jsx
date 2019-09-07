@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Search({ location }) {
+function GlobalSearch({ location }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, 'global'));
@@ -100,8 +100,8 @@ function Search({ location }) {
     });
 
     return results.sort((a, b) => {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
 
       if (nameA < nameB) return -1;
 
@@ -157,4 +157,4 @@ function Search({ location }) {
   );
 }
 
-export default withRouter(Search);
+export default withRouter(GlobalSearch);
