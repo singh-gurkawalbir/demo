@@ -9,7 +9,10 @@ import { getResourceSubType } from '../../../../utils/resource';
 
 export const getResourceLink = (resourceType, resource) => (
   <Fragment>
-    <Link to={getRoutePath(`/${resourceType}/edit/${resource._id}`)}>
+    <Link
+      to={getRoutePath(
+        `/${resourceType}/edit/${resourceType}/${resource._id}`
+      )}>
       {resource.name || resource._id}
     </Link>
     <Typography>{resource.shared ? 'Shared' : ''}</Typography>

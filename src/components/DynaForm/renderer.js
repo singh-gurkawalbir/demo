@@ -85,7 +85,7 @@ function getRenderer(
       <div style={wrapper}>
         <div style={fieldStyle}>
           <FieldWrapper {...field}>
-            <DynaField />
+            <DynaField resourceContext={context} />
           </FieldWrapper>
         </div>
         <FieldActions

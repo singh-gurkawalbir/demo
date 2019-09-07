@@ -19,11 +19,6 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
-const StandaloneResource = loadable(() =>
-  import(
-    /* webpackChunkName: 'StandaloneResource' */ '../../views/StandaloneResource'
-  )
-);
 const ResourceList = loadable(() =>
   import(
     /* webpackChunkName: 'StandaloneResource' */ '../../views/ResourceList'
@@ -41,9 +36,6 @@ const IntegrationDashboard = loadable(() =>
 const IntegrationSettings = loadable(() =>
   import('../../views/IntegrationSettings')
 );
-const AccessTokens = loadable(() =>
-  import(/* webpackChunkName: 'AccessTokens' */ '../../views/AccessTokens')
-);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -58,18 +50,14 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
-        <Route exact path="/pg/signin" component={SignIn} />
+        <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/resources" component={Resources} />
+        <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
-        <Route
-          path="/pg/:resourceType/:operation/:id"
-          component={StandaloneResource}
-        />
-        <Route path="/pg/:resourceType" component={ResourceList} />
         <Route path="/pg/myAccount" component={MyAccount} />
-        <Route path="/pg/tokens" component={AccessTokens} />
-        <Route path="/pg" component={Dashboard} />
+        <Route path="/pg/:resourceType" component={ResourceList} />
+        <Route path="/pg" exact component={Dashboard} />
 
         <Route component={NotFound} />
       </Switch>
