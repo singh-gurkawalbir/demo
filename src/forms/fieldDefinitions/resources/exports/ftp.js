@@ -103,7 +103,8 @@ export default {
       },
     ],
   },
-  'file.type': {
+  'ftp.file.type': {
+    id: 'file.type',
     type: 'select',
     label: 'File Type',
     options: [
@@ -157,6 +158,61 @@ export default {
       {
         field: 'file.xlsx.rowsPerRecord',
         is: [true],
+      },
+    ],
+  },
+  'edix12.format': {
+    type: 'filedefinitionselect',
+    label: 'EDI X12 Format',
+    format: 'edi',
+    required: 'true',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition'],
+      },
+    ],
+  },
+  'fixed.format': {
+    type: 'filedefinitionselect',
+    label: 'Format',
+    format: 'fixed',
+    required: 'true',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['fixed'],
+      },
+    ],
+  },
+  'edifact.format': {
+    type: 'filedefinitionselect',
+    label: 'EDIFACT Format',
+    format: 'ediFact',
+    required: 'true',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['delimited/edifact'],
+      },
+    ],
+  },
+  'file.filedefinition.rules': {
+    type: 'filedefinitioneditor',
+    label: 'File Definition Rules ',
+    // This field is visible when any of the below mentioned fields are visible and selected
+    visibleWhen: [
+      {
+        field: 'edix12.format',
+        isNot: [''],
+      },
+      {
+        field: 'fixed.format',
+        isNot: [''],
+      },
+      {
+        field: 'edifact.format',
+        isNot: [''],
       },
     ],
   },

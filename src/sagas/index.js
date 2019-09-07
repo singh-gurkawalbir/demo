@@ -23,6 +23,7 @@ import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
+import fileDefinitionSagas from './fileDefinitions';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -93,5 +94,6 @@ export default function* rootSaga() {
     ...agentSagas,
     ...stackSagas,
     ...sampleDataSagas,
+    ...fileDefinitionSagas,
   ]);
 }

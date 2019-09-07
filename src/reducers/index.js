@@ -1016,6 +1016,26 @@ export function optionsMapFromMetadata(
   );
 }
 
+export function getSupportedFileDefinitions(state, format) {
+  return fromSession.getSupportedFileDefinitions(
+    state && state.session,
+    format
+  );
+}
+
+export const getDefinitionTemplate = (
+  state,
+  format,
+  definitionId,
+  resourceType
+) =>
+  fromSession.getDefinitionTemplate(
+    state && state.session,
+    format,
+    definitionId,
+    resourceType
+  ) || {};
+
 export function commMetadataPathGen(
   applicationType,
   connectionId,

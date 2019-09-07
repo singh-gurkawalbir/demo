@@ -20,6 +20,8 @@ import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
+import DynaFileDefinitionEditor from './DynaFileDefinitionEditor';
 import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
 import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
@@ -60,6 +62,8 @@ export default {
   labeltitle: DynaLabel,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
+  filedefinitionselect: DynaFileDefinitionSelect,
+  filedefinitioneditor: DynaFileDefinitionEditor,
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,

@@ -329,6 +329,50 @@ const metadata = {
       }),
   },
 };
+const fileDefinitions = {
+  supported: {
+    request: () => action(actionTypes.FILE_DEFINITIONS.SUPPORTED.REQUEST),
+    received: fileDefinitions =>
+      action(actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED, {
+        fileDefinitions,
+      }),
+    receivedError: error =>
+      action(actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED_ERROR, {
+        error,
+      }),
+  },
+  userSupported: {
+    request: () =>
+      action(actionTypes.METADATA.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST),
+    received: fileDefinitions =>
+      action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED, {
+        fileDefinitions,
+      }),
+    receivedError: error =>
+      action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED_ERROR, {
+        error,
+      }),
+  },
+  definition: {
+    supported: {
+      request: (format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.UPDATE, {
+          format,
+          definitionId,
+        }),
+      received: (definition, format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.RECEIVED, {
+          definition,
+          format,
+          definitionId,
+        }),
+    },
+    userSupported: {
+      request: () => {},
+      received: () => {},
+    },
+  },
+};
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
@@ -615,6 +659,7 @@ export default {
   appErrored,
   toggleDrawer,
   metadata,
+  fileDefinitions,
   connectors,
   cancelTask,
   reloadApp,

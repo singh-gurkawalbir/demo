@@ -10,6 +10,7 @@ import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -25,6 +26,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  fileDefinitions,
 });
 
 // #region PUBLIC SELECTORS
@@ -113,6 +115,26 @@ export function optionsMapFromMetadata(
     optionsMap
   );
 }
+
+export function getSupportedFileDefinitions(state, format) {
+  return fromFileDefinitions.getSupportedFileDefinitions(
+    state && state.fileDefinitions,
+    format
+  );
+}
+
+export const getDefinitionTemplate = (
+  state,
+  format,
+  definitionId,
+  resourceType
+) =>
+  fromFileDefinitions.getDefinitionTemplate(
+    state && state.fileDefinitions,
+    format,
+    definitionId,
+    resourceType
+  );
 
 export function resourceFormState(state, resourceType, resourceId) {
   return fromResourceForm.resourceFormState(
