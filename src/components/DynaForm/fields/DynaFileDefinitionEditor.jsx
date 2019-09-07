@@ -1,27 +1,44 @@
 import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../components/AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
-export default function DynaFileDefinitionEditor(props) {
+function DynaFileDefinitionEditor(props) {
   const {
     id,
     label,
     resourceId,
     resourceType,
     onFieldChange,
+    formContext,
     options = {},
   } = props;
   const [showEditor, setShowEditor] = useState(false);
+  const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const rule = JSON.parse(editorValues.rule);
+      const { data, rule } = editorValues;
 
+      dispatch(
+        actions.sampleData.request(
+          resourceId,
+          resourceType,
+          {
+            type: 'fileDefinition',
+            file: data,
+            rules: rule && JSON.parse(rule),
+            formValues: formContext.value,
+          },
+          'file'
+        )
+      );
       onFieldChange(id, rule);
     }
 
@@ -66,3 +83,11 @@ export default function DynaFileDefinitionEditor(props) {
     </Fragment>
   );
 }
+
+const DynaFileDefinitionEditorWithFormContext = props => (
+  <FormContext.Consumer {...props}>
+    {form => <DynaFileDefinitionEditor {...props} formContext={form} />}
+  </FormContext.Consumer>
+);
+
+export default DynaFileDefinitionEditorWithFormContext;

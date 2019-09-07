@@ -64,9 +64,15 @@ export default function(state = {}, action) {
       newState[resourceId].data = {
         ...state[resourceId].data,
       };
+      // For all the parsers , data is an array
+      // Only incase of structuredFileParser it is an object
       newState[resourceId].data = {
         ...newState[resourceId].data,
-        [stage]: processedData.data && processedData.data[0],
+        [stage]:
+          processedData.data &&
+          (Array.isArray(processedData.data)
+            ? processedData.data[0]
+            : processedData.data),
       };
 
       return {
