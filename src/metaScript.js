@@ -71,6 +71,9 @@ const generateFieldReferences = data => {
     }));
   }
 
+  delete finalData.fields;
+  delete finalData.fieldSets;
+
   return finalData;
 };
 
