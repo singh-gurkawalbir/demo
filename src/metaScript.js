@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { deepClone } from 'fast-json-patch';
-import connections from './forms/definitions/connections';
+import connections from './forms/definitions/connections/subForms';
 
 // const fileread = filename => {
 //   const contents = fs.readFileSync(filename);
@@ -34,10 +34,11 @@ const refGeneration = field => {
 
 // get a particular component
 const generateFieldReferences = data => {
+  console.log('see data', data);
   const finalData = deepClone(data);
 
-  // if there are no fields or fieldSets
-  if (!data.fields || !data.fieldSets)
+  // if there are no fields and fieldSets
+  if (!data.fields && !data.fieldSets)
     throw new Error(
       `something wrong with meta no fields ${JSON.stringify(data)}`
     );
@@ -74,19 +75,25 @@ const generateFieldReferences = data => {
 };
 
 const basePath =
-  '/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/forms/definitions/connections/sample/';
+  '/Users/suryavamsivemparala/workspace/git/suryaVemp/integrator/integrator-ui/src/forms/definitions/connections/subForms/';
+const objectToTransform = connections;
 
-Object.keys(connections).forEach(key => {
-  const data = generateFieldReferences(connections[key]);
-  let transferedMeta = JSON.stringify(data, (key, val) => {
-    if (typeof val === 'function') {
+Object.keys(objectToTransform).forEach(key => {
+  try {
+    const data = generateFieldReferences(connections[key]);
+    let transferedMeta = JSON.stringify(data, (key, val) => {
+      if (typeof val === 'function') {
+        return val;
+      }
+
       return val;
-    }
+    });
 
-    return val;
-  });
+    transferedMeta = `export default ${transferedMeta};`;
 
-  transferedMeta = `export default ${transferedMeta};`;
-
-  fs.writeFileSync(`${basePath}${key}.js`, transferedMeta);
+    fs.writeFileSync(`${basePath}${key}.js`, transferedMeta);
+  } catch (e) {
+    console.log('for key ', key);
+    console.log('error generated ', e);
+  }
 });
