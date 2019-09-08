@@ -7,6 +7,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
   getPatchPathForCustomForms,
+  getFieldWithReferenceById,
 } from '../../forms/utils';
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
@@ -42,10 +43,35 @@ export function* patchFormField({
   if (!meta) return; // nothing to do
 
   const path = getPatchPathForCustomForms(meta, fieldId, offset);
+  // we try to get the corresponding fieldReference for the field so that we can patch fieldReference
+  const { fieldReference } = getFieldWithReferenceById({
+    meta,
+    id: fieldId,
+  });
 
   if (!path) return; // nothing to do.
+  let patchFieldReference = [];
+  let patchLayout = [];
 
-  const patchSet = [{ op, path, value }];
+  // patch the entire value into the fieldReference
+  if (op === 'add') {
+    // when adding a new field reference use field Id to generate the name of the field reference
+    patchFieldReference = [
+      {
+        op,
+        path: `/customForm/form/fieldReferences/${value && value.id}`,
+        value,
+      },
+    ];
+    patchLayout = [{ op, path, value: value && value.id }];
+  } else {
+    patchFieldReference = [
+      { op, path: `/customForm/form/fieldReferences/${fieldReference}`, value },
+    ];
+  }
+
+  // patch layout field with the reference
+  const patchSet = [...patchFieldReference, ...patchLayout];
 
   // Apply the new patch to the session
   yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
@@ -282,23 +308,21 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType,
     resource,
   });
-  const flattenedFields = factory.getFlattenedFieldMetaWithRules(
-    defaultFormAssets &&
-      defaultFormAssets.fieldMeta &&
-      defaultFormAssets.fieldMeta.layout,
-    resourceType,
-    defaultFormAssets &&
-      defaultFormAssets.fieldMeta &&
-      defaultFormAssets.fieldMeta.fieldReferences
+  const {
+    extractedInitFunctions,
+    ...remainingMeta
+  } = factory.getFieldsWithoutFuncs(
+    defaultFormAssets && defaultFormAssets.fieldMeta,
+    resource,
+    resourceType
   );
-  // I have fixed it with a flattened fields...but it does cascade
-  // form visibility rules to its children
+  // Todo: have to write code to merge init functions
   const patchSet = [
     {
       op: 'replace',
       path: '/customForm',
       value: {
-        form: flattenedFields,
+        form: remainingMeta,
       },
     },
   ];

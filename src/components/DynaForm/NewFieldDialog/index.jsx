@@ -16,7 +16,7 @@ import FormDialog from '../../FormDialog';
 import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
 import fieldDefinitions from '../../../forms/fieldDefinitions';
-import { getFieldById } from '../../../forms/utils';
+import { getFieldById, getFieldByName } from '../../../forms/utils';
 
 const fieldMeta = {
   text: { key: 'text', label: 'Text', props: {} },
@@ -117,7 +117,8 @@ export default class NewFieldDialog extends Component {
     error: false,
     count: 0,
     meta: {},
-    existingFieldWarning: false,
+    existingFieldIdWarning: false,
+    existingFieldNameWarning: false,
   };
 
   remountDynaField() {
@@ -125,17 +126,44 @@ export default class NewFieldDialog extends Component {
 
     this.setState({ count: count + 1 });
   }
-  handleExistingFieldWarning(id) {
+  handleExistingFieldWarning(id, name) {
     const { formFieldsMeta } = this.props;
-    const existingField = getFieldById({
+    const existingFieldId = getFieldById({
       meta: formFieldsMeta,
       id,
     });
+    const existingFieldName = getFieldByName({
+      fieldMeta: formFieldsMeta,
+      name,
+    });
 
-    if (existingField) {
+    if (existingFieldId || existingFieldName) {
       // set some state with warning
-      this.setState({ existingFieldWarning: true, error: true });
-    } else this.setState({ existingFieldWarning: false, error: false });
+
+      if (existingFieldId && existingFieldName)
+        this.setState({
+          existingFieldIdWarning: true,
+          existingFieldNameWarning: true,
+          error: true,
+        });
+      else if (existingFieldId)
+        this.setState({
+          existingFieldIdWarning: true,
+          existingFieldNameWarning: false,
+          error: true,
+        });
+      else
+        this.setState({
+          existingFieldIdWarning: false,
+          existingFieldNameWarning: true,
+          error: true,
+        });
+    } else
+      this.setState({
+        existingFieldIdWarning: false,
+        existingFieldNameWarning: false,
+        error: false,
+      });
   }
 
   handleEditorChange(value) {
@@ -150,7 +178,9 @@ export default class NewFieldDialog extends Component {
         meta = { id: meta.fieldId, ...resourceMeta[meta.fieldId], ...meta };
       }
 
-      this.handleExistingFieldWarning(meta.id);
+      const { id, name } = meta;
+
+      this.handleExistingFieldWarning(id, name);
       this.setState({ meta, value });
       this.remountDynaField();
     } catch (e) {
@@ -196,8 +226,9 @@ export default class NewFieldDialog extends Component {
     const fieldType = 'text';
     const meta = getFieldProps(fieldType);
     const value = JSON.stringify(meta, null, 2);
+    const { id, name } = meta;
 
-    this.handleExistingFieldWarning(meta.id);
+    this.handleExistingFieldWarning(id, name);
 
     this.setState({ fieldType, value, meta });
   }
@@ -218,7 +249,8 @@ export default class NewFieldDialog extends Component {
       meta,
       mode,
       count,
-      existingFieldWarning,
+      existingFieldIdWarning,
+      existingFieldNameWarning,
     } = this.state;
     const DynaField = fields[meta.type];
     // console.log('render:', fieldType, fieldId, meta);
@@ -295,11 +327,20 @@ export default class NewFieldDialog extends Component {
               </Form>
             )}
           </div>
-          {existingFieldWarning && (
+          {existingFieldIdWarning && (
             <div>
               <FormHelperText error>
                 The field Id provided is an id for an existing field, Please
                 change it to a more unique id.
+              </FormHelperText>
+            </div>
+          )}
+
+          {existingFieldNameWarning && (
+            <div>
+              <FormHelperText error>
+                The field name provided is used as a name for an existing field,
+                Please change it to a more unique name.
               </FormHelperText>
             </div>
           )}

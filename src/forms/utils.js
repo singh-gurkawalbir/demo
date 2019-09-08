@@ -1,33 +1,21 @@
 import jsonPatch from 'fast-json-patch';
 
 export const searchFieldFromMetaBasedOnFindFunc = (meta, findFieldFunction) => {
-  if (!meta || !meta.layout) return null;
+  if (!meta) return null;
 
-  const { layout } = meta;
-  const { fields, containers } = layout;
+  const { fieldReferences } = meta;
 
-  if (fields && fields.length > 0) {
-    const foundField = fields.find(findFieldFunction);
+  if (!fieldReferences) return null;
+  const foundFieldRefKey = Object.keys(fieldReferences)
+    .filter(key => findFieldFunction(fieldReferences[key]))
+    .map(key => ({
+      fieldReference: key,
+      field: fieldReferences[key],
+    }));
 
-    if (foundField) return foundField;
-  }
+  if (foundFieldRefKey && foundFieldRefKey[0]) return foundFieldRefKey[0];
 
-  if (containers && containers.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const container of containers) {
-      const { fieldSets } = container;
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const fieldSet of fieldSets) {
-        return searchFieldFromMetaBasedOnFindFunc(
-          {
-            layout: { ...fieldSet },
-          },
-          findFieldFunction
-        );
-      }
-    }
-  }
+  return null;
 };
 
 export const defaultPatchSetConverter = values =>
@@ -39,13 +27,13 @@ export const defaultPatchSetConverter = values =>
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
 const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
-  if (!meta || !meta.layout) return null;
+  if (!meta || !meta.layout || !meta.fieldReferences) return null;
 
-  const { layout } = meta;
+  const { layout, fieldReferences } = meta;
   const { fields, containers } = layout;
 
   if (fields && fields.length > 0) {
-    const foundFieldIndex = fields.findIndex(f => byId(f, id));
+    const foundFieldIndex = fields.findIndex(f => byId(fieldReferences[f], id));
 
     if (foundFieldIndex !== -1) {
       let res = queryRes;
@@ -76,6 +64,7 @@ const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
 
         return fieldSearchQueryObj(
           {
+            fieldReferences,
             layout: { ...fieldSet },
           },
           id,
@@ -96,44 +85,23 @@ export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
   return res;
 };
 
-export const getFieldPosition = ({ meta, id }) => {
-  const pos = {};
-  let index;
-
-  if (meta.fields) {
-    index = meta.fields.findIndex(f => byId(f, id));
-
-    if (index >= 0) {
-      pos.index = index;
-
-      return pos;
-    }
-  }
-
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    meta.fieldSets.some((set, i) => {
-      index = set.fields.findIndex(f => byId(f, id));
-
-      // break out of 'some' iterations as soon as any callback finds a field.
-      if (index >= 0) {
-        pos.index = index;
-        pos.fieldSetIndex = i;
-
-        return true;
-      }
-
-      return false;
-    });
-  }
-
-  return pos;
-};
-
-export const getFieldById = ({ meta, id }) =>
+export const getFieldWithReferenceById = ({ meta, id }) =>
   searchFieldFromMetaBasedOnFindFunc(meta, f => byId(f, id));
 
-export const getFieldByName = ({ fieldMeta, name }) =>
-  searchFieldFromMetaBasedOnFindFunc(fieldMeta, f => f.name === name);
+export const getFieldById = ({ meta, id }) => {
+  const res = searchFieldFromMetaBasedOnFindFunc(meta, f => byId(f, id));
+
+  return res && res.field;
+};
+
+export const getFieldByName = ({ fieldMeta, name }) => {
+  const res = searchFieldFromMetaBasedOnFindFunc(
+    fieldMeta,
+    f => f.name === name
+  );
+
+  return res && res.field;
+};
 
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];

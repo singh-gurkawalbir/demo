@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const TabComponent = props => {
-  const { fieldSets, classes } = props;
+  const { fieldSets, classes, fieldReferences } = props;
   const [selectedTab, setSelectedTab] = useState(0);
   const tabs = fieldSets.map((set, index) => {
     const { label: header } = set;
@@ -39,7 +39,9 @@ const TabComponent = props => {
     return (
       // eslint-disable-next-line react/no-array-index-key
       <Fragment key={index}>
-        {selectedTab === index && <FormGenerator layout={layout} />}
+        {selectedTab === index && (
+          <FormGenerator layout={layout} fieldReferences={fieldReferences} />
+        )}
       </Fragment>
     );
   });
@@ -58,15 +60,34 @@ const TabComponent = props => {
   );
 };
 
+const getCorrespondingFieldReferences = (fields, fieldReferences) =>
+  fields.map(field => {
+    const transFormedFieldValue = fieldReferences[field];
+
+    if (!transFormedFieldValue) {
+      // eslint-disable-next-line no-console
+      console.warn('no field reference found for field ', field);
+
+      return {};
+    }
+
+    return { ...transFormedFieldValue, fieldReferenceName: field };
+  });
+
 export default function FormGenerator(props) {
   const classes = useStyles();
 
-  if (!props || !props.layout) return null;
-  const { fields, containers } = props.layout;
+  if (!props || !props.layout || !props.fieldReferences) return null;
+  const { fieldReferences, layout } = props;
+  const { fields, containers } = layout;
   let fieldsComponent;
 
   if (fields && fields.length > 0) {
-    fieldsComponent = <FormFragment defaultFields={fields} />;
+    fieldsComponent = (
+      <FormFragment
+        defaultFields={getCorrespondingFieldReferences(fields, fieldReferences)}
+      />
+    );
   }
 
   let transformedContainers;
@@ -96,7 +117,10 @@ export default function FormGenerator(props) {
                 <Typography>{header}</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.fieldsContainer}>
-                <FormGenerator layout={layout} />
+                <FormGenerator
+                  layout={layout}
+                  fieldReferences={fieldReferences}
+                />
               </ExpansionPanelDetails>
             </ExpansionPanel>
           );
@@ -110,13 +134,20 @@ export default function FormGenerator(props) {
             // eslint-disable-next-line react/no-array-index-key
             <div key={index} className={classes.fieldsContainer}>
               <Typography>{header}</Typography>
-              <FormGenerator layout={layout} />
+              <FormGenerator
+                layout={layout}
+                fieldReferences={fieldReferences}
+              />
             </div>
           );
         });
       } else if (type === 'tab') {
         convertedFieldSets = (
-          <TabComponent classes={classes} fieldSets={fieldSets} />
+          <TabComponent
+            classes={classes}
+            fieldSets={fieldSets}
+            fieldReferences={fieldReferences}
+          />
         );
       }
 

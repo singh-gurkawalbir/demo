@@ -39,9 +39,21 @@ const mapStateToProps = (state, { match }) => {
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const newResourceId = selectors.createdResourceId(state, id);
+  // exclude add fieldReferences patches as well as the initial custom form patch
+  /*
+
+  */
   const metaPatches =
     (metaChanges.patch &&
-      metaChanges.patch.filter(patch => patch.path !== '/customForm').length) ||
+      metaChanges.patch
+        .filter(patch => patch.path !== '/customForm')
+        .filter(
+          patch =>
+            !(
+              patch.op === 'add' &&
+              patch.path.startsWith('/customForm/form/fieldReferences/')
+            )
+        ).length) ||
     0;
 
   return {
@@ -102,11 +114,17 @@ class Edit extends Component {
   };
 
   handleToggleEdit = () => {
-    const { handleInitCustomResourceForm } = this.props;
+    const {
+      handleInitCustomResourceForm,
+      handleUndoAllMetaChanges,
+    } = this.props;
     const { editMode } = this.state;
 
     if (!editMode) {
       handleInitCustomResourceForm();
+    } else {
+      // when the user exits edit mode clear all resource meta patches
+      handleUndoAllMetaChanges();
     }
 
     this.setState({ editMode: !editMode });
@@ -132,6 +150,7 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
+      handleInitCustomResourceForm,
       type,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
@@ -239,7 +258,12 @@ class Edit extends Component {
                   size="small"
                   color="secondary"
                   disabled={metaPatches === 0}
-                  onClick={handleUndoAllMetaChanges}>
+                  onClick={() => {
+                    // we clear all meta patches but we want to retain the inital custom form patch
+                    // hence we perform the init custom form
+                    handleUndoAllMetaChanges();
+                    handleInitCustomResourceForm();
+                  }}>
                   Cancel Meta Changes
                 </Button>
               </div>
