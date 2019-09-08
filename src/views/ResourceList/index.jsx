@@ -40,7 +40,9 @@ const useStyles = makeStyles(theme => ({
 
 function PageContent(props) {
   const { match, location } = props;
-  const { resourceType } = match.params;
+  const resourceType =
+    (match && match.params && match.params.resourceType) ||
+    (props && props.resourceType);
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state =>
@@ -50,6 +52,7 @@ function PageContent(props) {
     selectors.resourceList(state, {
       type: resourceType,
       take: 3,
+      integrationId: props && props.integrationId,
       ...filter,
     })
   );

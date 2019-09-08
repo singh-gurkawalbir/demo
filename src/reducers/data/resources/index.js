@@ -137,7 +137,10 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function resourceList(state, { type, take, keyword, sort, sandbox }) {
+export function resourceList(
+  state,
+  { type, take, keyword, integrationId, sort, sandbox }
+) {
   const result = {
     resources: [],
     type,
@@ -151,7 +154,20 @@ export function resourceList(state, { type, take, keyword, sort, sandbox }) {
     return result;
   }
 
-  const resources = state[type];
+  let resources = state[type];
+
+  if (integrationId && integrationId !== 'none' && type === 'connections') {
+    const integration = state.integrations.find(
+      integration => integration._id === integrationId
+    );
+    const registeredConnections = integration._registeredConnectionIds;
+
+    if (registeredConnections) {
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) >= 0
+      );
+    }
+  }
 
   if (!resources) return result;
 

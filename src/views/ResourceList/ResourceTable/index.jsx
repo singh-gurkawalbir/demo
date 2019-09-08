@@ -12,6 +12,7 @@ import {
 import metadata from './metadata';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import ActionMenu from './ActionMenu';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -27,25 +28,25 @@ const useStyles = makeStyles(theme => ({
   },
 
   row: {
-    '& > td:last-child': {
+    '& > td:last-child > div': {
       display: 'none',
     },
-    '&:hover > td:last-child': {
+    '&:hover > td:last-child > div': {
       display: 'flex',
     },
   },
-
   actionCell: {
+    padding: 0,
+  },
+  actionContainer: {
     position: 'sticky',
-    right: 0,
-    padding: theme.spacing(1),
-    marginTop: 1,
-    marginLeft: -92,
-    backgroundColor: '#eee',
-    border: 0,
+    display: 'flex',
   },
   action: {
     padding: theme.spacing(0, 0),
+  },
+  actionColHead: {
+    width: 100,
   },
 }));
 
@@ -98,9 +99,7 @@ export default function ResourceTable({ resourceType, resources }) {
               </TableCell>
             )
           )}
-          {
-            // rowActions && <TableCell className={classes.actionColHead} />
-          }
+          {rowActions && <TableCell className={classes.actionColHead} />}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -123,12 +122,17 @@ export default function ResourceTable({ resourceType, resources }) {
             )}
             {!r.shared && rowActions && (
               <TableCell className={classes.actionCell}>
-                {rowActions.map((Action, index) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <div key={index} className={classes.action}>
-                    <Action resourceType={resourceType} resource={r} />
-                  </div>
-                ))}
+                <ActionMenu
+                  actions={rowActions.map((Action, i) => (
+                    // TECH DEBT:
+                    // using index as key is not good enough when we have dynamic
+                    // actions... only fixed lists are safe to use index.
+                    // the actions metadata will need to change to support a
+                    // unique key
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Action key={i} resourceType={resourceType} resource={r} />
+                  ))}
+                />
               </TableCell>
             )}
           </TableRow>
