@@ -21,7 +21,12 @@ export default function DynaSelectOptionsGenerator(props) {
 
     if (resource && !data) {
       dispatch(
-        actions.metadata.request(connectionId, resource, mode, filterKey)
+        actions.metadata.request({
+          connectionId,
+          metadataType: resource,
+          mode,
+          filterKey,
+        })
       );
     }
   }, [connectionId, data, dispatch, filterKey, mode, options, resourceType]);

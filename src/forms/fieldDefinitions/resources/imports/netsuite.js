@@ -1,7 +1,7 @@
 export default {
   'netsuite.operation': {
     type: 'select',
-    label: 'Netsuite operation',
+    label: 'NetSuite operation',
     options: [
       {
         items: [
@@ -17,24 +17,24 @@ export default {
   },
   'netsuite.customFieldMetadata': {
     type: 'text',
-    label: 'Netsuite custom Field Metadata',
+    label: 'NetSuite custom Field Metadata',
   },
   'netsuite.recordType': {
     type: 'text',
-    label: 'Netsuite record Type',
+    label: 'NetSuite record Type',
   },
   'netsuite.recordTypeId': {
     type: 'text',
-    label: 'Netsuite record Type Id',
+    label: 'NetSuite record Type Id',
   },
   'netsuite.retryUpdateAsAdd': {
     type: 'checkbox',
-    label: 'Netsuite retry Update As Add',
+    label: 'NetSuite retry Update As Add',
     defaultValue: false,
   },
   'netsuite.batchSize': {
     type: 'text',
-    label: 'Netsuite batch Size',
+    label: 'NetSuite batch Size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -43,81 +43,81 @@ export default {
   },
   'netsuite.internalIdLookup.extract': {
     type: 'text',
-    label: 'Netsuite internal Id Lookup extract',
+    label: 'NetSuite internal Id Lookup extract',
   },
   'netsuite.internalIdLookup.searchField': {
     type: 'text',
-    label: 'Netsuite internal Id Lookup search Field',
+    label: 'NetSuite internal Id Lookup search Field',
   },
   'netsuite.internalIdLookup.expression': {
     type: 'text',
-    label: 'Netsuite internal Id Lookup expression',
+    label: 'NetSuite internal Id Lookup expression',
   },
   'netsuite.lookups[*].name': {
     type: 'text',
-    label: 'Netsuite lookups[*] name',
+    label: 'NetSuite lookups[*] name',
   },
   'netsuite.lookups[*].map': {
     type: 'text',
-    label: 'Netsuite lookups[*] map',
+    label: 'NetSuite lookups[*] map',
   },
   'netsuite.lookups[*].default': {
     type: 'text',
-    label: 'Netsuite lookups[*] default',
+    label: 'NetSuite lookups[*] default',
   },
   'netsuite.lookups[*].recordType': {
     type: 'text',
-    label: 'Netsuite lookups[*] record Type',
+    label: 'NetSuite lookups[*] record Type',
   },
   'netsuite.lookups[*].searchField': {
     type: 'text',
-    label: 'Netsuite lookups[*] search Field',
+    label: 'NetSuite lookups[*] search Field',
   },
   'netsuite.lookups[*].expression': {
     type: 'text',
-    label: 'Netsuite lookups[*] expression',
+    label: 'NetSuite lookups[*] expression',
   },
   'netsuite.lookups[*].resultField': {
     type: 'text',
-    label: 'Netsuite lookups[*] result Field',
+    label: 'NetSuite lookups[*] result Field',
   },
   'netsuite.lookups[*].includeInactive': {
     type: 'text',
-    label: 'Netsuite lookups[*] include Inactive',
+    label: 'NetSuite lookups[*] include Inactive',
   },
   'netsuite.lookups[*].allowFailures': {
     type: 'text',
-    label: 'Netsuite lookups[*] allow Failures',
+    label: 'NetSuite lookups[*] allow Failures',
   },
   'netsuite.preferences.ignoreReadOnlyFields': {
     type: 'checkbox',
-    label: 'Netsuite preferences ignore Read Only Fields',
+    label: 'NetSuite preferences ignore Read Only Fields',
     defaultValue: false,
   },
   'netsuite.preferences.warningAsError': {
     type: 'checkbox',
-    label: 'Netsuite preferences warning As Error',
+    label: 'NetSuite preferences warning As Error',
     defaultValue: false,
   },
   'netsuite.preferences.skipCustomMetadataRequests': {
     type: 'checkbox',
-    label: 'Netsuite preferences skip Custom Metadata Requests',
+    label: 'NetSuite preferences skip Custom Metadata Requests',
     defaultValue: false,
   },
   'netsuite.file.name': {
     type: 'text',
-    label: 'Netsuite file name',
+    label: 'NetSuite file name',
   },
   'netsuite.file.fileType': {
     type: 'text',
-    label: 'Netsuite file file Type',
+    label: 'NetSuite file file Type',
   },
   'netsuite.file.folder': {
     type: 'text',
-    label: 'Netsuite file folder',
+    label: 'NetSuite file folder',
   },
   'netsuite.file.internalId': {
     type: 'text',
-    label: 'Netsuite file internal Id',
+    label: 'NetSuite file internal Id',
   },
 };

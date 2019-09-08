@@ -1,14 +1,14 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles, fade } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: '12px',
     minWidth: '212px',
     maxWidth: '270px',
     border: '1px solid',
-    borderColor: theme.palette.background.arrowAfter,
+    borderColor: fade(theme.palette.common.black, 0.2),
     borderRadius: '4px',
     textAlign: 'left',
     overflow: 'hidden',
@@ -60,7 +60,7 @@ const usestyles = makeStyles(theme => ({
 }));
 
 function HelpContent(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { children, title, caption } = props;
 
   return (

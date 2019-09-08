@@ -13,4 +13,9 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
+  content: {
+    name: '/content',
+    type: 'scriptcontent',
+    label: 'Script Content',
+  },
 };

@@ -56,14 +56,13 @@ export default function DynaNSStaticMap(props) {
   const dispatch = useDispatch();
   const handleRefreshClick = () => {
     dispatch(
-      actions.metadata.request(
+      actions.metadata.request({
         connectionId,
-        'recordTypes',
-        'suitescript',
-        null,
+        metadataType: 'recordTypes',
+        mode: 'suitescript',
         recordType,
-        selectField
-      )
+        selectField,
+      })
     );
   };
 

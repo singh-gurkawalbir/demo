@@ -9,7 +9,7 @@ import WarningIcon from '../icons/WarningIcon';
 import InfoIcon from '../icons/InfoIcon';
 import ErrorIcon from '../icons/ErrorIcon';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
     left: '0px',
@@ -87,7 +87,7 @@ const variantIcon = {
 };
 
 function NotificationToaster(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const {
     className,
     message,
