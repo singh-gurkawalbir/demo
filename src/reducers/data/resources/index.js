@@ -134,15 +134,17 @@ export function resourceList(
   let resources = state[type];
 
   if (integrationId && integrationId !== 'none' && type === 'connections') {
-    const integration = state.integrations.find(
-      integration => integration._id === integrationId
-    );
-    const registeredConnections = integration._registeredConnectionIds;
+    const integration =
+      state &&
+      state.integrations &&
+      state.integrations.find(integration => integration._id === integrationId);
+    const registeredConnections =
+      integration && integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      resources = resources.filter(
-        conn => registeredConnections.indexOf(conn._id) >= 0
-      );
+      resources =
+        resources &&
+        resources.filter(conn => registeredConnections.indexOf(conn._id) >= 0);
     }
   }
 

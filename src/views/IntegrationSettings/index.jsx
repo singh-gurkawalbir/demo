@@ -10,7 +10,6 @@ import { Switch, Route, NavLink } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import getRoutePath from '../../utils/routePaths';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const mapStateToProps = (state, { match }) => {
@@ -86,7 +85,7 @@ const Connections = loadable(() =>
 }))
 class IntegrationSettings extends Component {
   render() {
-    const { classes, integration, permissions } = this.props;
+    const { match, classes, integration, permissions } = this.props;
     const showAPITokens =
       integration._connectorId && permissions.accesstokens.view;
 
@@ -173,36 +172,14 @@ class IntegrationSettings extends Component {
             </div>
             <div className={classes.rightElement}>
               <Switch>
+                <Route path={`${match.url}/flows`} component={Flows} />
                 <Route
-                  path={getRoutePath(
-                    `/integrations/:integrationId/settings/flows`
-                  )}
-                  component={Flows}
-                />
-                <Route
-                  path={getRoutePath(
-                    `/integrations/:integrationId/settings/connections`
-                  )}
+                  path={`${match.url}/connections`}
                   component={Connections}
                 />
-                <Route
-                  path={getRoutePath(
-                    `/integrations/:integrationId/settings/users`
-                  )}
-                  component={Users}
-                />
-                <Route
-                  path={getRoutePath(
-                    `/integrations/:integrationId/settings/audit`
-                  )}
-                  component={AuditLog}
-                />
-                <Route
-                  path={getRoutePath(
-                    `/integrations/:integrationId/settings/tokens`
-                  )}
-                  component={AccessTokens}
-                />
+                <Route path={`${match.url}/users`} component={Users} />
+                <Route path={`${match.url}/audit`} component={AuditLog} />
+                <Route path={`${match.url}/tokens`} component={AccessTokens} />
               </Switch>
             </div>
           </div>
