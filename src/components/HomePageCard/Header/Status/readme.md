@@ -8,7 +8,7 @@ const StatusCircle = require('./StatusCircle').default;
     </Status>
   </Grid>
   <Grid item>
-    <Status  count= "300" label="errors">
+    <Status  count= "5324" label="ERRORS">
       <StatusCircle variant="error" />
     </Status>
   </Grid>
@@ -18,7 +18,7 @@ const StatusCircle = require('./StatusCircle').default;
     </Status>
   </Grid>
   <Grid item>
-    <Status label="continue setup">
+    <Status label="Continue setup">
       <StatusCircle variant="warning" />
     </Status>
   </Grid>

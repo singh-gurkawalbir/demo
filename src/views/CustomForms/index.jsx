@@ -121,7 +121,7 @@ export default class CustomForms extends Component {
           omitWhenHidden: true,
           visibleWhen: [
             {
-              id: 'isNetsuite',
+              id: 'isNetSuite',
               field: 'conn',
               is: ['ns'],
             },

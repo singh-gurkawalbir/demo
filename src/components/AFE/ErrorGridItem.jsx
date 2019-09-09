@@ -5,7 +5,7 @@ import CodePanel from './GenericEditor/CodePanel';
 
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: `solid 1px ${theme.editor.panelBorder}`,
+    border: `solid 1px rgb(0,0,0,0.3)`,
     overflow: 'hidden',
     minWidth: '150px',
     minHeight: '100px',

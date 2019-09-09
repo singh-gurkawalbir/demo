@@ -16,7 +16,7 @@ import {
 import * as apiConsts from '../api/apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
 import actions from '../../actions';
-import { resourceStatus, getAdditionalHeaders } from '../../reducers';
+import { resourceStatus, accountShareHeader } from '../../reducers';
 
 const status401 = new APIException({
   status: 401,
@@ -107,7 +107,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'GET', path, false))
       );
-      expect(saga.next().value).toEqual(select(getAdditionalHeaders, path));
+      expect(saga.next().value).toEqual(select(accountShareHeader, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
@@ -121,7 +121,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(select(resourceStatus, path, method));
 
       expect(saga.next({ retryCount: 1 }).value).toEqual(
-        select(getAdditionalHeaders, path)
+        select(accountShareHeader, path)
       );
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
@@ -138,7 +138,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
-      expect(saga.next().value).toEqual(select(getAdditionalHeaders, path));
+      expect(saga.next().value).toEqual(select(accountShareHeader, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
 
       // All request types are text
@@ -179,7 +179,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
-      expect(saga.next().value).toEqual(select(getAdditionalHeaders, path));
+      expect(saga.next().value).toEqual(select(accountShareHeader, path));
       const additionalHeaders = {
         'integrator-ashareid': 'some-ashare-id',
         'integrator-something': 'something else',

@@ -3,7 +3,7 @@ import { IconButton } from '@material-ui/core';
 import Icon from '../../../../../components/icons/HookIcon';
 import ResourceReferences from '../../../../../components/ResourceReferences';
 
-export default function Delete({ resourceType, resource }) {
+export default function References({ resourceType, resource }) {
   const [show, setShow] = useState(false);
 
   return (

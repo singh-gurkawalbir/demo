@@ -4,9 +4,9 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles(theme => ({
   title: {
     paddingLeft: theme.spacing(1),
-    backgroundColor: theme.editor.panelBackground,
+    backgroundColor: theme.palette.background.paper2,
     // color: theme.palette.text.main,
-    borderBottom: `solid 1px ${theme.editor.panelBorder}`,
+    borderBottom: `solid 1px rgb(0,0,0,0.3)`,
   },
 }));
 
