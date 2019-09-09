@@ -3,7 +3,10 @@ import Button from '@material-ui/core/Button';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
-import { convertToFields, updateFormValues } from '../../../../utils/assistant';
+import {
+  convertToReactFormFields,
+  updateFormValues,
+} from '../../../../utils/assistant';
 
 const SearchParamsModal = props => {
   const {
@@ -15,7 +18,7 @@ const SearchParamsModal = props => {
     value,
     paramsType,
   } = props;
-  const { fields, fieldSets, fieldDetailsMap } = convertToFields(
+  const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields(
     fieldMeta,
     defaultValuesForDeltaExport,
     value,

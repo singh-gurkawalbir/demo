@@ -295,7 +295,7 @@ export function getExportOperationDetails(
 export function convertFromExport(exportDoc, assistantData, adaptorType) {
   const exportResource = { ...exportDoc };
   let { version, resource, operation } = exportResource.assistantMetadata || {};
-  const { exportType } = exportResource.assistantMetadata;
+  const { exportType } = exportResource.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
     queryParams: {},
@@ -512,6 +512,7 @@ export function convertToRestExport(assistantMetadata) {
 
     if (
       allQueryParams[queryParam.id] &&
+      allQueryParams[queryParam.id].includes &&
       allQueryParams[queryParam.id].includes('lastExportDateTime')
     ) {
       exportType = 'delta';
@@ -743,6 +744,7 @@ export function convertToExport(assistantConfig) {
 
     if (
       allQueryParams[queryParam.id] &&
+      allQueryParams[queryParam.id].includes &&
       allQueryParams[queryParam.id].includes('lastExportDateTime')
     ) {
       exportType = 'delta';
@@ -880,14 +882,14 @@ export function getParamValue(data, value = {}, paramsType) {
       toReturn = value[dataIn.id];
 
       if (paramsType === 'body') {
-        if (dataIn.fieldType === 'select' && isArray(toReturn)) {
+        if (dataIn.inputType === 'select' && isArray(toReturn)) {
           [toReturn] = toReturn;
         }
       }
 
       if (
         paramsType === 'query' &&
-        dataIn.fieldType === 'multiselect' &&
+        dataIn.inputType === 'multiselect' &&
         isArray(toReturn)
       ) {
         // wrap item inside array as multiselect expects item by default an array @BugFix : 8896
@@ -914,7 +916,7 @@ export function getParamValue(data, value = {}, paramsType) {
         toReturn = toReturn[keyParts[i]];
       }
 
-      if (dataIn.fieldType === 'select' && isArray(toReturn)) {
+      if (dataIn.inputType === 'select' && isArray(toReturn)) {
         [toReturn] = toReturn;
       }
 
@@ -925,7 +927,14 @@ export function getParamValue(data, value = {}, paramsType) {
   return undefined;
 }
 
-export function convertToFields(
+export function generateValidReactFormFieldId(fieldId) {
+  return fieldId
+    .replace(/\./g, '/')
+    .replace(/\[/g, '*_*')
+    .replace(/\]/g, '*__*');
+}
+
+export function convertToReactFormFields(
   fieldMeta = [],
   defaultValuesForDeltaExport = {},
   value = {},
@@ -933,7 +942,7 @@ export function convertToFields(
 ) {
   const fields = [];
   const fieldDetailsMap = {};
-  let fieldIndex = 0;
+  const actualFieldIdToGeneratedFieldIdMap = {};
   const paramValues = { ...value };
 
   fieldMeta.forEach(field => {
@@ -956,14 +965,23 @@ export function convertToFields(
       });
       paramValues[field.id] = fieldValue;
     }
-  });
 
-  fieldMeta.forEach(field => {
-    if (field.readOnly) {
-      return true;
-    }
+    /** There are some issues with forms processor if field id/name contains special chars like . and [] */
+    const fieldId = generateValidReactFormFieldId(field.id);
+
+    actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
 
     let { fieldType } = field;
+
+    fieldDetailsMap[fieldId] = {
+      id: field.id,
+      type: field.type,
+      indexed: field.indexed,
+    };
+
+    if (fieldType === 'integer') {
+      fieldDetailsMap[fieldId].type = 'integer';
+    }
 
     if (fieldType === 'input') {
       fieldType = 'text';
@@ -977,19 +995,18 @@ export function convertToFields(
       fieldType = 'text';
     }
 
-    fieldIndex += 1;
+    fieldDetailsMap[fieldId].inputType = fieldType;
+  });
 
-    /** There are some issues with forms processor if field id/name contains special chars like . and [] */
-    const fieldId = `field${fieldIndex}`;
+  fieldMeta.forEach(field => {
+    if (field.readOnly) {
+      return true;
+    }
 
-    fieldDetailsMap[fieldId] = {
-      id: field.id,
-      type: field.type,
-      indexed: field.indexed,
-    };
-
+    const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
+    const { inputType, type } = fieldDetailsMap[fieldId];
     const paramValue = getParamValue(
-      { id: field.id, fieldType },
+      { id: field.id, inputType },
       paramValues,
       paramsType
     );
@@ -1005,15 +1022,15 @@ export function convertToFields(
       defaultValue = defaultValuesForDeltaExport[field.id];
     }
 
-    fields.push({
+    const fieldDef = {
       id: fieldId,
       name: fieldId,
       label: field.name,
-      type: fieldType,
+      type: inputType,
       required: !!field.required,
       placeholder: field.placeholder,
       defaultValue:
-        getParamValue({ id: field.id, fieldType }, paramValues, paramsType) ||
+        getParamValue({ id: field.id, inputType }, paramValues, paramsType) ||
         defaultValue,
       options: [
         {
@@ -1026,7 +1043,24 @@ export function convertToFields(
         },
       ],
       helpText: field.description,
+    };
+
+    if (type === 'integer' || field.id === 'per_page') {
+      fieldDef.validWhen = {
+        matchesRegEx: {
+          pattern: '^[\\d]+$',
+          message: 'Must be a number.',
+        },
+      };
+    }
+
+    ['requiredWhen', 'validWhen'].forEach(p => {
+      if (Object.prototype.hasOwnProperty.call(field, p)) {
+        fieldDef[p] = field[p];
+      }
     });
+
+    fields.push(fieldDef);
   });
 
   const requiredFields = fields.filter(field => field.required);
