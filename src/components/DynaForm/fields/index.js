@@ -8,6 +8,9 @@ import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaLookupEditor from './DynaLookupEditor';
+import DynaKeyWithAction from './DynaKeyWithAction';
+import DynaHttpRequestBody from './DynaHttpRequestBody';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -17,6 +20,9 @@ import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
+import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
+import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
@@ -33,11 +39,17 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  subsidiaryMapWidget: DynaStaticMap,
+  xmlMapper: DynaXMLMapper,
+  trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
+  csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  httprequestbody: DynaHttpRequestBody,
+  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
@@ -55,4 +67,5 @@ export default {
   nssavedsearch: DynaNSSavedSearch,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
+  keywithaction: DynaKeyWithAction,
 };

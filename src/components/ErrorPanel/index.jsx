@@ -9,7 +9,7 @@ import ChevronDownIcon from 'mdi-react/ChevronDownIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import ErrorBox from './ErrorBox';
 
-const usestyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   panel: {
     marginBottom: theme.spacing(1),
   },
@@ -44,7 +44,7 @@ const usestyles = makeStyles(theme => ({
  * when in development
  */
 function ErrorPanel(props) {
-  const classes = usestyles();
+  const classes = useStyles();
   const { error, onClose } = props;
   const showStack =
     process.env.NODE_ENV === 'development' && error instanceof Error;

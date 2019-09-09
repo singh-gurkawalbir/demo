@@ -164,6 +164,10 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
+export function accountShareHeader(state, path) {
+  return fromUser.accountShareHeader(state && state.user, path);
+}
+
 export function userOwnPreferences(state) {
   return fromUser.userOwnPreferences(state && state.user);
 }
@@ -1010,7 +1014,8 @@ export function commMetadataPathGen(
   metadataType,
   mode,
   recordType,
-  selectField
+  selectField,
+  addInfo
 ) {
   let commMetadataPath;
 
@@ -1032,6 +1037,18 @@ export function commMetadataPathGen(
     }
   } else {
     throw Error('Invalid application type...cannot support it');
+  }
+
+  if (addInfo) {
+    if (addInfo.refreshCache === true) {
+      commMetadataPath += '?refreshCache=true';
+    }
+
+    if (addInfo.recordTypeOnly === true) {
+      commMetadataPath += `${
+        addInfo.refreshCache === true ? '&' : '?'
+      }recordTypeOnly=true`;
+    }
   }
 
   return commMetadataPath;

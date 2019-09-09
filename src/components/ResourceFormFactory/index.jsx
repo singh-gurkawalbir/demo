@@ -56,8 +56,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function ActionsFactory(props) {
-  const { resourceType, isNew, connectionType } = props;
+  const { resourceType, isNew, connectionType, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
+
+  if (variant === 'view') {
+    return <DynaForm {...props} />;
+  }
 
   // When action buttons is provided in the metadata then we generate the action buttons for you
   if (actions) {
@@ -83,14 +87,15 @@ function ActionsFactory(props) {
     actionButtons = ['cancel', 'save'];
   }
 
-  const actionButtonsCreator = actions =>
-    actions.map(id => {
-      const Action = consolidatedActions[id];
+  return (
+    <DynaForm {...props}>
+      {actionButtons.map(key => {
+        const Action = consolidatedActions[key];
 
-      return <Action key={id} {...props} />;
-    });
-
-  return <DynaForm {...props}>{actionButtonsCreator(actionButtons)}</DynaForm>;
+        return <Action key={key} {...props} />;
+      })}
+    </DynaForm>
+  );
 }
 
 export const ResourceFormFactory = props => {
@@ -159,11 +164,11 @@ export const ResourceFormFactory = props => {
 
   return (
     <ActionsFactory
+      onCancel={() => setCount(count => count + 1)}
       {...props}
       {...formState}
       connectionType={connectionType}
       optionsHandler={optionsHandler}
-      onCancel={() => setCount(count => count + 1)}
       key={count}
     />
   );

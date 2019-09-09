@@ -7,10 +7,11 @@ import { resource, commMetadataPathGen } from '../../../reducers/index';
 function* getNetsuiteOrSalesforceMeta({
   connectionId,
   metadataType,
-  mode,
-  filterKey,
-  recordType,
-  selectField,
+  mode = '',
+  filterKey = '',
+  recordType = '',
+  selectField = '',
+  addInfo = {},
 }) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = (connection || {}).type || 'netsuite';
@@ -20,7 +21,8 @@ function* getNetsuiteOrSalesforceMeta({
     metadataType,
     mode,
     recordType,
-    selectField
+    selectField,
+    addInfo
   );
   const path = `/${commMetadataPath}`;
 

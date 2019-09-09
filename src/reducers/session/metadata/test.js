@@ -13,7 +13,7 @@ import actions from '../../../actions';
  * Different metadata modes to  consider:
  * Suitescript and  Websearches
  */
-describe('Netsuite', () => {
+describe('NetSuite', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
@@ -26,7 +26,11 @@ describe('Netsuite', () => {
     test('should show status as request for suitescript Record Types', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request('1234', 'recordTypes', 'suitescript')
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: 'recordTypes',
+          mode: 'suitescript',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -40,7 +44,11 @@ describe('Netsuite', () => {
     test('should show status as request for suitescript Saved Searches', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request('1234', 'savedSearches', 'suitescript')
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: 'savedSearches',
+          mode: 'suitescript',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -54,7 +62,11 @@ describe('Netsuite', () => {
     test('should show status as request for suitescript Sublists', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request('1234', 'sublists', 'suitescript')
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: 'sublists',
+          mode: 'suitescript',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -68,12 +80,13 @@ describe('Netsuite', () => {
     test('should show status as request for suitescript Date Field', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchFilters',
-          'suitescript',
-          'dateField'
-        )
+
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchFilters',
+          mode: 'suitescript',
+          filterKey: 'dateField',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -89,12 +102,12 @@ describe('Netsuite', () => {
     test('should show status as request for suitescript Boolean Field', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchFilters',
-          'suitescript',
-          'booleanField'
-        )
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchFilters',
+          mode: 'suitescript',
+          filterKey: 'booleanField',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -351,7 +364,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'recordTypes',
           '1234',
           'suitescript'
@@ -366,7 +379,7 @@ describe('Netsuite', () => {
               recordTypes: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -382,7 +395,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'savedSearches',
           '1234',
           'suitescript'
@@ -397,7 +410,7 @@ describe('Netsuite', () => {
               savedSearches: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -413,7 +426,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'sublists',
           '1234',
           'suitescript'
@@ -428,7 +441,7 @@ describe('Netsuite', () => {
               sublists: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -449,7 +462,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -465,7 +478,7 @@ describe('Netsuite', () => {
               '/searchFilters-dateField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -486,7 +499,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -502,7 +515,7 @@ describe('Netsuite', () => {
               '/searchFilters-booleanField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -658,7 +671,11 @@ describe('Netsuite', () => {
     test('should show status as request for Websearches Record Types', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request('1234', 'recordTypes', 'webservices')
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: 'recordTypes',
+          mode: 'webservices',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -672,12 +689,13 @@ describe('Netsuite', () => {
     test('should show status as request for Websearches Saved Searches', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchMetadata',
-          'webservices',
-          'savedSearches'
-        )
+
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchMetadata',
+          mode: 'webservices',
+          filterKey: 'savedSearches',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -693,7 +711,11 @@ describe('Netsuite', () => {
     test('should show status as request for Websearches Sublists', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request('1234', 'sublists', 'webservices')
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: 'sublists',
+          mode: 'webservices',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -707,12 +729,12 @@ describe('Netsuite', () => {
     test('should show status as request for Websearches Date Field', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchFilters',
-          'webservices',
-          'dateField'
-        )
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchFilters',
+          mode: 'webservices',
+          filterKey: 'dateField',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -728,12 +750,12 @@ describe('Netsuite', () => {
     test('should show status as request for Websearches Boolean Field', () => {
       const requestReducer = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchFilters',
-          'webservices',
-          'booleanField'
-        )
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchFilters',
+          mode: 'webservices',
+          filterKey: 'booleanField',
+        })
       );
 
       expect(requestReducer).toMatchObject({
@@ -787,12 +809,12 @@ describe('Netsuite', () => {
     test('should show empty data for Websearches Saved searches', () => {
       const requestState = reducer(
         undefined,
-        actions.metadata.request(
-          '1234',
-          '/searchMetadata',
-          'webservices',
-          'savedSearches'
-        )
+        actions.metadata.request({
+          connectionId: '1234',
+          metadataType: '/searchMetadata',
+          mode: 'webservices',
+          filterKey: 'savedSearches',
+        })
       );
       const receivedState = reducer(
         requestState,
@@ -952,7 +974,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           'recordTypes',
           '1234',
           'webservices'
@@ -966,7 +988,7 @@ describe('Netsuite', () => {
               recordTypes: {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -988,7 +1010,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchMetadata',
           '1234',
           'webservices',
@@ -1003,7 +1025,7 @@ describe('Netsuite', () => {
               '/searchMetadata-savedSearches': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -1025,7 +1047,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchMetadata',
           '1234',
           'webservices',
@@ -1040,7 +1062,7 @@ describe('Netsuite', () => {
               '/searchMetadata-dateField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },
@@ -1062,7 +1084,7 @@ describe('Netsuite', () => {
       const errorReducer = reducer(
         requestState,
         actions.metadata.netsuite.receivedError(
-          'Netsuite record type error',
+          'NetSuite record type error',
           '/searchFilters',
           '1234',
           'suitescript',
@@ -1078,7 +1100,7 @@ describe('Netsuite', () => {
               '/searchFilters-booleanField': {
                 status: 'error',
                 data: [],
-                errorMessage: 'Netsuite record type error',
+                errorMessage: 'NetSuite record type error',
               },
             },
           },

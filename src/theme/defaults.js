@@ -11,7 +11,7 @@ export default {
   },
   typography: {
     useNextVariants: true,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: 'Roboto400, sans-serif',
   },
   palette: {
     background: {
@@ -33,75 +33,65 @@ export default {
     // Name of the component ⚛️ / style sheet
     MuiTypography: {
       body1: {
-        fontSize: '18px',
-        fontWeight: '400',
-        lineHeight: '27px',
+        fontSize: '17px',
+        lineHeight: '22px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       body2: {
         fontSize: '15px',
-        fontWeight: '400',
-        lineHeight: '22px',
+        lineHeight: '19px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
       h1: {
         fontSize: '48px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
-        lineHeight: '50px',
+        lineHeight: '53px',
         letterSpacing: '-0.7px',
       },
       h2: {
         fontSize: '36px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
         lineHeight: '40px',
         letterSpacing: '-0.5px',
       },
-
       h3: {
         fontSize: '24px',
         fontFamily: 'Roboto300',
-        fontWeight: '300',
-        lineHeight: '26px',
+        lineHeight: '28px',
         letterSpacing: 'normal',
       },
       h4: {
         fontSize: '20px',
-        fontWeight: '400',
-        lineHeight: '23px',
+        lineHeight: '25px',
         letterSpacing: 'normal',
       },
       h5: {
-        fontSize: '18px',
-        fontWeight: '400',
-        lineHeight: '16px',
+        fontSize: '17px',
+        lineHeight: '22px',
         letterSpacing: 'normal',
       },
       h6: {
-        fontSize: '16px',
-        fontWeight: '400',
-        lineHeight: '20px',
+        fontSize: '15px',
+        lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       subtitle1: {
-        fontSize: '22px',
-        fontWeight: '400',
-        lineHeight: '30px',
+        fontSize: '18px',
+        lineHeight: '23px',
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '16px',
-        fontWeight: '400',
-        lineHeight: '24px',
+        fontSize: '15px',
+        lineHeight: '18px',
         letterSpacing: 'normal',
+        fontFamily: 'Roboto500',
       },
       overline: {
         fontSize: '12px',
-        fontWeight: '400',
-        lineHeight: '20px',
+        lineHeight: '16px',
         letterSpacing: '1px',
       },
     },
@@ -111,11 +101,9 @@ export default {
       },
       // text Buttons
       text: {
-        letterSpacing: '1px',
-        minWidth: '100px',
-        fontSize: '12px',
-        lineHeight: '8px',
-        padding: '10px 0px',
+        textTransform: 'none',
+        fontSize: '13px',
+        lineHeight: '15px',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
@@ -151,30 +139,31 @@ export default {
       },
       // small size button
       sizeSmall: {
-        padding: '10px 20px',
-        fontSize: '14px',
-        textTransform: 'lowercase',
-        minWidth: 100,
+        padding: '4px 18px',
+        fontSize: '12px',
+        textTransform: 'none',
+        minWidth: 80,
         letterSpacing: 'normal',
       },
       // large Size Button
       sizeLarge: {
-        padding: '10px 20px',
+        padding: '8px 20px',
         lineHeight: 'normal',
-        fontSize: '24px',
-        borderRadius: '36px',
-        minWidth: 200,
+        fontSize: '14px',
+        borderRadius: '25px',
+        minWidth: 125,
       },
+      // Outline Button
       outlined: {
         borderRadius: '4px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
+        textTransform: 'none',
+        fontSize: '13px',
+        lineHeight: '15px',
         minWidth: '100px',
-        padding: '10px 20px',
+        padding: '6px 20px',
       },
       outlinedPrimary: {
-        backgroundColor: colors.celigoAccent3,
+        backgroundColor: colors.celigoAccent2,
         border: '1px solid',
       },
       outlinedSecondary: {
@@ -184,20 +173,20 @@ export default {
 
       // rounded buttons styles
       contained: {
-        borderRadius: '18px',
-        letterSpacing: '1px',
-        fontSize: '12px',
-        lineHeight: '8px',
+        borderRadius: '17px',
+        fontSize: '13px',
+        lineHeight: '15px',
         minWidth: '100px',
         border: '1px solid',
+        textTransform: 'none',
         boxShadow: 'none',
-        padding: '10px 20px',
+        padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
       },
       containedPrimary: {
-        borderColor: colors.celigoAccent3,
+        borderColor: colors.celigoAccent2,
       },
       containedSecondary: {
         backgroundColor: 'transparent',

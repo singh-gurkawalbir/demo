@@ -8,14 +8,14 @@ const styles = theme => ({
   },
 });
 const CancelButton = props => {
-  const { onCancel, label, classes } = props;
+  const { onCancel, cancelButtonLabel, classes } = props;
 
   return (
     <Button
       onClick={onCancel}
       className={classes.actionButton}
       variant="contained">
-      {label || 'Reset'}
+      {cancelButtonLabel || 'Reset'}
     </Button>
   );
 };

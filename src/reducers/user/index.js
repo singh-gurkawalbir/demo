@@ -86,6 +86,10 @@ export function appTheme(state) {
   return fromPreferences.appTheme(state && state.preferences);
 }
 
+export function accountShareHeader(state, path) {
+  return fromPreferences.accountShareHeader(state && state.preferences, path);
+}
+
 export function editorTheme(state) {
   return fromPreferences.editorTheme(state && state.preferences);
 }

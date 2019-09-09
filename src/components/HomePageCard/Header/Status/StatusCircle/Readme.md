@@ -16,5 +16,18 @@ const Grid = require('@material-ui/core/Grid').default;
   <Grid item>
     <StatusCircle variant="success" />
   </Grid>
+  <Grid item>
+    <StatusCircle variant="success" size="small"/>
+  </Grid>
+   <Grid item>
+    <StatusCircle variant="warning" size="small" />
+  </Grid>
+   <Grid item>
+    <StatusCircle variant="info" size="small" />
+  </Grid>
+  <Grid item>
+    <StatusCircle variant="error" size="small"/>
+  </Grid>
 </Grid>
+
 ```

@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 const theme = themeProvider();
 
 // eslint-disable-next-line
-console.log('new theme', theme);
+console.log('*** THEME ***', theme);
 
 // const oldTheme = themeProviderOld('light');
 // console.log('old theme', oldTheme);
