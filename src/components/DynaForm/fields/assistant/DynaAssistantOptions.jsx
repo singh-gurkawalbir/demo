@@ -14,7 +14,6 @@ const styles = () => ({
 });
 
 function DynaAssistantOptions(props) {
-  // console.log(`DynaAssistantOptions props ${JSON.stringify(props)}`);
   const { label, resourceId, options } = props;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {

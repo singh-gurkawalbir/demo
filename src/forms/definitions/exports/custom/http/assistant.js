@@ -10,21 +10,17 @@ export default function assistantDefinition(
   assistantData
 ) {
   const { assistant, adaptorType } = resource;
-  // console.log(`resourceId in assistantDefinition ${resourceId}`);
-  // console.log(`resource in assistantDefinition ${JSON.stringify(resource)}`);
   const fields = [
     { formId: 'common' },
     {
       id: 'assistantMetadata.assistant',
       type: 'text',
-      // defaultValue: r => r && r.assistant,
       value: assistant,
       visible: false,
     },
     {
       id: 'assistantMetadata.adaptorType',
       type: 'text',
-      // defaultValue: r => r && r.assistant,
       value: adaptorType === 'HTTPExport' ? 'http' : 'rest',
       visible: false,
     },

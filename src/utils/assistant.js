@@ -94,18 +94,23 @@ export function mergeArrays(arr1 = [], arr2 = []) {
 
 export function getExportVersionAndResourceFromOperation(
   operation,
-  assistantData
+  assistantData,
+  version
 ) {
   const toReturn = {};
 
-  assistantData.export.versions.forEach(version => {
-    version.resources.forEach(resource => {
+  assistantData.export.versions.forEach(ver => {
+    if (version && ver !== version) {
+      return true;
+    }
+
+    ver.resources.forEach(resource => {
       const ep = resource.endpoints.find(
         ep => ep.id === operation || ep.url === operation
       );
 
       if (ep) {
-        toReturn.version = version.version;
+        toReturn.version = ver.version;
         toReturn.resource = resource.id;
       }
     });
@@ -324,7 +329,8 @@ export function convertFromExport(exportDoc, assistantData, adaptorType) {
 
       const versionAndResource = getExportVersionAndResourceFromOperation(
         urlMatch.urlMatch,
-        assistantData
+        assistantData,
+        version
       );
 
       ({ version, resource } = versionAndResource);
