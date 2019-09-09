@@ -18,12 +18,12 @@ const SearchParamsModal = props => {
     value,
     paramsType,
   } = props;
-  const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields(
+  const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields({
     fieldMeta,
     defaultValuesForDeltaExport,
     value,
-    paramsType
-  );
+    paramsType,
+  });
 
   function onSaveClick(formValues) {
     const updatedFormValues = updateFormValues({

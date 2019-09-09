@@ -33,11 +33,11 @@ export default function assistantDefinition(
       value: assistantData,
       visible: false,
     });
-    const assistantConfig = convertFromExport(
-      resource,
+    const assistantConfig = convertFromExport({
+      resourceDoc: resource,
       assistantData,
-      adaptorType === 'HTTPExport' ? 'http' : 'rest'
-    );
+      adaptorType: adaptorType === 'HTTPExport' ? 'http' : 'rest',
+    });
     const { labels = {} } = assistantData.export;
 
     if (assistantData.export.versions.length > 1) {
@@ -238,8 +238,10 @@ export default function assistantDefinition(
       });
 
       const exportDoc = convertToExport({
-        ...assistantMetadata,
-        assistantData: formValues['/assistantMetadata/assistantData'],
+        assistantConfig: {
+          ...assistantMetadata,
+          assistantData: formValues['/assistantMetadata/assistantData'],
+        },
       });
 
       return { ...otherFormValues, ...exportDoc };

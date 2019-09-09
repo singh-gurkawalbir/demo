@@ -92,11 +92,11 @@ export function mergeArrays(arr1 = [], arr2 = []) {
   return mergedArray;
 }
 
-export function getExportVersionAndResourceFromOperation(
+export function getExportVersionAndResourceFromOperation({
+  version,
   operation,
   assistantData,
-  version
-) {
+}) {
   const toReturn = {};
 
   assistantData.export.versions.forEach(ver => {
@@ -119,7 +119,7 @@ export function getExportVersionAndResourceFromOperation(
   return toReturn;
 }
 
-export function getVersionDetails(version, assistantData) {
+export function getVersionDetails({ version, assistantData }) {
   let versionDetails = {};
 
   if (version) {
@@ -156,9 +156,12 @@ export function getVersionDetails(version, assistantData) {
   return { ...versionDetails };
 }
 
-export function getExportResourceDetails(version, resource, assistantData) {
+export function getExportResourceDetails({ version, resource, assistantData }) {
   let resourceDetails = {};
-  const versionDetails = getVersionDetails(version, assistantData.export);
+  const versionDetails = getVersionDetails({
+    version,
+    assistantData: assistantData.export,
+  });
 
   if (versionDetails && versionDetails.resources) {
     resourceDetails = versionDetails.resources.find(r => r.id === resource);
@@ -207,17 +210,17 @@ export function getExportResourceDetails(version, resource, assistantData) {
   return resourceDetails;
 }
 
-export function getExportOperationDetails(
+export function getExportOperationDetails({
   version,
   resource,
   operation,
-  assistantData
-) {
-  const resourceDetails = getExportResourceDetails(
+  assistantData,
+}) {
+  const resourceDetails = getExportResourceDetails({
     version,
     resource,
-    assistantData
-  );
+    assistantData,
+  });
   let operationDetails = {};
 
   if (resourceDetails && resourceDetails.endpoints) {
@@ -297,8 +300,8 @@ export function getExportOperationDetails(
   };
 }
 
-export function convertFromExport(exportDoc, assistantData, adaptorType) {
-  const exportResource = { ...exportDoc };
+export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
+  const exportResource = { ...resourceDoc };
   let { version, resource, operation } = exportResource.assistantMetadata || {};
   const { exportType } = exportResource.assistantMetadata || {};
   const assistantMetadata = {
@@ -308,8 +311,8 @@ export function convertFromExport(exportDoc, assistantData, adaptorType) {
     exportType,
   };
 
-  if (!assistantMetadata.exportType && exportDoc) {
-    assistantMetadata.exportType = exportDoc.type;
+  if (!assistantMetadata.exportType && resourceDoc) {
+    assistantMetadata.exportType = resourceDoc.type;
   }
 
   if (!resource || !operation) {
@@ -327,11 +330,11 @@ export function convertFromExport(exportDoc, assistantData, adaptorType) {
         operation = urlMatch.urlMatch;
       }
 
-      const versionAndResource = getExportVersionAndResourceFromOperation(
-        urlMatch.urlMatch,
+      const versionAndResource = getExportVersionAndResourceFromOperation({
+        version,
+        operation: urlMatch.urlMatch,
         assistantData,
-        version
-      );
+      });
 
       ({ version, resource } = versionAndResource);
     }
@@ -345,12 +348,12 @@ export function convertFromExport(exportDoc, assistantData, adaptorType) {
     return assistantMetadata;
   }
 
-  const endpoint = getExportOperationDetails(
+  const endpoint = getExportOperationDetails({
     version,
     resource,
     operation,
-    assistantData
-  );
+    assistantData,
+  });
 
   if (!endpoint || !endpoint.url) {
     return assistantMetadata;
@@ -442,193 +445,7 @@ export function convertFromExport(exportDoc, assistantData, adaptorType) {
   };
 }
 
-export function convertToRestExport(assistantMetadata) {
-  const {
-    assistant,
-    version,
-    resource,
-    operation,
-    pathParams,
-    queryParams,
-    bodyParams,
-    assistantData,
-  } = assistantMetadata;
-  const operationDetails = getExportOperationDetails(
-    version,
-    resource,
-    operation,
-    assistantData
-  );
-  const restExport = {
-    method: operationDetails.method || 'GET',
-    resourcePath: operationDetails.resourcePath,
-    successPath: operationDetails.successPath,
-    allowUndefinedResource: operationDetails.allowUndefinedResource,
-
-    pagingMethod: undefined,
-    nextPagePath: undefined,
-    nextPageRelativeURI: undefined,
-    pageArgument: undefined,
-    maxPagePath: undefined,
-    maxCountPath: undefined,
-
-    skipArgument: undefined,
-    lastPageStatusCode: undefined,
-    lastPagePath: undefined,
-    lastPageValue: undefined,
-    headers: [],
-  };
-
-  Object.keys(operationDetails.paging || {}).forEach(
-    prop => (restExport[prop] = operationDetails.paging[prop])
-  );
-
-  let { url: relativeURI } = { ...operationDetails };
-
-  operationDetails.pathParameters.forEach(pathParam => {
-    if (pathParams) {
-      let pathParamValue = pathParams[pathParam.id];
-
-      if (pathParamValue && pathParam.config) {
-        if (pathParam.config.prefix) {
-          pathParamValue = pathParam.config + pathParamValue;
-        }
-
-        if (pathParam.config.suffix) {
-          pathParamValue += pathParam.config.suffix;
-        }
-      }
-
-      relativeURI = relativeURI.replace(
-        new RegExp(`:_${pathParam.id}`, 'g'),
-        pathParamValue
-      );
-    }
-  });
-
-  let exportType;
-  const allQueryParams = {};
-
-  operationDetails.queryParameters.forEach(queryParam => {
-    allQueryParams[queryParam.id] = queryParam.defaultValue;
-
-    if (!queryParam.readOnly) {
-      allQueryParams[queryParam.id] = queryParams[queryParam.id];
-    }
-
-    if (
-      allQueryParams[queryParam.id] &&
-      allQueryParams[queryParam.id].includes &&
-      allQueryParams[queryParam.id].includes('lastExportDateTime')
-    ) {
-      exportType = 'delta';
-    }
-  });
-  const queryString = qs.stringify(allQueryParams, {
-    encode: false,
-    indices: false,
-  }); /* indices should be false to handle IO-1776 */
-
-  if (queryString) {
-    relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
-  }
-
-  restExport.relativeURI = relativeURI;
-
-  if (['POST', 'PUT'].includes(restExport.method)) {
-    if (!isEmpty(bodyParams)) {
-      restExport.postBody = defaultsDeep(
-        cloneDeep(operationDetails.postBody),
-        bodyParams
-      );
-
-      if (operationDetails.postBodyParamsOrder) {
-        // IO-4570
-        restExport.postBody = JSON.parse(
-          JSON.stringify(
-            restExport.postBody,
-            operationDetails.postBodyParamsOrder
-          )
-        );
-      }
-    } else if (operationDetails.postBody) {
-      restExport.postBody = cloneDeep(operationDetails.postBody);
-    } else {
-      restExport.postBody = queryParams;
-    }
-
-    if (restExport.postBody) {
-      if (isString(restExport.postBody)) {
-        if (restExport.postBody.includes('lastExportDateTime')) {
-          exportType = 'delta';
-        }
-      } else if (isObject(restExport.postBody)) {
-        if (
-          JSON.stringify(restExport.postBody).includes('lastExportDateTime')
-        ) {
-          exportType = 'delta';
-        }
-      }
-
-      if (assistant === 'expensify') {
-        restExport.postBody = `requestJobDescription=${JSON.stringify(
-          restExport.postBody
-        )}`;
-      }
-    }
-  }
-
-  Object.keys(operationDetails.headers).forEach(headerName => {
-    if (operationDetails.headers[headerName] !== null) {
-      restExport.headers.push({
-        name: headerName,
-        value: operationDetails.headers[headerName],
-      });
-
-      if (
-        operationDetails.headers[headerName].includes &&
-        operationDetails.headers[headerName].includes('lastExportDateTime')
-      ) {
-        exportType = 'delta';
-      }
-    }
-  });
-
-  if (
-    !exportType &&
-    assistantMetadata.exportType &&
-    ['delta', 'test'].includes(assistantMetadata.exportType)
-  ) {
-    ({ exportType } = assistantMetadata);
-  }
-
-  const deltaConfig = {};
-
-  if (exportType === 'delta' && operationDetails.delta) {
-    ['dateFormat', 'lagOffset'].forEach(v => {
-      if (operationDetails.delta[v]) {
-        deltaConfig[v] = operationDetails.delta[v];
-      }
-    });
-  }
-
-  if (operationDetails.mergePostBodyToPagingPostBody && restExport.postBody) {
-    // IO-7630
-    restExport.pagingPostBody = defaultsDeep(
-      restExport.pagingPostBody || {},
-      restExport.postBody
-    );
-  }
-
-  return {
-    '/rest': restExport,
-    '/type': exportType || undefined,
-    '/delta': !isEmpty(deltaConfig) ? deltaConfig : undefined,
-    '/assistant': assistant,
-  };
-}
-
-export function convertToExport(assistantConfig) {
+export function convertToExport({ assistantConfig }) {
   const {
     adaptorType,
     assistant,
@@ -640,12 +457,12 @@ export function convertToExport(assistantConfig) {
     bodyParams,
     assistantData,
   } = assistantConfig;
-  const operationDetails = getExportOperationDetails(
+  const operationDetails = getExportOperationDetails({
     version,
     resource,
     operation,
-    assistantData
-  );
+    assistantData,
+  });
   const exportDefaults = {
     rest: {
       resourcePath: operationDetails.resourcePath,
@@ -872,8 +689,8 @@ export function convertToExport(assistantConfig) {
   };
 }
 
-export function getParamValue(data, value = {}, paramsType) {
-  let dataIn = data;
+export function getParamValue({ fieldMeta, value = {}, paramsType }) {
+  let dataIn = fieldMeta;
 
   if (!isObject(dataIn)) {
     dataIn = {
@@ -940,12 +757,12 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\]/g, '*__*');
 }
 
-export function convertToReactFormFields(
+export function convertToReactFormFields({
   fieldMeta = [],
   defaultValuesForDeltaExport = {},
   value = {},
-  paramsType
-) {
+  paramsType,
+}) {
   const fields = [];
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
@@ -1011,11 +828,11 @@ export function convertToReactFormFields(
 
     const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
     const { inputType, type } = fieldDetailsMap[fieldId];
-    const paramValue = getParamValue(
-      { id: field.id, inputType },
-      paramValues,
-      paramsType
-    );
+    const paramValue = getParamValue({
+      fieldMeta: { id: field.id, inputType },
+      value: paramValues,
+      paramsType,
+    });
     let { defaultValue } = field;
 
     if (
@@ -1036,8 +853,11 @@ export function convertToReactFormFields(
       required: !!field.required,
       placeholder: field.placeholder,
       defaultValue:
-        getParamValue({ id: field.id, inputType }, paramValues, paramsType) ||
-        defaultValue,
+        getParamValue({
+          fieldMeta: { id: field.id, inputType },
+          value: paramValues,
+          paramsType,
+        }) || defaultValue,
       options: [
         {
           items: field.options
