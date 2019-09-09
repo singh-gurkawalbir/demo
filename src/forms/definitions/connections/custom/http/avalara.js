@@ -1,14 +1,15 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'avalara',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': 'v2/companies',
-    '/rest/baseURI': `https://${
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': 'v2/companies',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://${
       formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
-    }rest.avatax.com/api/`,
+    }http.avatax.com/api/`,
   }),
 
   fields: [
@@ -30,7 +31,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
@@ -44,18 +45,18 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
     },
 
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
     },
   ],
   fieldSets: [
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

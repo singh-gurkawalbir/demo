@@ -21,11 +21,12 @@ export default {
   // programmatically if needed. Typical example is to add hardcoded values...
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'jira',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/',
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/',
   }),
 
   fields: [
@@ -34,17 +35,17 @@ export default {
     // this file override the references field's props.
     { fieldId: 'name' },
     {
-      fieldId: 'rest.baseURI',
+      fieldId: 'http.baseURI',
       helpText:
         'The base URI for JIRA. For example, http://www.company.com/confluence',
     },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
       helpText: 'The username of your JIRA account.',
     },
-    // ...or, we can create completely custom fields like this:
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
+      label: 'API Token:',
       helpText: 'The password of your JIRA account.',
     },
   ],
@@ -52,7 +53,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

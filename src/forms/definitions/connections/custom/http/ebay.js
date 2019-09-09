@@ -1,25 +1,25 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'ebay',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api${
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api${
       formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
     }.ebay.com/`,
-    '/rest/authURI': `https://signin${
+    '/http/auth/oauth/authURI': `https://signin${
       formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
     }.ebay.com/authorize`,
-    '/rest/oauthTokenURI': `https://api${
+    '/http/auth/oauth/tokenURI': `https://api${
       formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
     }.ebay.com/identity/v1/oauth2/token`,
-    '/rest/scopeDelimiter': ' ',
-    '/rest/tokenLocation': 'header',
-    '/rest/scope':
+    '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/location': 'header',
+    '/http/auth/oauth/scope':
       formValues['/accountType'] === 'sandbox'
-        ? formValues['/rest/scopeSandbox']
-        : formValues['/rest/scopeProduction'],
+        ? formValues['/http/auth/oauth/scopeSandbox']
+        : formValues['/http/auth/oauth/scopeProduction'],
   }),
   fields: [
     { fieldId: 'name' },
@@ -38,7 +38,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
@@ -50,7 +50,7 @@ export default {
       },
     },
     {
-      id: 'rest.scopeSandbox',
+      id: 'http.scopeSandbox',
       type: 'selectscopes',
       label: 'Configure Scopes',
       visibleWhen: [
@@ -74,11 +74,11 @@ export default {
         'https://api.ebay.com/oauth/api_scope/sell.analytics.readonly',
       ],
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') !== -1) {
-            return r && r.rest && r.rest.scope;
+            return r && r.http && r.http.scope;
           }
         }
 
@@ -86,7 +86,7 @@ export default {
       },
     },
     {
-      id: 'rest.scopeProduction',
+      id: 'http.scopeProduction',
       type: 'selectscopes',
       label: 'Configure Scopes',
       scopes: [
@@ -104,11 +104,11 @@ export default {
         'https://api.ebay.com/oauth/api_scope/sell.analytics.readonly',
       ],
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
-            return r && r.rest && r.rest.scope;
+            return r && r.http && r.http.scope;
           }
         }
 
@@ -126,7 +126,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

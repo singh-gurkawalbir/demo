@@ -1,14 +1,14 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'chargebee',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/basicAuth/password': '',
-    '/rest/pingRelativeURI': '/v2/subscriptions',
-    '/rest/pingMethod': 'GET',
-    '/rest/baseURI': `https://${
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'urlencoded',
+    '/http/basicAuth/password': '',
+    '/http/ping/relativeURI': '/v2/subscriptions',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://${
       formValues['/chargebeeSubdomain']
     }.chargebee.com/api`,
   }),
@@ -29,7 +29,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -41,7 +41,7 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
       label: 'API Key:',
       helpText: 'The API Key of your Chargebee account.',
     },
@@ -50,7 +50,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

@@ -1,18 +1,18 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'docusign',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': 'https://demo.docusign.net/restapi', // we need to set this due to a backend validation. And backend updates this after oauth completes.
-    '/rest/authURI': `https://account${
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://demo.docusign.net/restapi', // we need to set this due to a backend validation. And backend updates this after oauth completes.
+    '/http/auth/oauth/authURI': `https://account${
       formValues['/environment'] === 'demo' ? '-d' : ''
     }.docusign.com/oauth/auth`,
-    '/rest/oauthTokenURI': `https://account${
+    '/http/auth/oauth/tokenURI': `https://account${
       formValues['/environment'] === 'demo' ? '-d' : ''
     }.docusign.com/oauth/token`,
-    '/rest/unencrypted/version': 'v2',
+    '/http/unencrypted/version': 'v2',
   }),
   fields: [
     { fieldId: 'name' },
@@ -31,10 +31,10 @@ export default {
       helpText:
         'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
       defaultValue: r => {
-        const authUri = r && r.rest && r.rest.authURI;
+        const authUri = r && r.http && r.http.authURI;
 
         if (authUri) {
-          if (authUri.indexOf('account-d.docusign.com') > -1) {
+          if (authUri.indexOf('account-d.docusign.com') !== -1) {
             return 'demo';
           }
         }
@@ -47,7 +47,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

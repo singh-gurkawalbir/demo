@@ -1,19 +1,19 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'coupa',
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/accounts',
-    '/rest/baseURI': `https://${
-      formValues['/rest/coupaSubdomain']
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/accounts',
+    '/http/baseURI': `https://${
+      formValues['/http/coupaSubdomain']
     }.coupacloud.com/api`,
-    '/rest/pingMethod': 'GET',
-    '/rest/tokenLocation': 'header',
-    '/rest/authHeader': 'X-COUPA-API-KEY',
-    '/rest/authScheme': ' ',
-    '/rest/headers': [
+    '/http/ping/method': 'GET',
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/headerName': 'X-COUPA-API-KEY',
+    '/http/auth/token/scheme': ' ',
+    '/http/headers': [
       {
         name: 'ACCEPT',
         value: 'application/json',
@@ -25,7 +25,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      id: 'rest.coupaSubdomain',
+      id: 'http.coupaSubdomain',
       startAdornment: 'https://',
       helpText:
         'Please enter the subdomain of your account here which can be obtained from the login url.',
@@ -38,7 +38,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -49,10 +49,8 @@ export default {
         return subdomain;
       },
     },
-
     {
-      fieldId: 'rest.bearerToken',
-      required: true,
+      fieldId: 'http.auth.token.token',
       label: 'API Key:',
       helpText:
         'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. A token can be created from the API Keys section of the Administration tab by an admin user. The token is a 40-character long case-sensitive alphanumeric code.',
@@ -62,7 +60,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

@@ -1,19 +1,20 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'chargify',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': 'customers.json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/chargifySubdomain']
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': 'customers.json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://${
+      formValues['/http/chargifySubdomain']
     }.chargify.com`,
-    '/rest/headers': [
+    '/http/headers': [
       {
         name: 'Authorization',
         value:
-          'Basic {{{base64Encode (join ":" connection.rest.encrypted.apiKey "x")}}}',
+          'Basic {{{base64Encode (join ":" connection.http.encrypted.apiKey "x")}}}',
       },
     ],
   }),
@@ -22,7 +23,7 @@ export default {
     { fieldId: 'name' },
     {
       type: 'text',
-      id: 'rest.chargifySubdomain',
+      id: 'http.chargifySubdomain',
       startAdornment: 'https://',
       helpText:
         'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
@@ -35,7 +36,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -48,7 +49,7 @@ export default {
     },
 
     {
-      id: 'rest.encrypted.apiKey',
+      id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key:',
@@ -60,7 +61,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

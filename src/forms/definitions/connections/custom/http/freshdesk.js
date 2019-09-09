@@ -1,22 +1,21 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'freshdesk',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': 'ticket_fields.json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/freshdeskSubdomain']
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': 'ticket_fields.json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://${
+      formValues['/http/freshdeskSubdomain']
     }.freshdesk.com/`,
-    '/rest/pingFailurePath': 'require_login',
-    '/rest/pingFailureValues': [true],
   }),
   fields: [
     { fieldId: 'name' },
     {
       type: 'text',
-      id: 'rest.freshdeskSubdomain',
+      id: 'http.freshdeskSubdomain',
       helpText:
         "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
@@ -29,7 +28,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -41,12 +40,12 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
       helpText:
         'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
     },
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
       helpText: 'The password of your Freshdesk account.',
     },
   ],
@@ -54,7 +53,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

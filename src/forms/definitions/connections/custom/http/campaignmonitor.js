@@ -1,20 +1,20 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'campaignmonitor',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': 'https://api.createsend.com/api',
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://api.createsend.com/oauth',
-    '/rest/oauthTokenURI': 'https://api.createsend.com/oauth/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://api.createsend.com/api',
+    '/http/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://api.createsend.com/oauth',
+    '/http/auth/oauth/tokenURI': 'https://api.createsend.com/oauth/token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.scope',
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'ViewReports',
         'ManageLists',
@@ -34,7 +34,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

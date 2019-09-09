@@ -1,15 +1,16 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'integratorio',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api${
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://api${
       formValues['/integrator/environment'] === 'staging' ? '.staging' : ''
     }.integrator.io`,
-    '/rest/pingRelativeURI': '/v1/connections',
-    '/rest/headers': [
+    '/http/ping/relativeURI': '/v1/connections',
+    '/http/headers': [
       {
         name: 'Authorization',
         value: `Bearer ${formValues['/integrator/token']}`,
@@ -35,7 +36,7 @@ export default {
       helpText:
         'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('staging') !== -1) {
@@ -64,7 +65,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

@@ -67,6 +67,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource && resource.assistant) {
+        // console.log('resource', type, resource.assistant);
         meta = formMeta.connections.custom[type];
 
         if (meta) {

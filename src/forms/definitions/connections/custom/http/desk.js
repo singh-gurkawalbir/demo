@@ -1,19 +1,19 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'desk',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/api/v2/cases',
-    '/rest/pingMethod': 'GET',
-    '/rest/baseURI': `https://${formValues['/rest/deskSubdomain']}'.desk.com`,
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/api/v2/cases',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://${formValues['/http/deskSubdomain']}.desk.com`,
   }),
   fields: [
     { fieldId: 'name' },
     {
       type: 'text',
-      id: 'rest.deskSubdomain',
+      id: 'http.deskSubdomain',
       helpText:
         "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
@@ -26,7 +26,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -38,19 +38,19 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
-      helpText: 'The API Key of your Desk account.',
+      fieldId: 'http.auth.basic.username',
+      helpText: 'The username of your LiquidPlanner account',
     },
     {
-      fieldId: 'rest.basicAuth.password',
-      helpText: 'The password of your Desk account.',
+      fieldId: 'http.auth.basic.password',
+      helpText: 'The password of your LiquidPlanner account',
     },
   ],
   fieldSets: [
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

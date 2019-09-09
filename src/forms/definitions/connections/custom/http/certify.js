@@ -1,27 +1,27 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'certify',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/v1/expensereports',
-    '/rest/baseURI': 'https://api.certify.com',
-    '/rest/headers': [
-      { name: 'x-api-key', value: '{{{connection.rest.encrypted.apiKey}}}' },
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/v1/expensereports',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': 'https://api.certify.com',
+    '/http/headers': [
+      { name: 'x-api-key', value: '{{{connection.http.encrypted.apiKey}}}' },
       { name: 'Content-Type', value: 'application/json' },
       {
         name: 'x-api-secret',
-        value: '{{{connection.rest.encrypted.apiSecret}}}',
+        value: '{{{connection.http.encrypted.apiSecret}}}',
       },
     ],
   }),
 
   fields: [
     { fieldId: 'name' },
-
     {
-      id: 'rest.encrypted.apiKey',
+      id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key:',
@@ -29,7 +29,7 @@ export default {
       helpText: 'The API Key of your Certify account.',
     },
     {
-      id: 'rest.encrypted.apiSecret',
+      id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
       label: 'API Secret:',
@@ -41,7 +41,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

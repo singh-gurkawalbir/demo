@@ -2,29 +2,30 @@ export default {
   preSubmit: formValues => {
     const refreshTokenBody = {};
 
-    refreshTokenBody.pass = '{{{connection.rest.encrypted.password}}}';
-    refreshTokenBody.user = formValues['rest.refreshTokenBody.user'];
+    refreshTokenBody.pass = '{{{connection.http.encrypted.password}}}';
+    refreshTokenBody.user = formValues['/http/refreshTokenBody/user'];
 
     return {
       ...formValues,
-      '/type': 'rest',
+      '/type': 'http',
       '/assistant': 'jet',
-      '/rest/authType': 'token',
-      '/rest/mediaType': 'json',
-      '/rest/pingRelativeURI': '/orders/created',
-      '/rest/pingMethod': 'GET',
-      '/rest/baseURI': `https://merchant-api.jet.com/api`,
-      '/rest/refreshTokenPath': `id_token`,
-      '/rest/refreshTokenMethod': `POST`,
-      '/rest/refreshTokenURI': `https://merchant-api.jet.com/api/token`,
-      '/rest/refreshTokenMediaType': `json`,
-      '/rest/refreshTokenBody': JSON.stringify(refreshTokenBody),
+      '/http/auth/type': 'token',
+      '/http/mediaType': 'json',
+      '/http/ping/relativeURI': '/orders/created',
+      '/http/ping/method': 'GET',
+      '/http/baseURI': 'https://merchant-api.jet.com/api',
+      '/http/auth/token/refreshTokenPath': 'id_token',
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshRelativeURI':
+        'https://merchant-api.jet.com/api/token',
+      '/http/auth/token/refreshMediaType': 'json',
+      '/http/auth/token/refreshBody': JSON.stringify(refreshTokenBody),
     };
   },
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.refreshTokenBody.user',
+      id: 'http.refreshTokenBody.user',
       type: 'text',
       helpText:
         'API User Key available from Jet under API Section-> Get API Keys', // Secret Key available from Jet under API Section-> Get API Keys
@@ -34,7 +35,7 @@ export default {
         let toReturn = '';
 
         try {
-          toReturn = JSON.parse(r.rest.refreshTokenBody);
+          toReturn = JSON.parse(r.http.refreshTokenBody);
           toReturn = toReturn.user;
         } catch (e) {
           toReturn = '';
@@ -44,7 +45,7 @@ export default {
       },
     },
     {
-      id: 'rest.encrypted.password',
+      id: 'http.encrypted.password',
       type: 'text',
       inputType: 'password',
       helpText:
@@ -59,7 +60,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

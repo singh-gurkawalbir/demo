@@ -18,13 +18,50 @@ import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
+import magento from './magento';
 import clio from './clio';
 import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
+import bronto from './bronto';
+import grms from './grms';
+import strata from './strata';
+import sugarcrm from './sugarcrm';
+import avalara from './avalara';
+import campaignmonitor from './campaignmonitor';
+import certify from './certify';
+import chargebee from './chargebee';
+import hubspot from './hubspot';
+import bigcommerce from './bigcommerce';
+import chargify from './chargify';
+import coupa from './coupa';
+import desk from './desk';
+import docusign from './docusign';
+import easypost from './easypost';
+import ebay from './ebay';
+import freshdesk from './freshdesk';
+import liquidplanner from './liquidplanner';
+import dunandbradstreet from './dunandbradstreet';
+import integratorio from './integratorio';
+import jet from './jet';
+import jira from './jira';
+import hybris from './hybris';
 
 export default {
+  jira,
+  hybris,
+  jet,
+  integratorio,
+  liquidplanner,
+  freshdesk,
+  ebay,
+  coupa,
+  chargify,
+  desk,
+  docusign,
+  bigcommerce,
+  easypost,
   activecampaign,
   drift,
   'authorize.net': authorizeNet,
@@ -36,11 +73,14 @@ export default {
   'ebay-xml': ebayXml,
   openair,
   quickbooks,
+  magento,
   trinet,
   pacejet,
   bamboohr,
+  chargebee,
   intercom,
   okta,
+  hubspot,
   myobaccountright,
   easyship,
   azureactivedirectory,
@@ -48,6 +88,14 @@ export default {
   propack,
   clio,
   onelogin,
+  campaignmonitor,
   recharge,
   autopilot,
+  bronto,
+  grms,
+  certify,
+  dunandbradstreet,
+  strata,
+  sugarcrm,
+  avalara,
 };

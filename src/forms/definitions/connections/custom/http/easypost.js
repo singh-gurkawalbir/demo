@@ -1,19 +1,19 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'easypost',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/addresses',
-    '/rest/pingMethod': 'GET',
-    '/rest/baseURI': `https://api.easypost.com/v2`,
-    '/rest/basicAuth/password': '',
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/addresses',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': 'https://api.easypost.com/v2',
+    '/http/auth/basic/password': '',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
       label: 'API Key',
       inputType: 'password',
       description:
@@ -24,7 +24,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };
