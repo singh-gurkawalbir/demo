@@ -34,7 +34,15 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { id, type, resource, collection, resourceType } = action;
+  const {
+    id,
+    type,
+    resource,
+    collection,
+    resourceType,
+    connectionIds,
+    integrationId,
+  } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -90,6 +98,31 @@ export default (state = {}, action) => {
       }
 
       return state;
+
+    case actionTypes.RESOURCE.CONNECTIONS_REGISTERED:
+      resourceIndex = state.integrations.findIndex(
+        r => r._id === integrationId
+      );
+
+      if (resourceIndex > -1) {
+        const reg =
+          state.integrations[resourceIndex]._registeredConnectionIds || [];
+
+        newState = [
+          ...state.integrations.slice(0, resourceIndex),
+          {
+            ...state.integrations[resourceIndex],
+            _registeredConnectionIds: [...reg, ...connectionIds],
+          },
+          ...state.integrations.slice(resourceIndex + 1),
+        ];
+        newState = { ...state, integrations: newState };
+
+        return newState;
+      }
+
+      return state;
+
     default:
       return state;
   }
@@ -116,7 +149,7 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(
   state,
-  { type, take, keyword, integrationId, sort, sandbox }
+  { type, take, keyword, integrationId, isRegConnDialog, sort, sandbox }
 ) {
   const result = {
     resources: [],
@@ -140,9 +173,15 @@ export function resourceList(
     const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      resources = resources.filter(
-        conn => registeredConnections.indexOf(conn._id) >= 0
-      );
+      if (isRegConnDialog) {
+        resources = resources.filter(
+          conn => registeredConnections.indexOf(conn._id) === -1
+        );
+      } else {
+        resources = resources.filter(
+          conn => registeredConnections.indexOf(conn._id) >= 0
+        );
+      }
     }
   }
 

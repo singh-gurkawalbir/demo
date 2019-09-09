@@ -140,11 +140,33 @@ export function* requestReferences({ resourceType, id }) {
   }
 }
 
+export function* registerConnections({ connectionIds, integrationId }) {
+  const path = `/integrations/${integrationId}/connections/register`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: connectionIds,
+      },
+      message: `Registering Connections`,
+    });
+
+    yield put(
+      actions.resource.registeredConnections(connectionIds, integrationId)
+    );
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
+  takeEvery(actionTypes.RESOURCE.CONNECTIONS_REGISTER, registerConnections),
   ...metadataSagas,
 ];

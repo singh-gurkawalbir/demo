@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
 import {
   // Paper,
   Table,
@@ -50,7 +52,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceTable({ resourceType, resources }) {
+export default function ResourceTable({
+  resourceType,
+  resources,
+  isRegConnDialog,
+  selectConn,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { sort = {} } = useSelector(state =>
@@ -62,11 +69,21 @@ export default function ResourceTable({ resourceType, resources }) {
   };
 
   const { columns = [], actions: rowActions } = metadata(resourceType);
+  const [selectedConnections, setSelectedConnections] = useState({});
+  const handleSelectConnChange = (event, connectionId) => {
+    const { checked } = event.target;
+    const connections = { ...selectedConnections };
+
+    connections[connectionId] = checked;
+    setSelectedConnections(connections);
+    selectConn(connections);
+  };
 
   return (
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
+          {isRegConnDialog && <TableCell padding="checkbox" />}
           {columns.map(col =>
             col.orderBy ? (
               <TableCell
@@ -99,12 +116,21 @@ export default function ResourceTable({ resourceType, resources }) {
               </TableCell>
             )
           )}
-          {rowActions && <TableCell className={classes.actionColHead} />}
+          {!isRegConnDialog && rowActions && (
+            <TableCell className={classes.actionColHead} />
+          )}
         </TableRow>
       </TableHead>
       <TableBody>
         {resources.map(r => (
           <TableRow hover key={r._id} className={classes.row}>
+            {isRegConnDialog && (
+              <TableCell padding="checkbox">
+                <Checkbox
+                  onChange={event => handleSelectConnChange(event, r._id)}
+                />
+              </TableCell>
+            )}
             {columns.map((col, index) =>
               index === 0 ? (
                 <TableCell
@@ -120,7 +146,7 @@ export default function ResourceTable({ resourceType, resources }) {
                 </TableCell>
               )
             )}
-            {rowActions && (
+            {!isRegConnDialog && rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
                   actions={rowActions.map((Action, i) => (

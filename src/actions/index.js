@@ -82,6 +82,17 @@ const resource = {
       id,
     }),
 
+  registerConnections: (connectionIds, integrationId) =>
+    action(actionTypes.RESOURCE.CONNECTIONS_REGISTER, {
+      connectionIds,
+      integrationId,
+    }),
+  registeredConnections: (connectionIds, integrationId) =>
+    action(actionTypes.RESOURCE.CONNECTIONS_REGISTERED, {
+      connectionIds,
+      integrationId,
+    }),
+
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
 
   receivedReferences: resourceReferences =>

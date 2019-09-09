@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
@@ -15,10 +15,12 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from './ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
+import RegisterConnections from '../../components/RegisterConnections';
 
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
+    marginRight: '250px',
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
@@ -38,20 +40,32 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PageContent(props) {
-  const { match, location } = props;
+  const {
+    match,
+    location,
+    integrationId,
+    isRegConnDialog,
+    selectedConnections,
+  } = props;
   const resourceType =
     (match && match.params && match.params.resourceType) ||
     (props && props.resourceType);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filter = useSelector(state =>
-    selectors.filter(state, resourceType)
-  ) || { take: 3 };
+  let filter = useSelector(state => selectors.filter(state, resourceType)) || {
+    take: 3,
+  };
+
+  if (isRegConnDialog) {
+    filter = {};
+  }
+
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      take: 3,
-      integrationId: props && props.integrationId,
+      take: isRegConnDialog ? 'undefined' : 3,
+      integrationId,
+      isRegConnDialog,
       ...filter,
     })
   );
@@ -68,9 +82,21 @@ function PageContent(props) {
   };
 
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
+  const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
+  const selectConn = connections => {
+    selectedConnections(connections);
+  };
 
   return (
     <Fragment>
+      {showRegisterConnDialog && (
+        <RegisterConnections
+          integrationId={integrationId}
+          onClose={() => setShowRegisterConnDialog(false)}
+          isRegConnDialog
+        />
+      )}
+
       <Route
         path={`${match.url}/:operation/:resourceType/:id`}
         // Note that we disable the eslint warning since Route
@@ -79,31 +105,47 @@ function PageContent(props) {
         // eslint-disable-next-line react/no-children-prop
         children={props => <ResourceDrawer {...props} />}
       />
+      {!isRegConnDialog && (
+        <CeligoPageBar
+          title={`${resourceName}s`}
+          infoText={infoText[resourceType]}>
+          <div className={classes.actions}>
+            {resourceType === 'connections' &&
+            integrationId &&
+            integrationId !== 'none' ? (
+              <CeligoIconButton
+                onClick={() => setShowRegisterConnDialog(true)}
+                variant="text">
+                Register {`${resourceName}s`}
+              </CeligoIconButton>
+            ) : (
+              <Fragment>
+                <SearchInput variant="light" onChange={handleKeywordChange} />
+                <CeligoIconButton
+                  component={Link}
+                  to={`${
+                    location.pathname
+                  }/add/${resourceType}/new-${shortid.generate()}`}
+                  variant="text">
+                  <AddIcon /> New {resourceName}
+                </CeligoIconButton>
+              </Fragment>
+            )}
+          </div>
+        </CeligoPageBar>
+      )}
 
-      <CeligoPageBar
-        title={`${resourceName}s`}
-        infoText={infoText[resourceType]}>
-        <div className={classes.actions}>
-          <SearchInput variant="light" onChange={handleKeywordChange} />
-          <CeligoIconButton
-            component={Link}
-            to={`${
-              location.pathname
-            }/add/${resourceType}/new-${shortid.generate()}`}
-            variant="text">
-            <AddIcon /> New {resourceName}
-          </CeligoIconButton>
-        </div>
-      </CeligoPageBar>
       <div className={classes.resultContainer}>
         <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
+            isRegConnDialog={isRegConnDialog}
+            selectConn={selectConn}
           />
         </LoadResources>
       </div>
-      {list.filtered > list.count && (
+      {!isRegConnDialog && list.filtered > list.count && (
         <Paper elevation={10} className={classes.pagingBar}>
           <Button
             onClick={handleMore}
