@@ -58,7 +58,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let meta;
   const { type } = getResourceSubType(resource);
 
-  // console.log('resource', resource);
+  // console.log('resource111', resource, type);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
@@ -67,7 +67,9 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource && resource.assistant) {
+        console.log('resource', type, resource.assistant);
         meta = formMeta.connections.custom[type];
+        // console.log('type', type, resource.assistant);
 
         if (meta) {
           meta = meta[resource.assistant];
@@ -77,7 +79,7 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
 
         // when editing rdms connection we lookup for the resource subtype
         meta = formMeta.connections.rdbms[dbConnSubtype];
-      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) > 0) {
+      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
         meta = formMeta.connections.rdbms[type];
       } else {
         meta = formMeta.connections[type];
@@ -143,6 +145,10 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // no create export has been considered here
   const fieldsFromForm = formMeta[resourceType].subForms[f.formId].fields;
 
+  if (!fieldsFromForm) {
+    throw new Error('no subform for', f.formId);
+  }
+
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(
       'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
@@ -207,7 +213,11 @@ const applyingMissedOutFieldMetaProperties = (
   }
 
   if (!field.id || !field.name)
-    throw new Error('Id and name must be provided for a field');
+    throw new Error(
+      `Id and name must be provided for a field ${JSON.stringify(
+        incompleteField
+      )}`
+    );
 
   return field;
 };

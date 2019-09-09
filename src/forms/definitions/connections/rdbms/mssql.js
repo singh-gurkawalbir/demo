@@ -21,11 +21,12 @@ export default {
       },
     },
     { fieldId: 'connMode' },
+    {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'connMode', is: ['onPremise'] }],
+    },
     { fieldId: 'rdbms.version' },
-    { fieldId: 'rdbms.host' },
-    { fieldId: 'rdbms.database' },
-    { fieldId: 'rdbms.user' },
-    { fieldId: 'rdbms.password' },
+    { formId: 'rdbmsFields' },
     { fieldId: 'rdbms.instanceName' },
     { fieldId: 'rdbms.port' },
   ],
@@ -34,9 +35,10 @@ export default {
       header: 'Advanced Settings',
       collapsed: true,
       fields: [
-        { fieldId: '' },
-        { fieldId: '_borrowConcurrencyFromConnectionId' },
-        { fieldId: 'rdbms.concurrencyLevel' },
+        {
+          fieldId: '', // To Do configure properties needs to added.
+        },
+        { formId: 'rdbmsAdvanced' },
       ],
     },
   ],

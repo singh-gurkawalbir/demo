@@ -25,12 +25,9 @@ export default {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'connMode', is: ['onPremise'] }],
     },
-    { fieldId: 'rdbms.host' },
-    { fieldId: 'rdbms.database' },
-    { fieldId: 'rdbms.user' },
-    { fieldId: 'rdbms.password' },
+    { formId: 'rdbmsFields' },
     { fieldId: 'rdbms.port' },
-    { fieldId: 'rdbms.useSSL' },
+    { id: 'rdbms.useSSL', type: 'checkbox', label: 'Use SSL' },
     {
       fieldId: 'rdbms.ssl.ca',
       visibleWhen: [
@@ -45,10 +42,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [
-        { fieldId: '_borrowConcurrencyFromConnectionId' },
-        { fieldId: 'rdbms.concurrencyLevel' },
-      ],
+      fields: [{ formId: 'rdbmsAdvanced' }],
     },
   ],
 };

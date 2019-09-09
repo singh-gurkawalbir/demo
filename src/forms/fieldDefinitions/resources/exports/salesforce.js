@@ -6,7 +6,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
@@ -25,7 +25,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Real-time', value: 'realTime' },
+          { label: 'Real-time', value: 'realtime' },
           { label: 'Scheduled', value: 'scheduled' },
         ],
       },
@@ -52,18 +52,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
-      },
-    ],
-  },
-  'salesforce.distributed.requiredTrigger': {
-    type: 'text',
-    label: 'Required Trigger',
-    multiline: true,
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
@@ -74,7 +63,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
@@ -88,7 +77,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },

@@ -10,15 +10,7 @@ export default {
     { fieldId: 'file.output' },
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
-    { fieldId: 'file.type' },
-    { fieldId: 'uploadFile' },
-    { fieldId: 'file.csv' },
-    { fieldId: 'file.json.resourcePath' },
-    { fieldId: 'file.xml.resourcePath' },
-    { fieldId: 'file.xlsx.hasHeaderRow' },
-    { fieldId: 'file.xlsx.rowsPerRecord' },
-    { fieldId: 'file.xlsx.keyColumns' },
-    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
+    { formId: 'file' },
   ],
   fieldSets: [
     {
@@ -32,15 +24,9 @@ export default {
       fields: [{ formId: 'hooks' }],
     },
     {
-      header: 'Advanced Settings',
+      header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'file.decompressFiles' },
-        { fieldId: 'file.compressionFormat' },
-        { fieldId: 'file.skipDelete' },
-        { fieldId: 'file.encoding' },
-        { formId: 'advancedSettings' },
-      ],
+      fields: [{ formId: 'fileAdvancedSettings' }],
     },
   ],
 };

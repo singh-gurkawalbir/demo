@@ -256,16 +256,6 @@ export default {
   },
   // #endregion common
   // #region rdbms
-  'rdbms.useSSL': {
-    type: 'checkbox',
-    label: 'Use SSL',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['postgresql', 'mysql'],
-      },
-    ],
-  },
   'rdbms.host': {
     type: 'text',
     label: 'Host:',

@@ -82,7 +82,7 @@ export default {
       fields: [{ formId: 'hooks' }],
     },
     {
-      header: 'Advanced Settings',
+      header: 'Advanced',
       collapsed: 'true',
       fields: [
         { formId: 'advancedSettings' },

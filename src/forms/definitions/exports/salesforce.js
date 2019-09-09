@@ -9,7 +9,7 @@ export default {
       visibleWhen: [
         {
           field: 'salesforce.executionType',
-          is: ['scheduled', 'realTime'],
+          is: ['scheduled', 'realtime'],
         },
       ],
     },
@@ -64,10 +64,21 @@ export default {
       ],
     },
     { fieldId: 'salesforce.sObjectType' },
-    { fieldId: 'salesforce.distributed.requiredTrigger' },
-    { fieldId: 'salesforce.distributed.referencedFields' },
-    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' },
-    { fieldId: 'salesforce.distributed.qualifier' },
+    {
+      id: 'salesforce.distributed.requiredTrigger',
+      type: 'text',
+      label: 'Required Trigger',
+      multiline: true,
+      visibleWhen: [
+        {
+          field: 'salesforce.executionType',
+          is: ['realtime'],
+        },
+      ],
+    },
+    { fieldId: 'salesforce.distributed.referencedFields' }, // To Do need to  modify the field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' }, // To Do need to modify field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.qualifier' }, // To Do need to modify field once enhancemnt done.
   ],
   fieldSets: [
     {
