@@ -34,12 +34,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [
-        {
-          fieldId: '', // To Do configure properties needs to added.
-        },
-        { formId: 'rdbmsAdvanced' },
-      ],
+      fields: [{ formId: 'rdbmsAdvanced' }],
     },
   ],
 };
