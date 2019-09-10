@@ -76,9 +76,9 @@ export default {
         },
       ],
     },
-    { fieldId: 'salesforce.distributed.referencedFields' }, // TO DO need to  modify the field once enhancemnt done.
-    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' }, // TO DO need to modify field once enhancemnt done.
-    { fieldId: 'salesforce.distributed.qualifier' }, // TO DO need to modify field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.referencedFields' }, // TODO need to  modify the field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' }, // TODO need to modify field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.qualifier' }, // TODO need to modify field once enhancemnt done.
   ],
   fieldSets: [
     {
