@@ -157,16 +157,6 @@ export function* requestToken({ resourceId, values }) {
       opts: { body: reqPayload, method: 'POST' },
       hidden: true,
     });
-
-    if (assistant === 'grms') {
-      if (resp && !resp.success)
-        yield put(
-          actions.resource.connections.requestTokenFailed(
-            resourceId,
-            resp && resp.ResponseMessages
-          )
-        );
-    }
   } catch (e) {
     const errorsJSON = JSON.parse(e.message);
     const { errors } = errorsJSON;

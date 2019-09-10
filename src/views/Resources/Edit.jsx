@@ -150,7 +150,6 @@ class Edit extends Component {
       handleUndoChange,
       newResourceId,
       handleCommitMetaChanges,
-      handleInitCustomResourceForm,
       type,
       handleUndoAllMetaChanges,
       // handleCommitChanges,
@@ -223,6 +222,7 @@ class Edit extends Component {
                 onChange={this.handleToggleEdit}
                 control={<Switch color="primary" />}
                 label="Edit"
+                checked={editMode}
                 labelPlacement="start"
               />
             )}
@@ -259,10 +259,9 @@ class Edit extends Component {
                   color="secondary"
                   disabled={metaPatches === 0}
                   onClick={() => {
-                    // we clear all meta patches but we want to retain the inital custom form patch
-                    // hence we perform the init custom form
+                    // we clear all meta patches and disable edit mode
                     handleUndoAllMetaChanges();
-                    handleInitCustomResourceForm();
+                    this.setState({ editMode: false });
                   }}>
                   Cancel Meta Changes
                 </Button>

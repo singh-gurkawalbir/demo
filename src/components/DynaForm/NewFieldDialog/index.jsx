@@ -1,5 +1,6 @@
-import { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { useState, useEffect, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Form, FormContext } from 'react-forms-processor/dist';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,7 +12,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import stringUtil from '../../../utils/string';
 import Select from '@material-ui/core/Select';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { Form } from 'react-forms-processor/dist';
 import FormDialog from '../../FormDialog';
 import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
@@ -85,8 +85,7 @@ const getFieldProps = type => ({
   value: 'test field value',
   ...fieldMeta[type].props,
 });
-
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   content: {
     padding: theme.spacing(1),
   },
@@ -107,67 +106,45 @@ const getFieldProps = type => ({
     border: '1px solid',
     borderColor: theme.palette.divider,
   },
-}))
-export default class NewFieldDialog extends Component {
-  state = {
-    mode: 'custom', // or 'preset'
-    fieldType: 'text',
-    fieldId: 'name',
-    value: '',
-    error: false,
-    count: 0,
-    meta: {},
-    existingFieldIdWarning: false,
-    existingFieldNameWarning: false,
+}));
+
+export default function NewFieldDialog(props) {
+  const classes = useStyles();
+  const [mode, setMode] = useState('custom');
+  const [fieldType, setFieldType] = useState('text');
+  const [fieldId, setFieldId] = useState('name');
+  const [value, setValue] = useState('');
+  const [error, setError] = useState(false);
+  const [count, setCount] = useState(0);
+  const [meta, setMeta] = useState({});
+  const [existingFieldIdWarning, setExistingFieldIdWarning] = useState(false);
+  const [existingFieldNameWarning, setExistingFieldNameWarning] = useState(
+    false
+  );
+  const remountDynaField = () => {
+    setCount(count => count + 1);
   };
 
-  remountDynaField() {
-    const count = this.state.count + 1;
-
-    this.setState({ count: count + 1 });
-  }
-  handleExistingFieldWarning(id, name) {
-    const { formFieldsMeta } = this.props;
-    const existingFieldId = getFieldById({
-      meta: formFieldsMeta,
-      id,
-    });
-    const existingFieldName = getFieldByName({
-      fieldMeta: formFieldsMeta,
-      name,
-    });
-
-    if (existingFieldId || existingFieldName) {
-      // set some state with warning
-
-      if (existingFieldId && existingFieldName)
-        this.setState({
-          existingFieldIdWarning: true,
-          existingFieldNameWarning: true,
-          error: true,
-        });
-      else if (existingFieldId)
-        this.setState({
-          existingFieldIdWarning: true,
-          existingFieldNameWarning: false,
-          error: true,
-        });
-      else
-        this.setState({
-          existingFieldIdWarning: false,
-          existingFieldNameWarning: true,
-          error: true,
-        });
-    } else
-      this.setState({
-        existingFieldIdWarning: false,
-        existingFieldNameWarning: false,
-        error: false,
+  const { formFieldsMeta } = props;
+  const handleExistingFieldWarning = useCallback(
+    (id, name) => {
+      const existingFieldId = getFieldById({
+        meta: formFieldsMeta,
+        id,
       });
-  }
+      const existingFieldName = getFieldByName({
+        fieldMeta: formFieldsMeta,
+        name,
+      });
 
-  handleEditorChange(value) {
-    const { resourceType } = this.props;
+      setExistingFieldNameWarning(!!existingFieldName);
+      setExistingFieldIdWarning(!!existingFieldId);
+      setError(existingFieldId || existingFieldName);
+    },
+    [formFieldsMeta]
+  );
+  const handleEditorChange = value => {
+    const { resourceType } = props;
 
     try {
       let meta = JSON.parse(value);
@@ -180,16 +157,17 @@ export default class NewFieldDialog extends Component {
 
       const { id, name } = meta;
 
-      this.handleExistingFieldWarning(id, name);
-      this.setState({ meta, value });
-      this.remountDynaField();
+      handleExistingFieldWarning(id, name);
+      setMeta(meta);
+      setValue(value);
+      remountDynaField();
     } catch (e) {
-      this.setState({ value, error: true });
+      setError(true);
     }
-  }
+  };
 
-  handleFieldChange({ fieldType, fieldId }) {
-    const { resourceType } = this.props;
+  const handleFieldChange = ({ fieldType, fieldId }) => {
+    const { resourceType } = props;
     let meta;
     let value;
 
@@ -203,158 +181,142 @@ export default class NewFieldDialog extends Component {
       value = JSON.stringify({ fieldId }, null, 2);
     }
 
-    // console.log('meta:', meta);
-    // console.log('value: ', value);
+    setMeta(meta);
+    setValue(value);
+    setFieldId(fieldId);
+    setFieldType(fieldType);
+    remountDynaField();
+  };
 
-    this.setState({ meta, value, fieldId, fieldType });
-    this.remountDynaField();
-  }
-
-  handleSubmit() {
-    const { value } = this.state;
-    const { onSubmit } = this.props;
+  const handleSubmit = () => {
+    const { onSubmit } = props;
     const meta = JSON.parse(value);
 
     onSubmit(meta);
-  }
+  };
 
-  handleModeChange(mode) {
-    this.setState({ mode });
-  }
+  const handleModeChange = mode => {
+    setMode(mode);
+  };
 
-  componentWillMount() {
-    const fieldType = 'text';
-    const meta = getFieldProps(fieldType);
-    const value = JSON.stringify(meta, null, 2);
-    const { id, name } = meta;
+  const [componentReloaded, setComponentReloaded] = useState(false);
 
-    this.handleExistingFieldWarning(id, name);
+  useEffect(() => {
+    if (!componentReloaded) {
+      setComponentReloaded(true);
+      const fieldType = 'text';
+      const meta = getFieldProps(fieldType);
+      const value = JSON.stringify(meta, null, 2);
+      const { id, name } = meta;
 
-    this.setState({ fieldType, value, meta });
-  }
+      handleExistingFieldWarning(id, name);
+      setFieldType(fieldType);
+      setValue(value);
+      setMeta(meta);
+    }
+  }, [componentReloaded, handleExistingFieldWarning]);
 
-  render() {
-    const {
-      classes,
-      onSubmit,
-      resourceType,
-      adaptorType,
-      ...rest
-    } = this.props;
-    const {
-      fieldId,
-      fieldType,
-      error,
-      value,
-      meta,
-      mode,
-      count,
-      existingFieldIdWarning,
-      existingFieldNameWarning,
-    } = this.state;
-    const DynaField = fields[meta.type];
-    // console.log('render:', fieldType, fieldId, meta);
-    const resourceMeta = fieldDefinitions[resourceType] || {};
+  const { onSubmit, resourceType, adaptorType, ...rest } = props;
+  const DynaField = fields[meta.type];
+  // console.log('render:', fieldType, fieldId, meta);
+  const resourceMeta = fieldDefinitions[resourceType] || {};
 
-    return (
-      <FormDialog
-        submitLabel="Insert Field"
-        isValid={!error}
-        {...rest}
-        onSubmit={() => this.handleSubmit()}>
-        <div className={classes.content}>
-          <RadioGroup
-            aria-label="position"
-            name="position"
-            value={mode}
-            onChange={e => this.handleModeChange(e.target.value)}
-            row>
-            <FormControlLabel
-              value="custom"
-              control={<Radio color="primary" />}
-              label="Build Custom Field"
-              labelPlacement="end"
-            />
-            <FormControlLabel
-              value="preset"
-              control={<Radio color="primary" />}
-              label="Select Preset Field"
-              labelPlacement="start"
-            />
-          </RadioGroup>
+  return (
+    <FormDialog
+      submitLabel="Insert Field"
+      isValid={!error}
+      {...rest}
+      onSubmit={() => handleSubmit()}>
+      <div className={classes.content}>
+        <RadioGroup
+          aria-label="position"
+          name="position"
+          value={mode}
+          onChange={e => handleModeChange(e.target.value)}
+          row>
+          <FormControlLabel
+            value="custom"
+            control={<Radio color="primary" />}
+            label="Build Custom Field"
+            labelPlacement="end"
+          />
+          <FormControlLabel
+            value="preset"
+            control={<Radio color="primary" />}
+            label="Select Preset Field"
+            labelPlacement="start"
+          />
+        </RadioGroup>
 
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="field-type">
-              {mode === 'custom'
-                ? 'Select a custom input type to insert'
-                : 'Select a pre-built field to insert'}
-            </InputLabel>
-            {mode === 'custom' ? (
-              <Select
-                value={fieldType}
-                onChange={e =>
-                  this.handleFieldChange({ fieldType: e.target.value })
-                }
-                input={<Input name="fieldType" id="field-type" />}>
-                {Object.values(fieldMeta).map(f => (
-                  <MenuItem key={f.key} value={f.key}>
-                    {f.label}
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="field-type">
+            {mode === 'custom'
+              ? 'Select a custom input type to insert'
+              : 'Select a pre-built field to insert'}
+          </InputLabel>
+          {mode === 'custom' ? (
+            <Select
+              value={fieldType}
+              onChange={e => handleFieldChange({ fieldType: e.target.value })}
+              input={<Input name="fieldType" id="field-type" />}>
+              {Object.values(fieldMeta).map(f => (
+                <MenuItem key={f.key} value={f.key}>
+                  {f.label}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Select
+              value={fieldId}
+              onChange={e => handleFieldChange({ fieldId: e.target.value })}
+              input={<Input name="fieldType" id="field-type" />}>
+              {Object.keys(resourceMeta)
+                .filter(key => key.startsWith(adaptorType))
+                .map(key => (
+                  <MenuItem key={key} value={key}>
+                    {`${resourceMeta[key].label} (${key})`}
                   </MenuItem>
                 ))}
-              </Select>
-            ) : (
-              <Select
-                value={fieldId}
-                onChange={e =>
-                  this.handleFieldChange({ fieldId: e.target.value })
-                }
-                input={<Input name="fieldType" id="field-type" />}>
-                {Object.keys(resourceMeta)
-                  .filter(key => key.startsWith(adaptorType))
-                  .map(key => (
-                    <MenuItem key={key} value={key}>
-                      {`${resourceMeta[key].label} (${key})`}
-                    </MenuItem>
-                  ))}
-              </Select>
-            )}
-          </FormControl>
-          <Typography variant="caption">Field Preview</Typography>
-          <div className={classes.fieldPreview}>
-            {DynaField && (
-              <Form key={count}>
-                <DynaField {...meta} />
-              </Form>
-            )}
-          </div>
-          {existingFieldIdWarning && (
-            <div>
-              <FormHelperText error>
-                The field Id provided is an id for an existing field, Please
-                change it to a more unique id.
-              </FormHelperText>
-            </div>
+            </Select>
           )}
-
-          {existingFieldNameWarning && (
-            <div>
-              <FormHelperText error>
-                The field name provided is used as a name for an existing field,
-                Please change it to a more unique name.
-              </FormHelperText>
-            </div>
+        </FormControl>
+        <Typography variant="caption">Field Preview</Typography>
+        <div className={classes.fieldPreview}>
+          {DynaField && (
+            <Form key={count}>
+              <FormContext>
+                {form => <DynaField {...form} {...meta} />}
+              </FormContext>
+            </Form>
           )}
-          <Typography variant="caption">Metadata</Typography>
-          <div className={classes.editorContainer}>
-            <CodeEditor
-              name={(meta && meta.id) || fieldId}
-              value={value}
-              mode="json"
-              onChange={v => this.handleEditorChange(v)}
-            />
-          </div>
         </div>
-      </FormDialog>
-    );
-  }
+        {existingFieldIdWarning && (
+          <div>
+            <FormHelperText error>
+              The field Id provided is an id for an existing field, Please
+              change it to a more unique id.
+            </FormHelperText>
+          </div>
+        )}
+
+        {existingFieldNameWarning && (
+          <div>
+            <FormHelperText error>
+              The field name provided is used as a name for an existing field,
+              Please change it to a more unique name.
+            </FormHelperText>
+          </div>
+        )}
+        <Typography variant="caption">Metadata</Typography>
+        <div className={classes.editorContainer}>
+          <CodeEditor
+            name={(meta && meta.id) || fieldId}
+            value={value}
+            mode="json"
+            onChange={v => handleEditorChange(v)}
+          />
+        </div>
+      </div>
+    </FormDialog>
+  );
 }

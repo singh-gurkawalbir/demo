@@ -1,6 +1,6 @@
 import jsonPatch from 'fast-json-patch';
 
-export const searchFieldFromMetaBasedOnFindFunc = (meta, findFieldFunction) => {
+export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
 
   const { fieldReferences } = meta;
@@ -86,19 +86,16 @@ export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
 };
 
 export const getFieldWithReferenceById = ({ meta, id }) =>
-  searchFieldFromMetaBasedOnFindFunc(meta, f => byId(f, id));
+  searchMetaForFieldByFindFunc(meta, f => byId(f, id));
 
 export const getFieldById = ({ meta, id }) => {
-  const res = searchFieldFromMetaBasedOnFindFunc(meta, f => byId(f, id));
+  const res = searchMetaForFieldByFindFunc(meta, f => byId(f, id));
 
   return res && res.field;
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {
-  const res = searchFieldFromMetaBasedOnFindFunc(
-    fieldMeta,
-    f => f.name === name
-  );
+  const res = searchMetaForFieldByFindFunc(fieldMeta, f => f.name === name);
 
   return res && res.field;
 };

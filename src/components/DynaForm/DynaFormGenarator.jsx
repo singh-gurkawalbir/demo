@@ -60,18 +60,55 @@ const TabComponent = props => {
   );
 };
 
+const CollapsedComponents = props => {
+  const { fieldSets, fieldReferences, classes } = props;
+
+  return fieldSets.map((fieldSet, index) => {
+    const { label: header, collapsed = true, ...layout } = fieldSet;
+
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <ExpansionPanel defaultExpanded={!collapsed} key={index}>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>{header}</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails className={classes.fieldsContainer}>
+          <FormGenerator layout={layout} fieldReferences={fieldReferences} />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    );
+  });
+};
+
+const ColumnComponents = props => {
+  const { fieldSets, fieldReferences, classes } = props;
+
+  return fieldSets.map((set, index) => {
+    const { label: header, ...layout } = set;
+
+    // TODO:its safe to use index for these elements since the metada is not expected to change
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <div key={index} className={classes.fieldsContainer}>
+        <Typography>{header}</Typography>
+        <FormGenerator layout={layout} fieldReferences={fieldReferences} />
+      </div>
+    );
+  });
+};
+
 const getCorrespondingFieldReferences = (fields, fieldReferences) =>
   fields.map(field => {
-    const transFormedFieldValue = fieldReferences[field];
+    const transformedFieldValue = fieldReferences[field];
 
-    if (!transFormedFieldValue) {
+    if (!transformedFieldValue) {
       // eslint-disable-next-line no-console
       console.warn('no field reference found for field ', field);
 
       return {};
     }
 
-    return { ...transFormedFieldValue, fieldReferenceName: field };
+    return transformedFieldValue;
   });
 
 export default function FormGenerator(props) {
@@ -107,40 +144,21 @@ export default function FormGenerator(props) {
       }
 
       if (type === 'collapse') {
-        convertedFieldSets = fieldSets.map((fieldSet, index) => {
-          const { label: header, ...layout } = fieldSet;
-
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <ExpansionPanel key={index}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>{header}</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.fieldsContainer}>
-                <FormGenerator
-                  layout={layout}
-                  fieldReferences={fieldReferences}
-                />
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          );
-        });
+        convertedFieldSets = (
+          <CollapsedComponents
+            fieldSets={fieldSets}
+            fieldReferences={fieldReferences}
+            classes={classes}
+          />
+        );
       } else if (type === 'column') {
-        convertedFieldSets = fieldSets.map((set, index) => {
-          const { label: header, ...layout } = set;
-
-          // TODO:its safe to use index for these elements since the metada is not expected to change
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={index} className={classes.fieldsContainer}>
-              <Typography>{header}</Typography>
-              <FormGenerator
-                layout={layout}
-                fieldReferences={fieldReferences}
-              />
-            </div>
-          );
-        });
+        convertedFieldSets = (
+          <ColumnComponents
+            fieldSets={fieldSets}
+            fieldReferences={fieldReferences}
+            classes={classes}
+          />
+        );
       } else if (type === 'tab') {
         convertedFieldSets = (
           <TabComponent

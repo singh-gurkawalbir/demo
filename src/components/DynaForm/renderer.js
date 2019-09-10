@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   iconButton: {
     marginLeft: 5,
   },
-  inlineElements: { display: 'inline-block' },
+  root: { display: 'inline-block' },
 });
 const wrapper = {
   display: 'flex',
@@ -35,7 +35,7 @@ const FieldActions = props => {
   const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
-    <div className={classes.inlineElements}>
+    <div className={classes.root}>
       {editMode && (
         <EditFieldButton
           key={`edit-${field.id}`}
