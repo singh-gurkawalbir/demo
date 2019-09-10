@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
-// import ResourceList from '../../views/ResourceList';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../views/ResourceList/ResourceTable';
 import * as selectors from '../../reducers';
@@ -68,13 +67,6 @@ function RegisterConnections(props) {
         <Typography>{title}</Typography>
       </DialogTitle>
       <DialogContent style={{ width }}>
-        {/* <ResourceList
-          resourceType="connections"
-          integrationId={integrationId}
-          isRegConnDialog={isRegConnDialog}
-          selectedConnections={selectedConnections}
-        /> */}
-
         <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}

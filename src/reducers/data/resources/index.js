@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -105,24 +106,14 @@ export default (state = {}, action) => {
       );
 
       if (resourceIndex > -1) {
-        const reg =
-          state.integrations[resourceIndex]._registeredConnectionIds || [];
-
-        newState = [
-          ...state.integrations.slice(0, resourceIndex),
-          {
-            ...state.integrations[resourceIndex],
-            _registeredConnectionIds: [...reg, ...connectionIds],
-          },
-          ...state.integrations.slice(resourceIndex + 1),
-        ];
-        newState = { ...state, integrations: newState };
-
-        return newState;
+        return produce(state, draft => {
+          connectionIds.map(cId =>
+            draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
+          );
+        });
       }
 
       return state;
-
     default:
       return state;
   }
