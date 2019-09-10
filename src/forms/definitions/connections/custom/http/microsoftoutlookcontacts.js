@@ -3,31 +3,30 @@ import _ from 'lodash';
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
-    '/assistant': 'microsoftoutlookmail',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://graph.microsoft.com/v1.0`,
-    '/rest/authURI':
+    '/type': 'http',
+    '/assistant': 'microsoftoutlookcontacts',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://graph.microsoft.com/v1.0`,
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/rest/scope': _.merge(
+    '/http/auth/oauth/scope': _.merge(
       ['openid', 'offline_access'],
-      formValues['/rest/scope']
+      formValues['/http/auth/oauth/scope']
     ),
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.scope',
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'openid',
         'offline_access',
-        'Mail.Read',
-        'Mail.ReadWrite',
-        'Mail.Send',
+        'Contacts.Read',
+        'Contacts.ReadWrite',
         'MailboxSettings.Read',
         'MailboxSettings.ReadWrite',
       ],
@@ -37,7 +36,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

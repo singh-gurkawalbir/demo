@@ -1,17 +1,17 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'shippo',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.goshippo.com`,
-    '/rest/pingRelativeURI': '/addresses',
-    '/rest/pingMethod': 'GET',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.goshippo.com`,
+    '/http/ping/relativeURI': '/addresses',
+    '/http/ping/method': 'GET',
+    '/http/headers': [
       {
         name: 'Authorization',
-        value: 'ShippoToken {{{connection.rest.encrypted.token}}}',
+        value: 'ShippoToken {{{connection.http.encrypted.token}}}',
       },
       { name: 'Content-Type', value: 'application/json' },
     ],
@@ -19,7 +19,7 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.token',
+      id: 'http.encrypted.token',
       label: 'API Token:',
       type: 'text',
       inputType: 'password',
@@ -34,7 +34,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

@@ -1,22 +1,22 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'microsoftdynamics365',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/microsoftDynamics365Subdomain']
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://${
+      formValues['/http/microsoftDynamics365Subdomain']
     }.dynamics.com`,
-    '/rest/authURI':
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.microsoftDynamics365Subdomain',
+      id: 'http.microsoftDynamics365Subdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.dynamics.com',
@@ -30,7 +30,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -46,7 +46,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

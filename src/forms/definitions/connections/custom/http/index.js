@@ -47,8 +47,34 @@ import integratorio from './integratorio';
 import jet from './jet';
 import jira from './jira';
 import hybris from './hybris';
+import mailchimp from './mailchimp';
+import microsoftbusinesscentral from './microsoftbusinesscentral';
+import microsoftonenote from './microsoftonenote';
+import microsoftoffice365 from './microsoftoffice365';
+import microsoftoutlookcalendar from './microsoftoutlookcalendar';
+import microsoftoutlookcontacts from './microsoftoutlookcontacts';
+import microsoftoutlookmail from './microsoftoutlookmail';
+import microsoftdynamics365 from './microsoftdynamics365';
+import sageone from './sageone';
+import slack from './slack';
+import shippo from './shippo';
+import skubana from './skubana';
+import servicenow from './servicenow';
 
 export default {
+  servicenow,
+  skubana,
+  shippo,
+  slack,
+  sageone,
+  microsoftdynamics365,
+  microsoftoutlookmail,
+  microsoftoutlookcontacts,
+  microsoftoutlookcalendar,
+  microsoftoffice365,
+  microsoftbusinesscentral,
+  microsoftonenote,
+  mailchimp,
   jira,
   hybris,
   jet,

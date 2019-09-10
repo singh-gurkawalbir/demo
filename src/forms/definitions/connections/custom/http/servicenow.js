@@ -1,12 +1,13 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'servicenow',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/api/now/pa/scorecards',
-    '/rest/baseURI': `https://${formValues['/instanceName']}.service-now.com`,
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/api/now/pa/scorecards',
+    '/http/baseURI': `https://${formValues['/instanceName']}.service-now.com`,
   }),
   fields: [
     { fieldId: 'name' },
@@ -25,7 +26,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -37,11 +38,11 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
+      fieldId: 'http.auth.basic.username',
       helpText: 'The username of your ServiceNow account.',
     },
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
       helpText: 'The password of your ServiceNow account.',
     },
   ],
@@ -49,7 +50,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

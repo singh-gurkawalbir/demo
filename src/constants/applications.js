@@ -315,12 +315,12 @@ const connectors = [
     type: 'http',
     assistant: 'microsoftdynamics365',
   },
-  // {
-  //   id: 'microsoftoffice365',
-  //   name: 'microsoftoffice365',
-  //   type: 'http',
-  //   assistant: 'microsoftoffice365',
-  // },
+  {
+    id: 'microsoftoffice365',
+    name: 'microsoftoffice365',
+    type: 'http',
+    assistant: 'microsoftoffice365',
+  },
   {
     id: 'microsoftonenote',
     name: 'Microsoft OneNote',

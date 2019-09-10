@@ -5,7 +5,6 @@ import greenhouse from './greenhouse';
 import insightly from './insightly';
 import mailgun from './mailgun';
 import pulseway from './pulseway';
-import servicenow from './servicenow';
 import shipstation from './shipstation';
 import shopify from './shopify';
 import shipwire from './shipwire';
@@ -22,15 +21,12 @@ import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
-import slack from './slack';
 import dropbox from './dropbox';
 import google from './google';
 import jobvite from './jobvite';
-import mailchimp from './mailchimp';
 import smartsheet from './smartsheet';
 import linkedin from './linkedin';
 import box from './box';
-import sageone from './sageone';
 import yahoo from './yahoo';
 import steelbrick from './steelbrick';
 import squareup from './squareup';
@@ -57,17 +53,11 @@ import googlecontacts from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
-import microsoftoffice365 from './microsoftoffice365';
 import zohodesk from './zohodesk';
 import zohocrm from './zohocrm';
 import pitneybowes from './pitneybowes';
 import zohobooks from './zohobooks';
-import shippo from './shippo';
 import expensify from './expensify';
-import microsoftoutlookcalendar from './microsoftoutlookcalendar';
-import microsoftoutlookmail from './microsoftoutlookmail';
-import microsoftoutlookcontacts from './microsoftoutlookcontacts';
-import microsoftonenote from './microsoftonenote';
 import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
@@ -84,8 +74,6 @@ import klaviyo from './klaviyo';
 import returnly from './returnly';
 import aptrinsic from './aptrinsic';
 import cardknox from './cardknox';
-import microsoftdynamics365 from './microsoftdynamics365';
-import microsoftbusinesscentral from './microsoftbusinesscentral';
 import quip from './quip';
 import concur from './concur';
 import oandaexchangerates from './oandaexchangerates';
@@ -96,7 +84,6 @@ import marketo from './marketo';
 import retailops from './retailops';
 import sharepoint from './sharepoint';
 import parseur from './parseur';
-import skubana from './skubana';
 import merchantesolutions from './merchantesolutions';
 import threedcart from './threedcart';
 
@@ -111,18 +98,14 @@ export default {
   namely,
   newegg,
   asana,
-  slack,
   dropbox,
   google,
   jobvite,
-  mailchimp,
   smartsheet,
   linkedin,
   box,
-  sageone,
   yahoo,
   steelbrick,
-  servicenow,
   shipstation,
   shopify,
   squareup,
@@ -157,17 +140,11 @@ export default {
   googleshopping,
   googleanalytics,
   taxjar,
-  microsoftoffice365,
   zohodesk,
   zohocrm,
   pitneybowes,
   zohobooks,
-  shippo,
   expensify,
-  microsoftoutlookcalendar,
-  microsoftoutlookmail,
-  microsoftoutlookcontacts,
-  microsoftonenote,
   wish,
   pdffiller,
   signnow,
@@ -187,8 +164,6 @@ export default {
   returnly,
   aptrinsic,
   cardknox,
-  microsoftdynamics365,
-  microsoftbusinesscentral,
   quip,
   concur,
   oandaexchangerates,
@@ -200,6 +175,5 @@ export default {
   retailops,
   sharepoint,
   parseur,
-  skubana,
   merchantesolutions,
 };

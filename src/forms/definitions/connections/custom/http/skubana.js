@@ -1,22 +1,22 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'skubana',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.${
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.${
       formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
     }skubana.com`,
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': `https://${
+    '/http/auth/token/location': 'header',
+    '/http/auth/oauth/authURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
     }.skubana.com/oauth/authorize`,
-    '/rest/oauthTokenURI': `https://${
+    '/http/auth/oauth/tokenURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
     }.skubana.com/oauth/token`,
-    '/rest/oauth/accessTokenPath': 'access_token',
-    '/rest/scopeDelimiter': '+',
+    '/http/auth/oauth/accessTokenPath': 'access_token',
+    '/http/auth/oauth/scopeDelimiter': '+',
   }),
   fields: [
     { fieldId: 'name' },
@@ -35,7 +35,7 @@ export default {
       helpText:
         'Please select your environment here. Select Sandbox if the account is created on https://demo.skubana.com/login. Select Production if the account is created on https://app.skubana.com/login.',
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox.') !== -1) {
@@ -47,7 +47,7 @@ export default {
       },
     },
     {
-      fieldId: 'rest.scope',
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'none',
         'read_inventory',
@@ -69,7 +69,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

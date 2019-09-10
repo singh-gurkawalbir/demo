@@ -1,22 +1,22 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'mailchimp',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/mailchimpDataCenter']
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://${
+      formValues['/http/mailchimpDataCenter']
     }.api.mailchimp.com`,
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://login.mailchimp.com/oauth2/authorize',
-    '/rest/oauthTokenURI': 'https://login.mailchimp.com/oauth2/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://login.mailchimp.com/oauth2/authorize',
+    '/http/auth/oauth/tokenURI': 'https://login.mailchimp.com/oauth2/token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.mailchimpDataCenter',
+      id: 'http.mailchimpDataCenter',
       type: 'text',
       label: 'Data Center:',
       helpText:
@@ -28,7 +28,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -44,7 +44,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };
