@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
   Drawer,
@@ -10,31 +9,10 @@ import {
   Box,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import SizeIcon from '@material-ui/icons/FormatSizeOutlined';
 import clsx from 'clsx';
+import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import * as selectors from '../../../reducers';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}>
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -57,10 +35,8 @@ const useStyles = makeStyles(theme => ({
   },
   tabBar: {
     display: 'flex',
-    // flexGrow: 1,
     flexDirection: 'row',
     width: '100%',
-    // backgroundColor: theme.palette.background.paper,
   },
   tabRoot: {
     flexGrow: 1,
@@ -70,6 +46,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}>
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
 export default function BottomDrawer({ defaultSize = 1 }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -78,15 +70,18 @@ export default function BottomDrawer({ defaultSize = 1 }) {
 
   function a11yProps(index) {
     return {
-      id: `scrollable-auto-tab-${index}`,
-      'aria-controls': `scrollable-auto-tabpanel-${index}`,
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
     };
   }
 
-  function handleSizeChange() {
-    if (size === 3) return setSize(0);
-    setSize(size + 1);
-  }
+  const handleSizeChange = direction => () => {
+    if (size === 3 && direction === 1) return setSize(0);
+
+    if (size === 0 && direction === -1) return setSize(3);
+
+    setSize(size + direction);
+  };
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
@@ -125,8 +120,11 @@ export default function BottomDrawer({ defaultSize = 1 }) {
           <Tab label="Item Six" {...a11yProps(5)} />
           <Tab label="Item Seven" {...a11yProps(6)} />
         </Tabs>
-        <IconButton onClick={handleSizeChange}>
-          <SizeIcon />
+        <IconButton onClick={handleSizeChange(1)}>
+          <ArrowUpIcon />
+        </IconButton>
+        <IconButton onClick={handleSizeChange(-1)}>
+          <ArrowDownIcon />
         </IconButton>
       </div>
 
