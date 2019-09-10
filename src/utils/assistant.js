@@ -9,6 +9,8 @@ import {
   last,
   each,
   isArray,
+  assign,
+  unionBy,
 } from 'lodash';
 
 export function routeToRegExp(route) {
@@ -60,67 +62,60 @@ export function getMatchingRoute(routes, url) {
   return toReturn;
 }
 
-export function mergeHeaders(headers1 = {}, headers2 = {}) {
-  const mergedHeaders = {};
-
-  Object.keys(headers1).forEach(key => (mergedHeaders[key] = headers1[key]));
-
-  Object.keys(headers2).forEach(key => {
-    if (!Object.prototype.hasOwnProperty.call(mergedHeaders, key)) {
-      mergedHeaders[key] = headers2[key];
-    }
-  });
-
-  return mergedHeaders;
+export function mergeHeaders(headers = {}, overwrites = {}) {
+  return assign({ ...headers }, { ...overwrites });
 }
 
-export function mergeArrays(arr1 = [], arr2 = []) {
-  const mergedArray = [];
-
-  arr1.forEach(elem => mergedArray.push(elem));
-
-  arr2.forEach(elem => {
-    const index = arr1.findIndex(e => elem.id === e.id);
-
-    if (index === -1) {
-      mergedArray.push(elem);
-    } else {
-      mergedArray[index] = elem;
-    }
-  });
-
-  return mergedArray;
+export function mergeQueryParameters(queryParameters = [], overwrites = []) {
+  return unionBy(overwrites, queryParameters, 'id');
 }
 
-export function getExportVersionAndResourceFromOperation({
-  version,
-  operation,
+export function getExportVersionAndResource({
+  assistantVersion,
+  assistantOperation,
   assistantData,
 }) {
-  const toReturn = {};
+  const versionAndResource = {};
 
-  assistantData.export.versions.forEach(ver => {
-    if (version && ver !== version) {
+  if (
+    !assistantOperation ||
+    !assistantData ||
+    !assistantData.versions ||
+    assistantData.versions.length === 0
+  ) {
+    return versionAndResource;
+  }
+
+  assistantData.versions.forEach(version => {
+    if (assistantVersion && version.version !== assistantVersion) {
       return true;
     }
 
-    ver.resources.forEach(resource => {
+    version.resources.forEach(resource => {
       const ep = resource.endpoints.find(
-        ep => ep.id === operation || ep.url === operation
+        ep => ep.id === assistantOperation || ep.url === assistantOperation
       );
 
       if (ep) {
-        toReturn.version = ver.version;
-        toReturn.resource = resource.id;
+        versionAndResource.version = version.version;
+        versionAndResource.resource = resource.id;
       }
     });
   });
 
-  return toReturn;
+  return versionAndResource;
 }
 
 export function getVersionDetails({ version, assistantData }) {
   let versionDetails = {};
+
+  if (
+    !assistantData ||
+    !assistantData.versions ||
+    assistantData.versions.length === 0
+  ) {
+    return versionDetails;
+  }
 
   if (version) {
     versionDetails = assistantData.versions.find(v => v.version === version);
@@ -128,7 +123,8 @@ export function getVersionDetails({ version, assistantData }) {
     [versionDetails] = assistantData.versions;
   }
 
-  if (versionDetails) {
+  if (versionDetails && versionDetails.version) {
+    versionDetails = { ...versionDetails };
     [
       'paging',
       'successPath',
@@ -137,21 +133,30 @@ export function getVersionDetails({ version, assistantData }) {
       'successMediaType',
       'errorMediaType',
     ].forEach(prop => {
-      if (!versionDetails[prop]) {
+      if (
+        !Object.prototype.hasOwnProperty.call(versionDetails, prop) &&
+        Object.prototype.hasOwnProperty.call(assistantData, prop)
+      ) {
         versionDetails[prop] = assistantData[prop];
       }
     });
+
+    if (Object.prototype.hasOwnProperty.call(assistantData, 'headers')) {
+      versionDetails.headers = mergeHeaders(
+        assistantData.headers,
+        versionDetails.headers
+      );
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(assistantData, 'queryParameters')
+    ) {
+      versionDetails.queryParameters = mergeQueryParameters(
+        assistantData.queryParameters,
+        versionDetails.queryParameters
+      );
+    }
   }
-
-  versionDetails.headers = mergeHeaders(
-    versionDetails.headers,
-    assistantData.headers
-  );
-
-  versionDetails.queryParameters = mergeArrays(
-    assistantData.queryParameters,
-    versionDetails.queryParameters
-  );
 
   return { ...versionDetails };
 }
@@ -196,11 +201,11 @@ export function getExportResourceDetails({ version, resource, assistantData }) {
       );
 
       resourceDetails.headers = mergeHeaders(
-        resourceDetails.headers,
-        versionDetails.headers
+        versionDetails.headers,
+        resourceDetails.headers
       );
 
-      resourceDetails.queryParameters = mergeArrays(
+      resourceDetails.queryParameters = mergeQueryParameters(
         versionDetails.queryParameters,
         resourceDetails.queryParameters
       );
@@ -280,11 +285,11 @@ export function getExportOperationDetails({
       }
 
       operationDetails.headers = mergeHeaders(
-        operationDetails.headers,
-        resourceDetails.headers
+        resourceDetails.headers,
+        operationDetails.headers
       );
 
-      operationDetails.queryParameters = mergeArrays(
+      operationDetails.queryParameters = mergeQueryParameters(
         resourceDetails.queryParameters,
         operationDetails.queryParameters
       );
@@ -330,10 +335,10 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
         operation = urlMatch.urlMatch;
       }
 
-      const versionAndResource = getExportVersionAndResourceFromOperation({
-        version,
-        operation: urlMatch.urlMatch,
-        assistantData,
+      const versionAndResource = getExportVersionAndResource({
+        assistantVersion: version,
+        assistantOperation: urlMatch.urlMatch,
+        assistantData: assistantData.export,
       });
 
       ({ version, resource } = versionAndResource);
