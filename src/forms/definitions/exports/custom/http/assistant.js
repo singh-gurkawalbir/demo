@@ -38,6 +38,7 @@ export default function assistantDefinition(
       assistantData,
       adaptorType: adaptorType === 'HTTPExport' ? 'http' : 'rest',
     });
+    const { operationDetails } = assistantConfig;
     const { labels = {} } = assistantData.export;
 
     if (assistantData.export.versions.length > 1) {
@@ -67,7 +68,7 @@ export default function assistantDefinition(
 
     fields.push(resourceField);
 
-    const endpointField = {
+    const operationField = {
       fieldId: 'assistantMetadata.operation',
       refreshOptionsOnChangesTo: [
         'assistantMetadata.version',
@@ -78,27 +79,27 @@ export default function assistantDefinition(
     };
 
     if (labels.endpoint) {
-      endpointField.label = labels.endpoint;
+      operationField.label = labels.endpoint;
     }
 
-    if (assistantConfig.endpoint) {
-      endpointField.endpoint = assistantConfig.endpoint;
+    if (operationDetails) {
+      operationField.operationDetails = operationDetails;
     }
 
-    fields.push(endpointField);
+    fields.push(operationField);
 
-    if (assistantConfig.endpoint) {
+    if (operationDetails) {
       if (
-        assistantConfig.endpoint.supportedExportTypes &&
-        assistantConfig.endpoint.supportedExportTypes.length > 0
+        operationDetails.supportedExportTypes &&
+        operationDetails.supportedExportTypes.length > 0
       ) {
         const exportTypeOptions = [{ value: 'all', label: 'All' }];
 
-        if (assistantConfig.endpoint.supportedExportTypes.includes('delta')) {
+        if (operationDetails.supportedExportTypes.includes('delta')) {
           exportTypeOptions.push({ value: 'delta', label: 'Delta' });
         }
 
-        if (assistantConfig.endpoint.supportedExportTypes.includes('test')) {
+        if (operationDetails.supportedExportTypes.includes('test')) {
           exportTypeOptions.push({ value: 'test', label: 'Test' });
         }
 
@@ -120,10 +121,10 @@ export default function assistantDefinition(
       }
 
       if (
-        assistantConfig.endpoint.pathParameters &&
-        assistantConfig.endpoint.pathParameters.length > 0
+        operationDetails.pathParameters &&
+        operationDetails.pathParameters.length > 0
       ) {
-        assistantConfig.endpoint.pathParameters.forEach(pathParam => {
+        operationDetails.pathParameters.forEach(pathParam => {
           const pathParamField = {
             id: `assistantMetadata.pathParams.${pathParam.id}`,
             label: pathParam.name,
@@ -154,33 +155,33 @@ export default function assistantDefinition(
       }
 
       if (
-        assistantConfig.endpoint.queryParameters &&
-        assistantConfig.endpoint.queryParameters.length > 0
+        operationDetails.queryParameters &&
+        operationDetails.queryParameters.length > 0
       ) {
         fields.push({
           id: 'assistantMetadata.queryParams',
-          label: assistantConfig.endpoint.queryParametersLabel,
+          label: operationDetails.queryParametersLabel,
           type: 'assistantsearchparams',
           value: assistantConfig.queryParams,
-          fieldMeta: assistantConfig.endpoint.queryParameters,
+          fieldMeta: operationDetails.queryParameters,
           defaultValuesForDeltaExport:
             assistantConfig.exportType === 'delta' &&
-            assistantConfig.endpoint.delta &&
-            assistantConfig.endpoint.delta.defaults
-              ? assistantConfig.endpoint.delta.defaults
+            operationDetails.delta &&
+            operationDetails.delta.defaults
+              ? operationDetails.delta.defaults
               : {},
         });
       } else if (
-        assistantConfig.endpoint.bodyParameters &&
-        assistantConfig.endpoint.bodyParameters.length > 0
+        operationDetails.bodyParameters &&
+        operationDetails.bodyParameters.length > 0
       ) {
         fields.push({
           id: 'assistantMetadata.bodyParams',
-          label: assistantConfig.endpoint.bodyParametersLabel,
+          label: operationDetails.bodyParametersLabel,
           type: 'assistantsearchparams',
           paramsType: 'body',
           value: assistantConfig.bodyParams,
-          fieldMeta: assistantConfig.endpoint.bodyParameters,
+          fieldMeta: operationDetails.bodyParameters,
         });
       }
     }

@@ -348,14 +348,14 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
     return assistantMetadata;
   }
 
-  const endpoint = getExportOperationDetails({
+  const operationDetails = getExportOperationDetails({
     version,
     resource,
     operation,
     assistantData,
   });
 
-  if (!endpoint || !endpoint.url) {
+  if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
   }
 
@@ -365,15 +365,18 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
 
   const exportAdaptorSubSchema = exportResource[adaptorType];
   const urlMatch = getMatchingRoute(
-    [endpoint.url],
+    [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
   );
   const pathParams = {};
   let queryParams = {};
   let bodyParams = {};
 
-  if (endpoint.pathParameters && endpoint.pathParameters.length > 0) {
-    endpoint.pathParameters.forEach((p, index) => {
+  if (
+    operationDetails.pathParameters &&
+    operationDetails.pathParameters.length > 0
+  ) {
+    operationDetails.pathParameters.forEach((p, index) => {
       if (urlMatch && urlMatch.urlParts && urlMatch.urlParts[index]) {
         pathParams[p.id] = urlMatch.urlParts[index];
       }
@@ -432,13 +435,13 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
   }
 
   if (!operation) {
-    operation = endpoint.id || endpoint.url;
+    operation = operationDetails.id || operationDetails.url;
   }
 
   return {
     ...assistantMetadata,
     operation,
-    endpoint,
+    operationDetails,
     pathParams,
     queryParams,
     bodyParams,
