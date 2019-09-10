@@ -10,8 +10,8 @@ import { Switch, Route, NavLink } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
+import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const mapStateToProps = (state, { match }) => {
   const { integrationId } = match.params;
