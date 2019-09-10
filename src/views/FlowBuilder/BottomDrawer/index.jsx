@@ -62,10 +62,9 @@ function TabPanel(props) {
   );
 }
 
-export default function BottomDrawer({ defaultSize = 1 }) {
+export default function BottomDrawer({ size, setSize }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const [size, setSize] = useState(defaultSize);
   const [tabValue, setTabValue] = useState(0);
 
   function a11yProps(index) {
@@ -75,10 +74,12 @@ export default function BottomDrawer({ defaultSize = 1 }) {
     };
   }
 
+  // set maxStep to 4 to allow 100% drawer coverage.
+  const maxStep = 3;
   const handleSizeChange = direction => () => {
-    if (size === 3 && direction === 1) return setSize(0);
+    if (size === maxStep && direction === 1) return setSize(0);
 
-    if (size === 0 && direction === -1) return setSize(3);
+    if (size === 0 && direction === -1) return setSize(maxStep);
 
     setSize(size + direction);
   };
