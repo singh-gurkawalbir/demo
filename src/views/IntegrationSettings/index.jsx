@@ -43,6 +43,11 @@ const AuditLog = loadable(() =>
 );
 /* webpackChunkName: 'IntegrationSettings.AccessTokens' */
 const AccessTokens = loadable(() => import('./AccessTokens'));
+const Connections = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationSettings.Connections' */ './Connections'
+  )
+);
 
 @hot(module)
 @withStyles(theme => ({
@@ -173,6 +178,12 @@ class IntegrationSettings extends Component {
                     `/integrations/:integrationId/settings/flows`
                   )}
                   component={Flows}
+                />
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/connections`
+                  )}
+                  component={Connections}
                 />
                 <Route
                   path={getRoutePath(
