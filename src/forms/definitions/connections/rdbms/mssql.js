@@ -20,7 +20,20 @@ export default {
         return rdbmsConnSubType;
       },
     },
-    { fieldId: 'connMode' },
+    {
+      id: 'connMode',
+      type: 'radiogroup',
+      label: 'Mode:',
+      defaultValue: 'cloud',
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-Premise', value: 'onPremise' },
+          ],
+        },
+      ],
+    },
     {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'connMode', is: ['onPremise'] }],

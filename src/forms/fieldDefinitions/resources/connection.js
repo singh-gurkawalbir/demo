@@ -280,19 +280,6 @@ export default {
     label: 'Database Name:',
     required: true,
   },
-  connMode: {
-    type: 'radiogroup',
-    label: 'Mode:',
-    defaultValue: 'cloud',
-    options: [
-      {
-        items: [
-          { label: 'Cloud', value: 'cloud' },
-          { label: 'On-Premise', value: 'onPremise' },
-        ],
-      },
-    ],
-  },
   'rdbms.instanceName': {
     type: 'text',
     label: 'Instance Name:',
