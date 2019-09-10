@@ -1,3 +1,5 @@
+import { SEARCH_PARAMETER_TYPES } from '../../../../../../utils/assistant';
+
 export default {
   'assistantMetadata.version': {
     type: 'assistantoptions',
@@ -21,6 +23,6 @@ export default {
   },
   'assistantMetadata.queryParams': {
     type: 'assistantsearchparams',
-    paramsType: 'query',
+    paramsType: SEARCH_PARAMETER_TYPES.QUERY,
   },
 };

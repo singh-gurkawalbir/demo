@@ -6,6 +6,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import {
   convertToReactFormFields,
   updateFormValues,
+  SEARCH_PARAMETER_TYPES,
 } from '../../../../utils/assistant';
 
 const SearchParamsModal = props => {
@@ -89,7 +90,7 @@ export default function DynaAssistantSearchParams(props) {
       <Button
         variant="contained"
         onClick={() => setShowSearchParamsModal(true)}>
-        {label || paramsType === 'body'
+        {label || paramsType === SEARCH_PARAMETER_TYPES.BODY
           ? 'Configure Body Parameters'
           : 'Configure Search Parameters'}
       </Button>

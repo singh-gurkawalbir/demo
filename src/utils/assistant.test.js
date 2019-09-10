@@ -6,6 +6,9 @@ import {
   mergeQueryParameters,
   getExportVersionAndResource,
   getVersionDetails,
+  getResourceDetails,
+  getParamValue,
+  SEARCH_PARAMETER_TYPES,
 } from './assistant';
 
 describe('getMatchingRoute', () => {
@@ -458,6 +461,157 @@ describe('getVersionDetails', () => {
         getVersionDetails({
           version,
           assistantData,
+        })
+      ).toEqual(expected);
+    }
+  );
+});
+
+describe('getResourceDetails TODO', () => {
+  const testCases = [[{}, undefined, undefined, undefined]];
+
+  each(testCases).test(
+    'should return %o when version = %s, resource = %s and assistantData = %o',
+    (expected, version, resource, assistantData) => {
+      expect(
+        getResourceDetails({
+          version,
+          resource,
+          assistantData,
+        })
+      ).toEqual(expected);
+    }
+  );
+});
+
+describe('getParamValue', () => {
+  const testCases = [
+    [undefined, undefined, undefined],
+    [undefined, {}, {}],
+    [undefined, { id: 'abc' }, { def: 'xyz' }],
+    ['def', { id: 'abc' }, { abc: 'def' }],
+    ['def', { id: 'abc', inputType: 'multiselect' }, { abc: 'def' }],
+    [
+      ['def'],
+      {
+        id: 'abc',
+        inputType: 'multiselect',
+        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+      { abc: 'def' },
+    ],
+    [
+      ['def'],
+      {
+        id: 'abc',
+        inputType: 'multiselect',
+        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+      { abc: ['def'] },
+    ],
+    [
+      'def',
+      {
+        id: 'abc',
+        inputType: 'select',
+        paramType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+      { abc: 'def' },
+    ],
+    [
+      'def',
+      {
+        id: 'abc',
+        inputType: 'select',
+        paramType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+      { abc: ['def'] },
+    ],
+    [
+      'something',
+      {
+        id: 'searchCriteria[filter_groups][0][filters][0][field]',
+        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+      {
+        abc: 'def',
+        'searchCriteria[filter_groups][0][filters][0][field]': 'something',
+      },
+    ],
+    [
+      'something',
+      {
+        id: 'searchCriteria[filter_groups]',
+        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+      {
+        abc: 'def',
+        'searchCriteria[filter_groups]': 'something',
+        searchCriteria: { filter_groups: 'something else' },
+      },
+    ],
+    [
+      'something else',
+      {
+        id: 'searchCriteria[filter_groups]',
+        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+      {
+        abc: 'def',
+        searchCriteria: { '[filter_groups]': 'something else' },
+      },
+    ],
+    [
+      'some thing',
+      {
+        id: 'a.b',
+        paramType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+      {
+        a: {
+          b: 'some thing',
+          c: {
+            d: {
+              e: 'something else',
+            },
+          },
+        },
+      },
+    ],
+    [
+      'something else',
+      {
+        id: 'a.c.d.e',
+        paramType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+      {
+        a: {
+          b: 'some thing',
+          c: {
+            d: {
+              e: 'something else',
+            },
+          },
+        },
+      },
+    ],
+    [
+      undefined,
+      {
+        id: 'a.c.d.e',
+        paramType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+      {},
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when fieldMeta = %o and values = %o',
+    (expected, fieldMeta, values) => {
+      expect(
+        getParamValue({
+          fieldMeta,
+          values,
         })
       ).toEqual(expected);
     }

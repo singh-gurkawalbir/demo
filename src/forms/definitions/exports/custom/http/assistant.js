@@ -2,6 +2,7 @@ import { omitBy } from 'lodash';
 import {
   convertFromExport,
   convertToExport,
+  SEARCH_PARAMETER_TYPES,
 } from '../../../../../utils/assistant';
 
 export default function assistantDefinition(
@@ -179,7 +180,7 @@ export default function assistantDefinition(
           id: 'assistantMetadata.bodyParams',
           label: operationDetails.bodyParametersLabel,
           type: 'assistantsearchparams',
-          paramsType: 'body',
+          paramsType: SEARCH_PARAMETER_TYPES.BODY,
           value: assistantConfig.bodyParams,
           fieldMeta: operationDetails.bodyParameters,
         });
