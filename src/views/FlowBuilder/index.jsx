@@ -1,11 +1,10 @@
 import { Fragment, useState } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { withRouter, Route } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-// import { Button, Paper } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import CeligoPageBar from '../../components/CeligoPageBar';
-// import CeligoIconButton from '../../components/IconButton';
-// import * as selectors from '../../reducers';
+import * as selectors from '../../reducers';
 // import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
@@ -16,22 +15,32 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   canvasContainer: {
-    width: `calc(100% - ${theme.drawer}px)`,
+    // border: 'solid 1px black',
+    overflow: 'hidden',
+    width: `calc(100vw - 57px)`,
+    transition: theme.transitions.create(['width', 'height'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  canvasShift: {
+    width: `calc(100vw - ${theme.drawerWidth}px)`,
   },
   canvas: {
     width: '100%',
-    padding: theme.spacing(1),
+    height: '100%',
     display: 'flex',
+    // border: 'solid 1px lightgrey',
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
-    width: '25%',
+    width: 250,
     overflowY: 'auto',
   },
   processorContainer: {
     display: 'flex',
-    width: '75%',
+    flexGrow: '1',
     overflowX: 'auto',
   },
   processorBlocks: {
@@ -49,13 +58,19 @@ const pageProcessors = [
   { name: 'p3' },
   { name: 'p4' },
 ];
-const pageGenerators = [{ name: 'g1' }, { name: 'g2' }, { name: 'g3' }];
+const pageGenerators = [
+  { name: 'g1' },
+  { name: 'g2' },
+  { name: 'g3' },
+  { name: 'g4' },
+];
 
 function FlowBuilder(props) {
   const { match } = props;
-  // const { resourceType } = match.params;
   const classes = useStyles();
+  const theme = useTheme();
   const [size, setSize] = useState(0);
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <Fragment>
@@ -78,8 +93,14 @@ function FlowBuilder(props) {
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
         <div
-          className={classes.canvasContainer}
-          style={{ marginBottom: `${size * 25 || 64}` }}>
+          className={clsx(classes.canvasContainer, {
+            [classes.canvasShift]: drawerOpened,
+          })}
+          style={{
+            height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
+              theme.pageBarHeight +
+              (size ? 0 : 64)}px)`,
+          }}>
           <div className={classes.canvas}>
             <div className={classes.generatorContainer}>
               {pageGenerators.map(g => (
