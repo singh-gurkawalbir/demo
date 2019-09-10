@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Checkbox from '@material-ui/core/Checkbox';
 import {
   // Paper,
   Table,
@@ -11,6 +10,7 @@ import {
   TableRow,
   TableSortLabel,
 } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
 import metadata from './metadata';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -55,8 +55,8 @@ const useStyles = makeStyles(theme => ({
 export default function ResourceTable({
   resourceType,
   resources,
-  isRegConnDialog,
-  selectConn,
+  selectResourceRef,
+  metadataType,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -68,22 +68,23 @@ export default function ResourceTable({
     dispatch(actions.patchFilter(resourceType, { sort: { order, orderBy } }));
   };
 
-  const { columns = [], actions: rowActions } = metadata(resourceType);
-  const [selectedConnections, setSelectedConnections] = useState({});
-  const handleSelectConnChange = (event, connectionId) => {
+  const { columns = [], actions: rowActions } = metadata(
+    metadataType || resourceType
+  );
+  const [selectedRes, setSelectedRes] = useState({});
+  const handleSelectResChange = (event, resourceId) => {
     const { checked } = event.target;
-    const connections = { ...selectedConnections };
+    const selectedResources = { ...selectedRes };
 
-    connections[connectionId] = checked;
-    setSelectedConnections(connections);
-    selectConn(connections);
+    selectedResources[resourceId] = checked;
+    setSelectedRes(selectedResources);
+    selectResourceRef(selectedResources);
   };
 
   return (
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
-          {isRegConnDialog && <TableCell padding="checkbox" />}
           {columns.map(col =>
             col.orderBy ? (
               <TableCell
@@ -116,21 +117,12 @@ export default function ResourceTable({
               </TableCell>
             )
           )}
-          {!isRegConnDialog && rowActions && (
-            <TableCell className={classes.actionColHead} />
-          )}
+          {rowActions && <TableCell className={classes.actionColHead} />}
         </TableRow>
       </TableHead>
       <TableBody>
         {resources.map(r => (
           <TableRow hover key={r._id} className={classes.row}>
-            {isRegConnDialog && (
-              <TableCell padding="checkbox">
-                <Checkbox
-                  onChange={event => handleSelectConnChange(event, r._id)}
-                />
-              </TableCell>
-            )}
             {columns.map((col, index) =>
               index === 0 ? (
                 <TableCell
@@ -138,7 +130,13 @@ export default function ResourceTable({
                   scope="row"
                   key={col.heading}
                   align={col.align || 'left'}>
-                  {col.value(r)}
+                  {col.type === 'checkbox' ? (
+                    <Checkbox
+                      onChange={event => handleSelectResChange(event, r._id)}
+                    />
+                  ) : (
+                    col.value(r)
+                  )}
                 </TableCell>
               ) : (
                 <TableCell key={col.heading} align={col.align || 'left'}>
@@ -146,7 +144,7 @@ export default function ResourceTable({
                 </TableCell>
               )
             )}
-            {!isRegConnDialog && rowActions && (
+            {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
                   actions={rowActions.map((Action, i) => (

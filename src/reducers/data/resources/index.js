@@ -149,7 +149,7 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(
   state,
-  { type, take, keyword, integrationId, isRegConnDialog, sort, sandbox }
+  { type, take, keyword, integrationId, sort, sandbox }
 ) {
   const result = {
     resources: [],
@@ -173,15 +173,9 @@ export function resourceList(
     const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      if (isRegConnDialog) {
-        resources = resources.filter(
-          conn => registeredConnections.indexOf(conn._id) === -1
-        );
-      } else {
-        resources = resources.filter(
-          conn => registeredConnections.indexOf(conn._id) >= 0
-        );
-      }
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) >= 0
+      );
     }
   }
 
@@ -307,5 +301,28 @@ export function isAgentOnline(state, agentId) {
     new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
       process.env.AGENT_STATUS_INTERVAL
   );
+}
+
+export function getIntegrationRegisterConn(state, resourceType, integrationId) {
+  if (!state) {
+    return [];
+  }
+
+  let resources = state[resourceType];
+
+  if (integrationId) {
+    const integration = state.integrations.find(
+      integration => integration._id === integrationId
+    );
+    const registeredConnections = integration._registeredConnectionIds;
+
+    if (registeredConnections) {
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) === -1
+      );
+    }
+  }
+
+  return resources;
 }
 // #endregion

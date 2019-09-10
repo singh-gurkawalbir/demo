@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -9,28 +9,20 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
-import ResourceList from '../../views/ResourceList';
+// import ResourceList from '../../views/ResourceList';
+import LoadResources from '../../components/LoadResources';
+import ResourceTable from '../../views/ResourceList/ResourceTable';
+import * as selectors from '../../reducers';
 
 const styles = theme => ({
   title: {
     marginLeft: theme.spacing(4),
     padding: theme.spacing(2),
   },
-  submit: {
-    marginLeft: theme.spacing(4),
-    marginTop: theme.spacing(4),
-    marginRight: 'auto',
-  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-  },
-  textField: {
-    width: theme.spacing(50),
-  },
-  form: {
-    marginLeft: theme.spacing(3),
   },
 });
 
@@ -41,8 +33,12 @@ function RegisterConnections(props) {
     width = '70vw',
     onClose,
     integrationId,
-    isRegConnDialog,
+    resourceType = 'connections',
+    metadataType = 'registerConnections',
   } = props;
+  const connectionsToReg = useSelector(state =>
+    selectors.getIntegrationRegisterConn(state, resourceType, integrationId)
+  );
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();
   const selectedConnections = connections => {
@@ -72,12 +68,21 @@ function RegisterConnections(props) {
         <Typography>{title}</Typography>
       </DialogTitle>
       <DialogContent style={{ width }}>
-        <ResourceList
+        {/* <ResourceList
           resourceType="connections"
           integrationId={integrationId}
           isRegConnDialog={isRegConnDialog}
           selectedConnections={selectedConnections}
-        />
+        /> */}
+
+        <LoadResources required resources={resourceType}>
+          <ResourceTable
+            resourceType={resourceType}
+            resources={connectionsToReg}
+            selectResourceRef={selectedConnections}
+            metadataType={metadataType}
+          />
+        </LoadResources>
       </DialogContent>
       <Button onClick={handleRegisterClick}>Register</Button>
     </Dialog>

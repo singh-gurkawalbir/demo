@@ -41,6 +41,14 @@ export function hasData(state, resourceType) {
 export function isAgentOnline(state, agentId) {
   return fromResources.isAgentOnline(state && state.resources, agentId);
 }
+
+export function getIntegrationRegisterConn(state, resourceType, integrationId) {
+  return fromResources.getIntegrationRegisterConn(
+    state && state.resources,
+    resourceType,
+    integrationId
+  );
+}
 // #endregion
 
 export function integrationUsers(state, integrationId) {

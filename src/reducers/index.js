@@ -424,6 +424,14 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
+export function getIntegrationRegisterConn(state, resourceType, integrationId) {
+  return fromData.getIntegrationRegisterConn(
+    state.data,
+    resourceType,
+    integrationId
+  );
+}
+
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

@@ -40,32 +40,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PageContent(props) {
-  const {
-    match,
-    location,
-    integrationId,
-    isRegConnDialog,
-    selectedConnections,
-  } = props;
+  const { match, location, integrationId } = props;
   const resourceType =
     (match && match.params && match.params.resourceType) ||
     (props && props.resourceType);
   const classes = useStyles();
   const dispatch = useDispatch();
-  let filter = useSelector(state => selectors.filter(state, resourceType)) || {
-    take: 3,
-  };
-
-  if (isRegConnDialog) {
-    filter = {};
-  }
-
+  const filter = useSelector(state =>
+    selectors.filter(state, resourceType)
+  ) || { take: 3 };
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      take: isRegConnDialog ? 'undefined' : 3,
+      take: 3,
       integrationId,
-      isRegConnDialog,
       ...filter,
     })
   );
@@ -83,9 +71,6 @@ function PageContent(props) {
 
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
-  const selectConn = connections => {
-    selectedConnections(connections);
-  };
 
   return (
     <Fragment>
@@ -93,7 +78,6 @@ function PageContent(props) {
         <RegisterConnections
           integrationId={integrationId}
           onClose={() => setShowRegisterConnDialog(false)}
-          isRegConnDialog
         />
       )}
 
@@ -105,47 +89,43 @@ function PageContent(props) {
         // eslint-disable-next-line react/no-children-prop
         children={props => <ResourceDrawer {...props} />}
       />
-      {!isRegConnDialog && (
-        <CeligoPageBar
-          title={`${resourceName}s`}
-          infoText={infoText[resourceType]}>
-          <div className={classes.actions}>
-            {resourceType === 'connections' &&
-            integrationId &&
-            integrationId !== 'none' ? (
+      <CeligoPageBar
+        title={`${resourceName}s`}
+        infoText={infoText[resourceType]}>
+        <div className={classes.actions}>
+          {resourceType === 'connections' &&
+          integrationId &&
+          integrationId !== 'none' ? (
+            <CeligoIconButton
+              onClick={() => setShowRegisterConnDialog(true)}
+              variant="text">
+              Register {`${resourceName}s`}
+            </CeligoIconButton>
+          ) : (
+            <Fragment>
+              <SearchInput variant="light" onChange={handleKeywordChange} />
               <CeligoIconButton
-                onClick={() => setShowRegisterConnDialog(true)}
+                component={Link}
+                to={`${
+                  location.pathname
+                }/add/${resourceType}/new-${shortid.generate()}`}
                 variant="text">
-                Register {`${resourceName}s`}
+                <AddIcon /> New {resourceName}
               </CeligoIconButton>
-            ) : (
-              <Fragment>
-                <SearchInput variant="light" onChange={handleKeywordChange} />
-                <CeligoIconButton
-                  component={Link}
-                  to={`${
-                    location.pathname
-                  }/add/${resourceType}/new-${shortid.generate()}`}
-                  variant="text">
-                  <AddIcon /> New {resourceName}
-                </CeligoIconButton>
-              </Fragment>
-            )}
-          </div>
-        </CeligoPageBar>
-      )}
+            </Fragment>
+          )}
+        </div>
+      </CeligoPageBar>
 
       <div className={classes.resultContainer}>
         <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
-            isRegConnDialog={isRegConnDialog}
-            selectConn={selectConn}
           />
         </LoadResources>
       </div>
-      {!isRegConnDialog && list.filtered > list.count && (
+      {list.filtered > list.count && (
         <Paper elevation={10} className={classes.pagingBar}>
           <Button
             onClick={handleMore}
