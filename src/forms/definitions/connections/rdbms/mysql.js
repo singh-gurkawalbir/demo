@@ -9,19 +9,19 @@ export default {
     {
       fieldId: 'type',
       defaultValue: r => {
-        let rdbmsConnSubType;
+        let rdbmsSubType;
 
         if (r && r.type === 'rdbms') {
-          rdbmsConnSubType = r.rdbms.type;
+          rdbmsSubType = r.rdbms.type;
         } else {
-          rdbmsConnSubType = r.type;
+          rdbmsSubType = r.type;
         }
 
-        return rdbmsConnSubType;
+        return rdbmsSubType;
       },
     },
     {
-      id: 'connMode',
+      id: 'mode',
       type: 'radiogroup',
       label: 'Mode:',
       defaultValue: 'cloud',
@@ -29,14 +29,14 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onPremise' },
+            { label: 'On-Premise', value: 'onpremise' },
           ],
         },
       ],
     },
     {
       fieldId: '_agentId',
-      visibleWhen: [{ field: 'connMode', is: ['onPremise'] }],
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
     { formId: 'rdbmsFields' },
     { fieldId: 'rdbms.port' },

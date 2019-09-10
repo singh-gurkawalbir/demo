@@ -58,8 +58,6 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let meta;
   const { type } = getResourceSubType(resource);
 
-  // console.log('resource111', resource, type);
-
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
   switch (resourceType) {
@@ -67,18 +65,16 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource && resource.assistant) {
-        // console.log('resource', type, resource.assistant);
         meta = formMeta.connections.custom[type];
-        // console.log('type', type, resource.assistant);
 
         if (meta) {
           meta = meta[resource.assistant];
         }
       } else if (resource && resource.type === 'rdbms') {
-        const dbConnSubtype = resource.rdbms.type;
+        const rdbmsSubType = resource.rdbms.type;
 
         // when editing rdms connection we lookup for the resource subtype
-        meta = formMeta.connections.rdbms[dbConnSubtype];
+        meta = formMeta.connections.rdbms[rdbmsSubType];
       } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
         meta = formMeta.connections.rdbms[type];
       } else {
@@ -196,12 +192,10 @@ const applyingMissedOutFieldMetaProperties = (
   }
 
   if (!Object.keys(field).includes('defaultValue')) {
-    // console.log(`default value for ${merged.fieldId} used`);
     field.defaultValue = get(resource, field.id, '');
   }
 
   if (!field.helpText && !field.helpKey) {
-    // console.log(`default helpKey for ${merged.id} used`);
     let singularResourceType = resourceType;
 
     // Make resourceType singular
