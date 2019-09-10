@@ -23,6 +23,27 @@ import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
+import threedcart from './threedcart';
+import harvest from './harvest';
+import greenhouse from './greenhouse';
+import jobvite from './jobvite';
+import lightspeed from './lightspeed';
+import newegg from './newegg';
+import newrelic from './newrelic';
+import pulseway from './pulseway';
+import accelo from './accelo';
+import anaplan from './anaplan';
+import asana from './asana';
+import atera from './atera';
+import eventbrite from './eventbrite';
+import exacterp from './exacterp';
+import fieldaware from './fieldaware';
+import freshbooks from './freshbooks';
+import pitneybowes from './pitneybowes';
+import shiphawk from './shiphawk';
+import shipwire from './shipwire';
+import snapfulfil from './snapfulfil';
+import quip from './quip';
 
 export default {
   activecampaign,
@@ -50,4 +71,25 @@ export default {
   onelogin,
   recharge,
   autopilot,
+  harvest,
+  greenhouse,
+  freshbooks,
+  fieldaware,
+  exacterp,
+  eventbrite,
+  accelo,
+  anaplan,
+  asana,
+  atera,
+  lightspeed,
+  jobvite,
+  newegg,
+  newrelic,
+  pulseway,
+  pitneybowes,
+  '3dcart': threedcart,
+  shiphawk,
+  shipwire,
+  snapfulfil,
+  quip,
 };
