@@ -34,7 +34,6 @@ const refGeneration = field => {
 
 // get a particular component
 const generateFieldReferences = data => {
-  console.log('see data', data);
   const finalData = deepClone(data);
 
   // if there are no fields and fieldSets
@@ -96,7 +95,9 @@ Object.keys(objectToTransform).forEach(key => {
 
     fs.writeFileSync(`${basePath}${key}.js`, transferedMeta);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log('for key ', key);
+    // eslint-disable-next-line no-console
     console.log('error generated ', e);
   }
 });

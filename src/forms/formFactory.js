@@ -158,6 +158,13 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
     );
   }
 
+  if (
+    !formMeta[resourceType].subForms[f.formId].layout ||
+    !formMeta[resourceType].subForms[f.formId].layout.fields
+  ) {
+    throw new Error(`could not find fields for given form id ${f.formId}`);
+  }
+
   const fieldReferencesFromSubForm =
     formMeta[resourceType].subForms[f.formId].fieldReferences;
 
@@ -195,8 +202,9 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       return acc;
     }, {});
+  const subFormFields = formMeta[resourceType].subForms[f.formId].layout.fields;
 
-  return transformedFieldReferences;
+  return { subformFieldReferences: transformedFieldReferences, subFormFields };
 };
 
 const applyingMissedOutFieldMetaProperties = (
@@ -247,27 +255,32 @@ const applyingMissedOutFieldMetaProperties = (
 };
 
 const flattenedFieldReferences = (
+  fields,
   fieldReferences,
   resourceType,
   resource,
-  ignoreFunctionTransformations
+  ignoreFunctionTransformations,
+  resObjectRefs = {},
+  resFields = []
 ) => {
-  if (!fieldReferences) return fieldReferences;
-
-  return Object.keys(fieldReferences).flatMap(fieldReferenceName => {
+  fields.forEach(fieldReferenceName => {
     const f = fieldReferences[fieldReferenceName];
 
     if (f && f.formId) {
-      const fieldReferencesFromSubForm = applyVisibilityRulesToSubForm(
-        f,
-        resourceType
-      );
+      const {
+        subFormFields,
+        subformFieldReferences,
+      } = applyVisibilityRulesToSubForm(f, resourceType);
+
+      resFields.push(...subFormFields);
 
       return flattenedFieldReferences(
-        fieldReferencesFromSubForm,
+        subFormFields,
+        subformFieldReferences,
         resourceType,
         resource,
-        ignoreFunctionTransformations
+        ignoreFunctionTransformations,
+        resObjectRefs
       );
     }
 
@@ -287,31 +300,87 @@ const flattenedFieldReferences = (
       ignoreFunctionTransformations
     );
 
-    return {
-      key: fieldReferenceName,
-      value,
-    };
+    resFields.push(fieldReferenceName);
+    // eslint-disable-next-line no-param-reassign
+    resObjectRefs[fieldReferenceName] = value;
   });
+
+  return {
+    fieldReferences: resObjectRefs,
+    fields: resFields,
+  };
 };
 
-const setDefaults = (
+const setDefaultsToLayout = (
+  layout,
   fieldReferences,
   resourceType,
   resource,
-  ignoreFunctionTransformations
-) =>
-  flattenedFieldReferences(
-    fieldReferences,
-    resourceType,
-    resource,
-    ignoreFunctionTransformations
-  ).reduce((acc, curr) => {
-    const { key, value } = curr;
+  ignoreFunctionTransformations,
+  transformedLayout = {},
+  transformedFieldReferences = {}
+) => {
+  const { fields, containers, ...rest } = layout;
 
-    acc[key] = value;
+  if (fields && fields.length > 0 && fieldReferences) {
+    const {
+      fields: transformedFields,
+      fieldReferences: transformedFieldRefs,
+    } = flattenedFieldReferences(
+      fields,
+      fieldReferences,
+      resourceType,
+      resource,
+      ignoreFunctionTransformations
+    );
 
-    return acc;
-  }, {});
+    // eslint-disable-next-line no-param-reassign
+    transformedFieldReferences = {
+      ...transformedFieldReferences,
+      ...transformedFieldRefs,
+    };
+    // eslint-disable-next-line no-param-reassign
+    transformedLayout = { ...rest, fields: transformedFields, containers };
+  }
+
+  if (containers && containers.length > 0) {
+    // eslint-disable-next-line no-param-reassign
+    transformedLayout.containers = containers.map(container => {
+      const { fieldSets, ...rest } = container;
+      const transformedFieldSets = fieldSets.map(fieldSet => {
+        const {
+          transformedLayout: transformedLayoutRes,
+          transformedFieldReferences: transFieldReferences,
+        } = setDefaultsToLayout(
+          fieldSet,
+          fieldReferences,
+          resourceType,
+          resource,
+          ignoreFunctionTransformations,
+          transformedLayout,
+          transformedFieldReferences
+        );
+        const { fields } = transformedLayoutRes;
+
+        // eslint-disable-next-line no-param-reassign
+        transformedFieldReferences = {
+          ...transformedFieldReferences,
+          ...transFieldReferences,
+        };
+
+        return { ...fieldSet, fields };
+      });
+
+      return { fieldSets: transformedFieldSets, ...rest };
+    });
+  }
+
+  return {
+    transformedLayout,
+    transformedFieldReferences,
+  };
+};
+
 const getFieldsWithDefaults = (
   fieldMeta,
   resourceType,
@@ -319,7 +388,8 @@ const getFieldsWithDefaults = (
   ignoreFunctionTransformations = false
 ) => {
   const { layout, fieldReferences, actions } = fieldMeta;
-  const transformedFieldReferences = setDefaults(
+  const { transformedFieldReferences, transformedLayout } = setDefaultsToLayout(
+    layout,
     fieldReferences,
     resourceType,
     resource,
@@ -327,7 +397,7 @@ const getFieldsWithDefaults = (
   );
 
   return {
-    layout,
+    layout: transformedLayout,
     fieldReferences: transformedFieldReferences,
     actions,
   };
