@@ -51,8 +51,8 @@ function getIntegrationAppsNextState(state, action) {
           integration.install = stepsToUpdate;
           break;
         case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
-          step.__isTriggered = false;
           step.__verifying = true;
+          step.__isTriggered = true;
           break;
         case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
           step.__isTriggered = true;
@@ -104,8 +104,8 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL:
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:

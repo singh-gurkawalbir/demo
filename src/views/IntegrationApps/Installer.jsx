@@ -279,10 +279,12 @@ export default function ConnectorInstallation(props) {
     }
   }, [installSteps]);
 
-  if (isSetupComplete) {
-    // redirect to integration Settings
-    props.history.push(`/pg/integrations/${integrationId}/settings/flows`);
-  }
+  useEffect(() => {
+    if (isSetupComplete) {
+      // redirect to integration Settings
+      props.history.push(`/pg/integrations/${integrationId}/settings/flows`);
+    }
+  }, [integrationId, isSetupComplete, props.history]);
 
   if (!installSteps) {
     return <Typography>No Integration Found</Typography>;
@@ -350,13 +352,6 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleSubmitComplete = () => {
-    // dispatchLocalAction({
-    //   type: 'markDone',
-    //   _connectionId: selectedConnectionId,
-    //   integrationId,
-    //   setShowConnectionDialog,
-    //   dispatch,
-    // });
     const step = installSteps.find(s => s.isCurrentStep);
 
     dispatch(
@@ -382,7 +377,6 @@ export default function ConnectorInstallation(props) {
     <LoadResources required resources="connections,integrations">
       {showConnectionDialog && (
         <ConnectionModal
-          type="netsuite"
           _connectionId={selectedConnectionId}
           handleClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
