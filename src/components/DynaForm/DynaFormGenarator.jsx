@@ -5,25 +5,27 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 
-// TODO:Azhar please review this styling
-const useStyles = makeStyles(theme => ({
-  container: {
-    display: 'flex',
-    'justify-content': 'space-evenly',
-    'flex-direction': 'row',
-    padding: theme.spacing(1),
-  },
-
+// TODO: Azhar please review this styling
+const useStyles = makeStyles({
   fieldsContainer: {
     display: 'flex',
-    'justify-content': 'space-evenly',
-    'flex-direction': 'column',
-    padding: theme.spacing(1),
+    flexDirection: 'column',
   },
-}));
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  child: {
+    flexBasis: '100%',
+    paddingRight: 10,
+    '&:last-child': {
+      paddingRight: 0,
+    },
+  },
+});
 const TabComponent = props => {
   const { fieldSets, classes, fieldReferences } = props;
   const [selectedTab, setSelectedTab] = useState(0);
@@ -31,23 +33,23 @@ const TabComponent = props => {
     const { label: header } = set;
 
     // eslint-disable-next-line react/no-array-index-key
-    return <Tab label={header} key={index} />;
+    return <Tab className={classes.child} label={header} key={index} />;
   });
   const tabPannels = fieldSets.map((fieldSet, index) => {
     const { label, ...layout } = fieldSet;
 
     return (
       // eslint-disable-next-line react/no-array-index-key
-      <Fragment key={index}>
+      <div key={index} className={classes.child}>
         {selectedTab === index && (
           <FormGenerator layout={layout} fieldReferences={fieldReferences} />
         )}
-      </Fragment>
+      </div>
     );
   });
 
   return (
-    <div className={classes.fieldsContainer}>
+    <div>
       <Tabs
         value={selectedTab}
         onChange={(evt, value) => {
@@ -62,39 +64,44 @@ const TabComponent = props => {
 
 const CollapsedComponents = props => {
   const { fieldSets, fieldReferences, classes } = props;
-
-  return fieldSets.map((fieldSet, index) => {
+  const children = fieldSets.map((fieldSet, index) => {
     const { label: header, collapsed = true, ...layout } = fieldSet;
 
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <ExpansionPanel defaultExpanded={!collapsed} key={index}>
+      <ExpansionPanel
+        defaultExpanded={!collapsed}
+        // eslint-disable-next-line react/no-array-index-key
+        key={index}
+        className={classes.child}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>{header}</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.fieldsContainer}>
+        <ExpansionPanelDetails>
           <FormGenerator layout={layout} fieldReferences={fieldReferences} />
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
   });
+
+  return <div className={classes.container}>{children}</div>;
 };
 
 const ColumnComponents = props => {
   const { fieldSets, fieldReferences, classes } = props;
-
-  return fieldSets.map((set, index) => {
+  const children = fieldSets.map((set, index) => {
     const { label: header, ...layout } = set;
 
     // TODO:its safe to use index for these elements since the metada is not expected to change
     return (
       // eslint-disable-next-line react/no-array-index-key
-      <div key={index} className={classes.fieldsContainer}>
+      <div key={index} className={classes.child}>
         <Typography>{header}</Typography>
         <FormGenerator layout={layout} fieldReferences={fieldReferences} />
       </div>
     );
   });
+
+  return <div className={classes.container}>{children}</div>;
 };
 
 const getCorrespondingFieldReferences = (fields, fieldReferences) =>
@@ -108,7 +115,7 @@ const getCorrespondingFieldReferences = (fields, fieldReferences) =>
       return {};
     }
 
-    return transformedFieldValue;
+    return { key: field, ...transformedFieldValue };
   });
 
 export default function FormGenerator(props) {
@@ -122,6 +129,7 @@ export default function FormGenerator(props) {
   if (fields && fields.length > 0) {
     fieldsComponent = (
       <FormFragment
+        className={classes.child}
         defaultFields={getCorrespondingFieldReferences(fields, fieldReferences)}
       />
     );
@@ -171,9 +179,7 @@ export default function FormGenerator(props) {
 
       return (
         // eslint-disable-next-line react/no-array-index-key
-        <div key={index} className={classes.container}>
-          {convertedFieldSets}
-        </div>
+        <div key={index}>{convertedFieldSets}</div>
       );
     });
   }
