@@ -10,7 +10,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import IconButton from '@material-ui/core/IconButton';
-// import produce from 'immer';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ResourceForm from '../../components/ResourceFormFactory';
@@ -47,8 +46,8 @@ const useStyles = makeStyles(theme => ({
     padding: '25px 40px 25px 0',
     display: 'inline-flex',
   },
-  stepNumber: {
-    background: '#eee',
+  stepNumber: props => ({
+    background: ((props || {}).step || {}).completed ? '#12C7FF' : '#eee',
     fontSize: '22px',
     borderRadius: '50%',
     width: '40px',
@@ -56,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     lineHeight: '40px',
     marginTop: '-10px',
-  },
+  }),
   floatRight: {
     float: 'right',
   },
@@ -125,7 +124,7 @@ const ConnectionModal = props => {
 };
 
 const InstallationStep = props => {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const { step, index, handleStepClick } = props;
 
   if (!step) {
@@ -222,35 +221,6 @@ const InstallationStep = props => {
   );
 };
 
-// function reducer(state, action) {
-//   const { type, dispatch, integrationId, setShowConnectionDialog } = action;
-
-//   return produce(state, d => {
-//     const draft = d;
-//     const currentStep = draft.find(d => d.isCurrentStep);
-
-//     // eslint-disable-next-line default-case
-//     switch (type) {
-//       case 'currentStep':
-//         draft.find(d => !d.completed).isCurrentStep = true;
-//         break;
-//       case 'markTriggered':
-//         (currentStep || {}).__isTriggered = true;
-//         break;
-//       case 'markDone':
-//         dispatch(
-//           actions.integrationApps.installer.stepInstall(
-//             integrationId,
-//             currentStep.installerFunction
-//           )
-//         );
-//         (currentStep || {}).isCurrentStep = false;
-//         setShowConnectionDialog(false);
-//         break;
-//     }
-//   });
-// }
-
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
@@ -261,12 +231,6 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
-
-  // const installationSteps = (integration || {}).install || [];
-  // const [installSteps, dispatchLocalAction] = useReducer(
-  //   reducer,
-  //   installationSteps
-  // );
 
   useEffect(() => {
     const setupIncomplete = installSteps.reduce(
