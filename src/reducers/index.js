@@ -445,18 +445,6 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
-export function getAvailableConnectionsToRegister(
-  state,
-  resourceType,
-  integrationId
-) {
-  return fromData.getAvailableConnectionsToRegister(
-    state.data,
-    resourceType,
-    integrationId
-  );
-}
-
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
@@ -601,6 +589,31 @@ export function userAccessLevelOnConnection(state, connectionId) {
   }
 
   return accessLevelOnConnection;
+}
+
+export function getAvailableConnectionsToRegister(state, integrationId) {
+  if (!state) {
+    return [];
+  }
+
+  const connList = resourceList(state, { type: 'connections' });
+  const allConnections = connList && connList.resources;
+  const integration = resource(state, 'integrations', integrationId);
+  const registeredConnections =
+    (integration && integration._registeredConnectionIds) || [];
+  let availableConnectionsToRegister = allConnections.filter(
+    conn => registeredConnections.indexOf(conn._id) === -1
+  );
+
+  availableConnectionsToRegister = availableConnectionsToRegister.filter(
+    conn => {
+      const accessLevel = userAccessLevelOnConnection(state, conn._id);
+
+      return accessLevel === 'manage' || accessLevel === 'owner';
+    }
+  );
+
+  return availableConnectionsToRegister;
 }
 
 export function suiteScriptLinkedConnections(state) {

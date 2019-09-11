@@ -278,30 +278,4 @@ export function isAgentOnline(state, agentId) {
   );
 }
 
-export function getAvailableConnectionsToRegister(
-  state,
-  resourceType,
-  integrationId
-) {
-  if (!state) {
-    return [];
-  }
-
-  const allConnections = state[resourceType];
-  let availableConnectionsToRegister = [];
-
-  if (integrationId) {
-    const integration = state.integrations.find(
-      integration => integration._id === integrationId
-    );
-    const registeredConnections =
-      (integration && integration._registeredConnectionIds) || [];
-
-    availableConnectionsToRegister = allConnections.filter(
-      conn => registeredConnections.indexOf(conn._id) === -1
-    );
-  }
-
-  return availableConnectionsToRegister;
-}
 // #endregion

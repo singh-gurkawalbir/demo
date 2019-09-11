@@ -42,17 +42,6 @@ export function isAgentOnline(state, agentId) {
   return fromResources.isAgentOnline(state && state.resources, agentId);
 }
 
-export function getAvailableConnectionsToRegister(
-  state,
-  resourceType,
-  integrationId
-) {
-  return fromResources.getAvailableConnectionsToRegister(
-    state && state.resources,
-    resourceType,
-    integrationId
-  );
-}
 // #endregion
 
 export function integrationUsers(state, integrationId) {

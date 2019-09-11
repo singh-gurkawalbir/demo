@@ -21,6 +21,7 @@ export default function Connections(props) {
   const list = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId)
   );
+  const permissions = useSelector(state => selectors.userPermissions(state));
 
   return (
     <Fragment>
@@ -31,13 +32,18 @@ export default function Connections(props) {
         />
       )}
       <LoadResources required resources="connections">
-        {integrationId && integrationId !== 'none' && (
-          <Button
-            className={classes.registerButton}
-            onClick={() => setShowRegisterConnDialog(true)}>
-            Register Connections
-          </Button>
-        )}
+        {integrationId &&
+          integrationId !== 'none' &&
+          permissions &&
+          permissions.integrations &&
+          permissions.integrations[integrationId] &&
+          permissions.integrations[integrationId].accessLevel !== 'monitor' && (
+            <Button
+              className={classes.registerButton}
+              onClick={() => setShowRegisterConnDialog(true)}>
+              Register Connections
+            </Button>
+          )}
 
         <ResourceTable
           resourceType="connections"

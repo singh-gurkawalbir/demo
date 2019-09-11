@@ -36,11 +36,7 @@ export default function RegisterConnections(props) {
   } = props;
   const classes = useStyles();
   const connectionsToReg = useSelector(state =>
-    selectors.getAvailableConnectionsToRegister(
-      state,
-      resourceType,
-      integrationId
-    )
+    selectors.getAvailableConnectionsToRegister(state, integrationId)
   );
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();
