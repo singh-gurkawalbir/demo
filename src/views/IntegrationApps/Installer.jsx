@@ -228,6 +228,9 @@ export default function ConnectorInstallation(props) {
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
+  );
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
@@ -358,7 +361,7 @@ export default function ConnectorInstallation(props) {
               <Typography variant="h6">Setup &gt;</Typography>
             </Grid>
             <Grid item xs className="connectorName">
-              <Typography variant="h6">Amazon - NetSuite Connector</Typography>
+              <Typography variant="h6">{integration.name}</Typography>
             </Grid>
             <Grid item xs={1} className={classes.floatRight}>
               <Button variant="outlined" color="primary">
