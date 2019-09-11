@@ -14,9 +14,11 @@ const styles = theme => ({
     margin: 'auto',
   },
   paper: {
-    width: 200,
-    height: 230,
+    width: 270,
+    height: 300,
+    wordBreak: 'break-word',
     overflow: 'auto',
+    background: theme.palette.background.paper2,
   },
   button: {
     margin: theme.spacing(1),
@@ -102,12 +104,7 @@ function TransferList(props) {
   );
 
   return (
-    <Grid
-      container
-      spacing={8}
-      justify="center"
-      alignItems="center"
-      className={classes.root}>
+    <Grid container className={classes.root}>
       <Grid item>{customList(left)}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">

@@ -57,6 +57,9 @@ export default (state = {}, action) => {
     return state;
   }
 
+  let resourceIndex;
+  let newState;
+
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
       return { ...state, [resourceType]: collection || [] };
@@ -68,6 +71,25 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
+    case actionTypes.STACK.USER_SHARING_TOGGLED:
+      resourceIndex = state.sshares.findIndex(user => user._id === id);
+
+      if (resourceIndex > -1) {
+        newState = [
+          ...state.sshares.slice(0, resourceIndex),
+          {
+            ...state.sshares[resourceIndex],
+            disabled: !state.sshares[resourceIndex].disabled,
+          },
+          ...state.sshares.slice(resourceIndex + 1),
+        ];
+
+        newState = { ...state, sshares: newState };
+
+        return newState;
+      }
+
+      return state;
     default:
       return state;
   }
@@ -92,7 +114,7 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function resourceList(state, { type, take, keyword, sandbox }) {
+export function resourceList(state, { type, take, keyword, sort, sandbox }) {
   const result = {
     resources: [],
     type,
@@ -125,7 +147,25 @@ export function resourceList(state, { type, take, keyword, sandbox }) {
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const filtered = resources.filter(matchTest);
+  function desc(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  const comparer = ({ order, orderBy }) =>
+    order === 'desc'
+      ? (a, b) => desc(a, b, orderBy)
+      : (a, b) => -desc(a, b, orderBy);
+  // console.log('sort:', sort, resources.sort(comparer, sort));
+  const sorted = sort ? resources.sort(comparer(sort)) : resources;
+  const filtered = sorted.filter(matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;

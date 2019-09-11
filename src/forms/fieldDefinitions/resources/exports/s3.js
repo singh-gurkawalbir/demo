@@ -17,6 +17,7 @@ export default {
   's3.region': {
     type: 'select',
     label: 'Region',
+    required: true,
     options: [
       {
         items: [
@@ -39,141 +40,10 @@ export default {
       },
     ],
   },
-  'file.output': {
-    type: 'select',
-    label: 'Output Mode',
-    options: [
-      {
-        items: [
-          { label: 'Records', value: 'records' },
-          { label: 'Metadata', value: 'metadata' },
-          { label: 'BlobKeys', value: 'blobKeys' },
-        ],
-      },
-    ],
-  },
-  'file.type': {
-    type: 'select',
-    label: 'File Type',
-    options: [
-      {
-        items: [
-          { label: 'CSV', value: 'csv' },
-          { label: 'JSON', value: 'json' },
-          { label: 'XLSX', value: 'xlsx' },
-          { label: 'XML', value: 'xml' },
-          { label: 'EDI X12', value: 'filedefinition' },
-          { label: 'Fixed Width', value: 'fixed' },
-          { label: 'EDIFACT', value: 'delimited/edifact' },
-        ],
-      },
-    ],
-  },
-  'file.json.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['json'],
-      },
-    ],
-  },
-  'file.csv': {
-    type: 'csvparse',
-    label: 'Configure CSV parse options',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.xlsx.hasHeaderRow': {
-    type: 'checkbox',
-    label: 'File Has Header',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xlsx'],
-      },
-    ],
-  },
-  'file.xlsx.keyColumns': {
-    type: 'multiselect',
-    label: 'Key Columns',
-    visibleWhen: [
-      {
-        field: 'file.xlsx.rowsPerRecord',
-        is: [true],
-      },
-    ],
-  },
-  'file.xlsx.rowsPerRecord': {
-    type: 'checkbox',
-    label: 'Multiple Rows Per Record',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xlsx'],
-      },
-    ],
-  },
-  'file.fileDefinition.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['filedefinition', 'fixed', 'delimited/edifact'],
-      },
-    ],
-  },
-  'file.encoding': {
-    type: 'select',
-    label: 'File Encoding Type',
-    options: [
-      {
-        items: [
-          { label: 'UTF-8', value: 'utf8' },
-          { label: 'Windows-1252', value: 'win1252' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
-        ],
-      },
-    ],
-  },
-  'file.skipDelete': {
-    type: 'checkbox',
-    label: 'Leave File On Server',
-  },
-  'file.decompressFiles': {
-    type: 'checkbox',
-    label: 'Decompress Files',
-  },
-  'file.compressionFormat': {
-    type: 'select',
-    label: 'Compression Format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
-    visibleWhen: [
-      {
-        field: 'file.decompressFiles',
-        is: [true],
-      },
-    ],
-  },
-  'file.xml.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xml'],
-      },
-    ],
-  },
   's3.bucket': {
     type: 'text',
     label: 'Bucket Name',
+    required: true,
   },
   's3.keyStartsWith': {
     type: 'text',

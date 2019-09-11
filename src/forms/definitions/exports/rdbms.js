@@ -12,6 +12,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      required: true,
       options: [
         {
           items: [
@@ -25,17 +26,23 @@ export default {
     },
     {
       fieldId: 'rdbms.once.query',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
     },
   ],
   fieldSets: [
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {

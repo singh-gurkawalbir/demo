@@ -28,6 +28,7 @@ export function AppRoutingWithAuth(props) {
     location,
     history,
     clearAppError,
+    ...rest
   } = props;
   const { pathname: currentRoute } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
@@ -73,7 +74,7 @@ export function AppRoutingWithAuth(props) {
       );
     }
 
-    return <AppRouting />;
+    return <AppRouting {...rest} />;
   }
 
   if (!isSessionExpired && !isSignInRoute) {
@@ -87,7 +88,7 @@ export function AppRoutingWithAuth(props) {
     );
   }
 
-  return <AppRouting />;
+  return <AppRouting {...rest} />;
 }
 
 // we need to create a HOC with withRouter otherwise the router context will

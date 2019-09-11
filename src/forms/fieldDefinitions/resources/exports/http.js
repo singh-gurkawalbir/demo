@@ -2,22 +2,10 @@ export default {
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'http.successMediaType': {
     type: 'select',
@@ -51,6 +39,7 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
+    required: true,
     options: [
       {
         items: [

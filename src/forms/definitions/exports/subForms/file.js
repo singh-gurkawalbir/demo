@@ -20,70 +20,14 @@ export default {
     return null;
   },
   fields: [
-    { fieldId: 'exportData' },
     { fieldId: 'file.type' },
-    { fieldId: 'file.output' },
     {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
       visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
     },
-
     {
-      fieldId: 'file.csv.columnDelimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.keyColumns',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.hasHeaderRow',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.trimSpaces',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.rowsToSkip',
+      fieldId: 'file.csv',
       visibleWhenAll: [
         {
           field: 'file.type',
@@ -154,10 +98,6 @@ export default {
         },
         { field: 'file.output', is: ['records'] },
       ],
-    },
-    {
-      fieldId: 'file.purgeInternalBackup',
-      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
     },
   ],
   fieldSets: [],

@@ -1,3 +1,4 @@
+import { darken } from '@material-ui/core/styles/colorManipulator';
 import colors from './colors';
 
 export default {
@@ -7,15 +8,11 @@ export default {
     contrast: colors.celigoWhite,
     hover: colors.celigoWhite,
   },
-  editor: {
-    panelBackground: colors.celigoNeutral7,
-    panelBorder: colors.celigoNeutral6,
-  },
   selectFormControl: {
     color: colors.celigoNeutral1,
     background: colors.celigoNeutral8,
-    hover: colors.celigoNeutral4,
-    text: colors.celigoNeutral8,
+    hover: darken(colors.celigoNeutral7, 0.6),
+    text: colors.celigoNeutral2,
     separator: colors.celigoNeutral6,
   },
   palette: {
@@ -23,9 +20,8 @@ export default {
     background: {
       paper: colors.celigoNeutral8,
       default: colors.celigoNeutral6,
-      editorInner: colors.celigoNeutral7,
       main: colors.celigoAccent3,
-      arrowAfter: colors.celigoNeutral7,
+      arrowAfter: colors.celigoNeutral6,
       // success:
       // warning: celigo.celigoWarning
       // error:
@@ -184,6 +180,17 @@ export default {
     MuiListItem: {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral7 },
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral5,
+        '&$selected': {
+          backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          '&:hover': {
+            backgroundColor: darken(colors.celigoNeutral7, 0.6),
+          },
+        },
       },
     },
   },

@@ -1,21 +1,21 @@
 import { useState } from 'react';
-import classNames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-const useAppBarStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
     padding: 2,
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: fade(theme.palette.secondary.light, 0.15),
     '& button': {
-      height: 26,
+      marginLeft: 0,
+      height: 20,
       border: 0,
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: 'transparent',
       '& p': {
-        color: theme.palette.secondary.light,
+        color: theme.palette.secondary.contrastText,
       },
     },
     '& button.Mui-selected': {
@@ -25,19 +25,14 @@ const useAppBarStyles = makeStyles(theme => ({
         color: theme.palette.common.white,
       },
     },
-
     '& button:hover': {
-      backgroundColor: 'rgba(0,0,0,0.1)',
+      backgroundColor: 'rgba(0,0,0,0.05)',
+      color: theme.palette.secondary.light,
       borderRadius: 24,
     },
-
     '& button.Mui-selected:hover': {
       backgroundColor: theme.palette.primary.main,
     },
-  },
-}));
-const useStyles = makeStyles({
-  root: {
     '& button:first-child': {
       borderTopLeftRadius: 24,
       borderBottomLeftRadius: 24,
@@ -51,7 +46,10 @@ const useStyles = makeStyles({
     minWidth: props => props.minWidth,
     textTransform: 'none',
   },
-});
+  toggleButton: {
+    marginLeft: 0,
+  },
+}));
 
 export default function TextToggle({
   options = [],
@@ -61,7 +59,6 @@ export default function TextToggle({
   ...rest
 }) {
   const classes = useStyles({ minWidth });
-  const appBarClasses = useAppBarStyles();
   const [value, setValue] = useState(defaultValue);
   const handleChange = (event, newValue) => {
     if (newValue) {
@@ -69,13 +66,10 @@ export default function TextToggle({
     }
   };
 
-  const rootClasses =
-    variant === 'appbar' ? [classes.root, appBarClasses.root] : classes.root;
-
   return (
     <ToggleButtonGroup
       {...rest}
-      className={classNames(rootClasses)}
+      className={classes.root}
       value={value}
       onChange={handleChange}>
       {options.map(item => (

@@ -20,12 +20,12 @@ const useStyles = makeStyles(theme => ({
   },
 
   avatarButton: {
-    marginLeft: theme.spacing(1),
-    padding: theme.spacing(1),
+    margin: theme.spacing(0, 1),
+    padding: 0,
   },
   avatar: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   bigAvatar: {
     marginLeft: theme.spacing(1),

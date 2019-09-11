@@ -75,6 +75,14 @@ export default {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
+<<<<<<< HEAD
+=======
+  },
+  'http.relativeUri': {
+    type: 'text',
+    label: 'Relative URI',
+    placeholder: 'Optional',
+>>>>>>> 628022c7c5cd50f81dfce0d5706ef2a9f2309211
   },
   'http.response.successPath': {
     type: 'text',

@@ -40,9 +40,12 @@ const mapDispatchToProps = (dispatch, { list }) => ({
     bottom: theme.spacing(0.25),
   },
   avatar: {
-    backgroundColor: theme.palette.background.editorInner,
+    backgroundColor: theme.palette.background.paper2,
     border: '1px solid',
     borderColor: theme.palette.text.primary,
+  },
+  listName: {
+    wordBreak: 'break-word',
   },
 }))
 class FilteredResources extends Component {
@@ -74,8 +77,8 @@ class FilteredResources extends Component {
                 render={() => (
                   <Button
                     size="small"
-                    variant="contained"
-                    // color="secondary"
+                    variant="outlined"
+                    color="primary"
                     aria-label="Add"
                     component={Link}
                     to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}
@@ -115,6 +118,7 @@ class FilteredResources extends Component {
               <ListItemText
                 primary={r.name || r._id}
                 secondary={daysOld(r.lastModified)}
+                className={classes.listName}
               />
             </ListItem>
           ))}

@@ -1,82 +1,84 @@
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'Salesforce s Object Type',
+    label: 'SObject Type',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
-  'salesforce.id': {
+  'delta.dateField': {
     type: 'text',
-    label: 'Salesforce id',
+    label: 'Date Field',
+    required: true,
   },
-  'salesforce.api': {
+  'delta.lagOffset': {
+    type: 'text',
+    label: 'Offset',
+  },
+  'salesforce.executionType': {
     type: 'radiogroup',
-    label: 'Salesforce api',
+    label: 'Execution Type',
     options: [
       {
         items: [
-          { label: 'Rest', value: 'rest' },
-          { label: 'Soap', value: 'soap' },
+          { label: 'Real-time', value: 'realtime' },
+          { label: 'Scheduled', value: 'scheduled' },
         ],
       },
     ],
   },
   'salesforce.soql.query': {
-    type: 'text',
-    label: 'Salesforce soql query',
+    type: 'editor',
+    mode: 'sql',
+    label: 'SOQL Query',
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['scheduled'],
+      },
+    ],
   },
-  'salesforce.distributed.referencedFieldss': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Salesforce distributed referenced Fields',
-    validWhen: [],
-  },
-  'salesforce.distributed.disabled': {
-    type: 'checkbox',
-    label: 'Salesforce distributed disabled',
-  },
-  'salesforce.distributed.connectorId': {
-    type: 'text',
-    label: 'Salesforce distributed connector Id',
-  },
-  'salesforce.distributed.userDefinedReferencedFieldss': {
+  'salesforce.distributed.referencedFields': {
     type: 'text',
     keyName: 'name',
+    multiline: true,
     valueName: 'value',
     valueType: 'array',
-    label: 'Salesforce distributed user Defined Referenced Fields',
-    validWhen: [],
+    label: 'Referenced Fields',
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
   'salesforce.distributed.qualifier': {
     type: 'text',
-    label: 'Salesforce distributed qualifier',
+    label: 'Field Specific Qualification Criteria',
+    multiline: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
-  'salesforce.distributed.relatedLists.referencedFieldss': {
+  'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Salesforce distributed related Lists referenced Fields',
-    validWhen: [],
-  },
-  'salesforce.distributed.relatedLists.parentField': {
-    type: 'text',
-    label: 'Salesforce distributed related Lists parent Field',
-  },
-  'salesforce.distributed.relatedLists.sObjectType': {
-    type: 'text',
-    label: 'Salesforce distributed related Lists s Object Type',
-  },
-  'salesforce.distributed.relatedLists.filter': {
-    type: 'text',
-    label: 'Salesforce distributed related Lists filter',
-  },
-  'salesforce.distributed.relatedLists.orderBy': {
-    type: 'text',
-    label: 'Salesforce distributed related Lists order By',
-  },
-  'salesforce.distributed.relatedLists.userDefined': {
-    type: 'text',
-    label: 'Salesforce distributed related Lists user Defined',
+    label: 'Related Lists',
+    multiline: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
 };

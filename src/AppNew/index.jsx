@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
@@ -25,24 +24,19 @@ const useStyles = makeStyles({
 const theme = themeProvider();
 
 // eslint-disable-next-line
-console.log('new theme', theme);
+console.log('*** THEME ***', theme);
 
 // const oldTheme = themeProviderOld('light');
 // console.log('old theme', oldTheme);
 
 export default function AppNew() {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const isAllLoadingCommsAboveThreshold = useSelector(state =>
     selectors.isAllLoadingCommsAboveThreshold(state)
   );
 
   // useEffect(() => {}, [isAllLoadingCommsAboveThreshold]);
-
-  function handleDrawerToggle() {
-    setOpen(!open);
-  }
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
@@ -51,12 +45,12 @@ export default function AppNew() {
       <BrowserRouter>
         <div className={classes.root}>
           {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
-          <CeligoAppBar shift={open} />
+          <CeligoAppBar />
           <AppErroredModal />
           <AuthDialog />
 
-          <CeligoDrawer handleDrawerToggle={handleDrawerToggle} open={open} />
-          <PageContent shift={open} />
+          <CeligoDrawer />
+          <PageContent />
         </div>
       </BrowserRouter>
     </MuiThemeProvider>

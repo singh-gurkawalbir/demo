@@ -7,16 +7,12 @@ export default {
     contrast: colors.celigoWhite,
     hover: colors.celigoWhite,
   },
-  editor: {
-    panelBackground: colors.celigoNeutral2,
-    panelBorder: colors.celigoNeutral2,
-  },
   selectFormControl: {
     color: colors.celigoNeutral6,
     background: colors.celigoWhite,
     hover: colors.celigoNeutral1,
     text: colors.celigoNeutral8,
-    separator: colors.celigoNeutral3,
+    separator: colors.celigoNeutral2,
   },
   palette: {
     type: 'light',
@@ -25,7 +21,6 @@ export default {
       default: colors.celigoNeutral1,
       main: colors.celigoAccent3,
       sideBar: colors.celigoNeutral1,
-      editorInner: colors.celigoNeutral2,
       arrowAfter: colors.celigoNeutral3,
     },
     primary: {
@@ -48,18 +43,7 @@ export default {
   },
   overrides: {
     MuiTypography: {
-      body2: { color: colors.celigoNeutral6 },
-      body1: { color: colors.celigoNeutral6 },
-      h1: { color: colors.celigoNeutral6 },
-      h2: { color: colors.celigoNeutral6 },
-      h3: { color: colors.celigoNeutral6 },
-      h4: { color: colors.celigoNeutral6 },
-      h5: { color: colors.celigoNeutral6 },
-      h6: { color: colors.celigoNeutral6 },
-      subtitle1: { color: colors.celigoNeutral6 },
-      subtitle2: { color: colors.celigoNeutral6 },
-      overline: { color: colors.celigoNeutral6 },
-      caption: { color: colors.celigoNeutral6 },
+      root: { color: colors.celigoNeutral6 },
     },
     MuiButton: {
       textPrimary: {
@@ -83,15 +67,15 @@ export default {
           color: colors.celigoAccent1,
         },
         '&:hover': {
-          color: colors.celigoAccent3,
+          color: colors.celigoAccent2,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
         },
       },
       outlinedPrimary: {
-        backgroundColor: colors.celigoAccent3,
-        borderColor: colors.celigoAccent3,
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
         color: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoAccent4,
@@ -109,7 +93,7 @@ export default {
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoNeutral6,
+        borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
@@ -138,12 +122,12 @@ export default {
         },
       },
       containedPrimary: {
-        backgroundColor: colors.celigoAccent3,
-        borderColor: colors.celigoAccent3,
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
         color: colors.celigoWhite,
         '&:hover': {
-          backgroundColor: colors.celigoAccent4,
-          borderColor: colors.celigoAccent4,
+          backgroundColor: colors.celigoAccent3,
+          borderColor: colors.celigoAccent3,
           color: colors.celigoWhite,
         },
         '&:focus': {
@@ -157,12 +141,12 @@ export default {
         },
       },
       containedSecondary: {
-        borderColor: colors.celigoNeutral6,
+        borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral7,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -180,6 +164,18 @@ export default {
     MuiListItem: {
       button: {
         '&:hover': { backgroundColor: colors.celigoNeutral2 },
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        borderBottomColor: colors.celigoNeutral3,
+        '&$selected': {
+          backgroundColor: colors.celigoNeutral2,
+          borderLeftColor: colors.celigoAccent3,
+          '&:hover': {
+            backgroundColor: colors.celigoNeutral3,
+          },
+        },
       },
     },
   },

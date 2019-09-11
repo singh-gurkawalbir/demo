@@ -13,6 +13,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      required: true,
       options: [
         {
           items: [
@@ -24,11 +25,20 @@ export default {
         },
       ],
     },
-    { fieldId: 'delta.dateField' },
+    {
+      fieldId: 'delta.dateField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
     {
       fieldId: 'once.booleanField',
       type: 'text',
       label: 'Once Boolean Field',
+      required: true,
       visibleWhen: [
         {
           field: 'type',
@@ -40,12 +50,12 @@ export default {
   fieldSets: [
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {

@@ -19,7 +19,7 @@ export default {
       ],
     },
     { fieldId: 'rest.headers' },
-    { fieldId: 'rest.relativeURI' },
+    { fieldId: 'rest.relativeuri' },
     {
       fieldId: 'rest.postBody',
       visibleWhen: [
@@ -32,18 +32,81 @@ export default {
     { fieldId: 'rest.resourcePath' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
-    { fieldId: 'type' },
-    { fieldId: 'delta.dateFormat' },
-    { fieldId: 'delta.lagOffset' },
-    { fieldId: 'once.booleanField' },
-    { fieldId: 'rest.once.relativeURI' },
-    { fieldId: 'rest.once.method' },
-    { fieldId: 'rest.once.postBody' },
+    {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
+    {
+      fieldId: 'delta.dateFormat',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    {
+      fieldId: 'delta.lagOffset',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    {
+      fieldId: 'once.booleanField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
+    {
+      fieldId: 'rest.once.relativeURI',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
+    {
+      fieldId: 'rest.once.method',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
+    {
+      fieldId: 'rest.once.postBody',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
   ],
   fieldSets: [
     {
       header: 'Does this API support paging?',
-      collapsed: false,
+      collapsed: true,
       fields: [
         { fieldId: 'rest.pagingMethod' },
         { fieldId: 'rest.nextPagePath' },
@@ -61,16 +124,17 @@ export default {
     },
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
+
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {
-      header: 'Advanced Settings',
+      header: 'Advanced',
       collapsed: 'true',
       fields: [{ formId: 'advancedSettings' }],
     },

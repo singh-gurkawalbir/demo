@@ -38,6 +38,7 @@ const TransferListModal = props => {
         </Button>
         <Button
           variant="contained"
+          color="primary"
           onClick={() => {
             onFieldChange(id, selectedScopes);
             handleClose();
@@ -69,7 +70,7 @@ export default function DynaSelectScopesDialog(props) {
       )}
       <Button
         variant="contained"
-        // color="secondary"
+        color="primary"
         onClick={() => setShowScopesModal(true)}>
         {label}
       </Button>

@@ -8,45 +8,10 @@ import {
   throwExceptionUsingTheResponse,
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
-import { resourceStatus, userPreferences } from '../../reducers/index';
+import { resourceStatus, accountShareHeader } from '../../reducers/index';
 import { pingConnectionParams } from '../api/apiPaths';
-import { ACCOUNT_IDS } from '../../utils/constants';
 
 const tryCount = 3;
-
-export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
-  'licenses',
-  'preferences',
-  'profile',
-  'published',
-  'shared/ashares',
-];
-
-export function* getAdditionalHeaders(path) {
-  const headers = {};
-  const preferences = yield select(userPreferences);
-
-  if (
-    !preferences ||
-    !preferences.defaultAShareId ||
-    preferences.defaultAShareId === ACCOUNT_IDS.OWN
-  ) {
-    return headers;
-  }
-
-  if (
-    PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER.includes(
-      path.charAt(0) === '/' ? path.replace('/', '') : path
-    )
-  ) {
-    return headers;
-  }
-
-  headers['integrator-ashareid'] = preferences.defaultAShareId;
-
-  return headers;
-}
 
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
@@ -58,7 +23,7 @@ export function* onRequestSaga(request) {
     yield put(actions.api.request(path, method, message, hidden));
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
-  const additionalHeaders = yield call(getAdditionalHeaders, path);
+  const additionalHeaders = yield select(accountShareHeader, path);
 
   options.headers = { ...options.headers, ...additionalHeaders };
 
@@ -80,6 +45,7 @@ export function* onRequestSaga(request) {
     meta: {
       path,
       method,
+      origReq: request,
     },
     responseType: 'text',
   };
@@ -132,7 +98,7 @@ export function* onSuccessSaga(response, action) {
 }
 
 export function* onErrorSaga(error, action) {
-  const { path, method } = action.request.meta;
+  const { path, method, origReq } = action.request.meta;
 
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
@@ -167,7 +133,18 @@ export function* onErrorSaga(error, action) {
   if (retryCount < tryCount) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
-    yield call(sendRequest, action, { silent: false });
+
+    // resend the request ..silent false meta allows the
+    // sendRequest to dispatch redux actions
+    // otherwise its defaulted to true in an interceptor
+
+    // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
+    // we already check the retry count onErrorHook for an exit case to prevent it from happening
+    yield call(
+      sendRequest,
+      { request: origReq, type: 'API_WATCHER' },
+      { silent: false, runOnError: true }
+    );
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...

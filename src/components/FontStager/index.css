@@ -61,10 +61,8 @@ code{
   and progressively re-render.
 */
 html, body {
-  font-family: sans-serif;
-  font-weight: 400;
+  font-family: Roboto400, sans-serif;
   -webkit-font-smoothing: antialiased;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 /*
@@ -79,8 +77,12 @@ html, body {
 .font-stage-primary html,
 .font-stage-primary body {
   font-family: Roboto400, sans-serif;
-  color: #677A89;
-
+  color: #677a89;
+  
+  /* Above color property is useful for styleguide icons to display,
+    otherwise we have to keep one prop(fill) for all the svg icons
+  */
+  
 }
 
 /* Prevent the secondary fonts from being tree-shaken away */
@@ -91,7 +93,6 @@ html, body {
   font-family: Roboto500, sans-serif;
 }
 a{
-  color: #00A1E1;
   text-decoration: none;
-  font-weight: 500,
+  color: #00A1E1;
 }

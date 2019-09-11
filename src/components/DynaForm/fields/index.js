@@ -8,6 +8,9 @@ import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaLookupEditor from './DynaLookupEditor';
+import DynaKeyWithAction from './DynaKeyWithAction';
+import DynaHttpRequestBody from './DynaHttpRequestBody';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -17,10 +20,15 @@ import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
+import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
+import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
+import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaLabelValueElement from './DynaLabelValueElement';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -29,12 +37,19 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  subsidiaryMapWidget: DynaStaticMap,
+  xmlMapper: DynaXMLMapper,
+  trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
+  csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  httprequestbody: DynaHttpRequestBody,
+  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
+  staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
@@ -45,6 +60,8 @@ export default {
   scriptcontent: DynaScriptContent,
   tokengen: DynaTokenGenerator,
   apiidentifier: DynaApiIdentifier,
+  labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
+  keywithaction: DynaKeyWithAction,
 };

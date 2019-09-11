@@ -1,18 +1,19 @@
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const styles = {
+const useStyles = makeStyles({
   center: {
     textAlign: 'center',
   },
-};
+});
 
 /**
  * Render an indeterminate spinning indicator.
  */
 function Spinner(props) {
-  const { loading, classes, className, ...rest } = props;
+  const classes = useStyles();
+  const { loading, className, ...rest } = props;
   const progress = (
     <CircularProgress color="primary" className={className} {...rest} />
   );
@@ -24,4 +25,4 @@ function Spinner(props) {
   );
 }
 
-export default withStyles(styles)(Spinner);
+export default Spinner;

@@ -2,12 +2,6 @@ export default {
   'delta.dateFormat': {
     type: 'text',
     label: 'Date Format',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'rest.method': {
     type: 'select',
@@ -25,6 +19,13 @@ export default {
   'rest.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT'],
+      },
+    ],
   },
   'rest.resourcePath': {
     type: 'text',
@@ -36,6 +37,12 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
+  },
+  'rest.once.booleanField': {
+    type: 'text',
+    label: 'Boolean Field',
+    id: 'once.booleanField',
+    helpkey: 'once.booleanField',
   },
   // #region paging
   'rest.pagingMethod': {
@@ -58,6 +65,7 @@ export default {
   'rest.nextPagePath': {
     type: 'text',
     label: 'Next Page Path',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -88,6 +96,7 @@ export default {
   'rest.pageArgument': {
     type: 'text',
     label: 'Page Argument',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -98,6 +107,7 @@ export default {
   'rest.pagingPostBody': {
     type: 'text',
     label: 'Build Paging Post Body',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -191,12 +201,6 @@ export default {
   'rest.once.relativeURI': {
     type: 'text',
     label: 'Relative URI',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
   },
   'rest.once.method': {
     type: 'select',
@@ -207,12 +211,6 @@ export default {
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
         ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
       },
     ],
   },
@@ -233,11 +231,5 @@ export default {
   'rest.once.postBody': {
     type: 'text',
     label: 'Build HTTP Request Body',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['once'],
-      },
-    ],
   },
 };

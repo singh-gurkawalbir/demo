@@ -5,10 +5,7 @@ export default theme => ({
       minHeight: '100vh',
     },
     content: {
-      maxWidth: 1260,
-      padding: [[15, 30]],
-      margin: [[0, 0]],
-      display: 'block',
+      maxWidth: '100%',
     },
   },
   fontFamily: {
@@ -25,8 +22,8 @@ export default theme => ({
     linkHover: theme.palette.text.linkHover,
     linkActive: theme.palette.text.linkActive,
     border: theme.palette.divider,
-    sidebarBackground: theme.palette.background.sideBar,
-    codeBackground: theme.palette.background.main,
+    sidebarBackground: theme.palette.secondary.lightest,
+    codeBackground: theme.palette.primary.light,
   },
   sidebarWidth: theme.drawerWidth,
 });
