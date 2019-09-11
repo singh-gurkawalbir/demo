@@ -1,6 +1,5 @@
 export default {
   name: {
-    name: '/name',
     defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
@@ -14,8 +13,8 @@ export default {
     label: 'Description',
   },
   content: {
-    name: '/content',
-    type: 'scriptcontent',
-    label: 'Script Content',
+    defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
+    type: 'hook',
+    label: 'Edit Script',
   },
 };
