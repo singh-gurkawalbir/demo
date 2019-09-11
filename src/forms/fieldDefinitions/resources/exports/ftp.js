@@ -15,25 +15,6 @@ export default {
     // excludeFilter: r => ({ _
     //
   },
-  'file.skipDelete': {
-    type: 'checkbox',
-    label: 'Leave File On Server',
-  },
-  'file.decompressFiles': {
-    type: 'checkbox',
-    label: 'Decompress Files',
-  },
-  'file.compressionFormat': {
-    type: 'select',
-    label: 'Compression Format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
-    visibleWhen: [
-      {
-        field: 'file.decompressFiles',
-        is: [true],
-      },
-    ],
-  },
   'ftp.directoryPath': {
     type: 'text',
     label: 'Directory Path',
@@ -216,6 +197,7 @@ export default {
       },
     ],
   },
+
   pageSize: {
     type: 'text',
     label: 'Page Size',

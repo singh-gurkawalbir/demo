@@ -18,34 +18,7 @@ export default {
     { fieldId: 'file.output' },
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
-    { fieldId: 'ftp.file.type' },
-    {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: 'file.type',
-      isFTP: true,
-    },
-    { fieldId: 'file.csv' },
-    { fieldId: 'file.json.resourcePath' },
-    { fieldId: 'file.xml.resourcePath' },
-    { fieldId: 'file.xlsx.hasHeaderRow' },
-    { fieldId: 'file.xlsx.rowsPerRecord' },
-    { fieldId: 'file.xlsx.keyColumns' },
-    { fieldId: 'edix12.format' },
-    { fieldId: 'fixed.format' },
-    { fieldId: 'edifact.format' },
-    {
-      fieldId: 'file.filedefinition.rules',
-      refreshOptionsOnChangesTo: [
-        'edix12.format',
-        'fixed.format',
-        'edifact.format',
-        'file.fileDefinition.resourcePath',
-      ],
-    },
-    { fieldId: 'file.fileDefinition.resourcePath' },
-    { fieldId: 'rawData', isFTP: true },
-    { fieldId: 'sampleData' },
-    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
+    { formId: 'file' },
   ],
   fieldSets: [
     {
@@ -55,19 +28,13 @@ export default {
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {
-      header: 'Advanced Settings',
+      header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'file.decompressFiles' },
-        { fieldId: 'file.compressionFormat' },
-        { fieldId: 'file.skipDelete' },
-        { fieldId: 'file.encoding' },
-        { formId: 'advancedSettings' },
-      ],
+      fields: [{ formId: 'fileAdvancedSettings' }],
     },
   ],
   actions: [
