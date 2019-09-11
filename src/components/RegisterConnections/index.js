@@ -73,10 +73,10 @@ function RegisterConnections(props) {
       <DialogContent style={{ width }}>
         <LoadResources required resources={resourceType}>
           <ResourceTable
-            resourceType={resourceType}
             resources={connectionsToReg}
             selectResourceRef={selectedConnections}
             metadataType={metadataType}
+            isSelectableListing
           />
         </LoadResources>
       </DialogContent>

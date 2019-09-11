@@ -8,10 +8,6 @@ import {
 export default {
   columns: [
     {
-      heading: '',
-      type: 'checkbox',
-    },
-    {
       heading: 'Name',
       value: r => getResourceLink('connections', r),
       orderBy: 'name',

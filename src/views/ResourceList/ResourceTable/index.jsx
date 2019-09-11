@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -57,6 +58,7 @@ export default function ResourceTable({
   resources,
   selectResourceRef,
   metadataType,
+  isSelectableListing,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -69,22 +71,51 @@ export default function ResourceTable({
   };
 
   const { columns = [], actions: rowActions } = metadata(
-    metadataType || resourceType
+    resourceType || metadataType
   );
-  const [selectedRes, setSelectedRes] = useState({});
-  const handleSelectResChange = (event, resourceId) => {
+  const [selectedResources, setSelectedResources] = useState({});
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const handleSelectChange = (event, resourceId) => {
     const { checked } = event.target;
-    const selectedResources = { ...selectedRes };
+    const selected = produce(selectedResources, draft => {
+      const selectedCopy = draft;
 
-    selectedResources[resourceId] = checked;
-    setSelectedRes(selectedResources);
-    selectResourceRef(selectedResources);
+      selectedCopy[resourceId] = checked;
+    });
+
+    setSelectedResources(selected);
+    selectResourceRef(selected);
+
+    if (!checked) {
+      setIsAllSelected(false);
+    }
+  };
+
+  const handleSelectAllChange = event => {
+    const { checked } = event.target;
+    const selected = produce(selectedResources, draft => {
+      const selectedCopy = draft;
+
+      resources.map(r => (selectedCopy[r._id] = checked));
+    });
+
+    setSelectedResources(selected);
+    selectResourceRef(selected);
+    setIsAllSelected(checked);
   };
 
   return (
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
+          {isSelectableListing && (
+            <TableCell>
+              <Checkbox
+                onChange={event => handleSelectAllChange(event)}
+                checked={isAllSelected}
+              />
+            </TableCell>
+          )}
           {columns.map(col =>
             col.orderBy ? (
               <TableCell
@@ -123,6 +154,14 @@ export default function ResourceTable({
       <TableBody>
         {resources.map(r => (
           <TableRow hover key={r._id} className={classes.row}>
+            {isSelectableListing && (
+              <TableCell>
+                <Checkbox
+                  onChange={event => handleSelectChange(event, r._id)}
+                  checked={!!selectedResources[r._id]}
+                />
+              </TableCell>
+            )}
             {columns.map((col, index) =>
               index === 0 ? (
                 <TableCell
@@ -130,13 +169,7 @@ export default function ResourceTable({
                   scope="row"
                   key={col.heading}
                   align={col.align || 'left'}>
-                  {col.type === 'checkbox' ? (
-                    <Checkbox
-                      onChange={event => handleSelectResChange(event, r._id)}
-                    />
-                  ) : (
-                    col.value(r)
-                  )}
+                  {col.value(r)}
                 </TableCell>
               ) : (
                 <TableCell key={col.heading} align={col.align || 'left'}>
