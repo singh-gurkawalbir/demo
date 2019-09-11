@@ -38,8 +38,7 @@ function getIntegrationAppsNextState(state, action) {
   const { stepsToUpdate, installerFunction, id, type } = action;
 
   if ((state.integrations || []).find(i => i._id === id)) {
-    return produce(state, d => {
-      const draft = d;
+    return produce(state, draft => {
       const integration = draft.integrations.find(i => i._id === id);
       const step = integration.install.find(
         s => s.installerFunction === installerFunction
@@ -161,24 +160,16 @@ export function integrationInstallSteps(
   resourceType = 'integrations',
   id
 ) {
-  if (!state || !id || !resourceType) {
-    return [];
-  }
-
-  const integrations = state[resourceType];
-  const integration = integrations.find(r => r._id === id);
+  const integration = resource(state, resourceType, id);
 
   if (!integration) {
     return [];
   }
 
-  const steps = integration.install;
-
-  return produce(steps, d => {
-    const draft = d;
-
-    if (draft.find(step => !step.completed))
+  return produce(integration.install, draft => {
+    if (draft.find(step => !step.completed)) {
       draft.find(step => !step.completed).isCurrentStep = true;
+    }
   });
 }
 
