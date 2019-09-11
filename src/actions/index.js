@@ -333,27 +333,28 @@ const integrationApps = {
   installer: {
     stepInstall: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL, {
-        integrationId,
+        id: integrationId,
         installerFunction,
       }),
     stepInstallInProgress: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS, {
-        integrationId,
+        id: integrationId,
         installerFunction,
       }),
-    failedStepInstall: (integrationId, installerFunction) =>
+    stepInstallVerify: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY, {
+        id: integrationId,
+        installerFunction,
+      }),
+    failedStepInstall: (id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE, {
-        integrationId,
+        id,
         installerFunction,
       }),
-    stepInstallComplete: (
-      stepCompleteResponse,
-      integrationId,
-      installerFunction
-    ) =>
+    stepInstallComplete: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
-        id: integrationId,
+        id,
         installerFunction,
       }),
   },

@@ -40,23 +40,22 @@ function getIntegrationAppsNextState(state, action) {
   if ((state.integrations || []).find(i => i._id === id)) {
     return produce(state, d => {
       const draft = d;
-      let step;
       const integration = draft.integrations.find(i => i._id === id);
+      const step = integration.install.find(
+        s => s.installerFunction === installerFunction
+      );
 
       // eslint-disable-next-line default-case
       switch (type) {
         case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
           integration.install = stepsToUpdate;
           break;
+        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
+          step.__isTriggered = false;
+          step.__verifying = true;
+          break;
         case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
-          step = integration.install.find(
-            s => s.installerFunction === installerFunction
-          );
-
-          if (step) {
-            step.__isTriggered = true;
-          }
-
+          step.__isTriggered = true;
           break;
       }
     });
@@ -170,11 +169,12 @@ export function integrationInstallSteps(
 
   const steps = integration.install;
 
-  if (steps.find(step => !step.completed)) {
-    steps.find(step => !step.completed).isCurrentStep = true;
-  }
+  return produce(steps, d => {
+    const draft = d;
 
-  return steps;
+    if (draft.find(step => !step.completed))
+      draft.find(step => !step.completed).isCurrentStep = true;
+  });
 }
 
 export function resourceList(

@@ -284,17 +284,6 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg/integrations/${integrationId}/settings/flows`);
   }
 
-  // if (
-  //   !installSteps.find(s => s.isCurrentStep) &&
-  //   installSteps.find(s => !s.completed)
-  // ) {
-  //   dispatchLocalAction({ type: 'currentStep' });
-  // }
-
-  // useEffect(() => {
-  //   dispatch(actions.resource.requestCollection('integrations'));
-  // }, [dispatch]);
-
   if (!installSteps) {
     return <Typography>No Integration Found</Typography>;
   }
@@ -302,19 +291,50 @@ export default function ConnectorInstallation(props) {
   const handleStepClick = step => {
     const { _connectionId, installURL, installerFunction } = step;
 
+    // handle connection step click
     if (_connectionId) {
+      if (step.__isTriggered) {
+        return false;
+      }
+
       setSelectedConnectionId(_connectionId);
-      // dispatchLocalAction({ type: 'markTriggered' });
       setShowConnectionDialog(true);
+      // handle Installation step click
     } else if (installURL) {
-      openExternalUrl({ url: installURL });
+      if (!step.__isTriggered) {
+        dispatch(
+          actions.integrationApps.installer.stepInstallInProgress(
+            integrationId,
+            installerFunction
+          )
+        );
+        openExternalUrl({ url: installURL });
+      } else {
+        if (step.__verifying) {
+          return false;
+        }
+
+        dispatch(
+          actions.integrationApps.installer.stepInstallVerify(
+            integrationId,
+            installerFunction
+          )
+        );
+        dispatch(
+          actions.integrationApps.installer.stepInstall(
+            integrationId,
+            installerFunction
+          )
+        );
+      }
+      // handle Action step click
+    } else if (!step.__isTriggered) {
       dispatch(
         actions.integrationApps.installer.stepInstallInProgress(
           integrationId,
           installerFunction
         )
       );
-    } else {
       dispatch(
         actions.integrationApps.installer.stepInstall(
           integrationId,

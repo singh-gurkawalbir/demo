@@ -3,8 +3,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
-export function* installStep({ integrationId, installerFunction }) {
-  const path = `/integrations/${integrationId}/installer/${installerFunction}`;
+export function* installStep({ id, installerFunction }) {
+  const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
 
   try {
@@ -15,10 +15,7 @@ export function* installStep({ integrationId, installerFunction }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.installer.failedStepInstall(
-        integrationId,
-        installerFunction
-      )
+      actions.integrationApps.installer.failedStepInstall(id, installerFunction)
     );
 
     return undefined;
@@ -28,7 +25,7 @@ export function* installStep({ integrationId, installerFunction }) {
     yield put(
       actions.integrationApps.installer.stepInstallComplete(
         stepCompleteResponse,
-        integrationId,
+        id,
         installerFunction
       )
     );
