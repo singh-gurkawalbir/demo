@@ -76,6 +76,7 @@ function PageContent(props) {
         // eslint-disable-next-line react/no-children-prop
         children={props => <ResourceDrawer {...props} />}
       />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
