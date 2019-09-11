@@ -123,15 +123,12 @@ export default function ResourceTable({ resourceType, resources }) {
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map((Action, i) => (
-                    // TECH DEBT:
-                    // using index as key is not good enough when we have dynamic
-                    // actions... only fixed lists are safe to use index.
-                    // the actions metadata will need to change to support a
-                    // unique key
-                    // eslint-disable-next-line react/no-array-index-key
-                    <Action key={i} resourceType={resourceType} resource={r} />
-                  ))}
+                  actions={rowActions.map(({ label, component: Action }) => ({
+                    label,
+                    component: (
+                      <Action resourceType={resourceType} resource={r} />
+                    ),
+                  }))}
                 />
               </TableCell>
             )}
