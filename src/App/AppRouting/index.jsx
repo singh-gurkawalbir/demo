@@ -32,6 +32,11 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
+const ConnectorInstallation = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationApps/Installer'
+  )
+);
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
   import('../../views/IntegrationSettings')
@@ -49,6 +54,10 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
+        />
+        <Route
+          path="/pg/connectors/:integrationId/setup"
+          component={ConnectorInstallation}
         />
         <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/resources" component={Resources} />

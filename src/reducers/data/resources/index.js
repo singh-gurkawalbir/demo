@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -31,6 +32,39 @@ function replaceOrInsertResource(state, type, resource) {
   ];
 
   return { ...state, [type]: newCollection };
+}
+
+function getIntegrationAppsNextState(state, action) {
+  const { stepsToUpdate, installerFunction, id, type } = action;
+
+  if ((state.integrations || []).find(i => i._id === id)) {
+    return produce(state, d => {
+      const draft = d;
+      let step;
+      const integration = draft.integrations.find(i => i._id === id);
+
+      // eslint-disable-next-line default-case
+      switch (type) {
+        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+          integration.install = stepsToUpdate;
+          break;
+        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_CLICK:
+          step = integration.install.find(
+            s => s.installerFunction === installerFunction
+          );
+
+          if (step) {
+            step.__isTriggered = true;
+          }
+
+          break;
+      }
+    });
+  }
+
+  return {
+    ...state,
+  };
 }
 
 export default (state = {}, action) => {
@@ -71,6 +105,10 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL:
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_CLICK:
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+      return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);
 
@@ -112,6 +150,31 @@ export function resource(state, resourceType, id) {
   if (!match) return null;
 
   return match;
+}
+
+export function integrationInstallSteps(
+  state,
+  resourceType = 'integrations',
+  id
+) {
+  if (!state || !id || !resourceType) {
+    return [];
+  }
+
+  const integrations = state[resourceType];
+  const integration = integrations.find(r => r._id === id);
+
+  if (!integration) {
+    return [];
+  }
+
+  const steps = integration.install;
+
+  if (steps.find(step => !step.completed)) {
+    steps.find(step => !step.completed).isCurrentStep = true;
+  }
+
+  return steps;
 }
 
 export function resourceList(

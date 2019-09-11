@@ -54,10 +54,14 @@ function Tile({ classes, tile }) {
       </CardContent>
       <Divider component="br" />
       <CardActions>
-        {tile.status === 'IS_PENDING_SETUP' && (
-          <Typography>Click to continue setup.</Typography>
+        {tile.status === 'is_pending_setup' && (
+          <Link
+            className={classes.navLink}
+            to={getRoutePath(`/connectors/${tile._integrationId}/setup`)}>
+            Click to continue setup.
+          </Link>
         )}
-        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+        {tile.status !== 'is_pending_setup' && accessLevel && (
           <Link
             className={classes.navLink}
             to={getRoutePath(
@@ -70,7 +74,7 @@ function Tile({ classes, tile }) {
               : 'Manage'}
           </Link>
         )}
-        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+        {tile.status !== 'is_pending_setup' && accessLevel && (
           <Link
             className={classes.navLink}
             to={getRoutePath(

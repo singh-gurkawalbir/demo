@@ -424,6 +424,16 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
+export function integrationInstallSteps(state, integrationId) {
+  if (!state) return null;
+
+  return fromData.integrationInstallSteps(
+    state.data,
+    'integrations',
+    integrationId
+  );
+}
+
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

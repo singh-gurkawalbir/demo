@@ -329,6 +329,35 @@ const metadata = {
       }),
   },
 };
+const integrationApps = {
+  installer: {
+    stepInstall: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL, {
+        integrationId,
+        installerFunction,
+      }),
+    stepInstallClick: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_CLICK, {
+        integrationId,
+        installerFunction,
+      }),
+    failedStepInstall: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE, {
+        integrationId,
+        installerFunction,
+      }),
+    stepInstallComplete: (
+      stepCompleteResponse,
+      integrationId,
+      installerFunction
+    ) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE, {
+        stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+        id: integrationId,
+        installerFunction,
+      }),
+  },
+};
 const ashares = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
@@ -603,6 +632,7 @@ export default {
   connectors,
   cancelTask,
   reloadApp,
+  integrationApps,
   clearComms,
   clearCommByKey,
   patchFilter,

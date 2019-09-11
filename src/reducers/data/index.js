@@ -22,6 +22,14 @@ export function resource(state, resourceType, id) {
   return fromResources.resource(state && state.resources, resourceType, id);
 }
 
+export function integrationInstallSteps(state, resourceType, id) {
+  return fromResources.integrationInstallSteps(
+    state && state.resources,
+    resourceType,
+    id
+  );
+}
+
 export function resourceList(state, options) {
   return fromResources.resourceList(state && state.resources, options);
 }

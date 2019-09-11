@@ -10,6 +10,7 @@ import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { accessTokenSagas } from './accessTokens';
 import { jobSagas } from './jobs';
+import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
 import {
@@ -86,6 +87,7 @@ export default function* rootSaga() {
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,
+    ...integrationAppsSagas,
     ...accessTokenSagas,
     ...jobSagas,
     ...flowSagas,
