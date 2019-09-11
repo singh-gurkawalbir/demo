@@ -3,6 +3,7 @@ import file from './file';
 import hooks from './hooks';
 import ftpFile from './ftpFile';
 import advancedSettings from './advancedSettings';
+import fileAdvancedSettings from './fileAdvancedSettings';
 
 export default {
   common,
@@ -10,4 +11,5 @@ export default {
   hooks,
   ftpFile,
   advancedSettings,
+  fileAdvancedSettings,
 };
