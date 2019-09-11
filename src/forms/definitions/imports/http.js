@@ -37,7 +37,6 @@ export default {
     { fieldId: 'http.headers' },
     { fieldId: 'http.requestMediaType' },
     { fieldId: 'http.compositeType' },
-<<<<<<< HEAD
     { fieldId: 'http.relativeURI' },
     // Manage lookup option is not visible directly  in form
     { fieldId: 'http.lookups', visible: false },
@@ -74,19 +73,6 @@ export default {
         },
       ],
     },
-=======
-    { fieldId: 'http.compositeMethod' },
-    // Manage lookup option is not visible directly  in form
-    { fieldId: 'http.lookups', visible: false },
-    { fieldId: 'http.body' },
-    { fieldId: 'http.relativeUri' },
-    { fieldId: 'http.successPath' },
-    { fieldId: 'http.successValues' },
-    { fieldId: 'http.responseIdPath' },
-    { fieldId: 'http.responsePath' },
-    { fieldId: 'http.errorPath' },
-    { fieldId: 'http.batchSizeLimit' },
->>>>>>> 628022c7c5cd50f81dfce0d5706ef2a9f2309211
     { fieldId: 'http.compositeMethodUpdate' },
     { fieldId: 'http.relativeURIUpdate' },
     { fieldId: 'http.resourceIdPathUpdate' },
