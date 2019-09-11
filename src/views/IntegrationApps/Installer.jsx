@@ -309,7 +309,7 @@ export default function ConnectorInstallation(props) {
     } else if (installURL) {
       openExternalUrl({ url: installURL });
       dispatch(
-        actions.integrationApps.installer.stepInstallClick(
+        actions.integrationApps.installer.stepInstallInProgress(
           integrationId,
           installerFunction
         )
@@ -340,7 +340,7 @@ export default function ConnectorInstallation(props) {
     const step = installSteps.find(s => s.isCurrentStep);
 
     dispatch(
-      actions.integrationApps.installer.stepInstallClick(
+      actions.integrationApps.installer.stepInstallInProgress(
         integrationId,
         (step || {}).installerFunction
       )

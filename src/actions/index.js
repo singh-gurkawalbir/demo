@@ -336,8 +336,8 @@ const integrationApps = {
         integrationId,
         installerFunction,
       }),
-    stepInstallClick: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_CLICK, {
+    stepInstallInProgress: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS, {
         integrationId,
         installerFunction,
       }),
