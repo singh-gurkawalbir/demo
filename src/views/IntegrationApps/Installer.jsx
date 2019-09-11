@@ -70,9 +70,10 @@ export default function ConnectorInstallation(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      dispatch(actions.resource.request('integrations', integrationId));
       props.history.push(`/pg/integrations/${integrationId}/settings/flows`);
     }
-  }, [integrationId, isSetupComplete, props.history]);
+  }, [dispatch, integrationId, isSetupComplete, props.history]);
 
   if (!installSteps) {
     return <Typography>No Integration Found</Typography>;
