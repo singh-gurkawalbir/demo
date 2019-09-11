@@ -54,7 +54,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
             square>
             <Grid container justify="space-between">
               <Grid item>
-                <Typography variant="h5">
+                <Typography variant="h3">
                   {title}
                   {infoText && (
                     <Fragment>
@@ -67,7 +67,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
                       </IconButton>
                       <ArrowPopper
                         id="pageInfo"
-                        zIndex={theme.zIndex.appBar - 1}
+                        zIndex={theme.zIndex.appBar + 1}
                         open={!!anchorEl}
                         anchorEl={anchorEl}
                         placement="right"
