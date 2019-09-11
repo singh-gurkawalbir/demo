@@ -408,6 +408,27 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function integrationConnectionList(state, integrationId) {
+  const integration = resource(state, 'integrations', integrationId);
+  const connList = fromData.resourceList(state.data, { type: 'connections' });
+
+  if (integrationId && integrationId !== 'none' && integration) {
+    const registeredConnections =
+      integration && integration._registeredConnectionIds;
+
+    if (registeredConnections) {
+      connList.resources =
+        connList &&
+        connList.resources &&
+        connList.resources.filter(
+          conn => registeredConnections.indexOf(conn._id) >= 0
+        );
+    }
+  }
+
+  return connList;
+}
+
 export function resourceReferences(state) {
   return fromSession.resourceReferences(state && state.session);
 }
@@ -424,8 +445,12 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
-export function getIntegrationRegisterConn(state, resourceType, integrationId) {
-  return fromData.getIntegrationRegisterConn(
+export function getAvailableConnectionsToRegister(
+  state,
+  resourceType,
+  integrationId
+) {
+  return fromData.getAvailableConnectionsToRegister(
     state.data,
     resourceType,
     integrationId

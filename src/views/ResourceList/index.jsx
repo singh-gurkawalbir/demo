@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
@@ -15,12 +15,10 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from './ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
-import RegisterConnections from '../../components/RegisterConnections';
 
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
-    marginRight: '250px',
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
@@ -40,10 +38,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PageContent(props) {
-  const { match, location, integrationId } = props;
-  const resourceType =
-    (match && match.params && match.params.resourceType) ||
-    (props && props.resourceType);
+  const { match, location } = props;
+  const { resourceType } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state =>
@@ -53,7 +49,6 @@ function PageContent(props) {
     selectors.resourceList(state, {
       type: resourceType,
       take: 3,
-      integrationId,
       ...filter,
     })
   );
@@ -70,17 +65,9 @@ function PageContent(props) {
   };
 
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
-  const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
 
   return (
     <Fragment>
-      {showRegisterConnDialog && (
-        <RegisterConnections
-          integrationId={integrationId}
-          onClose={() => setShowRegisterConnDialog(false)}
-        />
-      )}
-
       <Route
         path={`${match.url}/:operation/:resourceType/:id`}
         // Note that we disable the eslint warning since Route
@@ -93,30 +80,17 @@ function PageContent(props) {
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
-          {resourceType === 'connections' &&
-          integrationId &&
-          integrationId !== 'none' ? (
-            <CeligoIconButton
-              onClick={() => setShowRegisterConnDialog(true)}
-              variant="text">
-              Register {`${resourceName}s`}
-            </CeligoIconButton>
-          ) : (
-            <Fragment>
-              <SearchInput variant="light" onChange={handleKeywordChange} />
-              <CeligoIconButton
-                component={Link}
-                to={`${
-                  location.pathname
-                }/add/${resourceType}/new-${shortid.generate()}`}
-                variant="text">
-                <AddIcon /> New {resourceName}
-              </CeligoIconButton>
-            </Fragment>
-          )}
+          <SearchInput variant="light" onChange={handleKeywordChange} />
+          <CeligoIconButton
+            component={Link}
+            to={`${
+              location.pathname
+            }/add/${resourceType}/new-${shortid.generate()}`}
+            variant="text">
+            <AddIcon /> New {resourceName}
+          </CeligoIconButton>
         </div>
       </CeligoPageBar>
-
       <div className={classes.resultContainer}>
         <LoadResources required resources={resourceType}>
           <ResourceTable

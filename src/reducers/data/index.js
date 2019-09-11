@@ -42,8 +42,12 @@ export function isAgentOnline(state, agentId) {
   return fromResources.isAgentOnline(state && state.resources, agentId);
 }
 
-export function getIntegrationRegisterConn(state, resourceType, integrationId) {
-  return fromResources.getIntegrationRegisterConn(
+export function getAvailableConnectionsToRegister(
+  state,
+  resourceType,
+  integrationId
+) {
+  return fromResources.getAvailableConnectionsToRegister(
     state && state.resources,
     resourceType,
     integrationId

@@ -36,7 +36,11 @@ function RegisterConnections(props) {
     metadataType = 'registerConnections',
   } = props;
   const connectionsToReg = useSelector(state =>
-    selectors.getIntegrationRegisterConn(state, resourceType, integrationId)
+    selectors.getAvailableConnectionsToRegister(
+      state,
+      resourceType,
+      integrationId
+    )
   );
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();
