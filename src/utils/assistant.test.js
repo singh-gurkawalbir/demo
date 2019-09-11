@@ -8,6 +8,9 @@ import {
   getVersionDetails,
   getResourceDetails,
   getParamValue,
+  generateValidReactFormFieldId,
+  convertToReactFormFields,
+  updateFormValues,
   SEARCH_PARAMETER_TYPES,
 } from './assistant';
 
@@ -614,6 +617,424 @@ describe('getParamValue', () => {
           values,
         })
       ).toEqual(expected);
+    }
+  );
+});
+
+describe('generateValidReactFormFieldId', () => {
+  const testCases = [
+    ['something', 'something'],
+    ['some/thing', 'some.thing'],
+    ['some*_*thing', 'some[thing'],
+    ['something*__*', 'something]'],
+    ['so/me*_*thing*__*', 'so.me[thing]'],
+  ];
+
+  each(testCases).test(
+    'should return %s for fieldId = %s ',
+    (expected, fieldId) => {
+      expect(generateValidReactFormFieldId(fieldId)).toEqual(expected);
+    }
+  );
+});
+
+describe('convertToReactFormFields', () => {
+  const testCases = [
+    [
+      {
+        fields: [],
+        fieldDetailsMap: {},
+      },
+      {
+        fieldMeta: [],
+        defaultValuesForDeltaExport: {},
+        value: {},
+        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+    ],
+    [
+      {
+        fields: [
+          {
+            id: 'f1',
+            name: 'f1',
+            type: 'text',
+            required: true,
+          },
+        ],
+        fieldDetailsMap: {
+          f1: {
+            id: 'f1',
+            inputType: 'text',
+          },
+        },
+      },
+      {
+        fieldMeta: [{ id: 'f1', required: true }],
+      },
+    ],
+    [
+      {
+        fields: [
+          {
+            id: 'f1',
+            name: 'f1',
+            type: 'text',
+            required: false,
+          },
+        ],
+        fieldDetailsMap: {
+          f1: {
+            id: 'f1',
+            inputType: 'text',
+          },
+        },
+      },
+      {
+        fieldMeta: [{ id: 'f1' }],
+      },
+    ],
+    [
+      {
+        fields: [
+          {
+            id: 'f2',
+            name: 'f2',
+            type: 'text',
+            required: true,
+          },
+        ],
+        fieldSets: [
+          {
+            header: 'Optional',
+            collapsed: true,
+            fields: [
+              {
+                id: 'f1',
+                name: 'f1',
+                type: 'text',
+                required: false,
+              },
+            ],
+          },
+        ],
+        fieldDetailsMap: {
+          f1: {
+            id: 'f1',
+            inputType: 'text',
+          },
+          f2: {
+            id: 'f2',
+            inputType: 'text',
+          },
+        },
+      },
+      {
+        fieldMeta: [{ id: 'f1' }, { id: 'f2', required: true }],
+      },
+    ],
+    [
+      {
+        fields: [
+          {
+            id: 'id_multiselect',
+            label: 'MultiSelect',
+            name: 'id_multiselect',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'active',
+                    value: 'active',
+                  },
+                  {
+                    label: 'closed',
+                    value: 'closed',
+                  },
+                  {
+                    label: 'subscriber',
+                    value: 'subscriber',
+                  },
+                  {
+                    label: 'non_subscriber',
+                    value: 'non_subscriber',
+                  },
+                  {
+                    label: 'past_due',
+                    value: 'past_due',
+                  },
+                ],
+              },
+            ],
+            required: true,
+            type: 'multiselect',
+            defaultValue: ['one', 'two'],
+          },
+          {
+            id: 'id_text',
+            label: 'Text',
+            name: 'id_text',
+            placeholder: 'some placeholder',
+            required: true,
+            type: 'text',
+          },
+        ],
+        fieldSets: [
+          {
+            collapsed: true,
+            header: 'Optional',
+            fields: [
+              {
+                id: 'id_checkbox',
+                label: 'Checkbox',
+                name: 'id_checkbox',
+                required: false,
+                type: 'checkbox',
+                helpText: 'some help text',
+              },
+              {
+                id: 'id_select',
+                label: 'Select',
+                name: 'id_select',
+                options: [
+                  {
+                    items: [
+                      {
+                        label: 'desc',
+                        value: 'desc',
+                      },
+                      {
+                        label: 'asc',
+                        value: 'asc',
+                      },
+                    ],
+                  },
+                ],
+                required: false,
+                type: 'select',
+              },
+              {
+                id: 'id_textarea',
+                label: 'Text Area',
+                name: 'id_textarea',
+                required: false,
+                type: 'textarea',
+              },
+              {
+                id: 'id_input',
+                label: 'Input',
+                name: 'id_input',
+                required: false,
+                type: 'text',
+                validWhen: {
+                  matchesRegEx: {
+                    message: 'Must be a number.',
+                    pattern: '^[\\d]+$',
+                  },
+                },
+                defaultValue: 121,
+              },
+              {
+                id: 'id_some/thing',
+                name: 'id_some/thing',
+                required: false,
+                type: 'text',
+                defaultValue: 'something else',
+              },
+            ],
+          },
+        ],
+        fieldDetailsMap: {
+          id_checkbox: {
+            id: 'id_checkbox',
+            inputType: 'checkbox',
+          },
+          id_multiselect: {
+            id: 'id_multiselect',
+            inputType: 'multiselect',
+            type: 'repeat',
+            indexed: true,
+          },
+          id_select: {
+            id: 'id_select',
+            inputType: 'select',
+          },
+          id_text: {
+            id: 'id_text',
+            inputType: 'text',
+          },
+          id_textarea: {
+            id: 'id_textarea',
+            inputType: 'textarea',
+            type: 'something',
+          },
+          id_input: {
+            id: 'id_input',
+            inputType: 'text',
+            type: 'integer',
+          },
+          'id_some/thing': {
+            id: 'id_some.thing',
+            inputType: 'text',
+          },
+        },
+      },
+      {
+        // ['checkbox', 'multiselect', 'select', 'text', 'textarea']
+        fieldMeta: [
+          { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
+          {
+            id: 'id_checkbox',
+            fieldType: 'checkbox',
+            name: 'Checkbox',
+            description: 'some help text',
+          },
+          {
+            id: 'id_multiselect',
+            fieldType: 'multiselect',
+            name: 'MultiSelect',
+            type: 'repeat',
+            indexed: true,
+            required: true,
+            options: [
+              'active',
+              'closed',
+              'subscriber',
+              'non_subscriber',
+              'past_due',
+            ],
+          },
+          {
+            id: 'id_select',
+            fieldType: 'select',
+            name: 'Select',
+            options: ['desc', 'asc'],
+          },
+          {
+            id: 'id_text',
+            fieldType: 'text',
+            required: true,
+            name: 'Text',
+            placeholder: 'some placeholder',
+          },
+          { id: 'id_readOnly2', readOnly: true, name: 'ReadOnly 2' },
+          {
+            id: 'id_textarea',
+            fieldType: 'textarea',
+            name: 'Text Area',
+            type: 'something',
+          },
+          {
+            id: 'id_input',
+            fieldType: 'integer',
+            name: 'Input',
+            defaultValue: 121,
+          },
+          { id: 'id_some.thing', fieldType: 'something' },
+        ],
+        defaultValuesForDeltaExport: {
+          'id_some.thing': 'something else',
+        },
+        value: {
+          'id_multiselect.1': 'one',
+          'id_multiselect.2': 'two',
+          'id_multiselect.something': 'ten',
+        },
+        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when passed  %o ',
+    (expected, input) => {
+      expect(convertToReactFormFields(input)).toEqual(expected);
+    }
+  );
+});
+
+describe('updateFormValues', () => {
+  const testCases = [
+    [
+      {
+        'some.thing': 'some value',
+        repeat: [1, 3, 6],
+        'repeat_indexed.1': 2,
+        'repeat_indexed.2': 4,
+        'repeat_indexed.3': 6,
+        csv_array: 'a,b,c',
+        csv_string: 'test',
+        array_string: ['x', 'y', 'z'],
+        array_array: ['d', 1],
+        integer_string: 234,
+        integer_number: 100,
+        integer_float: 2,
+        boolean: false,
+      },
+      {
+        formValues: {
+          'some/thing': 'some value',
+          repeat: [1, 3, 6],
+          repeat_indexed: [2, 4, 6],
+          csv_array: ['a', 'b', 'c'],
+          csv_string: 'test',
+          array_string: 'x,y,z',
+          array_array: ['d', 1],
+          integer_string: '234',
+          integer_number: 100,
+          integer_string_invalid: 'something',
+          integer_float: '2.34',
+          boolean: false,
+        },
+        fieldDetailsMap: {
+          'some/thing': { id: 'some.thing' },
+          repeat: { id: 'repeat', type: 'repeat' },
+          repeat_indexed: {
+            id: 'repeat_indexed',
+            type: 'repeat',
+            indexed: true,
+          },
+          csv_array: { id: 'csv_array', type: 'csv' },
+          csv_string: { id: 'csv_string', type: 'csv' },
+          array_string: { id: 'array_string', type: 'array' },
+          array_array: { id: 'array_array', type: 'array' },
+          integer_string: { id: 'integer_string', type: 'integer' },
+          integer_string_invalid: {
+            id: 'integer_string_invalid',
+            type: 'integer',
+          },
+          integer_number: { id: 'integer_number', type: 'integer' },
+          integer_float: { id: 'integer_float', type: 'integer' },
+          boolean: { id: 'boolean' },
+        },
+        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
+      },
+    ],
+    [
+      {
+        some: { thing: { else: 'some value', else2: 'some other value' } },
+        xyz: 'abc',
+      },
+      {
+        formValues: {
+          'some/thing/else': 'some value',
+          'some/thing/else2': 'some other value',
+          xyz: 'abc',
+        },
+        fieldDetailsMap: {
+          'some/thing/else': { id: 'some.thing.else' },
+          'some/thing/else2': { id: 'some.thing.else2' },
+          xyz: { id: 'xyz' },
+        },
+        paramsType: SEARCH_PARAMETER_TYPES.BODY,
+      },
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when passed  %o ',
+    (expected, input) => {
+      expect(updateFormValues(input)).toEqual(expected);
     }
   );
 });

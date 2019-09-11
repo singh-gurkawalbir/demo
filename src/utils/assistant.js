@@ -763,20 +763,19 @@ export function convertToReactFormFields({
 
     fieldDetailsMap[fieldId] = {
       id: field.id,
-      type: field.type,
-      indexed: field.indexed,
     };
+    ['type', 'indexed'].forEach(prop => {
+      if (Object.prototype.hasOwnProperty.call(field, prop)) {
+        fieldDetailsMap[fieldId][prop] = field[prop];
+      }
+    });
 
     if (fieldType === 'integer') {
       fieldDetailsMap[fieldId].type = 'integer';
     }
 
-    if (fieldType === 'input') {
-      fieldType = 'text';
-    }
-
     if (
-      !['multiselect', 'select', 'text', 'textarea', 'checkbox'].includes(
+      !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
         fieldType
       )
     ) {
@@ -812,16 +811,16 @@ export function convertToReactFormFields({
     const fieldDef = {
       id: fieldId,
       name: fieldId,
+      defaultValue: paramValue || defaultValue,
+      helpText: field.description,
       label: field.name,
-      type: inputType,
-      required: !!field.required,
       placeholder: field.placeholder,
-      defaultValue:
-        getParamValue({
-          fieldMeta: { id: field.id, inputType, paramType: paramsType },
-          values: paramValues,
-        }) || defaultValue,
-      options: [
+      required: !!field.required,
+      type: inputType,
+    };
+
+    if (['multiselect', 'select'].includes(fieldDef.type)) {
+      fieldDef.options = [
         {
           items: field.options
             ? field.options.map(opt => ({
@@ -830,11 +829,21 @@ export function convertToReactFormFields({
               }))
             : [],
         },
-      ],
-      helpText: field.description,
-    };
+      ];
+    }
 
-    if (type === 'integer' || field.id === 'per_page') {
+    /** Clean up props with no values */
+    ['helpText', 'label', 'placeholder'].forEach(prop => {
+      if (!fieldDef[prop]) {
+        delete fieldDef[prop];
+      }
+    });
+
+    if (fieldDef.defaultValue === undefined) {
+      delete fieldDef.defaultValue;
+    }
+
+    if (type === 'integer') {
       fieldDef.validWhen = {
         matchesRegEx: {
           pattern: '^[\\d]+$',
