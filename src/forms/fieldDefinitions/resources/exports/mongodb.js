@@ -27,11 +27,5 @@ export default {
     type: 'text',
     label: 'Date Field',
     required: true,
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
 };
