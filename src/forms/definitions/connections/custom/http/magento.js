@@ -32,13 +32,13 @@ export default {
       helpText: 'The Base URI of Magento.',
     },
     {
-      fieldId: 'http.unencrypted.username',
+      id: 'http.unencrypted.username',
       type: 'text',
       label: 'Username',
       required: true,
     },
     {
-      fieldId: 'http.encrypted.password',
+      id: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
       inputType: 'password',
@@ -48,7 +48,7 @@ export default {
       required: true,
     },
     {
-      id: 'http.auth.token.token',
+      fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,

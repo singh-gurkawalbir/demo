@@ -5,13 +5,14 @@ export default {
     if (retValues['/authType'] === 'token') {
       retValues['/http/auth/token/location'] = 'url';
       retValues['/http/auth/token/paramName'] = 'hapikey';
+      retValues['/http/auth/oauth'] = undefined;
     } else {
       retValues['/http/auth/oauth/authURI'] =
         'https://app.hubspot.com/oauth/authorize';
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/token/token'] = undefined;
+      retValues['/http/auth/token'] = undefined;
     }
 
     return {
@@ -23,6 +24,7 @@ export default {
       '/http/baseURI': 'https://api.hubapi.com/',
       '/http/ping/relativeURI': '/contacts/v1/lists/all/contacts/all',
       '/http/ping/method': 'GET',
+      '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
     };
   },
   fields: [

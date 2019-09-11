@@ -59,7 +59,7 @@ export default {
       ],
     },
     {
-      id: 'http.auth.token.token',
+      fieldId: 'http.auth.token.token',
       required: true,
       type: 'text',
       defaultValue: '',

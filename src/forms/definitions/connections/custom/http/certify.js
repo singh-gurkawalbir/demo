@@ -22,6 +22,7 @@ export default {
     { fieldId: 'name' },
     {
       id: 'http.encrypted.apiKey',
+      defaultValue: '',
       required: true,
       type: 'text',
       label: 'API Key:',
@@ -30,6 +31,7 @@ export default {
     },
     {
       id: 'http.encrypted.apiSecret',
+      defaultValue: '',
       required: true,
       type: 'text',
       label: 'API Secret:',

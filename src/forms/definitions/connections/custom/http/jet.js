@@ -48,6 +48,7 @@ export default {
       id: 'http.encrypted.password',
       type: 'text',
       inputType: 'password',
+      defaultValue: '',
       helpText:
         'Secret Key available from Jet under API Section-> Get API Keys',
       label: 'Secret Key:',

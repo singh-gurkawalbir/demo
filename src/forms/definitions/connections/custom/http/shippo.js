@@ -21,6 +21,7 @@ export default {
     {
       id: 'http.encrypted.token',
       label: 'API Token:',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,

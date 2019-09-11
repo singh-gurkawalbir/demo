@@ -6,6 +6,7 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
       retValues['/http/auth/token/scheme'] = ' ';
+      retValues['/http/auth/basic'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -13,6 +14,7 @@ export default {
         },
       ];
     } else {
+      retValues['/http/auth/token'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Token',
@@ -78,7 +80,7 @@ export default {
       ],
     },
     {
-      id: 'http.auth.token.token',
+      fieldId: 'http.auth.token.token',
       required: true,
       defaultValue: '',
       type: 'text',

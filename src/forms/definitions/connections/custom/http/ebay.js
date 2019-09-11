@@ -18,8 +18,8 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/oauth/scope':
       formValues['/accountType'] === 'sandbox'
-        ? formValues['/http/auth/oauth/scopeSandbox']
-        : formValues['/http/auth/oauth/scopeProduction'],
+        ? formValues['/http/scopeSandbox']
+        : formValues['/http/scopeProduction'],
   }),
   fields: [
     { fieldId: 'name' },

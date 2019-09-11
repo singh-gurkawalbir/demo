@@ -8,7 +8,7 @@ export default {
     '/http/baseURI': `https://${
       formValues['/http/mailchimpDataCenter']
     }.api.mailchimp.com`,
-    '/http/token/location': 'header',
+    '/http/auth/token/location': 'header',
     '/http/auth/oauth/authURI': 'https://login.mailchimp.com/oauth2/authorize',
     '/http/auth/oauth/tokenURI': 'https://login.mailchimp.com/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',

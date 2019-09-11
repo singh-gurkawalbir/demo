@@ -9,7 +9,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://${
       formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
-    }http.avatax.com/api/`,
+    }rest.avatax.com/api/`,
   }),
 
   fields: [
