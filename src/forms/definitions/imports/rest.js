@@ -4,12 +4,12 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
     { fieldId: 'rest.method' },
     { fieldId: 'rest.headers' },
     { fieldId: 'rest.compositeType' },
-    { fieldId: 'rest.relativeUri' },
+    { fieldId: 'rest.relativeURI' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
     { fieldId: 'rest.responseIdPath' },
@@ -20,12 +20,12 @@ export default {
       visibleWhen: [
         {
           field: 'rest.compositeType',
-          is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+          is: ['createandupdate', 'createandignore'],
         },
       ],
     },
     { fieldId: 'rest.compositeMethodCreate' },
-    { fieldId: 'rest.relativeUriCreate' },
+    { fieldId: 'rest.relativeURICreate' },
     { fieldId: 'rest.successPathCreate' },
     { fieldId: 'rest.successValuesCreate' },
     { fieldId: 'rest.responseIdPathCreate' },
@@ -36,12 +36,12 @@ export default {
       visibleWhen: [
         {
           field: 'rest.compositeType',
-          is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+          is: ['createandupdate', 'updateandignore'],
         },
       ],
     },
     { fieldId: 'rest.compositeMethodUpdate' },
-    { fieldId: 'rest.relativeUriUpdate' },
+    { fieldId: 'rest.relativeURIUpdate' },
     { fieldId: 'rest.successPathUpdate' },
     { fieldId: 'rest.successValuesUpdate' },
     { fieldId: 'rest.responseIdPathUpdate' },
@@ -52,7 +52,7 @@ export default {
       visibleWhen: [
         {
           field: 'rest.compositeType',
-          is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+          is: ['createandignore', 'updateandignore'],
         },
       ],
     },
@@ -62,23 +62,20 @@ export default {
       type: 'labeltitle',
       label: 'Do you have sample data?',
     },
-    { fieldId: 'rest.ifSoPleasePasteItHere' },
+    { fieldId: 'rest.sampleData' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'rest.concurrencyIdLockTemplate' },
-        { fieldId: 'rest.dataUriTemplate' },
-      ],
+      fields: [{ fieldId: 'idLockTemplate' }, { fieldId: 'dataURITemplate' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

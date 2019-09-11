@@ -4,25 +4,40 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
     { fieldId: 'mongodb.method' },
     { fieldId: 'mongodb.collection' },
-    { fieldId: 'mongodb.ignoreExisting' },
-    { fieldId: 'mongodb.identifyExistingRecords' },
-    { fieldId: 'mongodb.whichField' },
+    {
+      fieldId: 'ignoreExisting',
+      visibleWhen: [
+        {
+          field: 'mongodb.method',
+          is: ['insertMany'],
+        },
+      ],
+    },
+    { fieldId: 'mongodb.lookupType' },
     { fieldId: 'mongodb.ignoreLookupFilters' },
     { fieldId: 'mongodb.filter' },
     { fieldId: 'mongodb.upsert' },
-    { fieldId: 'mongodb.ignoreMissing' },
-    { fieldId: 'mongodb.whichField?' },
+    {
+      fieldId: 'ignoreMissing',
+      visibleWhen: [
+        {
+          field: 'mongodb.method',
+          is: ['updateOne'],
+        },
+      ],
+    },
+    { fieldId: 'mongodb.ignoreExtract' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
   ],
   fieldSets: [
     {

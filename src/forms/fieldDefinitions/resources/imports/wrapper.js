@@ -8,17 +8,8 @@ export default {
     type: 'text',
     label: 'Configuration',
   },
-  'wrapper.ifSoPleasePasteItHere': {
+  'wrapper.sampleData': {
     type: 'textarea',
     label: 'If so,please paste it here',
-  },
-  'wrapper.concurrencyIdLockTemplate': {
-    type: 'textarea',
-    label: 'Concurrency Id Lock Template',
-  },
-  'wrapper.dataUriTemplate': {
-    type: 'text',
-    label: 'Data URI Template',
-    placeholder: 'Optional',
   },
 };

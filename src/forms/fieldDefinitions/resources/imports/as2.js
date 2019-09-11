@@ -1,22 +1,9 @@
 export default {
-  'as2.ediFormat': {
-    type: 'select',
-    label: 'EDI Format',
-    required: true,
-    options: [
-      {
-        items: [
-          { label: 'Generic 180', value: 'generic180' },
-          { label: 'Generic 850', value: 'generic850' },
-        ],
-      },
-    ],
-  },
-  'as2.fileName': {
+  'as2.fileNameTemplate': {
     type: 'text',
     label: 'File Name',
   },
-  'as2.messageId': {
+  'as2.messageIdTemplate': {
     type: 'text',
     label: 'Message Id',
   },

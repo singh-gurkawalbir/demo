@@ -1,24 +1,51 @@
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'http.body') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+
+      if (recordTypeField) {
+        return {
+          // we are saving http body in an array. Put correspond to 0th Index,
+          // Post correspond to 1st index.
+          // We will have 'Build HTTP Request Body for Create' and
+          // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
+          saveIndex: 0,
+          lookups: {
+            // passing lookupId fieldId and data since we will be modifying lookups
+            //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+            fieldId: recordTypeField.fieldId,
+            data: recordTypeField && recordTypeField.value,
+          },
+        };
+      }
+    }
+
+    return null;
+  },
   fields: [
     { formId: 'common' },
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
     { fieldId: 'http.method' },
     { fieldId: 'http.headers' },
     { fieldId: 'http.requestMediaType' },
     { fieldId: 'http.compositeType' },
-    { fieldId: 'http.relativeUri' },
-    { fieldId: 'http.successPath' },
-    { fieldId: 'http.successValues' },
-    { fieldId: 'http.responseIdPath' },
-    { fieldId: 'http.responsePath' },
-    { fieldId: 'http.errorPath' },
-    { fieldId: 'http.batchSizeLimit' },
+    { fieldId: 'http.relativeURI' },
+    // Manage lookup option is not visible directly  in form
+    { fieldId: 'http.lookups', visible: false },
+    { fieldId: 'http.response.successPath' },
+    { fieldId: 'http.response.successValues' },
+    { fieldId: 'http.response.resourceIdPath' },
+    { fieldId: 'http.response.resourcePath' },
+    { fieldId: 'http.response.errorPath' },
+    { fieldId: 'http.batchSize' },
     {
       id: 'createNewData',
       type: 'labeltitle',
@@ -26,14 +53,15 @@ export default {
       visibleWhen: [
         {
           field: 'http.compositeType',
-          is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+          is: ['createandupdate', 'createandignore'],
         },
       ],
     },
     { fieldId: 'http.compositeMethodCreate' },
-    { fieldId: 'http.relativeUriCreate' },
-    { fieldId: 'http.responseIdPathCreate' },
-    { fieldId: 'http.responsePathCreate' },
+    { fieldId: 'http.bodyCreate' },
+    { fieldId: 'http.resourceIdPathCreate' },
+    { fieldId: 'http.resourceIdPathCreate' },
+    { fieldId: 'http.resourcePathCreate' },
     {
       id: 'upateExistingData',
       type: 'labeltitle',
@@ -41,14 +69,14 @@ export default {
       visibleWhen: [
         {
           field: 'http.compositeType',
-          is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+          is: ['createandupdate', 'updateandignore'],
         },
       ],
     },
     { fieldId: 'http.compositeMethodUpdate' },
-    { fieldId: 'http.relativeUriUpdate' },
-    { fieldId: 'http.responseIdPathUpdate' },
-    { fieldId: 'http.responsePathUpdate' },
+    { fieldId: 'http.relativeURIUpdate' },
+    { fieldId: 'http.resourceIdPathUpdate' },
+    { fieldId: 'http.resourcePathUpdate' },
     {
       id: 'ignoreExistingData',
       type: 'labeltitle',
@@ -56,7 +84,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.compositeType',
-          is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+          is: ['createandignore', 'updateandignore'],
         },
       ],
     },
@@ -68,30 +96,72 @@ export default {
     },
     { fieldId: 'http.successMediaType' },
     { fieldId: 'http.errorMediaType' },
-    { fieldId: 'http.sampleFile' },
-    { fieldId: 'http.columnDelimiter' },
-    { fieldId: 'http.includeHeader' },
-    { fieldId: 'http.customHeaderRows' },
+    { fieldId: 'uploadFile' },
+    {
+      fieldId: 'file.csv.columnDelimiter',
+      visibleWhen: [
+        {
+          field: 'http.requestMediaType',
+          is: ['csv'],
+        },
+      ],
+    },
+    {
+      fieldId: 'file.csv.includeHeader',
+      visibleWhen: [
+        {
+          field: 'http.requestMediaType',
+          is: ['csv'],
+        },
+      ],
+    },
+    { fieldId: 'file.csv.customHeaderRows' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
+    { fieldId: 'http.body' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
       fields: [
-        { fieldId: 'http.rowDelimiter' },
-        { fieldId: 'http.replaceTabWithSpace' },
-        { fieldId: 'http.replaceNewLineWithSpace' },
+        {
+          fieldId: 'file.csv.rowDelimiter',
+          visibleWhen: [
+            {
+              field: 'http.requestMediaType',
+              is: ['csv'],
+            },
+          ],
+        },
+        {
+          fieldId: 'file.csv.replaceTabWithSpace',
+          visibleWhen: [
+            {
+              field: 'http.requestMediaType',
+              is: ['csv'],
+            },
+          ],
+        },
+        {
+          fieldId: 'file.csv.replaceNewLineWithSpace',
+          visibleWhen: [
+            {
+              field: 'http.requestMediaType',
+              is: ['csv'],
+            },
+          ],
+        },
         { fieldId: 'http.ignoreEmptyNodes' },
-        { fieldId: 'http.concurrencyIdLockTemplate' },
-        { fieldId: 'http.dataUriTemplate' },
+        { fieldId: 'idLockTemplate' },
+        { fieldId: 'dataURITemplate' },
         { fieldId: 'http.configureAsyncHelper' },
+        { fieldId: 'http._asyncHelperId' },
       ],
     },
     {

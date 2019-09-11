@@ -4,19 +4,37 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
     { fieldId: 'rdbms.queryType' },
-    { fieldId: 'rdbms.ignoreExistingRecords' },
-    { fieldId: 'rdbms.ignoreMissingRecords' },
+    {
+      fieldId: 'ignoreExisting',
+      label: 'Ignore Existing Records',
+      visibleWhen: [
+        {
+          field: 'rdbms.queryType',
+          is: ['INSERT'],
+        },
+      ],
+    },
+    {
+      fieldId: 'ignoreMissing',
+      label: 'Ignore Missing Records',
+      visibleWhen: [
+        {
+          field: 'rdbms.queryType',
+          is: ['UPDATE'],
+        },
+      ],
+    },
     { fieldId: 'rdbms.existingDataId' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
   ],
   fieldSets: [
     {

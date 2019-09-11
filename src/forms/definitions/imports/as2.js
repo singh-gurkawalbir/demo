@@ -4,19 +4,19 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
-    { fieldId: 'as2.ediFormat' },
-    { fieldId: 'as2.fileName' },
-    { fieldId: 'as2.messageId' },
+    { fieldId: 'ediX12Format', label: 'EDI Format' },
+    { fieldId: 'as2.fileNameTemplate' },
+    { fieldId: 'as2.messageIdTemplate' },
     { fieldId: 'as2.headers' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
   ],
   fieldSets: [
     {

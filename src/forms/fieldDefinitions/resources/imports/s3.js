@@ -25,7 +25,7 @@ export default {
       },
     ],
   },
-  's3.bucketName': {
+  's3.bucket': {
     type: 'text',
     label: 'Bucket Name',
     placeholder: 'Enter S3 folder path,such as:MySite/Orders',

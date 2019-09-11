@@ -13,26 +13,6 @@ export default {
       },
     ],
   },
-  'rdbms.ignoreExistingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Existing Records',
-    visibleWhen: [
-      {
-        field: 'rdbms.queryType',
-        is: ['INSERT'],
-      },
-    ],
-  },
-  'rdbms.ignoreMissingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Missing Records',
-    visibleWhen: [
-      {
-        field: 'rdbms.queryType',
-        is: ['UPDATE'],
-      },
-    ],
-  },
   'rdbms.existingDataId': {
     type: 'text',
     label: 'Existing Data Id',
@@ -43,11 +23,11 @@ export default {
         is: ['COMPOSITE'],
       },
       {
-        field: 'rdbms.ignoreExistingRecords',
+        field: 'ignoreExisting',
         is: [true],
       },
       {
-        field: 'rdbms.ignoreMissingRecords',
+        field: 'ignoreMissing',
         is: [true],
       },
     ],

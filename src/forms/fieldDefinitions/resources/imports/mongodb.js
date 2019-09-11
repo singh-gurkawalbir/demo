@@ -1,7 +1,7 @@
 export default {
   'mongodb.method': {
     type: 'radiogroup',
-    label: 'Mongodb method',
+    label: 'Method',
     options: [
       {
         items: [
@@ -22,18 +22,7 @@ export default {
       },
     ],
   },
-  'mongodb.ignoreExisting': {
-    type: 'checkbox',
-    label: 'Ignore Existing',
-    defaultValue: false,
-    visibleWhen: [
-      {
-        field: 'mongodb.method',
-        is: ['insertMany'],
-      },
-    ],
-  },
-  'mongodb.identifyExistingRecords': {
+  'mongodb.lookupType': {
     type: 'select',
     label: 'How should we identify existing records?',
     options: [
@@ -46,7 +35,7 @@ export default {
     ],
     visibleWhenAll: [
       {
-        field: 'mongodb.ignoreExisting',
+        field: 'ignoreExisting',
         is: [true],
       },
       {
@@ -56,28 +45,12 @@ export default {
     ],
     requiredWhen: [
       {
-        field: 'mongodb.ignoreExisting',
+        field: 'ignoreExisting',
         is: [true],
       },
       {
         field: 'mongodb.method',
         is: ['insertMany'],
-      },
-    ],
-  },
-  'mongodb.whichField': {
-    type: 'text',
-    label: 'Which Field?',
-    visibleWhen: [
-      {
-        field: 'mongodb.identifyExistingRecords',
-        is: ['source'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'mongodb.identifyExistingRecords',
-        is: ['source'],
       },
     ],
   },
@@ -86,7 +59,7 @@ export default {
     label: 'Ignore Lookup Filters',
     visibleWhen: [
       {
-        field: 'mongodb.identifyExistingRecords',
+        field: 'mongodb.lookupType',
         is: ['lookup'],
       },
     ],
@@ -117,29 +90,27 @@ export default {
       },
     ],
   },
-  'mongodb.ignoreMissing': {
-    type: 'checkbox',
-    label: 'Ignore Missing',
-    visibleWhen: [
-      {
-        field: 'mongodb.method',
-        is: ['updateOne'],
-      },
-    ],
-  },
-  'mongodb.whichField?': {
+  'mongodb.ignoreExtract': {
     type: 'text',
     label: 'Which Field?',
     visibleWhen: [
       {
-        field: 'mongodb.ignoreMissing',
+        field: 'ignoreMissing',
         is: [true],
+      },
+      {
+        field: 'mongodb.lookupType',
+        is: ['source'],
       },
     ],
     requiredWhen: [
       {
-        field: 'mongodb.ignoreMissing',
+        field: 'ignoreMissing',
         is: [true],
+      },
+      {
+        field: 'mongodb.lookupType',
+        is: ['source'],
       },
     ],
   },

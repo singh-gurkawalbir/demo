@@ -4,7 +4,7 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
     { fieldId: 'wrapper.function' },
     { fieldId: 'wrapper.configuration' },
@@ -13,23 +13,20 @@ export default {
       type: 'labeltitle',
       label: 'Do you have sample data?',
     },
-    { fieldId: 'wrapper.ifSoPleasePasteItHere' },
+    { fieldId: 'wrapper.sampleData' },
     {
       id: 'dataMapped',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'oneToMany' },
+    { fieldId: 'pathToMany' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'wrapper.concurrencyIdLockTemplate' },
-        { fieldId: 'wrapper.dataUriTemplate' },
-      ],
+      fields: [{ fieldId: 'idLockTemplate' }, { fieldId: 'dataURITemplate' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

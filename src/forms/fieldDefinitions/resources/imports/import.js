@@ -29,18 +29,45 @@ export default {
   },
   idLockTemplate: {
     type: 'text',
-    label: 'Id Lock Template',
+    label: 'Concurrency Id Lock Template',
   },
   dataURITemplate: {
     type: 'text',
-    label: 'Data URITemplate',
+    label: 'Data URI Template',
+    placeholder: 'Optional',
   },
   oneToMany: {
-    type: 'checkbox',
-    label: 'One To Many',
-    defaultValue: false,
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed translate to multiple records in the import application?',
+    defaultValue: 'false',
+    options: [
+      {
+        items: [
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
+        ],
+      },
+    ],
   },
-  pathToMany: { type: 'text', label: 'path to many' },
+  pathToMany: {
+    type: 'text',
+    label:
+      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'oneToMany',
+        is: ['true'],
+      },
+    ],
+    validWhen: [
+      {
+        field: 'oneToMany',
+        is: ['true'],
+      },
+    ],
+  },
   blobKeyPath: { type: 'text', label: 'blobkey path' },
   assistant: {
     type: 'select',
@@ -112,7 +139,7 @@ export default {
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
-          { label: 'Netsuite', value: 'netsuite' },
+          { label: 'NetSuite', value: 'netsuite' },
           { label: 'Newegg', value: 'newegg' },
           { label: 'Newrelic', value: 'newrelic' },
           { label: 'Okta', value: 'okta' },

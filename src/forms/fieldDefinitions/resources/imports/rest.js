@@ -27,15 +27,15 @@ export default {
         items: [
           {
             label: 'Create New Data & Update Existing Data',
-            value: 'CREATE_AND_UPDATE',
+            value: 'createandupdate',
           },
           {
             label: 'Create New Data & Ignore Existing Data',
-            value: 'CREATE_AND_IGNORE',
+            value: 'createandignore',
           },
           {
             label: 'Update Existing Data & Ignore NEW Data',
-            value: 'UPDATE_AND_IGNORE',
+            value: 'updateandignore',
           },
         ],
       },
@@ -47,7 +47,7 @@ export default {
       },
     ],
   },
-  'rest.relativeUri': {
+  'rest.relativeURI': {
     type: 'text',
     label: 'Relative URI',
     required: true,
@@ -107,11 +107,11 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
-  'rest.relativeUriCreate': {
+  'rest.relativeURICreate': {
     type: 'text',
     label: 'Relative URI',
     required: true,
@@ -119,7 +119,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
@@ -130,7 +130,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
@@ -141,7 +141,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
@@ -152,7 +152,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
@@ -171,11 +171,11 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
-  'rest.relativeUriUpdate': {
+  'rest.relativeURIUpdate': {
     type: 'text',
     label: 'Relative URI',
     required: true,
@@ -183,7 +183,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
@@ -194,7 +194,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
@@ -205,7 +205,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
@@ -216,7 +216,7 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
@@ -227,21 +227,12 @@ export default {
     visibleWhen: [
       {
         field: 'rest.compositeType',
-        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+        is: ['createandignore', 'updateandignore'],
       },
     ],
   },
-  'rest.ifSoPleasePasteItHere': {
+  'rest.sampleData': {
     type: 'textarea',
     label: 'If so,please paste it here',
-  },
-  'rest.concurrencyIdLockTemplate': {
-    type: 'textarea',
-    label: 'Concurrency Id Lock Template',
-  },
-  'rest.dataUriTemplate': {
-    type: 'text',
-    label: 'Data URI Template',
-    placeholder: 'Optional',
   },
 };

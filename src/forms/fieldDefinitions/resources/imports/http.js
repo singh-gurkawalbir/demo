@@ -1,7 +1,7 @@
 export default {
   'http.method': {
     type: 'radiogroup',
-    label: 'Http request Media Type',
+    label: 'Method',
     options: [
       {
         items: [
@@ -20,7 +20,7 @@ export default {
   },
   'http.requestMediaType': {
     type: 'select',
-    label: 'Http request Media Type',
+    label: 'Request Media Type',
     options: [
       {
         items: [
@@ -40,15 +40,15 @@ export default {
         items: [
           {
             label: 'Create New Data & Update Existing Data',
-            value: 'CREATE_AND_UPDATE',
+            value: 'createandupdate',
           },
           {
             label: 'Create New Data & Ignore Existing Data',
-            value: 'CREATE_AND_IGNORE',
+            value: 'createandignore',
           },
           {
             label: 'Update Existing Data & Ignore NEW Data',
-            value: 'UPDATE_AND_IGNORE',
+            value: 'updateandignore',
           },
         ],
       },
@@ -60,7 +60,7 @@ export default {
       },
     ],
   },
-  'http.relativeUri': {
+  'http.relativeURI': {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
@@ -71,7 +71,12 @@ export default {
       },
     ],
   },
-  'http.successPath': {
+  'http.body': {
+    type: 'httprequestbody',
+    label: 'Build HTTP Request Body',
+    refreshOptionsOnChangesTo: ['http.lookups'],
+  },
+  'http.response.successPath': {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
@@ -82,7 +87,7 @@ export default {
       },
     ],
   },
-  'http.successValues': {
+  'http.response.successValues': {
     type: 'text',
     label: 'Success Values',
     placeholder: 'Optional',
@@ -93,7 +98,7 @@ export default {
       },
     ],
   },
-  'http.responseIdPath': {
+  'http.response.resourceIdPath': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
@@ -104,7 +109,7 @@ export default {
       },
     ],
   },
-  'http.responsePath': {
+  'http.response.resourcePath': {
     type: 'text',
     label: 'Response Path',
     visibleWhen: [
@@ -114,7 +119,7 @@ export default {
       },
     ],
   },
-  'http.errorPath': {
+  'http.response.errorPath': {
     type: 'text',
     label: 'Error Path',
     placeholder: 'Optional',
@@ -125,7 +130,7 @@ export default {
       },
     ],
   },
-  'http.batchSizeLimit': {
+  'http.batchSize': {
     type: 'text',
     label: 'Batch Size Limit',
     defaultValue: 1,
@@ -151,39 +156,50 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
-  'http.relativeUriCreate': {
+  'http.relativeURICreate': {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
-  'http.responseIdPathCreate': {
+  'http.bodyCreate': {
+    type: 'httprequestbody',
+    label: 'Build HTTP Request Body For Create',
+    refreshOptionsOnChangesTo: ['http.lookups'],
+    visibleWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate', 'createandignore'],
+      },
+    ],
+  },
+  'http.resourceIdPathCreate': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
-  'http.responsePathCreate': {
+  'http.resourcePathCreate': {
     type: 'text',
     label: 'Response Path',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE'],
+        is: ['createandupdate', 'createandignore'],
       },
     ],
   },
@@ -202,50 +218,55 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
-  'http.relativeUriUpdate': {
+  'http.relativeURIUpdate': {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
-  'http.responseIdPathUpdate': {
+  'http.resourceIdPathUpdate': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
-  'http.responsePathUpdate': {
+  'http.resourcePathUpdate': {
     type: 'text',
     label: 'Response Path',
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE'],
+        is: ['createandupdate', 'updateandignore'],
       },
     ],
   },
   'http.existingDataId': {
     type: 'text',
     label: 'Existing Data Id',
-    required: true,
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['CREATE_AND_IGNORE', 'UPDATE_AND_IGNORE'],
+        is: ['createandignore', 'updateandignore'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'http.compositeType',
+        is: ['createandignore', 'updateandignore'],
       },
     ],
   },
@@ -273,123 +294,28 @@ export default {
       },
     ],
   },
-  'http.sampleFile': {
-    type: 'uploadfile',
-    label: 'Sample File (that would be imported)',
-    resourceType: 'connections',
-    mode: r => r && r.file && r.file.type,
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.columnDelimiter': {
-    type: 'select',
-    label: 'Column Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'Comma', value: ',' },
-          { label: 'Pipe', value: '|' },
-          { label: 'Semicolon', value: ';' },
-          { label: 'Space', value: '' },
-          { label: 'Tab', value: '\t' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.includeHeader': {
-    type: 'checkbox',
-    label: 'Include Header',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.customHeaderRows': {
-    type: 'textarea',
-    label: 'Custom Header Rows',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.rowDelimiter': {
-    type: 'select',
-    label: 'Row Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'LF(\\n)', value: '\n' },
-          { label: 'CR(\\r)', value: '\r' },
-          { label: 'CR(\\r) LF(\\n) ', value: '\r\n' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.wrapWithQuotes': {
-    type: 'checkbox',
-    label: 'Wrap with quotes',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.replaceTabWithSpace': {
-    type: 'checkbox',
-    label: 'Replace tab with space',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
-  'http.replaceNewLineWithSpace': {
-    type: 'checkbox',
-    label: 'Replace new line with space',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
-      },
-    ],
-  },
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
     label: 'Ignore Empty Nodes',
   },
-  'http.concurrencyIdLockTemplate': {
-    type: 'textarea',
-    label: 'Concurrency Id Lock Template',
-  },
-  'http.dataUriTemplate': {
-    type: 'text',
-    label: 'Data URI Template',
-    placeholder: 'Optional',
-  },
   'http.configureAsyncHelper': {
     type: 'checkbox',
     label: 'Configure Async Helper',
+  },
+  'http._asyncHelperId': {
+    type: 'select',
+    label: 'Async Helper',
+    options: [
+      {
+        // To Do statistically instead of dynamic
+        items: [{ label: 'NewAsynchHelper', value: 'newasynchhelper' }],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.configureAsyncHelper',
+        is: [true],
+      },
+    ],
   },
 };
