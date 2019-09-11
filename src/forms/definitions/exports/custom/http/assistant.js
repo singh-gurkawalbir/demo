@@ -1,8 +1,7 @@
-import { omitBy } from 'lodash';
+import { omitBy, isEmpty } from 'lodash';
 import {
   convertFromExport,
   convertToExport,
-  SEARCH_PARAMETER_TYPES,
 } from '../../../../../utils/assistant';
 
 export default function assistantDefinition(
@@ -91,37 +90,6 @@ export default function assistantDefinition(
 
     if (operationDetails) {
       if (
-        operationDetails.supportedExportTypes &&
-        operationDetails.supportedExportTypes.length > 0
-      ) {
-        const exportTypeOptions = [{ value: 'all', label: 'All' }];
-
-        if (operationDetails.supportedExportTypes.includes('delta')) {
-          exportTypeOptions.push({ value: 'delta', label: 'Delta' });
-        }
-
-        if (operationDetails.supportedExportTypes.includes('test')) {
-          exportTypeOptions.push({ value: 'test', label: 'Test' });
-        }
-
-        fields.push({
-          fieldId: 'assistantMetadata.exportType',
-          options: [
-            {
-              items: exportTypeOptions,
-            },
-          ],
-          value: assistantConfig.exportType || 'all',
-          refreshOptionsOnChangesTo: [
-            'assistantMetadata.version',
-            'assistantMetadata.resource',
-            'assistantMetadata.operation',
-          ],
-          required: true,
-        });
-      }
-
-      if (
         operationDetails.pathParameters &&
         operationDetails.pathParameters.length > 0
       ) {
@@ -156,14 +124,49 @@ export default function assistantDefinition(
       }
 
       if (
+        operationDetails.supportedExportTypes &&
+        operationDetails.supportedExportTypes.length > 0
+      ) {
+        const exportTypeOptions = [{ value: 'all', label: 'All' }];
+
+        if (operationDetails.supportedExportTypes.includes('delta')) {
+          exportTypeOptions.push({ value: 'delta', label: 'Delta' });
+        }
+
+        if (operationDetails.supportedExportTypes.includes('test')) {
+          exportTypeOptions.push({ value: 'test', label: 'Test' });
+        }
+
+        fields.push({
+          fieldId: 'assistantMetadata.exportType',
+          options: [
+            {
+              items: exportTypeOptions,
+            },
+          ],
+          value: assistantConfig.exportType || 'all',
+          refreshOptionsOnChangesTo: [
+            'assistantMetadata.version',
+            'assistantMetadata.resource',
+            'assistantMetadata.operation',
+          ],
+        });
+      }
+
+      if (
         operationDetails.queryParameters &&
         operationDetails.queryParameters.length > 0
       ) {
-        fields.push({
-          id: 'assistantMetadata.queryParams',
+        const hasRequiredParameters =
+          operationDetails.queryParameters.filter(qp => !!qp.required).length >
+          0;
+        const configureQueryParametersField = {
+          fieldId: 'assistantMetadata.queryParams',
           label: operationDetails.queryParametersLabel,
-          type: 'assistantsearchparams',
-          value: assistantConfig.queryParams,
+          required: hasRequiredParameters,
+          value: !isEmpty(assistantConfig.queryParams)
+            ? assistantConfig.queryParams
+            : undefined,
           fieldMeta: operationDetails.queryParameters,
           defaultValuesForDeltaExport:
             assistantConfig.exportType === 'delta' &&
@@ -171,19 +174,45 @@ export default function assistantDefinition(
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
               : {},
-        });
+        };
+
+        if (configureQueryParametersField.required) {
+          configureQueryParametersField.validWhen = {
+            isNot: {
+              values: [undefined, {}],
+              message: 'message some',
+            },
+          };
+        }
+
+        fields.push(configureQueryParametersField);
       } else if (
         operationDetails.bodyParameters &&
         operationDetails.bodyParameters.length > 0
       ) {
-        fields.push({
-          id: 'assistantMetadata.bodyParams',
+        const hasRequiredParameters =
+          operationDetails.bodyParameters.filter(qp => !!qp.required).length >
+          0;
+        const configureBodyParametersField = {
+          fieldId: 'assistantMetadata.bodyParams',
           label: operationDetails.bodyParametersLabel,
-          type: 'assistantsearchparams',
-          paramsType: SEARCH_PARAMETER_TYPES.BODY,
-          value: assistantConfig.bodyParams,
+          required: hasRequiredParameters,
+          value: !isEmpty(assistantConfig.bodyParams)
+            ? assistantConfig.bodyParams
+            : undefined,
           fieldMeta: operationDetails.bodyParameters,
-        });
+        };
+
+        if (configureBodyParametersField.required) {
+          configureBodyParametersField.validWhen = {
+            isNot: {
+              values: [undefined, {}],
+              message: 'message some',
+            },
+          };
+        }
+
+        fields.push(configureBodyParametersField);
       }
     }
   }

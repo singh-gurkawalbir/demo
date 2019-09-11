@@ -1,5 +1,7 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import { isEmpty } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
@@ -69,8 +71,10 @@ export default function DynaAssistantSearchParams(props) {
     fieldMeta,
     paramsType,
     defaultValuesForDeltaExport,
+    required,
   } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
+  const isValid = !required ? true : !isEmpty(value);
 
   return (
     <Fragment>
@@ -92,8 +96,12 @@ export default function DynaAssistantSearchParams(props) {
         onClick={() => setShowSearchParamsModal(true)}>
         {label || paramsType === SEARCH_PARAMETER_TYPES.BODY
           ? 'Configure Body Parameters'
-          : 'Configure Search Parameters'}
+          : 'Configure Search Parameters'}{' '}
+        {required ? '*' : ''}
       </Button>
+      <FormHelperText error={!isValid}>
+        {!isValid ? 'Please enter required parameters' : ''}
+      </FormHelperText>
     </Fragment>
   );
 }
