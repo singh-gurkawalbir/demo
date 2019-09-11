@@ -4,7 +4,7 @@ import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutlineOutlined';
+import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
@@ -87,7 +87,8 @@ function PageContent(props) {
             to={`${
               location.pathname
             }/add/${resourceType}/new-${shortid.generate()}`}
-            variant="text">
+            variant="text"
+            color="primary">
             <AddIcon /> New {resourceName}
           </CeligoIconButton>
         </div>

@@ -8,14 +8,15 @@ const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
     padding: 2,
-    backgroundColor: fade(theme.palette.secondary.light, 0.15),
+    backgroundColor: fade(theme.palette.background.arrowAfter, 0.5),
     '& button': {
       marginLeft: 0,
       height: 20,
       border: 0,
       backgroundColor: 'transparent',
+      minWidth: 100,
       '& p': {
-        color: theme.palette.secondary.contrastText,
+        color: theme.palette.secondary.light,
       },
     },
     '& button.Mui-selected': {
@@ -45,6 +46,7 @@ const useStyles = makeStyles(theme => ({
   item: {
     minWidth: props => props.minWidth,
     textTransform: 'none',
+    fontSize: 13,
   },
   toggleButton: {
     marginLeft: 0,
@@ -73,7 +75,7 @@ export default function TextToggle({
       value={value}
       onChange={handleChange}>
       {options.map(item => (
-        <ToggleButton key={item.value} value={item.value}>
+        <ToggleButton key={item.value} value={item.value} disableRipple>
           <Typography className={classes.item} variant="body2">
             {item.label}
           </Typography>
