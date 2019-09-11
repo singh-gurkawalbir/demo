@@ -4,16 +4,17 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../views/ResourceList/ResourceTable';
 import * as selectors from '../../reducers';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   title: {
     marginLeft: theme.spacing(4),
     padding: theme.spacing(2),
@@ -23,18 +24,17 @@ const styles = theme => ({
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
-});
+}));
 
-function RegisterConnections(props) {
+export default function RegisterConnections(props) {
   const {
-    classes,
     title = 'Register Connections',
-    width = '70vw',
     onClose,
     integrationId,
     resourceType = 'connections',
     metadataType = 'registerConnections',
   } = props;
+  const classes = useStyles();
   const connectionsToReg = useSelector(state =>
     selectors.getAvailableConnectionsToRegister(
       state,
@@ -70,7 +70,7 @@ function RegisterConnections(props) {
       <DialogTitle className={classes.title}>
         <Typography>{title}</Typography>
       </DialogTitle>
-      <DialogContent style={{ width }}>
+      <DialogContent>
         <LoadResources required resources={resourceType}>
           <ResourceTable
             resources={connectionsToReg}
@@ -80,9 +80,9 @@ function RegisterConnections(props) {
           />
         </LoadResources>
       </DialogContent>
-      <Button onClick={handleRegisterClick}>Register</Button>
+      <DialogActions>
+        <Button onClick={handleRegisterClick}>Register</Button>
+      </DialogActions>
     </Dialog>
   );
 }
-
-export default withStyles(styles)(RegisterConnections);

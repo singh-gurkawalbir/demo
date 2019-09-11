@@ -1,14 +1,22 @@
 import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../ResourceList/ResourceTable';
 import RegisterConnections from '../../components/RegisterConnections';
-import CeligoIconButton from '../../components/IconButton';
 
-function Connections(props) {
+const useStyles = makeStyles(() => ({
+  registerButton: {
+    float: 'right',
+  },
+}));
+
+export default function Connections(props) {
   const { match } = props;
   const { integrationId } = match.params;
+  const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
   const list = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId)
@@ -24,11 +32,11 @@ function Connections(props) {
       )}
       <LoadResources required resources="connections">
         {integrationId && integrationId !== 'none' && (
-          <CeligoIconButton
-            onClick={() => setShowRegisterConnDialog(true)}
-            variant="text">
+          <Button
+            className={classes.registerButton}
+            onClick={() => setShowRegisterConnDialog(true)}>
             Register Connections
-          </CeligoIconButton>
+          </Button>
         )}
 
         <ResourceTable
@@ -39,5 +47,3 @@ function Connections(props) {
     </Fragment>
   );
 }
-
-export default Connections;
