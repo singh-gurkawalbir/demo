@@ -3,18 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import IconButton from '@material-ui/core/IconButton';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import ResourceForm from '../../components/ResourceFormFactory';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
+import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,58 +67,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: '10px',
     marginBottom: '10px',
   },
-  iconButton: {
-    position: 'absolute',
-    top: '5px',
-    right: '10px',
-  },
 }));
-const ConnectionModal = props => {
-  const { _connectionId, onSubmitComplete, handleClose } = props;
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', _connectionId)
-  );
-
-  useEffect(() => {
-    if (!connection) {
-      dispatch(actions.resource.requestCollection('connections'));
-    }
-  }, [connection, dispatch]);
-
-  if (!connection) {
-    return null;
-  }
-
-  return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle>
-        Setup Connection
-        {handleClose && (
-          <IconButton
-            onClick={handleClose}
-            className={classes.iconButton}
-            autoFocus>
-            <SvgIcon>
-              <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-            </SvgIcon>
-          </IconButton>
-        )}
-      </DialogTitle>
-      <DialogContent style={{ width: '60vw' }}>
-        <ResourceForm
-          editMode
-          resourceType="connections"
-          resourceId={_connectionId}
-          onSubmitComplete={onSubmitComplete}
-          connectionType={connection.type}
-        />
-      </DialogContent>
-    </Dialog>
-  );
-};
-
 const InstallationStep = props => {
   const classes = useStyles(props);
   const { step, index, handleStepClick } = props;
@@ -343,7 +288,7 @@ export default function ConnectorInstallation(props) {
   return (
     <LoadResources required resources="connections,integrations">
       {showConnectionDialog && (
-        <ConnectionModal
+        <ConnectionSetupDialog
           _connectionId={selectedConnectionId}
           handleClose={handleClose}
           onSubmitComplete={handleSubmitComplete}

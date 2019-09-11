@@ -54,6 +54,10 @@ function getIntegrationAppsNextState(state, action) {
           step.__verifying = true;
           step.__isTriggered = true;
           break;
+        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
+          step.__verifying = false;
+          step.__isTriggered = false;
+          break;
         case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
           step.__isTriggered = true;
           break;
@@ -107,6 +111,7 @@ export default (state = {}, action) => {
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);
