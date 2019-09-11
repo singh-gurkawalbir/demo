@@ -10,7 +10,6 @@ import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import resource, * as fromResource from './resource';
-import assistants, * as fromAssistants from './assistants';
 
 export default combineReducers({
   stage,
@@ -24,7 +23,6 @@ export default combineReducers({
   stackSystemTokens,
   resource,
   netsuiteUserRole,
-  assistants,
 });
 
 // #region PUBLIC SELECTORS
@@ -154,7 +152,7 @@ export function resourceReferences(state) {
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
-  return fromAssistants.assistantData(state.assistants, {
+  return fromMetadata.assistantData(state.metadata, {
     adaptorType,
     assistant,
   });

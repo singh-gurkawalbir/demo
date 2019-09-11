@@ -595,9 +595,9 @@ const flow = {
 };
 const assistantMetadata = {
   request: ({ adaptorType, assistant }) =>
-    action(actionTypes.ASSISTANT_METADATA.REQUEST, { adaptorType, assistant }),
+    action(actionTypes.METADATA.REQUEST_ASSISTANT, { adaptorType, assistant }),
   received: ({ adaptorType, assistant, metadata }) =>
-    action(actionTypes.ASSISTANT_METADATA.RECEIVED, {
+    action(actionTypes.METADATA.RECEIVED_ASSISTANT, {
       adaptorType,
       assistant,
       metadata,

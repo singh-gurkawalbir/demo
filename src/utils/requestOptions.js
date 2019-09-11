@@ -186,7 +186,7 @@ export default function getRequestOptions(
         path: `/flows/${resourceId}/run`,
         opts: { method: 'POST' },
       };
-    case actionTypes.ASSISTANT_METADATA.REQUEST:
+    case actionTypes.METADATA.REQUEST_ASSISTANT:
       return {
         path:
           adaptorType === 'http'

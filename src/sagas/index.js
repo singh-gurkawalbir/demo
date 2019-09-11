@@ -21,7 +21,6 @@ import {
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
-import { assistantMetadataSagas } from './assistantMetadata';
 import { stackSagas } from './stack';
 
 export function* unauthenticateAndDeleteProfile() {
@@ -91,7 +90,6 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
-    ...assistantMetadataSagas,
     ...stackSagas,
   ]);
 }

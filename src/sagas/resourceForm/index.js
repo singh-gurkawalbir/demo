@@ -12,7 +12,7 @@ import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
-import { requestMetadata } from '../assistantMetadata';
+import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 
 export const SCOPES = {
@@ -236,7 +236,7 @@ export function* initFormValues({
     });
 
     if (!assistantData) {
-      assistantData = yield call(requestMetadata, {
+      assistantData = yield call(requestAssistantMetadata, {
         adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
         assistant: resource.assistant,
       });

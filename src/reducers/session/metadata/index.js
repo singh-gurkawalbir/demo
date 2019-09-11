@@ -116,7 +116,11 @@ function generateNetsuiteOptions(
 }
 
 export default (
-  state = { netsuite: { webservices: {}, suitescript: {} }, salesforce: {} },
+  state = {
+    netsuite: { webservices: {}, suitescript: {} },
+    salesforce: {},
+    assistants: { rest: {}, http: {} },
+  },
   action
 ) => {
   const {
@@ -372,6 +376,25 @@ export default (
       return { ...state, ...{ salesforce: newState } };
     }
 
+    case actionTypes.METADATA.RECEIVED_ASSISTANT: {
+      const { adaptorType, assistant, metadata } = action;
+
+      if (!state.assistants[adaptorType]) {
+        return state;
+      }
+
+      return {
+        ...state,
+        assistants: {
+          ...state.assistants,
+          [adaptorType]: {
+            ...state.assistants[adaptorType],
+            [assistant]: metadata,
+          },
+        },
+      };
+    }
+
     default:
       return state;
   }
@@ -464,3 +487,16 @@ export const optionsMapFromMetadata = (
     },
   };
 };
+
+export function assistantData(state, { adaptorType, assistant }) {
+  if (
+    !state ||
+    !state.assistants ||
+    !state.assistants[adaptorType] ||
+    !state.assistants[adaptorType][assistant]
+  ) {
+    return undefined;
+  }
+
+  return state.assistants[adaptorType][assistant];
+}
