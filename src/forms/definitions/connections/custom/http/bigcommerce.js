@@ -48,7 +48,7 @@ export default {
       required: true,
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
-      label: 'Authentication Type:',
+      label: 'Authentication Type',
       helpText: 'Please select Authentication Type',
       options: [
         {
@@ -84,7 +84,7 @@ export default {
       required: true,
       defaultValue: '',
       type: 'text',
-      label: 'Access Token:',
+      label: 'Access Token',
       helpText: 'This Access Token works in tandem with the Client ID.',
       visibleWhen: [
         {
@@ -97,7 +97,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID:',
+      label: 'Client ID',
       helpText:
         'This Client ID works together with the Access Token to grant authorization.',
       visibleWhen: [
@@ -111,7 +111,7 @@ export default {
       id: 'storeHash',
       required: true,
       type: 'text',
-      label: 'Store HASH:',
+      label: 'Store HASH',
       visibleWhen: [
         {
           field: 'authType',
@@ -127,8 +127,10 @@ export default {
           r.http.baseURI &&
           r.http.baseURI.indexOf('https://api.bigcommerce.com/stores/') > -1
         ) {
-          value = r.http.baseURI;
-          value = value.replace('https://api.bigcommerce.com/stores/', '');
+          value = r.http.baseURI.replace(
+            'https://api.bigcommerce.com/stores/',
+            ''
+          );
         }
 
         return value;
