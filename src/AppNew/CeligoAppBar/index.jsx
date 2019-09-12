@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
@@ -18,13 +17,18 @@ import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
 import ProfileMenuButton from '../ProfileMenuButton';
 import * as selectors from '../../reducers';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
+import NotificationsIcon from '../../components/icons/NotificationsIcon';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
-    background: theme.palette.background.default,
+    background: theme.palette.background.paper2,
     marginLeft: theme.drawerWidth,
     width: `calc(100% - ${theme.spacing(7)}px)`,
-    borderBottom: `solid 1px rgb(0,0,0,0.2)`,
+    height: 36,
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    // background: 'black',
 
     // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
@@ -40,13 +44,37 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   toolbar: theme.mixins.toolbar,
-  grow: {
+  breadCrumb: {
     flexGrow: 1,
+    '& li': {
+      fontSize: 12,
+      '& a': {
+        '&:hover': {
+          textDecoration: 'none',
+          color: theme.palette.primary.main,
+        },
+      },
+    },
   },
   topBar: {
     '& button': {
       padding: 0,
     },
+  },
+  topBarActions: {
+    listStyle: 'none',
+    margin: [[5, 0, 0, 0]],
+    '& li': {
+      float: 'left',
+      marginRight: theme.spacing(3),
+      '&:last-child': {
+        marginRight: 0,
+      },
+    },
+  },
+  addons: {
+    textTransform: 'unset',
+    fontSize: 12,
   },
 }));
 
@@ -64,7 +92,11 @@ export default function CeligoAppBar() {
             [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar className="topBar" variant="dense">
-            <Breadcrumbs maxItems={3} separator="›" aria-label="breadcrumb">
+            <Breadcrumbs
+              maxItems={3}
+              separator={<ArrowRightIcon fontSize="small" />}
+              aria-label="breadcrumb"
+              className={classes.breadCrumb}>
               <Link color="inherit" href="/pg">
                 Home
               </Link>
@@ -74,28 +106,38 @@ export default function CeligoAppBar() {
               <Link color="inherit" href="/pg">
                 Subscription
               </Link>
-              <Typography>Add-ons</Typography>
+              <Typography variant="body2" className={classes.addons}>
+                Add-ons
+              </Typography>
             </Breadcrumbs>
-
-            <div className={classes.grow} />
-            <GlobalSearch />
-            <TextToggle
-              defaultValue={1}
-              exclusive
-              options={[
-                { value: 1, label: 'Production' },
-                { value: 2, label: 'Sandbox' },
-              ]}
-            />
-            <IconButton
-              size="small"
-              aria-label="show 17 new notifications"
-              color="inherit">
-              <Badge badgeContent={17} color="primary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <ProfileMenuButton />
+            <ul className={classes.topBarActions}>
+              <li>
+                <GlobalSearch />
+              </li>
+              <li>
+                <TextToggle
+                  defaultValue={1}
+                  exclusive
+                  options={[
+                    { value: 1, label: 'Production' },
+                    { value: 2, label: 'Sandbox' },
+                  ]}
+                />
+              </li>
+              <li>
+                <IconButton
+                  size="small"
+                  aria-label="show 17 new notifications"
+                  color="inherit">
+                  <Badge badgeContent={17} color="primary">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+              </li>
+              <li>
+                <ProfileMenuButton />
+              </li>
+            </ul>
           </Toolbar>
         </AppBar>
       </ElevateOnScroll>

@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { DndProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FontStager from '../components/FontStager';
@@ -42,17 +44,19 @@ export default function AppNew() {
     <MuiThemeProvider key={reloadCount} theme={theme}>
       <FontStager />
       <CssBaseline />
-      <BrowserRouter>
-        <div className={classes.root}>
-          {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
-          <CeligoAppBar />
-          <AppErroredModal />
-          <AuthDialog />
+      <DndProvider backend={HTML5Backend}>
+        <BrowserRouter>
+          <div className={classes.root}>
+            {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
+            <CeligoAppBar />
+            <AppErroredModal />
+            <AuthDialog />
 
-          <CeligoDrawer />
-          <PageContent />
-        </div>
-      </BrowserRouter>
+            <CeligoDrawer />
+            <PageContent />
+          </div>
+        </BrowserRouter>
+      </DndProvider>
     </MuiThemeProvider>
   );
 }
