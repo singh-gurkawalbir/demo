@@ -48,6 +48,9 @@ const Connections = loadable(() =>
     /* webpackChunkName: 'IntegrationSettings.Connections' */ './Connections'
   )
 );
+const General = loadable(() =>
+  import(/* webpackChunkName: 'IntegrationSettings.General' */ './General')
+);
 
 @hot(module)
 @withStyles(theme => ({
@@ -202,6 +205,12 @@ class IntegrationSettings extends Component {
                     `/integrations/:integrationId/settings/tokens`
                   )}
                   component={AccessTokens}
+                />
+                <Route
+                  path={getRoutePath(
+                    `/integrations/:integrationId/settings/general`
+                  )}
+                  component={General}
                 />
               </Switch>
             </div>
