@@ -10,13 +10,7 @@ export default {
     { formId: 'fileType' },
     { fieldId: 'ftp.fileName' },
     { formId: 'file' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {
@@ -26,7 +20,7 @@ export default {
         { fieldId: 'file.csv.rowDelimiter' },
         { fieldId: 'ftp.useTempFile' },
         { fieldId: 'ftp.inProgressFileName' },
-        { formId: 'fileAdvanceSetting' },
+        { formId: 'fileAdvancedSettings' },
       ],
     },
     {

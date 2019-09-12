@@ -11,23 +11,13 @@ export default {
     { fieldId: 'as2.fileNameTemplate' },
     { fieldId: 'as2.messageIdTemplate' },
     { fieldId: 'as2.headers' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'file.compressFiles' },
-        { fieldId: 'file.compressionFormat' },
-        { fieldId: 'as2.maxRetries' },
-      ],
+      fields: [{ formId: 'compressFiles' }, { fieldId: 'as2.maxRetries' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

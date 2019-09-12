@@ -11,21 +11,15 @@ export default {
     { formId: 'fileType' },
     { fieldId: 's3.fileKey' },
     { formId: 'file' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {
-      header: 'Advance',
+      header: 'Advanced',
       collapsed: true,
       fields: [
         { fieldId: 'file.csv.rowDelimiter' },
-        { formId: 'fileAdvanceSetting' },
+        { formId: 'fileAdvancedSettings' },
       ],
     },
     {

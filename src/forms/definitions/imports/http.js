@@ -116,13 +116,7 @@ export default {
       ],
     },
     { fieldId: 'file.csv.customHeaderRows' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
     { fieldId: 'http.body' },
   ],
   fieldSets: [

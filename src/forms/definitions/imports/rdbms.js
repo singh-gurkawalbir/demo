@@ -28,13 +28,7 @@ export default {
       ],
     },
     { fieldId: 'rdbms.existingDataId' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {

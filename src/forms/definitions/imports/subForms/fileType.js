@@ -5,5 +5,4 @@ export default {
     { fieldId: 'ediFormat' },
     { fieldId: 'ediX12Format' },
   ],
-  fieldSets: [],
 };

@@ -63,13 +63,7 @@ export default {
       label: 'Do you have sample data?',
     },
     { fieldId: 'rest.sampleData' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {

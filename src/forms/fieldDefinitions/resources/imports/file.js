@@ -98,7 +98,6 @@ export default {
   uploadFile: {
     type: 'uploadfile',
     label: 'Sample File (that would be imported)',
-    resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
     // filter: r => ({ type: r.type }),y
     // excludeFilter: r => ({ _
@@ -162,26 +161,10 @@ export default {
       },
     ],
   },
-  'file.compressFiles': {
-    type: 'checkbox',
-    label: 'Compress Files',
-  },
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression Format',
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
-    visibleWhen: [
-      {
-        field: 'file.compressFiles',
-        is: [true],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'file.compressFiles',
-        is: [true],
-      },
-    ],
   },
   'file.csv.wrapWithQuotes': {
     type: 'checkbox',

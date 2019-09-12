@@ -40,5 +40,4 @@ export default {
       fieldId: 'hooks.postSubmit._stackId',
     },
   ],
-  fieldSets: [],
 };

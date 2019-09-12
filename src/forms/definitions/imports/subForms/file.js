@@ -28,5 +28,4 @@ export default {
     { fieldId: 'file.csv.includeHeader' },
     { fieldId: 'file.xlsx.includeHeader' },
   ],
-  fieldSets: [],
 };

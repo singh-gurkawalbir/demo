@@ -1,13 +1,17 @@
 import common from './common';
 import hooks from './hooks';
 import file from './file';
-import fileAdvanceSetting from './fileAdvanceSetting';
+import fileAdvancedSettings from './fileAdvancedSettings';
 import fileType from './fileType';
+import dataMappings from './dataMappings';
+import compressFiles from './compressFiles';
 
 export default {
   common,
   hooks,
   file,
-  fileAdvanceSetting,
+  fileAdvancedSettings,
   fileType,
+  dataMappings,
+  compressFiles,
 };
