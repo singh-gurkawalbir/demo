@@ -86,6 +86,7 @@ function FlowBuilder(props) {
       newOrder.splice(hoverIndex, 0, dragItem);
       setPageProcessors(newOrder);
 
+      // Below ghost code can be deleted once code review is done.
       // The below 'update' function is an example of another immutable
       // library that helps simplify common mutation patterns as in
       // the code above.
