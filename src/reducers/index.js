@@ -601,17 +601,19 @@ export function availableConnectionsToRegister(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const registeredConnections =
     (integration && integration._registeredConnectionIds) || [];
-  let availableConnectionToRegister = allConnections.filter(
+  let availableConnectionsToRegister = allConnections.filter(
     conn => registeredConnections.indexOf(conn._id) === -1
   );
 
-  availableConnectionToRegister = availableConnectionToRegister.filter(conn => {
-    const accessLevel = userAccessLevelOnConnection(state, conn._id);
+  availableConnectionsToRegister = availableConnectionsToRegister.filter(
+    conn => {
+      const accessLevel = userAccessLevelOnConnection(state, conn._id);
 
-    return accessLevel === 'manage' || accessLevel === 'owner';
-  });
+      return accessLevel === 'manage' || accessLevel === 'owner';
+    }
+  );
 
-  return availableConnectionToRegister;
+  return availableConnectionsToRegister;
 }
 
 export function suiteScriptLinkedConnections(state) {
