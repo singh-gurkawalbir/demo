@@ -3,8 +3,8 @@ import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '15vw',
-    height: '15vh',
+    width: '10vw',
+    height: '10vh',
     border: 'solid 1px lightblue',
     padding: theme.spacing(1),
     margin: theme.spacing(1),
