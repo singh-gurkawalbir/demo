@@ -10,7 +10,15 @@ const svgFontSizes = size => ({
 });
 
 export default function DynaMappingSettings(props) {
-  const { id, onSave, extractFields, lookup, updateLookup, value } = props;
+  const {
+    id,
+    onSave,
+    extractFields,
+    lookup,
+    application,
+    updateLookup,
+    value,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -29,6 +37,7 @@ export default function DynaMappingSettings(props) {
       {showEditor && (
         <ImportMappingSettings
           id={id}
+          application={application}
           updateLookup={updateLookup}
           title="Settings"
           lookup={lookup}

@@ -1,4 +1,4 @@
-const appendvisibleWhenAll = (fieldMeta, rule) => {
+const appendVisibleWhenRule = (fieldMeta, rule) => {
   fieldMeta.fields.flatMap(field => {
     const fieldTmp = field;
 
@@ -14,6 +14,7 @@ const appendvisibleWhenAll = (fieldMeta, rule) => {
 
 export default {
   getLookupMeta: (lookup = {}, application, parentVisibleRule) => {
+    // application is to used when rendering lookup for different applications
     const fieldMeta = {
       fields: [
         {
@@ -129,7 +130,7 @@ export default {
     };
 
     if (parentVisibleRule) {
-      const formattedFields = appendvisibleWhenAll(
+      const formattedFields = appendVisibleWhenRule(
         fieldMeta,
         parentVisibleRule
       );

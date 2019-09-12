@@ -106,7 +106,15 @@ const optionsHandler = (fieldId, fields) => {
 };
 
 export default function ImportMappingSettings(props) {
-  const { title, value, onClose, extractFields, lookup, updateLookup } = props;
+  const {
+    title,
+    value,
+    onClose,
+    extractFields,
+    lookup,
+    updateLookup,
+    application,
+  } = props;
   const classes = useStyles();
   const getDefaultDataType = () => {
     if (
@@ -384,7 +392,7 @@ export default function ImportMappingSettings(props) {
 
   fieldMeta.fields = fieldMeta.fields.flatMap(field => {
     if (field.formId === 'lookup') {
-      const lookupMeta = Lookup.getLookupMeta(lookup || {}, 'http', {
+      const lookupMeta = Lookup.getLookupMeta(lookup || {}, application, {
         field: 'restImportFieldMappingSettings',
         is: ['lookup'],
       });

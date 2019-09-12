@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
+import utilityFunctions from '../../../utils/utilityFunctions';
 
 const CloseIcon = require('../../../components/icons/CloseIcon').default;
 
@@ -28,13 +29,15 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    height: '20px',
+    height: '100%',
+    maxHeight: '28px',
   },
   root: {
     flexGrow: 1,
   },
   rowContainer: {
     display: 'flex',
+    padding: '0px',
   },
 }));
 
@@ -107,23 +110,25 @@ function reducer(state, action) {
   }
 }
 
-export default function RestImportMapping(props) {
+export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     label,
     onClose,
-    mappings,
+    mappings = {},
     lookups,
+    application,
     generateFields,
     extractFields,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
+  const [lookupState, setLookup] = useState(lookups || []);
   const classes = useStyles();
+  const mappingLabelObj = utilityFunctions.generateMappingLabel(application);
   const [state, dispatchLocalAction] = useReducer(
     reducer,
     mappings.fields || []
   );
-  const [lookupState, setLookup] = useState(lookups || []);
   const mappingsTmp = deepClone(state);
   const handleSubmit = () => {
     const mappings = state.map(
@@ -216,29 +221,30 @@ export default function RestImportMapping(props) {
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
           <Typography variant="h6">{label}</Typography>
-          <Grid container className={classes.root} spacing={2}>
+          <Grid container className={classes.root}>
             <Grid item xs={12} className={classes.header}>
-              <Grid container spacing={2}>
+              <Grid container>
                 <Grid key="heading_extract" item xs>
-                  <span className={classes.alignLeft}>Source Record Field</span>
+                  <span className={classes.alignLeft}>
+                    {mappingLabelObj.extract}
+                  </span>
                 </Grid>
                 <Grid key="heading_generate" item xs>
-                  <span className={classes.alignLeft}>REST API Field</span>
+                  <span className={classes.alignLeft}>
+                    {mappingLabelObj.generate}
+                  </span>
                 </Grid>
-
+                <Grid key="settings_button_header" item />
                 <Grid key="delete_button_header" item />
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={2}
-              key={changeIdentifier}
-              direction="column">
+            <Grid container key={changeIdentifier} direction="column">
               {tableData.map(mapping => (
                 <Grid item className={classes.rowContainer} key={mapping.index}>
                   <Grid container direction="row">
                     <Grid item xs>
                       <DynaAutoSuggest
+                        // hardCodedValueTmp is a formatted duplicate value of hardCodedValue
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
                         onBlur={(id, evt) => {
@@ -263,13 +269,13 @@ export default function RestImportMapping(props) {
                         }}
                       />
                     </Grid>
-                    <Grid item key="settings">
+                    <Grid item>
                       <DynaMappingSettings
                         id={mapping.index}
                         onSave={handleSettingsClose}
                         value={mapping}
+                        application={application}
                         updateLookup={updateLookupHandler}
-                        // getLookup={findLookupByName}
                         lookup={
                           mapping &&
                           mapping.lookupName &&
@@ -284,7 +290,6 @@ export default function RestImportMapping(props) {
                         onClick={() => {
                           handledelete(mapping.index);
                         }}
-                        key="settings"
                         className={classes.margin}>
                         <CloseIcon style={svgFontSizes(24)} />
                       </IconButton>

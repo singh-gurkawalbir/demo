@@ -67,7 +67,7 @@ export default {
   },
   // TODO: To be removed later
   mapping: {
-    type: 'dynarestmapping',
+    type: 'dynamapping',
     label: 'Manage Import Mapping',
   },
   'rest.relativeUri': {

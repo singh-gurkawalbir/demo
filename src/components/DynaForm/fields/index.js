@@ -29,11 +29,11 @@ import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaLabelValueElement from './DynaLabelValueElement';
-import DynaImportRestMapping from './DynaImportRestMapping';
+import DynaImportMapping from './DynaImportMapping';
 import DynaMappingSettings from './DynaMappingSettings';
 
 export default {
-  dynarestmapping: DynaImportRestMapping,
+  dynamapping: DynaImportMapping,
   dynamappingsettings: DynaMappingSettings,
   selectscopes: DynaSelectScopes,
   text: DynaText,

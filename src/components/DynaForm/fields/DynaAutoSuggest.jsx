@@ -16,10 +16,8 @@ const useStyles = makeStyles(theme => ({
     padding: '0.5rem',
   },
   input: {
-    minWidth: 365,
     height: '100%',
     margin: '2px 0px',
-    border: '1px solid',
     borderColor: theme.palette.divider,
     borderRadius: '2px',
     // backgroundColor: theme.selectFormControl.background,
@@ -44,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
     paddingLeft: 0,
     position: 'absolute',
-    zIndex: 100,
+    zIndex: 9999,
     // background: theme.selectFormControl.background,
     // color: theme.selectFormControl.color,
     width: '100%',
@@ -53,6 +51,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: [[0, 0, 4, 4]],
     '& li': {
       padding: 8,
+      zIndex: 9999,
       wordBreak: 'break-word',
       '&:hover': {
         // backgroundColor: theme.selectFormControl.hover,
