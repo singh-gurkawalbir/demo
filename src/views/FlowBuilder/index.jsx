@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Route } from 'react-router-dom';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -9,6 +9,8 @@ import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import BottomDrawer from './BottomDrawer';
+import PageProcessor from './PageProcessor';
+import PageGenerator from './PageGenerator';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -52,12 +54,6 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px lightblue',
   },
 }));
-const pageProcessors = [
-  { name: 'p1' },
-  { name: 'p2' },
-  { name: 'p3' },
-  { name: 'p4' },
-];
 const pageGenerators = [
   { name: 'g1' },
   { name: 'g2' },
@@ -69,8 +65,37 @@ function FlowBuilder(props) {
   const { match } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const [size, setSize] = useState(0);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const [size, setSize] = useState(0);
+  const [pageProcessors, setPageProcessors] = useState([
+    { _id: 11, name: 'p1' },
+    { _id: 22, name: 'p2' },
+    { _id: 33, name: 'p3' },
+    { _id: 44, name: 'p4' },
+  ]);
+  const moveItem = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageProcessors[dragIndex];
+      const newOrder = [...pageProcessors];
+
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      setPageProcessors(newOrder);
+
+      // The below 'update' function is an example of another immutable
+      // library that helps simplify common mutation patterns as in
+      // the code above.
+      // update(pageProcessors, {
+      //   $splice: [[dragIndex, 1], [hoverIndex, 0, dragItem]],
+      // })
+      //
+      // {$splice: array of arrays} for each item in arrays call splice() on the target with the parameters
+    },
+    [pageProcessors]
+  );
+  const renderBlock = (pp, index) => (
+    <PageProcessor {...pp} key={pp.name} index={index} moveItem={moveItem} />
+  );
 
   return (
     <Fragment>
@@ -103,19 +128,13 @@ function FlowBuilder(props) {
           }}>
           <div className={classes.canvas}>
             <div className={classes.generatorContainer}>
-              {pageGenerators.map(g => (
-                <div className={classes.appBlock} key={g.name}>
-                  {g.name}
-                </div>
+              {pageGenerators.map(pg => (
+                <PageGenerator key={pg.name} name={pg.name} />
               ))}
             </div>
             <div className={classes.processorContainer}>
               <div className={classes.processorBlocks}>
-                {pageProcessors.map(p => (
-                  <div className={classes.appBlock} key={p.name}>
-                    {p.name}
-                  </div>
-                ))}
+                {pageProcessors.map((pp, i) => renderBlock(pp, i))}
               </div>
             </div>
           </div>
