@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   pageBarOffset: { height: theme.pageBarHeight },
 }));
 
-export default function CeligoPageBar({ children, title, infoText }) {
+export default function CeligoPageBar({ children, title, infoText, subtitle }) {
   const classes = useStyles();
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -54,7 +54,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
             square>
             <Grid container justify="space-between">
               <Grid item>
-                <Typography variant="h5">
+                <Typography variant="h3">
                   {title}
                   {infoText && (
                     <Fragment>
@@ -67,7 +67,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
                       </IconButton>
                       <ArrowPopper
                         id="pageInfo"
-                        zIndex={theme.zIndex.appBar - 1}
+                        zIndex={theme.zIndex.appBar + 1}
                         open={!!anchorEl}
                         anchorEl={anchorEl}
                         placement="right"
@@ -77,6 +77,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
                     </Fragment>
                   )}
                 </Typography>
+                <Typography variant="caption">{subtitle}</Typography>
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>

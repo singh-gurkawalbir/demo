@@ -45,7 +45,6 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     location,
-    resourceContext,
   } = props;
   const classes = useStyles();
   const [newResourceId, setNewResourceId] = useState(newId());
@@ -139,10 +138,7 @@ function DynaSelectResource(props) {
         <IconButton
           className={classes.iconButton}
           component={Link}
-          to={{
-            state: { ...resourceContext, patchPath: name },
-            pathname: `${location.pathname}/add/${resourceType}/${newResourceId}`,
-          }}
+          to={`${location.pathname}/add/${resourceType}/${newResourceId}`}
           size="small">
           <AddIcon />
         </IconButton>

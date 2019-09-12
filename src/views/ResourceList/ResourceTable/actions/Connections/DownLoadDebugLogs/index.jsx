@@ -4,22 +4,27 @@ import * as selectors from '../../../../../../reducers';
 import Icon from '../../../../../../components/icons/CloseIcon';
 import openExternalUrl from '../../../../../../utils/window';
 
-export default function DownLoadDebugLogs({ resource }) {
-  let url = `/api/connections/${resource._id}/debug`;
-  const additionalHeaders = useSelector(state =>
-    selectors.accountShareHeader(state, url)
-  );
-  const onDownloadDebugLogClick = () => {
-    if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-      url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
-    }
+export default {
+  label: 'Download debug logs',
+  component: function DownLoadDebugLogs({ resource }) {
+    let url = `/api/connections/${resource._id}/debug`;
+    const additionalHeaders = useSelector(state =>
+      selectors.accountShareHeader(state, url)
+    );
+    const onDownloadDebugLogClick = () => {
+      if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+        url += `?integrator-ashareid=${
+          additionalHeaders['integrator-ashareid']
+        }`;
+      }
 
-    openExternalUrl({ url });
-  };
+      openExternalUrl({ url });
+    };
 
-  return (
-    <IconButton size="small" onClick={onDownloadDebugLogClick}>
-      <Icon />
-    </IconButton>
-  );
-}
+    return (
+      <IconButton size="small" onClick={onDownloadDebugLogClick}>
+        <Icon />
+      </IconButton>
+    );
+  },
+};
