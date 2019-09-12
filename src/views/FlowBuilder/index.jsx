@@ -11,6 +11,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
+import TrashCan from './TrashCan';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -48,10 +49,13 @@ const useStyles = makeStyles(theme => ({
   processorBlocks: {
     display: 'flex',
   },
-  appBlock: {
-    width: '20vw',
-    height: '20vh',
-    border: 'solid 1px lightblue',
+  trash: {
+    position: 'absolute',
+    right: theme.spacing(3),
+    transition: theme.transitions.create(['bottom', 'width', 'height'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
 }));
 const pageGenerators = [
@@ -93,7 +97,16 @@ function FlowBuilder(props) {
     },
     [pageProcessors]
   );
-  const renderBlock = (pp, index) => (
+  const handleDelete = useCallback(
+    index => {
+      const newOrder = [...pageProcessors];
+
+      newOrder.splice(index, 1);
+      setPageProcessors(newOrder);
+    },
+    [pageProcessors]
+  );
+  const renderPageProcessor = (pp, index) => (
     <PageProcessor {...pp} key={pp.name} index={index} moveItem={moveItem} />
   );
 
@@ -113,7 +126,10 @@ function FlowBuilder(props) {
         children={props => <ResourceDrawer {...props} />}
       />
 
-      <CeligoPageBar title="Flow Builder" infoText="Blah, blah, blah...">
+      <CeligoPageBar
+        title="Flow Builder"
+        subtitle=" Last saved: 1/11/11 13:45"
+        infoText="Blah, blah, blah...">
         <div className={classes.actions}>Actions!</div>
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
@@ -127,6 +143,7 @@ function FlowBuilder(props) {
               (size ? 0 : 64)}px)`,
           }}>
           <div className={classes.canvas}>
+            {/* CANVAS START */}
             <div className={classes.generatorContainer}>
               {pageGenerators.map(pg => (
                 <PageGenerator key={pg.name} name={pg.name} />
@@ -134,10 +151,20 @@ function FlowBuilder(props) {
             </div>
             <div className={classes.processorContainer}>
               <div className={classes.processorBlocks}>
-                {pageProcessors.map((pp, i) => renderBlock(pp, i))}
+                {pageProcessors.map((pp, i) => renderPageProcessor(pp, i))}
               </div>
             </div>
           </div>
+          <TrashCan
+            onDrop={handleDelete}
+            className={classes.trash}
+            style={{
+              bottom: size
+                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+                : 64 + theme.spacing(3),
+            }}
+          />
+          {/* CANVAS END */}
         </div>
       </LoadResources>
       <BottomDrawer size={size} setSize={setSize} />

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   pageBarOffset: { height: theme.pageBarHeight },
 }));
 
-export default function CeligoPageBar({ children, title, infoText }) {
+export default function CeligoPageBar({ children, title, infoText, subtitle }) {
   const classes = useStyles();
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -77,6 +77,7 @@ export default function CeligoPageBar({ children, title, infoText }) {
                     </Fragment>
                   )}
                 </Typography>
+                <Typography variant="caption">{subtitle}</Typography>
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>
