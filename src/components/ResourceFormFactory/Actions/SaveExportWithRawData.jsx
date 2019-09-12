@@ -18,6 +18,8 @@ const SaveButton = props => {
   } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = values => {
+    // Dispatches an action that uploads RawData to S3 and updates 'rawData' field with S3 'runkey'
+    // Then saves form
     dispatch(
       actions.resourceForm.submitWithRawData(resourceType, resourceId, values)
     );

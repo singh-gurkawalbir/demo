@@ -28,13 +28,17 @@ function DynaRawData(props) {
     resourceId,
     formContext,
     resourceType,
-    isFTP,
   } = props;
   const [isRawDataSet, setIsRawDataSet] = useState(false);
   const dispatch = useDispatch();
   const { data: rawData, status } = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')
   );
+  /*
+   * Fetches raw data by making a preview call
+   * @param fetchFromDB : Boolean
+   * Determines to fetch rawdata either from saved ( incase of edit ) or from actual end point
+   */
   const fetchRawData = useCallback(
     fetchFromDB => {
       dispatch(
@@ -51,13 +55,15 @@ function DynaRawData(props) {
   );
 
   useEffect(() => {
+    // Fetches raw data incase of initial load of an edit export mode
     if (!isRawDataSet && !isNewId(resourceId)) {
       setIsRawDataSet(true);
       fetchRawData(true);
     }
-  }, [isRawDataSet, rawData, resourceId, fetchRawData, isFTP]);
+  }, [isRawDataSet, rawData, resourceId, fetchRawData]);
 
   useEffect(() => {
+    // Updates rawdata against field id each time it gets updated
     if (rawData) {
       onFieldChange(id, rawData);
     }

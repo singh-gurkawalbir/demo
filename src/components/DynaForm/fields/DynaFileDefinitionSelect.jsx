@@ -8,6 +8,8 @@ import Spinner from '../../Spinner';
 export default function DynaFileDefinitionSelect(props) {
   const { format, onFieldChange } = props;
   const dispatch = useDispatch();
+  // Get File definitions based on the file type format
+  // Formats: edix12, fixed or edifact
   const { data: fileDefinitions = [], status } = useSelector(state =>
     selectors.getSupportedFileDefinitions(state, format)
   );

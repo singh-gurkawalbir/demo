@@ -13,6 +13,9 @@ export default function DynaCsvParse(props) {
   };
 
   const dispatch = useDispatch();
+  /*
+   * Fetches Raw data - CSV file to be parsed based on the rules
+   */
   const { data: csvData } = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')
   );
@@ -33,6 +36,8 @@ export default function DynaCsvParse(props) {
         rowsToSkip,
         trimSpaces,
       });
+      // On change of rules, trigger sample data update
+      // It calls processor on final rules to parse csv file
       dispatch(
         actions.sampleData.request(
           resourceId,

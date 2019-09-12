@@ -21,6 +21,9 @@ export default function DynaTransformEditor(props) {
     setShowEditor(!showEditor);
   };
 
+  /*
+   * Creates transform rules as per required format to be saved
+   */
   const constructTransformData = rule => ({
     version: 1,
     rules: [rule],

@@ -16,6 +16,7 @@ export default function DynaSampleData(props) {
   const classes = useStyles();
   const { defaultValue, label, mode, resourceId, id, onFieldChange } = props;
   const [isSampleDataSet, setIsSampleDataSet] = useState(false);
+  // Fetches sample data from the state
   const { data: sampleData } = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'sample')
   );

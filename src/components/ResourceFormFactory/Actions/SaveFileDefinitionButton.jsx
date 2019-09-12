@@ -20,6 +20,8 @@ const SaveFileDefinitionButton = props => {
   const handleSubmitForm = values => {
     const definitionRules = values['/file/filedefinition/rules'];
 
+    // Dispatches an action that saves file definitions and fetches corresponding id
+    // updates the same in form values and saves the form
     dispatch(
       actions.fileDefinitions.definition.userSupported.request(
         definitionRules.fileDefinition || {},

@@ -33,6 +33,8 @@ function DynaFileDefinitionEditor(props) {
     if (shouldCommit) {
       const { data, rule } = editorValues;
 
+      // On change of rules, trigger sample data update
+      // It calls processor on final rules to parse csv file
       dispatch(
         actions.sampleData.request(
           resourceId,
@@ -47,6 +49,7 @@ function DynaFileDefinitionEditor(props) {
         )
       );
 
+      // update rules against this field each time it gets saved
       if (rule) {
         onFieldChange(id, JSON.parse(rule));
       }
@@ -83,6 +86,7 @@ function DynaFileDefinitionEditor(props) {
           title="File Definition Editor"
           id={id + resourceId}
           data={sampleData}
+          // Stringify rules as the editor expects a string
           rule={JSON.stringify(rule, null, 2)}
           onClose={handleClose}
         />
