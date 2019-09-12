@@ -57,12 +57,9 @@ export default function ConnectorInstallation(props) {
   );
 
   useEffect(() => {
-    const setupIncomplete = installSteps.reduce(
-      (result, step) => result || !step.completed,
-      false
-    );
-
-    if (!setupIncomplete) {
+    if (
+      !installSteps.reduce((result, step) => result || !step.completed, false)
+    ) {
       setIsSetupComplete(true);
     }
   }, [installSteps]);
@@ -75,7 +72,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
-  if (!installSteps) {
+  if (!installSteps || !integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;
   }
 
