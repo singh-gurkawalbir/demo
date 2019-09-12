@@ -5,6 +5,8 @@ import restToken from './restToken';
 import restAdvanced from './restAdvanced';
 import httpAdvanced from './httpAdvanced';
 import restCookie from './restCookie';
+import rdbmsFields from './rdbmsFields';
+import rdbmsAdvanced from './rdbmsAdvanced';
 
 export default {
   httpBasic,
@@ -14,4 +16,6 @@ export default {
   restAdvanced,
   httpAdvanced,
   restCookie,
+  rdbmsFields,
+  rdbmsAdvanced,
 };

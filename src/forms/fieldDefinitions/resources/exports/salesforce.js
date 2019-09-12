@@ -3,27 +3,21 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',
     required: true,
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [
-      {
-        field: 'type',
-        is: ['delta'],
-      },
-    ],
   },
   'salesforce.executionType': {
     type: 'radiogroup',
@@ -31,7 +25,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Real-time', value: 'realTime' },
+          { label: 'Real-time', value: 'realtime' },
           { label: 'Scheduled', value: 'scheduled' },
         ],
       },
@@ -58,18 +52,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
-      },
-    ],
-  },
-  'salesforce.distributed.requiredTrigger': {
-    type: 'text',
-    label: 'Required Trigger',
-    multiline: true,
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
@@ -80,11 +63,11 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
-  'salesforce.distributed.relatedLists.referencedFieldss': {
+  'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
@@ -94,7 +77,7 @@ export default {
     visibleWhen: [
       {
         field: 'salesforce.executionType',
-        is: ['realTime'],
+        is: ['realtime'],
       },
     ],
   },
