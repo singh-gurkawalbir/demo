@@ -11,6 +11,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
+import TrashCan from './TrashCan';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -48,10 +49,13 @@ const useStyles = makeStyles(theme => ({
   processorBlocks: {
     display: 'flex',
   },
-  appBlock: {
-    width: '20vw',
-    height: '20vh',
-    border: 'solid 1px lightblue',
+  trash: {
+    position: 'absolute',
+    right: theme.spacing(3),
+    transition: theme.transitions.create(['bottom', 'width', 'height'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
 }));
 const pageGenerators = [
@@ -127,6 +131,7 @@ function FlowBuilder(props) {
               (size ? 0 : 64)}px)`,
           }}>
           <div className={classes.canvas}>
+            {/* CANVAS START */}
             <div className={classes.generatorContainer}>
               {pageGenerators.map(pg => (
                 <PageGenerator key={pg.name} name={pg.name} />
@@ -138,6 +143,15 @@ function FlowBuilder(props) {
               </div>
             </div>
           </div>
+          <TrashCan
+            className={classes.trash}
+            style={{
+              bottom: size
+                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+                : 64 + theme.spacing(3),
+            }}
+          />
+          {/* CANVAS END */}
         </div>
       </LoadResources>
       <BottomDrawer size={size} setSize={setSize} />
