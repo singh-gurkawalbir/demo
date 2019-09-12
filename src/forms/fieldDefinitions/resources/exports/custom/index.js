@@ -1,7 +1,7 @@
-import rest from './rest';
+import http from './http';
 
 const allFieldDefinitions = {
-  ...rest,
+  ...http,
 };
 
 export default allFieldDefinitions;

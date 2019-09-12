@@ -279,10 +279,9 @@ export function getExportOperationDetails({
   };
 }
 
-export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
-  const exportResource = { ...resourceDoc };
-  let { version, resource, operation } = exportResource.assistantMetadata || {};
-  const { exportType } = exportResource.assistantMetadata || {};
+export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
+  let { version, resource, operation } = exportDoc.assistantMetadata || {};
+  const { exportType } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
     queryParams: {},
@@ -290,19 +289,19 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
     exportType,
   };
 
-  if (!assistantMetadata.exportType && resourceDoc) {
-    assistantMetadata.exportType = resourceDoc.type;
+  if (!assistantMetadata.exportType && exportDoc) {
+    assistantMetadata.exportType = exportDoc.type;
   }
 
   if (!resource || !operation) {
     if (
-      exportResource &&
-      exportResource[adaptorType] &&
-      exportResource[adaptorType].relativeURI
+      exportDoc &&
+      exportDoc[adaptorType] &&
+      exportDoc[adaptorType].relativeURI
     ) {
       const urlMatch = getMatchingRoute(
         assistantData.export.urlResolution,
-        exportResource[adaptorType].relativeURI
+        exportDoc[adaptorType].relativeURI
       );
 
       if (!operation) {
@@ -338,11 +337,7 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
     return assistantMetadata;
   }
 
-  if (!exportResource[adaptorType]) {
-    exportResource[adaptorType] = {};
-  }
-
-  const exportAdaptorSubSchema = exportResource[adaptorType];
+  const exportAdaptorSubSchema = exportDoc[adaptorType] || {};
   const urlMatch = getMatchingRoute(
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
@@ -401,7 +396,7 @@ export function convertFromExport({ resourceDoc, assistantData, adaptorType }) {
     if (isObject(exportAdaptorSubSchema.postBody)) {
       bodyParams = cloneDeep(exportAdaptorSubSchema.postBody);
     } else if (isString(exportAdaptorSubSchema.postBody)) {
-      if (exportResource.assistant === 'expensify') {
+      if (exportDoc.assistant === 'expensify') {
         bodyParams = exportAdaptorSubSchema.postBody.replace(
           'requestJobDescription=',
           ''

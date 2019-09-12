@@ -34,7 +34,7 @@ export default function assistantDefinition(
       visible: false,
     });
     const assistantConfig = convertFromExport({
-      resourceDoc: resource,
+      exportDoc: resource,
       assistantData,
       adaptorType: adaptorType === 'HTTPExport' ? 'http' : 'rest',
     });
@@ -256,16 +256,21 @@ export default function assistantDefinition(
     },
     preSubmit: formValues => {
       const assistantMetadata = {
-        adaptorType: formValues['/assistantMetadata/adaptorType'],
-        assistant: formValues['/assistantMetadata/assistant'],
-        version: formValues['/assistantMetadata/version'],
-        resource: formValues['/assistantMetadata/resource'],
-        operation: formValues['/assistantMetadata/operation'],
-        exportType: formValues['/assistantMetadata/exportType'],
         pathParams: {},
-        queryParams: formValues['/assistantMetadata/queryParams'],
-        bodyParams: formValues['/assistantMetadata/bodyParams'],
       };
+
+      [
+        'adaptorType',
+        'assistant',
+        'version',
+        'resource',
+        'operation',
+        'exportType',
+        'queryParams',
+        'bodyParams',
+      ].forEach(prop => {
+        assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
+      });
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
