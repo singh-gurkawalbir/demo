@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core';
 import itemTypes from '../itemTypes';
 
 const useStyles = makeStyles(theme => ({
-  appBlock: {
+  root: {
     width: '15vw',
     height: '15vh',
     border: 'solid 1px lightblue',
@@ -76,7 +76,7 @@ const PageProcessor = ({ _id, name, index, moveItem }) => {
   drag(drop(ref));
 
   return (
-    <div ref={ref} className={classes.appBlock} style={{ opacity }}>
+    <div ref={ref} className={classes.root} style={{ opacity }}>
       <Typography variant="h2">{name}</Typography>
     </div>
   );
