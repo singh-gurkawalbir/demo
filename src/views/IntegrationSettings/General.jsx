@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { useState } from 'react';
 // import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// import 'react-quill/dist/quill.snow.css';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 
