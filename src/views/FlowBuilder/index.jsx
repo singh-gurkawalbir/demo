@@ -97,7 +97,16 @@ function FlowBuilder(props) {
     },
     [pageProcessors]
   );
-  const renderBlock = (pp, index) => (
+  const handleDelete = useCallback(
+    index => {
+      const newOrder = [...pageProcessors];
+
+      newOrder.splice(index, 1);
+      setPageProcessors(newOrder);
+    },
+    [pageProcessors]
+  );
+  const renderPageProcessor = (pp, index) => (
     <PageProcessor {...pp} key={pp.name} index={index} moveItem={moveItem} />
   );
 
@@ -117,7 +126,10 @@ function FlowBuilder(props) {
         children={props => <ResourceDrawer {...props} />}
       />
 
-      <CeligoPageBar title="Flow Builder" infoText="Blah, blah, blah...">
+      <CeligoPageBar
+        title="Flow Builder"
+        subtitle=" Last saved: 1/11/11 13:45"
+        infoText="Blah, blah, blah...">
         <div className={classes.actions}>Actions!</div>
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
@@ -139,11 +151,12 @@ function FlowBuilder(props) {
             </div>
             <div className={classes.processorContainer}>
               <div className={classes.processorBlocks}>
-                {pageProcessors.map((pp, i) => renderBlock(pp, i))}
+                {pageProcessors.map((pp, i) => renderPageProcessor(pp, i))}
               </div>
             </div>
           </div>
           <TrashCan
+            onDrop={handleDelete}
             className={classes.trash}
             style={{
               bottom: size

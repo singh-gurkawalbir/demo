@@ -1,15 +1,22 @@
-import React from 'react';
+import { useRef } from 'react';
+import { useDrop } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, Tooltip } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import itemTypes from '../itemTypes';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // border: 'solid 1px lightgreen',
     width: 110,
     height: 110,
-    '&:hover svg': {
+    // '&:hover svg': {
+    //   width: 80,
+    //   height: 80,
+    // },
+  },
+  hovering: {
+    '& svg': {
       width: 80,
       height: 80,
     },
@@ -28,13 +35,37 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TrashCan({ className, ...rest }) {
+export default function TrashCan({ className, onDrop, ...rest }) {
   const classes = useStyles();
+  const ref = useRef(null);
+  const [{ canDrop, isOver }, drop] = useDrop({
+    accept: itemTypes.PAGE_PROCESSOR,
+    collect: monitor => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    drop(item) {
+      if (!ref.current) {
+        return;
+      }
+
+      // Time to actually perform the action
+      onDrop(item.index);
+    },
+  });
+  const isActive = canDrop && isOver;
+
+  drop(ref);
 
   return (
-    <div {...rest} className={clsx(classes.root, className)}>
+    <div
+      ref={ref}
+      {...rest}
+      className={clsx(classes.root, className, {
+        [classes.hovering]: isActive,
+      })}>
       <Tooltip title="Drag applications here to delete">
-        <IconButton aria-label="delete" size="large" className={classes.button}>
+        <IconButton aria-label="delete" className={classes.button}>
           <DeleteIcon />
         </IconButton>
       </Tooltip>
