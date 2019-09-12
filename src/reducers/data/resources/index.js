@@ -40,6 +40,11 @@ function getIntegrationAppsNextState(state, action) {
   if ((state.integrations || []).find(i => i._id === id)) {
     return produce(state, draft => {
       const integration = draft.integrations.find(i => i._id === id);
+
+      if (!integration || !integration.install) {
+        return;
+      }
+
       const step = integration.install.find(
         s => s.installerFunction === installerFunction
       );
@@ -162,7 +167,7 @@ export function integrationInstallSteps(
 ) {
   const integration = resource(state, resourceType, id);
 
-  if (!integration) {
+  if (!integration || !integration.install) {
     return [];
   }
 

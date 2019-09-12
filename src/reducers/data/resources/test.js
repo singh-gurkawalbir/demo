@@ -114,6 +114,355 @@ describe('resources reducer', () => {
   });
 });
 
+describe('intetgrationApps installer reducer', () => {
+  describe(`integrationApps received installer install_inProgress action`, () => {
+    test('should find the integration with id and find the installation step with passed installerFunction and set __isTriggered flag to true', () => {
+      let state;
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [{ a: 1, installerFunction: 'installerFunction' }],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallInProgress(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([
+        {
+          __isTriggered: true,
+          a: 1,
+          installerFunction: 'installerFunction',
+          isCurrentStep: true,
+        },
+      ]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallInProgress(
+          123,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted installerFunction is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [{ _id: 1 }])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallInProgress(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+  });
+  describe(`integrationApps received installer install_failure action`, () => {
+    test('should find the integration with id and find the installation step with passed installerFunction and set __isTriggered flag to false', () => {
+      let state;
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [
+            {
+              a: 1,
+              installerFunction: 'installerFunction',
+              __isTriggered: true,
+              __verifying: true,
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.failedStepInstall(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([
+        {
+          __isTriggered: false,
+          __verifying: false,
+          a: 1,
+          installerFunction: 'installerFunction',
+          isCurrentStep: true,
+        },
+      ]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.failedStepInstall(
+          123,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted installerFunction is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [{ _id: 1 }])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.failedStepInstall(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+  });
+  describe(`integrationApps received installer install_complete action`, () => {
+    test('should find the integration with id and replace all the install steps with stepsToUpdate', () => {
+      let state;
+      const stepsToUpdate = [{ a: 1, b: 2 }, { a: 2, b: 1 }];
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [
+            {
+              a: 1,
+              installerFunction: 'installerFunction',
+              __isTriggered: true,
+              __verifying: true,
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallComplete(
+          { stepsToUpdate },
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.resource(
+        state,
+        'integrations',
+        1
+      ).install;
+
+      expect(installStepsAfterAction).toEqual(stepsToUpdate);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallComplete(
+          [],
+          123,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted installerFunction is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [{ _id: 1 }])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallComplete(
+          [],
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+  });
+  describe(`integrationApps received installer install_verify action`, () => {
+    test('should find the integration with id and find the install step by installerFunction and set __verifying flag to true', () => {
+      let state;
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [
+            {
+              a: 1,
+              installerFunction: 'installerFunction',
+              __isTriggered: true,
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallVerify(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.resource(
+        state,
+        'integrations',
+        1
+      ).install;
+
+      expect(installStepsAfterAction).toEqual([
+        {
+          __isTriggered: true,
+          __verifying: true,
+          a: 1,
+          installerFunction: 'installerFunction',
+        },
+      ]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallVerify(
+          123,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+    test('should not throw any exception when wrong/incorrect/deleted installerFunction is passed', () => {
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [{ _id: 1 }])
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallVerify(
+          1,
+          'installerFunction'
+        )
+      );
+      const installStepsAfterAction = selectors.integrationInstallSteps(
+        state,
+        'integrations',
+        1
+      );
+
+      expect(installStepsAfterAction).toEqual([]);
+    });
+  });
+});
+
 describe('resources selectors', () => {
   describe('resource', () => {
     test('should return null on bad/empty state.', () => {
@@ -270,6 +619,93 @@ describe('resources selectors', () => {
       );
 
       expect(selectors.hasData(state, 'exports')).toEqual(true);
+    });
+  });
+  describe('integrationInstallSteps', () => {
+    test('should return empty array when no data in store for any resource', () => {
+      expect(
+        selectors.integrationInstallSteps(undefined, 'integrations', 'dummy')
+      ).toEqual([]);
+      expect(selectors.integrationInstallSteps({}, null, 'dummyId')).toEqual(
+        []
+      );
+    });
+
+    test('should return empty array when no data found for integrations', () => {
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', [])
+      );
+
+      expect(
+        selectors.integrationInstallSteps(state, 'integrations', 'id')
+      ).toEqual([]);
+    });
+
+    test('should return installSteps when integration is found', () => {
+      const integrations = [
+        { _id: 'int1', name: 'int_One', install: [{ aa: 2, b: 'something' }] },
+        {
+          _id: 'int2',
+          name: 'int_Two',
+          _connectorId: 'connector2',
+          install: [{ aa: 1 }],
+          something: 'something',
+        },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+
+      expect(
+        selectors.integrationInstallSteps(state, 'integrations', 'int2')
+      ).toEqual([{ aa: 1, isCurrentStep: true }]);
+    });
+
+    test('should return installSteps with isCurrentStep set to true when integration is found', () => {
+      const integrations = [
+        { _id: 'int1', name: 'int_One', install: [{ aa: 2, b: 'something' }] },
+        {
+          _id: 'int2',
+          name: 'int_Two',
+          _connectorId: 'connector2',
+          install: [{ aa: 1 }, { aa: 2 }],
+          something: 'something',
+        },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+
+      expect(
+        selectors.integrationInstallSteps(state, 'integrations', 'int2')
+      ).toEqual([{ aa: 1, isCurrentStep: true }, { aa: 2 }]);
+    });
+
+    test('should return installSteps with isCurrentStep set to true only for the first uncomplete step when integration is found', () => {
+      const integrations = [
+        {
+          _id: 'int2',
+          name: 'int_Two',
+          _connectorId: 'connector2',
+          install: [{ aa: 1, completed: true }, { aa: 2 }, { aa: 3 }],
+          something: 'something',
+        },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+
+      expect(
+        selectors.integrationInstallSteps(state, 'integrations', 'int2')
+      ).toEqual([
+        { aa: 1, completed: true },
+        { aa: 2, isCurrentStep: true },
+        { aa: 3 },
+      ]);
     });
   });
 });
