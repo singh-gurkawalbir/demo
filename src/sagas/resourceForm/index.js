@@ -13,6 +13,7 @@ import processorLogic from '../../reducers/session/editors/processorLogic/javasc
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { isNewId } from '../../utils/resource';
+import { saveRawData } from '../sampleData';
 
 export const SCOPES = {
   META: 'meta',
@@ -192,6 +193,20 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
+export function* submitFormValuesWithRawData({
+  resourceType,
+  resourceId,
+  values,
+}) {
+  let newValues = { ...values };
+  const rawData = values['/rawData'];
+  const rawDataKey = yield call(saveRawData, { rawData });
+
+  newValues = { ...newValues, '/rawData': rawDataKey };
+
+  yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
+}
+
 export function* initFormValues({
   resourceType,
   resourceId,
@@ -310,5 +325,9 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
+  takeEvery(
+    actionTypes.RESOURCE_FORM.SUBMIT_WITH_RAW_DATA,
+    submitFormValuesWithRawData
+  ),
   ...connectionSagas,
 ];

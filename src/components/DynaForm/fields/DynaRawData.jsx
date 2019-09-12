@@ -23,8 +23,8 @@ function DynaRawData(props) {
     defaultValue,
     label,
     mode,
-    // id,
-    // onFieldChange,
+    id,
+    onFieldChange,
     resourceId,
     formContext,
     resourceType,
@@ -35,19 +35,34 @@ function DynaRawData(props) {
   const { data: rawData, status } = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')
   );
-  const fetchRawData = useCallback(() => {
-    dispatch(
-      actions.sampleData.request(resourceId, resourceType, formContext.value)
-    );
-  }, [dispatch, resourceId, resourceType, formContext]);
+  const fetchRawData = useCallback(
+    fetchFromDB => {
+      dispatch(
+        actions.sampleData.request(
+          resourceId,
+          resourceType,
+          formContext.value,
+          undefined,
+          fetchFromDB
+        )
+      );
+    },
+    [dispatch, resourceId, resourceType, formContext]
+  );
 
   useEffect(() => {
-    if (!isFTP && !isRawDataSet && !isNewId(resourceId)) {
+    if (!isRawDataSet && !isNewId(resourceId)) {
       setIsRawDataSet(true);
-      fetchRawData();
+      fetchRawData(true);
     }
   }, [isRawDataSet, rawData, resourceId, fetchRawData, isFTP]);
 
+  useEffect(() => {
+    if (rawData) {
+      onFieldChange(id, rawData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, rawData]);
   const handleRefreshRawData = () => {
     fetchRawData();
   };

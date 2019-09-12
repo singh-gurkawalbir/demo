@@ -22,7 +22,7 @@ import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { stackSagas } from './stack';
-import sampleDataSagas from './sampleData';
+import { sampleDataSagas } from './sampleData';
 import fileDefinitionSagas from './fileDefinitions';
 
 export function* unauthenticateAndDeleteProfile() {

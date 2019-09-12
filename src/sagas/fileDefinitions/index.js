@@ -54,7 +54,9 @@ function* saveResourceWithDefinitionID({ formValues, definitionId }) {
 
   newValues['/file/type'] = 'filedefinition';
   newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
-  yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
+  yield put(
+    actions.resourceForm.submitWithRawData(resourceType, resourceId, newValues)
+  );
 }
 
 function* addUserSupportedDefinition({ definitionRules, formValues }) {

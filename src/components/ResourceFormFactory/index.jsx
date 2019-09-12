@@ -79,6 +79,8 @@ function ActionsFactory(props) {
     } else {
       actionButtons = ['test', 'cancel', 'testandsave'];
     }
+  } else if (resourceType === 'exports' && !isNew) {
+    actionButtons = ['cancel', 'saverawdata'];
   } else {
     actionButtons = ['cancel', 'save'];
   }

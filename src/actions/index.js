@@ -464,12 +464,13 @@ const user = {
 };
 const reloadApp = () => action(actionTypes.APP_RELOAD);
 const sampleData = {
-  request: (resourceId, resourceType, values, stage) =>
+  request: (resourceId, resourceType, values, stage, fetchFromDB) =>
     action(actionTypes.SAMPLEDATA.REQUEST, {
       resourceId,
       resourceType,
       values,
       stage,
+      fetchFromDB,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
@@ -477,6 +478,8 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+  saveRawData: rawData =>
+    action(actionTypes.SAMPLEDATA.SAVE_RAWDATA, { rawData }),
 };
 const appErrored = () => action(actionTypes.APP_ERRORED);
 const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
@@ -527,6 +530,12 @@ const resourceForm = {
     }),
   submit: (resourceType, resourceId, values) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+    }),
+  submitWithRawData: (resourceType, resourceId, values) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_WITH_RAW_DATA, {
       resourceType,
       resourceId,
       values,

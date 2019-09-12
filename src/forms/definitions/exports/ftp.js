@@ -3,6 +3,7 @@ export default {
     const submitFormValues = { ...formValues };
 
     delete submitFormValues['/uploadFile'];
+    submitFormValues['/file/encoding'] = 'utf8';
 
     return submitFormValues;
   },
@@ -14,11 +15,49 @@ export default {
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
-    { fieldId: 'ftp.directoryPath' },
-    { fieldId: 'file.output' },
+    {
+      fieldId: 'ftp.directoryPath',
+      defaultValue: r => r && r.ftp && r.ftp.directoryPath,
+    },
+    {
+      fieldId: 'file.output',
+      defaultValue: r => r && r.file && r.file.output,
+    },
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
-    { formId: 'file' },
+    // { formId: 'file' },
+
+    { fieldId: 'ftp.file.type', defaultValue: r => r && r.file && r.file.type },
+    {
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: 'file.type',
+      isFTP: true,
+    },
+    {
+      fieldId: 'file.csv',
+      defaultValue: r => r && r.file && r.file.csv,
+    },
+    { fieldId: 'file.json.resourcePath' },
+    { fieldId: 'file.xml.resourcePath' },
+    { fieldId: 'file.xlsx.hasHeaderRow' },
+    { fieldId: 'file.xlsx.rowsPerRecord' },
+    { fieldId: 'file.xlsx.keyColumns' },
+    { fieldId: 'edix12.format' },
+    { fieldId: 'fixed.format' },
+    { fieldId: 'edifact.format' },
+    {
+      fieldId: 'file.filedefinition.rules',
+      refreshOptionsOnChangesTo: [
+        'edix12.format',
+        'fixed.format',
+        'edifact.format',
+        'file.fileDefinition.resourcePath',
+      ],
+    },
+    { fieldId: 'file.fileDefinition.resourcePath' },
+    { fieldId: 'rawData', isFTP: true },
+    { fieldId: 'sampleData' },
+    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
   ],
   fieldSets: [
     {
@@ -42,7 +81,7 @@ export default {
       id: 'cancel',
     },
     {
-      id: 'save',
+      id: 'saverawdata',
       visibleWhen: [
         {
           field: 'file.type',
