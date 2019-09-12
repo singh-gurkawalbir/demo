@@ -8,10 +8,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
@@ -19,6 +15,10 @@ import menuItems from './menuItems';
 import getRoutePath from '../../utils/routePaths';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
+import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
+import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 
   menuContainer: {
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: theme.palette.secondary.darkest,
     color: theme.palette.secondary.contrastText,
     overflow: 'hidden',
     height: '100%',
@@ -104,8 +104,9 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
   },
   itemText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'unset',
+    color: 'inherit',
   },
 }));
 
@@ -176,7 +177,7 @@ export default function CeligoDrawer() {
                     primary={label}
                   />
                   {children &&
-                    (expand === label ? <ExpandLess /> : <ExpandMore />)}
+                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
                 </ListItem>
                 {children && (
                   <Collapse in={expand === label} unmountOnExit timeout="auto">
@@ -192,7 +193,12 @@ export default function CeligoDrawer() {
                             classes={{ root: classes.itemIconRoot }}>
                             {<Icon />}
                           </ListItemIcon>
-                          <ListItemText primary={label} />
+                          <ListItemText
+                            primary={label}
+                            primaryTypographyProps={{
+                              className: classes.itemText,
+                            }}
+                          />
                         </ListItem>
                       ))}
                     </List>
@@ -206,7 +212,7 @@ export default function CeligoDrawer() {
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton color="inherit" onClick={handleDrawerToggle}>
-              {drawerOpened ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>
         </div>

@@ -17,9 +17,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.contrastText,
       width: 24,
       height: 24,
-      '& svg': {
-        fontSize: 24,
-      },
     },
   },
 }));

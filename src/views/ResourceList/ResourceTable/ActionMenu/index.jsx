@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Popover, IconButton } from '@material-ui/core';
+import { Popover, IconButton, Tooltip } from '@material-ui/core';
 import EllipsisIcon from '../../../../components/icons/EllipsisVerticalIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 export default function ActionMenu({ actions }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const actionContainerEl = useRef(null);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -41,13 +42,25 @@ export default function ActionMenu({ actions }) {
   if (!actions || !actions.length) return null;
 
   if (actions.length < 4) {
-    return <div className={classes.actionContainer}>{actions}</div>;
+    return (
+      <div className={classes.actionContainer}>
+        {actions.map(({ label, component }) => (
+          <Tooltip key={label} title={label}>
+            <span>{component}</span>
+          </Tooltip>
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className={classes.actionContainer}>
-      {actions[0]}
-      {actions[1]}
+    <div ref={actionContainerEl} className={classes.actionContainer}>
+      <Tooltip title={actions[0].label}>
+        <span>{actions[0].component}</span>
+      </Tooltip>
+      <Tooltip title={actions[1].label}>
+        <span>{actions[1].component}</span>
+      </Tooltip>
 
       <IconButton size="small" aria-describedby={id} onClick={handleClick}>
         <EllipsisIcon />
@@ -57,7 +70,8 @@ export default function ActionMenu({ actions }) {
         id={id}
         open={open}
         anchorEl={anchorEl}
-        container={anchorEl}
+        // buttons within buttons break DOM check. Need container to be parent div.
+        container={actionContainerEl.current}
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
@@ -67,7 +81,13 @@ export default function ActionMenu({ actions }) {
           vertical: 'center',
           horizontal: 'center',
         }}>
-        <div className={classes.ellipsisContainer}>{actions.slice(2)}</div>
+        <div className={classes.ellipsisContainer}>
+          {actions.slice(2).map(({ label, component }) => (
+            <Tooltip key={label} title={label}>
+              <span>{component}</span>
+            </Tooltip>
+          ))}
+        </div>
       </Popover>
     </div>
   );

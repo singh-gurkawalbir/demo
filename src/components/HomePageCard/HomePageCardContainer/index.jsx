@@ -1,5 +1,5 @@
 import Paper from '@material-ui/core/Paper';
-import { makeStyles, fade } from '@material-ui/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
@@ -12,12 +12,7 @@ const useStyles = makeStyles(theme => ({
     boxSizing: 'border-box',
     border: '1px solid',
     cursor: 'pointer',
-    // Azhar, since border is 1px, it is REALLY hard for a user to know what color
-    // we use.. I think this is perfect for fade()...
-    // please tweak as needed. I'm just guessing here to remove
-    // this custom background variable...
-    // borderColor: theme.palette.background.arrowAfter, // was neutral3
-    borderColor: fade(theme.palette.common.black, 0.2),
+    borderColor: fade(theme.palette.common.black, 0.1),
     transitionProperty: 'all',
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeIn,
