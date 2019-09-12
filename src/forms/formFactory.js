@@ -53,7 +53,6 @@ const getResourceFormAssets = ({
   resourceType,
   resource,
   isNew = false,
-  resourceId,
   assistantData,
 }) => {
   let fields;
@@ -106,7 +105,7 @@ const getResourceFormAssets = ({
           meta = meta.netsuite[resource.netsuite.type];
         } else if (resource && resource.assistant) {
           meta = meta.custom.http.assistantDefinition(
-            resourceId,
+            resource._id,
             resource,
             assistantData
           );

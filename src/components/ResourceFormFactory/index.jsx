@@ -148,9 +148,8 @@ export const ResourceFormFactory = props => {
         resourceType,
         resource,
         isNew,
-        resourceId,
       }),
-    [isNew, resource, resourceId, resourceType]
+    [isNew, resource, resourceType]
   );
   const { fieldMeta } = formState;
 

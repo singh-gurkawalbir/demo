@@ -246,7 +246,6 @@ export function* initFormValues({
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
-    resourceId,
     isNew,
     assistantData,
   });

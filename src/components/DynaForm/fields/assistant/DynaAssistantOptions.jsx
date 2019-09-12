@@ -1,20 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { FieldWrapper } from 'react-forms-processor/dist';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 
-const styles = () => ({
+const useStyles = makeStyles({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
   },
 });
 
-function DynaAssistantOptions(props) {
-  const { label, resourceId, options } = props;
+export default function DynaAssistantOptions(props) {
+  const { label, resourceContext, options } = props;
+  const classes = useStyles();
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: options.adaptorType,
@@ -22,13 +22,13 @@ function DynaAssistantOptions(props) {
     })
   );
   const dispatch = useDispatch();
-  const items =
+  const selectOptionsItems =
     options && options[0] && options[0].items ? options[0].items : [];
 
   if (assistantData && assistantData.export) {
     if (props.assistantFieldType === 'version') {
       assistantData.export.versions.forEach(v => {
-        items.push({ label: v.version, value: v.version });
+        selectOptionsItems.push({ label: v.version, value: v.version });
       });
     }
 
@@ -51,13 +51,13 @@ function DynaAssistantOptions(props) {
 
       if (props.assistantFieldType === 'resource' && selectedVersion) {
         selectedVersion.resources.forEach(r => {
-          items.push({ label: r.name, value: r.id });
+          selectOptionsItems.push({ label: r.name, value: r.id });
         });
       }
 
       if (props.assistantFieldType === 'operation' && selectedResource) {
         selectedResource.endpoints.forEach(ep => {
-          items.push({ label: ep.name, value: ep.id || ep.url });
+          selectOptionsItems.push({ label: ep.name, value: ep.id || ep.url });
         });
       }
     }
@@ -129,7 +129,13 @@ function DynaAssistantOptions(props) {
         });
       }
 
-      dispatch(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
+      dispatch(
+        actions.resource.patchStaged(
+          resourceContext.resourceId,
+          patch,
+          SCOPES.VALUE
+        )
+      );
     }
   }
 
@@ -137,17 +143,9 @@ function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      classes={props.classes}
-      options={[{ items }]}
+      classes={classes}
+      options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
     />
   );
 }
-
-const DynaSelect = props => (
-  <FieldWrapper {...props}>
-    <DynaAssistantOptions classes={props.classes} />
-  </FieldWrapper>
-);
-
-export default withStyles(styles)(DynaSelect);
