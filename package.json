@@ -76,7 +76,8 @@
     "redux-saga-requests": "0.25.0",
     "redux-saga-requests-fetch": "0.9.6",
     "shortid": "2.2.14",
-    "typeface-roboto": "0.0.75"
+    "typeface-roboto": "0.0.75",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@neutrinojs/jest": "8.3.0",

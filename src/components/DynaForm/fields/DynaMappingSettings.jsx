@@ -1,18 +1,24 @@
 import { useState, Fragment } from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import BuildOutlined from '@material-ui/icons/BuildOutlined';
 import ImportMappingSettings from '../../../components/AFE/ImportMappingSettings';
 
+const SettingsIcon = require('../../../components/icons/SettingsIcon').default;
+
+const svgFontSizes = size => ({
+  fontSize: size,
+  marginRight: 10,
+});
+
 export default function DynaMappingSettings(props) {
-  const { id, onSave, extractFields, value } = props;
+  const { id, onSave, extractFields, lookup, updateLookup, value } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleClose = (shouldCommit, settings) => {
     if (shouldCommit) {
-      onSave(id, editorValues);
+      onSave(id, settings);
     }
 
     handleEditorClick();
@@ -23,7 +29,9 @@ export default function DynaMappingSettings(props) {
       {showEditor && (
         <ImportMappingSettings
           id={id}
+          updateLookup={updateLookup}
           title="Settings"
+          lookup={lookup}
           value={value}
           onClose={handleClose}
           extractFields={extractFields}
@@ -33,7 +41,7 @@ export default function DynaMappingSettings(props) {
         aria-label="delete"
         onClick={handleEditorClick}
         key="settings">
-        <BuildOutlined fontSize="small" />
+        <SettingsIcon style={svgFontSizes(24)} />
       </IconButton>
     </Fragment>
   );

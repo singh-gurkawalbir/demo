@@ -6,7 +6,7 @@ export default function DynaImportRestMapping(props) {
   const {
     id,
     onFieldChange,
-    // options,
+    options,
     label,
     value,
     extractFields,
@@ -20,9 +20,13 @@ export default function DynaImportRestMapping(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, mappings) => {
+  const handleClose = (shouldCommit, mappings, lookups) => {
     if (shouldCommit) {
       onFieldChange(id, { fields: mappings });
+
+      if (lookups) {
+        onFieldChange(options.lookupId, lookups);
+      }
     }
 
     handleEditorClick();
@@ -34,6 +38,7 @@ export default function DynaImportRestMapping(props) {
         <RestImportMapping
           title="Define Import Mapping"
           id={id}
+          lookups={options && options.lookups}
           onFieldChange={onFieldChange}
           // lookups={lookups}
           mappings={value}

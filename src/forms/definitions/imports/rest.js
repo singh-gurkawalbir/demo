@@ -7,12 +7,8 @@ export default {
 
       if (recordTypeField) {
         return {
-          lookups: {
-            // passing lookupId fieldId and data since for modifying lookups inside
-            //  Mapping page
-            fieldId: recordTypeField.fieldId,
-            data: recordTypeField && recordTypeField.value,
-          },
+          lookupId: 'rest.lookups',
+          lookups: recordTypeField && recordTypeField.value,
         };
       }
     }
@@ -27,6 +23,7 @@ export default {
     { fieldId: 'rest.compositeType' },
     { fieldId: 'rest.compositeMethod' },
     // TODO: be removed later
+    { fieldId: 'rest.lookups', visible: false },
     { fieldId: 'mapping' },
     { fieldId: 'rest.relativeUri' },
     { fieldId: 'rest.successPath' },

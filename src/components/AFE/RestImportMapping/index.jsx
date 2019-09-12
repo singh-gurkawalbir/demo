@@ -1,4 +1,5 @@
 import { useReducer, useState } from 'react';
+import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
@@ -7,12 +8,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import ClearOutlined from '@material-ui/icons/ClearOutlined';
 import deepClone from 'lodash/cloneDeep';
-import DynaMappingSettings from '../../../components/DynaForm/fields/DynaMappingSettings';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
+import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
 
+const CloseIcon = require('../../../components/icons/CloseIcon').default;
+
+const svgFontSizes = size => ({
+  fontSize: size,
+  marginRight: 10,
+});
 const useStyles = makeStyles(theme => ({
   modalContent: {
     height: '100vh',
@@ -21,6 +26,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
+  },
+  header: {
+    height: '20px',
   },
   root: {
     flexGrow: 1,
@@ -101,20 +109,28 @@ function reducer(state, action) {
 
 export default function RestImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
-  const { label, onClose, mappings, generateFields, extractFields } = props;
+  const {
+    label,
+    onClose,
+    mappings,
+    lookups,
+    generateFields,
+    extractFields,
+  } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const classes = useStyles();
   const [state, dispatchLocalAction] = useReducer(
     reducer,
     mappings.fields || []
   );
+  const [lookupState, setLookup] = useState(lookups || []);
   const mappingsTmp = deepClone(state);
   const handleSubmit = () => {
     const mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
 
-    onClose(true, mappings);
+    onClose(true, mappings, lookupState);
   };
 
   const handleFieldUpdate = (row, event, field) => {
@@ -145,7 +161,25 @@ export default function RestImportMapping(props) {
 
     return obj;
   });
-  const handleSettingsSave = (row, settings) => {
+  const updateLookupHandler = (isDelete, obj) => {
+    let lookupsTmp = [...lookupState];
+
+    if (isDelete) {
+      lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
+    } else {
+      const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+      if (index !== -1) {
+        lookupsTmp[index] = obj;
+      } else {
+        lookupsTmp.push(obj);
+      }
+    }
+
+    setLookup(lookupsTmp);
+  };
+
+  const handleSettingsClose = (row, settings) => {
     const settingsCopy = { ...settings };
 
     if (settingsCopy.hardCodedValue) {
@@ -155,7 +189,7 @@ export default function RestImportMapping(props) {
     dispatchLocalAction({
       type: 'updateSettings',
       index: row,
-      value: settings,
+      value: settingsCopy,
       setChangeIdentifier,
       lastRowData: (mappingsTmp || []).length
         ? mappingsTmp[mappingsTmp.length - 1]
@@ -174,6 +208,8 @@ export default function RestImportMapping(props) {
     });
   };
 
+  const getLookup = name => lookupState.find(lookup => lookup.name === name);
+
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
       <DialogTitle>Manage Import Mapping</DialogTitle>
@@ -181,7 +217,7 @@ export default function RestImportMapping(props) {
         <div className={classes.container}>
           <Typography variant="h6">{label}</Typography>
           <Grid container className={classes.root} spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.header}>
               <Grid container spacing={2}>
                 <Grid key="heading_extract" item xs>
                   <span className={classes.alignLeft}>Source Record Field</span>
@@ -200,7 +236,7 @@ export default function RestImportMapping(props) {
               direction="column">
               {tableData.map(mapping => (
                 <Grid item className={classes.rowContainer} key={mapping.index}>
-                  <Grid container direction="row" spacing={2}>
+                  <Grid container direction="row">
                     <Grid item xs>
                       <DynaAutoSuggest
                         value={mapping.extract || mapping.hardCodedValueTmp}
@@ -230,8 +266,15 @@ export default function RestImportMapping(props) {
                     <Grid item key="settings">
                       <DynaMappingSettings
                         id={mapping.index}
-                        onSave={handleSettingsSave}
+                        onSave={handleSettingsClose}
                         value={mapping}
+                        updateLookup={updateLookupHandler}
+                        // getLookup={findLookupByName}
+                        lookup={
+                          mapping &&
+                          mapping.lookupName &&
+                          getLookup(mapping.lookupName)
+                        }
                         extractFields={extractFields}
                       />
                     </Grid>
@@ -243,7 +286,7 @@ export default function RestImportMapping(props) {
                         }}
                         key="settings"
                         className={classes.margin}>
-                        <ClearOutlined fontSize="small" />
+                        <CloseIcon style={svgFontSizes(24)} />
                       </IconButton>
                     </Grid>
                   </Grid>

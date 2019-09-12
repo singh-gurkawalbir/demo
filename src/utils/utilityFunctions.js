@@ -1,4 +1,7 @@
+import uuid from 'uuid';
+
 export default {
+  getRandomName: () => uuid.v4(),
   getHandlebarHelperFormat: helper => {
     const toReturn = `{{${helper} arg1}}`;
     const singleArs = [

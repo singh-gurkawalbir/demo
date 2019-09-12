@@ -8,6 +8,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import dateTimezones from '../../../utils/dateTimezones';
 import fieldExpressions from '../../../utils/fieldExpressions';
 import utilityFunctions from '../../../utils/utilityFunctions';
+import Lookup from './Lookup';
 
 const useStyles = makeStyles(() => ({
   modalContent: {
@@ -31,13 +32,81 @@ const optionsHandler = (fieldId, fields) => {
       );
 
     return expressionValue;
+  } else if (fieldId === 'standardAction') {
+    const actionField = fields.find(
+      field => field.id === 'restImportFieldMappingSettings'
+    );
+
+    switch (actionField.value) {
+      case 'hardCoded':
+        return [
+          {
+            items: [
+              {
+                label: `Use Empty String as hardcoded Value`,
+                value: 'useEmptyString',
+              },
+              {
+                label: 'Use Null as hardcoded Value',
+                value: 'useNull',
+              },
+              {
+                label: 'Use Custom Value',
+                value: 'default',
+              },
+            ],
+          },
+        ];
+      case 'lookup':
+        return [
+          {
+            items: [
+              {
+                label: 'Fail Record',
+                value: 'disallowFailure',
+              },
+              {
+                label: `Use Empty String as hardcoded Value`,
+                value: 'useEmptyString',
+              },
+              {
+                label: 'Use Null as hardcoded Value',
+                value: 'useNull',
+              },
+              {
+                label: 'Use Custom Value',
+                value: 'default',
+              },
+            ],
+          },
+        ];
+      default:
+        return [
+          {
+            items: [
+              {
+                label: `Use Empty String as Default Value`,
+                value: 'useEmptyString',
+              },
+              {
+                label: 'Use Null as Default Value',
+                value: 'useNull',
+              },
+              {
+                label: 'Use Custom Default Value',
+                value: 'default',
+              },
+            ],
+          },
+        ];
+    }
   }
 
   return null;
 };
 
 export default function ImportMappingSettings(props) {
-  const { title, value, onClose, extractFields } = props;
+  const { title, value, onClose, extractFields, lookup, updateLookup } = props;
   const classes = useStyles();
   const getDefaultDataType = () => {
     if (
@@ -132,26 +201,14 @@ export default function ImportMappingSettings(props) {
               { label: 'Standard', value: 'standard' },
               { label: 'Hard-Coded', value: 'hardCoded' },
               // the feature is to be enabled later
-              // { label: 'Static-Lookup', value: 'lookup' },
+              { label: 'Lookup', value: 'lookup' },
               { label: 'Multi-Field', value: 'multifield' },
             ],
           },
         ],
       },
       {
-        id: 'lookups',
-        name: 'lookups',
-        type: 'staticMap',
-        keyName: 'export',
-        keyLabel: 'Export Field',
-        valueName: 'import',
-        valueLabel: 'Import Field',
-        visibleWhen: [
-          {
-            field: 'restImportFieldMappingSettings',
-            is: ['lookup'],
-          },
-        ],
+        formId: 'lookup',
       },
       {
         id: 'functions',
@@ -215,6 +272,7 @@ export default function ImportMappingSettings(props) {
         name: 'standardAction',
         type: 'radiogroup',
         defaultValue: getDefaultValue(),
+        refreshOptionsOnChangesTo: ['restImportFieldMappingSettings'],
         label: 'Action to take if value not found:',
         options: [
           {
@@ -234,49 +292,7 @@ export default function ImportMappingSettings(props) {
             ],
           },
         ],
-        visibleWhen: [
-          {
-            field: 'restImportFieldMappingSettings',
-            is: ['standard'],
-          },
-          {
-            field: 'restImportFieldMappingSettings',
-            is: ['multifield'],
-          },
-        ],
       },
-      {
-        id: 'hardCodedAction',
-        name: 'hardCodedAction',
-        type: 'radiogroup',
-        defaultValue: getDefaultValue(),
-        label: 'Options:',
-        options: [
-          {
-            items: [
-              {
-                label: `Use Empty String as hardcoded Value`,
-                value: 'useEmptyString',
-              },
-              {
-                label: 'Use Null as hardcoded Value',
-                value: 'useNull',
-              },
-              {
-                label: 'Use Custom Value',
-                value: 'default',
-              },
-            ],
-          },
-        ],
-        visibleWhen: [
-          {
-            field: 'restImportFieldMappingSettings',
-            is: ['hardCoded'],
-          },
-        ],
-      },
-
       {
         id: 'default',
         name: 'default',
@@ -287,10 +303,6 @@ export default function ImportMappingSettings(props) {
         visibleWhen: [
           {
             field: 'standardAction',
-            is: ['default'],
-          },
-          {
-            field: 'hardCodedAction',
             is: ['default'],
           },
         ],
@@ -369,6 +381,19 @@ export default function ImportMappingSettings(props) {
       },
     ],
   };
+
+  fieldMeta.fields = fieldMeta.fields.flatMap(field => {
+    if (field.formId === 'lookup') {
+      const lookupMeta = Lookup.getLookupMeta(lookup || {}, 'http', {
+        field: 'restImportFieldMappingSettings',
+        is: ['lookup'],
+      });
+
+      return lookupMeta.fields;
+    }
+
+    return field;
+  });
   const handleSubmit = formVal => {
     const mappingSettingsTmp = {};
 
@@ -386,7 +411,7 @@ export default function ImportMappingSettings(props) {
 
     if (formVal.restImportFieldMappingSettings === 'hardCoded') {
       // in case of hardcoded value, we dont save extract property
-      switch (formVal.hardCodedAction) {
+      switch (formVal.standardAction) {
         case 'useEmptyString':
           mappingSettingsTmp.hardCodedValue = '';
           break;
@@ -419,12 +444,53 @@ export default function ImportMappingSettings(props) {
       }
     }
 
-    const lookups = {};
-
     if (formVal.restImportFieldMappingSettings === 'lookup') {
-      formVal.lookups.forEach(obj => {
-        lookups[obj.export] = obj.import;
-      });
+      const lookupTmp = {};
+
+      if (lookup && lookup.name) {
+        lookupTmp.name = lookup.name;
+      } else {
+        lookupTmp.name = utilityFunctions.getRandomName();
+      }
+
+      mappingSettingsTmp.lookupName = lookupTmp.name;
+
+      if (formVal._mode === 'dynamic') {
+        lookupTmp.method = formVal._method;
+        lookupTmp.relativeURI = formVal._relativeURI;
+        // lookup.allowFailures = false
+        lookupTmp.extract = formVal._extract;
+        lookupTmp.postBody = formVal._postBody;
+      } else {
+        lookupTmp.map = {};
+        formVal._mapList.forEach(obj => {
+          lookupTmp.map[obj.export] = obj.import;
+        });
+      }
+
+      if (formVal.standardAction === 'disallowFailure')
+        lookupTmp.allowFailures = false;
+      else {
+        lookupTmp.allowFailures = true;
+
+        switch (formVal.standardAction) {
+          case 'useEmptyString':
+            lookupTmp.default = '';
+            break;
+          case 'useNull':
+            lookupTmp.default = null;
+            break;
+          case 'default':
+            lookupTmp.default = formVal.default;
+            break;
+          default:
+        }
+      }
+
+      updateLookup(false, lookupTmp);
+    } else if (lookup) {
+      // delete the lookup . case where lookup was present before but its not a part of mapping anymore
+      updateLookup(true, lookup);
     }
 
     onClose(true, mappingSettingsTmp);

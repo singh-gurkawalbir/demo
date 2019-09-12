@@ -12,7 +12,7 @@ import DynaSelect from '../DynaSelect';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   tableBody: {
