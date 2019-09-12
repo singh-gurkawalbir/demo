@@ -14,7 +14,8 @@ const CancelButton = props => {
     <Button
       onClick={onCancel}
       className={classes.actionButton}
-      variant="contained">
+      variant="contained"
+      color="secondary">
       {cancelButtonLabel || 'Reset'}
     </Button>
   );

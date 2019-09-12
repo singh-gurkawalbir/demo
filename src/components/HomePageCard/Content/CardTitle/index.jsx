@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles({
   root: {
     paddingBottom: 5,
+    minHeight: 55,
   },
 });
 

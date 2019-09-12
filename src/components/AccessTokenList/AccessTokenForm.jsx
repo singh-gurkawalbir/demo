@@ -190,7 +190,8 @@ function AccessTokenForm(props) {
           onClick={onCancelClick}
           className={classes.actionButton}
           size="small"
-          variant="contained">
+          variant="contained"
+          color="secondary">
           Cancel
         </Button>
         <DynaSubmit className={classes.actionButton} onClick={onSaveClick}>
