@@ -6,6 +6,7 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
+    // To Do replace statistcally instead dynamic values
     { fieldId: 'ediX12Format', label: 'EDI Format' },
     { fieldId: 'as2.fileNameTemplate' },
     { fieldId: 'as2.messageIdTemplate' },

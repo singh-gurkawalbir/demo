@@ -8,7 +8,7 @@ export default {
     },
     { fieldId: 's3.region' },
     { fieldId: 's3.bucket' },
-    { formId: 'filetype' },
+    { formId: 'fileType' },
     { fieldId: 's3.fileKey' },
     { formId: 'file' },
     {
@@ -25,7 +25,7 @@ export default {
       collapsed: true,
       fields: [
         { fieldId: 'file.csv.rowDelimiter' },
-        { formId: 'fileadvancesetting' },
+        { formId: 'fileAdvanceSetting' },
       ],
     },
     {

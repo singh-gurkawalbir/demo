@@ -7,7 +7,7 @@ export default {
       label: 'How would you like the data imported?',
     },
     { fieldId: 'ftp.directoryPath' },
-    { formId: 'filetype' },
+    { formId: 'fileType' },
     { fieldId: 'ftp.fileName' },
     { formId: 'file' },
     {
@@ -26,7 +26,7 @@ export default {
         { fieldId: 'file.csv.rowDelimiter' },
         { fieldId: 'ftp.useTempFile' },
         { fieldId: 'ftp.inProgressFileName' },
-        { formId: 'fileadvancesetting' },
+        { formId: 'fileAdvanceSetting' },
       ],
     },
     {
