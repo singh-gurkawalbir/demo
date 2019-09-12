@@ -591,7 +591,7 @@ export function userAccessLevelOnConnection(state, connectionId) {
   return accessLevelOnConnection;
 }
 
-export function getAvailableConnectionsToRegister(state, integrationId) {
+export function availableConnectionsToRegister(state, integrationId) {
   if (!state) {
     return [];
   }
@@ -601,19 +601,17 @@ export function getAvailableConnectionsToRegister(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const registeredConnections =
     (integration && integration._registeredConnectionIds) || [];
-  let availableConnectionsToRegister = allConnections.filter(
+  let availableConnectionToRegister = allConnections.filter(
     conn => registeredConnections.indexOf(conn._id) === -1
   );
 
-  availableConnectionsToRegister = availableConnectionsToRegister.filter(
-    conn => {
-      const accessLevel = userAccessLevelOnConnection(state, conn._id);
+  availableConnectionToRegister = availableConnectionToRegister.filter(conn => {
+    const accessLevel = userAccessLevelOnConnection(state, conn._id);
 
-      return accessLevel === 'manage' || accessLevel === 'owner';
-    }
-  );
+    return accessLevel === 'manage' || accessLevel === 'owner';
+  });
 
-  return availableConnectionsToRegister;
+  return availableConnectionToRegister;
 }
 
 export function suiteScriptLinkedConnections(state) {

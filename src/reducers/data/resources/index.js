@@ -100,14 +100,14 @@ export default (state = {}, action) => {
 
       return state;
 
-    case actionTypes.RESOURCE.CONNECTIONS_REGISTERED:
+    case actionTypes.CONNECTION.REGISTER_COMPLETE:
       resourceIndex = state.integrations.findIndex(
         r => r._id === integrationId
       );
 
       if (resourceIndex > -1) {
         return produce(state, draft => {
-          connectionIds.map(cId =>
+          connectionIds.forEach(cId =>
             draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
           );
         });

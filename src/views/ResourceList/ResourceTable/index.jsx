@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResourceTable({
   resourceType,
-  resources,
+  resources = [],
   selectResourceRef,
   metadataType,
   isSelectableListing,
@@ -96,7 +96,7 @@ export default function ResourceTable({
     const selected = produce(selectedResources, draft => {
       const selectedCopy = draft;
 
-      resources.map(r => (selectedCopy[r._id] = checked));
+      resources.forEach(r => (selectedCopy[r._id] = checked));
     });
 
     setSelectedResources(selected);

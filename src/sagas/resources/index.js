@@ -140,7 +140,7 @@ export function* requestReferences({ resourceType, id }) {
   }
 }
 
-export function* registerConnections({ connectionIds, integrationId }) {
+export function* requestRegister({ connectionIds, integrationId }) {
   const path = `/integrations/${integrationId}/connections/register`;
 
   try {
@@ -154,7 +154,7 @@ export function* registerConnections({ connectionIds, integrationId }) {
     });
 
     yield put(
-      actions.resource.registeredConnections(connectionIds, integrationId)
+      actions.connection.completeRegister(connectionIds, integrationId)
     );
   } catch (error) {
     return undefined;
@@ -167,6 +167,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
-  takeEvery(actionTypes.RESOURCE.CONNECTIONS_REGISTER, registerConnections),
+  takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   ...metadataSagas,
 ];

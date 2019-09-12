@@ -52,6 +52,18 @@ const api = {
     action(actionTypes.API_FAILURE, { path, method, message, hidden }),
 };
 // #region Resource Actions
+const connection = {
+  requestRegister: (connectionIds, integrationId) =>
+    action(actionTypes.CONNECTION.REGISTER_REQUEST, {
+      connectionIds,
+      integrationId,
+    }),
+  completeRegister: (connectionIds, integrationId) =>
+    action(actionTypes.CONNECTION.REGISTER_COMPLETE, {
+      connectionIds,
+      integrationId,
+    }),
+};
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
@@ -80,17 +92,6 @@ const resource = {
     action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
       resourceType,
       id,
-    }),
-
-  registerConnections: (connectionIds, integrationId) =>
-    action(actionTypes.RESOURCE.CONNECTIONS_REGISTER, {
-      connectionIds,
-      integrationId,
-    }),
-  registeredConnections: (connectionIds, integrationId) =>
-    action(actionTypes.RESOURCE.CONNECTIONS_REGISTERED, {
-      connectionIds,
-      integrationId,
     }),
 
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
@@ -631,4 +632,5 @@ export default {
   flow,
   agent,
   stack,
+  connection,
 };
