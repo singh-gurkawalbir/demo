@@ -71,61 +71,26 @@ export default function DynaAssistantOptions(props) {
         props.assistantFieldType
       )
     ) {
+      const fieldDependencyMap = {
+        version: ['resource', 'operation', 'exportType'],
+        resource: ['operation', 'exportType'],
+        operation: ['exportType'],
+      };
       const patch = [];
 
-      if (props.assistantFieldType === 'version') {
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/version',
-          value,
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/resource',
-          value: '',
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/operation',
-          value: '',
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/exportType',
-          value: '',
-        });
-      } else if (props.assistantFieldType === 'resource') {
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/resource',
-          value,
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/operation',
-          value: '',
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/exportType',
-          value: '',
-        });
-      } else if (props.assistantFieldType === 'operation') {
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/operation',
-          value,
-        });
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/exportType',
-          value: '',
-        });
-      } else if (props.assistantFieldType === 'exportType') {
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/exportType',
-          value,
+      patch.push({
+        op: 'replace',
+        path: `/assistantMetadata/${props.assistantFieldType}`,
+        value,
+      });
+
+      if (fieldDependencyMap[props.assistantFieldType]) {
+        fieldDependencyMap[props.assistantFieldType].forEach(prop => {
+          patch.push({
+            op: 'replace',
+            path: `/assistantMetadata/${prop}`,
+            value: '',
+          });
         });
       }
 

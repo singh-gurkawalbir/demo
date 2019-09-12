@@ -8,34 +8,24 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import {
   convertToReactFormFields,
   updateFormValues,
-  SEARCH_PARAMETER_TYPES,
+  PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
 
 const SearchParamsModal = props => {
-  const {
-    fieldMeta,
-    defaultValuesForDeltaExport,
-    handleClose,
-    id,
-    onFieldChange,
-    value,
-    paramsType,
-  } = props;
+  const { paramMeta, handleClose, id, onFieldChange, value } = props;
   const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields({
-    fieldMeta,
-    defaultValuesForDeltaExport,
+    paramMeta,
     value,
-    paramsType,
   });
 
   function onSaveClick(formValues) {
-    const updatedFormValues = updateFormValues({
+    const updatedValues = updateFormValues({
       formValues,
       fieldDetailsMap,
-      paramsType,
+      paramLocation: paramMeta.paramLocation,
     });
 
-    onFieldChange(id, updatedFormValues);
+    onFieldChange(id, updatedValues);
     handleClose();
   }
 
@@ -68,9 +58,11 @@ export default function DynaAssistantSearchParams(props) {
     value,
     onFieldChange,
     id,
-    fieldMeta,
-    paramsType,
-    defaultValuesForDeltaExport,
+    paramMeta = {
+      paramLocation: PARAMETER_LOCATION.QUERY,
+      fields: [],
+      defaultValuesForDeltaExport: {},
+    },
     required,
   } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
@@ -81,10 +73,8 @@ export default function DynaAssistantSearchParams(props) {
       {showSearchParamsModal && (
         <SearchParamsModal
           id={id}
-          fieldMeta={fieldMeta}
-          defaultValuesForDeltaExport={defaultValuesForDeltaExport}
+          paramMeta={paramMeta}
           value={value}
-          paramsType={paramsType}
           onFieldChange={onFieldChange}
           handleClose={() => {
             setShowSearchParamsModal(false);
@@ -94,7 +84,7 @@ export default function DynaAssistantSearchParams(props) {
       <Button
         variant="contained"
         onClick={() => setShowSearchParamsModal(true)}>
-        {label || paramsType === SEARCH_PARAMETER_TYPES.BODY
+        {label || paramMeta.paramLocation === PARAMETER_LOCATION.BODY
           ? 'Configure Body Parameters'
           : 'Configure Search Parameters'}{' '}
         {required ? '*' : ''}

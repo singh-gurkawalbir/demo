@@ -11,7 +11,7 @@ import {
   generateValidReactFormFieldId,
   convertToReactFormFields,
   updateFormValues,
-  SEARCH_PARAMETER_TYPES,
+  PARAMETER_LOCATION,
 } from './assistant';
 
 describe('getMatchingRoute', () => {
@@ -499,7 +499,7 @@ describe('getParamValue', () => {
       {
         id: 'abc',
         inputType: 'multiselect',
-        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
       { abc: 'def' },
     ],
@@ -508,7 +508,7 @@ describe('getParamValue', () => {
       {
         id: 'abc',
         inputType: 'multiselect',
-        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
       { abc: ['def'] },
     ],
@@ -517,7 +517,7 @@ describe('getParamValue', () => {
       {
         id: 'abc',
         inputType: 'select',
-        paramType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
       { abc: 'def' },
     ],
@@ -526,7 +526,7 @@ describe('getParamValue', () => {
       {
         id: 'abc',
         inputType: 'select',
-        paramType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
       { abc: ['def'] },
     ],
@@ -534,7 +534,7 @@ describe('getParamValue', () => {
       'something',
       {
         id: 'searchCriteria[filter_groups][0][filters][0][field]',
-        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
       {
         abc: 'def',
@@ -545,7 +545,7 @@ describe('getParamValue', () => {
       'something',
       {
         id: 'searchCriteria[filter_groups]',
-        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
       {
         abc: 'def',
@@ -557,7 +557,7 @@ describe('getParamValue', () => {
       'something else',
       {
         id: 'searchCriteria[filter_groups]',
-        paramType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
       {
         abc: 'def',
@@ -568,7 +568,7 @@ describe('getParamValue', () => {
       'some thing',
       {
         id: 'a.b',
-        paramType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
       {
         a: {
@@ -585,7 +585,7 @@ describe('getParamValue', () => {
       'something else',
       {
         id: 'a.c.d.e',
-        paramType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
       {
         a: {
@@ -602,7 +602,7 @@ describe('getParamValue', () => {
       undefined,
       {
         id: 'a.c.d.e',
-        paramType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
       {},
     ],
@@ -646,10 +646,11 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {},
       },
       {
-        fieldMeta: [],
-        defaultValuesForDeltaExport: {},
+        paramMeta: {
+          defaultValuesForDeltaExport: {},
+          paramLocation: PARAMETER_LOCATION.QUERY,
+        },
         value: {},
-        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
       },
     ],
     [
@@ -670,7 +671,9 @@ describe('convertToReactFormFields', () => {
         },
       },
       {
-        fieldMeta: [{ id: 'f1', required: true }],
+        paramMeta: {
+          fields: [{ id: 'f1', required: true }],
+        },
       },
     ],
     [
@@ -691,7 +694,7 @@ describe('convertToReactFormFields', () => {
         },
       },
       {
-        fieldMeta: [{ id: 'f1' }],
+        paramMeta: { fields: [{ id: 'f1' }] },
       },
     ],
     [
@@ -730,7 +733,7 @@ describe('convertToReactFormFields', () => {
         },
       },
       {
-        fieldMeta: [{ id: 'f1' }, { id: 'f2', required: true }],
+        paramMeta: { fields: [{ id: 'f1' }, { id: 'f2', required: true }] },
       },
     ],
     [
@@ -880,67 +883,68 @@ describe('convertToReactFormFields', () => {
         },
       },
       {
-        // ['checkbox', 'multiselect', 'select', 'text', 'textarea']
-        fieldMeta: [
-          { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
-          {
-            id: 'id_checkbox',
-            fieldType: 'checkbox',
-            name: 'Checkbox',
-            description: 'some help text',
+        paramMeta: {
+          paramLocation: PARAMETER_LOCATION.QUERY,
+          fields: [
+            { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
+            {
+              id: 'id_checkbox',
+              fieldType: 'checkbox',
+              name: 'Checkbox',
+              description: 'some help text',
+            },
+            {
+              id: 'id_multiselect',
+              fieldType: 'multiselect',
+              name: 'MultiSelect',
+              type: 'repeat',
+              indexed: true,
+              required: true,
+              options: [
+                'active',
+                'closed',
+                'subscriber',
+                'non_subscriber',
+                'past_due',
+              ],
+            },
+            {
+              id: 'id_select',
+              fieldType: 'select',
+              name: 'Select',
+              options: ['desc', 'asc'],
+            },
+            {
+              id: 'id_text',
+              fieldType: 'text',
+              required: true,
+              name: 'Text',
+              placeholder: 'some placeholder',
+            },
+            { id: 'id_readOnly2', readOnly: true, name: 'ReadOnly 2' },
+            {
+              id: 'id_textarea',
+              fieldType: 'textarea',
+              name: 'Text Area',
+              type: 'something',
+            },
+            {
+              id: 'id_input',
+              fieldType: 'integer',
+              name: 'Input',
+              defaultValue: 121,
+            },
+            { id: 'id_some.thing', fieldType: 'something' },
+          ],
+          defaultValuesForDeltaExport: {
+            'id_some.thing': 'something else',
           },
-          {
-            id: 'id_multiselect',
-            fieldType: 'multiselect',
-            name: 'MultiSelect',
-            type: 'repeat',
-            indexed: true,
-            required: true,
-            options: [
-              'active',
-              'closed',
-              'subscriber',
-              'non_subscriber',
-              'past_due',
-            ],
-          },
-          {
-            id: 'id_select',
-            fieldType: 'select',
-            name: 'Select',
-            options: ['desc', 'asc'],
-          },
-          {
-            id: 'id_text',
-            fieldType: 'text',
-            required: true,
-            name: 'Text',
-            placeholder: 'some placeholder',
-          },
-          { id: 'id_readOnly2', readOnly: true, name: 'ReadOnly 2' },
-          {
-            id: 'id_textarea',
-            fieldType: 'textarea',
-            name: 'Text Area',
-            type: 'something',
-          },
-          {
-            id: 'id_input',
-            fieldType: 'integer',
-            name: 'Input',
-            defaultValue: 121,
-          },
-          { id: 'id_some.thing', fieldType: 'something' },
-        ],
-        defaultValuesForDeltaExport: {
-          'id_some.thing': 'something else',
         },
         value: {
           'id_multiselect.1': 'one',
           'id_multiselect.2': 'two',
           'id_multiselect.something': 'ten',
         },
-        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
       },
     ],
   ];
@@ -1007,7 +1011,7 @@ describe('updateFormValues', () => {
           integer_float: { id: 'integer_float', type: 'integer' },
           boolean: { id: 'boolean' },
         },
-        paramsType: SEARCH_PARAMETER_TYPES.QUERY,
+        paramLocation: PARAMETER_LOCATION.QUERY,
       },
     ],
     [
@@ -1026,7 +1030,7 @@ describe('updateFormValues', () => {
           'some/thing/else2': { id: 'some.thing.else2' },
           xyz: { id: 'xyz' },
         },
-        paramsType: SEARCH_PARAMETER_TYPES.BODY,
+        paramLocation: PARAMETER_LOCATION.BODY,
       },
     ],
   ];

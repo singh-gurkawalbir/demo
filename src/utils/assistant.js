@@ -24,7 +24,7 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'successPath',
 ]);
 
-export const SEARCH_PARAMETER_TYPES = Object.freeze({
+export const PARAMETER_LOCATION = Object.freeze({
   QUERY: 'query',
   BODY: 'body',
 });
@@ -678,17 +678,17 @@ export function getParamValue({ fieldMeta, values = {} }) {
     if (Object.prototype.hasOwnProperty.call(values, fieldMeta.id)) {
       paramValue = values[fieldMeta.id];
 
-      if (fieldMeta.paramType === SEARCH_PARAMETER_TYPES.QUERY) {
+      if (fieldMeta.paramLocation === PARAMETER_LOCATION.QUERY) {
         if (fieldMeta.inputType === 'multiselect' && !isArray(paramValue)) {
           // wrap item inside array as multiselect expects item by default an array @BugFix : 8896
           paramValue = [paramValue];
         }
-      } else if (fieldMeta.paramType === SEARCH_PARAMETER_TYPES.BODY) {
+      } else if (fieldMeta.paramLocation === PARAMETER_LOCATION.BODY) {
         if (fieldMeta.inputType === 'select' && isArray(paramValue)) {
           [paramValue] = paramValue;
         }
       }
-    } else if (fieldMeta.paramType === SEARCH_PARAMETER_TYPES.QUERY) {
+    } else if (fieldMeta.paramLocation === PARAMETER_LOCATION.QUERY) {
       if (fieldMeta.id.indexOf('[') > 0) {
         const prefix = fieldMeta.id.substr(0, fieldMeta.id.indexOf('['));
 
@@ -697,7 +697,7 @@ export function getParamValue({ fieldMeta, values = {} }) {
             values[prefix][fieldMeta.id.substr(fieldMeta.id.indexOf('['))];
         }
       }
-    } else if (fieldMeta.paramType === SEARCH_PARAMETER_TYPES.BODY) {
+    } else if (fieldMeta.paramLocation === PARAMETER_LOCATION.BODY) {
       const keyParts = fieldMeta.id.split('.');
 
       paramValue = values[keyParts[0]];
@@ -722,144 +722,146 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\]/g, '*__*');
 }
 
-export function convertToReactFormFields({
-  fieldMeta = [],
-  defaultValuesForDeltaExport = {},
-  value = {},
-  paramsType,
-}) {
+export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
   const fields = [];
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
   const paramValues = { ...value };
 
-  fieldMeta.forEach(field => {
-    if (field.readOnly) {
-      return true;
-    }
+  paramMeta.fields &&
+    paramMeta.fields.forEach(field => {
+      if (field.readOnly) {
+        return true;
+      }
 
-    if (field.type === 'repeat' && field.indexed) {
-      const fieldValue = [];
+      if (field.type === 'repeat' && field.indexed) {
+        const fieldValue = [];
 
-      each(value, (v, k) => {
-        if (
-          k &&
-          k.startsWith(field.id) &&
-          k.split('.').length > 1 &&
-          !isNaN(parseInt(last(k.split('.')), 10))
-        ) {
-          fieldValue.push(v);
+        each(value, (v, k) => {
+          if (
+            k &&
+            k.startsWith(field.id) &&
+            k.split('.').length > 1 &&
+            !isNaN(parseInt(last(k.split('.')), 10))
+          ) {
+            fieldValue.push(v);
+          }
+        });
+        paramValues[field.id] = fieldValue;
+      }
+
+      /** There are some issues with forms processor if field id/name contains special chars like . and [] */
+      const fieldId = generateValidReactFormFieldId(field.id);
+
+      actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
+
+      let { fieldType } = field;
+
+      fieldDetailsMap[fieldId] = {
+        id: field.id,
+      };
+      ['type', 'indexed'].forEach(prop => {
+        if (Object.prototype.hasOwnProperty.call(field, prop)) {
+          fieldDetailsMap[fieldId][prop] = field[prop];
         }
       });
-      paramValues[field.id] = fieldValue;
-    }
 
-    /** There are some issues with forms processor if field id/name contains special chars like . and [] */
-    const fieldId = generateValidReactFormFieldId(field.id);
-
-    actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
-
-    let { fieldType } = field;
-
-    fieldDetailsMap[fieldId] = {
-      id: field.id,
-    };
-    ['type', 'indexed'].forEach(prop => {
-      if (Object.prototype.hasOwnProperty.call(field, prop)) {
-        fieldDetailsMap[fieldId][prop] = field[prop];
+      if (fieldType === 'integer') {
+        fieldDetailsMap[fieldId].type = 'integer';
       }
-    });
 
-    if (fieldType === 'integer') {
-      fieldDetailsMap[fieldId].type = 'integer';
-    }
-
-    if (
-      !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
-        fieldType
-      )
-    ) {
-      fieldType = 'text';
-    }
-
-    fieldDetailsMap[fieldId].inputType = fieldType;
-  });
-
-  fieldMeta.forEach(field => {
-    if (field.readOnly) {
-      return true;
-    }
-
-    const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
-    const { inputType, type } = fieldDetailsMap[fieldId];
-    const paramValue = getParamValue({
-      fieldMeta: { id: field.id, inputType, paramType: paramsType },
-      values: paramValues,
-    });
-    let { defaultValue } = field;
-
-    if (
-      paramValue === undefined &&
-      Object.prototype.hasOwnProperty.call(
-        defaultValuesForDeltaExport,
-        field.id
-      )
-    ) {
-      defaultValue = defaultValuesForDeltaExport[field.id];
-    }
-
-    const fieldDef = {
-      id: fieldId,
-      name: fieldId,
-      defaultValue: paramValue || defaultValue,
-      helpText: field.description,
-      label: field.name,
-      placeholder: field.placeholder,
-      required: !!field.required,
-      type: inputType,
-    };
-
-    if (['multiselect', 'select'].includes(fieldDef.type)) {
-      fieldDef.options = [
-        {
-          items: field.options
-            ? field.options.map(opt => ({
-                label: opt,
-                value: opt,
-              }))
-            : [],
-        },
-      ];
-    }
-
-    /** Clean up props with no values */
-    ['helpText', 'label', 'placeholder'].forEach(prop => {
-      if (!fieldDef[prop]) {
-        delete fieldDef[prop];
+      if (
+        !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
+          fieldType
+        )
+      ) {
+        fieldType = 'text';
       }
+
+      fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
-    if (fieldDef.defaultValue === undefined) {
-      delete fieldDef.defaultValue;
-    }
+  paramMeta.fields &&
+    paramMeta.fields.forEach(field => {
+      if (field.readOnly) {
+        return true;
+      }
 
-    if (type === 'integer') {
-      fieldDef.validWhen = {
-        matchesRegEx: {
-          pattern: '^[\\d]+$',
-          message: 'Must be a number.',
+      const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
+      const { inputType, type } = fieldDetailsMap[fieldId];
+      const paramValue = getParamValue({
+        fieldMeta: {
+          id: field.id,
+          inputType,
+          paramLocation: paramMeta.paramLocation,
         },
+        values: paramValues,
+      });
+      let { defaultValue } = field;
+
+      if (
+        paramValue === undefined &&
+        paramMeta.defaultValuesForDeltaExport &&
+        Object.prototype.hasOwnProperty.call(
+          paramMeta.defaultValuesForDeltaExport,
+          field.id
+        )
+      ) {
+        defaultValue = paramMeta.defaultValuesForDeltaExport[field.id];
+      }
+
+      const fieldDef = {
+        id: fieldId,
+        name: fieldId,
+        defaultValue: paramValue || defaultValue,
+        helpText: field.description,
+        label: field.name,
+        placeholder: field.placeholder,
+        required: !!field.required,
+        type: inputType,
       };
-    }
 
-    ['requiredWhen', 'validWhen'].forEach(p => {
-      if (Object.prototype.hasOwnProperty.call(field, p)) {
-        fieldDef[p] = field[p];
+      if (['multiselect', 'select'].includes(fieldDef.type)) {
+        fieldDef.options = [
+          {
+            items: field.options
+              ? field.options.map(opt => ({
+                  label: opt,
+                  value: opt,
+                }))
+              : [],
+          },
+        ];
       }
-    });
 
-    fields.push(fieldDef);
-  });
+      /** Clean up props with no values */
+      ['helpText', 'label', 'placeholder'].forEach(prop => {
+        if (!fieldDef[prop]) {
+          delete fieldDef[prop];
+        }
+      });
+
+      if (fieldDef.defaultValue === undefined) {
+        delete fieldDef.defaultValue;
+      }
+
+      if (type === 'integer') {
+        fieldDef.validWhen = {
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Must be a number.',
+          },
+        };
+      }
+
+      ['requiredWhen', 'validWhen'].forEach(p => {
+        if (Object.prototype.hasOwnProperty.call(field, p)) {
+          fieldDef[p] = field[p];
+        }
+      });
+
+      fields.push(fieldDef);
+    });
 
   const requiredFields = fields.filter(field => field.required);
   const optionalFields = fields.filter(field => !field.required);
@@ -884,7 +886,11 @@ export function convertToReactFormFields({
   };
 }
 
-export function updateFormValues({ formValues, fieldDetailsMap, paramsType }) {
+export function updateFormValues({
+  formValues,
+  fieldDetailsMap,
+  paramLocation,
+}) {
   let updatedFormValues = {};
 
   Object.keys(formValues).forEach(key => {
@@ -923,7 +929,7 @@ export function updateFormValues({ formValues, fieldDetailsMap, paramsType }) {
     }
   });
 
-  if (paramsType === SEARCH_PARAMETER_TYPES.BODY) {
+  if (paramLocation === PARAMETER_LOCATION.BODY) {
     let keyParts;
     let objTemp;
     const toReturn = {};

@@ -1,4 +1,4 @@
-import { SEARCH_PARAMETER_TYPES } from '../../../../../../utils/assistant';
+import { PARAMETER_LOCATION } from '../../../../../../utils/assistant';
 
 export default {
   'assistantMetadata.version': {
@@ -27,10 +27,14 @@ export default {
   },
   'assistantMetadata.queryParams': {
     type: 'assistantsearchparams',
-    paramsType: SEARCH_PARAMETER_TYPES.QUERY,
+    paramMeta: {
+      paramLocation: PARAMETER_LOCATION.QUERY,
+    },
   },
   'assistantMetadata.bodyParams': {
     type: 'assistantsearchparams',
-    paramsType: SEARCH_PARAMETER_TYPES.BODY,
+    paramMeta: {
+      paramLocation: PARAMETER_LOCATION.BODY,
+    },
   },
 };

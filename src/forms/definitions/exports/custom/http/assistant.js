@@ -167,13 +167,15 @@ export default function assistantDefinition(
           value: !isEmpty(assistantConfig.queryParams)
             ? assistantConfig.queryParams
             : undefined,
-          fieldMeta: operationDetails.queryParameters,
-          defaultValuesForDeltaExport:
-            assistantConfig.exportType === 'delta' &&
-            operationDetails.delta &&
-            operationDetails.delta.defaults
-              ? operationDetails.delta.defaults
-              : {},
+          paramMeta: {
+            fields: operationDetails.queryParameters,
+            defaultValuesForDeltaExport:
+              assistantConfig.exportType === 'delta' &&
+              operationDetails.delta &&
+              operationDetails.delta.defaults
+                ? operationDetails.delta.defaults
+                : {},
+          },
         };
 
         if (configureQueryParametersField.required) {
@@ -200,7 +202,15 @@ export default function assistantDefinition(
           value: !isEmpty(assistantConfig.bodyParams)
             ? assistantConfig.bodyParams
             : undefined,
-          fieldMeta: operationDetails.bodyParameters,
+          paramMeta: {
+            fields: operationDetails.bodyParameters,
+            defaultValuesForDeltaExport:
+              assistantConfig.exportType === 'delta' &&
+              operationDetails.delta &&
+              operationDetails.delta.defaults
+                ? operationDetails.delta.defaults
+                : {},
+          },
         };
 
         if (configureBodyParametersField.required) {
