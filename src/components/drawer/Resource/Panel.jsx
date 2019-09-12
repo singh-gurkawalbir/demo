@@ -6,9 +6,7 @@ import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-// import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-// import { SCOPES } from '../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,17 +63,6 @@ export default function Panel(props) {
         variant: 'success',
       });
 
-      // const { resourceId, patchPath } = location.state;
-      // const patchSet = [
-      //   { op: 'replace', path: patchPath, value: newResourceId },
-      // ];
-
-      // console.log(`patching ${resourceId}`, patchSet);
-      // Apply the new patch to the session
-      // dispatch(
-      //   actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE)
-      // );
-
       onClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +70,7 @@ export default function Panel(props) {
 
   function handleSubmitComplete() {
     if (isNew) {
-      props.history.replace(getEditUrl(id), location.state);
+      props.history.replace(getEditUrl(id));
     }
   }
 

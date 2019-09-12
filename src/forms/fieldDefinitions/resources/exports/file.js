@@ -16,9 +16,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Utf8', value: 'utf8' },
-          { label: 'Win1252', value: 'win1252' },
-          { label: 'Utf-16le', value: 'utf-16le' },
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
         ],
       },
     ],
@@ -29,13 +29,13 @@ export default {
     options: [
       {
         items: [
-          { label: 'Csv', value: 'csv' },
-          { label: 'Json', value: 'json' },
-          { label: 'Xlsx', value: 'xlsx' },
-          { label: 'Xml', value: 'xml' },
-          // { label: 'Filedefinition', value: 'filedefinition' },
-          { label: 'Edi', value: 'edi' },
-          { label: 'Fixed width', value: 'fixedWidth' },
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' },
+          { label: 'XLSX', value: 'xlsx' },
+          { label: 'XML', value: 'xml' },
+          { label: 'EDI X12', value: 'filedefinition' },
+          { label: 'Fixed Width', value: 'fixed' },
+          { label: 'EDIFACT', value: 'delimited/edifact' },
         ],
       },
     ],
@@ -48,7 +48,7 @@ export default {
         items: [
           { label: 'Records', value: 'records' },
           { label: 'Metadata', value: 'metadata' },
-          { label: 'BlobKeys', value: 'blobKeys' },
+          { label: 'Blob Keys', value: 'blobKeys' },
         ],
       },
     ],
@@ -58,9 +58,9 @@ export default {
     label: 'Leave File On Server',
   },
   'file.compressionFormat': {
-    type: 'checkbox',
-    label: 'Decompress files of Gzip file format',
-    options: [{ items: [{ label: 'Gzip', value: 'gzip' }] }],
+    type: 'select',
+    label: 'Compression Format',
+    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.purgeInternalBackup': {
     type: 'checkbox',
@@ -77,11 +77,11 @@ export default {
     options: [
       {
         items: [
-          { label: 'Comma', value: 'comma' },
-          { label: 'Pipe', value: 'pipe' },
-          { label: 'Semicolumn', value: 'semicolumn' },
-          { label: 'Space', value: 'space' },
-          { label: 'Tab', value: 'tab' },
+          { label: 'Comma', value: ',' },
+          { label: 'Pipe', value: '|' },
+          { label: 'Semicolumn', value: ';' },
+          { label: 'Space', value: ' ' },
+          { label: 'Tab', value: '\t' },
         ],
       },
     ],
@@ -125,7 +125,6 @@ export default {
     valueName: 'value',
     valueType: 'array',
     label: 'File xlsx key Columns',
-    validWhen: [],
   },
   'file.xml.resourcePath': {
     type: 'text',
