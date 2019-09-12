@@ -86,6 +86,9 @@ export default function SelectApplication(props) {
       boxSizing: 'borderBox',
       transition: 'all 100ms ease 0s',
       outline: `0px !important`,
+      '&:hover': {
+        borderColor: theme.palette.primary.main,
+      },
     }),
     input: () => ({
       color: theme.palette.secondary.light,
