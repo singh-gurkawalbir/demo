@@ -82,6 +82,11 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  MongodbImport: 'mongodb',
+  S3Import: 's3',
+  WrapperImport: 'wrapper',
+  AS2Import: 'as2',
+  RDBMSImport: 'rdbms',
   SalesforceExport: 'salesforce',
 };
 
