@@ -274,7 +274,7 @@ export function getExportOperationDetails({
     paging: {},
     queryParameters: [],
     pathParameters: [],
-    headers: [],
+    headers: {},
     ...operationDetails,
   };
 }

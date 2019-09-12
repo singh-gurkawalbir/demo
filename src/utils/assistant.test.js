@@ -7,6 +7,7 @@ import {
   getExportVersionAndResource,
   getVersionDetails,
   getResourceDetails,
+  getExportOperationDetails,
   getParamValue,
   generateValidReactFormFieldId,
   convertToReactFormFields,
@@ -470,8 +471,175 @@ describe('getVersionDetails', () => {
   );
 });
 
-describe('getResourceDetails TODO', () => {
-  const testCases = [[{}, undefined, undefined, undefined]];
+describe('getResourceDetails', () => {
+  const testCases = [
+    [{}, undefined, undefined, undefined],
+    [
+      { id: 'r1' },
+      undefined,
+      'r1',
+      { versions: [{ version: 'v1', resources: [{ id: 'r1' }] }] },
+    ],
+    [
+      { id: 'r2', some: 'thing' },
+      'v2',
+      'r2',
+      {
+        versions: [
+          { version: 'v1', resources: [{ id: 'r1' }, { id: 'r2' }] },
+          {
+            version: 'v2',
+            resources: [{ id: 'r1' }, { id: 'r2', some: 'thing' }],
+          },
+        ],
+      },
+    ],
+    [
+      { id: 'r2', some: 'thing', paging: { some: 'thing', someThing: 'else' } },
+      'v2',
+      'r2',
+      {
+        paging: { some: 'thing', someThing: 'else' },
+        versions: [
+          { version: 'v1', resources: [{ id: 'r1' }, { id: 'r2' }] },
+          {
+            version: 'v2',
+            resources: [{ id: 'r1' }, { id: 'r2', some: 'thing' }],
+          },
+        ],
+      },
+    ],
+    [
+      { id: 'r2', some: 'thing', paging: { abc: 'def', ghi: 'jkl' } },
+      'v2',
+      'r2',
+      {
+        paging: { some: 'thing', someThing: 'else' },
+        versions: [
+          { version: 'v1', resources: [{ id: 'r1' }, { id: 'r2' }] },
+          {
+            version: 'v2',
+            paging: { abc: 'def', ghi: 'jkl' },
+            resources: [{ id: 'r1' }, { id: 'r2', some: 'thing' }],
+          },
+        ],
+      },
+    ],
+    [
+      { id: 'r2', some: 'thing', doesNotSupportPaging: true },
+      'v2',
+      'r2',
+      {
+        paging: { some: 'thing', someThing: 'else' },
+        versions: [
+          { version: 'v1', resources: [{ id: 'r1' }, { id: 'r2' }] },
+          {
+            version: 'v2',
+            paging: { abc: 'def', ghi: 'jkl' },
+            resources: [
+              { id: 'r1' },
+              { id: 'r2', some: 'thing', doesNotSupportPaging: true },
+            ],
+          },
+        ],
+      },
+    ],
+    [
+      { id: 'r2', some: 'thing', paging: { xyz: 'abc' } },
+      'v2',
+      'r2',
+      {
+        paging: { some: 'thing', someThing: 'else' },
+        versions: [
+          { version: 'v1', resources: [{ id: 'r1' }, { id: 'r2' }] },
+          {
+            version: 'v2',
+            paging: { abc: 'def', ghi: 'jkl' },
+            resources: [
+              { id: 'r1' },
+              { id: 'r2', some: 'thing', paging: { xyz: 'abc' } },
+            ],
+          },
+        ],
+      },
+    ],
+    [
+      {
+        id: 'r1',
+        something: 'else',
+        headers: {
+          h1: 'v1',
+          h2: 'v2_version',
+          h3: 'h3_resource',
+          h4: 'something',
+        },
+        queryParameters: [
+          {
+            id: 'qp3',
+            somethingElse: 'resource',
+          },
+          {
+            id: 'qp4',
+          },
+          {
+            id: 'qp2',
+            something: 'version',
+          },
+          {
+            id: 'qp1',
+          },
+        ],
+      },
+      undefined,
+      'r1',
+      {
+        headers: { h1: 'v1', h2: 'v2', h3: 'v3' },
+        queryParameters: [
+          {
+            id: 'qp1',
+          },
+          {
+            id: 'qp2',
+          },
+          {
+            id: 'qp3',
+          },
+        ],
+        versions: [
+          {
+            version: 'v1',
+            headers: { h2: 'v2_version', h3: 'v3_version' },
+            queryParameters: [
+              {
+                id: 'qp2',
+                something: 'version',
+              },
+              {
+                id: 'qp3',
+                something: 'version',
+              },
+            ],
+            resources: [
+              {
+                id: 'r1',
+                something: 'else',
+                headers: { h3: 'h3_resource', h4: 'something' },
+                queryParameters: [
+                  {
+                    id: 'qp3',
+                    somethingElse: 'resource',
+                  },
+                  {
+                    id: 'qp4',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  ];
 
   each(testCases).test(
     'should return %o when version = %s, resource = %s and assistantData = %o',
@@ -480,6 +648,144 @@ describe('getResourceDetails TODO', () => {
         getResourceDetails({
           version,
           resource,
+          assistantData,
+        })
+      ).toEqual(expected);
+    }
+  );
+});
+
+describe('getExportOperationDetails', () => {
+  const testCases = [
+    [
+      { headers: {}, paging: {}, pathParameters: [], queryParameters: [] },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ],
+    [
+      {
+        headers: {},
+        paging: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            { version: 'v1' },
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r1',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+                {
+                  id: 'r2',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                    },
+                  ],
+                },
+                {
+                  id: 'r3',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r3',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r3',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        id: 'op1',
+        some: 'r1',
+        allowUndefinedResource: true,
+        headers: { h1: 'v1', h2: 'v2' },
+        paging: { abc: 'def' },
+        queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+        successMediaType: 'something',
+        successPath: 'something else',
+        pathParameters: [{ id: 'pp1' }],
+      },
+      'v1',
+      'r1',
+      'op1',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v1',
+              resources: [
+                {
+                  id: 'r1',
+                  allowUndefinedResource: true,
+                  delta: { some: 'thing' },
+                  headers: { h1: 'v1', h2: 'v2' },
+                  paging: { abc: 'def' },
+                  queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+                  successMediaType: 'something',
+                  successPath: 'something else',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                      pathParameters: [{ id: 'pp1' }],
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when version = %s, resource = %s, operation = %s and assistantData = %o',
+    (expected, version, resource, operation, assistantData) => {
+      expect(
+        getExportOperationDetails({
+          version,
+          resource,
+          operation,
           assistantData,
         })
       ).toEqual(expected);
