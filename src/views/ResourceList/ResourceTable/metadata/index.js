@@ -5,6 +5,7 @@ import imports from './imports';
 import templates from './templates';
 import scripts from './scripts';
 import stacks from './stacks';
+import registerConnections from './registerConnections';
 import defaultResource from './default';
 
 const metadata = {
@@ -15,6 +16,7 @@ const metadata = {
   templates,
   scripts,
   stacks,
+  registerConnections,
 };
 
 export default function(resourceType) {
