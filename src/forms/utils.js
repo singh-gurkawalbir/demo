@@ -3,14 +3,14 @@ import jsonPatch from 'fast-json-patch';
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
 
-  const { fieldReferences } = meta;
+  const { fieldMap } = meta;
 
-  if (!fieldReferences) return null;
-  const foundFieldRefKey = Object.keys(fieldReferences)
-    .filter(key => findFieldFunction(fieldReferences[key]))
+  if (!fieldMap) return null;
+  const foundFieldRefKey = Object.keys(fieldMap)
+    .filter(key => findFieldFunction(fieldMap[key]))
     .map(key => ({
       fieldReference: key,
-      field: fieldReferences[key],
+      field: fieldMap[key],
     }));
 
   if (foundFieldRefKey && foundFieldRefKey[0]) return foundFieldRefKey[0];
@@ -27,13 +27,13 @@ export const defaultPatchSetConverter = values =>
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
 const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
-  if (!meta || !meta.layout || !meta.fieldReferences) return null;
+  if (!meta || !meta.layout || !meta.fieldMap) return null;
 
-  const { layout, fieldReferences } = meta;
+  const { layout, fieldMap } = meta;
   const { fields, containers } = layout;
 
   if (fields && fields.length > 0) {
-    const foundFieldIndex = fields.findIndex(f => byId(fieldReferences[f], id));
+    const foundFieldIndex = fields.findIndex(f => byId(fieldMap[f], id));
 
     if (foundFieldIndex !== -1) {
       let res = queryRes;
@@ -50,7 +50,7 @@ const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
       .map((container, index) =>
         fieldSearchQueryObj(
           {
-            fieldReferences,
+            fieldMap,
             layout: container,
           },
           id,

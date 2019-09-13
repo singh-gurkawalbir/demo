@@ -60,14 +60,14 @@ export function* patchFormField({
     patchFieldReference = [
       {
         op,
-        path: `/customForm/form/fieldReferences/${value && value.id}`,
+        path: `/customForm/form/fieldMap/${value && value.id}`,
         value,
       },
     ];
     patchLayout = [{ op, path, value: value && value.id }];
   } else {
     patchFieldReference = [
-      { op, path: `/customForm/form/fieldReferences/${fieldReference}`, value },
+      { op, path: `/customForm/form/fieldMap/${fieldReference}`, value },
     ];
   }
 

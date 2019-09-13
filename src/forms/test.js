@@ -16,7 +16,7 @@ jest.mock('./definitions/index', () => ({
     someResourceType: {
       subForms: {
         someSubform: {
-          fieldReferences: {
+          fieldMap: {
             someField: {
               fieldId: 'someField',
               someProp: 'foo',
@@ -33,7 +33,7 @@ jest.mock('./definitions/index', () => ({
           },
         },
         common: {
-          fieldReferences: {
+          fieldMap: {
             someField: {
               fieldId: 'someField',
               someProp: 'foo',
@@ -44,13 +44,13 @@ jest.mock('./definitions/index', () => ({
             fields: ['someField'],
           },
         },
-        bunchOfFieldsWithoutFieldReferences: {
+        bunchOfFieldsWithoutfieldMap: {
           layout: {
-            fields: ['bunchOfFieldsWithoutFieldReferences'],
+            fields: ['bunchOfFieldsWithoutfieldMap'],
           },
         },
         bunchOfFieldsWithoutLayoutFields: {
-          fieldReferences: {
+          fieldMap: {
             someField: {
               fieldId: 'someField',
               someProp: 'foo',
@@ -64,7 +64,7 @@ jest.mock('./definitions/index', () => ({
               return fields.find(field => field.id === 'someField').value;
             }
           },
-          fieldReferences: {
+          fieldMap: {
             someField: {
               fieldId: 'someField',
               someProp: 'foo',
@@ -242,7 +242,7 @@ describe('Form Utils', () => {
   describe('getPatchPathFromCustomForms', () => {
     test('should return null for meta having a non-existent field ', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: {
             fieldId: 'exportData',
             visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
@@ -258,7 +258,7 @@ describe('Form Utils', () => {
     });
     test('should generate field path for meta having just fields in the root ', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: {
             fieldId: 'exportData',
             visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
@@ -274,7 +274,7 @@ describe('Form Utils', () => {
     });
     test('should generate field path for meta having fields in containers ', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: {
             fieldId: 'exportData',
             visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
@@ -298,7 +298,7 @@ describe('Form Utils', () => {
 
     test('generate field path for meta having fields in containers and in the root', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           someField: {
             fieldId: 'someField',
             visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
@@ -326,7 +326,7 @@ describe('Form Utils', () => {
 
     test('generate field path for meta having fields in deep containers', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           someField: {
             fieldId: 'someField',
             visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
@@ -366,7 +366,7 @@ describe('Form Utils', () => {
   describe('search field by id through the layout ', () => {
     test('should correctly search for a field in the metadata', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: {
             fieldId: 'exportData',
             name: '/exportData',
@@ -389,10 +389,10 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('search field by name through the fieldReferences ', () => {
-    test('should correctly search for a field in the fieldReferences', () => {
+  describe('search field by name through the fieldMap ', () => {
+    test('should correctly search for a field in the fieldMap', () => {
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: {
             fieldId: 'exportData',
             name: '/exportData',
@@ -425,7 +425,7 @@ describe('form factory new layout', () => {
       const resourceType = 'someResourceType';
       const resource = {};
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
@@ -446,7 +446,7 @@ describe('form factory new layout', () => {
         resource
       );
 
-      expect(val.fieldReferences).toEqual({
+      expect(val.fieldMap).toEqual({
         exportData: {
           defaultValue: '',
           fieldId: 'exportData',
@@ -472,7 +472,7 @@ describe('form factory new layout', () => {
       const resourceType = 'someResourceType';
       const resource = {};
       const testMeta = {
-        fieldReferences: {
+        fieldMap: {
           exportData: { fieldId: 'exportData', someProp: 'blah' },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
@@ -498,7 +498,7 @@ describe('form factory new layout', () => {
         resource
       );
 
-      expect(val.fieldReferences).toEqual({
+      expect(val.fieldMap).toEqual({
         exportData: {
           defaultValue: '',
           fieldId: 'exportData',
@@ -541,7 +541,7 @@ describe('form factory new layout', () => {
         const resource = {};
         // metadata with a form visibility rule
         const testMeta = {
-          fieldReferences: {
+          fieldMap: {
             common: {
               formId: 'common',
               visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
@@ -565,7 +565,7 @@ describe('form factory new layout', () => {
         );
 
         expect(val).toEqual({
-          fieldReferences: {
+          fieldMap: {
             someField: {
               defaultValue: '',
               fieldId: 'someField',
@@ -597,7 +597,7 @@ describe('form factory new layout', () => {
         const resource = {};
         // metadata with a form visibility rule
         const testMeta = {
-          fieldReferences: {
+          fieldMap: {
             'file.decompressFiles': { fieldId: 'file.decompressFiles' },
             someSubform: {
               formId: 'someSubform',
@@ -623,7 +623,7 @@ describe('form factory new layout', () => {
         // we are checking if its flatteing in the references and layout correctly
         expect(val).toEqual({
           actions: undefined,
-          fieldReferences: {
+          fieldMap: {
             'custom.Field': {
               defaultValue: '',
               fieldId: 'custom.Field',
@@ -693,14 +693,14 @@ describe('form factory new layout', () => {
         });
       });
 
-      test('should throw an error when fieldReferences do not exist for the subform', () => {
+      test('should throw an error when fieldMap do not exist for the subform', () => {
         const resourceType = 'someResourceType';
         const resource = {};
         // metadata with a form visibility rule
         const testMeta = {
-          fieldReferences: {
-            bunchOfFieldsWithoutFieldReferences: {
-              formId: 'bunchOfFieldsWithoutFieldReferences',
+          fieldMap: {
+            bunchOfFieldsWithoutfieldMap: {
+              formId: 'bunchOfFieldsWithoutfieldMap',
               visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
             },
           },
@@ -709,7 +709,7 @@ describe('form factory new layout', () => {
             containers: [
               {
                 label: 'optional some label or tab name',
-                fields: ['bunchOfFieldsWithoutFieldReferences'],
+                fields: ['bunchOfFieldsWithoutfieldMap'],
               },
             ],
           },
@@ -720,7 +720,7 @@ describe('form factory new layout', () => {
           fail();
         } catch (e) {
           expect(e.message).toEqual(
-            'could not find fieldReferences for given form id bunchOfFieldsWithoutFieldReferences'
+            'could not find fieldMap for given form id bunchOfFieldsWithoutfieldMap'
           );
         }
       });
@@ -733,7 +733,7 @@ describe('getFieldsWithoutFuncs ', () => {
     const resourceType = 'someResourceType';
     const resource = {};
     const testMeta = {
-      fieldReferences: {
+      fieldMap: {
         common: {
           formId: 'common',
           visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
@@ -755,7 +755,7 @@ describe('getFieldsWithoutFuncs ', () => {
       resource,
       resourceType
     );
-    const expectedFieldReferences = {
+    const expectedfieldMap = {
       exportData: {
         defaultValue: '',
         fieldId: 'exportData',
@@ -787,7 +787,7 @@ describe('getFieldsWithoutFuncs ', () => {
       },
     };
 
-    expect(val.fieldReferences).toEqual(expectedFieldReferences);
+    expect(val.fieldMap).toEqual(expectedfieldMap);
 
     expect(val.extractedInitFunctions.exportData.someFuncProp('xyz')).toEqual(
       'xyz'
@@ -797,7 +797,7 @@ describe('getFieldsWithoutFuncs ', () => {
     const resourceType = 'someResourceType';
     const resource = {};
     const testMeta = {
-      fieldReferences: {
+      fieldMap: {
         common: {
           formId: 'common',
           visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
@@ -845,7 +845,7 @@ describe('form factory options handler amalgamation getAmalgamatedOptionsHandler
           return 'someValue';
         }
       },
-      fieldReferences: {
+      fieldMap: {
         bunchOffieldsWithOptionsHanlders: {
           formId: 'bunchOffieldsWithOptionsHanlders',
           visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],

@@ -39,7 +39,7 @@ const mapStateToProps = (state, { match }) => {
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const newResourceId = selectors.createdResourceId(state, id);
-  // exclude add fieldReferences patches as well as the initial custom form patch
+  // exclude add fieldMap patches as well as the initial custom form patch
   /*
 
   */
@@ -51,7 +51,7 @@ const mapStateToProps = (state, { match }) => {
           patch =>
             !(
               patch.op === 'add' &&
-              patch.path.startsWith('/customForm/form/fieldReferences/')
+              patch.path.startsWith('/customForm/form/fieldMap/')
             )
         ).length) ||
     0;

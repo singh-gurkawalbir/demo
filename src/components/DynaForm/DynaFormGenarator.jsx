@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 const TabComponent = props => {
-  const { containers, classes, fieldReferences } = props;
+  const { containers, classes, fieldMap } = props;
   const [selectedTab, setSelectedTab] = useState(0);
   const tabs = containers.map((set, index) => {
     const { label: header } = set;
@@ -42,7 +42,7 @@ const TabComponent = props => {
       // eslint-disable-next-line react/no-array-index-key
       <div key={index} className={classes.child}>
         {selectedTab === index && (
-          <FormGenerator layout={layout} fieldReferences={fieldReferences} />
+          <FormGenerator layout={layout} fieldMap={fieldMap} />
         )}
       </div>
     );
@@ -63,7 +63,7 @@ const TabComponent = props => {
 };
 
 const CollapsedComponents = props => {
-  const { containers, fieldReferences, classes } = props;
+  const { containers, fieldMap, classes } = props;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
@@ -79,7 +79,7 @@ const CollapsedComponents = props => {
             <Typography>{header}</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <FormGenerator layout={rest} fieldReferences={fieldReferences} />
+            <FormGenerator layout={rest} fieldMap={fieldMap} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
       );
@@ -89,7 +89,7 @@ const CollapsedComponents = props => {
 };
 
 const ColumnComponents = props => {
-  const { containers, fieldReferences, classes } = props;
+  const { containers, fieldMap, classes } = props;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
@@ -99,7 +99,7 @@ const ColumnComponents = props => {
         // eslint-disable-next-line react/no-array-index-key
         <div key={index} className={classes.child}>
           {header && <Typography>{header}</Typography>}
-          <FormGenerator layout={rest} fieldReferences={fieldReferences} />
+          <FormGenerator layout={rest} fieldMap={fieldMap} />
         </div>
       );
     });
@@ -107,9 +107,9 @@ const ColumnComponents = props => {
   return <div className={classes.container}>{transformedContainers}</div>;
 };
 
-const getCorrespondingFieldReferences = (fields, fieldReferences) =>
+const getCorrespondingfieldMap = (fields, fieldMap) =>
   fields.map(field => {
-    const transformedFieldValue = fieldReferences[field];
+    const transformedFieldValue = fieldMap[field];
 
     if (!transformedFieldValue) {
       // eslint-disable-next-line no-console
@@ -124,13 +124,13 @@ const getCorrespondingFieldReferences = (fields, fieldReferences) =>
 export default function FormGenerator(props) {
   const classes = useStyles();
 
-  if (!props || !props.layout || !props.fieldReferences) return null;
-  const { fieldReferences, layout } = props;
+  if (!props || !props.layout || !props.fieldMap) return null;
+  const { fieldMap, layout } = props;
   const { fields, containers, type } = layout;
   const fieldsComponent = fields && (
     <FormFragment
       className={classes.child}
-      defaultFields={getCorrespondingFieldReferences(fields, fieldReferences)}
+      defaultFields={getCorrespondingfieldMap(fields, fieldMap)}
     />
   );
   let ConvertedContainer;
@@ -151,7 +151,7 @@ export default function FormGenerator(props) {
               // eslint-disable-next-line react/no-array-index-key
               key={index}
               classes={classes}
-              fieldReferences={fieldReferences}
+              fieldMap={fieldMap}
               layout={container}
             />
           ))}
@@ -164,7 +164,7 @@ export default function FormGenerator(props) {
       {fieldsComponent}
       <ConvertedContainer
         classes={classes}
-        fieldReferences={fieldReferences}
+        fieldMap={fieldMap}
         containers={containers}
       />
     </div>

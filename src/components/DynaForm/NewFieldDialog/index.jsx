@@ -284,9 +284,9 @@ export default function NewFieldDialog(props) {
         <div className={classes.fieldPreview}>
           {DynaField && (
             <Form key={count}>
-              <FormContext>
+              <FormContext.Consumer>
                 {form => <DynaField {...form} {...meta} />}
-              </FormContext>
+              </FormContext.Consumer>
             </Form>
           )}
         </div>

@@ -42,7 +42,7 @@ export default class DynaForm extends Component {
       full,
       ...rest
     } = this.props;
-    const { layout, fieldReferences } = fieldMeta;
+    const { layout, fieldMap } = fieldMeta;
     const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
 
     if (!layout) {
@@ -52,10 +52,7 @@ export default class DynaForm extends Component {
     return (
       <Form {...rest} renderer={renderer}>
         <div className={clsx(classes.fieldContainer, className)}>
-          <DynaFormGenerator
-            layout={layout}
-            fieldReferences={fieldReferences}
-          />
+          <DynaFormGenerator layout={layout} fieldMap={fieldMap} />
         </div>
         {/* The children are action buttons for the form */}
 
