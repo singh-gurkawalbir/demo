@@ -9,7 +9,7 @@ import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
-import integrationApps, * as fromIntegrationApps from './integrationApps/installer';
+import integrationApps, * as fromIntegrationApps from './integrationApps';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({

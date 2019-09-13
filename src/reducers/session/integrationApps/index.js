@@ -6,5 +6,5 @@ export default combineReducers({
 });
 
 export function integrationAppsInstaller(state, id) {
-  return fromInstaller.integrationAppsInstaller(state, id);
+  return fromInstaller.integrationAppsInstaller(state.installer, id);
 }

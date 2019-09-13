@@ -4,11 +4,11 @@ import actionTypes from '../../../actions/types';
 export default (state = {}, action) => {
   const { id, type } = action;
 
-  if (!id) {
-    return {};
-  }
-
   return produce(state, draft => {
+    if (!id) {
+      return;
+    }
+
     if (!draft[id]) {
       draft[id] = {};
     }
