@@ -30,6 +30,8 @@ import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaAssistantOptions from './assistant/DynaAssistantOptions';
+import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaRawData from './DynaRawData';
 import DynaSampleData from './DynaSampleData';
@@ -71,5 +73,7 @@ export default {
   nssavedsearch: DynaNSSavedSearch,
   rawdata: DynaRawData,
   sampledata: DynaSampleData,
+  assistantoptions: DynaAssistantOptions,
+  assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
 };
