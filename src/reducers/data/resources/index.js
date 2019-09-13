@@ -135,6 +135,12 @@ export function resource(state, resourceType, id) {
 
   if (!match) return null;
 
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (match.assistant && !match.assistantMetadata) {
+      match.assistantMetadata = {};
+    }
+  }
+
   return match;
 }
 

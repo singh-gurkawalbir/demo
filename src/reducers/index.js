@@ -1260,3 +1260,10 @@ export function jobErrors(state, jobId) {
 export function jobErrorRetryObject(state, retryId) {
   return fromData.jobErrorRetryObject(state.data, retryId);
 }
+
+export function assistantData(state, { adaptorType, assistant }) {
+  return fromSession.assistantData(state.session, {
+    adaptorType,
+    assistant,
+  });
+}
