@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
-    padding: theme.spacing(3),
     // border: 'solid 1px lightgrey',
   },
   generatorContainer: {
@@ -57,6 +56,13 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     textAlign: 'center',
+  },
+  generatorRoot: {
+    backgroundColor: 'rgba(0,0,0,0.02)',
+    padding: theme.spacing(3, 0, 3, 3),
+  },
+  processorRoot: {
+    padding: theme.spacing(3, 3, 3, 0),
   },
 }));
 const pageGenerators = [
@@ -133,7 +139,7 @@ function FlowBuilder(props) {
           }}>
           <div className={classes.canvas}>
             {/* CANVAS START */}
-            <div>
+            <div className={classes.generatorRoot}>
               <Typography className={classes.title} variant="h6">
                 SOURCE APPLICATIONS
               </Typography>
@@ -143,13 +149,13 @@ function FlowBuilder(props) {
                   <PageGenerator
                     key={pg.name}
                     name={pg.name}
-                    isFirst={i === 1}
+                    index={i}
                     isLast={pageProcessors.length === i + 1}
                   />
                 ))}
               </div>
             </div>
-            <div>
+            <div className={classes.processorRoot}>
               <Typography className={classes.title} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
               </Typography>
@@ -159,7 +165,6 @@ function FlowBuilder(props) {
                     {...pp}
                     key={pp.name}
                     index={i}
-                    isFirst={i === 1}
                     isLast={pageProcessors.length === i + 1}
                     onMove={handleMove}
                   />
