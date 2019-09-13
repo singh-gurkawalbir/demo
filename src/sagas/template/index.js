@@ -19,15 +19,15 @@ export function* downloadZip({ id }) {
   window.open(response.signedURL, 'target=_blank', response.options, false);
 }
 
-export function* publish({ item, resourceType }) {
-  const path = `/templates/${item._id}`;
+export function* publish({ resource, resourceType }) {
+  const path = `/${resourceType}/${resource._id}`;
 
   try {
     yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'PUT',
-        body: { ...item, published: !item.published },
+        body: { ...resource, published: !resource.published },
       },
     });
   } catch (e) {
@@ -35,8 +35,8 @@ export function* publish({ item, resourceType }) {
   }
 
   yield put(
-    actions.resource.update(resourceType, item._id, {
-      published: !item.published,
+    actions.resource.update(resourceType, resource._id, {
+      published: !resource.published,
     })
   );
 }

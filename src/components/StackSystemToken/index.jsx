@@ -28,7 +28,7 @@ export default function StackSystemToken({ stackId }) {
     dispatch(actions.stack.displayToken(stackId));
   };
 
-  const changeSystemToken = () => {
+  const generateSystemToken = () => {
     dispatch(actions.stack.generateToken(stackId));
   };
 
@@ -45,7 +45,7 @@ export default function StackSystemToken({ stackId }) {
       </Typography>
       {systemToken && (
         <IconButton
-          title="Copy ot clipboard"
+          title="Copy to clipboard"
           onClick={copyToClipboard(systemToken)}
           size="small">
           <CopyIcon />
@@ -60,8 +60,8 @@ export default function StackSystemToken({ stackId }) {
         </IconButton>
       )}
       <IconButton
-        title="Re-generate Token"
-        onClick={changeSystemToken}
+        title="Regenerate Token"
+        onClick={generateSystemToken}
         size="small">
         <GenerateIcon />
       </IconButton>

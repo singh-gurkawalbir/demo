@@ -37,12 +37,12 @@ describe('downloadZip sagas', () => {
 });
 
 describe('publish sagas', () => {
-  const item = { _id: '123', published: true };
+  const resource = { _id: '123', published: true };
   const resourceType = 'templates';
-  const path = `/templates/${item._id}`;
+  const path = `/${resourceType}/${resource._id}`;
 
   test('should succeed on successful api call', () => {
-    const saga = publish({ item, resourceType });
+    const saga = publish({ resource, resourceType });
     const callEffect = saga.next().value;
 
     expect(callEffect).toEqual(
@@ -50,7 +50,7 @@ describe('publish sagas', () => {
         path,
         opts: {
           method: 'PUT',
-          body: { ...item, published: !item.published },
+          body: { ...resource, published: !resource.published },
         },
       })
     );
@@ -58,8 +58,8 @@ describe('publish sagas', () => {
 
     expect(effect).toEqual(
       put(
-        actions.resource.update(resourceType, item._id, {
-          published: !item.published,
+        actions.resource.update(resourceType, resource._id, {
+          published: !resource.published,
         })
       )
     );
@@ -67,7 +67,7 @@ describe('publish sagas', () => {
     expect(saga.next().done).toEqual(true);
   });
   test('should return undefined if api call fails', () => {
-    const saga = publish({ item, resourceType });
+    const saga = publish({ resource, resourceType });
     const callEffect = saga.next().value;
 
     expect(callEffect).toEqual(
@@ -75,7 +75,7 @@ describe('publish sagas', () => {
         path,
         opts: {
           method: 'PUT',
-          body: { ...item, published: !item.published },
+          body: { ...resource, published: !resource.published },
         },
       })
     );

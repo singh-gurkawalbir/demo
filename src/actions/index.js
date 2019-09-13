@@ -363,8 +363,8 @@ const agent = {
 };
 const template = {
   downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
-  publish: (item, resourceType) =>
-    action(actionTypes.TEMPLATE.PUBLISH, { item, resourceType }),
+  publish: (resource, resourceType) =>
+    action(actionTypes.TEMPLATE.PUBLISH, { resource, resourceType }),
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };

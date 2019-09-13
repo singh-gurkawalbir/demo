@@ -177,7 +177,7 @@ export default function ResourceTable({
                 </TableCell>
               )
             )}
-            {!r.shared && rowActions && (
+            {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
                   actions={rowActions.map(({ label, component: Action }) => ({
