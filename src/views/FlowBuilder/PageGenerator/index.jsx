@@ -3,11 +3,11 @@ import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '10vw',
-    height: '10vh',
+    width: 150,
+    height: 150,
     border: 'solid 1px lightblue',
     padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    margin: theme.spacing(3),
   },
 }));
 const PageGenerator = ({ name }) => {

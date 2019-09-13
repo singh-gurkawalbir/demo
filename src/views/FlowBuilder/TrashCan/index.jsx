@@ -45,7 +45,7 @@ export default function TrashCan({ className, onDrop, ...rest }) {
   drop(ref);
 
   return (
-    <Tooltip title="Drag applications here to delete">
+    <Tooltip title="Drag applications here to delete" placement="top">
       <IconButton
         aria-label="delete"
         ref={ref}

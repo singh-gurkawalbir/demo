@@ -33,21 +33,18 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     display: 'flex',
+    overflow: 'auto',
     // border: 'solid 1px lightgrey',
   },
   generatorContainer: {
+    width: 250,
     display: 'flex',
     flexDirection: 'column',
-    width: 250,
-    overflowY: 'auto',
   },
   processorContainer: {
     display: 'flex',
-    flexGrow: '1',
-    overflowX: 'auto',
-  },
-  processorBlocks: {
-    display: 'flex',
+    alignItems: 'flex-start',
+    paddingRight: theme.spacing(3),
   },
   trash: {
     position: 'absolute',
@@ -77,7 +74,7 @@ function FlowBuilder(props) {
     { _id: 33, name: 'p3' },
     { _id: 44, name: 'p4' },
   ]);
-  const moveItem = useCallback(
+  const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -85,16 +82,6 @@ function FlowBuilder(props) {
       newOrder.splice(dragIndex, 1);
       newOrder.splice(hoverIndex, 0, dragItem);
       setPageProcessors(newOrder);
-
-      // Below ghost code can be deleted once code review is done.
-      // The below 'update' function is an example of another immutable
-      // library that helps simplify common mutation patterns as in
-      // the code above.
-      // update(pageProcessors, {
-      //   $splice: [[dragIndex, 1], [hoverIndex, 0, dragItem]],
-      // })
-      //
-      // {$splice: array of arrays} for each item in arrays call splice() on the target with the parameters
     },
     [pageProcessors]
   );
@@ -107,8 +94,14 @@ function FlowBuilder(props) {
     },
     [pageProcessors]
   );
-  const renderPageProcessor = (pp, index) => (
-    <PageProcessor {...pp} key={pp.name} index={index} moveItem={moveItem} />
+  const renderPageProcessor = (pp, index, isLast) => (
+    <PageProcessor
+      {...pp}
+      key={pp.name}
+      index={index}
+      isLast={isLast}
+      onMove={handleMove}
+    />
   );
 
   return (
@@ -145,15 +138,17 @@ function FlowBuilder(props) {
           }}>
           <div className={classes.canvas}>
             {/* CANVAS START */}
+
             <div className={classes.generatorContainer}>
               {pageGenerators.map(pg => (
                 <PageGenerator key={pg.name} name={pg.name} />
               ))}
             </div>
+
             <div className={classes.processorContainer}>
-              <div className={classes.processorBlocks}>
-                {pageProcessors.map((pp, i) => renderPageProcessor(pp, i))}
-              </div>
+              {pageProcessors.map((pp, i) =>
+                renderPageProcessor(pp, i, pageProcessors.length === i + 1)
+              )}
             </div>
           </div>
           <TrashCan
@@ -165,6 +160,7 @@ function FlowBuilder(props) {
                 : 64 + theme.spacing(3),
             }}
           />
+
           {/* CANVAS END */}
         </div>
       </LoadResources>
