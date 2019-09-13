@@ -12,7 +12,9 @@ import {
   generateValidReactFormFieldId,
   convertToReactFormFields,
   updateFormValues,
+  convertToExport,
   PARAMETER_LOCATION,
+  DEFAULT_PROPS,
 } from './assistant';
 
 describe('getMatchingRoute', () => {
@@ -658,7 +660,7 @@ describe('getResourceDetails', () => {
 describe('getExportOperationDetails', () => {
   const testCases = [
     [
-      { headers: {}, paging: {}, pathParameters: [], queryParameters: [] },
+      { headers: {}, pathParameters: [], queryParameters: [] },
       undefined,
       undefined,
       undefined,
@@ -667,7 +669,6 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
-        paging: {},
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -730,6 +731,148 @@ describe('getExportOperationDetails', () => {
     ],
     [
       {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+        doesNotSupportPaging: true,
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            { version: 'v1' },
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r1',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+                {
+                  id: 'r2',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      doesNotSupportPaging: true,
+                    },
+                  ],
+                },
+                {
+                  id: 'r3',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r3',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r3',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+        doesNotSupportPaging: true,
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r2',
+                  delta: { some: 'thing' },
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      doesNotSupportPaging: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r2',
+                  delta: { some: 'thing' },
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      delta: { some: 'thing' },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
         id: 'op1',
         some: 'r1',
         allowUndefinedResource: true,
@@ -763,6 +906,61 @@ describe('getExportOperationDetails', () => {
                       id: 'op1',
                       some: 'r1',
                       pathParameters: [{ id: 'pp1' }],
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        id: 'op1',
+        some: 'r1',
+        allowUndefinedResource: false,
+        headers: { h1: 'v1', h2: 'v22', h3: 'v3' },
+        paging: { abc: 'def' },
+        queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+        successMediaType: 'something',
+        successPath: 'something',
+        pathParameters: [{ id: 'pp1' }],
+        supportedExportTypes: ['delta', 'test'],
+        delta: { something: 'else' },
+      },
+      'v1',
+      'r1',
+      'op1',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v1',
+              resources: [
+                {
+                  id: 'r1',
+                  allowUndefinedResource: true,
+                  delta: { some: 'thing' },
+                  headers: { h1: 'v1', h2: 'v2' },
+                  paging: { abc: 'def' },
+                  queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+                  successMediaType: 'something',
+                  successPath: 'something else',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                      pathParameters: [{ id: 'pp1' }],
+                      allowUndefinedResource: false,
+                      delta: { something: 'else' },
+                      supportedExportTypes: ['delta', 'test'],
+                      headers: { h2: 'v22', h3: 'v3' },
+                      successPath: 'something',
                     },
                     {
                       id: 'op2',
@@ -1345,6 +1543,152 @@ describe('updateFormValues', () => {
     'should return %o when passed  %o ',
     (expected, input) => {
       expect(updateFormValues(input)).toEqual(expected);
+    }
+  );
+});
+
+const assistantData = {
+  export: {
+    versions: [
+      {
+        version: 'v1',
+        resources: [
+          {
+            id: 'r1',
+            endpoints: [
+              {
+                id: 'ep1',
+                url: 'some/thing',
+              },
+              {
+                url: 'some/unique/url',
+              },
+            ],
+          },
+          {
+            id: 'r2',
+            endpoints: [
+              {
+                id: 'ep1',
+                url: 'some/thing',
+              },
+              {
+                id: 'ep2',
+                url: 'some/lists:_id/thing/:_action/some/other/:_action',
+                pathParameters: [
+                  {
+                    id: 'id',
+                    config: {
+                      prefix: "(guid'",
+                      suffix: "')",
+                    },
+                  },
+                  {
+                    id: 'action',
+                  },
+                ],
+                paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+describe('convertToExport', () => {
+  const testCases = [
+    [
+      undefined,
+      {
+        assistantConfig: {},
+      },
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r1',
+          operation: 'ep1',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/thing',
+          allowUndefinedResource: false,
+        },
+      },
+      {
+        assistantConfig: {
+          adaptorType: 'rest',
+          assistant: 'someAssistant',
+          resource: 'r1',
+          operation: 'ep1',
+          assistantData,
+        },
+      },
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r1',
+          operationUrl: 'some/unique/url',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/unique/url',
+          allowUndefinedResource: false,
+        },
+      },
+      {
+        assistantConfig: {
+          adaptorType: 'rest',
+          assistant: 'someAssistant',
+          resource: 'r1',
+          operation: 'some/unique/url',
+          assistantData,
+        },
+      },
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r2',
+          operation: 'ep2',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      {
+        assistantConfig: {
+          adaptorType: 'rest',
+          assistant: 'someAssistant',
+          resource: 'r2',
+          operation: 'ep2',
+          pathParams: { id: 'ABC', action: 'XYZ' },
+          assistantData,
+        },
+      },
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when passed  %o ',
+    (expected, input) => {
+      expect(convertToExport(input)).toEqual(expected);
     }
   );
 });
