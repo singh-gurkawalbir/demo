@@ -152,7 +152,7 @@ export function resourceReferences(state) {
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
-  return fromMetadata.assistantData(state.metadata, {
+  return fromMetadata.assistantData(state && state.metadata, {
     adaptorType,
     assistant,
   });
