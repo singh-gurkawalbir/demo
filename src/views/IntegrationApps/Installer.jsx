@@ -103,7 +103,7 @@ export default function ConnectorInstallation(props) {
         }
 
         dispatch(
-          actions.integrationApps.installer.stepInstallVerify(
+          actions.integrationApps.installer.verifyStepInstall(
             integrationId,
             installerFunction
           )

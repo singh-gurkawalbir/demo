@@ -23,7 +23,7 @@ export function* installStep({ id, installerFunction }) {
 
   if (stepCompleteResponse.success) {
     yield put(
-      actions.integrationApps.installer.stepInstallComplete(
+      actions.integrationApps.installer.completedStepInstall(
         stepCompleteResponse,
         id,
         installerFunction

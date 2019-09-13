@@ -122,7 +122,15 @@ describe('intetgrationApps installer reducer', () => {
         {
           _id: 1,
           name: 'bob',
-          install: [{ a: 1, installerFunction: 'installerFunction' }],
+          install: [
+            { a: 1, installerFunction: 'installerFunction' },
+            { a: 2, installerFunction: 'install2' },
+          ],
+        },
+        {
+          _id: 2,
+          name: 'bob2',
+          install: [{ a: 2, installerFunction: 'install2' }],
         },
       ];
 
@@ -139,7 +147,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -150,7 +157,56 @@ describe('intetgrationApps installer reducer', () => {
           installerFunction: 'installerFunction',
           isCurrentStep: true,
         },
+        {
+          a: 2,
+          installerFunction: 'install2',
+        },
       ]);
+    });
+
+    test('should find the integration with id and update it but should not affect any other integration in the collection', () => {
+      let state;
+      const integrationId = 1;
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [
+            { a: 1, installerFunction: 'installerFunction' },
+            { a: 2, installerFunction: 'install2' },
+          ],
+        },
+        {
+          _id: 2,
+          name: 'bob2',
+          install: [{ a: 2, installerFunction: 'install2' }],
+        },
+        {
+          _id: 3,
+          name: 'bob3',
+          install: [{ a: 3, installerFunction: 'install3' }],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.stepInstallInProgress(
+          integrationId,
+          'installerFunction'
+        )
+      );
+
+      const collectionAfterAction = selectors.resourceList(state, {
+        type: 'integrations',
+      });
+
+      expect(
+        collectionAfterAction.resources.filter(i => i._id !== integrationId)
+      ).toEqual(collection.filter(i => i._id !== integrationId));
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
       let state;
@@ -168,7 +224,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -190,7 +245,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -228,7 +282,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -241,6 +294,51 @@ describe('intetgrationApps installer reducer', () => {
           isCurrentStep: true,
         },
       ]);
+    });
+
+    test('should find the integration with id and update it but should not affect any other integration in the collection', () => {
+      let state;
+      const integrationId = 1;
+      const collection = [
+        {
+          _id: 1,
+          name: 'bob',
+          install: [
+            { a: 1, installerFunction: 'installerFunction' },
+            { a: 2, installerFunction: 'install2' },
+          ],
+        },
+        {
+          _id: 2,
+          name: 'bob2',
+          install: [{ a: 2, installerFunction: 'install2' }],
+        },
+        {
+          _id: 3,
+          name: 'bob3',
+          install: [{ a: 3, installerFunction: 'install3' }],
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', collection)
+      );
+      state = reducer(
+        state,
+        actions.integrationApps.installer.failedStepInstall(
+          integrationId,
+          'installerFunction'
+        )
+      );
+
+      const collectionAfterAction = selectors.resourceList(state, {
+        type: 'integrations',
+      });
+
+      expect(
+        collectionAfterAction.resources.filter(i => i._id !== integrationId)
+      ).toEqual(collection.filter(i => i._id !== integrationId));
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
       let state;
@@ -258,7 +356,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -280,7 +377,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -312,7 +408,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallComplete(
+        actions.integrationApps.installer.completedStepInstall(
           { stepsToUpdate },
           1,
           'installerFunction'
@@ -335,7 +431,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallComplete(
+        actions.integrationApps.installer.completedStepInstall(
           [],
           123,
           'installerFunction'
@@ -343,7 +439,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -358,7 +453,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallComplete(
+        actions.integrationApps.installer.completedStepInstall(
           [],
           1,
           'installerFunction'
@@ -366,7 +461,6 @@ describe('intetgrationApps installer reducer', () => {
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -396,7 +490,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallVerify(
+        actions.integrationApps.installer.verifyStepInstall(
           1,
           'installerFunction'
         )
@@ -425,14 +519,13 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallVerify(
+        actions.integrationApps.installer.verifyStepInstall(
           123,
           'installerFunction'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -447,14 +540,13 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallVerify(
+        actions.integrationApps.installer.verifyStepInstall(
           1,
           'installerFunction'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
         state,
-        'integrations',
         1
       );
 
@@ -623,12 +715,8 @@ describe('resources selectors', () => {
   });
   describe('integrationInstallSteps', () => {
     test('should return empty array when no data in store for any resource', () => {
-      expect(
-        selectors.integrationInstallSteps(undefined, 'integrations', 'dummy')
-      ).toEqual([]);
-      expect(selectors.integrationInstallSteps({}, null, 'dummyId')).toEqual(
-        []
-      );
+      expect(selectors.integrationInstallSteps(undefined, 'dummy')).toEqual([]);
+      expect(selectors.integrationInstallSteps({}, 'dummyId')).toEqual([]);
     });
 
     test('should return empty array when no data found for integrations', () => {
@@ -637,9 +725,7 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('integrations', [])
       );
 
-      expect(
-        selectors.integrationInstallSteps(state, 'integrations', 'id')
-      ).toEqual([]);
+      expect(selectors.integrationInstallSteps(state, 'id')).toEqual([]);
     });
 
     test('should return installSteps when integration is found', () => {
@@ -658,9 +744,9 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('integrations', integrations)
       );
 
-      expect(
-        selectors.integrationInstallSteps(state, 'integrations', 'int2')
-      ).toEqual([{ aa: 1, isCurrentStep: true }]);
+      expect(selectors.integrationInstallSteps(state, 'int2')).toEqual([
+        { aa: 1, isCurrentStep: true },
+      ]);
     });
 
     test('should return installSteps with isCurrentStep set to true when integration is found', () => {
@@ -679,9 +765,10 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('integrations', integrations)
       );
 
-      expect(
-        selectors.integrationInstallSteps(state, 'integrations', 'int2')
-      ).toEqual([{ aa: 1, isCurrentStep: true }, { aa: 2 }]);
+      expect(selectors.integrationInstallSteps(state, 'int2')).toEqual([
+        { aa: 1, isCurrentStep: true },
+        { aa: 2 },
+      ]);
     });
 
     test('should return installSteps with isCurrentStep set to true only for the first uncomplete step when integration is found', () => {
@@ -699,9 +786,7 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('integrations', integrations)
       );
 
-      expect(
-        selectors.integrationInstallSteps(state, 'integrations', 'int2')
-      ).toEqual([
+      expect(selectors.integrationInstallSteps(state, 'int2')).toEqual([
         { aa: 1, completed: true },
         { aa: 2, isCurrentStep: true },
         { aa: 3 },

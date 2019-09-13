@@ -341,7 +341,7 @@ const integrationApps = {
         id: integrationId,
         installerFunction,
       }),
-    stepInstallVerify: (integrationId, installerFunction) =>
+    verifyStepInstall: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY, {
         id: integrationId,
         installerFunction,
@@ -351,7 +351,7 @@ const integrationApps = {
         id,
         installerFunction,
       }),
-    stepInstallComplete: (stepCompleteResponse, id, installerFunction) =>
+    completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,

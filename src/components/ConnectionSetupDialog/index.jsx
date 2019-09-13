@@ -1,11 +1,13 @@
-import SvgIcon from '@material-ui/core/SvgIcon';
-import Dialog from '@material-ui/core/Dialog';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import {
+  IconButton,
+  Dialog,
+  SvgIcon,
+  makeStyles,
+  DialogContent,
+  DialogTitle,
+} from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ResourceForm from '../../components/ResourceFormFactory';
