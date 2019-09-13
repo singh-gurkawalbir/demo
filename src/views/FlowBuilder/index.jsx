@@ -1,8 +1,9 @@
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Route } from 'react-router-dom';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 // import actions from '../../actions';
@@ -12,7 +13,6 @@ import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
-import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -167,15 +167,17 @@ function FlowBuilder(props) {
               </div>
             </div>
           </div>
-          <TrashCan
-            onDrop={handleDelete}
-            className={classes.trash}
-            style={{
-              bottom: size
-                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
-                : 64 + theme.spacing(3),
-            }}
-          />
+          {size < 3 && (
+            <TrashCan
+              onDrop={handleDelete}
+              className={classes.trash}
+              style={{
+                bottom: size
+                  ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+                  : 64 + theme.spacing(3),
+              }}
+            />
+          )}
 
           {/* CANVAS END */}
         </div>
