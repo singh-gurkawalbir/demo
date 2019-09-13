@@ -395,6 +395,16 @@ const getFieldsWithDefaults = (
   ignoreFunctionTransformations = false
 ) => {
   const { layout, fieldReferences, actions } = fieldMeta;
+
+  if (!layout || !fieldReferences) {
+    let str = !fieldReferences ? 'fieldReferences ' : '';
+
+    str += !layout ? 'layout ' : '';
+
+    throw new Error(`No ${str}in the metadata `);
+  }
+
+  if (!fieldReferences) throw new Error('No layout  in the fieldReferences');
   const { transformedFieldReferences, transformedLayout } = setDefaultsToLayout(
     layout,
     fieldReferences,
