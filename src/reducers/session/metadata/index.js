@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 function generateSalesforceOptions(data = {}, sObjectType, selectField) {
@@ -376,23 +377,15 @@ export default (
       return { ...state, ...{ salesforce: newState } };
     }
 
-    case actionTypes.METADATA.RECEIVED_ASSISTANT: {
+    case actionTypes.METADATA.ASSISTANT_RECEIVED: {
       const { adaptorType, assistant, metadata } = action;
 
-      if (!state.assistants[adaptorType]) {
-        return state;
-      }
-
-      return {
-        ...state,
-        assistants: {
-          ...state.assistants,
-          [adaptorType]: {
-            ...state.assistants[adaptorType],
-            [assistant]: metadata,
-          },
-        },
-      };
+      return produce(state, draft => {
+        if (draft.assistants[adaptorType]) {
+          // eslint-disable-next-line no-param-reassign
+          draft.assistants[adaptorType][assistant] = metadata;
+        }
+      });
     }
 
     default:

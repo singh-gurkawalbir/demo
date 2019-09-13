@@ -182,7 +182,6 @@ export default function assistantDefinition(
           configureQueryParametersField.validWhen = {
             isNot: {
               values: [undefined, {}],
-              message: 'message some',
             },
           };
         }
@@ -217,7 +216,6 @@ export default function assistantDefinition(
           configureBodyParametersField.validWhen = {
             isNot: {
               values: [undefined, {}],
-              message: 'message some',
             },
           };
         }
