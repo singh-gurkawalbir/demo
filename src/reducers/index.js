@@ -1262,7 +1262,7 @@ export function jobErrorRetryObject(state, retryId) {
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
-  return fromSession.assistantData(state.session, {
+  return fromSession.assistantData(state && state.session, {
     adaptorType,
     assistant,
   });
