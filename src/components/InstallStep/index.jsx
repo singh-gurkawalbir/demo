@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { getStepText } from '../../utils/integrationApps';
+import integrationAppsUtil from '../../utils/integrationApps';
 
 const useStyles = makeStyles(() => ({
   step: {
@@ -90,13 +90,13 @@ export default function InstallationStep(props) {
               onClick={onStepClick}
               underline="none"
               variant="text">
-              {getStepText(step)}
+              {integrationAppsUtil.getStepText(step)}
             </Button>
           )}
           {step.completed && (
             <Fragment>
               <Typography onClick={onStepClick} className={classes.successText}>
-                {getStepText(step)}
+                {integrationAppsUtil.getStepText(step)}
               </Typography>
               <img
                 alt=""
