@@ -31,6 +31,8 @@ export default [
       { label: 'Connections', path: '/connections', Icon: MailIcon },
       { label: 'Scripts', path: '/scripts', Icon: MailIcon },
       { label: 'Agents', path: '/agents', Icon: MailIcon },
+      { label: 'Stacks', path: '/stacks', Icon: MailIcon },
+      { label: 'Templates', path: '/templates', Icon: MailIcon },
     ],
   },
   { label: 'Marketplace', path: '/marketplace', Icon: MarketplaceIcon },
