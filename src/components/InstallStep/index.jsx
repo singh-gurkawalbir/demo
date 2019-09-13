@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { getStepText } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(() => ({
   step: {
@@ -56,40 +57,6 @@ export default function InstallationStep(props) {
   const onStepClick = e => {
     e.preventDefault();
     handleStepClick(step);
-  };
-
-  const getStepText = step => {
-    let stepText = '';
-
-    if (step._connectionId) {
-      if (step.completed) {
-        stepText = 'Configured';
-      } else if (step.__isTriggered) {
-        stepText = 'Configuring...';
-      } else {
-        stepText = 'Click to Configure';
-      }
-    } else if (step.installURL) {
-      if (step.completed) {
-        stepText = 'Installed';
-      } else if (step.__isTriggered) {
-        if (step.__verifying) {
-          stepText = 'Verifying...';
-        } else {
-          stepText = 'Verify Now';
-        }
-      } else {
-        stepText = 'Click to Install';
-      }
-    } else if (step.completed) {
-      stepText = 'Configured';
-    } else if (step.__isTriggered) {
-      stepText = 'Installing...';
-    } else {
-      stepText = 'Click to Install';
-    }
-
-    return stepText;
   };
 
   return (
