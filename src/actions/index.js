@@ -490,8 +490,6 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  saveRawData: rawData =>
-    action(actionTypes.SAMPLEDATA.SAVE_RAWDATA, { rawData }),
 };
 const appErrored = () => action(actionTypes.APP_ERRORED);
 const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);

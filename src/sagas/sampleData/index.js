@@ -3,11 +3,7 @@ import jsonPatch from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import {
-  resourceData,
-  getResourceSampleDataWithStatus,
-  userProfile,
-} from '../../reducers';
+import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 
 /*
@@ -163,52 +159,6 @@ function* processFileData({ resourceId, resourceType, values }) {
   }
 }
 
-function postData({ url = '', data = {}, method, headers }) {
-  // Default options are marked with *
-  return fetch(url, {
-    method,
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers,
-    redirect: 'follow', // manual, *follow, error
-    referrer: 'no-referrer', // no-referrer, *client
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
-  }); // parses JSON response into native JavaScript objects
-}
-
-export function* saveRawData({ rawData }) {
-  const file = { name: 'testRaw.txt', type: 'application/text' };
-  const url = `/s3SignedURL?file_name=${file.name}&file_type=${file.type}`;
-
-  try {
-    const signedUrlOptions = yield apiCallWithRetry({
-      path: url,
-      opts: {
-        method: 'GET',
-      },
-    });
-    const { signedURL, runKey } = signedUrlOptions;
-    const data = rawData;
-    const headers = {
-      'Content-Type': 'application/text',
-      'x-amz-server-side-encryption': 'AES256',
-    };
-
-    yield call(postData, {
-      url: signedURL,
-      data,
-      method: 'PUT',
-      headers,
-    });
-    const profile = yield select(userProfile);
-
-    return profile._id + runKey;
-  } catch (e) {
-    // @TODO handle error
-  }
-}
-
 function* requestSampleData({
   resourceId,
   resourceType,
@@ -219,8 +169,6 @@ function* requestSampleData({
   // Call preview/processor based on stage
   // If stage is specified make a processor call else preview
   // Takes a different route for File processors
-  // yield call(saveRawData, {});
-
   if (stage) {
     if (stage === 'file') {
       yield call(processFileData, { resourceId, resourceType, values });
@@ -237,7 +185,4 @@ function* requestSampleData({
   }
 }
 
-export const sampleDataSagas = [
-  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData),
-  takeLatest(actionTypes.SAMPLEDATA.SAVE_RAWDATA, saveRawData),
-];
+export default [takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData)];

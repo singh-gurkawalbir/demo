@@ -15,6 +15,7 @@ export default function DynaFileDefinitionSelect(props) {
   );
 
   function handleFileDefinitionChange(id, value) {
+    // Incase of isNewId(id) is false , dont make template request
     const definitionSelected = fileDefinitions.find(def => def.value === value);
 
     // Definition template is saved under template inside a definition

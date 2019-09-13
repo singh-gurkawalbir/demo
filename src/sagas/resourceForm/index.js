@@ -14,7 +14,7 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
-import { saveRawData } from '../sampleData';
+import uploadFileToS3 from '../s3';
 
 export const SCOPES = {
   META: 'meta',
@@ -201,7 +201,7 @@ export function* submitFormValuesWithRawData({
 }) {
   let newValues = { ...values };
   const rawData = values['/rawData'];
-  const rawDataKey = yield call(saveRawData, { rawData });
+  const rawDataKey = yield call(uploadFileToS3, { file: rawData });
 
   newValues = { ...newValues, '/rawData': rawDataKey };
 
