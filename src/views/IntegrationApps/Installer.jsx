@@ -164,7 +164,7 @@ export default function ConnectorInstallation(props) {
       {showConnectionDialog && (
         <ConnectionSetupDialog
           _connectionId={selectedConnectionId}
-          handleClose={handleClose}
+          onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
       )}

@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function ConnectionModal(props) {
-  const { _connectionId, onSubmitComplete, handleClose } = props;
+  const { _connectionId, onSubmitComplete, onClose } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const connection = useSelector(state =>
@@ -42,9 +42,9 @@ export default function ConnectionModal(props) {
     <Dialog open maxWidth={false}>
       <DialogTitle>
         Setup Connection
-        {handleClose && (
+        {onClose && (
           <IconButton
-            onClick={handleClose}
+            onClick={onClose}
             className={classes.iconButton}
             autoFocus>
             <SvgIcon>
