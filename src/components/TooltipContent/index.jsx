@@ -20,7 +20,9 @@ function TooltipContent(props) {
 
   return (
     <div className={classes.root}>
-      <Typography className={classes.content}>{children}</Typography>
+      <Typography className={classes.content} variant="body2">
+        {children}
+      </Typography>
     </div>
   );
 }

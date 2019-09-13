@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 
@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: '212px',
     maxWidth: '270px',
     border: '1px solid',
-    borderColor: theme.palette.background.arrowAfter,
+    borderColor: fade(theme.palette.common.black, 0.1),
     borderRadius: '4px',
     textAlign: 'left',
     overflow: 'hidden',

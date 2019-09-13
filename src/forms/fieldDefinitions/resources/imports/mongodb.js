@@ -1,7 +1,7 @@
 export default {
   'mongodb.method': {
     type: 'radiogroup',
-    label: 'Mongodb method',
+    label: 'Method',
     options: [
       {
         items: [
@@ -13,31 +13,105 @@ export default {
   },
   'mongodb.collection': {
     type: 'text',
-    label: 'Mongodb collection',
+    label: 'Collection',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['insertMany', 'updateOne'],
+      },
+    ],
+  },
+  'mongodb.lookupType': {
+    type: 'select',
+    label: 'How should we identify existing records?',
+    options: [
+      {
+        items: [
+          { label: 'Records have a specific field populated', value: 'source' },
+          { label: 'Run a dynamic search against Mongodb', value: 'lookup' },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
+        field: 'mongodb.method',
+        is: ['insertMany'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
+        field: 'mongodb.method',
+        is: ['insertMany'],
+      },
+    ],
+  },
+  'mongodb.ignoreLookupFilters': {
+    type: 'textarea',
+    label: 'Ignore Lookup Filters',
+    visibleWhen: [
+      {
+        field: 'mongodb.lookupType',
+        is: ['lookup'],
+      },
+    ],
   },
   'mongodb.filter': {
-    type: 'text',
-    label: 'Mongodb filter',
-  },
-  'mongodb.document': {
-    type: 'text',
-    label: 'Mongodb document',
-  },
-  'mongodb.update': {
-    type: 'text',
-    label: 'Mongodb update',
+    type: 'textarea',
+    label: 'Filter',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
   },
   'mongodb.upsert': {
     type: 'checkbox',
-    label: 'Mongodb upsert',
-    defaultValue: false,
+    label: 'Upsert',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
   },
   'mongodb.ignoreExtract': {
     type: 'text',
-    label: 'Mongodb ignore Extract',
-  },
-  'mongodb.ignoreLookupFilter': {
-    type: 'text',
-    label: 'Mongodb ignore Lookup Filter',
+    label: 'Which Field?',
+    visibleWhen: [
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
+      {
+        field: 'mongodb.lookupType',
+        is: ['source'],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
+      {
+        field: 'mongodb.lookupType',
+        is: ['source'],
+      },
+    ],
   },
 };

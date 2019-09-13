@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   arrow: {
@@ -31,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   popper: {
     zIndex: props => props.zIndex || theme.zIndex.modal + 1,
     border: '1px solid',
-    borderColor: theme.palette.background.arrowAfter,
+    borderColor: fade(theme.palette.common.black, 0.1),
     borderRadius: '4px',
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
@@ -47,7 +45,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '0 1.3em 1.3em 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent transparent ${theme.palette.background.arrowAfter} transparent`,
+        borderColor: `transparent transparent rgb(0,0,0,0.2) transparent`,
         position: 'absolute',
         top: '-2px',
         left: '2px',
@@ -68,7 +66,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '1.3em 1.3em 0 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: ` ${theme.palette.background.arrowAfter} transparent transparent  transparent`,
+        borderColor: `rgb(0,0,0,0.2) transparent transparent  transparent`,
         position: 'absolute',
         top: '0px',
         left: '2px',
@@ -84,12 +82,12 @@ const useStyles = makeStyles(theme => ({
         marginTop: '0.4em',
         borderWidth: '1em 1em 1em 0',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+        borderColor: `transparent ${theme.palette.background.paper} transparent  transparent`,
       },
       '&::after': {
         borderWidth: '1.3em 1.3em 1.3em 0',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent ${theme.palette.background.arrowAfter} transparent transparent`,
+        borderColor: `transparent rgb(0,0,0,0.2) transparent transparent`,
         position: 'absolute',
         top: '1px',
         left: '-2px',
@@ -110,7 +108,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '1.3em 0 1.3em 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent transparent transparent ${theme.palette.background.arrowAfter}`,
+        borderColor: `transparent transparent transparent rgb(0,0,0,0.2)`,
         position: 'absolute',
         top: '2px',
         left: '0px',

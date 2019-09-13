@@ -49,7 +49,12 @@ const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
   return optionsHandler;
 };
 
-const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
+const getResourceFormAssets = ({
+  resourceType,
+  resource,
+  isNew = false,
+  assistantData,
+}) => {
   let fields;
   let fieldSets = [];
   let preSubmit;
@@ -57,8 +62,6 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
   let actions;
   let meta;
   const { type } = getResourceSubType(resource);
-
-  // console.log('resource', resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
@@ -72,6 +75,13 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         if (meta) {
           meta = meta[resource.assistant];
         }
+      } else if (resource && resource.type === 'rdbms') {
+        const rdbmsSubType = resource.rdbms.type;
+
+        // when editing rdms connection we lookup for the resource subtype
+        meta = formMeta.connections.rdbms[rdbmsSubType];
+      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+        meta = formMeta.connections.rdbms[type];
       } else {
         meta = formMeta.connections[type];
       }
@@ -85,7 +95,6 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
     case 'imports':
     case 'exports':
       meta = formMeta[resourceType];
-      // console.log('type', type);
 
       if (meta) {
         if (isNew) {
@@ -94,6 +103,12 @@ const getResourceFormAssets = ({ resourceType, resource, isNew = false }) => {
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuite[resource.netsuite.type];
+        } else if (resource && resource.assistant) {
+          meta = meta.custom.http.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
         } else {
           meta = meta[type];
         }
@@ -136,6 +151,10 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // TODO: We are assuming this factory applies defaults to edit exports
   // no create export has been considered here
   const fieldsFromForm = formMeta[resourceType].subForms[f.formId].fields;
+
+  if (!fieldsFromForm) {
+    throw new Error('no subform for', f.formId);
+  }
 
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(
@@ -184,12 +203,10 @@ const applyingMissedOutFieldMetaProperties = (
   }
 
   if (!Object.keys(field).includes('defaultValue')) {
-    // console.log(`default value for ${merged.fieldId} used`);
     field.defaultValue = get(resource, field.id, '');
   }
 
   if (!field.helpText && !field.helpKey) {
-    // console.log(`default helpKey for ${merged.id} used`);
     let singularResourceType = resourceType;
 
     // Make resourceType singular
@@ -201,7 +218,11 @@ const applyingMissedOutFieldMetaProperties = (
   }
 
   if (!field.id || !field.name)
-    throw new Error('Id and name must be provided for a field');
+    throw new Error(
+      `Id and name must be provided for a field ${JSON.stringify(
+        incompleteField
+      )}`
+    );
 
   return field;
 };
