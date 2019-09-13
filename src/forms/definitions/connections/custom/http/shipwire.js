@@ -36,6 +36,7 @@ export default {
             return 'sandbox';
           }
         }
+
         return 'production';
       },
     },
