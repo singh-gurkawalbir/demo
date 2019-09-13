@@ -44,36 +44,28 @@ const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
     }
   }
 
-  if (containers && containers.length > 0) {
-    for (
-      let containerIndex = 0;
-      containerIndex < containers.length;
-      containerIndex += 1
-    ) {
-      const { fieldSets } = containers[containerIndex];
-
-      for (
-        let fieldSetIndex = 0;
-        fieldSetIndex < fieldSets.length;
-        fieldSetIndex += 1
-      ) {
-        let res = queryRes;
-        const fieldSet = fieldSets[fieldSetIndex];
-
-        res += `/containers/${containerIndex}/fieldSets/${fieldSetIndex}`;
-
-        return fieldSearchQueryObj(
+  return (
+    containers &&
+    containers
+      .map((container, index) =>
+        fieldSearchQueryObj(
           {
             fieldReferences,
-            layout: { ...fieldSet },
+            layout: container,
           },
           id,
-          res,
+          `${queryRes}/containers/${index}`,
           offset
-        );
-      }
-    }
-  }
+        )
+      )
+      .reduce((acc, curr) => {
+        let res = acc;
+
+        if (!res) res = curr;
+
+        return res;
+      }, null)
+  );
 };
 
 export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
@@ -188,39 +180,7 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
   return newSet;
 };
 
-export const replaceField = ({ meta, field }) => {
-  if (meta.fields) {
-    for (let i = 0; i < meta.fields.length; i += 1) {
-      if (meta.fields[i].id === field.id) {
-        // we WANT to modify the meta since the calling function should
-        // already be dealing with a copy.
-        meta.fields[i] = field; // eslint-disable-line
-
-        // break as soon as replacement occurs.
-        return meta;
-      }
-    }
-  }
-
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    for (let i = 0; i < meta.fieldSets.length; i += 1) {
-      const set = meta.fieldSets[i];
-
-      for (let j = 0; j < set.fields.length; j += 1) {
-        if (set.fields[j].id === field.id) {
-          set.fields[j] = field;
-
-          return meta;
-        }
-      }
-    }
-  }
-
-  return meta;
-};
-
 export default {
   getFieldById,
-  replaceField,
   defaultPatchSetConverter,
 };

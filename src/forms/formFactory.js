@@ -263,47 +263,48 @@ const flattenedFieldReferences = (
   resObjectRefs = {},
   resFields = []
 ) => {
-  fields.forEach(fieldReferenceName => {
-    const f = fieldReferences[fieldReferenceName];
+  fields &&
+    fields.forEach(fieldReferenceName => {
+      const f = fieldReferences[fieldReferenceName];
 
-    if (f && f.formId) {
-      const {
-        subFormFields,
-        subformFieldReferences,
-      } = applyVisibilityRulesToSubForm(f, resourceType);
+      if (f && f.formId) {
+        const {
+          subFormFields,
+          subformFieldReferences,
+        } = applyVisibilityRulesToSubForm(f, resourceType);
 
-      resFields.push(...subFormFields);
+        resFields.push(...subFormFields);
 
-      return flattenedFieldReferences(
-        subFormFields,
-        subformFieldReferences,
+        return flattenedFieldReferences(
+          subFormFields,
+          subformFieldReferences,
+          resourceType,
+          resource,
+          ignoreFunctionTransformations,
+          resObjectRefs
+        );
+      }
+
+      const masterFields = masterFieldHash[resourceType]
+        ? masterFieldHash[resourceType][f.fieldId]
+        : {};
+      const merged = {
+        resourceId: resource._id,
         resourceType,
+        ...masterFields,
+        ...f,
+      };
+      const value = applyingMissedOutFieldMetaProperties(
+        merged,
         resource,
-        ignoreFunctionTransformations,
-        resObjectRefs
+        resourceType,
+        ignoreFunctionTransformations
       );
-    }
 
-    const masterFields = masterFieldHash[resourceType]
-      ? masterFieldHash[resourceType][f.fieldId]
-      : {};
-    const merged = {
-      resourceId: resource._id,
-      resourceType,
-      ...masterFields,
-      ...f,
-    };
-    const value = applyingMissedOutFieldMetaProperties(
-      merged,
-      resource,
-      resourceType,
-      ignoreFunctionTransformations
-    );
-
-    resFields.push(fieldReferenceName);
-    // eslint-disable-next-line no-param-reassign
-    resObjectRefs[fieldReferenceName] = value;
-  });
+      resFields.push(fieldReferenceName);
+      // eslint-disable-next-line no-param-reassign
+      resObjectRefs[fieldReferenceName] = value;
+    });
 
   return {
     fieldReferences: resObjectRefs,
@@ -316,68 +317,57 @@ const setDefaultsToLayout = (
   fieldReferences,
   resourceType,
   resource,
-  ignoreFunctionTransformations,
-  transformedLayout = {},
-  transformedFieldReferences = {}
+  ignoreFunctionTransformations
 ) => {
   const { fields, containers, ...rest } = layout;
 
-  if (fields && fields.length > 0 && fieldReferences) {
-    const {
-      fields: transformedFields,
-      fieldReferences: transformedFieldRefs,
-    } = flattenedFieldReferences(
-      fields,
-      fieldReferences,
-      resourceType,
-      resource,
-      ignoreFunctionTransformations
-    );
+  if (!fields && !containers) return null;
 
-    // eslint-disable-next-line no-param-reassign
-    transformedFieldReferences = {
-      ...transformedFieldReferences,
-      ...transformedFieldRefs,
-    };
-    // eslint-disable-next-line no-param-reassign
-    transformedLayout = { ...rest, fields: transformedFields, containers };
-  }
+  const {
+    fields: transformedFields,
+    fieldReferences: transformedFieldRef,
+  } = flattenedFieldReferences(
+    fields,
+    fieldReferences,
+    resourceType,
+    resource,
+    ignoreFunctionTransformations
+  );
+  let transformedFieldRefs = transformedFieldRef;
+  const transformedContainers =
+    containers &&
+    containers.map(container => {
+      const {
+        transformedLayout: transformedLayoutRes,
+        transformedFieldReferences: transFieldReferences,
+      } = setDefaultsToLayout(
+        container,
+        fieldReferences,
+        resourceType,
+        resource,
+        ignoreFunctionTransformations
+      );
+      const { fields, containers } = transformedLayoutRes;
 
-  if (containers && containers.length > 0) {
-    // eslint-disable-next-line no-param-reassign
-    transformedLayout.containers = containers.map(container => {
-      const { fieldSets, ...rest } = container;
-      const transformedFieldSets = fieldSets.map(fieldSet => {
-        const {
-          transformedLayout: transformedLayoutRes,
-          transformedFieldReferences: transFieldReferences,
-        } = setDefaultsToLayout(
-          fieldSet,
-          fieldReferences,
-          resourceType,
-          resource,
-          ignoreFunctionTransformations,
-          transformedLayout,
-          transformedFieldReferences
-        );
-        const { fields } = transformedLayoutRes;
+      transformedFieldRefs = {
+        ...transformedFieldRefs,
+        ...transFieldReferences,
+      };
 
-        // eslint-disable-next-line no-param-reassign
-        transformedFieldReferences = {
-          ...transformedFieldReferences,
-          ...transFieldReferences,
-        };
-
-        return { ...fieldSet, fields };
-      });
-
-      return { fieldSets: transformedFieldSets, ...rest };
+      return { ...container, fields, containers };
     });
-  }
 
   return {
-    transformedLayout,
-    transformedFieldReferences,
+    transformedLayout: {
+      ...rest,
+      ...(transformedFields && transformedFields.length > 0
+        ? { fields: transformedFields }
+        : {}),
+      ...(transformedContainers && transformedContainers.length > 0
+        ? { containers: transformedContainers }
+        : {}),
+    },
+    transformedFieldReferences: transformedFieldRefs,
   };
 };
 

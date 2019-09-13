@@ -33,14 +33,14 @@ const TransferListModal = props => {
       <Fragment>
         <Button
           variant="contained"
-          onClick={() => onFieldChange(id, selectedScopes)}>
+          onClick={() => onFieldChange(id, selectedScopes.join())}>
           Save
         </Button>
         <Button
           variant="contained"
           color="primary"
           onClick={() => {
-            onFieldChange(id, selectedScopes);
+            onFieldChange(id, selectedScopes.join());
             handleClose();
           }}>
           Save And Close
@@ -53,7 +53,8 @@ const TransferListModal = props => {
 export default function DynaSelectScopesDialog(props) {
   const { label, scopes, value, onFieldChange, id } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
-  const defaultAvailableScopes = excludeSelectedScopes(scopes, value);
+  const selectedScopes = (value && value.split(',')) || [];
+  const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
 
   return (
     <Fragment>
@@ -61,7 +62,7 @@ export default function DynaSelectScopesDialog(props) {
         <TransferListModal
           id={id}
           availableScopes={defaultAvailableScopes}
-          selectedScopes={value}
+          selectedScopes={selectedScopes}
           onFieldChange={onFieldChange}
           handleClose={() => {
             setShowScopesModal(false);
