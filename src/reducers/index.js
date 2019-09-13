@@ -447,8 +447,22 @@ export function isAgentOnline(state, agentId) {
 
 export function integrationInstallSteps(state, integrationId) {
   if (!state) return null;
+  const integrationInstallSteps = fromData.integrationInstallSteps(
+    state.data,
+    integrationId
+  );
+  const installStatus = fromSession.integrationAppsInstaller(
+    state.session,
+    integrationId
+  );
 
-  return fromData.integrationInstallSteps(state.data, integrationId);
+  return integrationInstallSteps.map(step => {
+    if (step.isCurrentStep) {
+      return { ...step, ...installStatus };
+    }
+
+    return step;
+  });
 }
 
 export function integrationUninstallSteps(state, integrationId) {

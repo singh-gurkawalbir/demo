@@ -116,7 +116,7 @@ describe('resources reducer', () => {
 
 describe('intetgrationApps installer reducer', () => {
   describe(`integrationApps received installer install_inProgress action`, () => {
-    test('should find the integration with id and find the installation step with passed installerFunction and set __isTriggered flag to true', () => {
+    test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
       let state;
       const collection = [
         {
@@ -152,7 +152,6 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(installStepsAfterAction).toEqual([
         {
-          __isTriggered: true,
           a: 1,
           installerFunction: 'installerFunction',
           isCurrentStep: true,
@@ -252,7 +251,7 @@ describe('intetgrationApps installer reducer', () => {
     });
   });
   describe(`integrationApps received installer install_failure action`, () => {
-    test('should find the integration with id and find the installation step with passed installerFunction and set __isTriggered flag to false', () => {
+    test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to false', () => {
       let state;
       const collection = [
         {
@@ -262,8 +261,6 @@ describe('intetgrationApps installer reducer', () => {
             {
               a: 1,
               installerFunction: 'installerFunction',
-              __isTriggered: true,
-              __verifying: true,
             },
           ],
         },
@@ -287,8 +284,6 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(installStepsAfterAction).toEqual([
         {
-          __isTriggered: false,
-          __verifying: false,
           a: 1,
           installerFunction: 'installerFunction',
           isCurrentStep: true,
@@ -395,8 +390,6 @@ describe('intetgrationApps installer reducer', () => {
             {
               a: 1,
               installerFunction: 'installerFunction',
-              __isTriggered: true,
-              __verifying: true,
             },
           ],
         },
@@ -468,7 +461,7 @@ describe('intetgrationApps installer reducer', () => {
     });
   });
   describe(`integrationApps received installer install_verify action`, () => {
-    test('should find the integration with id and find the install step by installerFunction and set __verifying flag to true', () => {
+    test('should find the integration with id and find the install step by installerFunction and set verifying flag to true', () => {
       let state;
       const collection = [
         {
@@ -478,7 +471,6 @@ describe('intetgrationApps installer reducer', () => {
             {
               a: 1,
               installerFunction: 'installerFunction',
-              __isTriggered: true,
             },
           ],
         },
@@ -503,8 +495,6 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(installStepsAfterAction).toEqual([
         {
-          __isTriggered: true,
-          __verifying: true,
           a: 1,
           installerFunction: 'installerFunction',
         },

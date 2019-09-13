@@ -78,7 +78,7 @@ export default function ConnectorInstallation(props) {
 
     // handle connection step click
     if (_connectionId) {
-      if (step.__isTriggered) {
+      if (step.isTriggered) {
         return false;
       }
 
@@ -86,7 +86,7 @@ export default function ConnectorInstallation(props) {
       setShowConnectionDialog(true);
       // handle Installation step click
     } else if (installURL) {
-      if (!step.__isTriggered) {
+      if (!step.isTriggered) {
         dispatch(
           actions.integrationApps.installer.stepInstallInProgress(
             integrationId,
@@ -95,7 +95,7 @@ export default function ConnectorInstallation(props) {
         );
         openExternalUrl({ url: installURL });
       } else {
-        if (step.__verifying) {
+        if (step.verifying) {
           return false;
         }
 
@@ -113,7 +113,7 @@ export default function ConnectorInstallation(props) {
         );
       }
       // handle Action step click
-    } else if (!step.__isTriggered) {
+    } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApps.installer.stepInstallInProgress(
           integrationId,
@@ -192,7 +192,6 @@ export default function ConnectorInstallation(props) {
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
-                classes={classes}
               />
             ))}
           </Grid>

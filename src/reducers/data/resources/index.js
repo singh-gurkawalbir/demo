@@ -35,7 +35,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 function getIntegrationAppsNextState(state, action) {
-  const { stepsToUpdate, installerFunction, id, type } = action;
+  const { stepsToUpdate, id, type } = action;
 
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
@@ -44,25 +44,10 @@ function getIntegrationAppsNextState(state, action) {
       return;
     }
 
-    const step = integration.install.find(
-      s => s.installerFunction === installerFunction
-    );
-
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
         integration.install = stepsToUpdate;
-        break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
-        step.__verifying = true;
-        step.__isTriggered = true;
-        break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
-        step.__verifying = false;
-        step.__isTriggered = false;
-        break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
-        step.__isTriggered = true;
         break;
     }
   });
@@ -106,10 +91,7 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);

@@ -9,6 +9,7 @@ import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
+import integrationApps, * as fromIntegrationApps from './integrationApps/installer';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -23,6 +24,7 @@ export default combineReducers({
   stackSystemTokens,
   resource,
   netsuiteUserRole,
+  integrationApps,
 });
 
 // #region PUBLIC SELECTORS
@@ -140,6 +142,13 @@ export function stackSystemToken(state, resourceId) {
   return fromStackSystemTokens.stackSystemToken(
     state && state.stackSystemTokens,
     resourceId
+  );
+}
+
+export function integrationAppsInstaller(state, id) {
+  return fromIntegrationApps.integrationAppsInstaller(
+    state && state.integrationApps,
+    id
   );
 }
 

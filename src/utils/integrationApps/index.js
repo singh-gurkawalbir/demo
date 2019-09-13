@@ -5,7 +5,7 @@ export default {
     if (step._connectionId) {
       if (step.completed) {
         stepText = 'Configured';
-      } else if (step.__isTriggered) {
+      } else if (step.isTriggered) {
         stepText = 'Configuring...';
       } else {
         stepText = 'Click to Configure';
@@ -13,8 +13,8 @@ export default {
     } else if (step.installURL) {
       if (step.completed) {
         stepText = 'Installed';
-      } else if (step.__isTriggered) {
-        if (step.__verifying) {
+      } else if (step.isTriggered) {
+        if (step.verifying) {
           stepText = 'Verifying...';
         } else {
           stepText = 'Verify Now';
@@ -24,7 +24,7 @@ export default {
       }
     } else if (step.completed) {
       stepText = 'Configured';
-    } else if (step.__isTriggered) {
+    } else if (step.isTriggered) {
       stepText = 'Installing...';
     } else {
       stepText = 'Click to Install';
