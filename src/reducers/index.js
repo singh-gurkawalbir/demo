@@ -448,10 +448,16 @@ export function isAgentOnline(state, agentId) {
 export function integrationInstallSteps(state, integrationId) {
   if (!state) return null;
 
+  return fromData.integrationInstallSteps(state.data, integrationId);
+}
+
+export function integrationUninstallSteps(state, integrationId) {
+  if (!state) return null;
+
   return fromData.integrationInstallSteps(
     state.data,
-    'integrations',
-    integrationId
+    integrationId,
+    'uninstall'
   );
 }
 
