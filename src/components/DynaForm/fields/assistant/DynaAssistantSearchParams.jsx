@@ -12,7 +12,7 @@ import {
 } from '../../../../utils/assistant';
 
 const SearchParamsModal = props => {
-  const { paramMeta, handleClose, id, onFieldChange, value } = props;
+  const { paramMeta, onClose, id, onFieldChange, value } = props;
   const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
@@ -26,11 +26,11 @@ const SearchParamsModal = props => {
     });
 
     onFieldChange(id, updatedValues);
-    handleClose();
+    onClose();
   }
 
   return (
-    <ModalDialog show handleClose={handleClose}>
+    <ModalDialog show onClose={onClose}>
       <Fragment>
         <span>Search Parameters</span>
       </Fragment>
@@ -41,7 +41,7 @@ const SearchParamsModal = props => {
             fieldSets,
           }}>
           <div>
-            <Button onClick={handleClose} size="small" variant="contained">
+            <Button onClick={onClose} size="small" variant="contained">
               Cancel
             </Button>
             <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
@@ -53,18 +53,7 @@ const SearchParamsModal = props => {
 };
 
 export default function DynaAssistantSearchParams(props) {
-  const {
-    label,
-    value,
-    onFieldChange,
-    id,
-    paramMeta = {
-      paramLocation: PARAMETER_LOCATION.QUERY,
-      fields: [],
-      defaultValuesForDeltaExport: {},
-    },
-    required,
-  } = props;
+  const { label, value, onFieldChange, id, paramMeta = {}, required } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
   const isValid = !required ? true : !isEmpty(value);
 
@@ -76,7 +65,7 @@ export default function DynaAssistantSearchParams(props) {
           paramMeta={paramMeta}
           value={value}
           onFieldChange={onFieldChange}
-          handleClose={() => {
+          onClose={() => {
             setShowSearchParamsModal(false);
           }}
         />
@@ -87,7 +76,7 @@ export default function DynaAssistantSearchParams(props) {
         {label || paramMeta.paramLocation === PARAMETER_LOCATION.BODY
           ? 'Configure Body Parameters'
           : 'Configure Search Parameters'}{' '}
-        {required ? '*' : ''}
+        {required && !isValid ? '*' : ''}
       </Button>
       <FormHelperText error={!isValid}>
         {!isValid ? 'Please enter required parameters' : ''}

@@ -1,20 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 
-const useStyles = makeStyles({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-  },
-});
-
 export default function DynaAssistantOptions(props) {
   const { label, resourceContext, options } = props;
-  const classes = useStyles();
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: options.adaptorType,
@@ -108,7 +99,6 @@ export default function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      classes={classes}
       options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
     />
