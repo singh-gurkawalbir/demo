@@ -12,6 +12,7 @@ import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -34,10 +35,10 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
+    padding: theme.spacing(3),
     // border: 'solid 1px lightgrey',
   },
   generatorContainer: {
-    width: 250,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -53,6 +54,9 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+  },
+  title: {
+    textAlign: 'center',
   },
 }));
 const pageGenerators = [
@@ -94,15 +98,6 @@ function FlowBuilder(props) {
     },
     [pageProcessors]
   );
-  const renderPageProcessor = (pp, index, isLast) => (
-    <PageProcessor
-      {...pp}
-      key={pp.name}
-      index={index}
-      isLast={isLast}
-      onMove={handleMove}
-    />
-  );
 
   return (
     <Fragment>
@@ -138,17 +133,38 @@ function FlowBuilder(props) {
           }}>
           <div className={classes.canvas}>
             {/* CANVAS START */}
+            <div>
+              <Typography className={classes.title} variant="h6">
+                SOURCE APPLICATIONS
+              </Typography>
 
-            <div className={classes.generatorContainer}>
-              {pageGenerators.map(pg => (
-                <PageGenerator key={pg.name} name={pg.name} />
-              ))}
+              <div className={classes.generatorContainer}>
+                {pageGenerators.map((pg, i) => (
+                  <PageGenerator
+                    key={pg.name}
+                    name={pg.name}
+                    isFirst={i === 1}
+                    isLast={pageProcessors.length === i + 1}
+                  />
+                ))}
+              </div>
             </div>
-
-            <div className={classes.processorContainer}>
-              {pageProcessors.map((pp, i) =>
-                renderPageProcessor(pp, i, pageProcessors.length === i + 1)
-              )}
+            <div>
+              <Typography className={classes.title} variant="h6">
+                DESTINATION &amp; LOOKUP APPLICATIONS
+              </Typography>
+              <div className={classes.processorContainer}>
+                {pageProcessors.map((pp, i) => (
+                  <PageProcessor
+                    {...pp}
+                    key={pp.name}
+                    index={i}
+                    isFirst={i === 1}
+                    isLast={pageProcessors.length === i + 1}
+                    onMove={handleMove}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <TrashCan

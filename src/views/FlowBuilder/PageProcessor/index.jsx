@@ -2,6 +2,7 @@ import React, { useRef, Fragment } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
+import clsx from 'clsx';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
 import ToolsIcon from '../../../components/icons/ToolsIcon';
@@ -15,6 +16,7 @@ const useStyles = makeStyles(theme => ({
     width: 150,
     height: 150,
     border: 'solid 1px lightblue',
+    borderRadius: 24,
     padding: theme.spacing(1),
     margin: theme.spacing(3, 0),
     cursor: 'move',
@@ -22,12 +24,17 @@ const useStyles = makeStyles(theme => ({
   processorActions: {
     display: 'flex',
     alignItems: 'flex-start',
+    padding: theme.spacing(0, 1),
+  },
+  lineRight: {
+    top: -theme.spacing(3),
+    // none yet
+  },
+  lineLeft: {
+    minWidth: 50,
   },
   dottedLine: {
     position: 'relative',
-    left: 0,
-    right: 0,
-    top: -theme.spacing(3),
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
 }));
@@ -88,13 +95,16 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
       isDragging: monitor.isDragging(),
     }),
   });
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
 
   return (
     <Fragment>
       <div className={classes.ppContainer}>
+        {index === 0 && (
+          <div className={clsx(classes.dottedLine, classes.lineLeft)} />
+        )}
         <div ref={ref} className={classes.ppBox} style={{ opacity }}>
           <Typography variant="h2">{name}</Typography>
         </div>
@@ -109,7 +119,7 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
                 <HookIcon />
               </IconButton>
             </div>
-            <div className={classes.dottedLine} />
+            <div className={clsx(classes.dottedLine, classes.lineRight)} />
           </div>
         )}
       </div>
