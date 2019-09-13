@@ -87,7 +87,11 @@ export const adaptorTypeMap = {
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
   RDBMSImport: 'rdbms',
+<<<<<<< HEAD
   SalesforceImport: 'salesforce',
+=======
+  SalesforceExport: 'salesforce',
+>>>>>>> 0df7c2ac6203868a434eec369a1fb17e3e7720bb
 };
 
 const inferResourceType = adaptorType => {

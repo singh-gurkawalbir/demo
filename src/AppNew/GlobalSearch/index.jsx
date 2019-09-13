@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -12,11 +12,7 @@ const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.black, 0.15),
-    },
-    marginRight: theme.spacing(1),
-    marginLeft: 0,
+    top: -3,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
@@ -35,44 +31,74 @@ const useStyles = makeStyles(theme => ({
 
   inputRoot: {
     color: 'inherit',
+    '&.Mui-focused': {
+      border: '1px solid',
+      borderColor: fade(theme.palette.common.black, 0.15),
+      borderRadius: '20px',
+      backgroundColor: theme.palette.common.white,
+      zIndex: '-1',
+    },
   },
   inputInput: {
-    padding: theme.spacing(1, 1, 1, 4),
+    background: 'transparent',
+    padding: theme.spacing(0.5, 1, 0.5, 4),
     transition: theme.transitions.create('width'),
     [theme.breakpoints.up('sm')]: {
       width: 0,
       '&:focus': {
         width: 200,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
       },
     },
   },
   searchResults: {
     position: 'fixed',
-    display: 'inline-block',
     zIndex: theme.zIndex.appBar + 1,
-    padding: theme.spacing(1, 2),
-    // minHeight: '10vh',
     maxHeight: '75vh',
     overflow: 'auto',
     width: '100%',
     marginTop: theme.appBarHeight - 1,
-    // border: `solid 1px ${fade(theme.palette.common.black, 0.87)}`,
-    // borderTop: 0,
+    boxShadow: theme.shadows[1],
+    borderTop: 0,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.secondary.light,
+    maxWidth: 390,
   },
   searchItem: {
     display: 'flex',
+    position: 'relative',
+    padding: theme.spacing(1),
+    justifyContent: 'space-between',
+    wordBreak: 'break-word',
+    borderBottom: `solid 1px ${fade(theme.palette.common.black, 0.1)}`,
     '& > *:first-child': {
+      flexGrow: 1,
       marginRight: theme.spacing(1),
+      flexBasis: '50%',
     },
+    '&:before': {
+      content: '""',
+      width: '6px',
+      height: '100%',
+      position: 'absolute',
+      left: '0px',
+      top: '0px',
+      backgroundColor: 'transparent',
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper2,
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
+  noResult: {
+    padding: theme.spacing(1),
   },
 }));
 
-export default function Search() {
+function GlobalSearch({ location }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, 'global'));
@@ -100,8 +126,8 @@ export default function Search() {
     });
 
     return results.sort((a, b) => {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
 
       if (nameA < nameB) return -1;
 
@@ -126,16 +152,16 @@ export default function Search() {
                     <Typography
                       color="inherit"
                       component={Link}
-                      to={`/pg/${r.type}/edit/${r.id}`}>
+                      to={`${location.pathname}/edit/${r.type}/${r.id}`}>
                       {r.name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {r.type}
+                      [{r.type}]
                     </Typography>
                   </div>
                 ))
               ) : (
-                <Typography>No Match</Typography>
+                <Typography className={classes.noResult}>No Match</Typography>
               )}
             </div>
           </LoadResources>
@@ -156,3 +182,5 @@ export default function Search() {
     </Fragment>
   );
 }
+
+export default withRouter(GlobalSearch);

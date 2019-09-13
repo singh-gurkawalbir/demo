@@ -1,7 +1,14 @@
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'Salesforce s Object Type',
+    label: 'SObject Type',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
   'salesforce.id': {
     type: 'text',
@@ -51,7 +58,7 @@ export default {
     type: 'text',
     label: 'Salesforce distributed qualifier',
   },
-  'salesforce.distributed.relatedLists.referencedFieldss': {
+  'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',

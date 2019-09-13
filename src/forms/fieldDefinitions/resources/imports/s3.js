@@ -1,7 +1,8 @@
 export default {
   's3.region': {
     type: 'select',
-    label: 'S3 region',
+    label: 'Region',
+    required: true,
     options: [
       {
         items: [
@@ -26,14 +27,13 @@ export default {
   },
   's3.bucket': {
     type: 'text',
-    label: 'S3 bucket',
+    label: 'Bucket Name',
+    placeholder: 'Enter S3 folder path,such as:MySite/Orders',
+    required: true,
   },
   's3.fileKey': {
     type: 'text',
-    label: 'S3 file key',
-  },
-  's3.backupBucket': {
-    type: 'text',
-    label: 'S3 backup Bucket',
+    label: 'File Key',
+    required: true,
   },
 };

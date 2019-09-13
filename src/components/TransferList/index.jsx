@@ -18,7 +18,7 @@ const styles = theme => ({
     height: 300,
     wordBreak: 'break-word',
     overflow: 'auto',
-    background: theme.editor.panelBackground,
+    background: theme.palette.background.paper2,
   },
   button: {
     margin: theme.spacing(1),

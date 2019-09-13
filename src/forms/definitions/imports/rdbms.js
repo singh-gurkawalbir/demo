@@ -1,17 +1,45 @@
 export default {
   fields: [
-    { fieldId: 'rdbms.query' },
+    { formId: 'common' },
+    {
+      id: 'importData',
+      type: 'labeltitle',
+      label: 'How would you like the data imported?',
+    },
     { fieldId: 'rdbms.queryType' },
-    { fieldId: 'rdbms.updateLookupName' },
-    { fieldId: 'rdbms.updateExtract' },
-    { fieldId: 'rdbms.ignoreLookupName' },
-    { fieldId: 'rdbms.ignoreExtract' },
-    { fieldId: 'rdbms.lookups' },
-    { fieldId: 'rdbms.lookups[*].map' },
-    { fieldId: 'rdbms.lookups[*].default' },
-    { fieldId: 'rdbms.lookups[*].query' },
-    { fieldId: 'rdbms.lookups[*].extract' },
-    { fieldId: 'rdbms.lookups[*].allowFailures' },
+    {
+      fieldId: 'ignoreExisting',
+      label: 'Ignore Existing Records',
+      visibleWhen: [
+        {
+          field: 'rdbms.queryType',
+          is: ['INSERT'],
+        },
+      ],
+    },
+    {
+      fieldId: 'ignoreMissing',
+      label: 'Ignore Missing Records',
+      visibleWhen: [
+        {
+          field: 'rdbms.queryType',
+          is: ['UPDATE'],
+        },
+      ],
+    },
+    { fieldId: 'rdbms.existingDataId' },
+    { formId: 'dataMappings' },
   ],
-  fieldSets: [],
+  fieldSets: [
+    {
+      header: 'Hooks (Optional, Developers Only)',
+      collapsed: false,
+      fields: [
+        { formId: 'hooks' },
+        { fieldId: 'hooks.postAggregate.function' },
+        { fieldId: 'hooks.postAggregate._scriptId' },
+        { fieldId: 'hooks.postAggregate._stackId' },
+      ],
+    },
+  ],
 };

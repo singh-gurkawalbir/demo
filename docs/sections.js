@@ -1,6 +1,6 @@
 module.exports.sections = [
   {
-    name: 'Color Palette',
+    name: 'ColorPalette',
     content: 'docs/colors.md',
   },
   {

@@ -2,7 +2,14 @@ import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import { resource, commMetadataPathGen } from '../../../reducers/index';
+import {
+  resource,
+  commMetadataPathGen,
+  commStatusByKey,
+} from '../../../reducers/index';
+import getRequestOptions from '../../../utils/requestOptions';
+import commKeyGenerator from '../../../utils/commKeyGenerator';
+import { COMM_STATES } from '../../../reducers/comms';
 
 function* getNetsuiteOrSalesforceMeta({
   connectionId,
@@ -115,6 +122,42 @@ function* getNetsuiteOrSalesforceMeta({
   }
 }
 
+export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.METADATA.REQUEST_ASSISTANT,
+    {
+      resourceId: assistant,
+      adaptorType,
+    }
+  );
+  const commStatus = yield select(
+    commStatusByKey,
+    commKeyGenerator(path, opts.method)
+  );
+
+  if (commStatus && commStatus.status !== COMM_STATES.ERROR) {
+    return;
+  }
+
+  let metadata;
+
+  try {
+    metadata = yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return;
+  }
+
+  yield put(
+    actions.assistantMetadata.received({
+      adaptorType,
+      assistant,
+      metadata,
+    })
+  );
+
+  return metadata;
+}
+
 export default [
   takeEvery(actionTypes.METADATA.NETSUITE_REQUEST, getNetsuiteOrSalesforceMeta),
   takeEvery(
@@ -122,4 +165,5 @@ export default [
     getNetsuiteOrSalesforceMeta
   ),
   takeLatest(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMeta),
+  takeEvery(actionTypes.METADATA.REQUEST_ASSISTANT, requestAssistantMetadata),
 ];

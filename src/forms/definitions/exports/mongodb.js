@@ -25,7 +25,15 @@ export default {
         },
       ],
     },
-    { fieldId: 'delta.dateField' },
+    {
+      fieldId: 'delta.dateField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
     {
       fieldId: 'once.booleanField',
       type: 'text',
@@ -42,12 +50,12 @@ export default {
   fieldSets: [
     {
       header: 'Would you like to transform the records?',
-      collapsed: false,
+      collapsed: true,
       fields: [{ fieldId: 'transform.expression.rules' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
+      collapsed: true,
       fields: [{ formId: 'hooks' }],
     },
     {
