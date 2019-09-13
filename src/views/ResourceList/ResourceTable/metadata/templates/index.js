@@ -1,11 +1,9 @@
 import Link from '@material-ui/core/Link';
 import Delete from '../../actions/Delete';
 import Edit from '../../actions/Edit';
-import {
-  UploadZipFile,
-  Download,
-  TogglePublish,
-} from '../../actions/Templates';
+import UploadZipFile from '../../actions/Templates/UploadZipFile';
+import Download from '../../actions/Templates/Download';
+import TogglePublish from '../../actions/Templates/TogglePublish';
 import { getResourceLink, formatLastModified } from '../util';
 
 export default {

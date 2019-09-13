@@ -3,15 +3,18 @@ import { IconButton } from '@material-ui/core';
 import EditIcon from 'mdi-react/EditIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
-export default function Edit({ resourceType, resource }) {
-  return (
-    <Link
-      to={getRoutePath(
-        `/${resourceType}/edit/${resourceType}/${resource._id}`
-      )}>
-      <IconButton size="small">
-        <EditIcon />
-      </IconButton>
-    </Link>
-  );
-}
+export default {
+  label: 'Edit',
+  component: function Edit({ resourceType, resource }) {
+    return (
+      <Link
+        to={getRoutePath(
+          `/${resourceType}/edit/${resourceType}/${resource._id}`
+        )}>
+        <IconButton size="small">
+          <EditIcon />
+        </IconButton>
+      </Link>
+    );
+  },
+};

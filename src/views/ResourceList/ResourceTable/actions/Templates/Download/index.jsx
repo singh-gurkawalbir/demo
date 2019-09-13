@@ -1,0 +1,20 @@
+import { useDispatch } from 'react-redux';
+import { IconButton } from '@material-ui/core';
+import DownloadIcon from '../../../../../../components/icons/ArrowDownIcon';
+import actions from '../../../../../../actions';
+
+export default {
+  label: 'Download',
+  component: function Download({ resource }) {
+    const dispatch = useDispatch();
+    const handleDownloadClick = () => {
+      dispatch(actions.template.downloadZip(resource._id));
+    };
+
+    return (
+      <IconButton size="small" onClick={handleDownloadClick}>
+        <DownloadIcon />
+      </IconButton>
+    );
+  },
+};

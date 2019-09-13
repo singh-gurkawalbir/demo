@@ -64,7 +64,7 @@ function ResourceReferences(props) {
                       <ListItem key={reference.id}>
                         <Link
                           to={getRoutePath(
-                            `${refObject.resourceType}/edit/${reference.id}`
+                            `${refObject.resourceType}/edit/${refObject.resourceType}/${reference.id}`
                           )}
                           onClick={onClose}
                           className={classes.referenceLink}>
