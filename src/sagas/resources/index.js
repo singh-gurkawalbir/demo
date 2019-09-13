@@ -1,5 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { isEqual } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -57,6 +58,31 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
       updated.content === undefined
     ) {
       updated.content = merged.content;
+    }
+
+    if (['exports', 'imports'].includes(resourceType)) {
+      if (
+        merged.assistant &&
+        merged.assistantMetadata &&
+        !isEqual(merged.assistantMetadata, updated.assistantMetadata)
+      ) {
+        const assistantMetadata = merged.assistantMetadata || {};
+
+        yield call(apiCallWithRetry, {
+          path: `/${resourceType}/${updated._id}`,
+          opts: {
+            method: 'PATCH',
+            body: [
+              {
+                op: 'replace',
+                path: '/assistantMetadata',
+                value: merged.assistantMetadata || {},
+              },
+            ],
+          },
+        });
+        updated.assistantMetadata = assistantMetadata;
+      }
     }
 
     yield put(actions.resource.received(resourceType, updated));
@@ -140,11 +166,33 @@ export function* requestReferences({ resourceType, id }) {
   }
 }
 
+export function* requestRegister({ connectionIds, integrationId }) {
+  const path = `/integrations/${integrationId}/connections/register`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: connectionIds,
+      },
+      message: `Registering Connections`,
+    });
+
+    yield put(
+      actions.connection.completeRegister(connectionIds, integrationId)
+    );
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
+  takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   ...metadataSagas,
 ];

@@ -1,54 +1,35 @@
 export default {
-  'rdbms.query[*]s': {
-    type: 'text',
-    label: 'Rdbms query[*]',
-    name: 'undefineds',
-    validWhen: [],
+  'rdbms.queryType': {
+    type: 'radiogroup',
+    label: 'Query Type',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'Insert', value: 'INSERT' },
+          { label: 'Update', value: 'UPDATE' },
+          { label: 'Insert or Update', value: 'COMPOSITE' },
+        ],
+      },
+    ],
   },
-  'rdbms.queryType[*]s': {
+  'rdbms.existingDataId': {
     type: 'text',
-    label: 'Rdbms query Type[*]',
-    name: 'undefineds',
-    validWhen: [],
-  },
-  'rdbms.updateLookupName': {
-    type: 'text',
-    label: 'Rdbms update Lookup Name',
-  },
-  'rdbms.updateExtract': {
-    type: 'text',
-    label: 'Rdbms update Extract',
-  },
-  'rdbms.ignoreLookupName': {
-    type: 'text',
-    label: 'Rdbms ignore Lookup Name',
-  },
-  'rdbms.ignoreExtract': {
-    type: 'text',
-    label: 'Rdbms ignore Extract',
-  },
-  'rdbms.lookups[*].name': {
-    type: 'text',
-    label: 'Rdbms lookups[*] name',
-  },
-  'rdbms.lookups[*].map': {
-    type: 'text',
-    label: 'Rdbms lookups[*] map',
-  },
-  'rdbms.lookups[*].default': {
-    type: 'text',
-    label: 'Rdbms lookups[*] default',
-  },
-  'rdbms.lookups[*].query': {
-    type: 'text',
-    label: 'Rdbms lookups[*] query',
-  },
-  'rdbms.lookups[*].extract': {
-    type: 'text',
-    label: 'Rdbms lookups[*] extract',
-  },
-  'rdbms.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'Rdbms lookups[*] allow Failures',
+    label: 'Existing Data Id',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
+    ],
   },
 };
