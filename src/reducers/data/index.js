@@ -22,11 +22,11 @@ export function resource(state, resourceType, id) {
   return fromResources.resource(state && state.resources, resourceType, id);
 }
 
-export function integrationInstallSteps(state, resourceType, id) {
+export function integrationInstallSteps(state, id, type) {
   return fromResources.integrationInstallSteps(
     state && state.resources,
-    resourceType,
-    id
+    id,
+    type
   );
 }
 
