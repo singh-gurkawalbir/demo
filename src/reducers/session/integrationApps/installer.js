@@ -4,32 +4,30 @@ import actionTypes from '../../../actions/types';
 export default (state = {}, action) => {
   const { id, type } = action;
 
+  if (!id) {
+    return {};
+  }
+
   return produce(state, draft => {
     if (!draft[id]) {
       draft[id] = {};
     }
 
-    if (!draft[id].installer) {
-      draft[id].installer = {};
-    }
-
-    const config = draft[id].installer;
-
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
-        draft[id].installer = {};
+        draft[id] = {};
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
-        config.verifying = true;
-        config.isTriggered = true;
+        draft[id].verifying = true;
+        draft[id].isTriggered = true;
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
-        config.verifying = false;
-        config.isTriggered = false;
+        draft[id].verifying = false;
+        draft[id].isTriggered = false;
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
-        config.isTriggered = true;
+        draft[id].isTriggered = true;
         break;
     }
   });
@@ -41,6 +39,6 @@ export function integrationAppsInstaller(state, id) {
     return {};
   }
 
-  return state[id].installer || {};
+  return state[id];
 }
 // #endregion
