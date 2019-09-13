@@ -37,41 +37,35 @@ function replaceOrInsertResource(state, type, resource) {
 function getIntegrationAppsNextState(state, action) {
   const { stepsToUpdate, installerFunction, id, type } = action;
 
-  if ((state.integrations || []).find(i => i._id === id)) {
-    return produce(state, draft => {
-      const integration = draft.integrations.find(i => i._id === id);
+  return produce(state, draft => {
+    const integration = draft.integrations.find(i => i._id === id);
 
-      if (!integration || !integration.install) {
-        return;
-      }
+    if (!integration || !integration.install) {
+      return;
+    }
 
-      const step = integration.install.find(
-        s => s.installerFunction === installerFunction
-      );
+    const step = integration.install.find(
+      s => s.installerFunction === installerFunction
+    );
 
-      // eslint-disable-next-line default-case
-      switch (type) {
-        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
-          integration.install = stepsToUpdate;
-          break;
-        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
-          step.__verifying = true;
-          step.__isTriggered = true;
-          break;
-        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
-          step.__verifying = false;
-          step.__isTriggered = false;
-          break;
-        case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
-          step.__isTriggered = true;
-          break;
-      }
-    });
-  }
-
-  return {
-    ...state,
-  };
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+        integration.install = stepsToUpdate;
+        break;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
+        step.__verifying = true;
+        step.__isTriggered = true;
+        break;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
+        step.__verifying = false;
+        step.__isTriggered = false;
+        break;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
+        step.__isTriggered = true;
+        break;
+    }
+  });
 }
 
 export default (state = {}, action) => {
@@ -160,18 +154,14 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function integrationInstallSteps(
-  state,
-  resourceType = 'integrations',
-  id
-) {
-  const integration = resource(state, resourceType, id);
+export function integrationInstallSteps(state, id, type = 'install') {
+  const integration = resource(state, 'integrations', id);
 
-  if (!integration || !integration.install) {
+  if (!integration || !integration[type]) {
     return [];
   }
 
-  return produce(integration.install, draft => {
+  return produce(integration[type], draft => {
     if (draft.find(step => !step.completed)) {
       draft.find(step => !step.completed).isCurrentStep = true;
     }
