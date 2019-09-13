@@ -24,6 +24,7 @@ export default {
       label: 'API Key',
       required: true,
       inputType: 'password',
+      defaultValue: '',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. From the account dropdown in the New Relic UI, select Account settings > Integrations > API keys to find it.',
       description:

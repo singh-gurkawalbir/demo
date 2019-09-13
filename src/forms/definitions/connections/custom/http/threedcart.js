@@ -41,6 +41,7 @@ export default {
       id: 'http.encrypted.PrivateKey',
       type: 'text',
       label: 'Private Key',
+      defaultValue: '',
       required: true,
       helpText: `Your application's private key.`,
       description:

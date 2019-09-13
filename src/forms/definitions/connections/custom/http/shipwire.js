@@ -32,13 +32,10 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('beta') === -1) {
-            return 'production';
+          if (baseUri.indexOf('beta') !== -1) {
+            return 'sandbox';
           }
-
-          return 'sandbox';
         }
-
         return 'production';
       },
     },

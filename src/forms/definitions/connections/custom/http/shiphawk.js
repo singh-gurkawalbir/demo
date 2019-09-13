@@ -23,6 +23,7 @@ export default {
       label: 'API Key',
       type: 'text',
       inputType: 'password',
+      defaultValue: '',
       required: true,
       helpText: 'The API Key of your ShipHawk account.',
       description:

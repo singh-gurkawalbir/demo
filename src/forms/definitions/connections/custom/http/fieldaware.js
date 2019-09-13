@@ -24,6 +24,7 @@ export default {
       fieldId: 'http.encrypted.apiKey',
       type: 'text',
       inputType: 'password',
+      defaultValue: '',
       required: true,
       label: 'API Key',
       helpText:

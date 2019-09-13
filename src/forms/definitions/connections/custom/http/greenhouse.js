@@ -27,6 +27,7 @@ export default {
       helpText:
         'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
       inputType: 'password',
+      defaultValue: '',
       label: 'API Token',
       description:
         'Note: for security reasons this field must always be re-entered.',

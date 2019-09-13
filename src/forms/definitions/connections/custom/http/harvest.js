@@ -25,6 +25,7 @@ export default {
       id: 'http.encrypted.accountId',
       type: 'text',
       label: 'Account ID',
+      defaultValue: '',
       helpText: 'Please enter the Harvest account ID .',
       validWhen: {
         matchesRegEx: {

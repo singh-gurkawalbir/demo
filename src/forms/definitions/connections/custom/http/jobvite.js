@@ -9,7 +9,7 @@ export default {
       formValues['/environment'] === 'sandbox' ? '-stg' : ''
     }.jobvite.com`,
     '/http/ping/relativeURI':
-      '/api/v2/candidate?api={{connection.http.unencrypted.api}}&sc={{connection.http.encrypted.sc}}',
+      '/api/v2/candidate?api={{connection.http.unencrypted.api}}&sc={{connection.http.encrypted.secret}}',
     '/http/ping/method': 'GET',
   }),
   fields: [
@@ -35,8 +35,6 @@ export default {
           if (baseUri.indexOf('api-stg.') !== -1) {
             return 'sandbox';
           }
-
-          return 'production';
         }
 
         return 'production';
@@ -57,7 +55,7 @@ export default {
       helpText: 'The API Key of your Jobvite account.',
     },
     {
-      id: 'http.encrypted.sc',
+      id: 'http.encrypted.secret',
       type: 'text',
       label: 'Secret',
       required: true,

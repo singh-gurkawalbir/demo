@@ -51,8 +51,6 @@ export default {
           if (baseUri.indexOf('b2b') !== -1) {
             return 'neweggbusiness';
           }
-
-          return 'newegg';
         }
 
         return 'newegg';
@@ -64,6 +62,7 @@ export default {
       label: 'API Key',
       required: true,
       inputType: 'password',
+      defaultValue: '',
       helpText:
         'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.',
       description:
@@ -75,6 +74,7 @@ export default {
       label: 'API Key',
       required: true,
       inputType: 'password',
+      defaultValue: '',
       helpText:
         'Please enter the unique Secret Key which Newegg Marketplace integration team assigned to you. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your key safe.',
       description:
