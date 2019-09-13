@@ -52,6 +52,18 @@ const api = {
     action(actionTypes.API_FAILURE, { path, method, message, hidden }),
 };
 // #region Resource Actions
+const connection = {
+  requestRegister: (connectionIds, integrationId) =>
+    action(actionTypes.CONNECTION.REGISTER_REQUEST, {
+      connectionIds,
+      integrationId,
+    }),
+  completeRegister: (connectionIds, integrationId) =>
+    action(actionTypes.CONNECTION.REGISTER_COMPLETE, {
+      connectionIds,
+      integrationId,
+    }),
+};
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
@@ -593,6 +605,16 @@ const job = {
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
 };
+const assistantMetadata = {
+  request: ({ adaptorType, assistant }) =>
+    action(actionTypes.METADATA.REQUEST_ASSISTANT, { adaptorType, assistant }),
+  received: ({ adaptorType, assistant, metadata }) =>
+    action(actionTypes.METADATA.RECEIVED_ASSISTANT, {
+      adaptorType,
+      assistant,
+      metadata,
+    }),
+};
 // #endregion
 
 export default {
@@ -619,5 +641,7 @@ export default {
   job,
   flow,
   agent,
+  assistantMetadata,
   stack,
+  connection,
 };

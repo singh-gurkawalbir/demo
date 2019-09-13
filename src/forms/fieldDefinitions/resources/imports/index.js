@@ -10,6 +10,7 @@ import rest from './rest';
 import s3 from './s3';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
+import file from './file';
 
 const allFieldDefinitions = {
   ...as2,
@@ -24,6 +25,7 @@ const allFieldDefinitions = {
   ...s3,
   ...salesforce,
   ...wrapper,
+  ...file,
 };
 
 export default allFieldDefinitions;

@@ -19,10 +19,11 @@ const Resources = loadable(() =>
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
+const FlowBuilder = loadable(() =>
+  import(/* webpackChunkName: 'FlowBuider' */ '../../views/FlowBuilder')
+);
 const ResourceList = loadable(() =>
-  import(
-    /* webpackChunkName: 'StandaloneResource' */ '../../views/ResourceList'
-  )
+  import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
@@ -51,6 +52,7 @@ export default class AppRouting extends Component {
           component={IntegrationSettings}
         />
         <Route path="/pg/signin" component={SignIn} />
+        <Route path="/pg/flowbuilder" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
         <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />

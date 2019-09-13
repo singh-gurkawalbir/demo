@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -9,6 +11,7 @@ import {
   TableRow,
   TableSortLabel,
 } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
 import metadata from './metadata';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -50,7 +53,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceTable({ resourceType, resources }) {
+export default function ResourceTable({
+  resourceType,
+  resources = [],
+  selectResourceRef,
+  metadataType,
+  isSelectableListing,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { sort = {} } = useSelector(state =>
@@ -61,12 +70,52 @@ export default function ResourceTable({ resourceType, resources }) {
     dispatch(actions.patchFilter(resourceType, { sort: { order, orderBy } }));
   };
 
-  const { columns = [], actions: rowActions } = metadata(resourceType);
+  const { columns = [], actions: rowActions } = metadata(
+    resourceType || metadataType
+  );
+  const [selectedResources, setSelectedResources] = useState({});
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const handleSelectChange = (event, resourceId) => {
+    const { checked } = event.target;
+    const selected = produce(selectedResources, draft => {
+      const selectedCopy = draft;
+
+      selectedCopy[resourceId] = checked;
+    });
+
+    setSelectedResources(selected);
+    selectResourceRef(selected);
+
+    if (!checked) {
+      setIsAllSelected(false);
+    }
+  };
+
+  const handleSelectAllChange = event => {
+    const { checked } = event.target;
+    const selected = produce(selectedResources, draft => {
+      const selectedCopy = draft;
+
+      resources.forEach(r => (selectedCopy[r._id] = checked));
+    });
+
+    setSelectedResources(selected);
+    selectResourceRef(selected);
+    setIsAllSelected(checked);
+  };
 
   return (
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
+          {isSelectableListing && (
+            <TableCell>
+              <Checkbox
+                onChange={event => handleSelectAllChange(event)}
+                checked={isAllSelected}
+              />
+            </TableCell>
+          )}
           {columns.map(col =>
             col.orderBy ? (
               <TableCell
@@ -105,6 +154,14 @@ export default function ResourceTable({ resourceType, resources }) {
       <TableBody>
         {resources.map(r => (
           <TableRow hover key={r._id} className={classes.row}>
+            {isSelectableListing && (
+              <TableCell>
+                <Checkbox
+                  onChange={event => handleSelectChange(event, r._id)}
+                  checked={!!selectedResources[r._id]}
+                />
+              </TableCell>
+            )}
             {columns.map((col, index) =>
               index === 0 ? (
                 <TableCell
@@ -123,15 +180,12 @@ export default function ResourceTable({ resourceType, resources }) {
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map((Action, i) => (
-                    // TECH DEBT:
-                    // using index as key is not good enough when we have dynamic
-                    // actions... only fixed lists are safe to use index.
-                    // the actions metadata will need to change to support a
-                    // unique key
-                    // eslint-disable-next-line react/no-array-index-key
-                    <Action key={i} resourceType={resourceType} resource={r} />
-                  ))}
+                  actions={rowActions.map(({ label, component: Action }) => ({
+                    label,
+                    component: (
+                      <Action resourceType={resourceType} resource={r} />
+                    ),
+                  }))}
                 />
               </TableCell>
             )}
