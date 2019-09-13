@@ -28,13 +28,13 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   connectingLine: {
-    top: -(pgBoxSize + theme.spacing(3) * 2) / 2,
-    height: pgBoxSize + theme.spacing(3) * 2,
+    top: -(pgBoxSize + theme.spacing(3 * 2)) / 2,
+    height: pgBoxSize + theme.spacing(3 * 2),
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ _id, name, index, isLast }) => {
+const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   const classes = useStyles();
 
   return (
