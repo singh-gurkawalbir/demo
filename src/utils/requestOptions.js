@@ -186,6 +186,11 @@ export default function getRequestOptions(
         path: `/flows/${resourceId}/run`,
         opts: { method: 'POST' },
       };
+    case actionTypes.FLOW.DOWNLOAD_ZIP_FILE:
+      return {
+        path: `/flows/${resourceId}/template`,
+        opts: { method: 'GET' },
+      };
     default:
       return {};
   }

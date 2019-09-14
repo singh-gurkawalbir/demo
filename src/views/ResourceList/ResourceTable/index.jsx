@@ -105,8 +105,25 @@ export default function ResourceTable({ resourceType, resources }) {
       <TableBody>
         {resources.map(r => (
           <TableRow hover key={r._id} className={classes.row}>
-            {columns.map((col, index) =>
-              index === 0 ? (
+            {columns.map((col, index) => {
+              if (col.action) {
+                return (
+                  <TableCell className={classes.actionCell}>
+                    <ActionMenu
+                      actions={col.action.map(
+                        ({ label, component: Action }) => ({
+                          label,
+                          component: (
+                            <Action resourceType={resourceType} resource={r} />
+                          ),
+                        })
+                      )}
+                    />
+                  </TableCell>
+                );
+              }
+
+              return index === 0 ? (
                 <TableCell
                   component="th"
                   scope="row"
@@ -118,8 +135,8 @@ export default function ResourceTable({ resourceType, resources }) {
                 <TableCell key={col.heading} align={col.align || 'left'}>
                   {col.value(r)}
                 </TableCell>
-              )
-            )}
+              );
+            })}
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu

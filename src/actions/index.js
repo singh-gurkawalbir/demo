@@ -592,6 +592,9 @@ const job = {
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
+  downloadZipFile: flowId => {
+    action(actionTypes.FLOW.DOWNLOAD_ZIP_FILE, { flowId });
+  },
 };
 // #endregion
 

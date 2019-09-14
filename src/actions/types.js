@@ -236,6 +236,7 @@ const JOB = {
 };
 const FLOW = {
   RUN: 'FLOW_RUN',
+  DOWNLOAD_ZIP_FILE: 'DOWNLOAD_ZIP_FILE',
 };
 
 export default {
