@@ -10,76 +10,6 @@ export default {
     ],
   }),
 
-  fields: [
-    { formId: 'common' },
-    {
-      fieldId: 'netsuite.netsuiteExportlabel',
-    },
-    {
-      fieldId: 'netsuite.webservices.recordType',
-    },
-    {
-      fieldId: 'netsuite.webservices.searchId',
-      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-      visibleWhen: [
-        {
-          field: 'netsuite.webservices.recordType',
-          isNot: [''],
-        },
-      ],
-    },
-    {
-      fieldId: 'type',
-    },
-    {
-      fieldId: 'delta.lagOffset',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
-    },
-    {
-      fieldId: 'delta.dateField',
-      mode: 'webservices',
-      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-      visibleWhenAll: [
-        {
-          field: 'netsuite.webservices.recordType',
-          isNot: [''],
-        },
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
-    },
-    {
-      fieldId: 'once.booleanField',
-      mode: 'webservices',
-      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-      visibleWhenAll: [
-        {
-          field: 'netsuite.webservices.recordType',
-          isNot: [''],
-        },
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
-    },
-    {
-      fieldId: 'netsuite.skipGrouping',
-    },
-    // Search Criteria
-    // Sample Data
-    //  Tranform  Data
-    { fieldId: 'transform.expression.rules' },
-    // Filter  Data
-    // Advanced
-  ],
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'netsuite.webservices.searchId') {
       const recordTypeField = fields.find(
@@ -123,5 +53,56 @@ export default {
     }
 
     return null;
+  },
+  fieldMap: {
+    common: { formId: 'common' },
+    'netsuite.netsuiteExportlabel': { fieldId: 'netsuite.netsuiteExportlabel' },
+    'netsuite.webservices.recordType': {
+      fieldId: 'netsuite.webservices.recordType',
+    },
+    'netsuite.webservices.searchId': {
+      fieldId: 'netsuite.webservices.searchId',
+      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhen: [{ field: 'netsuite.webservices.recordType', isNot: [''] }],
+    },
+    type: { fieldId: 'type' },
+    'delta.lagOffset': {
+      fieldId: 'delta.lagOffset',
+      visibleWhen: [{ field: 'type', is: ['delta'] }],
+    },
+    'delta.dateField': {
+      fieldId: 'delta.dateField',
+      mode: 'webservices',
+      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.webservices.recordType', isNot: [''] },
+        { field: 'type', is: ['delta'] },
+      ],
+    },
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+      mode: 'webservices',
+      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.webservices.recordType', isNot: [''] },
+        { field: 'type', is: ['once'] },
+      ],
+    },
+    'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'netsuite.netsuiteExportlabel',
+      'netsuite.webservices.recordType',
+      'netsuite.webservices.searchId',
+      'type',
+      'delta.lagOffset',
+      'delta.dateField',
+      'once.booleanField',
+      'netsuite.skipGrouping',
+      'transform.expression.rules',
+    ],
   },
 };

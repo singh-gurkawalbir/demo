@@ -1,15 +1,15 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    {
+  fieldMap: {
+    common: { formId: 'common' },
+    exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
-    { fieldId: 'mongodb.collection' },
-    { fieldId: 'mongodb.filter' },
-    { fieldId: 'mongodb.projection' },
-    {
+    'mongodb.collection': { fieldId: 'mongodb.collection' },
+    'mongodb.filter': { fieldId: 'mongodb.filter' },
+    'mongodb.projection': { fieldId: 'mongodb.projection' },
+    type: {
       id: 'type',
       type: 'select',
       label: 'Export Type',
@@ -25,43 +25,45 @@ export default {
         },
       ],
     },
-    {
+    'delta.dateField': {
       fieldId: 'delta.dateField',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
+      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
-    {
+    'once.booleanField': {
       fieldId: 'once.booleanField',
       type: 'text',
       label: 'Once Boolean Field',
       required: true,
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
+      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Would you like to transform the records?',
-      collapsed: true,
-      fields: [{ fieldId: 'transform.expression.rules' }],
-    },
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: true,
-      fields: [{ formId: 'hooks' }],
-    },
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [{ formId: 'advancedSettings' }],
-    },
-  ],
+    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    hooks: { formId: 'hooks' },
+    advancedSettings: { formId: 'advancedSettings' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'exportData',
+      'mongodb.collection',
+      'mongodb.filter',
+      'mongodb.projection',
+      'type',
+      'delta.dateField',
+      'once.booleanField',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Would you like to transform the records?',
+        fields: ['transform.expression.rules'],
+      },
+      {
+        collapsed: true,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+    ],
+  },
 };

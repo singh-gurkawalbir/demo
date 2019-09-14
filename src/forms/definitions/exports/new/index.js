@@ -34,8 +34,8 @@ export default {
 
     return newValues;
   },
-  fields: [
-    {
+  fieldMap: {
+    application: {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
@@ -43,7 +43,7 @@ export default {
       defaultValue: '',
       required: true,
     },
-    {
+    connection: {
       id: 'connection',
       name: '/_connectionId',
       type: 'selectresource',
@@ -52,10 +52,10 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
       allowNew: true,
     },
-    {
+    name: {
       id: 'name',
       name: '/name',
       type: 'text',
@@ -63,9 +63,9 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
     },
-    {
+    description: {
       id: 'description',
       name: '/description',
       type: 'text',
@@ -73,9 +73,9 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen,
+      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
     },
-    {
+    'netsuite.execution.type': {
       id: 'netsuite.execution.type',
       name: 'executionType',
       type: 'radiogroup',
@@ -89,14 +89,9 @@ export default {
           ],
         },
       ],
-      visibleWhen: [
-        {
-          field: 'application',
-          is: ['netsuite'],
-        },
-      ],
+      visibleWhen: [{ field: 'application', is: ['netsuite'] }],
     },
-    {
+    'netsuite.api.type': {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
@@ -110,14 +105,19 @@ export default {
           ],
         },
       ],
-      visibleWhen: [
-        {
-          field: 'netsuite.execution.type',
-          is: ['scheduled'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.execution.type', is: ['scheduled'] }],
     },
-  ],
+  },
+  layout: {
+    fields: [
+      'application',
+      'connection',
+      'name',
+      'description',
+      'netsuite.execution.type',
+      'netsuite.api.type',
+    ],
+  },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};

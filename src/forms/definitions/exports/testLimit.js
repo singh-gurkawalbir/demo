@@ -1,1 +1,4 @@
-export default { fields: [{ fieldId: 'test.limit' }], fieldSets: [] };
+export default {
+  fieldMap: { 'test.limit': { fieldId: 'test.limit' } },
+  layout: { fields: ['test.limit'] },
+};
