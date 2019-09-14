@@ -6,6 +6,7 @@ export default {
   'rest.method': {
     type: 'select',
     label: 'HTTP Method',
+    required: true,
     options: [
       {
         items: [
@@ -148,6 +149,7 @@ export default {
   'rest.relativeURI': {
     type: 'text',
     label: 'Relative URI',
+    required: true,
   },
   'rest.successPath': {
     type: 'text',

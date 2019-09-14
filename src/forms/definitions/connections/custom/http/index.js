@@ -23,16 +23,10 @@ import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
-import bronto from './bronto';
-import grms from './grms';
-import strata from './strata';
-import sugarcrm from './sugarcrm';
-import liquidplanner from './liquidplanner';
 import stripe from './stripe';
 import zendesk from './zendesk';
 import acumatica from './acumatica';
 import postmark from './postmark';
-import splunk from './splunk';
 import steelbrick from './steelbrick';
 import squareup from './squareup';
 import twilio from './twilio';
@@ -47,7 +41,6 @@ import wish from './wish';
 import returnly from './returnly';
 import expensify from './expensify';
 import myobessentials from './myobessentials';
-import marketo from './marketo';
 import parseur from './parseur';
 import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
@@ -58,7 +51,6 @@ export default {
   oandav20fxtrade,
   oandaexchangerates,
   parseur,
-  marketo,
   returnly,
   myobessentials,
   expensify,
@@ -73,12 +65,10 @@ export default {
   tsheets,
   steelbrick,
   squareup,
-  splunk,
   acumatica,
   postmark,
   zendesk,
   stripe,
-  liquidplanner,
   activecampaign,
   drift,
   'authorize.net': authorizeNet,
@@ -104,8 +94,4 @@ export default {
   onelogin,
   recharge,
   autopilot,
-  bronto,
-  grms,
-  strata,
-  sugarcrm,
 };
