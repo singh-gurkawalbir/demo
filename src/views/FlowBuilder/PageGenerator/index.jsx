@@ -1,6 +1,9 @@
+import { useRef } from 'react';
+import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import itemTypes from '../itemTypes';
 
 const pgBoxSize = 150;
 const useStyles = makeStyles(theme => ({
@@ -14,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px lightblue',
     padding: theme.spacing(1),
     margin: theme.spacing(3, 0),
+    cursor: 'move',
   },
   processorActions: {
     display: 'flex',
@@ -36,10 +40,20 @@ const useStyles = makeStyles(theme => ({
 }));
 const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   const classes = useStyles();
+  const ref = useRef(null);
+  const [{ isDragging }, drag] = useDrag({
+    item: { type: itemTypes.PAGE_GENERATOR, _id, index },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+  const opacity = isDragging ? 0.5 : 1;
+
+  drag(ref);
 
   return (
     <div id={_id} className={classes.pgContainer}>
-      <div className={classes.pgBox}>
+      <div ref={ref} className={classes.pgBox} style={{ opacity }}>
         <Typography variant="h2">{name}</Typography>
       </div>
       <div
