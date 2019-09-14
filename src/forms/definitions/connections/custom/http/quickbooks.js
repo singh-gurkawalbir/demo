@@ -54,7 +54,7 @@ export default {
     {
       id: 'http.quickbooksEnvironment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       helpText:
         'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
       options: [

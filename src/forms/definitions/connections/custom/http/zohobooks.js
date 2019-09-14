@@ -1,21 +1,21 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zohobooks',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/baseURI': 'https://books.zoho.com/api/v3',
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
-    '/rest/oauthTokenURI': 'https://accounts.zoho.com/oauth/v2/token',
-    '/rest/scopeDelimiter': ',',
-    '/rest/headers': [{ name: 'Accept', value: 'application/json' }],
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'urlencoded',
+    '/http/baseURI': 'https://books.zoho.com/api/v3',
+    '/http/auth/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
+    '/http/auth/oauth/tokenURI': 'https://accounts.zoho.com/oauth/v2/token',
+    '/http/auth/oauth/scopeDelimiter': ',',
+    '/http/headers': [{ name: 'Accept', value: 'application/json' }],
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.scope',
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'ZohoBooks.contacts.CREATE',
         'ZohoBooks.contacts.UPDATE',
@@ -84,7 +84,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

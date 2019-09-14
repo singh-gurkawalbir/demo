@@ -20,7 +20,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.dynamics.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {

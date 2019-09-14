@@ -44,7 +44,8 @@ export default {
     },
     // ...or, we can create completely custom fields like this:
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
+      label: 'API Token',
       helpText: 'The password of your JIRA account.',
     },
   ],

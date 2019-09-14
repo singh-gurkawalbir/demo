@@ -1,21 +1,22 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'tophatter',
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/pingRelativeURI': '/products.json',
-    '/rest/baseURI': `https://tophatter.com/merchant_api/v1`,
-    '/rest/tokenLocation': 'url',
-    '/rest/tokenParam': 'access_token',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'urlencoded',
+    '/http/ping/relativeURI': '/products.json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://tophatter.com/merchant_api/v1`,
+    '/http/auth/token/location': 'url',
+    '/http/auth/token/paramName': 'access_token',
   }),
   fields: [
     { fieldId: 'name' },
-
     {
-      fieldId: 'rest.bearerToken',
-      label: 'Access Token:',
+      fieldId: 'http.auth.token.token',
+      label: 'Access Token',
+      defaultValue: '',
       required: true,
       inputType: 'password',
       helpText:
@@ -28,7 +29,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

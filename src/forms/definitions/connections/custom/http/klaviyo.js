@@ -1,20 +1,22 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'klaviyo',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/baseURI': `https://a.klaviyo.com/api/`,
-    '/rest/pingRelativeURI':
-      '/v1/lists?api_key={{{connection.rest.encrypted.apiKey}}}',
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'urlencoded',
+    '/http/baseURI': `https://a.klaviyo.com/api/`,
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI':
+      '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.apiKey',
+      id: 'http.encrypted.apiKey',
       type: 'text',
-      label: 'API Key:',
+      label: 'API Key',
+      defaultValue: '',
       required: true,
       inputType: 'password',
       helpText:
@@ -27,7 +29,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

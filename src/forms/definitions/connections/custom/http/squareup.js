@@ -1,23 +1,24 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'squareup',
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/v2/locations',
-    '/rest/baseURI': `https://connect.squareup.com`,
-    '/rest/tokenLocation': 'header',
-    '/rest/authHeader': 'Authorization',
-    '/rest/authScheme': 'Bearer',
-    '/rest/pingSuccessPath': 'locations',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/v2/locations',
+    '/http/baseURI': `https://connect.squareup.com`,
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/headerName': 'Authorization',
+    '/http/auth/token/scheme': 'Bearer',
+    '/http/ping/successPath': 'locations',
   }),
   fields: [
     { fieldId: 'name' },
 
     {
-      fieldId: 'rest.bearerToken',
-      label: 'Access Token:',
+      fieldId: 'http.auth.token.token',
+      label: 'Access Token',
       required: true,
       helpText:
         'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
@@ -29,7 +30,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

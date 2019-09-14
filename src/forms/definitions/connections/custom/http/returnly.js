@@ -1,16 +1,17 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'returnly',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.returnly.com/`,
-    '/rest/pingRelativeURI': '/returns.json',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.returnly.com/`,
+    '/http/ping/relativeURI': '/returns.json',
+    '/http/ping/method': 'GET',
+    '/http/headers': [
       {
         name: 'X-Api-Token',
-        value: '{{{connection.rest.encrypted.apiKey}}}',
+        value: '{{{connection.http.encrypted.apiKey}}}',
       },
       {
         name: 'Content-Type',
@@ -21,8 +22,9 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.apiKey',
-      label: 'API Key:',
+      id: 'http.encrypted.apiKey',
+      label: 'API Key',
+      defaultValue: '',
       required: true,
       type: 'text',
       inputType: 'password',
@@ -36,7 +38,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

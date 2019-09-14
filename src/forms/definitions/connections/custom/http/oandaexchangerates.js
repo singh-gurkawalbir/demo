@@ -1,18 +1,18 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'oandaexchangerates',
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/v2/currencies.json',
-    '/rest/pingMethod': 'GET',
-    '/rest/baseURI': `https://web-services.oanda.com/rates/api`,
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/v2/currencies.json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://web-services.oanda.com/rates/api`,
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.bearerToken',
+      fieldId: 'http.auth.token.token',
       helpText: 'Please enter the API Key of your OANDA account.',
       label: 'API Key:',
       required: true,
@@ -22,7 +22,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

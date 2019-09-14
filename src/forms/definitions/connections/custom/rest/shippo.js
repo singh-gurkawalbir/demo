@@ -19,8 +19,9 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.token',
-      label: 'API Token:',
+      id: 'http.encrypted.token',
+      label: 'API Token',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,

@@ -18,13 +18,13 @@ export default {
     { fieldId: 'name' },
     {
       id: 'http.unencrypted.companyId',
-      label: 'Company ID:',
+      label: 'Company ID',
       type: 'text',
       helpText: 'Please reach out to TriNet support team for company Id.',
     },
     {
       fieldId: 'http.auth.token.token',
-      label: 'API Key:',
+      label: 'API Key',
       helpText:
         'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       required: true,

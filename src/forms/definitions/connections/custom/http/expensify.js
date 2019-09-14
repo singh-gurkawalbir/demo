@@ -3,8 +3,8 @@ export default {
     const pingData = {
       type: 'get',
       credentials: {
-        partnerUserID: formValues['/rest/unencrypted/partnerUserId'],
-        partnerUserSecret: formValues['/rest/encrypted/partnerUserSecret'],
+        partnerUserID: formValues['/http/unencrypted/partnerUserId'],
+        partnerUserSecret: formValues['/http/encrypted/partnerUserSecret'],
       },
       inputSettings: { type: 'policyList', adminOnly: true },
     };
@@ -14,32 +14,33 @@ export default {
 
     return {
       ...formValues,
-      '/type': 'rest',
+      '/type': 'http',
       '/assistant': 'expensify',
-      '/rest/authType': 'custom',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/pingRelativeURI': '/ExpensifyIntegrations',
-      '/rest/baseURI': `https://integrations.expensify.com/Integration-Server`,
-      '/rest/pingMethod': 'POST',
-      '/rest/pingSuccessPath': 'policyList',
-      '/rest/pingBody': JSON.stringify(pingBody),
+      '/http/auth/type': 'custom',
+      '/http/mediaType': 'urlencoded',
+      '/http/ping/relativeURI': '/ExpensifyIntegrations',
+      '/http/baseURI': 'https://integrations.expensify.com/Integration-Server',
+      '/http/ping/method': 'POST',
+      '/http/ping/successPath': 'responseCode',
+      '/http/ping/successValues': [200],
+      '/http/ping/body': JSON.stringify(pingBody),
     };
   },
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.unencrypted.partnerUserId',
+      id: 'http.unencrypted.partnerUserId',
       type: 'text',
-      label: 'Partner User ID:',
+      label: 'Partner User ID',
       helpText:
         'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
       required: true,
     },
     {
-      id: 'rest.encrypted.partnerUserSecret',
+      id: 'http.encrypted.partnerUserSecret',
       type: 'text',
       inputType: 'password',
-      label: 'Partner User Secret:',
+      label: 'Partner User Secret',
       helpText:
         'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       required: true,
@@ -51,7 +52,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

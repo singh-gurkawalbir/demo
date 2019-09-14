@@ -1,13 +1,13 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'http',
-    '/assistant': 'drift',
+    '/assistant': 'stripe',
     '/http/auth/type': 'token',
-    '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '/accounts',
+    '/type': 'http',
+    '/http/mediaType': 'urlencoded',
+    '/http/ping/relativeURI': '/v1/charges',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://driftapi.com`,
+    '/http/baseURI': `https://api.stripe.com/`,
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
@@ -16,10 +16,9 @@ export default {
     { fieldId: 'name' },
     {
       fieldId: 'http.auth.token.token',
-      label: 'Personal Access Token',
-      helpText:
-        'Please enter your access token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your access token safe. This token is automatically generated when you installed the app to your team. You can use this to authenticate your app.',
+      label: 'Secret Key',
       required: true,
+      helpText: 'The secret key of your Stripe account.',
     },
   ],
   fieldSets: [

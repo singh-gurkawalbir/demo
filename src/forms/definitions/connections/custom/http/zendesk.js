@@ -1,12 +1,13 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zendesk',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/api/v2/users.json',
-    '/rest/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/api/v2/users.json',
+    '/http/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
   }),
   fields: [
     { fieldId: 'name' },
@@ -15,7 +16,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {
@@ -25,7 +26,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -36,16 +37,16 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username' },
+    { fieldId: 'http.auth.basic.username' },
     {
-      fieldId: 'rest.basicAuth.password',
+      fieldId: 'http.auth.basic.password',
     },
   ],
   fieldSets: [
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

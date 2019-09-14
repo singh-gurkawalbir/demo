@@ -1,20 +1,20 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zohomail',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': 'https://mail.zoho.com/api',
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
-    '/rest/oauthTokenURI': 'https://accounts.zoho.com/oauth/v2/token',
-    '/rest/scopeDelimiter': ',',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://mail.zoho.com/api',
+    '/http/auth/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
+    '/http/auth/oauth/tokenURI': 'https://accounts.zoho.com/oauth/v2/token',
+    '/http/auth/oauth/scopeDelimiter': ',',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.scope',
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'VirtualOffice.accounts.READ',
         'VirtualOffice.accounts.UPDATE',
@@ -57,7 +57,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

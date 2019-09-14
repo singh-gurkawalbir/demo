@@ -19,7 +19,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.okta.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

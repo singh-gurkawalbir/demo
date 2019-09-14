@@ -39,7 +39,7 @@ export default {
     },
     {
       fieldId: 'http.auth.basic.username',
-      label: 'API Key:',
+      label: 'API Key',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
     },

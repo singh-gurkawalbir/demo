@@ -1,25 +1,25 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'tsheets',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${
-      formValues['/rest/tsheetsSubdomain']
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://${
+      formValues['/http/tsheetsSubdomain']
     }.tsheets.com/api`,
-    '/rest/authURI': 'https://rest.tsheets.com/api/v1/authorize',
-    '/rest/oauthTokenURI': 'https://rest.tsheets.com/api/v1/grant',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/authURI': 'https://rest.tsheets.com/api/v1/authorize',
+    '/http/auth/oauth/tokenURI': 'https://rest.tsheets.com/api/v1/grant',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.tsheetsSubdomain',
+      id: 'http.tsheetsSubdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.tsheets.com/api',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
       validWhen: {
@@ -29,7 +29,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -45,7 +45,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

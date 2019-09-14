@@ -4,29 +4,29 @@ export default {
 
     return {
       ...formValues,
-      '/type': 'rest',
+      '/type': 'http',
       '/assistant': 'wish',
-      '/rest/authType': 'oauth',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/authHeader': 'Authorization',
-      '/rest/authScheme': 'Bearer',
-      '/rest/baseURI': `${
+      '/http/auth/type': 'oauth',
+      '/http/mediaType': 'urlencoded',
+      '/http/auth/token/headerName': 'Authorization',
+      '/http/auth/token/scheme': 'Bearer',
+      '/http/baseURI': `${
         environment === 'production'
           ? 'https://merchant.wish.com/api/v2'
           : 'https://sandbox.merchant.wish.com/api/v2'
       }`,
-      '/rest/authURI': `${
+      '/http/auth/oauth/authURI': `${
         environment === 'production'
           ? 'https://merchant.wish.com/oauth/authorize'
           : 'https://sandbox.merchant.wish.com/oauth/authorize'
       }`,
-      '/rest/oauthTokenURI': `${
+      '/http/auth/oauth/tokenURI': `${
         environment === 'production'
           ? 'https://merchant.wish.com/api/v2/oauth/access_token'
           : 'https://sandbox.merchant.wish.com/api/v2/oauth/access_token'
       }`,
-      '/rest/oauth/accessTokenPath': 'data.access_token',
-      '/rest/refreshTokenPath': 'data.refresh_token',
+      '/http/auth/oauth/accessTokenPath': 'data.access_token',
+      '/http/auth/token/refreshTokenPath': 'data.refresh_token',
     };
   },
   fields: [{ fieldId: 'name' }],
@@ -34,7 +34,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

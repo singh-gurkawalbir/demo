@@ -28,7 +28,7 @@ export default {
       type: 'text',
       helpText:
         'API User Key available from Jet under API Section-> Get API Keys', // Secret Key available from Jet under API Section-> Get API Keys
-      label: 'API User:',
+      label: 'API User',
       required: true,
       defaultValue: r => {
         let toReturn = '';
@@ -49,7 +49,7 @@ export default {
       inputType: 'password',
       helpText:
         'Secret Key available from Jet under API Section-> Get API Keys',
-      label: 'Secret Key:',
+      label: 'Secret Key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

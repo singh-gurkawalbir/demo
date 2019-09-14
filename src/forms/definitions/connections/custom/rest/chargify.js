@@ -51,7 +51,7 @@ export default {
       id: 'rest.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key:',
+      label: 'API Key',
       inputType: 'password',
       helpText: 'The API key of your Chargify account.',
     },

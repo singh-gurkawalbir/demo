@@ -21,7 +21,7 @@ export default {
       helpText:
         "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
       endAdornment: '.chargebee.com/api',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -41,8 +41,8 @@ export default {
       },
     },
     {
-      fieldId: 'rest.basicAuth.username',
-      label: 'API Key:',
+      fieldId: 'http.auth.basic.username',
+      label: 'API Key',
       helpText: 'The API Key of your Chargebee account.',
     },
   ],

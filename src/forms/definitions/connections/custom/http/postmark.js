@@ -1,25 +1,27 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'postmark',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.postmarkapp.com/`,
-    '/rest/pingRelativeURI': '/servers?count=1&offset=0',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://api.postmarkapp.com/`,
+    '/http/ping/relativeURI': '/servers?count=1&offset=0',
+    '/http/headers': [
       { name: 'Content-Type', value: 'application/json' },
       {
         name: 'X-Postmark-Account-Token',
-        value: '{{{connection.rest.encrypted.accountToken}}}',
+        value: '{{{connection.http.encrypted.accountToken}}}',
       },
     ],
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.serverToken',
-      label: 'Server Token:',
+      id: 'http.encrypted.serverToken',
+      label: 'Server Token',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
@@ -29,8 +31,9 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
     },
     {
-      id: 'rest.encrypted.accountToken',
-      label: 'Account Token:',
+      id: 'http.encrypted.accountToken',
+      label: 'Account Token',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
@@ -44,7 +47,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

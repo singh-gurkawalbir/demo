@@ -1,21 +1,21 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'sharepoint',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${formValues['/rest/subDomain']}.sharepoint.com`,
-    '/rest/authURI':
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://${formValues['/http/subDomain']}.sharepoint.com`,
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.subDomain',
+      id: 'http.subDomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.sharepoint.com',
@@ -29,7 +29,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -45,7 +45,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

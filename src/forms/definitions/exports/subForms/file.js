@@ -58,6 +58,18 @@ export default {
       ],
     },
     {
+      id: 'rowsPerRecord',
+      type: 'checkbox',
+      label: 'Multiple Rows Per Record',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xlsx'],
+        },
+        { field: 'file.output', is: ['records'] },
+      ],
+    },
+    {
       fieldId: 'file.xlsx.keyColumns',
 
       visibleWhenAll: [
@@ -66,6 +78,7 @@ export default {
           is: ['xlsx'],
         },
         { field: 'file.output', is: ['records'] },
+        { field: 'rowsPerRecord', is: [true] },
       ],
     },
     {
@@ -84,7 +97,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'file.type',
-          is: ['edi', 'fixedWidth'],
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
         { field: 'file.output', is: ['records'] },
       ],
@@ -94,7 +107,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'file.type',
-          is: ['edi', 'fixedWidth'],
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
         { field: 'file.output', is: ['records'] },
       ],

@@ -22,7 +22,7 @@ export default {
     {
       id: 'integrator.environment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       required: true,
       options: [
         {
@@ -51,7 +51,7 @@ export default {
     {
       id: 'integrator.token',
       type: 'text',
-      label: 'Token:',
+      label: 'Token',
       required: true,
       inputType: 'password',
       helpText:

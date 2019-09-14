@@ -1,24 +1,25 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'parseur',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.parseur.com`,
-    '/rest/pingRelativeURI': '/parser',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.parseur.com`,
+    '/http/ping/relativeURI': '/parser',
+    '/http/ping/method': 'GET',
+    '/http/headers': [
       { name: 'Content-Type', value: 'application/json' },
       {
         name: 'Authorization',
-        value: 'Token {{{connection.rest.encrypted.apiKey}}}',
+        value: 'Token {{{connection.http.encrypted.apiKey}}}',
       },
     ],
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.encrypted.apiKey',
+      id: 'http.encrypted.apiKey',
       type: 'text',
       inputType: 'password',
       label: 'API Token Key:',
@@ -33,7 +34,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

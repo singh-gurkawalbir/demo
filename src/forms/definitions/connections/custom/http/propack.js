@@ -45,7 +45,7 @@ export default {
     {
       id: 'environment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       helpText:
         'Please select your environment here. Select Test if the account is created on https://test.webservices.p3pl.com. Select Production if the account is created on https://webservices.p3pl.com.',
       options: [
@@ -71,14 +71,14 @@ export default {
     {
       id: 'http.unencrypted.p3plUserID',
       type: 'text',
-      label: 'P3PL User ID:',
+      label: 'P3PL User ID',
       helpText: 'Please enter your P3PL account User ID.',
       required: true,
     },
     {
       id: 'http.encrypted.p3plUserPassword',
       type: 'text',
-      label: 'P3PL User Password:',
+      label: 'P3PL User Password',
       helpText: 'Please enter your P3PL account Password.',
       required: true,
       inputType: 'password',
