@@ -19,7 +19,7 @@ export default {
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'jira',

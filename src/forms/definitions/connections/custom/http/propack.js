@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const date = new Date();
     const dateString = new Date(
       date.getTime() - date.getTimezoneOffset() * 60000

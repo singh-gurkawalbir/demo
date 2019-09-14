@@ -1,7 +1,7 @@
 import applications from '../../../../constants/applications';
 
 export default {
-  preSubmit: ({ application, ...rest }) => {
+  preSave: ({ application, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,

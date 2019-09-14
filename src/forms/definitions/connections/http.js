@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
     if (!newValues['/http/ping/successPath']) {

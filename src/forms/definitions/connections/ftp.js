@@ -3,7 +3,7 @@ export default {
   // it should only do that when the user selects another protocol type
   // as well
   // The optionsHandler handler runs for every field
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = formValues;
 
     if (newValues['/ftp/entryParser'] === '') {

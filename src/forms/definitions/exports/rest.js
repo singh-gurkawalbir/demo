@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     if (retValues['/type'] === 'all') {

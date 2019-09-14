@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/rest/authType': 'oauth',
     '/rest/mediaType': 'json',

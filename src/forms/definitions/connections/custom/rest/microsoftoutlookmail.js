@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'microsoftoutlookmail',

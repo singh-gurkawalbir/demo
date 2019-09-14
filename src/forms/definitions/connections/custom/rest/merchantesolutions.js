@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const pingData = {
       profile_id: formValues['/rest/unencrypted/profileId'],
       profile_key: formValues['/rest/encrypted/profileKey'],

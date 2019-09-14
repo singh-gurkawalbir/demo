@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = formValues;
 
     if (newValues['/ftp/entryParser'] === '') {

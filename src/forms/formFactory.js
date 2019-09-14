@@ -68,7 +68,7 @@ const getResourceFormAssets = ({
 }) => {
   let fieldMap;
   let layout = [];
-  let preSubmit;
+  let preSave;
   let init;
   let actions;
   let meta;
@@ -98,7 +98,7 @@ const getResourceFormAssets = ({
       }
 
       if (meta) {
-        ({ fieldMap, layout, preSubmit, init, actions } = meta);
+        ({ fieldMap, layout, preSave, init, actions } = meta);
       }
 
       break;
@@ -125,7 +125,7 @@ const getResourceFormAssets = ({
         }
 
         if (meta) {
-          ({ fieldMap, layout, init, preSubmit, actions } = meta);
+          ({ fieldMap, layout, init, preSave, actions } = meta);
         }
       }
 
@@ -150,7 +150,7 @@ const getResourceFormAssets = ({
   return {
     fieldMeta: { fieldMap, layout, actions },
     init,
-    preSubmit,
+    preSave,
     optionsHandler,
   };
 };

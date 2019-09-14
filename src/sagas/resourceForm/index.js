@@ -137,25 +137,25 @@ export function* createFormValuesPatchSet({
   const { customForm } = resource;
   let finalValues = values;
 
-  if (customForm && customForm.preSubmit) {
+  if (customForm && customForm.preSave) {
     // pre-save-resource
     // this resource has an embedded custom form.
 
     finalValues = yield call(runHook, {
-      hook: customForm.preSubmit,
+      hook: customForm.preSave,
       data: values,
     });
   } else {
-    const { preSubmit } = factory.getResourceFormAssets({
+    const { preSave } = factory.getResourceFormAssets({
       resourceType,
       resource,
       isNew: formState.isNew,
     });
 
-    if (typeof preSubmit === 'function') {
-      // stock preSubmit handler present...
+    if (typeof preSave === 'function') {
+      // stock preSave handler present...
 
-      finalValues = preSubmit(values);
+      finalValues = preSave(values);
     }
   }
 

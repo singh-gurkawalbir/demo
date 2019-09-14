@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     let headers = [];
 
     if (formValues['/rest/sandbox'] === 'true') {

@@ -1,7 +1,7 @@
 import applications from '../../../../constants/applications';
 
 export default {
-  preSubmit: ({ application, executionType, apiType, ...rest }) => {
+  preSave: ({ application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     // TODO: Raghu, the below logic should move to a proper fn that uses a map.
     // This will only work for a select few adaptorTypes as others probably

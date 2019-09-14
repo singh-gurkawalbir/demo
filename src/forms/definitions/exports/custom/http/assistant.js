@@ -291,7 +291,7 @@ export default function assistantDefinition(
 
       return values;
     },
-    preSubmit: formValues => {
+    preSave: formValues => {
       const assistantMetadata = {
         pathParams: {},
       };

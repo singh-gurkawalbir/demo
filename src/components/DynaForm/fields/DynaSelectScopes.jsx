@@ -57,7 +57,8 @@ export default function DynaSelectScopesDialog(props) {
 
   // TODO:Confirm with ashok the behavior of the received select scopes
   // And check the delimiter behavior....it seems to be specific with each assistant
-  if (value && Array.isArray(value)) selectedScopes = value[0].split(',');
+  if (value && Array.isArray(value))
+    selectedScopes = (value && value[0] && value[0].split(',')) || [];
   else selectedScopes = (value && value.split(',')) || [];
   const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
 
