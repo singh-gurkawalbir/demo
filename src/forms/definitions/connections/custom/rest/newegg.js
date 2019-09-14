@@ -27,9 +27,9 @@ export default {
       { name: 'Accept', value: 'application/json' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accountType: {
       id: 'accountType',
       type: 'select',
       label: 'Account Type:',
@@ -42,7 +42,7 @@ export default {
         },
       ],
       helpText:
-        'Select "Newegg Business" if your account is created on https://www.neweggbusiness.com. \n Select "Newegg" if your account is created on https://www.newegg.com.',
+        'Select "Newegg Business" if your account is created on https://www.neweggbusiness.com. Select "Newegg" if your account is created on https://www.newegg.com.',
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
 
@@ -57,7 +57,7 @@ export default {
         return 'newegg';
       },
     },
-    {
+    'rest.encrypted.apiKey': {
       id: 'rest.encrypted.apiKey',
       type: 'text',
       label: 'API Key:',
@@ -68,7 +68,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.encrypted.apiSecret': {
       id: 'rest.encrypted.apiSecret',
       type: 'text',
       label: 'API Key:',
@@ -79,7 +79,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.unencrypted.sellerId': {
       id: 'rest.unencrypted.sellerId',
       type: 'text',
       label: 'Seller Id:',
@@ -87,12 +87,19 @@ export default {
       helpText:
         'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'accountType',
+      'rest.encrypted.apiKey',
+      'rest.encrypted.apiSecret',
+      'rest.unencrypted.sellerId',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

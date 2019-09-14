@@ -14,9 +14,10 @@ export default {
     }.docusign.com/oauth/token`,
     '/rest/unencrypted/version': 'v2',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment:',
@@ -42,12 +43,13 @@ export default {
         return 'production';
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'environment'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

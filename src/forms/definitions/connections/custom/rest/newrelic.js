@@ -15,9 +15,9 @@ export default {
       { name: 'Content-Type', value: 'application/json' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.encrypted.apiKey': {
       id: 'rest.encrypted.apiKey',
       type: 'text',
       label: 'API Key:',
@@ -28,12 +28,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -22,11 +22,9 @@ export default {
       formValues['/rest/sandbox'] === 'sandbox' ? 'sandbox-api' : ''
     }.zuora.com/rest/`,
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.encrypted.apiAccessKeyId': {
       id: 'rest.encrypted.apiAccessKeyId',
       required: true,
       type: 'text',
@@ -36,7 +34,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.encrypted.apiSecretAccessKey': {
       id: 'rest.encrypted.apiSecretAccessKey',
       required: true,
       type: 'text',
@@ -46,7 +44,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.sandbox': {
       id: 'rest.sandbox',
       type: 'select',
       label: 'Account Type:',
@@ -71,12 +69,18 @@ export default {
         return 'production';
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.encrypted.apiAccessKeyId',
+      'rest.encrypted.apiSecretAccessKey',
+      'rest.sandbox',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

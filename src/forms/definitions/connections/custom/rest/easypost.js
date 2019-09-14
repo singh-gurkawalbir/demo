@@ -10,21 +10,22 @@ export default {
     '/rest/baseURI': `https://api.easypost.com/v2`,
     '/rest/basicAuth/password': '',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.basicAuth.username'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

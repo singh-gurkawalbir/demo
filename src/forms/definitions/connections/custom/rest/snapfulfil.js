@@ -8,9 +8,9 @@ export default {
     '/rest/pingRelativeURI': 'api/Receipts',
     '/rest/baseURI': `https://${formValues['/rest/subdomain']}.snapfulfil.net/`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.subdomain': {
       type: 'text',
       id: 'rest.subdomain',
       helpText:
@@ -36,18 +36,20 @@ export default {
         return subdomain;
       },
     },
-    {
-      fieldId: 'rest.basicAuth.username',
-    },
-    {
-      fieldId: 'rest.basicAuth.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    'rest.basicAuth.username': { fieldId: 'rest.basicAuth.username' },
+    'rest.basicAuth.password': { fieldId: 'rest.basicAuth.password' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.subdomain',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

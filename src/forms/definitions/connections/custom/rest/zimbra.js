@@ -14,9 +14,9 @@ export default {
       { name: 'Content-Type', value: 'application/json' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.baseURI': {
       fieldId: 'rest.baseURI',
       endAdornment: '/home',
       label: 'Base URI:',
@@ -28,7 +28,7 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.unencrypted.userAccount': {
       id: 'rest.unencrypted.userAccount',
       type: 'text',
       label: 'User Account:',
@@ -36,12 +36,13 @@ export default {
         'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.baseURI', 'rest.unencrypted.userAccount'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

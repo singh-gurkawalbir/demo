@@ -11,9 +11,9 @@ export default {
     '/rest/authHeader': 'X-Spree-Token',
     '/rest/authScheme': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.baseURI': {
       fieldId: 'rest.baseURI',
       endAdornment: '/api',
       label: 'Base URI:',
@@ -25,16 +25,14 @@ export default {
         return subdomain;
       },
     },
-    {
-      fieldId: 'rest.bearerToken',
-      required: true,
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    'rest.bearerToken': { fieldId: 'rest.bearerToken', required: true },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.baseURI', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

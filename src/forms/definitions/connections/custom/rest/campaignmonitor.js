@@ -11,9 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://api.createsend.com/oauth/token',
     '/rest/scopeDelimiter': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'ViewReports',
@@ -29,12 +29,13 @@ export default {
         'SendTransactional',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

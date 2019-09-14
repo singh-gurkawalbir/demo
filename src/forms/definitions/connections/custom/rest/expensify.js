@@ -25,9 +25,10 @@ export default {
       '/rest/pingBody': JSON.stringify(pingBody),
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.unencrypted.partnerUserId': {
       id: 'rest.unencrypted.partnerUserId',
       type: 'text',
       label: 'Partner User ID:',
@@ -35,7 +36,7 @@ export default {
         'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
       required: true,
     },
-    {
+    'rest.encrypted.partnerUserSecret': {
       id: 'rest.encrypted.partnerUserSecret',
       type: 'text',
       inputType: 'password',
@@ -46,12 +47,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.unencrypted.partnerUserId',
+      'rest.encrypted.partnerUserSecret',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

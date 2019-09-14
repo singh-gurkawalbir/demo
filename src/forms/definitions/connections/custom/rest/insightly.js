@@ -9,9 +9,9 @@ export default {
     '/rest/pingMethod': 'GET',
     '/rest/baseURI': `https://api.insight.ly`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The API key of your Insightly account.',
       inputType: 'password',
@@ -20,12 +20,13 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.basicAuth.username'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

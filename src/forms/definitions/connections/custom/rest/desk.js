@@ -9,9 +9,9 @@ export default {
     '/rest/pingMethod': 'GET',
     '/rest/baseURI': `https://${formValues['/rest/deskSubdomain']}'.desk.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.deskSubdomain': {
       type: 'text',
       id: 'rest.deskSubdomain',
       helpText:
@@ -37,20 +37,26 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The API Key of your Desk account.',
     },
-    {
+    'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your Desk account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.deskSubdomain',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

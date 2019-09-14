@@ -13,9 +13,9 @@ export default {
     '/rest/oauthTokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.microsoftDynamics365Subdomain': {
       id: 'rest.microsoftDynamics365Subdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -41,12 +41,13 @@ export default {
         return subdomain;
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.microsoftDynamics365Subdomain'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

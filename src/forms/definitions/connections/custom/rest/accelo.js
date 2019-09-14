@@ -16,9 +16,9 @@ export default {
     }.api.accelo.com/oauth2/v0/token`,
     '/rest/scopeDelimiter': ',',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.acceloSubdomain': {
       id: 'rest.acceloSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -44,16 +44,17 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: ['read(all)', 'write(all)'],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.acceloSubdomain', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

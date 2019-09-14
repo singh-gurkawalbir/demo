@@ -11,9 +11,9 @@ export default {
     '/rest/scopeDelimiter': ' ',
   }),
 
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'https://www.googleapis.com/auth/drive',
@@ -27,12 +27,13 @@ export default {
         'https://www.googleapis.com/auth/drive.scripts',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

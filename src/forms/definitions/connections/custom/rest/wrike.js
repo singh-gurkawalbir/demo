@@ -11,9 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://www.wrike.com/oauth2/token',
     '/rest/scopeDelimiter': ',',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'Default',
@@ -29,12 +29,13 @@ export default {
         'amReadWriteWorkflow',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

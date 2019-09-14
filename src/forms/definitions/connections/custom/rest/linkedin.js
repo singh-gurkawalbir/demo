@@ -11,9 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://www.linkedin.com/oauth/v2/accessToken',
     '/rest/scopeDelimiter': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'r_basicprofile',
@@ -22,12 +22,13 @@ export default {
         'w_share',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

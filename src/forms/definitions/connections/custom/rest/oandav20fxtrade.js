@@ -11,9 +11,9 @@ export default {
     '/rest/pingRelativeURI': '/v3/accounts',
     '/rest/headers': [{ name: 'Content-Type', value: 'application/json' }],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accountType: {
       id: 'accountType',
       type: 'select',
       label: 'Account Type:',
@@ -39,16 +39,17 @@ export default {
         return 'trading';
       },
     },
-    {
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       helpText: 'Please enter your API token here.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'accountType', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

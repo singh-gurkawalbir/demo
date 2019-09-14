@@ -11,18 +11,16 @@ export default {
     '/rest/tokenParam': 'token',
     '/rest/pingSuccessPath': 'ok',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
-      fieldId: 'rest.bearerToken',
-      required: true,
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.bearerToken': { fieldId: 'rest.bearerToken', required: true },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -11,12 +11,15 @@ export default {
     '/rest/oauthTokenURI': `https://api.dropboxapi.com/1/oauth2/token`,
     '/rest/rest/scopeDelimiter': ' ',
   }),
-  fields: [{ fieldId: 'name' }],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -9,12 +9,15 @@ export default {
     '/rest/authURI': 'https://developers.pdffiller.com/api_access',
     '/rest/oauthTokenURI': 'https://api.pdffiller.com/v2/oauth/token',
   }),
-  fields: [{ fieldId: 'name' }],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

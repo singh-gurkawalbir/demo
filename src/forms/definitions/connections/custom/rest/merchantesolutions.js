@@ -26,16 +26,16 @@ export default {
       ],
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.unencrypted.profileId': {
       id: 'rest.unencrypted.profileId',
       type: 'text',
       label: 'Profile ID:',
       required: true,
       helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
-    {
+    'rest.encrypted.profileKey': {
       id: 'rest.encrypted.profileKey',
       type: 'text',
       label: 'Profile Key:',
@@ -45,7 +45,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.encrypted.cardNumber': {
       id: 'rest.encrypted.cardNumber',
       type: 'text',
       label: 'Card Number:',
@@ -55,12 +55,18 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.unencrypted.profileId',
+      'rest.encrypted.profileKey',
+      'rest.encrypted.cardNumber',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

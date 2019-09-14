@@ -8,11 +8,9 @@ export default {
     '/rest/pingRelativeURI': '/v2/users',
     '/rest/baseURI': 'https://api.zoom.us',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.encrypted.apiKey': {
       id: 'rest.encrypted.apiKey',
       required: true,
       type: 'text',
@@ -22,7 +20,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.encrypted.apiSecret': {
       id: 'rest.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -32,12 +30,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.encrypted.apiKey', 'rest.encrypted.apiSecret'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -18,9 +18,9 @@ export default {
     '/rest/refreshTokenMediaType': 'json',
     '/rest/refreshTokenPath': 'access_token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.marketoSubdomain': {
       id: 'rest.marketoSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -46,7 +46,7 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.unencrypted.clientId': {
       id: 'rest.unencrypted.clientId',
       type: 'text',
       label: 'Client Id:',
@@ -54,7 +54,7 @@ export default {
       helpText:
         'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
     },
-    {
+    'rest.encrypted.clientSecret': {
       id: 'rest.encrypted.clientSecret',
       type: 'text',
       label: 'Client Secret:',
@@ -65,12 +65,18 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.marketoSubdomain',
+      'rest.unencrypted.clientId',
+      'rest.encrypted.clientSecret',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

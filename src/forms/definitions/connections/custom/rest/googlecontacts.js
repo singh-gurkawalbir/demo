@@ -10,22 +10,22 @@ export default {
     '/rest/oauthTokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/rest/scopeDelimiter': ' ',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'https://www.google.com/m8/feeds/',
         'https://www.googleapis.com/auth/contacts.readonly',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

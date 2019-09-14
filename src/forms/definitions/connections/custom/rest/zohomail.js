@@ -11,9 +11,9 @@ export default {
     '/rest/oauthTokenURI': 'https://accounts.zoho.com/oauth/v2/token',
     '/rest/scopeDelimiter': ',',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'VirtualOffice.accounts.READ',
@@ -52,12 +52,13 @@ export default {
         'VirtualOffice.organization.domains.DELETE',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

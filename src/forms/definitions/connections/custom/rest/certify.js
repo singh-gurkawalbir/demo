@@ -16,11 +16,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.encrypted.apiKey': {
       id: 'rest.encrypted.apiKey',
       required: true,
       type: 'text',
@@ -28,7 +26,7 @@ export default {
       inputType: 'password',
       helpText: 'The API Key of your Certify account.',
     },
-    {
+    'rest.encrypted.apiSecret': {
       id: 'rest.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -36,12 +34,13 @@ export default {
       inputType: 'password',
       helpText: 'The API Secret of your Certify account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.encrypted.apiKey', 'rest.encrypted.apiSecret'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

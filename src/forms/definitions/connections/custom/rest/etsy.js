@@ -10,21 +10,20 @@ export default {
     '/rest/tokenLocation': 'url',
     '/rest/tokenParam': 'api_key',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       required: true,
       label: 'API Key:',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -18,9 +18,9 @@ export default {
     '/rest/oauth/accessTokenPath': 'access_token',
     '/rest/scopeDelimiter': '+',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment:',
@@ -46,7 +46,7 @@ export default {
         return 'production';
       },
     },
-    {
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'none',
@@ -64,12 +64,13 @@ export default {
         'all',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'environment', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
