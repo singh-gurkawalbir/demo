@@ -58,122 +58,91 @@ export default {
 
     return newValues;
   },
-  fields: [
-    { fieldId: 'type' },
-    { fieldId: 'name' },
-
-    { fieldId: 'rest.authType', required: true },
-    {
+  fieldMap: {
+    type: { fieldId: 'type' },
+    name: { fieldId: 'name' },
+    'rest.authType': { fieldId: 'rest.authType', required: true },
+    'rest.headers': {
       fieldId: 'rest.headers',
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          isNot: [''],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
-    {
+    'rest.baseURI': {
       fieldId: 'rest.baseURI',
       required: true,
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          isNot: [''],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
-    {
+    'rest.mediaType': {
       fieldId: 'rest.mediaType',
       required: true,
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          isNot: [''],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
-
-    {
+    'rest.encrypted': {
       fieldId: 'rest.encrypted',
       visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          is: ['custom'],
-        },
-        {
-          field: 'rest.authType',
-          isNot: [''],
-        },
+        { field: 'rest.authType', is: ['custom'] },
+        { field: 'rest.authType', isNot: [''] },
       ],
       defaultValue: '{"field": "value"}',
     },
-    {
+    'rest.unencrypted': {
       fieldId: 'rest.unencrypted',
       visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          is: ['custom'],
-        },
-        {
-          field: 'rest.authType',
-          isNot: [''],
-        },
+        { field: 'rest.authType', is: ['custom'] },
+        { field: 'rest.authType', isNot: [''] },
       ],
       defaultValue: r =>
         r && r.rest && r.rest.unencrypted && JSON.stringify(r.rest.unencrypted),
     },
-    {
+    restBasic: {
       formId: 'restBasic',
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', is: ['basic'] }],
     },
-    {
+    restToken: {
       formId: 'restToken',
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          is: ['token'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', is: ['token'] }],
     },
-    {
+    restCookie: {
       formId: 'restCookie',
-      visibleWhenAll: [
-        {
-          field: 'rest.authType',
-          is: ['cookie'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'rest.authType', is: ['cookie'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'How to test connection?',
-      collapsed: false,
-      fields: [
-        { fieldId: 'rest.pingMethod' },
-        {
-          fieldId: 'rest.pingBody',
-          visibleWhenAll: [
-            {
-              field: 'rest.pingMethod',
-              is: ['POST'],
-            },
-          ],
-        },
-        { fieldId: 'rest.pingRelativeURI' },
-        { fieldId: 'rest.pingSuccessPath' },
-        { fieldId: 'rest.pingSuccessValues' },
-      ],
+    'rest.pingMethod': { fieldId: 'rest.pingMethod' },
+    'rest.pingBody': {
+      fieldId: 'rest.pingBody',
+      visibleWhenAll: [{ field: 'rest.pingMethod', is: ['POST'] }],
     },
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    'rest.pingRelativeURI': { fieldId: 'rest.pingRelativeURI' },
+    'rest.pingSuccessPath': { fieldId: 'rest.pingSuccessPath' },
+    'rest.pingSuccessValues': { fieldId: 'rest.pingSuccessValues' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'type',
+      'name',
+      'rest.authType',
+      'rest.headers',
+      'rest.baseURI',
+      'rest.mediaType',
+      'rest.encrypted',
+      'rest.unencrypted',
+      'restBasic',
+      'restToken',
+      'restCookie',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: false,
+        label: 'How to test connection?',
+        fields: [
+          'rest.pingMethod',
+          'rest.pingBody',
+          'rest.pingRelativeURI',
+          'rest.pingSuccessPath',
+          'rest.pingSuccessValues',
+        ],
+      },
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
