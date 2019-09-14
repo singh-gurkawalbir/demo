@@ -1,18 +1,14 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Drawer,
-  IconButton,
-  Tabs,
-  Tab,
-  Typography,
-  Box,
-} from '@material-ui/core';
+import { Drawer, IconButton, Tabs, Tab, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import * as selectors from '../../../reducers';
+import ConnectionPanel from './panels/Connection';
+import RunDashboardPanel from './panels/RunDashboard';
+import AuditPanel from './panels/Audit';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -50,15 +46,14 @@ function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <Typography
-      component="div"
+    <div
       role="tabpanel"
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
       {...other}>
       <Box p={3}>{children}</Box>
-    </Typography>
+    </div>
   );
 }
 
@@ -113,13 +108,9 @@ export default function BottomDrawer({ size, setSize }) {
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example">
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-          <Tab label="Item Four" {...a11yProps(3)} />
-          <Tab label="Item Five" {...a11yProps(4)} />
-          <Tab label="Item Six" {...a11yProps(5)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
+          <Tab label="Connections" {...a11yProps(0)} />
+          <Tab label="Run Dashboard" {...a11yProps(1)} />
+          <Tab label="Audit Log" {...a11yProps(2)} />
         </Tabs>
         <IconButton onClick={handleSizeChange(1)}>
           <ArrowUpIcon />
@@ -130,25 +121,13 @@ export default function BottomDrawer({ size, setSize }) {
       </div>
 
       <TabPanel value={tabValue} index={0}>
-        Item One
+        <ConnectionPanel />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        Item Two
+        <RunDashboardPanel />
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={tabValue} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={tabValue} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={tabValue} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={tabValue} index={6}>
-        Item Seven
+        <AuditPanel />
       </TabPanel>
     </Drawer>
   );
