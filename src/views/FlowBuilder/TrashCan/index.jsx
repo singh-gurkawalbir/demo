@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, Tooltip } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import TrashIcon from '../../../components/icons/TrashIcon';
 import itemTypes from '../itemTypes';
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +45,7 @@ export default function TrashCan({ className, onDrop, ...rest }) {
   drop(ref);
 
   return (
-    <Tooltip title="Drag applications here to delete">
+    <Tooltip title="Delete applications by dragging them here" placement="top">
       <IconButton
         aria-label="delete"
         ref={ref}
@@ -54,7 +54,7 @@ export default function TrashCan({ className, onDrop, ...rest }) {
           [classes.isOver]: isOver,
           [classes.canDrop]: canDrop,
         })}>
-        <DeleteIcon />
+        <TrashIcon />
       </IconButton>
     </Tooltip>
   );

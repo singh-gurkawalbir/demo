@@ -1,20 +1,44 @@
-import React, { useRef } from 'react';
+import React, { useRef, Fragment } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
+import clsx from 'clsx';
 import itemTypes from '../itemTypes';
+import HookIcon from '../../../components/icons/HookIcon';
+import ToolsIcon from '../../../components/icons/ToolsIcon';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '15vw',
-    height: '15vh',
+  ppContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  ppBox: {
+    width: 150,
+    height: 150,
     border: 'solid 1px lightblue',
+    borderRadius: 24,
     padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    margin: theme.spacing(3, 0),
     cursor: 'move',
   },
+  processorActions: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    padding: theme.spacing(0, 1),
+  },
+  lineRight: {
+    top: -theme.spacing(3),
+    // none yet
+  },
+  lineLeft: {
+    minWidth: 50,
+  },
+  dottedLine: {
+    position: 'relative',
+    borderBottom: `3px dotted ${theme.palette.divider}`,
+  },
 }));
-const PageProcessor = ({ _id, name, index, moveItem }) => {
+const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
   const ref = useRef(null);
   const classes = useStyles();
   const [, drop] = useDrop({
@@ -56,7 +80,7 @@ const PageProcessor = ({ _id, name, index, moveItem }) => {
       }
 
       // Time to actually perform the action
-      moveItem(dragIndex, hoverIndex);
+      onMove(dragIndex, hoverIndex);
       // Note: we're mutating the monitor item here!
       // Generally it's better to avoid mutations,
       // but it's good here for the sake of performance
@@ -71,14 +95,35 @@ const PageProcessor = ({ _id, name, index, moveItem }) => {
       isDragging: monitor.isDragging(),
     }),
   });
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
 
   return (
-    <div ref={ref} className={classes.root} style={{ opacity }}>
-      <Typography variant="h2">{name}</Typography>
-    </div>
+    <Fragment>
+      <div className={classes.ppContainer}>
+        {index === 0 && (
+          <div className={clsx(classes.dottedLine, classes.lineLeft)} />
+        )}
+        <div ref={ref} className={classes.ppBox} style={{ opacity }}>
+          <Typography variant="h2">{name}</Typography>
+        </div>
+        {!isLast && (
+          <div>
+            <div className={classes.processorActions}>
+              <IconButton>
+                <ToolsIcon />
+              </IconButton>
+
+              <IconButton>
+                <HookIcon />
+              </IconButton>
+            </div>
+            <div className={clsx(classes.dottedLine, classes.lineRight)} />
+          </div>
+        )}
+      </div>
+    </Fragment>
   );
 };
 
