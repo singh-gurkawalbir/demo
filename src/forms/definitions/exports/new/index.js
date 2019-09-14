@@ -1,13 +1,5 @@
 import applications from '../../../../constants/applications';
 
-const visibleWhen = [
-  {
-    id: 'hasApp',
-    field: 'application',
-    isNot: [''],
-  },
-];
-
 export default {
   preSubmit: ({ application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
