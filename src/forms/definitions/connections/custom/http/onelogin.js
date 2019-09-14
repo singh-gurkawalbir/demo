@@ -20,8 +20,8 @@ export default {
     '/http/ping/relativeURI': `/1/users`,
     '/http/ping/method': `GET`,
   }),
-  fields: [
-    {
+  fieldMap: {
+    'http.oneloginRegion': {
       id: 'http.oneloginRegion',
       type: 'text',
       startAdornment: 'https://api.',
@@ -43,14 +43,14 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key:',
       helpText: 'Please enter API Key of your OneLogin Account.',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       defaultValue: '',
@@ -60,43 +60,39 @@ export default {
       helpText:
         'Please enter API Secret of your OneLogin Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
-
-    {
+    'http.auth.token.token': {
       id: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       defaultValue: '',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.encrypted.apiKey',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.apiSecret',
-          is: [''],
-        },
-        {
-          field: 'http.oneloginRegion',
-          is: [''],
-        },
+        { field: 'http.encrypted.apiKey', is: [''] },
+        { field: 'http.encrypted.apiSecret', is: [''] },
+        { field: 'http.oneloginRegion', is: [''] },
       ],
       label: 'Token Generator',
       helpText: 'The access token of your OneLogin account.',
     },
-
-    {
+    'http.auth.token.refreshToken': {
       id: 'http.auth.token.refreshToken',
       type: 'text',
       label: 'refresh Token',
       visible: false,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'http.oneloginRegion',
+      'http.unencrypted.apiKey',
+      'http.encrypted.apiSecret',
+      'http.auth.token.token',
+      'http.auth.token.refreshToken',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
