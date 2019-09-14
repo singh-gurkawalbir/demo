@@ -1,15 +1,20 @@
 export default {
-  'netsuite.restlet.recordType': {
+  'netsuite_da.recordType': {
+    type: 'select',
     label: 'Record Type',
-    mode: 'suitescript',
-    defaultValue: r =>
-      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.recordType,
     required: true,
-    type: 'refreshableselect',
-    resourceType: 'recordTypes',
-    connectionId: r => r && r._connectionId,
+    options: [
+      {
+        // To do replace statistically instead of dynamic
+        items: [
+          { label: 'Accounts', value: 'accounts' },
+          { label: 'Customers', value: 'customers' },
+          { label: 'Items', value: 'items' },
+        ],
+      },
+    ],
   },
-  'netsuite.operation': {
+  'netsuite_da.operation': {
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -23,52 +28,46 @@ export default {
       },
     ],
   },
-  'netsuite.ignoreExistingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Existing Records',
+  'netsuite_da.internalIdLookup.expression': {
+    type: 'text',
+    label: 'How can we find existing records?',
     visibleWhen: [
       {
-        field: 'netsuite.operation',
-        is: ['add'],
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
+        field: 'netsuite_da.operation',
+        is: ['update', 'addupdate'],
       },
     ],
   },
-  'netsuite.ignoreMissingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Missing Records',
-    visibleWhen: [
-      {
-        field: 'netsuite.operation',
-        is: ['update'],
-      },
-    ],
-  },
-  'netsuite.suitescriptPremapFunction': {
+  'netsuite_da.hooks.preMap.function': {
     type: 'text',
     label: 'Pre Map ',
     placeholder: 'Function Name',
   },
-  'netsuite.suitescriptPremapFileInternalID': {
+  'netsuite_da.hooks.preMap.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Pre Map File',
   },
-  'netsuite.suitescriptPostmapFunction': {
+  'netsuite_da.hooks.postMap.function': {
     type: 'text',
     label: 'Post Map',
     placeholder: 'Function Name',
   },
-  'netsuite.suitescriptPostmapFileInternalID': {
+  'netsuite_da.hooks.postMap.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Post Map File',
   },
-  'netsuite.suitescriptPostSubmitFunction': {
+  'netsuite_da.hooks.postSubmit.function': {
     type: 'text',
     label: 'Post Submit',
     placeholder: 'Function Name',
   },
-  'netsuite.suitescriptPostSubmitFileInternalID': {
+  'netsuite_da.hooks.postSubmit.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
     label: 'Post Submit File',

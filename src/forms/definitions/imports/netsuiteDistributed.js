@@ -4,39 +4,47 @@ export default {
     {
       id: 'importData',
       type: 'labeltitle',
-      label: 'What would you like the data imported?',
+      label: 'How would you like the data imported?',
     },
-    { fieldId: 'netsuite.restlet.recordType' },
-    { fieldId: 'netsuite.operation' },
-    { fieldId: 'netsuite.ignoreExistingRecords' },
-    { fieldId: 'netsuite.ignoreMissingRecords' },
+    { fieldId: 'netsuite_da.recordType' },
+    { fieldId: 'netsuite_da.operation' },
+    {
+      fieldId: 'ignoreExisting',
+      visibleWhen: [
+        {
+          field: 'netsuite_da.operation',
+          is: ['add'],
+        },
+      ],
+    },
+    {
+      fieldId: 'ignoreMissing',
+      visibleWhen: [
+        {
+          field: 'netsuite_da.operation',
+          is: ['update'],
+        },
+      ],
+    },
+    { fieldId: 'netsuite_da.internalIdLookup.expression' },
     {
       id: 'suiteScript',
       type: 'labeltitle',
       label: 'SuiteScript Hooks (Optional, Developers Only)',
     },
-    { fieldId: 'netsuite.suitescriptPremapFunction' },
-    { fieldId: 'netsuite.suitescriptPremapFileInternalID' },
-    { fieldId: 'netsuite.suitescriptPostmapFunction' },
-    { fieldId: 'netsuite.suitescriptPostmapFileInternalID' },
-    { fieldId: 'netsuite.suitescriptPostSubmitFunction' },
-    { fieldId: 'netsuite.suitescriptPostSubmitFileInternalID' },
-    {
-      id: 'dataMapped',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
-    { fieldId: 'file.parentOption' },
-    { fieldId: 'file.childRecords' },
+    { fieldId: 'netsuite_da.hooks.preMap.function' },
+    { fieldId: 'netsuite_da.hooks.preMap.fileInternalId' },
+    { fieldId: 'netsuite_da.hooks.postMap.function' },
+    { fieldId: 'netsuite_da.hooks.postMap.fileInternalId' },
+    { fieldId: 'netsuite_da.hooks.postSubmit.function' },
+    { fieldId: 'netsuite_da.hooks.postSubmit.fileInternalId' },
+    { formId: 'dataMappings' },
   ],
   fieldSets: [
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [
-        { fieldId: 'file.concurrencyIdLockTemplate' },
-        { fieldId: 'file.dataUriTemplate' },
-      ],
+      fields: [{ formId: 'fileTemplates' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

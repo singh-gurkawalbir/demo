@@ -19,7 +19,7 @@ export default {
     required: true,
     options: [
       {
-        // Added dummy values for testing
+        // To do replace values statistically instead of dynamic
         items: [
           { label: 'Account', value: 'account' },
           { label: 'Customer', value: 'customer' },
@@ -67,31 +67,40 @@ export default {
       },
     ],
   },
-  'salesforce.ignoreExistingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Existing Records',
+  'salesforce.idLookup.extract': {
+    type: 'text',
+    label: 'How can we find existing records?',
     visibleWhen: [
       {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
         field: 'salesforce.operation',
-        is: ['insert'],
+        is: ['update', 'addupdate'],
       },
     ],
   },
-  'salesforce.ignoreMissingRecords': {
-    type: 'checkbox',
-    label: 'Ignore Missing Records',
+  'salesforce.idLookup.whereClause': {
+    type: 'text',
+    label: 'Where Clause',
     visibleWhen: [
       {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+      {
         field: 'salesforce.operation',
-        is: ['update'],
+        is: ['update', 'addupdate'],
       },
     ],
   },
-  'salesforce.whichExternalIDfieldshouldbeusedtoUpsert?': {
+  'salesforce.upsertpicklistvalues.fullName': {
     type: 'select',
     label: 'Which External ID field should be used to Upsert?',
     options: [
       {
+        // To do replace statistically instead of dynamic
         items: [
           { label: 'AccountID', value: 'accountid' },
           { label: 'CustomerID', value: 'customerid' },
@@ -105,7 +114,7 @@ export default {
       },
     ],
   },
-  'salesforce.whichexportdatafieldshouldmaptoExternalID?': {
+  'salesforce.upsert.externalIdField': {
     type: 'text',
     label: 'Which export data field should map to External ID?',
     visibleWhen: [
