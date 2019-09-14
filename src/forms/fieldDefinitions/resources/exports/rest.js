@@ -145,15 +145,9 @@ export default {
       },
     ],
   },
-  'rest.relativeuri': {
+  'rest.relativeURI': {
     type: 'text',
     label: 'Relative URI',
-    visibleWhen: [
-      {
-        field: 'rest.pagingMethod',
-        is: ['relativeuri'],
-      },
-    ],
   },
   'rest.successPath': {
     type: 'text',
