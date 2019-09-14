@@ -1,45 +1,53 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    {
+  fieldMap: {
+    common: { formId: 'common' },
+    importData: {
       id: 'importData',
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    { fieldId: 'rdbms.queryType' },
-    {
+    'rdbms.queryType': { fieldId: 'rdbms.queryType' },
+    ignoreExisting: {
       fieldId: 'ignoreExisting',
       label: 'Ignore Existing Records',
-      visibleWhen: [
-        {
-          field: 'rdbms.queryType',
-          is: ['INSERT'],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.queryType', is: ['INSERT'] }],
     },
-    {
+    ignoreMissing: {
       fieldId: 'ignoreMissing',
       label: 'Ignore Missing Records',
-      visibleWhen: [
-        {
-          field: 'rdbms.queryType',
-          is: ['UPDATE'],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
     },
-    { fieldId: 'rdbms.existingDataId' },
-    { formId: 'dataMappings' },
-  ],
-  fieldSets: [
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
-      fields: [
-        { formId: 'hooks' },
-        { fieldId: 'hooks.postAggregate.function' },
-        { fieldId: 'hooks.postAggregate._scriptId' },
-        { fieldId: 'hooks.postAggregate._stackId' },
-      ],
+    'rdbms.existingDataId': { fieldId: 'rdbms.existingDataId' },
+    dataMappings: { formId: 'dataMappings' },
+    hooks: { formId: 'hooks' },
+    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
+    'hooks.postAggregate._scriptId': {
+      fieldId: 'hooks.postAggregate._scriptId',
     },
-  ],
+    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'importData',
+      'rdbms.queryType',
+      'ignoreExisting',
+      'ignoreMissing',
+      'rdbms.existingDataId',
+      'dataMappings',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: false,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: [
+          'hooks',
+          'hooks.postAggregate.function',
+          'hooks.postAggregate._scriptId',
+          'hooks.postAggregate._stackId',
+        ],
+      },
+    ],
+  },
 };

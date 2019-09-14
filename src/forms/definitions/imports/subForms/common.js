@@ -1,11 +1,8 @@
 export default {
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: 'description' },
-    { fieldId: 'apiIdentifier' },
-
-    // { fieldId: 'apiIdentifier' },
-    // { fieldId: 'ftp.exportFrom' },
-  ],
-  fieldSets: [],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    description: { fieldId: 'description' },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
+  },
+  layout: { fields: ['name', 'description', 'apiIdentifier'] },
 };
