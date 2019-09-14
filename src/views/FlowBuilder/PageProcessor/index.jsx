@@ -1,4 +1,4 @@
-import React, { useRef, Fragment } from 'react';
+import { useRef, Fragment } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
