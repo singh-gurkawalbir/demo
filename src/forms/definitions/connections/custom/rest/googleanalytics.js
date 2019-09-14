@@ -2,7 +2,7 @@ export default {
   preSubmit: formValues => ({
     ...formValues,
     '/type': 'rest',
-    '/assistant': 'google',
+    '/assistant': 'googleanalytics',
     '/rest/authType': 'oauth',
     '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://www.googleapis.com/analytics/',
