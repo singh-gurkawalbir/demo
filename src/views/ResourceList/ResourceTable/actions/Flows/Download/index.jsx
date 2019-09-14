@@ -8,7 +8,6 @@ export default {
   component: function DownLoadFlows({ resource }) {
     const dispatch = useDispatch();
     const handleDownloadZipFileClick = () => {
-      console.log('download zip file got clicked');
       dispatch(actions.flow.downloadZipFile(resource._id));
     };
 
