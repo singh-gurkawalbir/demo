@@ -59,6 +59,20 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
   }
 }
 
+export function* deleteIntegration({ integrationId }) {
+  const path = `/integrations/${integrationId}/install`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: { body: {}, method: 'DELETE' },
+      message: `Uninstalling`,
+    });
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export default [
   takeEvery(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL,
@@ -67,5 +81,9 @@ export default [
   takeEvery(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST,
     uninstallStep
+  ),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION,
+    deleteIntegration
   ),
 ];

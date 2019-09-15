@@ -32,11 +32,12 @@ export default function Uninstall(props) {
 
   useEffect(() => {
     if (uninstallSteps && uninstallSteps.length) {
+      dispatch(actions.resource.request('integrations', integrationId));
       props.history.push(
         `/pg/integrations/${integrationId}/uninstall/${storeId}`
       );
     }
-  }, [integrationId, props.history, storeId, uninstallSteps]);
+  }, [dispatch, integrationId, props.history, storeId, uninstallSteps]);
 
   if (!integration) {
     return null;

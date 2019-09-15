@@ -381,6 +381,10 @@ const integrationApps = {
         actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_UNINSTALL_STEPS,
         { uninstallSteps, id, storeId }
       ),
+    deleteIntegration: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
+        integrationId,
+      }),
   },
 };
 const ashares = {
