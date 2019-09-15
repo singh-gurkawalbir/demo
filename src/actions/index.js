@@ -358,6 +358,18 @@ const integrationApps = {
         installerFunction,
       }),
   },
+  uninstaller: {
+    preUninstall: (storeId, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL, {
+        storeId,
+        id: integrationId,
+      }),
+    receivedUninstallSteps: (uninstallSteps, storeId, id) =>
+      action(
+        actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEPS_RECEIVED,
+        { uninstallSteps, id, storeId }
+      ),
+  },
 };
 const ashares = {
   receivedCollection: ashares =>
