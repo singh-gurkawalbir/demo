@@ -37,11 +37,16 @@ export default {
       fieldId: 'file.csv',
       defaultValue: r => r && r.file && r.file.csv,
     },
+    {
+      fieldId: 'file.xlsx',
+      defaultValue: r => r && r.file && r.file.xlsx,
+    },
+    {
+      fieldId: 'file.xml',
+      defaultValue: r => r && r.file && r.file.xml,
+    },
     { fieldId: 'file.json.resourcePath' },
-    { fieldId: 'file.xml.resourcePath' },
-    { fieldId: 'file.xlsx.hasHeaderRow' },
-    { fieldId: 'file.xlsx.rowsPerRecord' },
-    { fieldId: 'file.xlsx.keyColumns' },
+
     { fieldId: 'edix12.format' },
     { fieldId: 'fixed.format' },
     { fieldId: 'edifact.format' },

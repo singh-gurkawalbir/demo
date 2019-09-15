@@ -35,6 +35,7 @@ import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaRawData from './DynaRawData';
 import DynaSampleData from './DynaSampleData';
+import DynaXmlParse from './DynaXmlParse';
 
 export default {
   selectscopes: DynaSelectScopes,
@@ -57,6 +58,7 @@ export default {
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse,
+  xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,

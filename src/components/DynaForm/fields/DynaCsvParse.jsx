@@ -16,9 +16,15 @@ export default function DynaCsvParse(props) {
   /*
    * Fetches Raw data - CSV file to be parsed based on the rules
    */
-  const { data: csvData } = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')
-  );
+  const { csvData } = useSelector(state => {
+    const rawData = selectors.getResourceSampleDataWithStatus(
+      state,
+      resourceId,
+      'raw'
+    );
+
+    return { csvData: rawData && rawData.data && rawData.data.body };
+  });
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
@@ -66,7 +72,7 @@ export default function DynaCsvParse(props) {
       {showEditor && (
         <CsvParseEditorDialog
           title="CSV parse options"
-          id={id}
+          id={id + resourceId}
           mode="csv"
           data={csvData}
           rule={value}

@@ -113,6 +113,26 @@ export default {
       },
     ],
   },
+  'file.xlsx': {
+    type: 'csvparse',
+    label: 'Configure XLSX parse options',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xlsx'],
+      },
+    ],
+  },
+  'file.xml': {
+    type: 'xmlparse',
+    label: 'Configure XML parse options',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xml'],
+      },
+    ],
+  },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File Has Header',
