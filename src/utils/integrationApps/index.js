@@ -1,6 +1,7 @@
 export default {
-  getStepText: step => {
+  getStepText: (step, mode) => {
     let stepText = '';
+    const isUninstall = mode === 'uninstall';
 
     if (step._connectionId) {
       if (step.completed) {
@@ -10,9 +11,9 @@ export default {
       } else {
         stepText = 'Click to Configure';
       }
-    } else if (step.installURL) {
+    } else if (step.installURL || step.uninstallURL) {
       if (step.completed) {
-        stepText = 'Installed';
+        stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
         if (step.verifying) {
           stepText = 'Verifying...';
@@ -20,14 +21,14 @@ export default {
           stepText = 'Verify Now';
         }
       } else {
-        stepText = 'Click to Install';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
       }
     } else if (step.completed) {
-      stepText = 'Configured';
+      stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
-      stepText = 'Installing...';
+      stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
     } else {
-      stepText = 'Click to Install';
+      stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
     }
 
     return stepText;
