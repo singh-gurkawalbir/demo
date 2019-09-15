@@ -22,6 +22,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_UNINSTALL_STEPS:
         draft[id].uninstall = uninstallSteps;
         break;
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.CLEAR:
+        draft[id] = {};
+        break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.UPDATE:
         step = (draft[id].uninstall || []).find(
           s => s.uninstallerFunction === uninstallerFunction

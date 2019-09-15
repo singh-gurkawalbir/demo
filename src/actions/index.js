@@ -364,6 +364,10 @@ const integrationApps = {
         storeId,
         id: integrationId,
       }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.CLEAR, {
+        id: integrationId,
+      }),
     updateStep: (integrationId, uninstallerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.UPDATE, {
         id: integrationId,
