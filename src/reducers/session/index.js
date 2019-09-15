@@ -116,12 +116,17 @@ export function optionsMapFromMetadata(
   );
 }
 
-export function getSupportedFileDefinitions(state, format) {
-  return fromFileDefinitions.getSupportedFileDefinitions(
+export const getSupportedFileDefinitions = (state, format) =>
+  fromFileDefinitions.getSupportedFileDefinitions(
     state && state.fileDefinitions,
     format
   );
-}
+
+export const getUserSupportedFileDefinitions = (state, format) =>
+  fromFileDefinitions.getUserSupportedFileDefinitions(
+    state && state.fileDefinitions,
+    format
+  );
 
 export const getDefinitionTemplate = (
   state,
@@ -134,6 +139,12 @@ export const getDefinitionTemplate = (
     format,
     definitionId,
     resourceType
+  );
+
+export const getUserSupportedDefinition = (state, definitionId) =>
+  fromFileDefinitions.getUserSupportedDefinition(
+    state && state.fileDefinitions,
+    definitionId
   );
 
 export function resourceFormState(state, resourceType, resourceId) {

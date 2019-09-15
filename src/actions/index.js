@@ -354,8 +354,7 @@ const fileDefinitions = {
       }),
   },
   userSupported: {
-    request: () =>
-      action(actionTypes.METADATA.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST),
+    request: () => action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST),
     received: fileDefinitions =>
       action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED, {
         fileDefinitions,
@@ -385,10 +384,11 @@ const fileDefinitions = {
           definitionRules,
           formValues,
         }),
-      update: (definitionId, definitionRules) =>
+      update: (definitionId, definitionRules, formValues) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE, {
           definitionId,
           definitionRules,
+          formValues,
         }),
       received: (definition, definitionId) =>
         action(

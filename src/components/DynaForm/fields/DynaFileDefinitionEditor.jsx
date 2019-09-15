@@ -1,10 +1,19 @@
-import { useState, Fragment } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../components/AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+
+/*
+ * This editor is shown in case of :
+ *  1. In Export creation , when specific format is selected to fetch parser rules
+ *  2. When editing an export, resource has a userDefinitionId using which we get rules
+ *    customized and saved by user while creation
+ *  3. So 'hideFileDefinitionEditor' checks if neither of userDefinitionId nor format is selected
+ * Rule is always in a String format saved against 'id'
+ */
 
 function DynaFileDefinitionEditor(props) {
   const {
@@ -14,20 +23,34 @@ function DynaFileDefinitionEditor(props) {
     resourceType,
     onFieldChange,
     formContext,
+    userDefinitionId,
     options = {},
+    value,
   } = props;
+  const hideFileDefinitionEditor =
+    !userDefinitionId &&
+    !formContext.value['/edix12/format'] &&
+    !formContext.value['/edifact/format'] &&
+    !formContext.value['/fixed/format'];
   const [showEditor, setShowEditor] = useState(false);
+  const [isDefaultRuleAssigned, setIsDefaultRuleAssigned] = useState(false);
   const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  /*
-   * @TODO
-   * Note: On edit case, pass fileDefinitionId as props
-   * check in state for user supported fds based on this id
-   * fetch rules and save
-   */
+  const { data: userSupportedFileDefinitions, status } = useSelector(state =>
+    selectors.getUserSupportedFileDefinitions(state)
+  );
+
+  useEffect(() => {
+    // !status indicates no request has been made for fetching file defs
+    // We make a fetch call to load all userSupportedFileDefinitions
+
+    if (!userSupportedFileDefinitions.length && !status) {
+      dispatch(actions.fileDefinitions.userSupported.request());
+    }
+  }, [dispatch, status, userDefinitionId, userSupportedFileDefinitions.length]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -51,33 +74,53 @@ function DynaFileDefinitionEditor(props) {
 
       // update rules against this field each time it gets saved
       if (rule) {
-        onFieldChange(id, JSON.parse(rule));
+        onFieldChange(id, rule);
       }
     }
 
     setShowEditor(false);
   };
 
-  // It expects selected definition id and File definition format to fetch
-  // Parse / Generate rules and sample data for the same based on resource type ( exports/ imports)
   const { format, definitionId, resourcePath } = options;
+  /*
+   * Definition rules are fetched in 2 ways
+   * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+   * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+   */
   const { sampleData, rule } = useSelector(state => {
-    const template = selectors.getDefinitionTemplate(
-      state,
-      format,
-      definitionId,
-      resourceType
-    );
-    const { sampleData, ...fileDefinitionRules } = template || {};
+    let template;
 
-    return {
-      sampleData,
-      rule: {
-        resourcePath: resourcePath || '',
-        fileDefinition: fileDefinitionRules,
-      },
+    if (definitionId && format) {
+      template = selectors.getDefinitionTemplate(
+        state,
+        format,
+        definitionId,
+        resourceType
+      );
+    } else if (userDefinitionId) {
+      template = selectors.getUserSupportedDefinition(state, userDefinitionId);
+    }
+
+    if (!template) return {};
+    const { sampleData, ...fileDefinitionRules } = template;
+    const rule = {
+      resourcePath: resourcePath || '',
+      fileDefinition: fileDefinitionRules,
     };
+
+    return { sampleData, rule };
   });
+
+  useEffect(() => {
+    if (!isDefaultRuleAssigned && rule && rule.fileDefinition) {
+      onFieldChange(id, JSON.stringify(rule, null, 2));
+      setIsDefaultRuleAssigned(true);
+    }
+  }, [id, isDefaultRuleAssigned, onFieldChange, rule]);
+
+  if (hideFileDefinitionEditor) {
+    return null;
+  }
 
   return (
     <Fragment>
@@ -87,7 +130,7 @@ function DynaFileDefinitionEditor(props) {
           id={id + resourceId}
           data={sampleData}
           // Stringify rules as the editor expects a string
-          rule={JSON.stringify(rule, null, 2)}
+          rule={value || JSON.stringify(rule, null, 2)}
           onClose={handleClose}
         />
       )}

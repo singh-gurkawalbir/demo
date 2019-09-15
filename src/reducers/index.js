@@ -1062,12 +1062,11 @@ export function optionsMapFromMetadata(
   );
 }
 
-export function getSupportedFileDefinitions(state, format) {
-  return fromSession.getSupportedFileDefinitions(
-    state && state.session,
-    format
-  );
-}
+export const getSupportedFileDefinitions = (state, format) =>
+  fromSession.getSupportedFileDefinitions(state && state.session, format);
+
+export const getUserSupportedFileDefinitions = state =>
+  fromSession.getUserSupportedFileDefinitions(state && state.session);
 
 export const getDefinitionTemplate = (
   state,
@@ -1080,7 +1079,10 @@ export const getDefinitionTemplate = (
     format,
     definitionId,
     resourceType
-  ) || {};
+  );
+
+export const getUserSupportedDefinition = (state, definitionId) =>
+  fromSession.getUserSupportedDefinition(state && state.session, definitionId);
 
 export function commMetadataPathGen(
   applicationType,

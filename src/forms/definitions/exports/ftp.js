@@ -53,11 +53,15 @@ export default {
         'edifact.format',
         'file.fileDefinition.resourcePath',
       ],
+      userDefinitionId: r =>
+        r &&
+        r.file &&
+        r.file.fileDefinition &&
+        r.file.fileDefinition._fileDefinitionId,
     },
     { fieldId: 'file.fileDefinition.resourcePath' },
     { fieldId: 'rawData', isFTP: true },
     { fieldId: 'sampleData' },
-    // { fieldId: 'ftp.fileDefinition._fileDefinitionId' },
   ],
   fieldSets: [
     {

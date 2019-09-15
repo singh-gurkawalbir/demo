@@ -101,6 +101,7 @@ export default {
         ],
       },
     ],
+    required: true,
   },
   'file.csv': {
     type: 'csvparse',
@@ -146,7 +147,7 @@ export default {
     type: 'filedefinitionselect',
     label: 'EDI X12 Format',
     format: 'edi',
-    required: 'true',
+    required: r => !r,
     visibleWhen: [
       {
         field: 'file.type',
@@ -158,7 +159,7 @@ export default {
     type: 'filedefinitionselect',
     label: 'Format',
     format: 'fixed',
-    required: 'true',
+    required: r => !r,
     visibleWhen: [
       {
         field: 'file.type',
@@ -170,7 +171,7 @@ export default {
     type: 'filedefinitionselect',
     label: 'EDIFACT Format',
     format: 'ediFact',
-    required: 'true',
+    required: r => !r,
     visibleWhen: [
       {
         field: 'file.type',
@@ -182,20 +183,20 @@ export default {
     type: 'filedefinitioneditor',
     label: 'File Definition Rules ',
     // This field is visible when any of the below mentioned fields are visible and selected
-    visibleWhen: [
-      {
-        field: 'edix12.format',
-        isNot: [''],
-      },
-      {
-        field: 'fixed.format',
-        isNot: [''],
-      },
-      {
-        field: 'edifact.format',
-        isNot: [''],
-      },
-    ],
+    // visibleWhen: [
+    //   {
+    //     field: 'edix12.format',
+    //     isNot: [''],
+    //   },
+    //   {
+    //     field: 'fixed.format',
+    //     isNot: [''],
+    //   },
+    //   {
+    //     field: 'edifact.format',
+    //     isNot: [''],
+    //   },
+    // ],
   },
 
   pageSize: {
