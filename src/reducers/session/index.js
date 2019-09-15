@@ -128,23 +128,11 @@ export const getUserSupportedFileDefinitions = (state, format) =>
     format
   );
 
-export const getDefinitionTemplate = (
-  state,
-  format,
-  definitionId,
-  resourceType
-) =>
-  fromFileDefinitions.getDefinitionTemplate(
+export const getFileDefinition = (state, definitionId, options) =>
+  fromFileDefinitions.getFileDefinition(
     state && state.fileDefinitions,
-    format,
     definitionId,
-    resourceType
-  );
-
-export const getUserSupportedDefinition = (state, definitionId) =>
-  fromFileDefinitions.getUserSupportedDefinition(
-    state && state.fileDefinitions,
-    definitionId
+    options
   );
 
 export function resourceFormState(state, resourceType, resourceId) {

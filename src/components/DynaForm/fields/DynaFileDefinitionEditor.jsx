@@ -91,14 +91,14 @@ function DynaFileDefinitionEditor(props) {
     let template;
 
     if (definitionId && format) {
-      template = selectors.getDefinitionTemplate(
-        state,
+      template = selectors.getFileDefinition(state, definitionId, {
         format,
-        definitionId,
-        resourceType
-      );
+        resourceType,
+      });
     } else if (userDefinitionId) {
-      template = selectors.getUserSupportedDefinition(state, userDefinitionId);
+      template = selectors.getFileDefinition(state, userDefinitionId, {
+        type: 'user',
+      });
     }
 
     if (!template) return {};

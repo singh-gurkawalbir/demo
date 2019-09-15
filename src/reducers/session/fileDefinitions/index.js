@@ -184,12 +184,7 @@ export const getUserSupportedFileDefinitions = state => ({
     state.userSupportedFileDefinitions.status,
 });
 
-export const getDefinitionTemplate = (
-  state,
-  format,
-  definitionId,
-  resourceType
-) => {
+const getDefinitionTemplate = (state, format, definitionId, resourceType) => {
   if (!format || !definitionId || !resourceType) return undefined;
   const definitions =
     state &&
@@ -205,11 +200,21 @@ export const getDefinitionTemplate = (
   return resourceType === 'exports' ? parse : generate;
 };
 
-export const getUserSupportedDefinition = (state, definitionId) => {
+const getUserSupportedDefinition = (state, definitionId) => {
   if (!definitionId || !state.userSupportedFileDefinitions.data)
     return undefined;
 
   return state.userSupportedFileDefinitions.data.find(
     def => def._id === definitionId
   );
+};
+
+export const getFileDefinition = (state, definitionId, options) => {
+  const { format, resourceType, type } = options;
+
+  if (type === 'user') {
+    return getUserSupportedDefinition(state, definitionId);
+  }
+
+  return getDefinitionTemplate(state, format, definitionId, resourceType);
 };

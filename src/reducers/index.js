@@ -1068,22 +1068,8 @@ export const getSupportedFileDefinitions = (state, format) =>
 export const getUserSupportedFileDefinitions = state =>
   fromSession.getUserSupportedFileDefinitions(state && state.session);
 
-export const getDefinitionTemplate = (
-  state,
-  format,
-  definitionId,
-  resourceType
-) =>
-  fromSession.getDefinitionTemplate(
-    state && state.session,
-    format,
-    definitionId,
-    resourceType
-  );
-
-export const getUserSupportedDefinition = (state, definitionId) =>
-  fromSession.getUserSupportedDefinition(state && state.session, definitionId);
-
+export const getFileDefinition = (state, definitionId, options) =>
+  fromSession.getFileDefinition(state && state.session, definitionId, options);
 export function commMetadataPathGen(
   applicationType,
   connectionId,
