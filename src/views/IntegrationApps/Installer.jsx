@@ -9,6 +9,7 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
 import InstallationStep from '../../components/InstallStep';
+import { confirmDialog } from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,7 +48,7 @@ export default function ConnectorInstallation(props) {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
+    selectors.integrationAppSettings(state, integrationId)
   );
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
@@ -72,6 +73,35 @@ export default function ConnectorInstallation(props) {
   if (!installSteps || !integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;
   }
+
+  const initUninstall = storeId => {
+    dispatch(
+      actions.integrationApps.uninstaller.preUninstall(storeId, integrationId)
+    );
+  };
+
+  const handleUninstall = e => {
+    e.preventDefault();
+    confirmDialog({
+      title: 'Uninstall',
+      message: `Are you sure you want to uninstall`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            const storeId = (integration.stores || {}).length
+              ? integration.stores[0].value
+              : undefined;
+
+            initUninstall(storeId);
+          },
+        },
+      ],
+    });
+  };
 
   const handleStepClick = step => {
     const { _connectionId, installURL, installerFunction } = step;
@@ -180,7 +210,10 @@ export default function ConnectorInstallation(props) {
               <Typography variant="h6">{integration.name}</Typography>
             </Grid>
             <Grid item xs={1} className={classes.floatRight}>
-              <Button variant="outlined" color="primary">
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleUninstall}>
                 Uninstall
               </Button>
             </Grid>
