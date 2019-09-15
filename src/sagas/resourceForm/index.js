@@ -208,6 +208,17 @@ export function* submitFormValuesWithRawData({
   yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
 }
 
+export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
+  const { resourceId, resourceType, values } = formValues;
+  const newValues = { ...values };
+
+  newValues['/file/type'] = 'filedefinition';
+  newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
+  yield put(
+    actions.resourceForm.submitWithRawData(resourceType, resourceId, newValues)
+  );
+}
+
 export function* initFormValues({
   resourceType,
   resourceId,

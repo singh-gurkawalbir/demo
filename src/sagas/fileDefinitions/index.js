@@ -2,7 +2,11 @@ import { put, takeLatest, call } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { saveResourceWithDefinitionID } from '../resourceForm';
 
+/*
+ * Fetches all Supported File Definitions
+ */
 function* getFileDefinitions() {
   try {
     const fileDefinitions = yield apiCallWithRetry({
@@ -23,6 +27,9 @@ function* getFileDefinitions() {
   }
 }
 
+/*
+ * Fetches all User Defined File Definitions
+ */
 function* getUserFileDefinitions() {
   try {
     const fileDefinitions = yield apiCallWithRetry({
@@ -45,6 +52,9 @@ function* getUserFileDefinitions() {
   }
 }
 
+/*
+ * Fetches definition template ( Parse / Generate rules ) for the selected definitionId
+ */
 function* getDefinition({ definitionId, format }) {
   try {
     const definition = yield apiCallWithRetry({
@@ -70,56 +80,23 @@ function* getDefinition({ definitionId, format }) {
   }
 }
 
-function* saveResourceWithDefinitionID({ formValues, definitionId }) {
-  const { resourceId, resourceType, values } = formValues;
-  const newValues = { ...values };
-
-  newValues['/file/type'] = 'filedefinition';
-  newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
-  yield put(
-    actions.resourceForm.submitWithRawData(resourceType, resourceId, newValues)
-  );
-}
-
-function* addUserSupportedDefinition({ definitionRules, formValues }) {
-  try {
-    const definition = yield apiCallWithRetry({
-      path: '/filedefinitions',
-      opts: {
-        method: 'POST',
-        body: definitionRules,
-      },
-    });
-
-    yield put(
-      actions.fileDefinitions.definition.userSupported.received(definition)
-    );
-    // Once definition is saved, save the resource with the id
-    yield call(saveResourceWithDefinitionID, {
-      formValues,
-      definitionId: definition._id,
-    });
-  } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    // if (e.status >= 400 && e.status < 500) {
-    //   const parsedError = JSON.parse(e.message);
-    //   yield put(
-    //     actions.fileDefinitions.definition.userSupported.receivedError(parsedError)
-    //   );
-    // }
-  }
-}
-
-function* updateUserSupportedDefinition({
+/*
+ * Adds to the list of User Supported file definitions if it is a new Definition
+ * Else, updates definition based on definitionId passed
+ */
+function* saveUserFileDefinition({
   definitionId,
   definitionRules,
   formValues,
 }) {
+  const path = `/filedefinitions${definitionId ? `/${definitionId}` : ''}`;
+  const method = definitionId ? 'PUT' : 'POST';
+
   try {
     const definition = yield apiCallWithRetry({
-      path: `/filedefinitions/${definitionId}`,
+      path,
       opts: {
-        method: 'PUT',
+        method,
         body: definitionRules,
       },
     });
@@ -137,12 +114,22 @@ function* updateUserSupportedDefinition({
     });
   } catch (e) {
     // Handling Errors with status code between 400 and 500
-    // if (e.status >= 400 && e.status < 500) {
-    //   const parsedError = JSON.parse(e.message);
-    //   yield put(
-    //     actions.fileDefinitions.definition.userSupported.receivedError(parsedError)
-    //   );
-    // }
+    if (e.status >= 400 && e.status < 500) {
+      const parsedError = JSON.parse(e.message);
+
+      yield put(
+        actions.fileDefinitions.definition.userSupported.receivedError(
+          parsedError
+        )
+      );
+    }
+
+    // Skip saving file definition id and save resource on error
+    const { resourceId, resourceType, values } = formValues;
+
+    yield put(
+      actions.resourceForm.submitWithRawData(resourceType, resourceId, values)
+    );
   }
 }
 
@@ -160,11 +147,10 @@ export default [
     getDefinition
   ),
   takeLatest(
-    actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.REQUEST,
-    addUserSupportedDefinition
-  ),
-  takeLatest(
-    actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE,
-    updateUserSupportedDefinition
+    [
+      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.REQUEST,
+      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE,
+    ],
+    saveUserFileDefinition
   ),
 ];
