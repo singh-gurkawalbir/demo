@@ -35,7 +35,12 @@ const IntegrationDashboard = loadable(() =>
 );
 const IntegrationAppsInstallation = loadable(() =>
   import(
-    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationApps/Installer'
+    /* webpackChunkName: 'IntegrationAppsInstaller' */ '../../views/IntegrationApps/Installer'
+  )
+);
+const IntegratitonAppUninstallation = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationAppsUninstaller' */ '../../views/IntegrationApps/Uninstaller'
   )
 );
 /* webpackChunkName: 'IntegrationSettings' */
@@ -59,6 +64,13 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/connectors/:integrationId/setup"
           component={IntegrationAppsInstallation}
+        />
+        <Route
+          path={[
+            '/pg/integrations/:integrationId/uninstall/:storeId',
+            '/pg/integrations/:integrationId/uninstall',
+          ]}
+          component={IntegratitonAppUninstallation}
         />
         <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/flowbuilder" component={FlowBuilder} />

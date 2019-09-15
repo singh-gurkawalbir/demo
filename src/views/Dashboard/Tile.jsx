@@ -61,30 +61,39 @@ function Tile({ classes, tile }) {
             Click to continue setup.
           </Link>
         )}
-        {tile.status !== 'is_pending_setup' && accessLevel && (
+        {tile.status === 'uninstall' && (
           <Link
             className={classes.navLink}
-            to={getRoutePath(
-              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
-                tile._integrationId
-              }/settings/flows`
-            )}>
-            {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
-              ? 'Monitor'
-              : 'Manage'}
+            to={getRoutePath(`/integrations/${tile._integrationId}/uninstall`)}>
+            Click to continue uninstall.
           </Link>
         )}
-        {tile.status !== 'is_pending_setup' && accessLevel && (
-          <Link
-            className={classes.navLink}
-            to={getRoutePath(
-              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
-                tile._integrationId
-              }/dashboard`
-            )}>
-            Dashboard
-          </Link>
-        )}
+        {!['is_pending_setup', 'uninstall'].includes(tile.status) &&
+          accessLevel && (
+            <Link
+              className={classes.navLink}
+              to={getRoutePath(
+                `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                  tile._integrationId
+                }/settings/flows`
+              )}>
+              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
+                ? 'Monitor'
+                : 'Manage'}
+            </Link>
+          )}
+        {!['is_pending_setup', 'uninstall'].includes(tile.status) &&
+          accessLevel && (
+            <Link
+              className={classes.navLink}
+              to={getRoutePath(
+                `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                  tile._integrationId
+                }/dashboard`
+              )}>
+              Dashboard
+            </Link>
+          )}
         {tile.tag && (
           <Chip label={tile.tag} color="secondary" className={classes.tag} />
         )}

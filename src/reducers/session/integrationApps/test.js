@@ -6,7 +6,7 @@ describe('intetgrationApps installer reducer', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
-    expect(state).toEqual({ installer: {} });
+    expect(state).toEqual({ installer: {}, uninstaller: {} });
   });
 
   describe(`integrationApps received installer install_inProgress action`, () => {
@@ -21,6 +21,7 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(state).toEqual({
         installer: { '1': { isTriggered: true } },
+        uninstaller: { '1': {} },
       });
     });
 
@@ -42,6 +43,7 @@ describe('intetgrationApps installer reducer', () => {
           1: { isTriggered: true, verifying: true },
           2: { isTriggered: true },
         },
+        uninstaller: { '1': {} },
       });
     });
   });
@@ -58,6 +60,7 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(state).toEqual({
         installer: { '1': { isTriggered: true, verifying: true } },
+        uninstaller: { '1': {} },
       });
     });
 
@@ -76,9 +79,10 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(state).toEqual({
         installer: {
-          1: { verifying: true, isTriggered: true },
-          2: { isTriggered: true },
+          '1': { isTriggered: true, verifying: true },
+          '2': { isTriggered: true },
         },
+        uninstaller: { '1': {} },
       });
     });
   });
@@ -97,6 +101,7 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(state).toEqual({
         installer: { '1': { isTriggered: false, verifying: false } },
+        uninstaller: { '1': {} },
       });
     });
 
@@ -118,6 +123,7 @@ describe('intetgrationApps installer reducer', () => {
           '1': { isTriggered: false, verifying: false },
           '2': { isTriggered: true },
         },
+        uninstaller: { '1': {} },
       });
     });
   });
@@ -137,6 +143,7 @@ describe('intetgrationApps installer reducer', () => {
 
       expect(state).toEqual({
         installer: { '1': {} },
+        uninstaller: { '1': {} },
       });
     });
 
@@ -161,6 +168,7 @@ describe('intetgrationApps installer reducer', () => {
           '1': {},
           '2': { isTriggered: true },
         },
+        uninstaller: { '1': {} },
       });
     });
   });

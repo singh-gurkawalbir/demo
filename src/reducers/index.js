@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
+import produce from 'immer';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -445,6 +446,18 @@ export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
 }
 
+export function integrationAppSettings(state, id, storeId) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const uninstallSteps = fromSession.uninstallSteps(
+    state.resource,
+    id,
+    storeId
+  );
+
+  return { ...integrationResource, ...uninstallSteps };
+}
+
 export function integrationInstallSteps(state, integrationId) {
   if (!state) return null;
   const integrationInstallSteps = fromData.integrationInstallSteps(
@@ -466,13 +479,20 @@ export function integrationInstallSteps(state, integrationId) {
 }
 
 export function integrationUninstallSteps(state, integrationId) {
-  if (!state) return null;
-
-  return fromData.integrationInstallSteps(
-    state.data,
-    integrationId,
-    'uninstall'
+  const uninstallSteps = fromSession.uninstallSteps(
+    state && state.session,
+    integrationId
   );
+
+  if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
+    return [];
+  }
+
+  return produce(uninstallSteps, draft => {
+    if (draft.find(s => !s.completed)) {
+      draft.find(s => !s.completed).isCurrentStep = true;
+    }
+  });
 }
 
 // #endregion
@@ -819,7 +839,12 @@ export function tiles(state) {
   return tiles.map(t => {
     integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (t.offlineConnections && t.offlineConnections.length > 0) {
       status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;

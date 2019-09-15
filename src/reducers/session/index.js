@@ -152,6 +152,14 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function uninstallSteps(state, id, storeId) {
+  return fromIntegrationApps.uninstallSteps(
+    state && state.integrationApps,
+    id,
+    storeId
+  );
+}
+
 export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }

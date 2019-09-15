@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props);
-  const { step, index, handleStepClick } = props;
+  const { step, index, handleStepClick, mode = 'install' } = props;
 
   if (!step) {
     return null;
@@ -88,13 +88,13 @@ export default function InstallationStep(props) {
               onClick={onStepClick}
               underline="none"
               variant="text">
-              {integrationAppsUtil.getStepText(step)}
+              {integrationAppsUtil.getStepText(step, mode)}
             </Button>
           )}
           {step.completed && (
             <Fragment>
               <Typography onClick={onStepClick} className={classes.successText}>
-                {integrationAppsUtil.getStepText(step)}
+                {integrationAppsUtil.getStepText(step, mode)}
               </Typography>
               <img
                 alt=""

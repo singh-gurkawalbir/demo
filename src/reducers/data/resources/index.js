@@ -136,17 +136,36 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
-export function integrationInstallSteps(state, id, type = 'install') {
+export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration || !integration[type]) {
+  if (!integration || !integration.install) {
     return [];
   }
 
-  return produce(integration[type], draft => {
+  return produce(integration.install, draft => {
     if (draft.find(step => !step.completed)) {
       draft.find(step => !step.completed).isCurrentStep = true;
     }
+  });
+}
+
+export function integrationAppSettings(state, id) {
+  const integration = resource(state, 'integrations', id);
+
+  if (!integration) {
+    return {};
+  }
+
+  return produce(integration, draft => {
+    if (draft.settings.general) {
+      draft.hasGeneralSettings = true;
+    }
+
+    draft.stores = draft.settings.sections.map(s => ({
+      label: s.title,
+      value: s.id,
+    }));
   });
 }
 
