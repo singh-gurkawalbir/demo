@@ -39,8 +39,8 @@ function DynaFileDefinitionEditor(props) {
     setShowEditor(!showEditor);
   };
 
-  const { data: userSupportedFileDefinitions, status } = useSelector(state =>
-    selectors.getUserSupportedFileDefinitions(state)
+  const { data: userSupportedFileDefinitions = [], status } = useSelector(
+    state => selectors.getUserSupportedFileDefinitions(state)
   );
 
   useEffect(() => {
