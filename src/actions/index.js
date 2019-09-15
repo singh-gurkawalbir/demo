@@ -364,26 +364,15 @@ const integrationApps = {
         storeId,
         id: integrationId,
       }),
-    stepUninstallInProgress: (integrationId, uninstallerFunction) =>
-      action(
-        actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.IN_PROGRESS,
-        {
-          id: integrationId,
-          uninstallerFunction,
-        }
-      ),
-    verifyStepUninstall: (integrationId, uninstallerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.VERIFY, {
+    updateStep: (integrationId, uninstallerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.UPDATE, {
         id: integrationId,
         uninstallerFunction,
+        update,
       }),
-    failedStepUninstall: (id, uninstallerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.FAILURE, {
-        id,
-        uninstallerFunction,
-      }),
-    stepUninstall: (integrationId, uninstallerFunction) =>
+    stepUninstall: (storeId, integrationId, uninstallerFunction) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST, {
+        storeId,
         id: integrationId,
         uninstallerFunction,
       }),

@@ -26,21 +26,22 @@ export function* preUninstall({ storeId, id }) {
   );
 }
 
-export function* uninstallStep({ id, uninstallerFunction }) {
+export function* uninstallStep({ storeId, id, uninstallerFunction }) {
   const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
   let stepCompleteResponse;
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
-      opts: { body: {}, method: 'PUT' },
-      message: `Installing`,
+      opts: { body: { storeId }, method: 'PUT' },
+      message: `Uninstalling`,
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.installer.failedStepInstall(
+      actions.integrationApps.uninstaller.updateStep(
         id,
-        uninstallerFunction
+        uninstallerFunction,
+        'failed'
       )
     );
 
@@ -49,10 +50,10 @@ export function* uninstallStep({ id, uninstallerFunction }) {
 
   if (stepCompleteResponse.success) {
     yield put(
-      actions.integrationApps.uninstaller.uninstalledStep(
-        stepCompleteResponse,
+      actions.integrationApps.uninstaller.updateStep(
         id,
-        uninstallerFunction
+        uninstallerFunction,
+        'completed'
       )
     );
   }
@@ -62,5 +63,9 @@ export default [
   takeEvery(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL,
     preUninstall
+  ),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST,
+    uninstallStep
   ),
 ];

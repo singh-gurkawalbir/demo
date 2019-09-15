@@ -11,7 +11,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import MaterialUiSelect from '../../components/DynaForm/fields/DynaSelect';
@@ -104,8 +104,21 @@ export default function IntegrationAppSettings(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const [currentStore, setCurrentStore] = useState(integration.stores[0].value);
+  const defaultStoreId = useSelector(state =>
+    selectors.defaultStoreId(state, integrationId)
+  );
+  const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const showAPITokens = permissions.accesstokens.view;
+
+  useEffect(() => {
+    if (
+      (defaultStoreId !== currentStore &&
+        !integration.stores.find(s => s.value === currentStore)) ||
+      !currentStore
+    )
+      setCurrentStore(defaultStoreId);
+  }, [currentStore, defaultStoreId, integration.stores]);
+
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
   };
@@ -143,7 +156,7 @@ export default function IntegrationAppSettings(props) {
                 variant="contained"
                 color="primary"
                 className={classes.button}>
-                Add New Store
+                Add {integration.settings.storeLabel}
               </Button>
             </Grid>
           </Grid>

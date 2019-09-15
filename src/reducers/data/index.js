@@ -38,6 +38,10 @@ export function integrationAppSettings(state, id) {
   return fromResources.integrationAppSettings(state && state.resources, id);
 }
 
+export function defaultStoreId(state, id) {
+  return fromResources.defaultStoreId(state && state.resources, id);
+}
+
 export function processors(state) {
   return fromResources.processors(state && state.resources);
 }

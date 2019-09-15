@@ -107,18 +107,19 @@ export default function IntegratorAppUninstalleer(props) {
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
-    const { installURL, uninstallerFunction } = step;
+    const { uninstallURL, uninstallerFunction } = step;
 
     // handle connection step click
-    if (installURL) {
+    if (uninstallURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.uninstaller.stepUninstallInProgress(
+          actions.integrationApps.uninstaller.updateStep(
             integrationId,
-            uninstallerFunction
+            uninstallerFunction,
+            'inProgress'
           )
         );
-        openExternalUrl({ url: installURL });
+        openExternalUrl({ url: uninstallURL });
       } else {
         if (step.verifying) {
           return false;
@@ -140,13 +141,15 @@ export default function IntegratorAppUninstalleer(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.uninstaller.stepUninstallInProgress(
+        actions.integrationApps.uninstaller.updateStep(
           integrationId,
-          uninstallerFunction
+          uninstallerFunction,
+          'inProgress'
         )
       );
       dispatch(
         actions.integrationApps.uninstaller.stepUninstall(
+          storeId,
           integrationId,
           uninstallerFunction
         )

@@ -458,6 +458,10 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
+export function defaultStoreId(state, id) {
+  return fromData.defaultStoreId(state && state.data, id);
+}
+
 export function integrationInstallSteps(state, integrationId) {
   if (!state) return null;
   const integrationInstallSteps = fromData.integrationInstallSteps(

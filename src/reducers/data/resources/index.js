@@ -169,6 +169,16 @@ export function integrationAppSettings(state, id) {
   });
 }
 
+export function defaultStoreId(state, id) {
+  const settings = integrationAppSettings(state, id);
+
+  if (settings.stores && settings.stores.length) {
+    return settings.stores[0].value;
+  }
+
+  return undefined;
+}
+
 export function resourceList(state, { type, take, keyword, sort, sandbox }) {
   const result = {
     resources: [],
