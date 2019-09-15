@@ -2,6 +2,7 @@ import { omitBy, isEmpty } from 'lodash';
 import {
   convertFromExport,
   convertToExport,
+  PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
 
 export default function assistantDefinition(
@@ -161,13 +162,15 @@ export default function assistantDefinition(
           operationDetails.queryParameters.filter(qp => !!qp.required).length >
           0;
         const configureQueryParametersField = {
-          fieldId: 'assistantMetadata.queryParams',
+          fieldId: 'assistantMetadata.searchParams',
+          id: 'assistantMetadata.queryParams',
           label: operationDetails.queryParametersLabel,
           required: hasRequiredParameters,
           value: !isEmpty(assistantConfig.queryParams)
             ? assistantConfig.queryParams
             : undefined,
           paramMeta: {
+            paramLocation: PARAMETER_LOCATION.QUERY,
             fields: operationDetails.queryParameters,
             defaultValuesForDeltaExport:
               assistantConfig.exportType === 'delta' &&
@@ -182,7 +185,6 @@ export default function assistantDefinition(
           configureQueryParametersField.validWhen = {
             isNot: {
               values: [undefined, {}],
-              message: 'message some',
             },
           };
         }
@@ -196,13 +198,15 @@ export default function assistantDefinition(
           operationDetails.bodyParameters.filter(qp => !!qp.required).length >
           0;
         const configureBodyParametersField = {
-          fieldId: 'assistantMetadata.bodyParams',
+          fieldId: 'assistantMetadata.searchParams',
+          id: 'assistantMetadata.bodyParams',
           label: operationDetails.bodyParametersLabel,
           required: hasRequiredParameters,
           value: !isEmpty(assistantConfig.bodyParams)
             ? assistantConfig.bodyParams
             : undefined,
           paramMeta: {
+            paramLocation: PARAMETER_LOCATION.BODY,
             fields: operationDetails.bodyParameters,
             defaultValuesForDeltaExport:
               assistantConfig.exportType === 'delta' &&
@@ -217,7 +221,6 @@ export default function assistantDefinition(
           configureBodyParametersField.validWhen = {
             isNot: {
               values: [undefined, {}],
-              message: 'message some',
             },
           };
         }

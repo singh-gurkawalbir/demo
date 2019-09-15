@@ -29,6 +29,40 @@ export const PARAMETER_LOCATION = Object.freeze({
   BODY: 'body',
 });
 
+export const DEFAULT_PROPS = Object.freeze({
+  EXPORT: {
+    REST: {
+      pagingMethod: undefined,
+      nextPagePath: undefined,
+      nextPageRelativeURI: undefined,
+      pageArgument: undefined,
+      maxPagePath: undefined,
+      maxCountPath: undefined,
+      skipArgument: undefined,
+      lastPageStatusCode: undefined,
+      lastPagePath: undefined,
+      lastPageValue: undefined,
+    },
+    HTTP: {
+      relativeURI: undefined,
+      body: undefined,
+      paging: {
+        method: undefined,
+        skip: undefined,
+        page: undefined,
+      },
+      response: {
+        resourcePath: undefined,
+        resourceIdPath: undefined,
+        successPath: undefined,
+        successValues: [],
+        errorPath: undefined,
+        blobFormat: undefined,
+      },
+    },
+  },
+});
+
 export function routeToRegExp(route) {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
@@ -232,6 +266,13 @@ export function getExportOperationDetails({
     );
 
     if (operationDetails) {
+      if (
+        !operationDetails.supportedExportTypes ||
+        !operationDetails.supportedExportTypes.includes('delta')
+      ) {
+        delete operationDetails.delta;
+      }
+
       OVERWRITABLE_PROPERTIES.forEach(prop => {
         if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
           if (Object.prototype.hasOwnProperty.call(resourceDetails, prop)) {
@@ -271,7 +312,6 @@ export function getExportOperationDetails({
   }
 
   return {
-    paging: {},
     queryParameters: [],
     pathParameters: [],
     headers: {},
@@ -424,7 +464,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
 
 export function convertToExport({ assistantConfig }) {
   const {
-    adaptorType,
+    adaptorType = 'http',
     assistant,
     version,
     resource,
@@ -434,6 +474,11 @@ export function convertToExport({ assistantConfig }) {
     bodyParams,
     assistantData,
   } = assistantConfig;
+
+  if (!assistant || !resource || !operation || !assistantData) {
+    return undefined;
+  }
+
   const operationDetails = getExportOperationDetails({
     version,
     resource,
@@ -442,38 +487,15 @@ export function convertToExport({ assistantConfig }) {
   });
   const exportDefaults = {
     rest: {
+      ...DEFAULT_PROPS.EXPORT.REST,
       resourcePath: operationDetails.resourcePath,
       successPath: operationDetails.successPath,
-      allowUndefinedResource: operationDetails.allowUndefinedResource,
-      pagingMethod: undefined,
-      nextPagePath: undefined,
-      nextPageRelativeURI: undefined,
-      pageArgument: undefined,
-      maxPagePath: undefined,
-      maxCountPath: undefined,
-      skipArgument: undefined,
-      lastPageStatusCode: undefined,
-      lastPagePath: undefined,
-      lastPageValue: undefined,
+      allowUndefinedResource: !!operationDetails.allowUndefinedResource,
     },
     http: {
+      ...DEFAULT_PROPS.EXPORT.HTTP,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
-      relativeURI: undefined,
-      body: undefined,
-      paging: {
-        method: undefined,
-        skip: undefined,
-        page: undefined,
-      },
-      response: {
-        resourcePath: undefined,
-        resourceIdPath: undefined,
-        successPath: undefined,
-        successValues: [],
-        errorPath: undefined,
-        blobFormat: undefined,
-      },
     },
   };
   const exportDoc = {
@@ -483,14 +505,16 @@ export function convertToExport({ assistantConfig }) {
     ...exportDefaults[adaptorType],
   };
 
-  Object.keys(operationDetails.response || {}).forEach(
-    prop => (exportDoc.response[prop] = operationDetails.response[prop])
-  );
+  if (adaptorType === 'http') {
+    Object.keys(operationDetails.response || {}).forEach(
+      prop => (exportDoc.response[prop] = operationDetails.response[prop])
+    );
+  }
 
   Object.keys(operationDetails.paging || {}).forEach(prop => {
     if (adaptorType === 'rest') {
       exportDoc[prop] = operationDetails.paging[prop];
-    } else {
+    } else if (adaptorType === 'http') {
       exportDoc.paging[prop] = operationDetails.paging[prop];
     }
   });
@@ -503,7 +527,7 @@ export function convertToExport({ assistantConfig }) {
 
       if (pathParamValue && pathParam.config) {
         if (pathParam.config.prefix) {
-          pathParamValue = pathParam.config + pathParamValue;
+          pathParamValue = pathParam.config.prefix + pathParamValue;
         }
 
         if (pathParam.config.suffix) {
@@ -647,7 +671,11 @@ export function convertToExport({ assistantConfig }) {
     );
   }
 
-  const assistantMetadata = { version, resource };
+  const assistantMetadata = { resource };
+
+  if (version) {
+    assistantMetadata.version = version;
+  }
 
   /** We need to set operation only if id is set on endpoint in metadata. Otherwise, the conversion logic in ampersand app fails */
   if (operationDetails.id) {
