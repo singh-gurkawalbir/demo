@@ -1,9 +1,9 @@
 import { useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import TransformEditorDialog from '../../../components/AFE/TransformEditor/Dialog';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
+import TransformEditorDialog from '../../../AFE/TransformEditor/Dialog';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 
 export default function DynaTransformEditor(props) {
   const {

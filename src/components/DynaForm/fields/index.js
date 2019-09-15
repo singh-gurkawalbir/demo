@@ -12,16 +12,16 @@ import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody from './DynaHttpRequestBody';
 import DynaEditor from './DynaEditor';
-import DynaCsvParse from './DynaCsvParse';
+import DynaCsvParse from './DynaEditors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import DynaTransformEditor from './DynaTransformEditor';
+import DynaTransformEditor from './DynaEditors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
-import DynaFileDefinitionEditor from './DynaFileDefinitionEditor';
+import DynaFileDefinitionEditor from './DynaEditors/DynaFileDefinitionEditor';
 import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
 import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
@@ -35,7 +35,7 @@ import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaRawData from './DynaRawData';
 import DynaSampleData from './DynaSampleData';
-import DynaXmlParse from './DynaXmlParse';
+import DynaXmlParse from './DynaEditors/DynaXmlParse';
 
 export default {
   selectscopes: DynaSelectScopes,

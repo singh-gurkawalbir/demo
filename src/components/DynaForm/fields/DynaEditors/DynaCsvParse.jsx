@@ -1,9 +1,9 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import CsvParseEditorDialog from '../../../components/AFE/CsvParseEditor/Dialog';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import CsvParseEditorDialog from '../../../AFE/CsvParseEditor/Dialog';
 
 export default function DynaCsvParse(props) {
   const { id, onFieldChange, value, label, resourceId, resourceType } = props;

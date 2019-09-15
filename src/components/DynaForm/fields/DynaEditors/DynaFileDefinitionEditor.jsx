@@ -2,9 +2,9 @@ import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { FormContext } from 'react-forms-processor/dist';
-import FileDefinitionEditorDialog from '../../../components/AFE/FileDefinitionEditor/Dialog';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
+import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 
 /*
  * This editor is shown in case of :
