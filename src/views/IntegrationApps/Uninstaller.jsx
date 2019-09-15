@@ -140,13 +140,13 @@ export default function IntegratorAppUninstalleer(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.installer.stepIUninstallInProgress(
+        actions.integrationApps.uninstaller.stepIUninstallInProgress(
           integrationId,
           uninstallerFunction
         )
       );
       dispatch(
-        actions.integrationApps.installer.stepUninstall(
+        actions.integrationApps.uninstaller.stepUninstall(
           integrationId,
           uninstallerFunction
         )

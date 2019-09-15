@@ -46,7 +46,7 @@ function getIntegrationAppsNextState(state, action) {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
         integration.install = stepsToUpdate;
         break;
     }
@@ -91,7 +91,7 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+    case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);

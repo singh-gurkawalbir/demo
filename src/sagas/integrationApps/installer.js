@@ -33,5 +33,8 @@ export function* installStep({ id, installerFunction }) {
 }
 
 export default [
-  takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL, installStep),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST,
+    installStep
+  ),
 ];

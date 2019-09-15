@@ -15,18 +15,18 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
         draft[id] = {};
         break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.VERIFY:
         draft[id].verifying = true;
         draft[id].isTriggered = true;
         break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.FAILURE:
         draft[id].verifying = false;
         draft[id].isTriggered = false;
         break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.IN_PROGRESS:
         draft[id].isTriggered = true;
         break;
     }

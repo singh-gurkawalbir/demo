@@ -332,27 +332,27 @@ const metadata = {
 const integrationApps = {
   installer: {
     stepInstall: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL, {
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST, {
         id: integrationId,
         installerFunction,
       }),
     stepInstallInProgress: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_IN_PROGRESS, {
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.IN_PROGRESS, {
         id: integrationId,
         installerFunction,
       }),
     verifyStepInstall: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_VERIFY, {
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.VERIFY, {
         id: integrationId,
         installerFunction,
       }),
     failedStepInstall: (id, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_FAILURE, {
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.FAILURE, {
         id,
         installerFunction,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP_INSTALL_COMPLETE, {
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
@@ -364,9 +364,32 @@ const integrationApps = {
         storeId,
         id: integrationId,
       }),
+    stepUninstallInProgress: (integrationId, uninstallerFunction) =>
+      action(
+        actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.IN_PROGRESS,
+        {
+          id: integrationId,
+          uninstallerFunction,
+        }
+      ),
+    verifyStepUninstall: (integrationId, uninstallerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.VERIFY, {
+        id: integrationId,
+        uninstallerFunction,
+      }),
+    failedStepUninstall: (id, uninstallerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.FAILURE, {
+        id,
+        uninstallerFunction,
+      }),
+    stepUninstall: (integrationId, uninstallerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST, {
+        id: integrationId,
+        uninstallerFunction,
+      }),
     receivedUninstallSteps: (uninstallSteps, storeId, id) =>
       action(
-        actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEPS_RECEIVED,
+        actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_UNINSTALL_STEPS,
         { uninstallSteps, id, storeId }
       ),
   },
