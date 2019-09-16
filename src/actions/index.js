@@ -64,6 +64,15 @@ const connection = {
       integrationId,
     }),
 };
+const marketPlace = {
+  requestConnectors: () =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_REQUEST, {}),
+  requestTemplates: () => action(actionTypes.MARKETPLACE.TEMPLATES_REQUEST, {}),
+  receivedConnectors: ({ connectors }) =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
+  receivedTemplates: ({ templates }) =>
+    action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
+};
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
@@ -644,4 +653,5 @@ export default {
   assistantMetadata,
   stack,
   connection,
+  marketPlace,
 };

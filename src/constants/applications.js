@@ -555,4 +555,7 @@ export const getApp = (type, assistant) => {
   return connectors.find(c => c.id === id) || {};
 };
 
+export const getApplicationConnectors = () =>
+  connectors.filter(conn => !!conn.assistant === true);
+
 export default connectors;

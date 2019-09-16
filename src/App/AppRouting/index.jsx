@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
+import MarketPlace from '../../views/MarketPlace';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -58,6 +59,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/marketplace" component={MarketPlace} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route path="/pg" exact component={Dashboard} />
 

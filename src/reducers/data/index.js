@@ -7,6 +7,7 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
+import marketPlace from './marketPlace';
 
 export default combineReducers({
   resources,
@@ -15,6 +16,7 @@ export default combineReducers({
   accessTokens,
   jobs,
   suiteScript,
+  marketPlace,
 });
 
 // #region resource selectors
