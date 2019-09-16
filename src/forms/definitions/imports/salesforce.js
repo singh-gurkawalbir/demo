@@ -43,7 +43,7 @@ export default {
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [{ formId: 'fileTemplates' }],
+      fields: [{ formId: 'advancedSettings' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',

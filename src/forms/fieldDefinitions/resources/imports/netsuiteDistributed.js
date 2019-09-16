@@ -44,7 +44,7 @@ export default {
   },
   'netsuite_da.hooks.preMap.function': {
     type: 'text',
-    label: 'Pre Map ',
+    label: 'Pre Map',
     placeholder: 'Function Name',
   },
   'netsuite_da.hooks.preMap.fileInternalId': {

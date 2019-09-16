@@ -48,6 +48,7 @@ export default {
       },
     ],
   },
+  // To do replace values statistically instead of dynamic
   'salesforce.compositeOperation': {
     type: 'radiogroup',
     label: 'Operation',

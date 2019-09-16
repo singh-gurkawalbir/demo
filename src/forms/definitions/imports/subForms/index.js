@@ -5,7 +5,7 @@ import fileAdvancedSettings from './fileAdvancedSettings';
 import fileType from './fileType';
 import dataMappings from './dataMappings';
 import compressFiles from './compressFiles';
-import fileTemplates from './fileTemplates';
+import advancedSettings from './advancedSettings';
 
 export default {
   common,
@@ -15,5 +15,5 @@ export default {
   fileType,
   dataMappings,
   compressFiles,
-  fileTemplates,
+  advancedSettings,
 };
