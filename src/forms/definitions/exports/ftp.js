@@ -27,11 +27,13 @@ export default {
     { fieldId: 'ftp.fileNameEndsWith' },
     // { formId: 'file' },
 
-    { fieldId: 'ftp.file.type', defaultValue: r => r && r.file && r.file.type },
+    {
+      fieldId: 'ftp.file.type',
+      defaultValue: r => r && r.file && r.file.type,
+    },
     {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
-      isFTP: true,
     },
     {
       fieldId: 'file.csv',
@@ -52,6 +54,12 @@ export default {
     { fieldId: 'edifact.format' },
     {
       fieldId: 'file.filedefinition.rules',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
       refreshOptionsOnChangesTo: [
         'edix12.format',
         'fixed.format',
@@ -65,7 +73,7 @@ export default {
         r.file.fileDefinition._fileDefinitionId,
     },
     { fieldId: 'file.fileDefinition.resourcePath' },
-    { fieldId: 'rawData', isFTP: true },
+    { fieldId: 'rawData' },
     { fieldId: 'sampleData' },
   ],
   fieldSets: [

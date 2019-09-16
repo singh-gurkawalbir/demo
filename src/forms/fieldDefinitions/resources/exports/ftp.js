@@ -202,21 +202,6 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File Definition Rules ',
-    // This field is visible when any of the below mentioned fields are visible and selected
-    // visibleWhen: [
-    //   {
-    //     field: 'edix12.format',
-    //     isNot: [''],
-    //   },
-    //   {
-    //     field: 'fixed.format',
-    //     isNot: [''],
-    //   },
-    //   {
-    //     field: 'edifact.format',
-    //     isNot: [''],
-    //   },
-    // ],
   },
 
   pageSize: {
