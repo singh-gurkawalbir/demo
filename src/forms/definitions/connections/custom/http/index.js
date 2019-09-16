@@ -25,7 +25,6 @@ import autopilot from './autopilot';
 import drift from './drift';
 import stripe from './stripe';
 import zendesk from './zendesk';
-import acumatica from './acumatica';
 import postmark from './postmark';
 import steelbrick from './steelbrick';
 import squareup from './squareup';
@@ -45,8 +44,10 @@ import parseur from './parseur';
 import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
 import sharepoint from './sharepoint';
+import marketo from './marketo';
 
 export default {
+  marketo,
   sharepoint,
   oandav20fxtrade,
   oandaexchangerates,
@@ -65,7 +66,6 @@ export default {
   tsheets,
   steelbrick,
   squareup,
-  acumatica,
   postmark,
   zendesk,
   stripe,
