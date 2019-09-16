@@ -33,14 +33,19 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
-const IntegrationAppsInstallation = loadable(() =>
+const IntegrationAppInstallation = loadable(() =>
   import(
     /* webpackChunkName: 'IntegrationAppsInstaller' */ '../../views/IntegrationApps/Installer'
   )
 );
-const IntegratitonAppUninstallation = loadable(() =>
+const IntegrationAppUninstallation = loadable(() =>
   import(
     /* webpackChunkName: 'IntegrationAppsUninstaller' */ '../../views/IntegrationApps/Uninstaller'
+  )
+);
+const IntegrationAppSettings = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationAppSettings' */ '../../views/IntegrationApps/Settings'
   )
 );
 /* webpackChunkName: 'IntegrationSettings' */
@@ -63,14 +68,20 @@ export default class AppRouting extends Component {
         />
         <Route
           path="/pg/connectors/:integrationId/setup"
-          component={IntegrationAppsInstallation}
+          component={IntegrationAppInstallation}
+        />
+        <Route
+          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+          path="/pg/connectors/:integrationId/settings"
+          component={IntegrationAppSettings}
         />
         <Route
           path={[
-            '/pg/integrations/:integrationId/uninstall/:storeId',
-            '/pg/integrations/:integrationId/uninstall',
+            // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+            '/pg/connectors/:integrationId/uninstall/:storeId',
+            '/pg/connectors/:integrationId/uninstall',
           ]}
-          component={IntegratitonAppUninstallation}
+          component={IntegrationAppUninstallation}
         />
         <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/flowbuilder" component={FlowBuilder} />

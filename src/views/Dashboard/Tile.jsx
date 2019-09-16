@@ -73,7 +73,7 @@ function Tile({ classes, tile }) {
             <Link
               className={classes.navLink}
               to={getRoutePath(
-                `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                `/${tile._connectorId ? 'connectors' : 'integrations'}/${
                   tile._integrationId
                 }/settings/flows`
               )}>
@@ -87,7 +87,7 @@ function Tile({ classes, tile }) {
             <Link
               className={classes.navLink}
               to={getRoutePath(
-                `/${tile._connectorId ? 'integrations' : 'integrations'}/${
+                `/${tile._connectorId ? 'connectors' : 'integrations'}/${
                   tile._integrationId
                 }/dashboard`
               )}>

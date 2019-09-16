@@ -162,10 +162,14 @@ export function integrationAppSettings(state, id) {
       draft.hasGeneralSettings = true;
     }
 
-    draft.stores = draft.settings.sections.map(s => ({
-      label: s.title,
-      value: s.id,
-    }));
+    if (draft.settings.supportsMultiStore) {
+      draft.stores = draft.settings.sections.map(s => ({
+        label: s.title,
+        hidden: !!s.hidden,
+        mode: s.mode,
+        value: s.id,
+      }));
+    }
   });
 }
 

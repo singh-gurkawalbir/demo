@@ -10,27 +10,28 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route, NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import loadable from '../../utils/loadable';
-import * as selectors from '../../reducers';
-import MaterialUiSelect from '../../components/DynaForm/fields/DynaSelect';
-import LoadResources from '../../components/LoadResources';
-import getRoutePath from '../../utils/routePaths';
+import actions from '../../../actions';
+import loadable from '../../../utils/loadable';
+import * as selectors from '../../../reducers';
+import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
+import LoadResources from '../../../components/LoadResources';
+import getRoutePath from '../../../utils/routePaths';
 
 const Flows = loadable(() =>
   import(
-    /* webpackChunkName: 'IntegrationSettings.Flows' */ '../IntegrationSettings/Flows'
+    /* webpackChunkName: 'IntegrationSettings.Flows' */ '../../IntegrationSettings/Flows'
   )
 );
 const Users = loadable(() =>
   import(
-    /* webpackChunkName: 'IntegrationSettings.Users' */ '../IntegrationSettings/Users'
+    /* webpackChunkName: 'IntegrationSettings.Users' */ '../../IntegrationSettings/Users'
   )
 );
 const AuditLog = loadable(() =>
   import(
-    /* webpackChunkName: 'IntegrationSettings.AuditLog' */ '../IntegrationSettings/AuditLog'
+    /* webpackChunkName: 'IntegrationSettings.AuditLog' */ '../../IntegrationSettings/AuditLog'
   )
 );
 const Uninstall = loadable(() =>
@@ -39,7 +40,7 @@ const Uninstall = loadable(() =>
 /* webpackChunkName: 'IntegrationSettings.AccessTokens' */
 const Connections = loadable(() =>
   import(
-    /* webpackChunkName: 'IntegrationSettings.Connections' */ '../IntegrationSettings/Connections'
+    /* webpackChunkName: 'IntegrationSettings.Connections' */ '../../IntegrationSettings/Connections'
   )
 );
 const useStyles = makeStyles(theme => ({
@@ -98,8 +99,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function IntegrationAppSettings(props) {
-  const { integrationId } = props;
+  const { integrationId } = props.match.params;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
@@ -110,6 +112,11 @@ export default function IntegrationAppSettings(props) {
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const showAPITokens = permissions.accesstokens.view;
 
+  useEffect(() => {
+    if (!integration) {
+      dispatch(actions.resource.request('integrations', integrationId));
+    }
+  });
   useEffect(() => {
     if (
       (defaultStoreId !== currentStore &&

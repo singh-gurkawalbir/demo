@@ -4,9 +4,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment, useEffect } from 'react';
-import { confirmDialog } from '../../components/ConfirmDialog';
-import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { confirmDialog } from '../../../components/ConfirmDialog';
+import actions from '../../../actions';
+import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   button: {
