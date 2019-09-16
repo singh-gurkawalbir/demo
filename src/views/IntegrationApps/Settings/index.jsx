@@ -243,32 +243,26 @@ export default function IntegrationAppSettings(props) {
           <div className={classes.rightElement}>
             <Switch>
               <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/flows`
-                )}
+                path={getRoutePath(`/connectors/:integrationId/settings/flows`)}
                 component={Flows}
               />
               <Route
                 path={getRoutePath(
-                  `/integrations/:integrationId/settings/connections`
+                  `/connectors/:integrationId/settings/connections`
                 )}
                 component={Connections}
               />
               <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/users`
-                )}
+                path={getRoutePath(`/connectors/:integrationId/settings/users`)}
                 component={Users}
               />
               <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/audit`
-                )}
+                path={getRoutePath(`/connectors/:integrationId/settings/audit`)}
                 component={AuditLog}
               />
               <Route
                 path={getRoutePath(
-                  `/integrations/:integrationId/settings/uninstall`
+                  `/connectors/:integrationId/settings/uninstall`
                 )}
                 render={props => (
                   <Uninstall
