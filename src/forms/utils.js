@@ -134,7 +134,7 @@ export const getMissingPatchSet = (paths, resource) => {
   return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
-export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
+export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   /*  
   console.log('check sanitize patch set ', patchSet, fieldMeta);
 
@@ -144,17 +144,36 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
  .map(ref => ({path: ref.path, op: 'remove' }));
      
     */
+  let removeFieldOps = [];
 
-  const valuePathsFromForm = patchSet.map(patch => patch.path);
-  const removeFields = fieldMeta.fields
-    .filter(ref => !valuePathsFromForm.includes(ref.name))
-    .map(ref => ({ path: ref.name, op: 'remove' }));
-  const removeFieldSetFields = fieldMeta.fieldSets
-    .map(fieldSet => fieldSet.fields)
-    .flat()
-    .filter(ref => !valuePathsFromForm.includes(ref.name))
-    .map(ref => ({ path: ref.name, op: 'remove' }));
-  const removeFieldOps = [...removeFields, removeFieldSetFields];
+  if (fieldMeta && (fieldMeta.fields || fieldMeta.fieldSets)) {
+    const valuePathsFromForm =
+      (patchSet && patchSet.map(patch => patch.path)) || [];
+
+    if (fieldMeta.fields) {
+      const removeFields =
+        fieldMeta &&
+        fieldMeta.fields &&
+        fieldMeta.fields
+          .filter(ref => !valuePathsFromForm.includes(ref.name))
+          .map(ref => ({ path: ref.name, op: 'remove' }));
+
+      removeFieldOps = [...removeFields];
+    }
+
+    if (fieldMeta.fieldSets) {
+      const removeFieldSetFields =
+        fieldMeta &&
+        fieldMeta.fieldSets &&
+        fieldMeta.fieldSets
+          .map(fieldSet => fieldSet.fields)
+          .flat()
+          .filter(ref => !valuePathsFromForm.includes(ref.name))
+          .map(ref => ({ path: ref.name, op: 'remove' }));
+
+      removeFieldOps = [...removeFieldSetFields];
+    }
+  }
 
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce((s, patch) => {
