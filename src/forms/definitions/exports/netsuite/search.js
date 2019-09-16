@@ -29,7 +29,21 @@ export default {
       ],
     },
     {
-      fieldId: 'type',
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.type) || 'all',
     },
     {
       fieldId: 'delta.lagOffset',
