@@ -79,7 +79,8 @@ function getRenderer(
     }
 
     return (
-      /* Unable to add class in the makestyle because it is throwing and error that this 
+      /* TODO: Dave. refactor to allow useClasses...
+         Unable to add class in the makestyle because it is throwing and error that this 
          function is not a react function neither hook so added inline. */
 
       <div style={wrapper}>

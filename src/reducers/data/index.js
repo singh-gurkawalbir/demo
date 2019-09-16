@@ -53,6 +53,7 @@ export function hasData(state, resourceType) {
 export function isAgentOnline(state, agentId) {
   return fromResources.isAgentOnline(state && state.resources, agentId);
 }
+
 // #endregion
 
 export function integrationUsers(state, integrationId) {

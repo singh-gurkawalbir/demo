@@ -22,6 +22,7 @@ import mongodb from './mongodb';
 import as2 from './as2';
 import common from './common';
 import newExport from './new';
+import custom from './custom';
 
 export default {
   new: newExport,
@@ -48,4 +49,5 @@ export default {
   wrapper,
   mongodb,
   as2,
+  custom,
 };
