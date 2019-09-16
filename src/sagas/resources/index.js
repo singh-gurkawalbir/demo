@@ -8,6 +8,7 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
+import { defaultPatchSetConverter } from '../../forms/utils';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -91,6 +92,33 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     if (isNew) {
       yield put(actions.resource.created(updated._id, id));
     }
+  } catch (error) {
+    // TODO: What should we do for 4xx errors? where the resource to put/post
+    // violates some API business rules?
+  }
+}
+
+export function* patchResource({ resourceType, id, values }) {
+  const isNew = isNewId(id);
+
+  if (!values || isNew) return; // nothing to do.
+
+  const path = `/${resourceType}/${id}`;
+  const patchSet = defaultPatchSetConverter(values);
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PATCH',
+        body: patchSet,
+      },
+    });
+    const resource = yield select(selectors.resource, resourceType, id);
+    const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
+      .newDocument;
+
+    yield put(actions.resource.received(resourceType, resourceUpdated));
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
@@ -189,6 +217,7 @@ export function* requestRegister({ connectionIds, integrationId }) {
 
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
+  takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),

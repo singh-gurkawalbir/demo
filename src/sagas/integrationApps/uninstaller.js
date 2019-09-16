@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -71,18 +71,20 @@ export function* deleteIntegration({ integrationId }) {
   } catch (error) {
     return undefined;
   }
+
+  yield put(actions.resource.deleted('integrations', integrationId));
 }
 
 export default [
-  takeEvery(
+  takeLatest(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL,
     preUninstall
   ),
-  takeEvery(
+  takeLatest(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST,
     uninstallStep
   ),
-  takeEvery(
+  takeLatest(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION,
     deleteIntegration
   ),

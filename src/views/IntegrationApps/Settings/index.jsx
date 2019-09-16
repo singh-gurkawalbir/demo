@@ -5,7 +5,6 @@ import {
   Grid,
   Drawer,
   List,
-  Chip,
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,6 +17,7 @@ import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import getRoutePath from '../../../utils/routePaths';
+import ChipInput from '../../../components/ChipInput';
 
 const Flows = loadable(() =>
   import(
@@ -130,8 +130,8 @@ export default function IntegrationAppSettings(props) {
     setCurrentStore(value);
   };
 
-  const handleTagClickHandler = e => {
-    e.preventDefault();
+  const handleTagChangeHandler = tag => {
+    dispatch(actions.resource.patch('integrations', integrationId, { tag }));
   };
 
   return (
@@ -139,11 +139,11 @@ export default function IntegrationAppSettings(props) {
       <div className={classes.appFrame}>
         <div className={classes.about}>
           <Typography variant="h5">{integration.name}</Typography>
-          <Chip
-            label={integration.tag || 'tag'}
+          <ChipInput
+            value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
-            onClick={handleTagClickHandler}
+            onChange={handleTagChangeHandler}
           />
         </div>
         <Divider />
