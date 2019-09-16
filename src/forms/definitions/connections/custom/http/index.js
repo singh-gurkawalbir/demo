@@ -44,10 +44,8 @@ import parseur from './parseur';
 import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
 import sharepoint from './sharepoint';
-import marketo from './marketo';
 
 export default {
-  marketo,
   sharepoint,
   oandav20fxtrade,
   oandaexchangerates,
