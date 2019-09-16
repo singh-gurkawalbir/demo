@@ -130,7 +130,15 @@ function* processFileData({ resourceId, resourceType, values }) {
   );
 
   // JSON file does not need parsing
-  if (type === 'json') return;
+  if (type === 'json') {
+    // Update the same JSON file in parse stage as it does not need any parsing
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'parse')
+    );
+
+    return;
+  }
+
   // For file types : csv, xlsx and xml files
   const body = {
     rules: rules || {},

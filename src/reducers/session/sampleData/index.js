@@ -13,7 +13,7 @@ function extractStages(sampleData) {
   stagesInSampleData.forEach(stage => {
     switch (stage.name) {
       case 'parse':
-        stageMap[stage.name] = stage.data;
+        stageMap[stage.name] = stage.data && stage.data[0];
         break;
       case 'transform':
         stageMap[stage.name] =
@@ -113,12 +113,7 @@ function getRawData(resourceData) {
 }
 
 function getSampleData(resourceData) {
-  return (
-    resourceData.transform ||
-    resourceData.parse ||
-    (resourceData.raw && resourceData.raw.body) ||
-    DEFAULT_VALUE
-  );
+  return resourceData.transform || resourceData.parse || DEFAULT_VALUE;
 }
 
 function getTransformData(resourceData) {

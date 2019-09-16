@@ -25,12 +25,17 @@ function DynaUploadFile(props) {
    * File types supported for upload are CSV, XML, XLSX and JSON
    */
   const handleFileRead = event => {
-    const { result: fileContent } = event.target;
-    let csvFileContent;
+    const { result } = event.target;
+    let fileContent = result;
 
     // For xlsx file , content gets converted to 'csv' before parsing
     if (options === 'xlsx') {
-      csvFileContent = getCsvFromXlsx(fileContent);
+      fileContent = getCsvFromXlsx(fileContent);
+    }
+
+    // For JSON file, content should be parsed from String to JSON
+    if (options === 'json') {
+      fileContent = JSON.parse(fileContent);
     }
 
     // Dispatches an action to process uploaded file data
@@ -40,7 +45,7 @@ function DynaUploadFile(props) {
         resourceType,
         {
           type: options,
-          file: csvFileContent || fileContent,
+          file: fileContent,
           formValues: formContext.value,
         },
         'file'
