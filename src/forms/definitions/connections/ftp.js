@@ -58,7 +58,7 @@ export default {
     },
     {
       fieldId: 'ftp.authKey',
-
+      omitWhenHidden: true,
       visibleWhen: [
         {
           field: 'ftp.type',
