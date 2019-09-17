@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
 
 export default function DynaSampleData(props) {
   const classes = useStyles();
-  const { defaultValue, label, mode, resourceId, id, onFieldChange } = props;
+  const { label, mode, resourceId, id, onFieldChange } = props;
   const [isSampleDataSet, setIsSampleDataSet] = useState(false);
   // Fetches sample data from the state
   const { data: sampleData } = useSelector(state =>
@@ -34,7 +34,7 @@ export default function DynaSampleData(props) {
       <div className={classes.container}>
         <CodeEditor
           name="sampleData"
-          value={sampleData || defaultValue}
+          value={sampleData}
           mode={mode || 'json'}
           readOnly
         />

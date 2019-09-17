@@ -20,7 +20,6 @@ const useStyles = makeStyles(() => ({
 function DynaRawData(props) {
   const classes = useStyles();
   const {
-    defaultValue,
     label,
     mode,
     id,
@@ -79,7 +78,7 @@ function DynaRawData(props) {
       <div className={classes.container}>
         <CodeEditor
           name="rawData"
-          value={rawData || defaultValue}
+          value={rawData}
           mode={mode || 'json'}
           readOnly
         />

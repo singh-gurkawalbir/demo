@@ -569,11 +569,9 @@ export default {
   rawData: {
     type: 'rawdata',
     label: 'Raw Data',
-    defaultValue: r => r && r.rawData,
   },
   sampleData: {
     type: 'sampledata',
     label: 'Sample Data',
-    defaultValue: r => r && r.sampleData,
   },
 };
