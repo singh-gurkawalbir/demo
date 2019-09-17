@@ -3,6 +3,7 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    defaultValue: r => (r && r.salesforce && r.salesforce.sObjectType) || '',
     visibleWhen: [
       {
         field: 'salesforce.executionType',
@@ -22,6 +23,7 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     label: 'Execution Type',
+    defaultValue: r => (r && r.salesforce && r.salesforce.executionType) || '',
     options: [
       {
         items: [
