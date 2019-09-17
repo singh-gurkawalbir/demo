@@ -3,7 +3,7 @@ import { JOB_TYPES } from './constants';
 
 export default function getRequestOptions(
   action,
-  { resourceId, integrationId, osType, filters = {} } = {}
+  { resourceId, integrationId, osType, filters = {}, adaptorType } = {}
 ) {
   switch (action) {
     case actionTypes.USER_CREATE:
@@ -189,6 +189,13 @@ export default function getRequestOptions(
     case actionTypes.FLOW.DOWNLOAD_ZIP_FILE:
       return {
         path: `/flows/${resourceId}/template`,
+      };
+    case actionTypes.METADATA.ASSISTANT_REQUEST:
+      return {
+        path:
+          adaptorType === 'http'
+            ? `/ui/assistants/http/${resourceId}`
+            : `/ui/assistants/${resourceId}`,
         opts: { method: 'GET' },
       };
     default:

@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -34,7 +35,15 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 export default (state = {}, action) => {
-  const { id, type, resource, collection, resourceType } = action;
+  const {
+    id,
+    type,
+    resource,
+    collection,
+    resourceType,
+    connectionIds,
+    integrationId,
+  } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -90,6 +99,21 @@ export default (state = {}, action) => {
       }
 
       return state;
+
+    case actionTypes.CONNECTION.REGISTER_COMPLETE:
+      resourceIndex = state.integrations.findIndex(
+        r => r._id === integrationId
+      );
+
+      if (resourceIndex > -1) {
+        return produce(state, draft => {
+          connectionIds.forEach(cId =>
+            draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
+          );
+        });
+      }
+
+      return state;
     default:
       return state;
   }
@@ -110,6 +134,12 @@ export function resource(state, resourceType, id) {
   const match = resources.find(r => r._id === id);
 
   if (!match) return null;
+
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (match.assistant && !match.assistantMetadata) {
+      match.assistantMetadata = {};
+    }
+  }
 
   return match;
 }
@@ -253,4 +283,5 @@ export function isAgentOnline(state, agentId) {
       process.env.AGENT_STATUS_INTERVAL
   );
 }
+
 // #endregion

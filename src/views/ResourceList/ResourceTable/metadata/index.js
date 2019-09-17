@@ -2,6 +2,7 @@ import agents from './agents';
 import connections from './connections';
 import exports from './exports';
 import flows from './flows';
+import registerConnections from './registerConnections';
 import defaultResource from './default';
 
 const metadata = {
@@ -9,6 +10,7 @@ const metadata = {
   connections,
   exports,
   flows,
+  registerConnections,
 };
 
 export default function(resourceType) {

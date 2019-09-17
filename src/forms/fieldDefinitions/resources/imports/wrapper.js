@@ -1,26 +1,15 @@
 export default {
   'wrapper.function': {
     type: 'text',
-    label: 'Wrapper function',
+    label: 'Function',
+    required: true,
   },
   'wrapper.configuration': {
     type: 'text',
-    label: 'Wrapper configuration',
+    label: 'Configuration',
   },
-  'wrapper.lookups[*].name': {
-    type: 'text',
-    label: 'Wrapper lookups[*] name',
-  },
-  'wrapper.lookups[*].map': {
-    type: 'text',
-    label: 'Wrapper lookups[*] map',
-  },
-  'wrapper.lookups[*].default': {
-    type: 'text',
-    label: 'Wrapper lookups[*] default',
-  },
-  'wrapper.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'Wrapper lookups[*] allow Failures',
+  'wrapper.sampleData': {
+    type: 'textarea',
+    label: 'If so,please paste it here',
   },
 };
