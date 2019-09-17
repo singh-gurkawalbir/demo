@@ -46,7 +46,6 @@ export default {
     { fieldId: 'rest.resourcePath' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
-    { fieldId: 'allConnectionsExportType' },
     { fieldId: 'rawData' },
     { fieldId: 'sampleData' },
     {

@@ -30,22 +30,6 @@ export default {
     type: 'checkbox',
     label: 'Configure Async Helper',
   },
-  allConnectionsExportType: {
-    id: 'type',
-    type: 'select',
-    helpId: 'export.type',
-    label: 'Type',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-        ],
-      },
-    ],
-  },
   type: {
     type: 'select',
     label: 'Type',
