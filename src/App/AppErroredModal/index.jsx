@@ -20,7 +20,7 @@ export default function AppErroredModal() {
       </Typography>
       <Button
         onClick={() => {
-          dispatch(actions.clearAppError());
+          dispatch(actions.app.clearError());
           window.location.reload();
         }}>
         Reload

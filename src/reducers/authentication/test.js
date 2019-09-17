@@ -1,5 +1,6 @@
 /* global describe, test, expect */
-import reducer from './';
+import { advanceBy, advanceTo, clear } from 'jest-date-mock';
+import reducer, * as selectors from './';
 import actions from '../../actions';
 import { COMM_STATES } from '../comms';
 
@@ -108,5 +109,57 @@ describe('authentication reducers', () => {
         failure: someFailureMsg,
       });
     });
+  });
+});
+
+describe('authentication selectors', () => {
+  // 2 minutes prior interval
+  process.env.SESSION_EXPIRATION_INTERVAL = 10;
+  process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION = 3;
+  // one hour expiration interval
+
+  test('should return a `warning` when reaching the warning interval and subsequently an `expired` when exceeding the expiration interval ', () => {
+    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+    let newState = reducer(undefined, actions.auth.complete());
+
+    newState = reducer(newState, actions.auth.sessionTimestamp());
+
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual();
+
+    advanceBy(8);
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual(
+      'warning'
+    );
+    advanceBy(3);
+
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual(
+      'expired'
+    );
+
+    clear();
+  });
+
+  test('should return an `expired` when the session expires irrespective of the time state  ', () => {
+    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
+    let newState = reducer(undefined, actions.auth.complete());
+
+    newState = reducer(newState, actions.auth.sessionTimestamp());
+
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual();
+
+    advanceBy(5);
+    // suddenly session expires
+    newState = reducer(newState, actions.auth.failure());
+
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual(
+      'expired'
+    );
+    advanceBy(3);
+
+    expect(selectors.showSessionStatus(newState, Date.now())).toEqual(
+      'expired'
+    );
+
+    clear();
   });
 });

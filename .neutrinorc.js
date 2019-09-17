@@ -169,7 +169,9 @@ module.exports = {
         "HELPER_FUNCTIONS_INTERVAL_UPDATE",
         "USE_NEW_APP",
         "AGENT_STATUS_INTERVAL",
-        "MASK_SENSITIVE_INFO_DELAY"
+        "MASK_SENSITIVE_INFO_DELAY",
+        "SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION",
+        "SESSION_EXPIRATION_INTERVAL"
       ]
     ],
     neutrino => {

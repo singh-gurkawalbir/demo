@@ -40,6 +40,8 @@ export default function(
         newState.sessionExpired = true;
       }
 
+      delete newState.authTimestamp;
+
       newState.initialized = true;
 
       newState.authenticated = false;
@@ -56,6 +58,13 @@ export default function(
       return newState;
     }
 
+    case actionTypes.AUTH_TIMESTAMP: {
+      return {
+        ...state,
+        authTimestamp: Date.now(),
+      };
+    }
+
     case actionTypes.CLEAR_STORE: {
       newState = {
         initialized: false,
@@ -70,4 +79,29 @@ export default function(
       return state;
     }
   }
+}
+
+1000;
+
+export function showSessionStatus(state, date) {
+  const { authenticated, authTimestamp, sessionExpired } = state;
+
+  // authenticated and session Expired are mutually exclusive
+  if (authenticated) {
+    if (
+      Number(process.env.SESSION_EXPIRATION_INTERVAL) + authTimestamp <
+      date
+    ) {
+      return 'expired';
+    }
+
+    if (
+      authTimestamp +
+        Number(process.env.SESSION_EXPIRATION_INTERVAL) -
+        Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION) <
+      date
+    ) {
+      return 'warning';
+    }
+  } else if (sessionExpired) return 'expired';
 }
