@@ -59,6 +59,10 @@ export default {
       },
     ],
   },
+  mapping: {
+    type: 'dynamapping',
+    label: 'Manage Import Mapping',
+  },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
@@ -69,10 +73,6 @@ export default {
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
     ],
-  },
-  mapping: {
-    type: 'dynamapping',
-    label: 'Manage Import Mapping',
   },
   'rest.successValues': {
     type: 'text',

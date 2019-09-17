@@ -27,12 +27,10 @@ export default {
     { fieldId: 'rest.method' },
     { fieldId: 'rest.headers' },
     { fieldId: 'rest.compositeType' },
-    { fieldId: 'rest.relativeURI' },
-    { fieldId: 'rest.successPath' },
-    // TODO: be removed later
     { fieldId: 'rest.lookups', visible: false },
     { fieldId: 'mapping' },
-
+    { fieldId: 'rest.relativeURI' },
+    { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
     { fieldId: 'rest.responseIdPath' },
     {
