@@ -7,6 +7,7 @@ import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
+import stringUtil from '../../utils/string';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
@@ -33,6 +34,8 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     formState,
     resource,
     lastPatchtimestamp,
+    resourceHash: stringUtil.hashCode(resource.assistantMetadata),
+    /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
 
@@ -106,6 +109,7 @@ export const ResourceFormFactory = props => {
     resourceId,
     isNew,
     lastPatchtimestamp,
+    resourceHash,
   } = props;
   const [count, setCount] = useState(0);
 
@@ -120,6 +124,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
+    resourceHash,
   ]);
 
   // once the form successfully completes submission (could be async)
@@ -137,7 +142,12 @@ export const ResourceFormFactory = props => {
   }, [formState.submitComplete /* , onSubmitComplete */]);
 
   const { optionsHandler } = useMemo(
-    () => formFactory.getResourceFormAssets({ resourceType, resource, isNew }),
+    () =>
+      formFactory.getResourceFormAssets({
+        resourceType,
+        resource,
+        isNew,
+      }),
     [isNew, resource, resourceType]
   );
   const { fieldMeta } = formState;

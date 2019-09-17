@@ -408,6 +408,27 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function integrationConnectionList(state, integrationId) {
+  const integration = resource(state, 'integrations', integrationId);
+  const connList = fromData.resourceList(state.data, { type: 'connections' });
+
+  if (integrationId && integrationId !== 'none' && integration) {
+    const registeredConnections =
+      integration && integration._registeredConnectionIds;
+
+    if (registeredConnections) {
+      connList.resources =
+        connList &&
+        connList.resources &&
+        connList.resources.filter(
+          conn => registeredConnections.indexOf(conn._id) >= 0
+        );
+    }
+  }
+
+  return connList;
+}
+
 export function resourceReferences(state) {
   return fromSession.resourceReferences(state && state.session);
 }
@@ -568,6 +589,31 @@ export function userAccessLevelOnConnection(state, connectionId) {
   }
 
   return accessLevelOnConnection;
+}
+
+export function availableConnectionsToRegister(state, integrationId) {
+  if (!state) {
+    return [];
+  }
+
+  const connList = resourceList(state, { type: 'connections' });
+  const allConnections = connList && connList.resources;
+  const integration = resource(state, 'integrations', integrationId);
+  const registeredConnections =
+    (integration && integration._registeredConnectionIds) || [];
+  let availableConnectionsToRegister = allConnections.filter(
+    conn => registeredConnections.indexOf(conn._id) === -1
+  );
+
+  availableConnectionsToRegister = availableConnectionsToRegister.filter(
+    conn => {
+      const accessLevel = userAccessLevelOnConnection(state, conn._id);
+
+      return accessLevel === 'manage' || accessLevel === 'owner';
+    }
+  );
+
+  return availableConnectionsToRegister;
 }
 
 export function suiteScriptLinkedConnections(state) {
@@ -1213,4 +1259,11 @@ export function jobErrors(state, jobId) {
 
 export function jobErrorRetryObject(state, retryId) {
   return fromData.jobErrorRetryObject(state.data, retryId);
+}
+
+export function assistantData(state, { adaptorType, assistant }) {
+  return fromSession.assistantData(state && state.session, {
+    adaptorType,
+    assistant,
+  });
 }

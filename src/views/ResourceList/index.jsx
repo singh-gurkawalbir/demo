@@ -4,7 +4,7 @@ import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutlineOutlined';
+import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
@@ -39,9 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 function PageContent(props) {
   const { match, location } = props;
-  const resourceType =
-    (match && match.params && match.params.resourceType) ||
-    (props && props.resourceType);
+  const { resourceType } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state =>
@@ -51,7 +49,6 @@ function PageContent(props) {
     selectors.resourceList(state, {
       type: resourceType,
       take: 3,
-      integrationId: props && props.integrationId,
       ...filter,
     })
   );
@@ -90,7 +87,8 @@ function PageContent(props) {
             to={`${
               location.pathname
             }/add/${resourceType}/new-${shortid.generate()}`}
-            variant="text">
+            variant="text"
+            color="primary">
             <AddIcon /> New {resourceName}
           </CeligoIconButton>
         </div>
