@@ -96,8 +96,6 @@ const getResourceFormAssets = ({
     case 'exports':
       meta = formMeta[resourceType];
 
-      console.log('resource', meta, resource);
-
       if (meta) {
         if (isNew) {
           meta = meta.new;
