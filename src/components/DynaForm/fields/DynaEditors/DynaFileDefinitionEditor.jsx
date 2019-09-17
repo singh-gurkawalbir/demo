@@ -33,7 +33,7 @@ function DynaFileDefinitionEditor(props) {
     !formContext.value['/edifact/format'] &&
     !formContext.value['/fixed/format'];
   const [showEditor, setShowEditor] = useState(false);
-  const [isDefaultRuleAssigned, setIsDefaultRuleAssigned] = useState(false);
+  const [isRuleChanged, setIsRuleChanged] = useState(false);
   const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -103,20 +103,30 @@ function DynaFileDefinitionEditor(props) {
 
     if (!template) return {};
     const { sampleData, ...fileDefinitionRules } = template;
-    const rule = {
-      resourcePath: resourcePath || '',
-      fileDefinition: fileDefinitionRules,
-    };
+    // Stringify rules as the editor expects a string
+    const rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
 
     return { sampleData, rule };
   });
 
   useEffect(() => {
-    if (!isDefaultRuleAssigned && rule && rule.fileDefinition) {
-      onFieldChange(id, JSON.stringify(rule, null, 2));
-      setIsDefaultRuleAssigned(true);
+    if (isRuleChanged) {
+      onFieldChange(id, rule);
+      setIsRuleChanged(false);
     }
-  }, [id, isDefaultRuleAssigned, onFieldChange, rule]);
+  }, [id, isRuleChanged, onFieldChange, rule]);
+  useEffect(() => {
+    if (rule) {
+      setIsRuleChanged(true);
+    }
+  }, [rule]);
 
   if (hideFileDefinitionEditor) {
     return null;
@@ -129,8 +139,7 @@ function DynaFileDefinitionEditor(props) {
           title="File Definition Editor"
           id={id + resourceId}
           data={sampleData}
-          // Stringify rules as the editor expects a string
-          rule={value || JSON.stringify(rule, null, 2)}
+          rule={value}
           onClose={handleClose}
         />
       )}
