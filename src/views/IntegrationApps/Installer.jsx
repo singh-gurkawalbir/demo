@@ -118,9 +118,10 @@ export default function ConnectorInstallation(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.installer.stepInstallInProgress(
+          actions.integrationApps.installer.updateStep(
             integrationId,
-            installerFunction
+            installerFunction,
+            'inProgress'
           )
         );
         openExternalUrl({ url: installURL });
@@ -130,13 +131,14 @@ export default function ConnectorInstallation(props) {
         }
 
         dispatch(
-          actions.integrationApps.installer.verifyStepInstall(
+          actions.integrationApps.installer.updateStep(
             integrationId,
-            installerFunction
+            installerFunction,
+            'verify'
           )
         );
         dispatch(
-          actions.integrationApps.installer.stepInstall(
+          actions.integrationApps.installer.installStep(
             integrationId,
             installerFunction
           )
@@ -145,13 +147,14 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           integrationId,
-          installerFunction
+          installerFunction,
+          'inProgress'
         )
       );
       dispatch(
-        actions.integrationApps.installer.stepInstall(
+        actions.integrationApps.installer.installStep(
           integrationId,
           installerFunction
         )
@@ -168,13 +171,14 @@ export default function ConnectorInstallation(props) {
     const step = installSteps.find(s => s.isCurrentStep);
 
     dispatch(
-      actions.integrationApps.installer.stepInstallInProgress(
+      actions.integrationApps.installer.updateStep(
         integrationId,
-        (step || {}).installerFunction
+        (step || {}).installerFunction,
+        'inProgress'
       )
     );
     dispatch(
-      actions.integrationApps.installer.stepInstall(
+      actions.integrationApps.installer.installStep(
         integrationId,
         (step || {}).installerFunction
       )

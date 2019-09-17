@@ -140,9 +140,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'inProgress'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -193,9 +194,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           integrationId,
-          'installerFunction'
+          'installerFunction',
+          'inProgress'
         )
       );
 
@@ -216,9 +218,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           123,
-          'installerFunction'
+          'installerFunction',
+          'inProgress'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -237,9 +240,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'inProgress'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -272,9 +276,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.failedStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'failed'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -321,9 +326,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.failedStepInstall(
+        actions.integrationApps.installer.updateStep(
           integrationId,
-          'installerFunction'
+          'installerFunction',
+          'failed'
         )
       );
 
@@ -344,9 +350,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.failedStepInstall(
+        actions.integrationApps.installer.updateStep(
           123,
-          'installerFunction'
+          'installerFunction',
+          'failed'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -365,9 +372,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.failedStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'failed'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -482,9 +490,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.verifyStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'verify'
         )
       );
       const installStepsAfterAction = selectors.resource(
@@ -509,9 +518,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.verifyStepInstall(
+        actions.integrationApps.installer.updateStep(
           123,
-          'installerFunction'
+          'installerFunction',
+          'verify'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(
@@ -530,9 +540,10 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.verifyStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'verify'
         )
       );
       const installStepsAfterAction = selectors.integrationInstallSteps(

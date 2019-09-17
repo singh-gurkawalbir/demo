@@ -15,7 +15,11 @@ export function* installStep({ id, installerFunction }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.installer.failedStepInstall(id, installerFunction)
+      actions.integrationApps.installer.updateStep(
+        id,
+        installerFunction,
+        'failed'
+      )
     );
 
     return undefined;

@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { id, type } = action;
+  const { id, type, update } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -18,16 +18,17 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
         draft[id] = {};
         break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.VERIFY:
-        draft[id].verifying = true;
-        draft[id].isTriggered = true;
-        break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.FAILURE:
-        draft[id].verifying = false;
-        draft[id].isTriggered = false;
-        break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.IN_PROGRESS:
-        draft[id].isTriggered = true;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.UPDATE:
+        if (update === 'inProgress') {
+          draft[id].isTriggered = true;
+        } else if (update === 'verify') {
+          draft[id].verifying = true;
+          draft[id].isTriggered = true;
+        } else if (update === 'failed') {
+          draft[id].verifying = false;
+          draft[id].isTriggered = false;
+        }
+
         break;
     }
   });

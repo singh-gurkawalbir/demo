@@ -103,6 +103,7 @@ export default function IntegrationAppSettings(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const [addNewStoreButtonDisabled, disableAddNewStoreButton] = useState(false);
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
@@ -128,6 +129,12 @@ export default function IntegrationAppSettings(props) {
 
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
+  };
+
+  const handleAddNewStoreClick = e => {
+    e.preventDefault();
+    disableAddNewStoreButton(true);
+    dispatch(actions.integrationApps.store.addNew(integrationId));
   };
 
   const handleTagChangeHandler = tag => {
@@ -164,6 +171,8 @@ export default function IntegrationAppSettings(props) {
                 color="primary"
                 className={classes.button}>
                 Add {integration.settings.storeLabel}
+                disabled={addNewStoreButtonDisabled}
+                onClick={handleAddNewStoreClick}
               </Button>
             </Grid>
           </Grid>

@@ -104,7 +104,9 @@ export function* patchResource({ resourceType, id, values }) {
   if (!values || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
-  const patchSet = defaultPatchSetConverter(values);
+  const patchSet = Array.isArray(values)
+    ? values
+    : defaultPatchSetConverter(values);
 
   try {
     yield call(apiCallWithRetry, {

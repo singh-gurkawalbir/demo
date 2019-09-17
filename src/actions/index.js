@@ -344,25 +344,16 @@ const metadata = {
 };
 const integrationApps = {
   installer: {
-    stepInstall: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST, {
         id: integrationId,
         installerFunction,
       }),
-    stepInstallInProgress: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.IN_PROGRESS, {
+    updateStep: (integrationId, installerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.UPDATE, {
         id: integrationId,
         installerFunction,
-      }),
-    verifyStepInstall: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.VERIFY, {
-        id: integrationId,
-        installerFunction,
-      }),
-    failedStepInstall: (id, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.FAILURE, {
-        id,
-        installerFunction,
+        update,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE, {
@@ -401,6 +392,15 @@ const integrationApps = {
     deleteIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
+      }),
+  },
+  store: {
+    addNew: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.STORE.ADD_NEW, { integrationId }),
+    receivedNewStoreSteps: (integrationId, steps) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
+        integrationId,
+        steps,
       }),
   },
 };

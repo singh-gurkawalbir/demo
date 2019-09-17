@@ -127,9 +127,10 @@ export default function IntegratorAppUninstalleer(props) {
         }
 
         dispatch(
-          actions.integrationApps.uninstaller.verifyStepInstall(
+          actions.integrationApps.uninstaller.updateStep(
             integrationId,
-            uninstallerFunction
+            uninstallerFunction,
+            'verify'
           )
         );
         dispatch(

@@ -13,9 +13,10 @@ describe('intetgrationApps installer reducer', () => {
     test('should find the integration with id and set isTriggered flag to true', () => {
       const state = reducer(
         {},
-        actions.integrationApps.installer.stepInstallInProgress(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'inProgress'
         )
       );
 
@@ -35,7 +36,11 @@ describe('intetgrationApps installer reducer', () => {
       };
       const state = reducer(
         initialState,
-        actions.integrationApps.installer.stepInstallInProgress(integrationId)
+        actions.integrationApps.installer.updateStep(
+          integrationId,
+          'installerFunction',
+          'inProgress'
+        )
       );
 
       expect(state).toEqual({
@@ -52,9 +57,10 @@ describe('intetgrationApps installer reducer', () => {
     test('should find the integration with id and set isTriggered and verifying flag to true', () => {
       const state = reducer(
         {},
-        actions.integrationApps.installer.verifyStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'verify'
         )
       );
 
@@ -74,7 +80,11 @@ describe('intetgrationApps installer reducer', () => {
       };
       const state = reducer(
         initialState,
-        actions.integrationApps.installer.verifyStepInstall(integrationId)
+        actions.integrationApps.installer.updateStep(
+          integrationId,
+          'installerFunction',
+          'verify'
+        )
       );
 
       expect(state).toEqual({
@@ -93,9 +103,10 @@ describe('intetgrationApps installer reducer', () => {
         {
           installer: { '1': { isTriggered: true } },
         },
-        actions.integrationApps.installer.failedStepInstall(
+        actions.integrationApps.installer.updateStep(
           1,
-          'installerFunction'
+          'installerFunction',
+          'failed'
         )
       );
 
@@ -115,7 +126,11 @@ describe('intetgrationApps installer reducer', () => {
       };
       const state = reducer(
         initialState,
-        actions.integrationApps.installer.failedStepInstall(integrationId)
+        actions.integrationApps.installer.updateStep(
+          integrationId,
+          'installerFunction',
+          'failed'
+        )
       );
 
       expect(state).toEqual({
