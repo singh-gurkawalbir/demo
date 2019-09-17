@@ -1,14 +1,13 @@
 import React, { Fragment, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import { ButtonBase } from '@material-ui/core';
+import { Card } from '@material-ui/core';
 import { getApplicationConnectors } from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import CeligoLogo from '../../components/CeligoLogo';
+import * as selectors from '../../reducers';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,21 +17,31 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
-  gridList: {
-    width: 1100,
-    marginTop: theme.spacing(4),
-  },
-  logo: {
-    width: 90,
-    display: 'inline-block',
+  card: {
+    margin: theme.spacing(1),
+    paddingTop: theme.spacing(8),
+    paddingLeft: theme.spacing(4),
+    width: '200px',
+    height: '200px',
+    cursor: 'pointer',
   },
 }));
 
 export default function MarketPlaceGridList() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const applicationConnectors = getApplicationConnectors();
+  const connectors =
+    useSelector(state => selectors.marketPlaceConnectors(state)) || [];
+  const templates =
+    useSelector(state => selectors.marketPlaceTemplates(state)) || [];
+  let applicationConnectors = getApplicationConnectors();
+  let applications = [];
 
+  connectors.forEach(c => (applications = applications.concat(c.applications)));
+  templates.forEach(t => (applications = applications.concat(t.applications)));
+  applicationConnectors = applicationConnectors.filter(connector =>
+    applications.includes(connector.id)
+  );
   useEffect(() => {
     dispatch(actions.marketPlace.requestConnectors());
     dispatch(actions.marketPlace.requestTemplates());
@@ -42,20 +51,19 @@ export default function MarketPlaceGridList() {
     <Fragment>
       <CeligoPageBar title="Marketplace" />
       <div className={classes.root}>
-        <GridList
-          cellHeight={180}
-          className={classes.gridList}
-          cols={6}
-          spacing={24}>
-          {applicationConnectors.map(connector => (
-            <GridListTile key={connector.id}>
-              <ButtonBase className={classes.logo}>
-                <CeligoLogo />
-              </ButtonBase>
-              <GridListTileBar title={connector.name} />
-            </GridListTile>
-          ))}
-        </GridList>
+        {applicationConnectors.map(connector => (
+          <NavLink
+            key={connector.id}
+            to={getRoutePath(`/marketplace/${connector.id}`)}>
+            <Card className={classes.card}>
+              <img
+                width="150px"
+                src={`https://d142hkd03ds8ug.cloudfront.net/images/marketplace/large/${connector.id}.png`}
+                alt={connector.name}
+              />
+            </Card>
+          </NavLink>
+        ))}
       </div>
     </Fragment>
   );

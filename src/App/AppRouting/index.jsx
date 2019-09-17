@@ -3,7 +3,6 @@ import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
-import MarketPlace from '../../views/MarketPlace';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -26,6 +25,9 @@ const FlowBuilder = loadable(() =>
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
+const MarketPlace = loadable(() =>
+  import(/* webpackChunkName: 'MarketPlace' */ '../../views/MarketPlace')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -37,6 +39,11 @@ const IntegrationDashboard = loadable(() =>
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
   import('../../views/IntegrationSettings')
+);
+const ConnectorTemplateList = loadable(() =>
+  import(
+    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketPlaceGridList/ConnectorTemplateList'
+  )
 );
 
 @hot(module)
@@ -51,6 +58,10 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
+        />
+        <Route
+          path="/pg/marketplace/:application"
+          component={ConnectorTemplateList}
         />
         <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/flowbuilder" component={FlowBuilder} />

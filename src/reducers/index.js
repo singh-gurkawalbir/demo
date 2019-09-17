@@ -408,6 +408,14 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function marketPlaceConnectors(state) {
+  return fromData.marketPlaceConnectors(state.data);
+}
+
+export function marketPlaceTemplates(state) {
+  return fromData.marketPlaceTemplates(state.data);
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
