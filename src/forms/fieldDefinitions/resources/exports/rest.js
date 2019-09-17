@@ -48,6 +48,8 @@ export default {
   'rest.pagingMethod': {
     type: 'select',
     label: 'Paging Method',
+    defaultValue: r =>
+      r && r.rest && r.rest.pagingMethod ? r.rest.pagingMethod : '',
     options: [
       {
         items: [
@@ -66,6 +68,7 @@ export default {
     type: 'text',
     label: 'Next Page Path',
     required: true,
+    defaultValue: r => r && r.rest && r.rest.nextPagePath,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -86,6 +89,7 @@ export default {
   'rest.nextPageRelativeURI': {
     type: 'text',
     label: 'Next Page Relative URI',
+    defaultValue: r => r && r.rest && r.rest.pageArgument,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -97,6 +101,7 @@ export default {
     type: 'text',
     label: 'Page Argument',
     required: true,
+    defaultValue: r => r && r.rest && r.rest.pageArgument,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',

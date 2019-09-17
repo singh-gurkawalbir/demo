@@ -1,21 +1,21 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'powerbi',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.powerbi.com`,
-    '/rest/authURI':
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.powerbi.com`,
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.unencrypted.adminUser',
+      id: 'http.unencrypted.adminUser',
       label: 'Admin User:',
       type: 'checkbox',
       helpText:
@@ -26,7 +26,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

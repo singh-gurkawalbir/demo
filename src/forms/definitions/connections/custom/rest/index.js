@@ -24,7 +24,6 @@ import acton from './acton';
 import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
-import etsy from './etsy';
 import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
@@ -90,14 +89,11 @@ import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
 import zohomail from './zohomail';
-import zoom from './zoom';
 import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
 import bronto from './bronto';
-import powerbi from './powerbi';
 import procurify from './procurify';
-import zimbra from './zimbra';
 import strata from './strata';
 import postmark from './postmark';
 import klaviyo from './klaviyo';
@@ -120,7 +116,6 @@ import retailops from './retailops';
 import sharepoint from './sharepoint';
 import parseur from './parseur';
 import skubana from './skubana';
-import merchantesolutions from './merchantesolutions';
 import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 
@@ -130,7 +125,6 @@ export default {
   tsheets,
   splunk,
   anaplan,
-  etsy,
   googledrive,
   namely,
   newegg,
@@ -215,13 +209,11 @@ export default {
   acton,
   acumatica,
   zohomail,
-  zoom,
   myobessentials,
   exacterp,
   nimble,
   bronto,
   greenhouse,
-  powerbi,
   mailgun,
   procurify,
   strata,
@@ -242,12 +234,10 @@ export default {
   spreecommerce,
   sugarcrm,
   marketo,
-  zimbra,
   grms,
   retailops,
   sharepoint,
   parseur,
   skubana,
-  merchantesolutions,
   dunandbradstreet,
 };

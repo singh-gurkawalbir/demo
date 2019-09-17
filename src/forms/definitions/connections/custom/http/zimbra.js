@@ -1,15 +1,16 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zimbra',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': `/${
-      formValues['/rest/unencrypted/userAccount']
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': `/${
+      formValues['/http/unencrypted/userAccount']
     }/inbox?fmt=json`,
-    '/rest/baseURI': `${formValues['/rest/baseURI']}/home`,
-    '/rest/headers': [
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `${formValues['/http/baseURI']}/home`,
+    '/http/headers': [
       { name: 'Accept', value: 'application/json' },
       { name: 'Content-Type', value: 'application/json' },
     ],
@@ -17,11 +18,11 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      fieldId: 'rest.baseURI',
+      fieldId: 'http.baseURI',
       endAdornment: '/home',
       label: 'Base URI:',
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/home'));
 
@@ -29,7 +30,7 @@ export default {
       },
     },
     {
-      id: 'rest.unencrypted.userAccount',
+      id: 'http.unencrypted.userAccount',
       type: 'text',
       label: 'User Account:',
       helpText:
@@ -41,7 +42,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

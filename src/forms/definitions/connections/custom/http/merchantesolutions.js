@@ -1,27 +1,27 @@
 export default {
   preSubmit: formValues => {
     const pingData = {
-      profile_id: formValues['/rest/unencrypted/profileId'],
-      profile_key: formValues['/rest/encrypted/profileKey'],
+      profile_id: formValues['/http/unencrypted/profileId'],
+      profile_key: formValues['/http/encrypted/profileKey'],
       transaction_type: 'D',
-      card_number: formValues['rest/encrypted/cardNumber'],
+      card_number: formValues['/http/encrypted/cardNumber'],
       transaction_amount: '151',
       resp_encoding: 'json',
     };
 
     return {
       ...formValues,
-      '/type': 'rest',
+      '/type': 'http',
       '/assistant': 'merchantesolutions',
-      '/rest/authType': 'token',
-      '/rest/mediaType': 'urlencoded',
-      '/rest/baseURI': `https://cert.merchante-solutions.com`,
-      '/rest/pingRelativeURI': '/mes-api/tridentApi',
-      '/rest/pingMethod': 'POST',
-      '/rest/pingSuccessValues': ['000'],
-      '/rest/pingSuccessPath': 'error_code',
-      '/rest/pingBody': JSON.stringify(pingData),
-      '/rest/headers': [
+      '/http/auth/type': 'token',
+      '/http/mediaType': 'urlencoded',
+      '/http/baseURI': `https://cert.merchante-solutions.com`,
+      '/http/ping/relativeURI': '/mes-api/tridentApi',
+      '/http/ping/method': 'POST',
+      '/http/ping/successValues': ['000'],
+      '/http/ping/successPath': 'error_code',
+      '/http/ping/body': JSON.stringify(pingData),
+      '/http/headers': [
         { name: 'content-type', value: 'application/x-www-form-urlencoded' },
       ],
     };
@@ -29,14 +29,14 @@ export default {
   fields: [
     { fieldId: 'name' },
     {
-      id: 'rest.unencrypted.profileId',
+      id: 'http.unencrypted.profileId',
       type: 'text',
       label: 'Profile ID:',
       required: true,
       helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
     {
-      id: 'rest.encrypted.profileKey',
+      id: 'http.encrypted.profileKey',
       type: 'text',
       label: 'Profile Key:',
       required: true,
@@ -46,7 +46,7 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
     },
     {
-      id: 'rest.encrypted.cardNumber',
+      id: 'http.encrypted.cardNumber',
       type: 'text',
       label: 'Card Number:',
       required: true,
@@ -60,7 +60,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };

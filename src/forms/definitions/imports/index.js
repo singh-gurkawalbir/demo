@@ -8,6 +8,7 @@ import s3 from './s3';
 import wrapper from './wrapper';
 import as2 from './as2';
 import rdbms from './rdbms';
+import newImport from './new';
 
 export default {
   common,
@@ -17,6 +18,7 @@ export default {
   rest,
   mongodb,
   s3,
+  new: newImport,
   wrapper,
   as2,
   rdbms,

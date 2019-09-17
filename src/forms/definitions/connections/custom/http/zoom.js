@@ -1,19 +1,20 @@
 export default {
   preSubmit: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zoom',
-    '/rest/authType': 'jwt',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/v2/users',
-    '/rest/baseURI': 'https://api.zoom.us',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/v2/users',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': 'https://api.zoom.us',
   }),
 
   fields: [
     { fieldId: 'name' },
 
     {
-      id: 'rest.encrypted.apiKey',
+      id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key:',
@@ -23,7 +24,7 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
     },
     {
-      id: 'rest.encrypted.apiSecret',
+      id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
       label: 'API Secret:',
@@ -37,7 +38,7 @@ export default {
     {
       header: 'Advanced Settings',
       collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
+      fields: [{ formId: 'httpAdvanced' }],
     },
   ],
 };
