@@ -1,28 +1,55 @@
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
 import Icon from '../../../../../../components/icons/CloseIcon';
-import openExternalUrl from '../../../../../../utils/window';
+import { confirmDialog } from '../../../../../../components/ConfirmDialog';
 
 export default {
-  label: 'On&Off',
-  component: function DownLoadDebugLogs({ resource }) {
-    let url = `/api/connections/${resource._id}/debug`;
-    const additionalHeaders = useSelector(state =>
-      selectors.accountShareHeader(state, url)
-    );
-    const onDownloadDebugLogClick = () => {
-      if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-        url += `?integrator-ashareid=${
-          additionalHeaders['integrator-ashareid']
-        }`;
-      }
+  label: 'Off/On',
+  component: function EnableOrDisableFlow({ resource }) {
+    const dispatch = useDispatch();
+    const enableOrDisableFlow = () => {
+      const enable = resource.disabled;
+      const message = [
+        'Are you sure you want to ',
+        enable ? 'enable' : 'disable',
+        resource.name || resource._id,
+        'flow?',
+      ].join(' ');
 
-      openExternalUrl({ url });
+      confirmDialog({
+        title: 'Confirm',
+        message,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              const patchSet = [
+                {
+                  op: 'replace',
+                  path: '/disabled',
+                  value: !enable,
+                },
+              ];
+
+
+              dispatch(
+                actions.resource.patchStaged(resource._id, patchSet, 'value')
+              );
+              dispatch(
+                actions.resource.commitStaged('flows', resource._id, 'value')
+              );
+            },
+          },
+        ],
+      });
     };
 
     return (
-      <IconButton size="small" onClick={onDownloadDebugLogClick}>
+      <IconButton size="small" onClick={enableOrDisableFlow}>
         <Icon />
       </IconButton>
     );
