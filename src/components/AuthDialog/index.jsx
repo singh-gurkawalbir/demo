@@ -51,16 +51,23 @@ export default function AlertDialog() {
   const showSessionStatus = useSelector(state =>
     selectors.showSessionStatus(state, date)
   );
+  const isAuthenticated = useSelector(state =>
+    selectors.isAuthenticated(state)
+  );
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setDate(Date.now());
-    }, 5000);
+    let timer;
+
+    if (isAuthenticated) {
+      timer = setInterval(() => {
+        setDate(Date.now());
+      }, 5000);
+    }
 
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div>
