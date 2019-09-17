@@ -142,7 +142,6 @@ export default {
       let filter;
 
       if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
-        console.log('rdbms', app.type);
         filter = { type: 'rdbms', rdbms: { type: app.type } };
       } else filter = { type: app.type };
 
