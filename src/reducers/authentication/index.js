@@ -81,8 +81,6 @@ export default function(
   }
 }
 
-1000;
-
 export function showSessionStatus(state, date) {
   const { authenticated, authTimestamp, sessionExpired } = state;
 
