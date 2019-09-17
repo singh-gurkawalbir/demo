@@ -35,7 +35,6 @@ export default {
                 },
               ];
 
-
               dispatch(
                 actions.resource.patchStaged(resource._id, patchSet, 'value')
               );
