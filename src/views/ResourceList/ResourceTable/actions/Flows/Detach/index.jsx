@@ -1,28 +1,27 @@
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
 import Icon from '../../../../../../components/icons/CloseIcon';
-import openExternalUrl from '../../../../../../utils/window';
 
 export default {
   label: 'Detach Flow',
-  component: function DownLoadDebugLogs({ resource }) {
-    let url = `/api/connections/${resource._id}/debug`;
-    const additionalHeaders = useSelector(state =>
-      selectors.accountShareHeader(state, url)
-    );
-    const onDownloadDebugLogClick = () => {
-      if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-        url += `?integrator-ashareid=${
-          additionalHeaders['integrator-ashareid']
-        }`;
-      }
+  component: function DetachFlow({ resource }) {
+    const dispatch = useDispatch();
+    const handleDetachFlow = () => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: undefined,
+        },
+      ];
 
-      openExternalUrl({ url });
+      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', resource._id, 'value'));
     };
 
     return (
-      <IconButton size="small" onClick={onDownloadDebugLogClick}>
+      <IconButton size="small" onClick={handleDetachFlow}>
         <Icon />
       </IconButton>
     );
