@@ -1,16 +1,14 @@
 export default {
   preSubmit: formValues => {
-    const retValues = { ...formValues };
+    const newValues = { ...formValues };
 
-    if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
-    } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
+    if (newValues['/type'] === 'all') {
+      delete newValues['/type'];
+    } else if (newValues['/type'] === 'test') {
+      newValues['/test/limit'] = 1;
     }
 
-    return {
-      ...retValues,
-    };
+    return newValues;
   },
   fields: [
     { formId: 'common' },
@@ -46,8 +44,6 @@ export default {
     { fieldId: 'rest.resourcePath' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },
-    { fieldId: 'rawData' },
-    { fieldId: 'sampleData' },
     {
       id: 'type',
       type: 'select',
@@ -119,6 +115,8 @@ export default {
         },
       ],
     },
+    { fieldId: 'rawData' },
+    { fieldId: 'sampleData' },
   ],
   fieldSets: [
     {

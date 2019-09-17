@@ -1,4 +1,21 @@
 export default {
+  preSubmit: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/type'] === 'all') {
+      delete newValues['/type'];
+    } else if (newValues['/type'] === 'test') {
+      newValues['/test/limit'] = 1;
+    }
+
+    // TODO: No need of this as success values is shown only when successPath is filled
+    // But, getting [] as value because of delimiter prop on text field, though not visible.
+    if (!newValues['/http/response/successPath']) {
+      delete newValues['/http/response/successValues'];
+    }
+
+    return newValues;
+  },
   fields: [
     { formId: 'common' },
     {
@@ -14,13 +31,22 @@ export default {
     { fieldId: 'http.errorMediaType' },
     { fieldId: 'http.response.resourcePath' },
     { fieldId: 'http.response.successPath' },
-    { fieldId: 'http.response.successValues' },
+    {
+      fieldId: 'http.response.successValues',
+      visibleWhen: [
+        {
+          field: 'http.response.successPath',
+          isNot: [''],
+        },
+      ],
+    },
     { fieldId: 'http.response.errorPath' },
     {
       id: 'type',
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => (r && r.type) || 'all',
       options: [
         {
           items: [
@@ -49,6 +75,8 @@ export default {
         },
       ],
     },
+    { fieldId: 'rawData' },
+    { fieldId: 'sampleData' },
   ],
   fieldSets: [
     {

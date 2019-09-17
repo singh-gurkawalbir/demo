@@ -40,6 +40,7 @@ export default {
     type: 'select',
     label: 'HTTP Method',
     required: true,
+    defaultValue: r => r && r.http && r.http.method,
     options: [
       {
         items: [
