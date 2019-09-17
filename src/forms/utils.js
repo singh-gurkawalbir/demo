@@ -135,46 +135,6 @@ export const getMissingPatchSet = (paths, resource) => {
 };
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
-  /*  
-  console.log('check sanitize patch set ', patchSet, fieldMeta);
-
-  const valuePathsFromForm = patchSet.map(patch => patch.path);
-  const removeRemainingValuesFromResource = Object.values(fieldMeta.fieldMap)
- .filter(ref => !valuePathsFromForm.includes(ref.name))
- .map(ref => ({path: ref.path, op: 'remove' }));
-     
-    */
-  let removeFieldOps = [];
-
-  if (fieldMeta && (fieldMeta.fields || fieldMeta.fieldSets)) {
-    const valuePathsFromForm =
-      (patchSet && patchSet.map(patch => patch.path)) || [];
-
-    if (fieldMeta.fields) {
-      const removeFields =
-        fieldMeta &&
-        fieldMeta.fields &&
-        fieldMeta.fields
-          .filter(ref => !valuePathsFromForm.includes(ref.name))
-          .map(ref => ({ path: ref.name, op: 'remove' }));
-
-      removeFieldOps = [...removeFields];
-    }
-
-    if (fieldMeta.fieldSets) {
-      const removeFieldSetFields =
-        fieldMeta &&
-        fieldMeta.fieldSets &&
-        fieldMeta.fieldSets
-          .map(fieldSet => fieldSet.fields)
-          .flat()
-          .filter(ref => !valuePathsFromForm.includes(ref.name))
-          .map(ref => ({ path: ref.name, op: 'remove' }));
-
-      removeFieldOps = [...removeFieldSetFields];
-    }
-  }
-
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce((s, patch) => {
     if (patch.op === 'replace') {
@@ -196,7 +156,7 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
     sanitizedSet.map(p => p.path),
     resource
   );
-  const newSet = [...removeFieldOps, ...missingPatchSet, ...sanitizedSet];
+  const newSet = [...missingPatchSet, ...sanitizedSet];
   const error = jsonPatch.validate(newSet, resource);
 
   if (error) {

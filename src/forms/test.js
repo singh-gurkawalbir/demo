@@ -148,43 +148,4 @@ describe('Form Utils', () => {
       });
     });
   });
-
-  test('result patch set should succeed in patching resource when initial patch is missing operations.', () => {
-    const resource = {
-      html: {
-        anotherProp: 'blah',
-        name: 'abc',
-      },
-    };
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/html/someProp',
-        value: 'someValue',
-      },
-    ];
-    const fieldMeta = {
-      fields: [
-        {
-          name: '/html/name',
-        },
-        {
-          name: '/html/someProp',
-        },
-      ],
-    };
-    const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
-    const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
-      .newDocument;
-
-    // console.log(merged);
-    expect(merged).toEqual({
-      html: {
-        anotherProp: 'blah',
-        someProp: 'someValue',
-      },
-    });
-
-    // console.log(sanitized);
-  });
 });
