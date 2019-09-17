@@ -24,11 +24,12 @@ export default {
     { fieldId: 'rest.requestMediaType' },
     { fieldId: 'rest.compositeType' },
     { fieldId: 'rest.compositeMethod' },
+    { fieldId: 'rest.relativeUri' },
+    { fieldId: 'rest.successPath' },
     // TODO: be removed later
     { fieldId: 'rest.lookups', visible: false },
     { fieldId: 'mapping' },
-    { fieldId: 'rest.relativeUri' },
-    { fieldId: 'rest.successPath' },
+
     { fieldId: 'rest.successValues' },
     { fieldId: 'rest.responseIdPath' },
     { fieldId: 'rest.compositeMethodUpdate' },

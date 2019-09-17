@@ -65,11 +65,6 @@ export default {
       },
     ],
   },
-  // TODO: To be removed later
-  mapping: {
-    type: 'dynamapping',
-    label: 'Manage Import Mapping',
-  },
   'rest.relativeUri': {
     type: 'text',
     label: 'Relative URI',
@@ -79,6 +74,10 @@ export default {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
+  },
+  mapping: {
+    type: 'dynamapping',
+    label: 'Manage Import Mapping',
   },
   'rest.successValues': {
     type: 'text',
