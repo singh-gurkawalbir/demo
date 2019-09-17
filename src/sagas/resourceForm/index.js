@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -363,7 +363,7 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
-  takeEvery(
+  takeLatest(
     actionTypes.RESOURCE_FORM.SUBMIT_WITH_RAW_DATA,
     submitFormValuesWithRawData
   ),
