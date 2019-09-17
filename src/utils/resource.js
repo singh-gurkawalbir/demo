@@ -87,6 +87,7 @@ export const adaptorTypeMap = {
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
   RDBMSImport: 'rdbms',
+
   SalesforceExport: 'salesforce',
 };
 
