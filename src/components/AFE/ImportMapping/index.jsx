@@ -7,11 +7,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
-import utilityFunctions from '../../../utils/utilityFunctions';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const CloseIcon = require('../../../components/icons/CloseIcon').default;
 
@@ -76,7 +75,14 @@ function reducer(state, action) {
             objCopy.hardCodedValueTmp = inputValue;
           } else {
             delete objCopy.hardCodedValue;
-            objCopy.extract = inputValue;
+
+            if (inputValue === '') {
+              /* User removes the extract completely and blurs out, 
+              extract field should be replaced back with last valid content */
+              objCopy.extract = objCopy.extract;
+            } else {
+              objCopy.extract = inputValue;
+            }
           }
         } else {
           objCopy[field] = inputValue;
@@ -113,7 +119,7 @@ function reducer(state, action) {
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
-    label,
+    title,
     onClose,
     mappings = {},
     lookups,
@@ -124,19 +130,113 @@ export default function ImportMapping(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups || []);
   const classes = useStyles();
-  const mappingLabelObj = utilityFunctions.generateMappingLabel(application);
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [state, dispatchLocalAction] = useReducer(
     reducer,
     mappings.fields || []
   );
   const mappingsTmp = deepClone(state);
+  const validateMapping = mappings => {
+    const duplicateMappings = mappings
+      .map(e => e.generate)
+      .map((e, i, final) => final.indexOf(e) !== i && i)
+      .filter(obj => mappings[obj])
+      .map(e => mappings[e].generate);
+
+    if (duplicateMappings.length) {
+      enquesnackbar({
+        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+          ','
+        )}`,
+        variant: 'error',
+      });
+
+      return false;
+    }
+
+    const mappingsWithoutExtract = mappings
+      .filter(mapping => {
+        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
+
+        return false;
+      })
+      .map(mapping => mapping.generate);
+
+    if (mappingsWithoutExtract.length) {
+      enquesnackbar({
+        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+          ','
+        )}`,
+        variant: 'error',
+      });
+
+      return false;
+    }
+
+    const mappingsWithoutGenerate = mappings.filter(mapping => {
+      if (!mapping.generate) return true;
+
+      return false;
+    });
+
+    if (mappingsWithoutGenerate.length) {
+      enquesnackbar({
+        message: 'Generate Fields missing for mapping(s)',
+        variant: 'error',
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = () => {
     const mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
+    // check for all mapping with useAsAnInitializeValue set to true
+    const initialValues = [];
 
-    onClose(true, mappings, lookupState);
+    mappings.forEach(mapping => {
+      if (mapping.useAsAnInitializeValue) {
+        initialValues.push(mapping.generate);
+      }
+    });
+    // check for initial value mapping
+    const initialMappingIndex = mappings.findIndex(
+      mapping => mapping.generate === 'celigo_initializeValues'
+    );
+
+    if (initialValues.length) {
+      if (initialMappingIndex !== -1) {
+        mappings[initialMappingIndex].hardCodedValue = initialValues.join(',');
+      } else {
+        mappings.push({
+          generate: 'celigo_initializeValues',
+          hardCodedValue: initialValues.join(','),
+        });
+      }
+    } else if (initialMappingIndex !== -1) {
+      mappings.splice(initialMappingIndex, 1);
+    }
+
+    if (validateMapping(mappings)) {
+      onClose(true, mappings, lookupState);
+    }
   };
+
+  let generateLabel;
+
+  switch (application) {
+    case 'REST':
+      generateLabel = 'REST API Field';
+      break;
+    case 'netsuite':
+      generateLabel = 'NetSuite Field';
+      break;
+    default:
+  }
 
   const handleFieldUpdate = (row, event, field) => {
     const { value } = event.target;
@@ -154,7 +254,6 @@ export default function ImportMapping(props) {
   };
 
   mappingsTmp.push({});
-
   const tableData = (mappingsTmp || []).map((value, index) => {
     const obj = value;
 
@@ -217,22 +316,17 @@ export default function ImportMapping(props) {
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-      <DialogTitle>Manage Import Mapping</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
-          <Typography variant="h6">{label}</Typography>
           <Grid container className={classes.root}>
             <Grid item xs={12} className={classes.header}>
               <Grid container>
                 <Grid key="heading_extract" item xs>
-                  <span className={classes.alignLeft}>
-                    {mappingLabelObj.extract}
-                  </span>
+                  <span className={classes.alignLeft}>Source Record Field</span>
                 </Grid>
                 <Grid key="heading_generate" item xs>
-                  <span className={classes.alignLeft}>
-                    {mappingLabelObj.generate}
-                  </span>
+                  <span className={classes.alignLeft}>{generateLabel}</span>
                 </Grid>
                 <Grid key="settings_button_header" item />
                 <Grid key="delete_button_header" item />

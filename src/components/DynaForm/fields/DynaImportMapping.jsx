@@ -7,8 +7,8 @@ lookups and lookupId is passed in options
 
 */
 export default function DynaImportMapping(props) {
-  const { id, onFieldChange, options, label, value } = props;
-  const { application, lookupId, lookups } = options;
+  const { id, application, onFieldChange, options, label, value } = props;
+  const { lookupId, lookups } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
   /*
      Using dummy data for functionality demonstration. generate fields and

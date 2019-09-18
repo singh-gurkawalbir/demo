@@ -9,8 +9,6 @@ export default {
         return {
           lookupId: 'rest.lookups',
           lookups: recordTypeField && recordTypeField.value,
-          // TODO: Check for better alternative for sending application type
-          application: 'REST',
         };
       }
     }
@@ -28,7 +26,11 @@ export default {
     { fieldId: 'rest.headers' },
     { fieldId: 'rest.compositeType' },
     { fieldId: 'rest.lookups', visible: false },
-    { fieldId: 'mapping' },
+    {
+      fieldId: 'mapping',
+      application: 'REST',
+      refreshOptionsOnChangesTo: ['rest.lookups'],
+    },
     { fieldId: 'rest.relativeURI' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },

@@ -1,20 +1,6 @@
 import uuid from 'uuid';
 
 export default {
-  generateMappingLabel: application => {
-    const mappingLabelObj = { extract: '', generate: '' };
-
-    switch (application) {
-      case 'REST':
-        mappingLabelObj.extract = 'Source Record Field';
-        mappingLabelObj.generate = 'REST API Field';
-        break;
-      // Aditya TODO other applications to be added here
-      default:
-    }
-
-    return mappingLabelObj;
-  },
   getRandomName: () => uuid.v4(),
   getHandlebarHelperFormat: helper => {
     const toReturn = `{{${helper} arg1}}`;
