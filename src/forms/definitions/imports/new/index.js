@@ -7,13 +7,28 @@ const visibleWhen = [
     isNot: [''],
   },
 ];
+const appTypeToAdaptorType = {
+  salesforce: 'Salesforce',
+  mongodb: 'Mongodb',
+  postgresql: 'RDBMS',
+  mysql: 'RDBMS',
+  mssql: 'RDBMS',
+  netsuite: 'NetSuite',
+  ftp: 'FTP',
+  http: 'HTTP',
+  rest: 'REST',
+  s3: 'S3',
+  wrapper: 'Wrapper',
+  as2: 'AS2',
+  webhook: 'Webhook',
+};
 
 export default {
   preSubmit: ({ application, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
-      '/adaptorType': `${app.type.toUpperCase()}Import`,
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}Import`,
     };
 
     if (app.assistant) {
