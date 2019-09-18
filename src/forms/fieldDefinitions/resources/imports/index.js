@@ -11,6 +11,7 @@ import s3 from './s3';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
 import file from './file';
+import custom from './custom';
 
 const allFieldDefinitions = {
   ...as2,
@@ -26,6 +27,7 @@ const allFieldDefinitions = {
   ...salesforce,
   ...wrapper,
   ...file,
+  ...custom,
 };
 
 export default allFieldDefinitions;

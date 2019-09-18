@@ -231,13 +231,17 @@ export function* initFormValues({
     }
 
     assistantData = yield select(selectors.assistantData, {
-      adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+      adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
+        ? 'rest'
+        : 'http',
       assistant: resource.assistant,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
-        adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+        adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
+          ? 'rest'
+          : 'http',
         assistant: resource.assistant,
       });
     }

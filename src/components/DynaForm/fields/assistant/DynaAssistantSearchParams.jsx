@@ -53,9 +53,17 @@ const SearchParamsModal = props => {
 };
 
 export default function DynaAssistantSearchParams(props) {
-  const { label, value, onFieldChange, id, paramMeta = {}, required } = props;
+  let { label } = props;
+  const { value, onFieldChange, id, paramMeta = {}, required } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
   const isValid = !required ? true : !isEmpty(value);
+
+  if (!label) {
+    label =
+      paramMeta.paramLocation === PARAMETER_LOCATION.BODY
+        ? 'Configure Body Parameters'
+        : 'Configure Search Parameters';
+  }
 
   return (
     <Fragment>
@@ -73,10 +81,7 @@ export default function DynaAssistantSearchParams(props) {
       <Button
         variant="contained"
         onClick={() => setShowSearchParamsModal(true)}>
-        {label || paramMeta.paramLocation === PARAMETER_LOCATION.BODY
-          ? 'Configure Body Parameters'
-          : 'Configure Search Parameters'}{' '}
-        {required && !isValid ? '*' : ''}
+        {label} {required && !isValid ? '*' : ''}
       </Button>
       <FormHelperText error={!isValid}>
         {!isValid ? 'Please enter required parameters' : ''}

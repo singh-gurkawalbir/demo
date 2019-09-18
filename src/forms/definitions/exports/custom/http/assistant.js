@@ -12,7 +12,6 @@ export default function assistantDefinition(
 ) {
   const { assistant, adaptorType } = resource;
   const fields = [
-    { formId: 'common' },
     {
       id: 'assistantMetadata.assistant',
       type: 'text',
@@ -231,8 +230,13 @@ export default function assistantDefinition(
   }
 
   return {
-    fields,
+    fields: [{ formId: 'common' }],
     fieldSets: [
+      {
+        header: 'What would you like to export?',
+        collapsed: false,
+        fields,
+      },
       {
         header: 'Hooks (Optional, Developers Only)',
         collapsed: false,

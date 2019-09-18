@@ -8,8 +8,11 @@ import s3 from './s3';
 import wrapper from './wrapper';
 import as2 from './as2';
 import rdbms from './rdbms';
+import newImport from './new';
+import custom from './custom';
 
 export default {
+  new: newImport,
   common,
   ftp,
   subForms,
@@ -20,4 +23,5 @@ export default {
   wrapper,
   as2,
   rdbms,
+  custom,
 };
