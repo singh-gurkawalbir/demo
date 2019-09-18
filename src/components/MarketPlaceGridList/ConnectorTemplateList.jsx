@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Card, CardActions, Button } from '@material-ui/core';
+import { Card, CardActions, Button } from '@material-ui/core';
 import { getApplicationConnectors } from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import ConnectorTemplateContent from './ConnectorTemplateContent';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -54,29 +55,11 @@ export default function ConnectorTemplateList(props) {
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card key={connector._id} className={classes.card}>
-            <div>
-              <Typography>SmartConnector</Typography>
-              <Typography>
-                {connector.user &&
-                  (connector.user.company ||
-                    connector.user.name ||
-                    connector.user.email)}
-              </Typography>
-            </div>
-            <img
-              width="100px"
-              src={`https://d142hkd03ds8ug.cloudfront.net/images/marketplace/large/${
-                connector.applications.length >= 2 &&
-                application === connector.applications[0]
-                  ? connector.applications[1]
-                  : connector.applications[0]
-              }.png`}
-              alt={connector.name}
+            <ConnectorTemplateContent
+              resource={connector}
+              title="SmartConnector"
+              application={application}
             />
-            <Typography variant="h3">{connector.name}</Typography>
-            <Typography className={classes.description}>
-              {connector.description}
-            </Typography>
             <CardActions disableSpacing>
               <Button variant="contained">Contact Sales</Button>
             </CardActions>
@@ -84,29 +67,11 @@ export default function ConnectorTemplateList(props) {
         ))}
         {templates.map(template => (
           <Card key={template._id} className={classes.card}>
-            <div>
-              <Typography>Template</Typography>
-              <Typography>
-                {template.user &&
-                  (template.user.company ||
-                    template.user.name ||
-                    template.user.email)}
-              </Typography>
-            </div>
-            <img
-              width="100px"
-              src={`https://d142hkd03ds8ug.cloudfront.net/images/marketplace/large/${
-                template.applications.length >= 2 &&
-                application === template.applications[0]
-                  ? template.applications[1]
-                  : template.applications[0]
-              }.png`}
-              alt={template.name}
+            <ConnectorTemplateContent
+              resource={template}
+              title="Template"
+              application={application}
             />
-            <Typography variant="h3">{template.name}</Typography>
-            <Typography className={classes.description}>
-              {template.description}
-            </Typography>
             <CardActions disableSpacing>
               <Button variant="contained">Install</Button>
             </CardActions>
