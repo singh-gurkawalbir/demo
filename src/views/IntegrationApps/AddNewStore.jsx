@@ -67,6 +67,7 @@ export default function IntegrationAppAddNewStore(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      dispatch(actions.integrationApps.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
     }
