@@ -11,6 +11,7 @@ import rdbms from './rdbms';
 import netsuite from './netsuite';
 import netsuiteDistributed from './netsuiteDistributed';
 import salesforce from './salesforce';
+import newImport from './new';
 
 export default {
   common,
@@ -26,4 +27,5 @@ export default {
   netsuite,
   netsuiteDistributed,
   salesforce,
+  new: newImport,
 };
