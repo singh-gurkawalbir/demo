@@ -11,9 +11,7 @@ import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    display: 'block',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
@@ -24,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     width: '200px',
     height: '200px',
     cursor: 'pointer',
+    float: 'left',
   },
 }));
 

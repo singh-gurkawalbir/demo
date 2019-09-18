@@ -2,23 +2,43 @@ import React, { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   description: {
     width: '200px',
     maxHeight: '100px',
     overflowY: 'auto',
+    marginTop: theme.spacing(3),
+  },
+  name: {
+    marginTop: theme.spacing(2),
+  },
+  cardHeader: {
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(1),
+    paddingTop: theme.spacing(2),
+    background: props => (props.type === 'connector' ? '#085895' : '#D3D3D2'),
+    height: '50px',
+  },
+  user: {
+    display: 'inline',
+    float: 'right',
+    color: 'white',
+  },
+  title: {
+    display: 'inline',
+    color: 'white',
   },
 }));
 
 export default function ConnectorTemplateContent(props) {
   const { resource, title, application } = props;
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   return (
     <Fragment>
-      <div>
-        <Typography>{title}</Typography>
-        <Typography>
+      <div className={classes.cardHeader}>
+        <Typography className={classes.title}>{title}</Typography>
+        <Typography className={classes.user}>
           {resource.user &&
             (resource.user.company ||
               resource.user.name ||
@@ -35,7 +55,9 @@ export default function ConnectorTemplateContent(props) {
         }.png`}
         alt={resource.name}
       />
-      <Typography variant="h3">{resource.name}</Typography>
+      <Typography className={classes.name} variant="h3">
+        {resource.name}
+      </Typography>
       <Typography className={classes.description}>
         {resource.description}
       </Typography>

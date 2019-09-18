@@ -9,19 +9,16 @@ import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    display: 'block',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
   card: {
     margin: theme.spacing(1),
-    paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(4),
+    padding: theme.spacing(1),
     width: '300px',
     height: '350px',
-    align: 'left',
+    float: 'left',
   },
   description: {
     width: '200px',
@@ -59,8 +56,9 @@ export default function ConnectorTemplateList(props) {
               resource={connector}
               title="SmartConnector"
               application={application}
+              type="connector"
             />
-            <CardActions disableSpacing>
+            <CardActions>
               <Button variant="contained">Contact Sales</Button>
             </CardActions>
           </Card>
@@ -71,8 +69,9 @@ export default function ConnectorTemplateList(props) {
               resource={template}
               title="Template"
               application={application}
+              type="template"
             />
-            <CardActions disableSpacing>
+            <CardActions>
               <Button variant="contained">Install</Button>
             </CardActions>
           </Card>
