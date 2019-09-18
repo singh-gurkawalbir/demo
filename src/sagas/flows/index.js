@@ -36,25 +36,4 @@ export function* run({ flowId }) {
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* downloadZipFile({ flowId }) {
-  const { path, opts } = getRequestOptions(actionTypes.FLOW.DOWNLOAD_ZIP_FILE, {
-    resourceId: flowId,
-  });
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Download Zip File',
-    });
-    window.open(response.signedURL, 'target=_blank', response.options, false);
-  } catch (e) {
-    return true;
-  }
-}
-
-export const flowSagas = [
-  takeEvery(actionTypes.FLOW.RUN, run),
-  takeEvery(actionTypes.FLOW.DOWNLOAD_ZIP_FILE, downloadZipFile),
-];
+export const flowSagas = [takeEvery(actionTypes.FLOW.RUN, run)];

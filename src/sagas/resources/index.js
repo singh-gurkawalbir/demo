@@ -8,6 +8,7 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
+import getRequestOptions from '../../utils/requestOptions';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -94,6 +95,28 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+  }
+}
+
+export function* downloadZipFile({ resourceType, id }) {
+  const { path, opts } = getRequestOptions(
+    actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE,
+    {
+      resourceId: id,
+      resourceType,
+    }
+  );
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Download Zip File',
+    });
+    window.open(response.signedURL, 'target=_blank', response.options, false);
+  } catch (e) {
+    return true;
   }
 }
 
@@ -193,6 +216,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
+  takeEvery(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, downloadZipFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   ...metadataSagas,
 ];

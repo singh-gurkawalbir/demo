@@ -1,6 +1,6 @@
 import DetachFlow from '../../actions/Flows/Detach';
 import ViewAuditLog from '../../actions/AuditLogs';
-import DownloadFlow from '../../actions/Flows/Download';
+import DownloadFlow from '../../actions/Download';
 import FieldMappings from '../../actions/Flows/FieldMappings';
 import Schedule from '../../actions/Flows/Schedule';
 import Run from '../../actions/Flows/Run';

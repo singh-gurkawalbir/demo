@@ -65,6 +65,8 @@ const connection = {
     }),
 };
 const resource = {
+  downloadZipFile: (id, resourceType) =>
+    action(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, { resourceType, id }),
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
   request: (resourceType, id, message) =>
@@ -604,8 +606,6 @@ const job = {
 };
 const flow = {
   run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
-  downloadZipFile: flowId =>
-    action(actionTypes.FLOW.DOWNLOAD_ZIP_FILE, { flowId }),
 };
 const assistantMetadata = {
   request: ({ adaptorType, assistant }) =>
