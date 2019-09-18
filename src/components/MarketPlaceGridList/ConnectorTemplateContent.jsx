@@ -7,16 +7,16 @@ const useStyles = makeStyles(theme => ({
     width: '200px',
     maxHeight: '100px',
     overflowY: 'auto',
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   name: {
     marginTop: theme.spacing(2),
   },
   cardHeader: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
     padding: theme.spacing(1),
     paddingTop: theme.spacing(2),
-    background: props => (props.type === 'connector' ? '#085895' : '#D3D3D2'),
+    background: props => (props.type === 'connector' ? '#2B547E' : '#D3D3D2'),
     height: '50px',
   },
   user: {

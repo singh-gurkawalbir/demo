@@ -198,4 +198,8 @@ export function accountOwner(state) {
   }
 }
 
+export function licenses(state) {
+  return fromAccounts.licenses(state.org.accounts);
+}
+
 // #endregion PUBLIC USER SELECTORS

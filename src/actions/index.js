@@ -72,6 +72,13 @@ const marketPlace = {
     action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
   receivedTemplates: ({ templates }) =>
     action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
+  installConnector: (connectorId, sandbox) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  contactSales: (connectorName, _connectorId) =>
+    action(actionTypes.MARKETPLACE.SALES_CONTACT, {
+      connectorName,
+      _connectorId,
+    }),
 };
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),

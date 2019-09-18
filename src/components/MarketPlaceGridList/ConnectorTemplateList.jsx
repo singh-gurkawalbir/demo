@@ -1,10 +1,19 @@
-import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import React, { Fragment, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardActions, Button } from '@material-ui/core';
+import {
+  Link,
+  Card,
+  CardActions,
+  Button,
+  Dialog,
+  DialogContent,
+} from '@material-ui/core';
 import { getApplicationConnectors } from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
+import getRoutePath from '../../utils/routePaths';
+import actions from '../../actions';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -31,10 +40,15 @@ export default function ConnectorTemplateList(props) {
   const { match } = props;
   const { application } = match.params;
   const classes = useStyles();
-  let connectors =
-    useSelector(state => selectors.marketPlaceConnectors(state)) || [];
-  let templates =
-    useSelector(state => selectors.marketPlaceTemplates(state)) || [];
+  const dispatch = useDispatch();
+  const [showMessage, setShowMessage] = useState(false);
+  let connectors = useSelector(state => selectors.marketPlaceConnectors(state));
+  let templates = useSelector(state => selectors.marketPlaceTemplates(state));
+  const licenses = useSelector(state => selectors.licenses(state));
+  const userPreferences = useSelector(state =>
+    selectors.userPreferences(state)
+  );
+  const sandbox = userPreferences.environment === 'sandbox';
 
   connectors = connectors.filter(
     c => c.applications && c.applications.includes(application)
@@ -45,6 +59,32 @@ export default function ConnectorTemplateList(props) {
   const applicationConnectors = getApplicationConnectors();
   const connector = applicationConnectors.find(c => c.id === application);
   const applicationName = connector && connector.name;
+  const canInstallConnector = connector => {
+    let hasLicense = false;
+
+    licenses.forEach(l => {
+      if (
+        !l.hasExpired &&
+        l.type === 'connector' &&
+        l._connectorId === connector._id &&
+        !l._integrationId &&
+        l.sandbox === sandbox
+      ) {
+        hasLicense = true;
+      }
+    });
+
+    return hasLicense;
+  };
+
+  const handleConnectorInstallClick = connector => {
+    dispatch(actions.marketPlace.installConnector(connector._id, sandbox));
+  };
+
+  const handleContactSalesClick = connector => {
+    dispatch(actions.marketPlace.contactSales(connector.name, connector._id));
+    setShowMessage(true);
+  };
 
   return (
     <Fragment>
@@ -59,7 +99,20 @@ export default function ConnectorTemplateList(props) {
               type="connector"
             />
             <CardActions>
-              <Button variant="contained">Contact Sales</Button>
+              {canInstallConnector(connector) ? (
+                <Button
+                  to={getRoutePath('/integrations')}
+                  onClick={() => handleConnectorInstallClick(connector)}
+                  variant="contained">
+                  Install
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => handleContactSalesClick(connector)}
+                  variant="contained">
+                  Contact Sales
+                </Button>
+              )}
             </CardActions>
           </Card>
         ))}
@@ -77,6 +130,18 @@ export default function ConnectorTemplateList(props) {
           </Card>
         ))}
       </div>
+      {showMessage && (
+        <Dialog open onClose={() => setShowMessage(false)}>
+          <DialogContent>
+            Your request has been received. We will contact you soon to learn
+            more about your needs. Meanwhile, please checkout
+            <Link href="http://www.celigo.com/integration-marketplace">
+              http://www.celigo.com/integration-marketplace
+            </Link>
+            for more information.
+          </DialogContent>
+        </Dialog>
+      )}
     </Fragment>
   );
 }
