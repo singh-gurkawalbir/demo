@@ -1,14 +1,14 @@
 export default {
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
-      const recordTypeField = fields.find(
+      const lookupField = fields.find(
         field => field.fieldId === 'rest.lookups'
       );
 
-      if (recordTypeField) {
+      if (lookupField) {
         return {
           lookupId: 'rest.lookups',
-          lookups: recordTypeField && recordTypeField.value,
+          lookups: lookupField && lookupField.value,
         };
       }
     }

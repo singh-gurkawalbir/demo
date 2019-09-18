@@ -73,7 +73,7 @@ export default function DynaAutoSuggest(props) {
   } = props;
   const wrapperRef = useRef(null);
   const classes = useStyles();
-  const [state, setState] = useState({
+  const [suggestionConfig, setSuggestionConfig] = useState({
     // The active selection's index
     activeSuggestion: 0,
     // The suggestions that match the user's input
@@ -88,17 +88,17 @@ export default function DynaAutoSuggest(props) {
     filteredSuggestions,
     showSuggestions,
     userInput,
-  } = state;
+  } = suggestionConfig;
   const handleClickOutside = useCallback(
     event => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setState({
-          ...state,
+        setSuggestionConfig({
+          ...suggestionConfig,
           showSuggestions: false,
         });
       }
     },
-    [state]
+    [suggestionConfig]
   );
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function DynaAutoSuggest(props) {
 
     // Update the user input and filtered suggestions, reset the active
     // suggestion and make sure the suggestions are shown
-    setState({
+    setSuggestionConfig({
       activeSuggestion: 0,
       filteredSuggestions,
       showSuggestions: true,
@@ -136,8 +136,8 @@ export default function DynaAutoSuggest(props) {
   // Event fired when the user clicks on a suggestion
   const onClick = e => {
     // Update the user input and reset the rest of the state
-    setState({
-      ...state,
+    setSuggestionConfig({
+      ...suggestionConfig,
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
@@ -147,13 +147,13 @@ export default function DynaAutoSuggest(props) {
 
   // Event fired when the user presses a key down
   const handleKeyDown = e => {
-    const { activeSuggestion, filteredSuggestions } = state;
+    const { activeSuggestion, filteredSuggestions } = suggestionConfig;
 
     // User pressed the enter key, update the input and close the
     // suggestions
     if (e.keyCode === 13) {
-      setState({
-        ...state,
+      setSuggestionConfig({
+        ...suggestionConfig,
         activeSuggestion: 0,
         showSuggestions: false,
         userInput: filteredSuggestions[activeSuggestion],
@@ -165,7 +165,10 @@ export default function DynaAutoSuggest(props) {
         return;
       }
 
-      setState({ ...state, activeSuggestion: activeSuggestion - 1 });
+      setSuggestionConfig({
+        ...suggestionConfig,
+        activeSuggestion: activeSuggestion - 1,
+      });
     }
     // User pressed the down arrow, increment the index
     else if (e.keyCode === 40) {
@@ -173,7 +176,10 @@ export default function DynaAutoSuggest(props) {
         return;
       }
 
-      setState({ ...state, activeSuggestion: activeSuggestion + 1 });
+      setSuggestionConfig({
+        ...suggestionConfig,
+        activeSuggestion: activeSuggestion + 1,
+      });
     }
   };
 

@@ -112,7 +112,7 @@ export default {
           label: '',
           showOptionsHorizontally: true,
           fullWidth: true,
-          defaultValue: lookup && lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup.map ? 'static' : 'dynamic',
           visibleWhen: [
             {
               field: 'restImportFieldMappingSettings',
@@ -228,7 +228,7 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (HTTP)',
-          map: lookup && lookup.map,
+          map: lookup.map,
           visibleWhenAll: [
             {
               field: 'restImportFieldMappingSettings',
