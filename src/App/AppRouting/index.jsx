@@ -48,6 +48,11 @@ const IntegrationAppSettings = loadable(() =>
     /* webpackChunkName: 'IntegrationAppSettings' */ '../../views/IntegrationApps/Settings'
   )
 );
+const IntegrationAppAddNewStore = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationAppAddNewStore' */ '../../views/IntegrationApps/AddNewStore'
+  )
+);
 /* webpackChunkName: 'IntegrationSettings' */
 const IntegrationSettings = loadable(() =>
   import('../../views/IntegrationSettings')
@@ -74,6 +79,11 @@ export default class AppRouting extends Component {
           // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
           path="/pg/connectors/:integrationId/settings"
           component={IntegrationAppSettings}
+        />
+        <Route
+          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+          path="/pg/connectors/:integrationId/install/addNewStore"
+          component={IntegrationAppAddNewStore}
         />
         <Route
           path={[

@@ -18,3 +18,7 @@ export function uninstallSteps(state, id, storeId) {
     storeId
   );
 }
+
+export function addNewStoreSteps(state, id) {
+  return fromInstaller.addNewStoreSteps(state && state.installer, id);
+}

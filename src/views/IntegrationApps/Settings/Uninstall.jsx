@@ -34,7 +34,7 @@ export default function Uninstall(props) {
     if (uninstallSteps && uninstallSteps.length) {
       dispatch(actions.resource.request('integrations', integrationId));
       props.history.push(
-        `/pg/integrations/${integrationId}/uninstall/${storeId}`
+        `/pg/connectors/${integrationId}/uninstall/${storeId}`
       );
     }
   }, [dispatch, integrationId, props.history, storeId, uninstallSteps]);

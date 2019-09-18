@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -36,9 +36,29 @@ export function* installStep({ id, installerFunction }) {
   }
 }
 
+export function* addNewStore({ id }) {
+  const path = `/integrations/${id}/installer/addNewStore`;
+  let steps;
+
+  try {
+    steps = yield call(apiCallWithRetry, {
+      path,
+      opts: { body: {}, method: 'PUT' },
+      message: `Installing`,
+    });
+  } catch (error) {
+    return undefined;
+  }
+
+  if (steps) {
+    yield put(actions.integrationApps.store.receivedNewStoreSteps(id, steps));
+  }
+}
+
 export default [
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST,
     installStep
   ),
+  takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
 ];

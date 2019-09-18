@@ -499,6 +499,23 @@ export function integrationUninstallSteps(state, integrationId) {
   });
 }
 
+export function addNewStoreSteps(state, integrationId) {
+  const addNewStoreSteps = fromSession.addNewStoreSteps(
+    state && state.session,
+    integrationId
+  );
+
+  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
+    return [];
+  }
+
+  return produce(addNewStoreSteps, draft => {
+    if (draft.find(s => !s.completed)) {
+      draft.find(s => !s.completed).isCurrentStep = true;
+    }
+  });
+}
+
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS

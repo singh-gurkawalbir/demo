@@ -110,6 +110,9 @@ export default function IntegrationAppSettings(props) {
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId)
   );
+  const addNewStoreSteps = useSelector(state =>
+    selectors.addNewStoreSteps(state, integrationId)
+  );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const showAPITokens = permissions.accesstokens.view;
 
@@ -118,6 +121,12 @@ export default function IntegrationAppSettings(props) {
       dispatch(actions.resource.request('integrations', integrationId));
     }
   });
+  useEffect(() => {
+    if (addNewStoreSteps && addNewStoreSteps.length) {
+      props.history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
+    }
+  }, [addNewStoreSteps, dispatch, integrationId, props.history]);
+
   useEffect(() => {
     if (
       (defaultStoreId !== currentStore &&
@@ -169,10 +178,10 @@ export default function IntegrationAppSettings(props) {
               <Button
                 variant="contained"
                 color="primary"
+                onClick={handleAddNewStoreClick}
+                disabled={addNewStoreButtonDisabled}
                 className={classes.button}>
                 Add {integration.settings.storeLabel}
-                disabled={addNewStoreButtonDisabled}
-                onClick={handleAddNewStoreClick}
               </Button>
             </Grid>
           </Grid>

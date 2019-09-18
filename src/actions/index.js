@@ -396,10 +396,10 @@ const integrationApps = {
   },
   store: {
     addNew: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.ADD_NEW, { integrationId }),
+      action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
     receivedNewStoreSteps: (integrationId, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
-        integrationId,
+        id: integrationId,
         steps,
       }),
   },

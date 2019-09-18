@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Button, Grid } from '@material-ui/core';
+import { Typography, IconButton, Grid } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -9,7 +9,6 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
 import InstallationStep from '../../components/InstallStep';
-import { confirmDialog } from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectorInstallation(props) {
+export default function IntegrationAppAddNewStore(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
@@ -50,17 +49,20 @@ export default function ConnectorInstallation(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const installSteps = useSelector(state =>
-    selectors.integrationInstallSteps(state, integrationId)
+  const addNewStoreSteps = useSelector(state =>
+    selectors.addNewStoreSteps(state, integrationId)
   );
 
   useEffect(() => {
     if (
-      !installSteps.reduce((result, step) => result || !step.completed, false)
+      !addNewStoreSteps.reduce(
+        (result, step) => result || !step.completed,
+        false
+      )
     ) {
       setIsSetupComplete(true);
     }
-  }, [installSteps]);
+  }, [addNewStoreSteps]);
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -70,38 +72,9 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
-  if (!installSteps || !integration || !integration._connectorId) {
+  if (!addNewStoreSteps || !integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;
   }
-
-  const initUninstall = storeId => {
-    dispatch(
-      actions.integrationApps.uninstaller.preUninstall(storeId, integrationId)
-    );
-  };
-
-  const handleUninstall = e => {
-    e.preventDefault();
-    confirmDialog({
-      title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            const storeId = (integration.stores || {}).length
-              ? integration.stores[0].value
-              : undefined;
-
-            initUninstall(storeId);
-          },
-        },
-      ],
-    });
-  };
 
   const handleStepClick = step => {
     const { _connectionId, installURL, installerFunction } = step;
@@ -168,7 +141,7 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleSubmitComplete = () => {
-    const step = installSteps.find(s => s.isCurrentStep);
+    const step = addNewStoreSteps.find(s => s.isCurrentStep);
 
     dispatch(
       actions.integrationApps.installer.updateStep(
@@ -213,17 +186,9 @@ export default function ConnectorInstallation(props) {
             <Grid item xs className="connectorName">
               <Typography variant="h6">{integration.name}</Typography>
             </Grid>
-            <Grid item xs={1} className={classes.floatRight}>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleUninstall}>
-                Uninstall
-              </Button>
-            </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.stepTable}>
-            {installSteps.map((step, index) => (
+            {addNewStoreSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
