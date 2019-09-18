@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { id, type, update, steps } = action;
+  const { id, type, update } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -17,12 +17,6 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
         draft[id] = {};
-        break;
-      case actionTypes.INTEGRATION_APPS.STORE.RECEIVED:
-        draft[id].addNewStoreSteps = steps;
-        break;
-      case actionTypes.INTEGRATION_APPS.STORE.CLEAR:
-        draft[id].addNewStoreSteps = undefined;
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.UPDATE:
         if (update === 'inProgress') {
@@ -49,11 +43,4 @@ export function integrationAppsInstaller(state, id) {
   return state[id];
 }
 
-export function addNewStoreSteps(state, id) {
-  if (!state || !state[id]) {
-    return {};
-  }
-
-  return state[id].addNewStoreSteps;
-}
 // #endregion

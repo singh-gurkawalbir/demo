@@ -6,7 +6,7 @@ describe('intetgrationApps installer reducer', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
-    expect(state).toEqual({ installer: {}, uninstaller: {} });
+    expect(state).toEqual({ installer: {}, uninstaller: {}, addStore: {} });
   });
 
   describe(`integrationApps received installer install_inProgress action`, () => {
@@ -23,6 +23,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(state).toEqual({
         installer: { '1': { isTriggered: true } },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
 
@@ -49,6 +50,7 @@ describe('intetgrationApps installer reducer', () => {
           2: { isTriggered: true },
         },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
   });
@@ -67,6 +69,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(state).toEqual({
         installer: { '1': { isTriggered: true, verifying: true } },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
 
@@ -93,6 +96,7 @@ describe('intetgrationApps installer reducer', () => {
           '2': { isTriggered: true },
         },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
   });
@@ -113,6 +117,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(state).toEqual({
         installer: { '1': { isTriggered: false, verifying: false } },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
 
@@ -139,6 +144,7 @@ describe('intetgrationApps installer reducer', () => {
           '2': { isTriggered: true },
         },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
   });
@@ -159,6 +165,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(state).toEqual({
         installer: { '1': {} },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
 
@@ -184,6 +191,7 @@ describe('intetgrationApps installer reducer', () => {
           '2': { isTriggered: true },
         },
         uninstaller: { '1': {} },
+        addStore: { '1': {} },
       });
     });
   });

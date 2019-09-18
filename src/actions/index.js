@@ -397,6 +397,25 @@ const integrationApps = {
   store: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
+    updateStep: (integrationId, installerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
+        id: integrationId,
+        installerFunction,
+        update,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
+    completedStepInstall: (integrationId, installerFunction, steps) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
+        id: integrationId,
+        installerFunction,
+        steps,
+      }),
+    installStep: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
+        id: integrationId,
+        installerFunction,
+      }),
     receivedNewStoreSteps: (integrationId, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
         id: integrationId,

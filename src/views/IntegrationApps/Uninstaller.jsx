@@ -84,7 +84,7 @@ export default function IntegratorAppUninstalleer(props) {
       if (integration.mode !== 'uninstall') {
         dispatch(actions.integrationApps.uninstaller.clearSteps(integrationId));
         dispatch(actions.resource.request('integrations', integrationId));
-        props.history.push(`/pg/integrations/${integrationId}/settings/flows`);
+        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
       } else {
         dispatch(
           actions.integrationApps.uninstaller.deleteIntegration(integrationId)

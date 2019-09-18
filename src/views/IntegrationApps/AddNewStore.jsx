@@ -91,7 +91,7 @@ export default function IntegrationAppAddNewStore(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApps.store.updateStep(
             integrationId,
             installerFunction,
             'inProgress'
@@ -104,14 +104,14 @@ export default function IntegrationAppAddNewStore(props) {
         }
 
         dispatch(
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApps.store.updateStep(
             integrationId,
             installerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApps.installer.installStep(
+          actions.integrationApps.store.installStep(
             integrationId,
             installerFunction
           )
@@ -120,14 +120,14 @@ export default function IntegrationAppAddNewStore(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApps.store.updateStep(
           integrationId,
           installerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApps.installer.installStep(
+        actions.integrationApps.store.installStep(
           integrationId,
           installerFunction
         )
@@ -144,14 +144,14 @@ export default function IntegrationAppAddNewStore(props) {
     const step = addNewStoreSteps.find(s => s.isCurrentStep);
 
     dispatch(
-      actions.integrationApps.installer.updateStep(
+      actions.integrationApps.store.updateStep(
         integrationId,
         (step || {}).installerFunction,
         'inProgress'
       )
     );
     dispatch(
-      actions.integrationApps.installer.installStep(
+      actions.integrationApps.store.installStep(
         integrationId,
         (step || {}).installerFunction
       )

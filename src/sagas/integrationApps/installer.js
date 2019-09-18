@@ -36,6 +36,35 @@ export function* installStep({ id, installerFunction }) {
   }
 }
 
+export function* installStoreStep({ id, installerFunction }) {
+  const path = `/integrations/${id}/installer/${installerFunction}`;
+  let stepCompleteResponse;
+
+  try {
+    stepCompleteResponse = yield call(apiCallWithRetry, {
+      path,
+      opts: { body: {}, method: 'PUT' },
+      message: `Installing`,
+    });
+  } catch (error) {
+    yield put(
+      actions.integrationApps.store.updateStep(id, installerFunction, 'failed')
+    );
+
+    return undefined;
+  }
+
+  if (stepCompleteResponse.success) {
+    yield put(
+      actions.integrationApps.store.completedStepInstall(
+        id,
+        installerFunction,
+        stepCompleteResponse.stepsToUpdate
+      )
+    );
+  }
+}
+
 export function* addNewStore({ id }) {
   const path = `/integrations/${id}/installer/addNewStore`;
   let steps;
@@ -61,4 +90,5 @@ export default [
     installStep
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
+  takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
 ];
