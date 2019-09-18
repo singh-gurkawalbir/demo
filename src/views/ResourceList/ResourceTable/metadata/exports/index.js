@@ -16,5 +16,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  actions: [Delete, References],
+  actions: () => [Delete, References],
 };

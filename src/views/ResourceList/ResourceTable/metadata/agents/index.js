@@ -36,5 +36,5 @@ export default {
       value: r => getAgentDownloadInstaller(r),
     },
   ],
-  actions: [Delete, References],
+  actions: () => [Delete, References],
 };

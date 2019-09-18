@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../../actions';
-import Icon from '../../../../../../components/icons/CloseIcon';
+import Icon from '../../../../../../components/icons/DownloadIcon';
 
 export default {
   label: 'Download Flow',

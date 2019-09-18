@@ -197,12 +197,14 @@ export default function ResourceTable({
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map(({ label, component: Action }) => ({
-                    label,
-                    component: (
-                      <Action resourceType={resourceType} resource={r} />
-                    ),
-                  }))}
+                  actions={rowActions(r).map(
+                    ({ label, component: Action }) => ({
+                      label,
+                      component: (
+                        <Action resourceType={resourceType} resource={r} />
+                      ),
+                    })
+                  )}
                 />
               </TableCell>
             )}

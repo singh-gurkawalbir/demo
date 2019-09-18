@@ -46,7 +46,7 @@ export default {
       },
     },
   ],
-  actions: [
+  actions: () => [
     Delete,
     References,
     ConfigureDebugger,
