@@ -1,9 +1,16 @@
 export default {
-  presubmit: formValues => {
+  preSubmit: formValues => {
     const submitFormValues = { ...formValues };
 
     delete submitFormValues['/uploadFile'];
-    submitFormValues['/file/encoding'] = 'utf8';
+
+    if (submitFormValues['/file/output'] === 'metadata') {
+      submitFormValues['/file/type'] = 'csv';
+    }
+
+    if (submitFormValues['/file/output'] === 'blobKeys') {
+      submitFormValues['/file/skipDelete'] = false;
+    }
 
     return submitFormValues;
   },
@@ -21,7 +28,7 @@ export default {
     },
     {
       fieldId: 'file.output',
-      defaultValue: r => r && r.file && r.file.output,
+      defaultValue: r => (r && r.file && r.file.output) || 'records',
     },
     { fieldId: 'ftp.fileNameStartsWith' },
     { fieldId: 'ftp.fileNameEndsWith' },
@@ -54,12 +61,6 @@ export default {
     { fieldId: 'edifact.format' },
     {
       fieldId: 'file.filedefinition.rules',
-      visibleWhen: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'fixed', 'delimited/edifact'],
-        },
-      ],
       refreshOptionsOnChangesTo: [
         'edix12.format',
         'fixed.format',

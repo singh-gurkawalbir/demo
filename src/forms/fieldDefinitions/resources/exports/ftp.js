@@ -5,16 +5,18 @@ export default {
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'xml', 'json', 'xlsx'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
     // filter: r => ({ type: r.type }),
     // excludeFilter: r => ({ _
     //
   },
+
   'ftp.directoryPath': {
     type: 'text',
     label: 'Directory Path',
@@ -28,36 +30,6 @@ export default {
     type: 'text',
     label: 'File Name Ends With',
   },
-  'file.json.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['json'],
-      },
-    ],
-  },
-  'file.xml.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xml'],
-      },
-    ],
-  },
-  'file.fileDefinition.resourcePath': {
-    label: 'Resource Path',
-    type: 'text',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['filedefinition', 'fixed', 'delimited/edifact'],
-      },
-    ],
-  },
   'file.output': {
     label: 'Output Mode',
     type: 'select',
@@ -66,9 +38,42 @@ export default {
         items: [
           { label: 'Records', value: 'records' },
           { label: 'Metadata', value: 'metadata' },
-          { label: 'Blob Keys', value: 'blobkeys' },
+          { label: 'Blob Keys', value: 'blobKeys' },
         ],
       },
+    ],
+  },
+  'file.json.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['json'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+  },
+  'file.xml.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['xml'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+  },
+  'file.fileDefinition.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.encoding': {
@@ -102,65 +107,39 @@ export default {
       },
     ],
     required: true,
+    visibleWhen: [{ field: 'file.output', is: ['records'] }],
   },
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.xlsx': {
     type: 'csvparse',
     label: 'Configure XLSX parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xlsx'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.xml': {
     type: 'xmlparse',
     label: 'Configure XML parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xml'],
       },
-    ],
-  },
-  'file.xlsx.hasHeaderRow': {
-    type: 'checkbox',
-    label: 'File Has Header',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xlsx'],
-      },
-    ],
-  },
-  'file.xlsx.rowsPerRecord': {
-    type: 'checkbox',
-    label: 'Multiple Rows Per Record',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xlsx'],
-      },
-    ],
-  },
-  'file.xlsx.keyColumns': {
-    type: 'multiselect',
-    label: 'Key Columns',
-    visibleWhen: [
-      {
-        field: 'file.xlsx.rowsPerRecord',
-        is: [true],
-      },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'edix12.format': {
@@ -168,11 +147,12 @@ export default {
     label: 'EDI X12 Format',
     format: 'edi',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'fixed.format': {
@@ -180,11 +160,12 @@ export default {
     label: 'Format',
     format: 'fixed',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['fixed'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'edifact.format': {
@@ -192,16 +173,24 @@ export default {
     label: 'EDIFACT Format',
     format: 'ediFact',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File Definition Rules ',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
   },
 
   pageSize: {
