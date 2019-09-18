@@ -1,20 +1,6 @@
 import { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
-// import { makeStyles } from '@material-ui/core/styles';
-
-// const useStyles = makeStyles(theme => ({
-//   wrapper: {
-//     background: theme.palette.background.paper,
-//     border: '1px solid',
-//     borderColor: 'transparent',
-//     padding: theme.spacing(1),
-//     '&:hover': {
-//       border: '1px solid',
-//       borderColor: theme.palette.primary.main,
-//     },
-//   },
-// }));
 
 export default function DynaText(props) {
   const {
@@ -37,7 +23,6 @@ export default function DynaText(props) {
     inputType,
     options,
   } = props;
-  // const classes = useStyles();
   const [valueChanged, setValueChanged] = useState(false);
 
   useEffect(() => {
@@ -87,8 +72,6 @@ export default function DynaText(props) {
         error={!isValid}
         value={value}
         variant="filled"
-        // disableUnderline
-        // className={classes.wrapper}
         onChange={handleFieldChange}
       />
     </div>

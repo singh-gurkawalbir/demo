@@ -268,6 +268,14 @@ const theme = {
       formControl: {
         background: colors.celigoWhite,
       },
+      underline: {
+        '&:before': {
+          display: 'none',
+        },
+        '&:after': {
+          display: 'none',
+        },
+      },
     },
     MuiFormLabel: {
       root: {
@@ -289,8 +297,9 @@ const theme = {
         background: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
-        height: '42px',
+        height: 50,
         boxSizing: 'border-box',
+        borderRadius: 2,
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
@@ -308,6 +317,9 @@ const theme = {
       },
       multiline: {
         background: colors.celigoWhite,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
+        borderRadius: 2,
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
@@ -346,6 +358,9 @@ export default () => {
   });
   muiTheme.palette.warning = muiTheme.palette.augmentColor({
     main: colors.celigoWarning,
+  });
+  muiTheme.palette.info = muiTheme.palette.augmentColor({
+    main: colors.celigoAccent2,
   });
 
   return muiTheme;

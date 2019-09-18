@@ -20,12 +20,20 @@ export default {
       error: colors.celigoError,
       info: colors.celigoAccent1,
     },
-    // Adding only for the styleGuide later I will remove, once we point styyleguide to the new ThemeProvider
+    /* Adding states only for the styleGuide later I will remove, 
+        once we point styleguide to the new ThemeProvider,
+    */
     success: {
-      contrastText: 'rgba(0, 0, 0, 0.87)',
-      dark: 'rgb(53, 130, 1)',
-      light: 'rgb(111, 200, 52)',
-      main: '#4CBB02',
+      main: colors.celigoSuccess,
+    },
+    error: {
+      main: colors.celigoError,
+    },
+    warning: {
+      main: colors.celigoWarning,
+    },
+    info: {
+      main: colors.celigoAccent2,
     },
   },
   spacing: 8,

@@ -18,15 +18,24 @@ const useStyles = makeStyles(theme => ({
     transitionProperty: 'border',
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
-
-    '& + label': {
-      padding: 20,
+    overflow: 'hidden',
+    height: 50,
+    justifyContent: 'flex-end',
+    borderRadius: 2,
+    '& > Label': {
+      paddingTop: 10,
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
     '& > *': {
-      paddingLeft: 12,
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
     },
   },
 }));
@@ -108,9 +117,11 @@ export default function DynaSelect(props) {
           {items}
         </Select>
       </FormControl>
-      <FormHelperText error={!isValid}>
-        {isValid ? description : errorMessages}
-      </FormHelperText>
+      {(description || errorMessages) && (
+        <FormHelperText error={!isValid}>
+          {isValid ? description : errorMessages}
+        </FormHelperText>
+      )}
     </div>
   );
 }

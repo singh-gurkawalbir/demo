@@ -10,11 +10,12 @@ import * as selectors from '../../reducers';
 const useStyles = makeStyles(theme => ({
   iconButton: {
     marginLeft: 5,
-    borderRadius: 0,
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    height: '42px',
+    height: 50,
+    width: 50,
+    borderRadius: 2,
     '&:hover': {
       background: theme.palette.background.paper,
       '& > span': {
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 const wrapper = {
   display: 'flex',
   alignItems: 'flex-start',
+  marginBottom: 6,
 };
 const fieldStyle = {
   flexGrow: '1',

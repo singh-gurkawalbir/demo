@@ -1,7 +1,6 @@
 export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
-
   'file.type': {
     type: 'select',
     label: 'File Type',
