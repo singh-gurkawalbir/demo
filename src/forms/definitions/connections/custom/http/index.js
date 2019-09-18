@@ -23,10 +23,24 @@ import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
+import zoom from './zoom';
+import paycor from './paycor';
+import miva from './miva';
+import vend from './vend';
+import marketo from './marketo';
+import messagemedia from './messagemedia';
+import merchantesolutions from './merchantesolutions';
 
 export default {
+  marketo,
+  merchantesolutions,
+  messagemedia,
+  vend,
+  miva,
+  paycor,
   activecampaign,
   drift,
+  zoom,
   'authorize.net': authorizeNet,
   recurly,
   cartrover,

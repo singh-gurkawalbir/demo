@@ -13,7 +13,7 @@ export default {
       ...formValues,
       '/type': 'http',
       '/assistant': 'merchantesolutions',
-      '/http/auth/type': 'token',
+      '/http/auth/type': 'custom',
       '/http/mediaType': 'urlencoded',
       '/http/baseURI': `https://cert.merchante-solutions.com`,
       '/http/ping/relativeURI': '/mes-api/tridentApi',

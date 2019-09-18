@@ -3,7 +3,7 @@ export default {
     ...formValues,
     '/type': 'http',
     '/assistant': 'zoom',
-    '/http/auth/type': 'token',
+    '/http/auth/type': 'jwt',
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v2/users',
     '/http/ping/method': 'GET',
