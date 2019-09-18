@@ -30,10 +30,7 @@ export default function AttachStandAloneFlows({
   // integrationId,
   standAloneFlows,
 }) {
-  console.log('It should come here');
   const classes = useStyles();
-
-  console.log('standAloneFlows', standAloneFlows);
   const flowsToAttch = standAloneFlows;
   const [, setSelected] = useState({});
   const selectedFlows = flows => {
