@@ -14,7 +14,6 @@ const theme = {
       paper: colors.celigoWhite,
       paper2: colors.celigoNeutral2,
       default: colors.celigoNeutral1,
-      arrowAfter: colors.celigoNeutral3,
     },
     primary: {
       light: colors.celigoAccent3,
@@ -22,9 +21,9 @@ const theme = {
       dark: colors.celigoAccent1,
     },
     secondary: {
+      lightest: colors.celigoNeutral3,
       light: colors.celigoNeutral6,
       main: colors.celigoNeutral8,
-      darker: colors.celigoNeutral7,
       darkest: colors.celigoNeutral9,
       contrastText: colors.celigoNeutral4,
     },
@@ -148,7 +147,7 @@ const theme = {
       root: {
         borderBottom: '1px solid',
         '&$selected': {
-          backgroundColor: 'transparent',
+          backgroundColor: colors.celigoNeutral2,
           '&:before': {
             background: colors.celigoAccent3,
           },
@@ -157,6 +156,7 @@ const theme = {
           borderBottom: 'none',
         },
         '&:hover': {
+          background: colors.celigoNeutral2,
           '&:before': {
             background: colors.celigoAccent3,
           },
@@ -249,8 +249,89 @@ const theme = {
     MuiTableRow: {
       root: {
         '&$hover:hover': {
-          backgroundColor: '#eee',
+          backgroundColor: colors.celigoWhite,
           boxShadow: `2px 2px 4px rgba(0,0,0,0.1)`,
+        },
+      },
+    },
+    MuiSelect: {
+      icon: {
+        color: colors.celigoNeutral5,
+      },
+      select: {
+        '&:focus': {
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+    MuiInput: {
+      formControl: {
+        background: colors.celigoWhite,
+      },
+    },
+    MuiFormLabel: {
+      root: {
+        fontFamily: 'source sans pro',
+      },
+    },
+    MuiFilledInput: {
+      root: {
+        '&:hover': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&$focused': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+      },
+      input: {
+        background: colors.celigoWhite,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
+        height: '42px',
+        boxSizing: 'border-box',
+        '&:hover': {
+          borderColor: colors.celigoAccent2,
+        },
+        '&:disabled': {
+          backgroundColor: colors.celigoNeutral3,
+        },
+      },
+      underline: {
+        '&:before': {
+          display: 'none',
+        },
+        '&:after': {
+          display: 'none',
+        },
+      },
+      multiline: {
+        background: colors.celigoWhite,
+        '&:hover': {
+          borderColor: colors.celigoAccent2,
+        },
+        '&:disabled': {
+          backgroundColor: colors.celigoNeutral3,
+        },
+      },
+      inputMultiline: {
+        border: 'none',
+      },
+    },
+    MuiRadio: {
+      root: {
+        color: colors.celigoNeutral5,
+      },
+    },
+    MuiInputBase: {
+      root: {
+        fontFamily: 'source sans pro',
+        fontSize: '15px',
+      },
+      input: {
+        '&:invalid': {
+          borderColor: colors.celigoError,
         },
       },
     },

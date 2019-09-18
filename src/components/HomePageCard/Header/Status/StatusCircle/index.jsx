@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     height: 12,
   },
   success: {
-    backgroundColor: theme.palette.background.success,
+    backgroundColor: theme.palette.success.main,
   },
   error: {
     backgroundColor: theme.palette.background.error,

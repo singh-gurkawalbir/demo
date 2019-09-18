@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import {
@@ -15,8 +15,9 @@ import {
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import LoadResources from '../../../components/LoadResources';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -28,8 +29,13 @@ const useStyles = makeStyles({
   iconButton: {
     height: 'fit-content',
     alignSelf: 'flex-end',
+    border: '1px solid',
+    background: theme.palette.background.paper,
+    marginLeft: 5,
+    borderColor: fade(theme.palette.common.black, 0.1),
+    borderRadius: 0,
   },
-});
+}));
 const newId = () => `new-${shortid.generate()}`;
 
 function DynaSelectResource(props) {
@@ -125,6 +131,7 @@ function DynaSelectResource(props) {
         <LoadResources required resources={resourceType}>
           <Select
             value={value}
+            IconComponent={ArrowDownIcon}
             onChange={evt => {
               onFieldChange(id, evt.target.value);
             }}

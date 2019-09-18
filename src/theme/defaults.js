@@ -20,6 +20,13 @@ export default {
       error: colors.celigoError,
       info: colors.celigoAccent1,
     },
+    // Adding only for the styleGuide later I will remove, once we point styyleguide to the new ThemeProvider
+    success: {
+      contrastText: 'rgba(0, 0, 0, 0.87)',
+      dark: 'rgb(53, 130, 1)',
+      light: 'rgb(111, 200, 52)',
+      main: '#4CBB02',
+    },
   },
   spacing: 8,
   drawerWidth: 300,

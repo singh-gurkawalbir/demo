@@ -75,6 +75,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: fade(theme.palette.secondary.light, 0.25),
     paddingTop: 0,
     paddingBottom: 0,
+    '& ul': {
+      '&:last-child': {
+        borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
+      },
+    },
   },
   listItem: {
     '&:hover': {

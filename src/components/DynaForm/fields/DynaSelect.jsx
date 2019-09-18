@@ -6,13 +6,30 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+
+    '& + label': {
+      padding: 20,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      paddingLeft: 12,
+    },
   },
-});
+}));
 
 export default function DynaSelect(props) {
   const {
@@ -72,25 +89,28 @@ export default function DynaSelect(props) {
   items = [defaultItem, ...items];
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.root}>
-      <InputLabel shrink htmlFor={id}>
-        {label}
-      </InputLabel>
-      <Select
-        value={finalTextValue}
-        displayEmpty
-        onChange={evt => {
-          const { value: evtValue } = evt.target;
+    <div>
+      <FormControl key={id} disabled={disabled} className={classes.root}>
+        <InputLabel shrink htmlFor={id}>
+          {label}
+        </InputLabel>
+        <Select
+          value={finalTextValue}
+          IconComponent={ArrowDownIcon}
+          disableUnderline
+          displayEmpty
+          onChange={evt => {
+            const { value: evtValue } = evt.target;
 
-          onFieldChange(id, evtValue);
-        }}
-        input={<Input name={name} id={id} />}>
-        {items}
-      </Select>
-
+            onFieldChange(id, evtValue);
+          }}
+          input={<Input name={name} id={id} />}>
+          {items}
+        </Select>
+      </FormControl>
       <FormHelperText error={!isValid}>
         {isValid ? description : errorMessages}
       </FormHelperText>
-    </FormControl>
+    </div>
   );
 }
