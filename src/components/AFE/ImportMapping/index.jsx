@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function reducer(state, action) {
+export const reducer = (state, action) => {
   const {
     type,
     value,
@@ -51,14 +51,14 @@ function reducer(state, action) {
   } = action;
 
   switch (type) {
-    case 'remove':
+    case 'REMOVE':
       setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
       return [
         ...state.slice(0, index),
         ...state.slice(index + 1, state.length),
       ];
-    case 'updateField':
+    case 'UPDATE_FIELD':
       if (state[index]) {
         const objCopy = { ...state[index] };
         let inputValue = value;
@@ -98,23 +98,29 @@ function reducer(state, action) {
       }
 
       return [...state, Object.assign({}, lastRowData, { [field]: value })];
-    case 'updateSettings':
+    case 'UPDATE_SETTING':
       setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
       if (state[index]) {
+        const valueTmp = { ...value };
+
+        if (valueTmp.hardCodedValue) {
+          valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+        }
+
         return [
           ...state.slice(0, index),
-          { ...value },
+          { ...valueTmp },
           ...state.slice(index + 1, state.length),
         ];
       }
 
-      return [...state, Object.assign({}, lastRowData, { [field]: value })];
+      return [...state];
 
     default:
       return state;
   }
-}
+};
 
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
@@ -242,7 +248,7 @@ export default function ImportMapping(props) {
     const { value } = event.target;
 
     dispatchLocalAction({
-      type: 'updateField',
+      type: 'UPDATE_FIELD',
       index: row,
       field,
       value,
@@ -284,16 +290,10 @@ export default function ImportMapping(props) {
   };
 
   const handleSettingsClose = (row, settings) => {
-    const settingsCopy = { ...settings };
-
-    if (settingsCopy.hardCodedValue) {
-      settingsCopy.hardCodedValueTmp = `"${settingsCopy.hardCodedValue}"`;
-    }
-
     dispatchLocalAction({
-      type: 'updateSettings',
+      type: 'UPDATE_SETTING',
       index: row,
-      value: settingsCopy,
+      value: { ...settings },
       setChangeIdentifier,
       lastRowData: (mappingsTmp || []).length
         ? mappingsTmp[mappingsTmp.length - 1]
@@ -303,7 +303,7 @@ export default function ImportMapping(props) {
 
   const handledelete = row => {
     dispatchLocalAction({
-      type: 'remove',
+      type: 'REMOVE',
       index: row,
       setChangeIdentifier,
       lastRowData: (mappingsTmp || []).length
