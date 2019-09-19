@@ -25,6 +25,36 @@ const useStyles = makeStyles(theme => ({
   select: {
     display: 'flex',
     width: '100%',
+    flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 50,
+    borderRadius: 2,
+    '& > Label': {
+      zIndex: 1,
+
+      '&.MuiInputLabel-shrink': {
+        paddingTop: 10,
+      },
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+      zIndex: 2,
+    },
+    '& svg': {
+      right: 8,
+    },
   },
   iconButton: {
     height: 'fit-content',
@@ -131,6 +161,7 @@ function DynaSelectResource(props) {
         <LoadResources required resources={resourceType}>
           <Select
             value={value}
+            variant="filled"
             IconComponent={ArrowDownIcon}
             onChange={evt => {
               onFieldChange(id, evt.target.value);

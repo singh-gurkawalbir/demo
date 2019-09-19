@@ -13,6 +13,7 @@ const AuditLogIcon = require('../../src/components/icons/AuditLogIcon').default;
 const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
+const CloudTransferIcon = require('../../src/components/icons/CloudTransferIcon').default;
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
 const DataTransformationIcon = require('../../src/components/icons/DataTransformationIcon').default;
 const DataLoaderIcon = require('../../src/components/icons/DataLoaderIcon').default;
@@ -35,6 +36,8 @@ const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
 const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon').default;
+const ListnerIcon = require('../../src/components/icons/ListnerIcon').default;
+const LookUpIcon = require('../../src/components/icons/LookUpIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
@@ -57,7 +60,7 @@ const WarningIcon = require('../../src/components/icons/WarningIcon').default;
 
 const container = {
   display: 'grid',
-  gridTemplateColumns: `repeat(8, 1fr)`,
+  gridTemplateColumns: `repeat(6, 1fr)`,
 }
 const wrapper = {
   margin: 15,
@@ -65,232 +68,243 @@ const wrapper = {
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
+  
 };
 const icon = {
-    fontSize: 24,
+    fontSize: 48,
     background: colors.celigoNeutral2,
     borderRadius: '10%',
-    color: colors.celigoNeutral8,
+    color: colors.celigoNeutral6,
     padding: 10,
     border: '1px solid',
     borderColor: colors.celigoNeutral3,
 };
-const title = {
-  whiteSpace: 'nowrap',
-};
+
 
 <div style={container}>
     <div style={wrapper}>
         <AddIcon style={icon}/>
-        <p style={title}>Add</p>
+        <p>Add</p>
     </div>
     <div style={wrapper}>
       <AdjustInventoryIcon style={icon}/> 
-      <p style={title}>AdjustInventory</p>
+      <p>AdjustInventory</p>
     </div>
     <div style={wrapper}>
       <AppBuilderIcon style={icon}/> 
-      <p style={title}>AppBuilder</p>
+      <p>AppBuilder</p>
     </div>
     <div style={wrapper}>
       <AgentsIcon style={icon}/> 
-      <p style={title}>Agents</p>
+      <p>Agents</p>
     </div>
     <div style={wrapper}>
         <ArrowLeftIcon style={icon} />
-      <p style={title}>ArrowLeft</p>
+      <p>ArrowLeft</p>
     </div>
     <div style={wrapper}>
       <ArrowRightIcon style={icon}/>
-      <p style={title}>ArrowRight</p>
+      <p>ArrowRight</p>
     </div>
     <div style={wrapper}>
       <ArrowDownIcon style={icon}/>
-      <p style={title}>ArrowDown</p>
+      <p>ArrowDown</p>
     </div>
     <div style={wrapper}>
       <ArrowUpIcon style={icon}/>
-      <p style={title}>ArrowUp</p>
+      <p>ArrowUp</p>
     </div>
     <div style={wrapper}>
       <AuditLogIcon style={icon}/>
-      <p style={title}>AuditLog</p>
+      <p>AuditLog</p>
     </div>
     <div style={wrapper}>
       <CalendarIcon style={icon}/>
-      <p style={title}>Calendar</p>
+      <p>Calendar</p>
     </div>
     <div style={wrapper}>
       <CloseIcon style={icon}/>
-      <p style={title}>Close</p>
+      <p>Close</p>
     </div>
     <div style={wrapper}>
       <CopyIcon style={icon} />
-      <p style={title}>Copy</p>
+      <p>Copy</p>
     </div>
     <div style={wrapper}>
       <ConnectionsIcon style={icon} />
-      <p style={title}>Connections</p>
+      <p>Connections</p>
+    </div>
+    <div style={wrapper}>
+      < CloudTransferIcon style={icon} />
+      <p> CloudTransfer(FB)</p>
     </div>
     <div style={wrapper}>
       <DataTransformationIcon style={icon} />
-      <p style={title}>DataTransformation</p>
+      <p>DataTransformation</p>
     </div>
     <div style={wrapper}>
       <DataLoaderIcon style={icon} />
-      <p style={title}>DataLoader</p>
+      <p>DataLoader</p>
     </div>
     <div style={wrapper}>
       <DebugIcon style={icon} />
-      <p style={title}>Debug</p>
+      <p>Debug</p>
     </div>
      <div style={wrapper}>
       <DownloadIcon style={icon} />
-      <p style={title}>Download</p>
+      <p>Download</p>
     </div>
      <div style={wrapper}>
       <EditIcon style={icon} />
-      <p style={title}>Edit</p>
+      <p>Edit</p>
     </div>
      <div style={wrapper}>
       <EditorsPlaygroundIcon style={icon} />
-      <p style={title}>EditorsPlayground </p>
+      <p>EditorsPlayground </p>
     </div>
      <div style={wrapper}>
       <ErrorIcon style={icon} />
-      <p style={title}>Error</p>
+      <p>Error</p>
     </div>
      <div style={wrapper}>
       <EllipsisHorizontalIcon style={icon} />
-      <p style={title}>EllipsisHorizontal </p>
+      <p>EllipsisHorizontal </p>
     </div>
      <div style={wrapper}>
       <EllipsisVerticalIcon style={icon} />
-      <p style={title}>EllipsisVertical </p>
+      <p>EllipsisVertical </p>
     </div>
      <div style={wrapper}>
       <ExitIcon style={icon} />
-      <p style={title}>Exit</p>
+      <p>Exit</p>
     </div>
      <div style={wrapper}>
       <ExportsIcon style={icon} />
-      <p style={title}>Exports</p>
+      <p>Exports</p>
     </div>
      <div style={wrapper}>
       <FilterIcon style={icon} />
-      <p style={title}>Filter</p>
+      <p>Filter</p>
     </div>
-     <div style={wrapper}>
+    <div style={wrapper}>
       <FlowBuilderIcon style={icon} />
-      <p style={title}>FlowBuilder</p>
+      <p>FlowBuilder</p>
     </div>
      <div style={wrapper}>
       <GettingStartedIcon style={icon} />
-      <p style={title}>GettingStarted</p>
+      <p>GettingStarted</p>
     </div>
      <div style={wrapper}>
       <HelpIcon style={icon} />
-      <p style={title}>Help</p>
+      <p>Help</p>
     </div>
      <div style={wrapper}>
       <HomeIcon style={icon} />
-      <p style={title}>Home</p>
+      <p>Home</p>
     </div>
     <div style={wrapper}>
       <HookIcon style={icon} />
-      <p style={title}>Hook</p>
+      <p>Hook</p>
     </div>
     <div style={wrapper}>
       <InfoIcon style={icon} />
-      <p style={title}>Info</p>
+      <p>Info</p>
     </div>
     <div style={wrapper}>
       <InstallIcon style={icon} />
-      <p style={title}>Install</p>
+      <p>Install</p>
     </div>
     <div style={wrapper}>
       <ImportsIcon style={icon} />
-      <p style={title}>Imports</p>
+      <p>Imports</p>
     </div>
     <div style={wrapper}>
       <KnowledgeBaseIcon style={icon} />
-      <p style={title}>KnowledgeBase</p>
+      <p>KnowledgeBase</p>
+    </div>
+     <div style={wrapper}>
+      <ListnerIcon style={icon} />
+      <p>Listner (FB)</p>
+    </div>
+    <div style={wrapper}>
+      <LookUpIcon style={icon} />
+      <p>LookUp</p>
     </div>
     <div style={wrapper}>
       <MapDataIcon style={icon} />
-      <p style={title}>MapData</p>
+      <p>MapData</p>
     </div>
     <div style={wrapper}>
       <MarketplaceIcon style={icon} />
-      <p style={title}>Marketplace</p>
+      <p>Marketplace</p>
     </div>
     <div style={wrapper}>
       <NotificationsIcon style={icon} />
-      <p style={title}>Notifications</p>
+      <p>Notifications</p>
     </div>
     <div style={wrapper}>
       <PermissionsManageIcon style={icon} />
-      <p style={title}>PermissionsManage</p>
+      <p>PermissionsManage</p>
     </div>
     <div style={wrapper}>
       <PermissionExplorerIcon style={icon} />
-      <p style={title}>PermissionExplorer</p>
+      <p>PermissionExplorer</p>
     </div>
      <div style={wrapper}>
       <ResourcesIcon style={icon} />
-      <p style={title}>Resources</p>
+      <p>Resources</p>
     </div>
     <div style={wrapper}>
       <StacksIcon style={icon} />
-      <p style={title}>Stacks</p>
+      <p>Stacks</p>
     </div>
     <div style={wrapper}>
       <SuccessIcon style={icon} />
-      <p style={title}>Success</p>
+      <p>Success</p>
     </div>
     <div style={wrapper}>
       <ScriptsIcon style={icon} />
-      <p style={title}>Scripts</p>
+      <p>Scripts</p>
     </div>
     <div style={wrapper}>
       <SearchIcon style={icon} />
-      <p style={title}>Search</p>
+      <p>Search</p>
     </div>
     <div style={wrapper}>
       <SettingsIcon style={icon} />
-      <p style={title}>Settings</p>
+      <p>Settings</p>
     </div>
     <div style={wrapper}>
       <SubtractIcon style={icon} />
-      <p style={title}>Subtract</p>
+      <p>Subtract</p>
     </div>
     <div style={wrapper}>
       <SupportIcon style={icon} />
-      <p style={title}>Support</p>
+      <p>Support</p>
     </div>
     <div style={wrapper}>
       <TransferOrderIcon style={icon} />
-      <p style={title}>TransferOrder</p>
+      <p>TransferOrder</p>
     </div>
     <div style={wrapper}>
       <ToolsIcon style={icon} />
-      <p style={title}>ToolsIcon</p>
+      <p>ToolsIcon</p>
     </div>
     <div style={wrapper}>
       <TransferIcon style={icon} />
-      <p style={title}>Transfer</p>
+      <p>Transfer</p>
     </div>
     <div style={wrapper}>
       <TrashIcon style={icon} />
-      <p style={title}>Trash</p>
+      <p>Trash</p>
     </div>
     <div style={wrapper}>
       <ViewReferencesIcon style={icon} />
-      <p style={title}>ViewReferences</p>
+      <p>ViewReferences</p>
     </div>
     <div style={wrapper}>
       <WarningIcon style={icon} />
-      <p style={title}>Warning</p>
+      <p>Warning</p>
     </div>
 </div>
 ```

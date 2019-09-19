@@ -276,6 +276,9 @@ const theme = {
           display: 'none',
         },
       },
+      // '&:disabled': {
+      //   backgroundColor: colors.celigoNeutral3,
+      // },
     },
     MuiFormLabel: {
       root: {
@@ -305,6 +308,9 @@ const theme = {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral3,
+          '&:hover': {
+            borderColor: colors.celigoNeutral3,
+          },
         },
       },
       underline: {
@@ -340,6 +346,9 @@ const theme = {
       root: {
         fontFamily: 'source sans pro',
         fontSize: '15px',
+        '&$disabled': {
+          background: colors.celigoNeutral3,
+        },
       },
       input: {
         '&:invalid': {

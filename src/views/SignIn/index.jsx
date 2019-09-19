@@ -28,11 +28,11 @@ const mapDispatchToProps = dispatch => ({
     marginRight: ' auto',
   },
   editableFields: {
-    paddingTop: theme.spacing(1),
     textAlign: 'center',
     maxWidth: 500,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    margin: [[-8, -24]],
+    background: theme.palette.background.paper2,
+    padding: [[8, 24]],
   },
   relatedContent: {
     textDecoration: 'none',
@@ -41,6 +41,17 @@ const mapDispatchToProps = dispatch => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '90%',
+    border: '1px solid',
+    background: theme.palette.background.paper,
+    borderColor: theme.palette.secondary.lightest,
+
+    // '& div > input:disabled': {
+    //   background: theme.palette.background.paper2,
+    // },
+    '& Label': {
+      color: theme.palette.secondary.light,
+      zIndex: 2,
+    },
   },
 }))
 class SignIn extends Component {
@@ -91,6 +102,7 @@ class SignIn extends Component {
             label="Email"
             type="email"
             margin="normal"
+            variant="filled"
             value={dialogOpen ? userEmail : email}
             onChange={this.handleOnChangeEmail}
             className={classes.textField}
@@ -101,6 +113,7 @@ class SignIn extends Component {
             label="Password"
             type="password"
             margin="normal"
+            variant="filled"
             className={classes.textField}
           />
 
