@@ -13,7 +13,7 @@ export function* requestConnectors() {
       message: 'Requesting Connectors',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.marketPlace.receivedConnectors({ connectors: response }));
@@ -29,7 +29,7 @@ export function* requestTemplates() {
       message: 'Requesting Templates',
     });
   } catch (e) {
-    return true;
+    return;
   }
 
   yield put(actions.marketPlace.receivedTemplates({ templates: response }));
