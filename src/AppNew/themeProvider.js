@@ -254,6 +254,19 @@ const theme = {
         },
       },
     },
+    MuiTableCell: {
+      root: {
+        padding: [[8, 40, 8, 16]],
+      },
+      head: {
+        fontFamily: 'Roboto500',
+        color: colors.celigoNeutral6,
+        fontSize: 15,
+      },
+      body: {
+        fontFamily: 'source sans pro',
+      },
+    },
     MuiSelect: {
       icon: {
         color: colors.celigoNeutral5,
