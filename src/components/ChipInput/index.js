@@ -14,7 +14,7 @@ export default function ChipInput(props) {
   const classes = useStyles();
   const { onChange, value } = props;
   const [tag, setTag] = useState(value);
-  const [isChipView, setIsChipView] = useState('chip');
+  const [isChipView, setIsChipView] = useState(true);
   const handleBlur = e => {
     e.preventDefault();
     setIsChipView(true);
