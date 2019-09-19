@@ -23,6 +23,28 @@ import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
+import tableau from './tableau';
+import acton from './acton';
+import aptrinsic from './aptrinsic';
+import github from './github';
+import googleshopping from './googleshopping';
+import insightly from './insightly';
+import mailgun from './mailgun';
+import pdffiller from './pdffiller';
+import shipstation from './shipstation';
+import smartsheet from './smartsheet';
+import spreecommerce from './spreecommerce';
+import taxjar from './taxjar';
+import tesco from './tesco';
+import woocommerce from './woocommerce';
+import wrike from './wrike';
+import zuora from './zuora';
+import shopify from './shopify';
+import retailops from './retailops';
+import box from './box';
+import microsoftoffice365 from './microsoftoffice365';
+import faire from './faire';
+import ware2go from './ware2go';
 
 export default {
   activecampaign,
@@ -50,4 +72,26 @@ export default {
   onelogin,
   recharge,
   autopilot,
+  tableau,
+  acton,
+  aptrinsic,
+  github,
+  googleshopping,
+  insightly,
+  mailgun,
+  pdffiller,
+  shipstation,
+  smartsheet,
+  spreecommerce,
+  taxjar,
+  tesco,
+  woocommerce,
+  wrike,
+  zuora,
+  shopify,
+  retailops,
+  box,
+  microsoftoffice365,
+  faire,
+  ware2go,
 };

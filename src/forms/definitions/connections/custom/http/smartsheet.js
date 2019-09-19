@@ -1,0 +1,45 @@
+export default {
+  preSubmit: formValues => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'smartsheet',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://api.smartsheet.com',
+    '/http/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://app.smartsheet.com/b/authorize',
+    '/http/auth/oauth/tokenURI': 'https://api.smartsheet.com/2.0/token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
+  }),
+  fields: [
+    { fieldId: 'name' },
+    {
+      fieldId: 'http.auth.oauth.scope',
+      scopes: [
+        'ADMIN_SHEETS',
+        'ADMIN_SIGHTS',
+        'ADMIN_USERS',
+        'ADMIN_WEBHOOKS',
+        'ADMIN_WORKSPACES',
+        'CREATE_SHEETS',
+        'CREATE_SIGHTS',
+        'DELETE_SHEETS',
+        'DELETE_SIGHTS',
+        'READ_CONTACTS',
+        'READ_SHEETS',
+        'READ_SIGHTS',
+        'READ_USERS',
+        'SHARE_SHEETS',
+        'SHARE_SIGHTS',
+        'WRITE_SHEETS',
+      ],
+    },
+  ],
+  fieldSets: [
+    {
+      header: 'Advanced Settings',
+      collapsed: true,
+      fields: [{ formId: 'httpAdvanced' }],
+    },
+  ],
+};
