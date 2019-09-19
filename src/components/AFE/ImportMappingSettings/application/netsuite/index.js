@@ -1,6 +1,6 @@
 import fieldExpressions from '../../../../../utils/fieldExpressions';
 import utilityFunctions from '../../../../../utils/utilityFunctions';
-import mappingUtil from '../../../../../utils/mapping';
+import MappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
@@ -53,7 +53,7 @@ export default {
           name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue: mappingUtil.getFieldMappingType(value),
+          defaultValue: MappingUtil.getFieldMappingType(value),
           showOptionsHorizontally: true,
           fullWidth: true,
           options: [
@@ -241,7 +241,7 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue: mappingUtil.getDefaultExpression(value),
+          defaultValue: MappingUtil.getDefaultExpression(value),
           visibleWhen: [
             {
               field: 'fieldMappingType',
@@ -253,7 +253,7 @@ export default {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue: mappingUtil.getDefaultActionValue(value),
+          defaultValue: MappingUtil.getDefaultActionValue(value),
           refreshOptionsOnChangesTo: ['fieldMappingType'],
           label: '',
           visibleWhen: [

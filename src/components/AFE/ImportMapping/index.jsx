@@ -9,10 +9,13 @@ import {
   Grid,
   DialogActions,
 } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import actions from '../../../actions';
+import MappingUtil from '../../../utils/mapping';
 
 const CloseIcon = require('../../../components/icons/CloseIcon').default;
 
@@ -132,12 +135,15 @@ export default function ImportMapping(props) {
     mappings = {},
     lookups,
     application,
+    isStandAloneMapping,
     generateFields,
     extractFields,
+    resourceId,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups || []);
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, dispatchLocalAction] = useReducer(
     reducer,
@@ -199,7 +205,7 @@ export default function ImportMapping(props) {
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = closeModal => {
     const mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
@@ -230,22 +236,39 @@ export default function ImportMapping(props) {
     }
 
     if (validateMapping(mappings)) {
-      onClose(true, mappings, lookupState);
+      // case where its standalone mapping. Save directly to server.
+      if (isStandAloneMapping) {
+        const patchSet = [
+          {
+            op: 'replace',
+            path: MappingUtil.getMappingPath(application),
+            value: mappings,
+          },
+        ];
+
+        if (lookupState) {
+          patchSet.push({
+            op: 'replace',
+            path: MappingUtil.getLookupPath(application),
+            value: lookupState,
+          });
+        }
+
+        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
+
+        // case of Save and Close
+        if (closeModal) {
+          onClose(false);
+        }
+      } else {
+        // case where its mapping is behaving as a field. Save to form
+        onClose(true, mappings, lookupState);
+      }
     }
   };
 
-  let generateLabel;
-
-  switch (application) {
-    case 'REST':
-      generateLabel = 'REST API Field';
-      break;
-    case 'netsuite':
-      generateLabel = 'NetSuite Field';
-      break;
-    default:
-  }
-
+  const generateLabel = MappingUtil.getGenerateLabelForMapping(application);
   const handleFieldUpdate = (row, event, field) => {
     const { value } = event.target;
 
@@ -398,20 +421,31 @@ export default function ImportMapping(props) {
         </div>
       </DialogContent>
       <DialogActions>
+        {!isStandAloneMapping && (
+          <Button
+            onClick={() => {
+              onClose(false);
+            }}
+            variant="contained"
+            size="small">
+            Cancel
+          </Button>
+        )}
+        {isStandAloneMapping && (
+          <Button
+            onClick={() => handleSubmit(false)}
+            variant="contained"
+            size="small"
+            color="secondary">
+            Save
+          </Button>
+        )}
         <Button
-          onClick={() => {
-            onClose(false);
-          }}
-          variant="contained"
-          size="small">
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSubmit}
+          onClick={() => handleSubmit(true)}
           variant="contained"
           size="small"
           color="secondary">
-          Save
+          {isStandAloneMapping ? 'Save and Close' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

@@ -7,8 +7,16 @@ lookups and lookupId is passed in options
 
 */
 export default function DynaImportMapping(props) {
-  const { id, application, onFieldChange, options, label, value } = props;
-  const { lookupId, lookups } = options;
+  const {
+    id,
+    application,
+    onFieldChange,
+    options,
+    label,
+    value,
+    resourceId,
+  } = props;
+  const { lookupId, lookups, isStandAloneMapping } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
   /*
      Using dummy data for functionality demonstration. generate fields and
@@ -41,6 +49,8 @@ export default function DynaImportMapping(props) {
           id={id}
           application={application}
           lookups={lookups}
+          isStandAloneMapping={isStandAloneMapping}
+          resourceId={resourceId}
           mappings={value}
           generateFields={generateFields || []}
           extractFields={extractFields || []}

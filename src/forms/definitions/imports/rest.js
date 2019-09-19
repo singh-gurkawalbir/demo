@@ -28,7 +28,7 @@ export default {
     { fieldId: 'rest.lookups', visible: false },
     {
       fieldId: 'mapping',
-      application: 'REST',
+      application: 'rest',
       refreshOptionsOnChangesTo: ['rest.lookups'],
     },
     { fieldId: 'rest.relativeURI' },

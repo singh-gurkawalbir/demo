@@ -44,4 +44,33 @@ export default {
       return value.extract;
     }
   },
+  getMappingPath: application => {
+    switch (application) {
+      case 'rest':
+        return '/mapping/fields';
+      case 'netsuite':
+        // TODO
+        return '';
+      default:
+    }
+  },
+  getLookupPath: application => {
+    switch (application) {
+      case 'rest':
+        return '/rest/lookup';
+      case 'netsuite':
+        // TODO
+        return '';
+      default:
+    }
+  },
+  getGenerateLabelForMapping: application => {
+    switch (application) {
+      case 'rest':
+        return 'REST API Field';
+      case 'netsuite':
+        return 'NetSuite Field';
+      default:
+    }
+  },
 };

@@ -2,6 +2,8 @@ import utilityFunctions from '../../../../utils/utilityFunctions';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
 
+// TODO (Aditya) test cases to be added for save functionality
+
 const getFormattedLookup = (lookup, formVal) => {
   const lookupTmp = {};
 
@@ -51,7 +53,7 @@ export default {
     let fieldMeta = {};
 
     switch (application) {
-      case 'REST':
+      case 'rest':
         fieldMeta = RestMappingSettings.getMetaData({
           value,
           lookup,
