@@ -20,7 +20,7 @@ export default {
     {
       header: 'Advanced',
       collapsed: true,
-      fields: [{ fieldId: 'idLockTemplate' }, { fieldId: 'dataURITemplate' }],
+      fields: [{ formId: 'advancedSettings' }],
     },
     {
       header: 'Hooks (Optional, Developers Only)',
