@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import _ from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Button,
   IconButton,
@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../views/ResourceList/ResourceTable';
+import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -40,6 +41,15 @@ export default function AttachStandAloneFlows({
     setSelected(flows);
   };
 
+  const exports = useSelector(
+    state => selectors.resourceList(state, { type: 'exports' }).resources
+  );
+  const imports = useSelector(
+    state => selectors.resourceList(state, { type: 'imports' }).resources
+  );
+  const connections = useSelector(
+    state => selectors.resourceList(state, { type: 'connections' }).resources
+  );
   const dispatch = useDispatch();
   const getAllTheConnectionIdsUsedInTheFlow = flow => {
     const exportIds = [];
@@ -60,7 +70,7 @@ export default function AttachStandAloneFlows({
     }
 
     if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-      flow.pageProcessors.each(pp => {
+      flow.pageProcessors.forEach(pp => {
         if (pp._exportId) {
           exportIds.push(pp._exportId);
         }
@@ -72,7 +82,7 @@ export default function AttachStandAloneFlows({
     }
 
     if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-      flow.pageGenerators.each(pg => {
+      flow.pageGenerators.forEach(pg => {
         if (pg._exportId) {
           exportIds.push(pg._exportId);
         }
@@ -82,6 +92,31 @@ export default function AttachStandAloneFlows({
         }
       });
     }
+
+    const AttachedExports =
+      exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+    const AttachedImports =
+      imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+    AttachedExports.forEach(exp => {
+      if (exp && exp._connectionId) {
+        connectionIds.push(exp._connectionId);
+      }
+    });
+    AttachedImports.forEach(imp => {
+      if (imp && imp._connectionId) {
+        connectionIds.push(imp._connectionId);
+      }
+    });
+    const AttachedConnections =
+      connections &&
+      connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+    AttachedConnections.forEach(conn => {
+      if (conn && conn._borrowConcurrencyFromConnectionId) {
+        borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
 
     return _.uniq(connectionIds.concat(borrowConnectionIds));
   };
@@ -109,7 +144,9 @@ export default function AttachStandAloneFlows({
         getAllTheConnectionIdsUsedInTheFlow(f)
       );
     });
-
+    dispatch(
+      actions.connection.requestRegister(connectionIdsToRegister, integrationId)
+    );
     onClose();
   };
 
@@ -137,7 +174,7 @@ export default function AttachStandAloneFlows({
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleAttachFlowsClick}>Register</Button>
+        <Button onClick={handleAttachFlowsClick}>Attach</Button>
       </DialogActions>
     </Dialog>
   );

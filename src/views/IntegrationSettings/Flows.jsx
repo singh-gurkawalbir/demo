@@ -53,7 +53,7 @@ function Flows(props) {
           onClose={() => setAttachFlowsDialog(false)}
         />
       )}
-      <LoadResources required resources="flows">
+      <LoadResources required resources="flows, connections, exports, imports">
         {integrationId && integrationId !== 'none' && (
           <Button
             className={classes.registerButton}
