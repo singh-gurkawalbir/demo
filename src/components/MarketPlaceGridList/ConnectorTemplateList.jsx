@@ -68,7 +68,7 @@ export default function ConnectorTemplateList(props) {
         l.type === 'connector' &&
         l._connectorId === connector._id &&
         !l._integrationId &&
-        l.sandbox === sandbox
+        !!l.sandbox === sandbox
       ) {
         hasLicense = true;
       }
