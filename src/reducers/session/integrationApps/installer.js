@@ -9,16 +9,16 @@ export default (state = {}, action) => {
       return;
     }
 
-    if (!draft[id]) {
-      draft[id] = {};
-    }
-
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
         draft[id] = {};
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.UPDATE:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
+
         if (update === 'inProgress') {
           draft[id].isTriggered = true;
         } else if (update === 'verify') {

@@ -10,10 +10,6 @@ export default (state = {}, action) => {
       return;
     }
 
-    if (!draft[id]) {
-      draft[id] = {};
-    }
-
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.STORE.RECEIVED:
@@ -21,7 +17,7 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.STORE.COMPLETE:
         steps.forEach(step => {
-          const stepIndex = draft[id].findIndex(
+          const stepIndex = (draft[id] || []).findIndex(
             s => s.installerFunction === step.installerFunction
           );
 
@@ -36,25 +32,27 @@ export default (state = {}, action) => {
         });
         break;
       case actionTypes.INTEGRATION_APPS.STORE.CLEAR:
-        draft[id] = undefined;
+        delete draft[id];
         break;
       case actionTypes.INTEGRATION_APPS.STORE.UPDATE:
         step = (draft[id] || []).find(
           s => s.installerFunction === installerFunction
         );
 
-        if (update === 'inProgress') {
-          step.isTriggered = true;
-        } else if (update === 'verify') {
-          step.verifying = true;
-          step.isTriggered = true;
-        } else if (update === 'failed') {
-          step.verifying = false;
-          step.isTriggered = false;
-        } else if (update === 'completed') {
-          step.isTriggered = false;
-          step.verifying = false;
-          step.completed = true;
+        if (step) {
+          if (update === 'inProgress') {
+            step.isTriggered = true;
+          } else if (update === 'verify') {
+            step.verifying = true;
+            step.isTriggered = true;
+          } else if (update === 'failed') {
+            step.verifying = false;
+            step.isTriggered = false;
+          } else if (update === 'completed') {
+            step.isTriggered = false;
+            step.verifying = false;
+            step.completed = true;
+          }
         }
 
         break;

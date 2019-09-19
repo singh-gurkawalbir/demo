@@ -10,23 +10,19 @@ export default (state = {}, action) => {
       return;
     }
 
-    if (!draft[id]) {
-      draft[id] = {};
-    }
-
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL:
-        draft[id] = {};
+        draft[id] = [];
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_UNINSTALL_STEPS:
-        draft[id].uninstall = uninstallSteps;
+        draft[id] = uninstallSteps;
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.CLEAR:
-        draft[id] = {};
+        delete draft[id];
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.UPDATE:
-        step = (draft[id].uninstall || []).find(
+        step = (draft[id] || []).find(
           s => s.uninstallerFunction === uninstallerFunction
         );
 
@@ -54,9 +50,9 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function uninstallSteps(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return [];
   }
 
-  return state[id].uninstall;
+  return state[id];
 }
 // #endregion
