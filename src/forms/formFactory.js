@@ -112,7 +112,7 @@ const getResourceFormAssets = ({
           meta = meta.new;
         }
         // get edit form meta branch
-        else if (type === 'netsuite') {
+        else if (type === 'netsuite' && resourceType === 'exports') {
           meta = meta.netsuite[resource.netsuite.type];
         } else if (resource && resource.assistant) {
           meta = meta.custom.http.assistantDefinition(

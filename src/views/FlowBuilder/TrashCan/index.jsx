@@ -30,13 +30,13 @@ export default function TrashCan({ className, onDrop, ...rest }) {
   const classes = useStyles();
   const ref = useRef(null);
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: itemTypes.PAGE_PROCESSOR,
+    accept: [itemTypes.PAGE_PROCESSOR, itemTypes.PAGE_GENERATOR],
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
     drop(item) {
-      onDrop(item.index);
+      onDrop(item);
     },
   });
 

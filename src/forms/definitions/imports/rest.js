@@ -64,8 +64,7 @@ export default {
     },
     'rest.sampleData': { fieldId: 'rest.sampleData' },
     dataMappings: { formId: 'dataMappings' },
-    idLockTemplate: { fieldId: 'idLockTemplate' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
+    advancedSettings: { formId: 'advancedSettings' },
     hooks: { formId: 'hooks' },
   },
   layout: {
@@ -99,11 +98,7 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['idLockTemplate', 'dataURITemplate'],
-      },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
       {
         collapsed: false,
         label: 'Hooks (Optional, Developers Only)',

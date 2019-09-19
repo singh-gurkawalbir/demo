@@ -13,6 +13,7 @@ import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
+import itemTypes from './itemTypes';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -65,12 +66,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 3, 0),
   },
 }));
-const pageGenerators = [
-  { name: 'g1' },
-  { name: 'g2' },
-  { name: 'g3' },
-  { name: 'g4' },
-];
 
 function FlowBuilder(props) {
   const { match } = props;
@@ -78,11 +73,17 @@ function FlowBuilder(props) {
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [size, setSize] = useState(0);
+  const [pageGenerators, setPageGenerators] = useState([
+    { _id: 1, name: 'G1' },
+    { _id: 2, name: 'G2' },
+    { _id: 3, name: 'G3' },
+    { _id: 4, name: 'G4' },
+  ]);
   const [pageProcessors, setPageProcessors] = useState([
-    { _id: 11, name: 'p1' },
-    { _id: 22, name: 'p2' },
-    { _id: 33, name: 'p3' },
-    { _id: 44, name: 'p4' },
+    { _id: 11, name: 'P1' },
+    { _id: 22, name: 'P2' },
+    { _id: 33, name: 'P3' },
+    { _id: 44, name: 'P4' },
   ]);
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
@@ -96,13 +97,22 @@ function FlowBuilder(props) {
     [pageProcessors]
   );
   const handleDelete = useCallback(
-    index => {
-      const newOrder = [...pageProcessors];
+    ({ index, type }) => {
+      if (type === itemTypes.PAGE_PROCESSOR) {
+        const newOrder = [...pageProcessors];
 
-      newOrder.splice(index, 1);
-      setPageProcessors(newOrder);
+        newOrder.splice(index, 1);
+        setPageProcessors(newOrder);
+      }
+
+      if (type === itemTypes.PAGE_GENERATOR) {
+        const newOrder = [...pageGenerators];
+
+        newOrder.splice(index, 1);
+        setPageGenerators(newOrder);
+      }
     },
-    [pageProcessors]
+    [pageGenerators, pageProcessors]
   );
 
   return (

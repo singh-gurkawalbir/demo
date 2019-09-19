@@ -24,6 +24,7 @@ export default {
 
     return null;
   },
+
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -119,8 +120,7 @@ export default {
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
-    idLockTemplate: { fieldId: 'idLockTemplate' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
+    advancedSettings: { formId: 'advancedSettings' },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
     hooks: { formId: 'hooks' },
@@ -176,8 +176,7 @@ export default {
           'file.csv.replaceTabWithSpace',
           'file.csv.replaceNewLineWithSpace',
           'http.ignoreEmptyNodes',
-          'idLockTemplate',
-          'dataURITemplate',
+          'advancedSettings',
           'http.configureAsyncHelper',
           'http._asyncHelperId',
         ],
