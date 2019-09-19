@@ -155,3 +155,6 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+
+export const CONTACT_SALES_MESSAGE =
+  'Your request has been received. We will contact you soon to learn more about your needs. Meanwhile, please checkout';

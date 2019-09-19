@@ -15,6 +15,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
+import { CONTACT_SALES_MESSAGE } from '../../utils/constants';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -135,12 +136,10 @@ export default function ConnectorTemplateList(props) {
       {showMessage && (
         <Dialog open onClose={() => setShowMessage(false)}>
           <DialogContent>
-            Your request has been received. We will contact you soon to learn
-            more about your needs. Meanwhile, please checkout
+            {CONTACT_SALES_MESSAGE}
             <Link href="http://www.celigo.com/integration-marketplace">
               http://www.celigo.com/integration-marketplace
             </Link>
-            for more information.
           </DialogContent>
         </Dialog>
       )}
