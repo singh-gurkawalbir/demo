@@ -1,12 +1,14 @@
 import { useReducer, useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
+import {
+  Button,
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  DialogActions,
+} from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
@@ -301,7 +303,7 @@ export default function ImportMapping(props) {
     });
   };
 
-  const handledelete = row => {
+  const handleDelete = row => {
     dispatchLocalAction({
       type: 'REMOVE',
       index: row,
@@ -382,7 +384,7 @@ export default function ImportMapping(props) {
                       <IconButton
                         aria-label="delete"
                         onClick={() => {
-                          handledelete(mapping.index);
+                          handleDelete(mapping.index);
                         }}
                         className={classes.margin}>
                         <CloseIcon style={svgFontSizes(24)} />

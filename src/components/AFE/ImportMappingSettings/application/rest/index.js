@@ -1,50 +1,20 @@
+import dateTimezones from '../../../../../utils/dateTimezones';
 import fieldExpressions from '../../../../../utils/fieldExpressions';
 import utilityFunctions from '../../../../../utils/utilityFunctions';
 
-const getFieldMappingType = value => {
-  if (value.lookupName) {
-    return 'lookup';
-  } else if ('hardCodedValue' in value) {
-    return 'hardCoded';
-  } else if (value.extract && value.extract.indexOf('{{') !== -1) {
-    return 'multifield';
-  }
-
-  return 'standard';
-};
-
-const getDefaultValue = value => {
-  if ('default' in value || 'hardCodedValue' in value) {
-    const defaultVal = value.default || value.hardCodedValue;
-
-    switch (defaultVal) {
-      case '':
-        return 'useEmptyString';
-      case null:
-        return 'useNull';
-      default:
-        return 'default';
-    }
-  }
-};
-
-const getDefaultExpression = value => {
-  if (value.extract && value.extract.indexOf('{{') !== -1) {
-    return value.extract;
-  }
-};
-
 export default {
   getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields } = options;
+    const { value, lookup = {}, extractFields, defaultUtil = {} } = options;
     const fieldMeta = {
       fields: [
         {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
-          label: 'Data Type:',
-          defaultValue: value.dataType,
+          label: 'Data Type',
+          defaultValue:
+            defaultUtil.getDefaultDataType &&
+            defaultUtil.getDefaultDataType(value),
           options: [
             {
               items: [
@@ -63,29 +33,23 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
-          label: 'Discard If Empty:',
+          label: 'Discard If Empty',
         },
-
         {
           id: 'immutable',
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
-          label: 'Immutable (Advanced):',
-        },
-        {
-          id: 'useAsAnInitializeValue',
-          name: 'useAsAnInitializeValue',
-          type: 'checkbox',
-          defaultValue: value.useAsAnInitializeValue || false,
-          label: 'Use This Field During Record Initialization:',
+          label: 'Immutable (Advanced)',
         },
         {
           id: 'restImportFieldMappingSettings',
           name: 'restImportFieldMappingSettings',
           type: 'radiogroup',
-          label: 'Field Mapping Type:',
-          defaultValue: getFieldMappingType(value),
+          label: 'Field Mapping Type',
+          defaultValue:
+            defaultUtil.getFieldMappingType &&
+            defaultUtil.getFieldMappingType(value),
           showOptionsHorizontally: true,
           fullWidth: true,
           options: [
@@ -106,7 +70,7 @@ export default {
           label: '',
           showOptionsHorizontally: true,
           fullWidth: true,
-          defaultValue: lookup && lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup.map ? 'static' : 'dynamic',
           visibleWhen: [
             {
               field: 'restImportFieldMappingSettings',
@@ -116,90 +80,103 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: NetSuite Search', value: 'dynamic' },
+                { label: 'Dynamic Search', value: 'dynamic' },
                 { label: 'Static: Value to Value', value: 'static' },
               ],
             },
           ],
         },
-        // TODO
+        {
+          id: 'lookup.relativeURI',
+          name: '_relativeURI',
+          type: 'text',
+          label: 'Relative URI',
+          placeholder: 'Relative URI',
+          defaultValue: lookup.relativeURI,
+          visibleWhenAll: [
+            {
+              field: 'restImportFieldMappingSettings',
+              is: ['lookup'],
+            },
+            {
+              field: 'lookup.mode',
+              is: ['dynamic'],
+            },
+          ],
+        },
+        {
+          id: 'lookup.method',
+          name: '_method',
+          type: 'select',
+          label: 'HTTP Method',
+          placeholder: 'Required',
+          defaultValue: lookup.method,
+          options: [
+            {
+              heading: 'Select Http Method',
+              items: [
+                {
+                  label: 'GET',
+                  value: 'GET',
+                },
+                {
+                  label: 'POST',
+                  value: 'POST',
+                },
+              ],
+            },
+          ],
+          visibleWhenAll: [
+            {
+              field: 'restImportFieldMappingSettings',
+              is: ['lookup'],
+            },
+            {
+              field: 'lookup.mode',
+              is: ['dynamic'],
+            },
+          ],
+        },
+        {
+          id: 'lookup.body',
+          name: '_body',
+          type: 'httprequestbody',
+          label: 'Build HTTP Request Body',
+          defaultValue: lookup.body || '',
+          visibleWhenAll: [
+            {
+              field: 'restImportFieldMappingSettings',
+              is: ['lookup'],
+            },
+            {
+              field: 'lookup.mode',
+              is: ['dynamic'],
+            },
+            {
+              field: 'lookup.method',
+              is: ['POST'],
+            },
+          ],
+        },
+        {
+          id: 'lookup.extract',
+          name: '_extract',
+          type: 'text',
+          label: 'Resource Identifier Path',
+          placeholder: 'Resource Identifier Path',
+          defaultValue: lookup.extract,
+          visibleWhenAll: [
+            {
+              field: 'restImportFieldMappingSettings',
+              is: ['lookup'],
+            },
+            {
+              field: 'lookup.mode',
+              is: ['dynamic'],
+            },
+          ],
+        },
 
-        // {
-        //   id: 'lookup.recordType',
-        //   name: '_recordType',
-        //   label: 'Search Record Type:',
-        //   type: 'refreshableselect',
-        //   mode: 'suitescript',
-        //   resourceType: 'recordTypes',
-        //   connectionId: '5c88a4bb26a9676c5d706324',
-        //   // TODO
-        //   defaultValue: '',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'restImportFieldMappingSettings',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.queryBuilder',
-        //   name: '_queryBuilder',
-        //   label: '',
-        //   type: 'queryBuilder',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'restImportFieldMappingSettings',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.expression',
-        //   name: '_expression',
-        //   label: 'Lookup Filter Expression:',
-        //   type: 'text',
-
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'restImportFieldMappingSettings',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.resultField',
-        //   name: '_resultField',
-        //   label: 'Value Field:',
-        //   refreshOptionsOnChangesTo: ['lookup.recordType'],
-        //   type: 'refreshableselect',
-        //   mode: 'suitescript',
-        //   resourceType: 'recordTypes',
-        //   connectionId: '5c88a4bb26a9676c5d706324',
-        //   filterKey: 'myFilter',
-        //   defaultValue: '',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'restImportFieldMappingSettings',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
         {
           id: 'lookup.mapList',
           name: '_mapList',
@@ -208,8 +185,8 @@ export default {
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
-          map: lookup && lookup.map,
+          valueLabel: 'Import Field (REST)',
+          map: lookup.map,
           visibleWhenAll: [
             {
               field: 'restImportFieldMappingSettings',
@@ -221,11 +198,12 @@ export default {
             },
           ],
         },
+        // TODO (Aditya) : resetting function after selection
         {
           id: 'functions',
           name: 'functions',
           type: 'select',
-          label: 'Function:',
+          label: 'Function',
           options: [
             {
               items:
@@ -244,11 +222,12 @@ export default {
             },
           ],
         },
+        // TODO (Aditya) : resetting Field after selection
         {
           id: 'extract',
           name: 'extract',
           type: 'select',
-          label: 'Field:',
+          label: 'Field',
           options: [
             {
               items:
@@ -272,8 +251,10 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
-          label: 'Expression:',
-          defaultValue: getDefaultExpression(value),
+          label: 'Expression',
+          defaultValue:
+            defaultUtil.getDefaultExpression &&
+            defaultUtil.getDefaultExpression(value),
           visibleWhen: [
             {
               field: 'restImportFieldMappingSettings',
@@ -285,17 +266,26 @@ export default {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue: getDefaultValue(value),
+          defaultValue:
+            defaultUtil.getDefaultValue && defaultUtil.getDefaultValue(value),
           refreshOptionsOnChangesTo: ['restImportFieldMappingSettings'],
-          label: '',
-          visibleWhen: [
+          label: 'Action to take if value not found',
+          options: [
             {
-              field: 'restImportFieldMappingSettings',
-              is: ['hardCoded'],
-            },
-            {
-              field: 'restImportFieldMappingSettings',
-              is: ['lookup'],
+              items: [
+                {
+                  label: `Use Empty String as Default Value`,
+                  value: 'useEmptyString',
+                },
+                {
+                  label: 'Use Null as Default Value',
+                  value: 'useNull',
+                },
+                {
+                  label: 'Use Custom Default Value',
+                  value: 'default',
+                },
+              ],
             },
           ],
         },
@@ -303,13 +293,85 @@ export default {
           id: 'default',
           name: 'default',
           type: 'text',
-          label: 'Enter Default Value:',
+          label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
           defaultValue: value.default,
           visibleWhen: [
             {
               field: 'standardAction',
               is: ['default'],
+            },
+          ],
+        },
+        {
+          id: 'exportDateFormat',
+          name: 'exportDateFormat',
+          type: 'text',
+          label: 'Export Date Format',
+          placeholder: '',
+          visibleWhen: [
+            {
+              field: 'dataType',
+              is: ['date'],
+            },
+          ],
+        },
+        {
+          id: 'exportDateTimeZone',
+          name: 'exportDateTimeZone',
+          type: 'select',
+          label: 'Export Date TimeZone',
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.label,
+                    value: date.value,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [
+            {
+              field: 'dataType',
+              is: ['date'],
+            },
+          ],
+        },
+        {
+          id: 'importDateFormat',
+          name: 'importDateFormat',
+          type: 'text',
+          label: 'Import Date Format',
+          placeholder: '',
+          visibleWhen: [
+            {
+              field: 'dataType',
+              is: ['date'],
+            },
+          ],
+        },
+        {
+          id: 'importDateTimeZone',
+          name: 'importDateTimeZone',
+          type: 'select',
+          label: 'Import Date TimeZone',
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.label,
+                    value: date.value,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [
+            {
+              field: 'dataType',
+              is: ['date'],
             },
           ],
         },
@@ -333,18 +395,6 @@ export default {
             );
 
           return expressionValue;
-        } else if (fieldId === 'lookup.resultField') {
-          const recordTypeField = fields.find(
-            field => field.id === 'lookup.recordType'
-          );
-
-          return {
-            resourceToFetch:
-              recordTypeField &&
-              recordTypeField.value &&
-              `recordTypes/${recordTypeField.value}/searchColumns`,
-            resetValue: [],
-          };
         } else if (fieldId === 'standardAction') {
           const actionField = fields.find(
             field => field.id === 'restImportFieldMappingSettings'
@@ -394,6 +444,24 @@ export default {
                 },
               ];
             default:
+              return [
+                {
+                  items: [
+                    {
+                      label: `Use Empty String as Default Value`,
+                      value: 'useEmptyString',
+                    },
+                    {
+                      label: 'Use Null as Default Value',
+                      value: 'useNull',
+                    },
+                    {
+                      label: 'Use Custom Default Value',
+                      value: 'default',
+                    },
+                  ],
+                },
+              ];
           }
         }
 
@@ -403,10 +471,4 @@ export default {
 
     return fieldMeta;
   },
-  // getFormattedValue: value => {
-  //   const formattedObj = {};
-
-  //   formattedObj.generateFieldSelectOptions = {};
-  //   formattedObj.wsGenerateFieldSelectOptions = { options: {} };
-  // },
 };

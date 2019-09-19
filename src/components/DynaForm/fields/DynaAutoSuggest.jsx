@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
-import FormControl from '@material-ui/core/FormControl';
+import { Input, FormControl } from '@material-ui/core';
+import KeyCodes from '../../../utils/keyCodes';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -151,7 +151,7 @@ export default function DynaAutoSuggest(props) {
 
     // User pressed the enter key, update the input and close the
     // suggestions
-    if (e.keyCode === 13) {
+    if (e.keyCode === KeyCodes.ENTER) {
       setSuggestionConfig({
         ...suggestionConfig,
         activeSuggestion: 0,
@@ -160,7 +160,7 @@ export default function DynaAutoSuggest(props) {
       });
     }
     // User pressed the up arrow, decrement the index
-    else if (e.keyCode === 38) {
+    else if (e.keyCode === KeyCodes.ARROW_UP) {
       if (activeSuggestion === 0) {
         return;
       }
@@ -171,7 +171,7 @@ export default function DynaAutoSuggest(props) {
       });
     }
     // User pressed the down arrow, increment the index
-    else if (e.keyCode === 40) {
+    else if (e.keyCode === KeyCodes.ARROW_DOWN) {
       if (activeSuggestion - 1 === filteredSuggestions.length) {
         return;
       }
@@ -198,6 +198,7 @@ export default function DynaAutoSuggest(props) {
             }
 
             return (
+              // TODO (Aditya): Check for alternative. Tslint is through error for onClick on li element
               // eslint-disable-next-line
               <li className={className} key={options} onClick={onClick}>
                 {suggestion}
