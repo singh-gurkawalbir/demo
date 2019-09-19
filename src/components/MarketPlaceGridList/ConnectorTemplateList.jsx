@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core';
+import { Link as RouterLink } from 'react-router-dom';
 import { getApplicationConnectors } from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -102,6 +103,7 @@ export default function ConnectorTemplateList(props) {
               {canInstallConnector(connector) ? (
                 <Button
                   to={getRoutePath('/integrations')}
+                  component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
                   variant="contained">
                   Install
