@@ -32,7 +32,6 @@ import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaImportMapping from './DynaImportMapping';
-import DynaQueryBuilder from './DynaQueryBuilder';
 
 export default {
   mapping: DynaImportMapping,
@@ -71,5 +70,4 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
-  queryBuilder: DynaQueryBuilder,
 };
