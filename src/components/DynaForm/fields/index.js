@@ -32,11 +32,10 @@ import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaImportMapping from './DynaImportMapping';
-import DynaMappingSettings from './DynaMappingSettings';
+import DynaQueryBuilder from './DynaQueryBuilder';
 
 export default {
-  dynamapping: DynaImportMapping,
-  dynamappingsettings: DynaMappingSettings,
+  mapping: DynaImportMapping,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
@@ -72,4 +71,5 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
+  queryBuilder: DynaQueryBuilder,
 };
