@@ -2,11 +2,13 @@ import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../ResourceList/ResourceTable';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import AttachFlows from '../../components/AttachFlows';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(() => ({
   registerButton: {
@@ -54,6 +56,12 @@ function Flows(props) {
         />
       )}
       <LoadResources required resources="flows, connections, exports, imports">
+        <Button
+          className={classes.registerButton}
+          component={Link}
+          to={getRoutePath(`/integrations/${integrationId}/data-loader`)}>
+          Load Data
+        </Button>
         {integrationId && integrationId !== 'none' && (
           <Button
             className={classes.registerButton}
@@ -61,6 +69,12 @@ function Flows(props) {
             Attach Flows
           </Button>
         )}
+        <Button
+          className={classes.registerButton}
+          component={Link}
+          to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
+          Create Flow
+        </Button>
 
         <ResourceTable resourceType="flows" resources={flows} />
       </LoadResources>
