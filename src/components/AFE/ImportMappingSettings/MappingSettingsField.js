@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import ImportMappingSettings from '../../../components/AFE/ImportMappingSettings';
+import ImportMappingSettings from './';
 
 const SettingsIcon = require('../../../components/icons/SettingsIcon').default;
 
@@ -9,7 +9,7 @@ const svgFontSizes = size => ({
   marginRight: 10,
 });
 
-export default function DynaMappingSettings(props) {
+export default function MappingSettingsField(props) {
   const {
     id,
     onSave,
@@ -19,9 +19,9 @@ export default function DynaMappingSettings(props) {
     updateLookup,
     value,
   } = props;
-  const [showEditor, setShowEditor] = useState(false);
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
+  const [isSettingsShown, showSettings] = useState(false);
+  const handleBtnClick = () => {
+    showSettings(!isSettingsShown);
   };
 
   const handleClose = (shouldCommit, settings) => {
@@ -29,12 +29,12 @@ export default function DynaMappingSettings(props) {
       onSave(id, settings);
     }
 
-    handleEditorClick();
+    handleBtnClick();
   };
 
   return (
     <Fragment>
-      {showEditor && (
+      {isSettingsShown && (
         <ImportMappingSettings
           id={id}
           application={application}
@@ -46,10 +46,7 @@ export default function DynaMappingSettings(props) {
           extractFields={extractFields}
         />
       )}
-      <IconButton
-        aria-label="delete"
-        onClick={handleEditorClick}
-        key="settings">
+      <IconButton aria-label="delete" onClick={handleBtnClick} key="settings">
         <SettingsIcon style={svgFontSizes(24)} />
       </IconButton>
     </Fragment>

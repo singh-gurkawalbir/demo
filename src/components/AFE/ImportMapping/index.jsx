@@ -12,7 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
-import DynaMappingSettings from '../../DynaForm/fields/DynaMappingSettings';
+import DynaMappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import MappingUtil from '../../../utils/mapping';
@@ -135,7 +135,7 @@ export default function ImportMapping(props) {
     mappings = {},
     lookups,
     application,
-    isStandAloneMapping,
+    isStandaloneMapping,
     generateFields,
     extractFields,
     resourceId,
@@ -237,7 +237,7 @@ export default function ImportMapping(props) {
 
     if (validateMapping(mappings)) {
       // case where its standalone mapping. Save directly to server.
-      if (isStandAloneMapping) {
+      if (isStandaloneMapping) {
         const patchSet = [
           {
             op: 'replace',
@@ -421,7 +421,7 @@ export default function ImportMapping(props) {
         </div>
       </DialogContent>
       <DialogActions>
-        {!isStandAloneMapping && (
+        {!isStandaloneMapping && (
           <Button
             onClick={() => {
               onClose(false);
@@ -431,7 +431,7 @@ export default function ImportMapping(props) {
             Cancel
           </Button>
         )}
-        {isStandAloneMapping && (
+        {isStandaloneMapping && (
           <Button
             onClick={() => handleSubmit(false)}
             variant="contained"
@@ -445,7 +445,7 @@ export default function ImportMapping(props) {
           variant="contained"
           size="small"
           color="secondary">
-          {isStandAloneMapping ? 'Save and Close' : 'Save'}
+          {isStandaloneMapping ? 'Save and Close' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

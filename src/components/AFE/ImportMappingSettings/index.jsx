@@ -8,7 +8,6 @@ import {
 } from '@material-ui/core';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
-import LoadResources from '../../LoadResources';
 import ApplicationMappingSettings from './application';
 
 const useStyles = makeStyles(() => ({
@@ -58,19 +57,17 @@ export default function ImportMappingSettings(props) {
     <Dialog open maxWidth={false}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent className={classes.modalContent}>
-        <LoadResources resources="imports, connections" required>
-          <DynaForm
-            fieldMeta={fieldMeta}
-            optionsHandler={fieldMeta.optionsHandler}>
-            <Button
-              onClick={() => {
-                onClose(false);
-              }}>
-              Cancel
-            </Button>
-            <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
-          </DynaForm>
-        </LoadResources>
+        <DynaForm
+          fieldMeta={fieldMeta}
+          optionsHandler={fieldMeta.optionsHandler}>
+          <Button
+            onClick={() => {
+              onClose(false);
+            }}>
+            Cancel
+          </Button>
+          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+        </DynaForm>
       </DialogContent>
     </Dialog>
   );

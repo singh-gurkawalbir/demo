@@ -60,7 +60,7 @@ export default {
     ],
   },
   mapping: {
-    type: 'dynamapping',
+    type: 'mapping',
     label: 'Manage Import Mapping',
   },
   'rest.successPath': {

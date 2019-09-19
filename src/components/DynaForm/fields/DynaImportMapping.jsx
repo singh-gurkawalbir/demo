@@ -4,7 +4,7 @@ import ImportMapping from '../../../components/AFE/ImportMapping';
 
 /*
 lookups and lookupId is passed in options
-
+Passing isStandaloneMapping with options will render Mapping as standalone component where user is able to save the mappings directly to server
 */
 export default function DynaImportMapping(props) {
   const {
@@ -16,7 +16,7 @@ export default function DynaImportMapping(props) {
     value,
     resourceId,
   } = props;
-  const { lookupId, lookups, isStandAloneMapping } = options;
+  const { lookupId, lookups, isStandaloneMapping } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
   /*
      Using dummy data for functionality demonstration. generate fields and
@@ -49,7 +49,7 @@ export default function DynaImportMapping(props) {
           id={id}
           application={application}
           lookups={lookups}
-          isStandAloneMapping={isStandAloneMapping}
+          isStandaloneMapping={isStandaloneMapping}
           resourceId={resourceId}
           mappings={value}
           generateFields={generateFields || []}
