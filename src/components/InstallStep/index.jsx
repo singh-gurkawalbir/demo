@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Grid } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
+import formattedImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(() => ({
   step: {
@@ -74,10 +75,7 @@ export default function InstallationStep(props) {
         <Grid item xs={2} className={classes.step}>
           <img
             alt=""
-            src={
-              process.env.CDN_BASE_URI +
-              step.imageURL.replace(/^\/images\//, '')
-            }
+            src={process.env.CDN_BASE_URI + formattedImageUrl(step.imageURL)}
           />
         </Grid>
         <Grid item xs={2} className={classes.step}>
