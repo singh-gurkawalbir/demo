@@ -11,7 +11,7 @@ export default {
   }),
   fields: [
     { fieldId: 'name' },
-    { fieldId: 'http.baseURI' },
+    { fieldId: 'http.baseURI', required: true },
     {
       fieldId: 'http.auth.basic.username',
     },
