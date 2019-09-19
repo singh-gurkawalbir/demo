@@ -47,7 +47,20 @@ function getIntegrationAppsNextState(state, action) {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
-        integration.install = stepsToUpdate;
+        stepsToUpdate.forEach(step => {
+          const stepIndex = integration.install.findIndex(
+            s => s.installerFunction === step.installerFunction
+          );
+
+          if (stepIndex !== -1) {
+            integration.install[stepIndex] = {
+              ...integration.install[stepIndex],
+              ...step,
+              isTriggered: false,
+              verifying: false,
+            };
+          }
+        });
         break;
     }
   });

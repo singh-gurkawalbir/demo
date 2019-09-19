@@ -64,7 +64,7 @@ function Tile({ classes, tile }) {
         {tile.status === 'uninstall' && (
           <Link
             className={classes.navLink}
-            to={getRoutePath(`/integrations/${tile._integrationId}/uninstall`)}>
+            to={getRoutePath(`/connectors/${tile._integrationId}/uninstall`)}>
             Click to continue uninstall.
           </Link>
         )}

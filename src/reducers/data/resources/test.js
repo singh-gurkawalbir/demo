@@ -421,7 +421,9 @@ describe('intetgrationApps installer reducer', () => {
         1
       ).install;
 
-      expect(installStepsAfterAction).toEqual(stepsToUpdate);
+      expect(installStepsAfterAction).toEqual([
+        { a: 1, installerFunction: 'installerFunction' },
+      ]);
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {
       let state;

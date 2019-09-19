@@ -55,7 +55,7 @@ export default function ConnectionModal(props) {
       </DialogTitle>
       <DialogContent style={{ width: '60vw' }}>
         <ResourceForm
-          editMode
+          editMode={false}
           resourceType="connections"
           resourceId={_connectionId}
           onSubmitComplete={onSubmitComplete}
