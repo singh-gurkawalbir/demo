@@ -81,8 +81,8 @@ const resource = {
       resourceType,
       collection,
     }),
-  patch: (resourceType, id, values) =>
-    action(actionTypes.RESOURCE.PATCH, { resourceType, id, values }),
+  patch: (resourceType, id, patchSet) =>
+    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
   delete: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
 

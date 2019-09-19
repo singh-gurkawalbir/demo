@@ -8,7 +8,6 @@ import * as selectors from '../../reducers';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
-import { defaultPatchSetConverter } from '../../forms/utils';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -98,15 +97,12 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   }
 }
 
-export function* patchResource({ resourceType, id, values }) {
+export function* patchResource({ resourceType, id, patchSet }) {
   const isNew = isNewId(id);
 
-  if (!values || isNew) return; // nothing to do.
+  if (!patchSet || isNew) return; // nothing to do.
 
   const path = `/${resourceType}/${id}`;
-  const patchSet = Array.isArray(values)
-    ? values
-    : defaultPatchSetConverter(values);
 
   try {
     yield call(apiCallWithRetry, {

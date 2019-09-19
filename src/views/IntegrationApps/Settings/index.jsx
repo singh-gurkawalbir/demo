@@ -147,7 +147,9 @@ export default function IntegrationAppSettings(props) {
   };
 
   const handleTagChangeHandler = tag => {
-    dispatch(actions.resource.patch('integrations', integrationId, { tag }));
+    const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
+
+    dispatch(actions.resource.patch('integrations', integrationId, patchSet));
   };
 
   return (
