@@ -7,6 +7,8 @@ import { reducer } from './';
  * UPDATE_FIELD, REMOVE, UPDATE_SETTING
  */
 describe('Mappings', () => {
+  const setChangeIdentifier = () => {};
+
   test('Check for invalid action impact on Mapping reducer', () => {
     const state = reducer([], { type: 'RANDOM_ACTION' });
 
@@ -15,7 +17,6 @@ describe('Mappings', () => {
 
   describe('REST Import Mapping', () => {
     test('Check for generate Field change in empty array', () => {
-      const setChangeIdentifier = () => {};
       const mappingReducer = reducer([], {
         type: 'UPDATE_FIELD',
         index: 0,
@@ -29,7 +30,6 @@ describe('Mappings', () => {
     });
 
     test('Check for generate Field change at given position', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -50,7 +50,6 @@ describe('Mappings', () => {
     });
 
     test('Check for extract Field change', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -71,7 +70,6 @@ describe('Mappings', () => {
     });
 
     test('Check for extract Field change for hardcoding with starting and end quotes(")', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -91,7 +89,6 @@ describe('Mappings', () => {
       ]);
     });
     test('Check for extract Field change for hardcoding without entering closing quotes(")', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -111,8 +108,7 @@ describe('Mappings', () => {
       ]);
     });
 
-    test('Case where user tries to set empty extract value to already set field  ', () => {
-      const setChangeIdentifier = () => {};
+    test('Should preserve existing field value when attempting to set empty extract value', () => {
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -133,7 +129,6 @@ describe('Mappings', () => {
     });
 
     test('Case when user tries to set empty generate value to already set field  ', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { extract: 'm2', generate: 'abc2' },
@@ -154,7 +149,6 @@ describe('Mappings', () => {
     });
 
     test('Case when user tries to change hardcoded value', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', hardCodedValueTmp: '"m2"', generate: 'abc2' },
@@ -178,7 +172,6 @@ describe('Mappings', () => {
       ]);
     });
     test('Case when user tries to change hardcoded value to extract value', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', hardCodedValueTmp: '"m2"', generate: 'abc2' },
@@ -199,7 +192,6 @@ describe('Mappings', () => {
     });
 
     test('Removing mapping from list', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', hardCodedValueTmp: '"m2"', generate: 'abc2' },
@@ -217,7 +209,6 @@ describe('Mappings', () => {
     });
 
     test('Updating settings to mapping', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', hardCodedValueTmp: '"m2"', generate: 'abc2' },
@@ -248,7 +239,6 @@ describe('Mappings', () => {
     });
 
     test('Updating settings to mapping', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', generate: 'abc2' },
@@ -279,7 +269,6 @@ describe('Mappings', () => {
     });
 
     test('Updating settings to mapping with invalid index', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', hardCodedValueTmp: '"m2"', generate: 'abc2' },
@@ -304,7 +293,6 @@ describe('Mappings', () => {
     });
 
     test('Updating settings to mapping with additional keys', () => {
-      const setChangeIdentifier = () => {};
       const mapping = [
         { extract: 'm1', generate: 'abc1' },
         { hardCodedValue: 'm2', generate: 'abc2' },
