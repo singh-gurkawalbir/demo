@@ -3,7 +3,6 @@ import abstractImport from './import';
 import ftp from './ftp';
 import http from './http';
 import mongodb from './mongodb';
-import netsuite from './netsuite';
 import netsuiteDistributed from './netsuiteDistributed';
 import rdbms from './rdbms';
 import rest from './rest';
@@ -18,7 +17,6 @@ const allFieldDefinitions = {
   ...ftp,
   ...http,
   ...mongodb,
-  ...netsuite,
   ...netsuiteDistributed,
   ...rdbms,
   ...rest,
