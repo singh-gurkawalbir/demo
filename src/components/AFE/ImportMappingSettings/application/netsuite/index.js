@@ -1,9 +1,10 @@
 import fieldExpressions from '../../../../../utils/fieldExpressions';
 import utilityFunctions from '../../../../../utils/utilityFunctions';
+import mappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields, defaultUtil = {} } = options;
+    const { value, lookup = {}, extractFields } = options;
     const fieldMeta = {
       fields: [
         {
@@ -48,13 +49,11 @@ export default {
           label: 'Use This Field During Record Initialization',
         },
         {
-          id: 'restImportFieldMappingSettings',
-          name: 'restImportFieldMappingSettings',
+          id: 'fieldMappingType',
+          name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue:
-            defaultUtil.getFieldMappingType &&
-            defaultUtil.getFieldMappingType(value),
+          defaultValue: mappingUtil.getFieldMappingType(value),
           showOptionsHorizontally: true,
           fullWidth: true,
           options: [
@@ -78,7 +77,7 @@ export default {
           defaultValue: lookup.map ? 'static' : 'dynamic',
           visibleWhen: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['lookup'],
             },
           ],
@@ -105,7 +104,7 @@ export default {
         //   defaultValue: '',
         //   visibleWhenAll: [
         //     {
-        //       field: 'restImportFieldMappingSettings',
+        //       field: 'fieldMappingType',
         //       is: ['lookup'],
         //     },
         //     {
@@ -121,7 +120,7 @@ export default {
         //   type: 'queryBuilder',
         //   visibleWhenAll: [
         //     {
-        //       field: 'restImportFieldMappingSettings',
+        //       field: 'fieldMappingType',
         //       is: ['lookup'],
         //     },
         //     {
@@ -138,7 +137,7 @@ export default {
 
         //   visibleWhenAll: [
         //     {
-        //       field: 'restImportFieldMappingSettings',
+        //       field: 'fieldMappingType',
         //       is: ['lookup'],
         //     },
         //     {
@@ -160,7 +159,7 @@ export default {
         //   defaultValue: '',
         //   visibleWhenAll: [
         //     {
-        //       field: 'restImportFieldMappingSettings',
+        //       field: 'fieldMappingType',
         //       is: ['lookup'],
         //     },
         //     {
@@ -181,7 +180,7 @@ export default {
           map: lookup.map,
           visibleWhenAll: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['lookup'],
             },
             {
@@ -208,7 +207,7 @@ export default {
           ],
           visibleWhen: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['multifield'],
             },
           ],
@@ -231,7 +230,7 @@ export default {
           ],
           visibleWhen: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['multifield'],
             },
           ],
@@ -242,12 +241,10 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue:
-            defaultUtil.getDefaultExpression &&
-            defaultUtil.getDefaultExpression(value),
+          defaultValue: mappingUtil.getDefaultExpression(value),
           visibleWhen: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['multifield'],
             },
           ],
@@ -256,17 +253,16 @@ export default {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue:
-            defaultUtil.getDefaultValue && defaultUtil.getDefaultValue(value),
-          refreshOptionsOnChangesTo: ['restImportFieldMappingSettings'],
+          defaultValue: mappingUtil.getDefaultActionValue(value),
+          refreshOptionsOnChangesTo: ['fieldMappingType'],
           label: '',
           visibleWhen: [
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['hardCoded'],
             },
             {
-              field: 'restImportFieldMappingSettings',
+              field: 'fieldMappingType',
               is: ['lookup'],
             },
           ],
@@ -319,7 +315,7 @@ export default {
           };
         } else if (fieldId === 'standardAction') {
           const actionField = fields.find(
-            field => field.id === 'restImportFieldMappingSettings'
+            field => field.id === 'fieldMappingType'
           );
 
           switch (actionField.value) {

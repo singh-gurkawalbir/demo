@@ -2,52 +2,6 @@ import utilityFunctions from '../../../../utils/utilityFunctions';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
 
-const getDefaultDataType = value => {
-  if (
-    value.extractDateFormat ||
-    value.extractDateTimezone ||
-    value.generateDateFormat ||
-    value.generateDateTimezone
-  ) {
-    return 'date';
-  }
-
-  return value.dataType;
-};
-
-const getFieldMappingType = value => {
-  if (value.lookupName) {
-    return 'lookup';
-  } else if ('hardCodedValue' in value) {
-    return 'hardCoded';
-  } else if (value.extract && value.extract.indexOf('{{') !== -1) {
-    return 'multifield';
-  }
-
-  return 'standard';
-};
-
-const getDefaultValue = value => {
-  if ('default' in value || 'hardCodedValue' in value) {
-    const defaultVal = value.default || value.hardCodedValue;
-
-    switch (defaultVal) {
-      case '':
-        return 'useEmptyString';
-      case null:
-        return 'useNull';
-      default:
-        return 'default';
-    }
-  }
-};
-
-const getDefaultExpression = value => {
-  if (value.extract && value.extract.indexOf('{{') !== -1) {
-    return value.extract;
-  }
-};
-
 const getFormattedLookup = (lookup, formVal) => {
   const lookupTmp = {};
 
@@ -94,12 +48,6 @@ const getFormattedLookup = (lookup, formVal) => {
 export default {
   getMetaData: options => {
     const { application, value, lookup = {}, extractFields } = options;
-    const defaultUtil = {
-      getDefaultDataType,
-      getFieldMappingType,
-      getDefaultValue,
-      getDefaultExpression,
-    };
     let fieldMeta = {};
 
     switch (application) {
@@ -108,7 +56,6 @@ export default {
           value,
           lookup,
           extractFields,
-          defaultUtil,
         });
         break;
       case 'netsuite':
@@ -116,7 +63,6 @@ export default {
           value,
           lookup,
           extractFields,
-          defaultUtil,
         });
         break;
       default:
@@ -152,7 +98,7 @@ export default {
       settings.immutable = formVal.immutable;
     }
 
-    if (formVal.restImportFieldMappingSettings === 'hardCoded') {
+    if (formVal.fieldMappingType === 'hardCoded') {
       // in case of hardcoded value, we dont save extract property
       switch (formVal.standardAction) {
         case 'useEmptyString':
@@ -167,7 +113,7 @@ export default {
         default:
       }
     } else {
-      if (formVal.restImportFieldMappingSettings === 'multifield') {
+      if (formVal.fieldMappingType === 'multifield') {
         settings.extract = formVal.expression;
       } else {
         settings.extract = extract;
@@ -189,7 +135,7 @@ export default {
 
     let updatedLookup;
 
-    if (formVal.restImportFieldMappingSettings === 'lookup') {
+    if (formVal.fieldMappingType === 'lookup') {
       updatedLookup = getFormattedLookup(lookup, formVal);
 
       settings.lookupName = updatedLookup && updatedLookup.name;
