@@ -1,5 +1,6 @@
 import { useReducer, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import produce from 'immer';
 import {
   Button,
   IconButton,
@@ -55,76 +56,70 @@ export const reducer = (state, action) => {
     setChangeIdentifier,
   } = action;
 
-  switch (type) {
-    case 'REMOVE':
-      setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+  return produce(state, d => {
+    const draft = d;
 
-      return [
-        ...state.slice(0, index),
-        ...state.slice(index + 1, state.length),
-      ];
-    case 'UPDATE_FIELD':
-      if (state[index]) {
-        const objCopy = { ...state[index] };
-        let inputValue = value;
+    switch (type) {
+      case 'REMOVE':
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+        draft.splice(index, 1);
+        break;
+      case 'UPDATE_FIELD':
+        if (state[index]) {
+          const objCopy = { ...state[index] };
+          let inputValue = value;
 
-        if (field === 'extract') {
-          if (inputValue.indexOf('"') === 0) {
-            if (inputValue.charAt(inputValue.length - 1) !== '"')
-              inputValue += '"';
-            delete objCopy.extract;
-            objCopy.hardCodedValue = inputValue.substr(
-              1,
-              inputValue.length - 2
-            );
-            objCopy.hardCodedValueTmp = inputValue;
-          } else {
-            delete objCopy.hardCodedValue;
-
-            if (inputValue === '') {
+          if (field === 'extract') {
+            if (inputValue !== '') {
               /* User removes the extract completely and blurs out, 
-              extract field should be replaced back with last valid content */
-              objCopy.extract = objCopy.extract;
-            } else {
-              objCopy.extract = inputValue;
+              extract field should be replaced back with last valid content
+              Change the extract value only when he has provided valid content
+            */
+
+              if (inputValue.indexOf('"') === 0) {
+                if (inputValue.charAt(inputValue.length - 1) !== '"')
+                  inputValue += '"';
+                delete objCopy.extract;
+                objCopy.hardCodedValue = inputValue.substr(
+                  1,
+                  inputValue.length - 2
+                );
+                objCopy.hardCodedValueTmp = inputValue;
+              } else {
+                delete objCopy.hardCodedValue;
+                objCopy.extract = inputValue;
+              }
             }
+          } else {
+            objCopy[field] = inputValue;
           }
-        } else {
-          objCopy[field] = inputValue;
+
+          setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+          draft[index] = objCopy;
+
+          return;
         }
 
+        draft.push(Object.assign({}, lastRowData, { [field]: value }));
+        break;
+      case 'UPDATE_SETTING':
         setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
 
-        return [
-          ...state.slice(0, index),
-          objCopy,
-          ...state.slice(index + 1, state.length),
-        ];
-      }
+        if (draft[index]) {
+          const valueTmp = { ...value };
 
-      return [...state, Object.assign({}, lastRowData, { [field]: value })];
-    case 'UPDATE_SETTING':
-      setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+          if (valueTmp.hardCodedValue) {
+            valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+          }
 
-      if (state[index]) {
-        const valueTmp = { ...value };
-
-        if (valueTmp.hardCodedValue) {
-          valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+          draft[index] = { ...valueTmp };
         }
 
-        return [
-          ...state.slice(0, index),
-          { ...valueTmp },
-          ...state.slice(index + 1, state.length),
-        ];
-      }
+        break;
 
-      return [...state];
-
-    default:
-      return state;
-  }
+      default:
+    }
+  });
 };
 
 export default function ImportMapping(props) {
@@ -257,12 +252,12 @@ export default function ImportMapping(props) {
         dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
         dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
 
-        // case of Save and Close
+        // Save and Close
         if (closeModal) {
           onClose(false);
         }
       } else {
-        // case where its mapping is behaving as a field. Save to form
+        // case where mapping is used in context with Form. Saving mappings and lookup to form
         onClose(true, mappings, lookupState);
       }
     }

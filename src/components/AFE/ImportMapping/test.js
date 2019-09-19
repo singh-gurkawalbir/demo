@@ -66,7 +66,7 @@ describe('Mappings', () => {
 
       expect(mappingReducer).toMatchObject([
         { extract: 'm1', generate: 'abc1' },
-        { extract: 'dummy' },
+        { extract: 'dummy', generate: 'abc2' },
       ]);
     });
 
