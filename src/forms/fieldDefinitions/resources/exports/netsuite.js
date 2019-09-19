@@ -179,7 +179,7 @@ export default {
   },
 
   'netsuite.netsuiteExportlabel': {
-    label: 'Would you like to transform the records?',
+    label: 'What would you like to export from NetSuite?',
     type: 'labeltitle',
   },
 
