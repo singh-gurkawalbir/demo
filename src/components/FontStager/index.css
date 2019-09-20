@@ -25,12 +25,12 @@
 }
 @font-face {
   font-family: source sans pro;
-  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot');
-  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../../static/fonts/sourcesanspro-regular-webfont.woff2') format('woff2'),
-       url('../../static/fonts/sourcesanspro-regular-webfont.woff') format('woff'),
-       url('../../static/fonts/sourcesanspro-regular-webfont.ttf') format('truetype'),
-       url('../../static/fonts/sourcesanspro-regular-webfont.svg#source_sans_proregular') format('svg');
+  src: url('../../static/fonts/Sourcesanspro-regular-webfont.eot');
+  src: url('../../static/fonts/Sourcesanspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../../static/fonts/Sourcesanspro-regular-webfont.woff2') format('woff2'),
+       url('../../static/fonts/Sourcesanspro-regular-webfont.woff') format('woff'),
+       url('../../static/fonts/Sourcesanspro-regular-webfont.ttf') format('truetype'),
+       url('../../static/fonts/Sourcesanspro-regular-webfont.svg#source_sans_proregular') format('svg');
   font-weight: normal;
   font-style: normal;
 
@@ -42,7 +42,7 @@
        url('../../static/fonts/Consolas.woff2') format('woff2'),
        url('../../static/fonts/Consolas.woff') format('woff'),
        url('../../static/fonts/Consolas.ttf') format('truetype'),
-       url('../../static/fonts/Consolas.svg#source_sans_proregular') format('svg');
+       url('../../static/fonts/Consolas.svg#Consolas') format('svg');
   font-weight: normal;
   font-style: normal;
 
@@ -95,4 +95,7 @@ html, body {
 a{
   text-decoration: none;
   color: #00A1E1;
+}
+.layout > div{
+  margin-bottom: 0px !Important;
 }
