@@ -1,35 +1,32 @@
 export default {
   'assistantMetadata.version': {
-    type: 'importassistantoptions',
+    type: 'assistantoptions',
     assistantFieldType: 'version',
     label: 'API Version',
     required: true,
   },
   'assistantMetadata.resource': {
-    type: 'importassistantoptions',
+    type: 'assistantoptions',
     assistantFieldType: 'resource',
     label: 'API Name',
     required: true,
   },
   'assistantMetadata.operation': {
-    type: 'importassistantoptions',
+    type: 'assistantoptions',
     assistantFieldType: 'operation',
     label: 'Operation',
     required: true,
   },
   'assistantMetadata.ignoreExisting': {
-    type: 'importassistantoptions',
-    assistantFieldType: 'ignoreExisting',
+    type: 'checkbox',
     label: 'Ignore Existing Records?',
   },
   'assistantMetadata.ignoreMissing': {
-    type: 'importassistantoptions',
-    assistantFieldType: 'ignoreMissing',
+    type: 'checkbox',
     label: 'Ignore Missing Records?',
   },
   'assistantMetadata.lookupType': {
-    type: 'importassistantoptions',
-    assistantFieldType: 'lookupType',
+    type: 'select',
     label: 'How should we identify existing records?',
     required: true,
   },

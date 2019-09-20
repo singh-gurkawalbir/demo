@@ -1454,7 +1454,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToImport({ assistantConfig }) {
+export function convertToImport({ assistantConfig, assistantData }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -1464,7 +1464,6 @@ export function convertToImport({ assistantConfig }) {
     pathParams = {},
     lookupUrl,
     lookupType,
-    assistantData,
     ignoreExisting = false,
     ignoreMissing = false,
   } = assistantConfig;

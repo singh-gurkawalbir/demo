@@ -30,7 +30,6 @@ import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
-import DynaImportAssistantOptions from './assistant/DynaImportAssistantOptions';
 import DynaLabelValueElement from './DynaLabelValueElement';
 
 export default {
@@ -68,6 +67,5 @@ export default {
   nssavedsearch: DynaNSSavedSearch,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
-  importassistantoptions: DynaImportAssistantOptions,
   keywithaction: DynaKeyWithAction,
 };
