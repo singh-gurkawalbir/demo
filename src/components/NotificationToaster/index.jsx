@@ -40,27 +40,27 @@ const useStyles = makeStyles(theme => ({
     },
   },
   success: {
-    backgroundColor: fade(theme.palette.background.success, 0.1),
+    backgroundColor: fade(theme.palette.success.main, 0.1),
     '& svg': {
-      color: theme.palette.background.success,
+      color: theme.palette.success.main,
     },
   },
   error: {
-    backgroundColor: fade(theme.palette.background.error, 0.1),
+    backgroundColor: fade(theme.palette.error.main, 0.1),
     '& svg': {
-      color: theme.palette.background.error,
+      color: theme.palette.error.main,
     },
   },
   info: {
-    backgroundColor: fade(theme.palette.background.info, 0.1),
+    backgroundColor: fade(theme.palette.info.main, 0.1),
     '& svg': {
-      color: theme.palette.background.info,
+      color: theme.palette.info.main,
     },
   },
   warning: {
-    backgroundColor: fade(theme.palette.background.warning, 0.1),
+    backgroundColor: fade(theme.palette.warning.main, 0.1),
     '& svg': {
-      color: theme.palette.background.warning,
+      color: theme.palette.warning.main,
     },
   },
   iconVariant: {

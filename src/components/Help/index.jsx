@@ -1,10 +1,10 @@
 import { useState, Fragment } from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import HelpIcon from 'mdi-react/HelpIcon';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
+import HelpIcon from '../../components/icons/HelpIcon';
 
 function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);

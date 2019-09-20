@@ -17,7 +17,7 @@ import CloseIcon from '../icons/CloseIcon';
   modalContent: {
     margin: theme.spacing(0, 1),
     padding: theme.spacing(1, 2),
-    width: '100',
+    minWidth: 450,
   },
   actionButton: {
     float: 'right',
