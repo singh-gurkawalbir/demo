@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
     if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
@@ -8,21 +8,33 @@ export default {
 
     return newValues;
   },
-  fields: [
-    { fieldId: 'name', required: true },
-    { fieldId: 'salesforce.sandbox' },
-    { fieldId: 'salesforce.oauth2FlowType' },
-    { fieldId: 'salesforce.username' },
-  ],
-
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [
-        { fieldId: '_borrowConcurrencyFromConnectionId' },
-        { fieldId: 'salesforce.concurrencyLevel' },
-      ],
+  fieldMap: {
+    name: { fieldId: 'name', required: true },
+    'salesforce.sandbox': { fieldId: 'salesforce.sandbox' },
+    'salesforce.oauth2FlowType': { fieldId: 'salesforce.oauth2FlowType' },
+    'salesforce.username': { fieldId: 'salesforce.username' },
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
     },
-  ],
+    'salesforce.concurrencyLevel': { fieldId: 'salesforce.concurrencyLevel' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'salesforce.sandbox',
+      'salesforce.oauth2FlowType',
+      'salesforce.username',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: [
+          '_borrowConcurrencyFromConnectionId',
+          'salesforce.concurrencyLevel',
+        ],
+      },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'acumatica',
@@ -19,9 +19,9 @@ export default {
       formValues[`/rest/unencrypted/company`]
     }"}`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    instanceURI: {
       id: 'instanceURI',
       type: 'text',
       endAdornment: '/entity',
@@ -37,7 +37,7 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.unencrypted.endpointName': {
       id: 'rest.unencrypted.endpointName',
       type: 'text',
       label: 'Endpoint Name:',
@@ -50,7 +50,7 @@ export default {
           r.rest.unencrypted.endpointName) ||
         'Default',
     },
-    {
+    'rest.unencrypted.endpointVersion': {
       id: 'rest.unencrypted.endpointVersion',
       type: 'text',
       label: 'Endpoint Version:',
@@ -63,17 +63,16 @@ export default {
           r.rest.unencrypted.endpointVersion) ||
         '18.200.001',
     },
-    {
+    'rest.unencrypted.username': {
       id: 'rest.unencrypted.username',
       type: 'text',
       label: 'Username:',
       required: true,
-
       helpText: 'Please enter username of your Acumatica account.',
       defaultValue: r =>
         r && r.rest && r.rest.unencrypted && r.rest.unencrypted.username,
     },
-    {
+    password: {
       id: 'password',
       type: 'text',
       inputType: 'password',
@@ -81,18 +80,27 @@ export default {
       required: true,
       helpText: 'Please enter password of your Acumatica account.',
     },
-    {
+    'rest.unencrypted.company': {
       id: 'rest.unencrypted.company',
       type: 'text',
       label: 'Company:',
       helpText: 'Please enter company name of your Acumatica account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'instanceURI',
+      'rest.unencrypted.endpointName',
+      'rest.unencrypted.endpointVersion',
+      'rest.unencrypted.username',
+      'password',
+      'rest.unencrypted.company',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

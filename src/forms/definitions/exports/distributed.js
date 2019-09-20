@@ -1,4 +1,6 @@
 export default {
-  fields: [{ fieldId: 'distributed.bearerToken' }],
-  fieldSets: [],
+  fieldMap: {
+    'distributed.bearerToken': { fieldId: 'distributed.bearerToken' },
+  },
+  layout: { fields: ['distributed.bearerToken'] },
 };

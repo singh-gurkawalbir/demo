@@ -3,7 +3,7 @@ import { Form } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import getRenderer from './renderer';
-import DynaFormGenerator from './DynaFormGenarator';
+import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
 
 @withStyles(theme => ({

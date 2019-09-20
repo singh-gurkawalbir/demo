@@ -68,7 +68,7 @@ const getResourceFormAssets = ({
 }) => {
   let fieldMap;
   let layout = [];
-  let preSubmit;
+  let preSave;
   let init;
   let actions;
   let meta;
@@ -98,7 +98,7 @@ const getResourceFormAssets = ({
       }
 
       if (meta) {
-        ({ fieldMap, layout, preSubmit, init, actions } = meta);
+        ({ fieldMap, layout, preSave, init, actions } = meta);
       }
 
       break;
@@ -127,7 +127,7 @@ const getResourceFormAssets = ({
         }
 
         if (meta) {
-          ({ fieldMap, layout, init, preSubmit, actions } = meta);
+          ({ fieldMap, layout, init, preSave, actions } = meta);
         }
       }
 
@@ -152,7 +152,7 @@ const getResourceFormAssets = ({
   return {
     fieldMeta: { fieldMap, layout, actions },
     init,
-    preSubmit,
+    preSave,
     optionsHandler,
   };
 };
@@ -212,9 +212,9 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       return acc;
     }, {});
-  const subFormFields = formMeta[resourceType].subForms[f.formId].layout.fields;
+  const subformFields = formMeta[resourceType].subForms[f.formId].layout.fields;
 
-  return { subformfieldMap: transformedFieldMap, subFormFields };
+  return { subformFieldMap: transformedFieldMap, subformFields };
 };
 
 const applyingMissedOutFieldMetaProperties = (
@@ -266,7 +266,7 @@ const applyingMissedOutFieldMetaProperties = (
   return field;
 };
 
-const flattenedfieldMap = (
+const flattenedFieldMap = (
   fields,
   fieldMap,
   resourceType,
@@ -281,15 +281,15 @@ const flattenedfieldMap = (
 
       if (f && f.formId) {
         const {
-          subFormFields,
-          subformfieldMap,
+          subformFields,
+          subformFieldMap,
         } = applyVisibilityRulesToSubForm(f, resourceType);
 
-        resFields.push(...subFormFields);
+        resFields.push(...subformFields);
 
-        return flattenedfieldMap(
-          subFormFields,
-          subformfieldMap,
+        return flattenedFieldMap(
+          subformFields,
+          subformFieldMap,
           resourceType,
           resource,
           ignoreFunctionTransformations,
@@ -338,7 +338,7 @@ const setDefaultsToLayout = (
   const {
     fields: transformedFields,
     fieldMap: transformedFieldRef,
-  } = flattenedfieldMap(
+  } = flattenedFieldMap(
     fields,
     fieldMap,
     resourceType,

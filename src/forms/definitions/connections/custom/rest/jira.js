@@ -19,7 +19,7 @@ export default {
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'jira',
@@ -27,32 +27,33 @@ export default {
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/',
   }),
-
-  fields: [
-    // Fields can be referenced by their fieldDefinition key, and the
-    // framework will fetch the missing values. Any values present in
-    // this file override the references field's props.
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.baseURI': {
       fieldId: 'rest.baseURI',
       helpText:
         'The base URI for JIRA. For example, http://www.company.com/confluence',
     },
-    {
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The username of your JIRA account.',
     },
-    // ...or, we can create completely custom fields like this:
-    {
+    'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your JIRA account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.baseURI',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
