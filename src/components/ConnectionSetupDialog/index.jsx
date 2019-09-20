@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   IconButton,
   Dialog,
-  SvgIcon,
   makeStyles,
   DialogContent,
   DialogTitle,
@@ -11,6 +10,7 @@ import {
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ResourceForm from '../../components/ResourceFormFactory';
+import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(() => ({
   iconButton: {
@@ -47,9 +47,7 @@ export default function ConnectionModal(props) {
             onClick={onClose}
             className={classes.iconButton}
             autoFocus>
-            <SvgIcon>
-              <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-            </SvgIcon>
+            <CloseIcon />
           </IconButton>
         )}
       </DialogTitle>
