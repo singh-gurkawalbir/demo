@@ -17,7 +17,7 @@ function Manage(props) {
   const { children } = props;
 
   return (
-    <IconButton aria-label="manage" className={classes.wrapper}>
+    <IconButton aria-label="manage" className={classes.wrapper} {...props}>
       {children}
     </IconButton>
   );

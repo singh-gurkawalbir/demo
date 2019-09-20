@@ -89,12 +89,16 @@ export default function ConfigureDebugger(props) {
               defaultValue={defaultVal}
               // value={searchType}
               onChange={evt => setDebugValue(evt.target.value)}>
-              <FormControlLabel value="0" control={<Radio />} label="Off" />
+              <FormControlLabel
+                value="0"
+                control={<Radio color="primary" />}
+                label="Off"
+              />
               {['15', '30', '45', '60'].map(duration => (
                 <FormControlLabel
                   key={duration}
                   value={duration}
-                  control={<Radio />}
+                  control={<Radio color="primary" />}
                   label={`Next ${duration} mins`}
                 />
               ))}
