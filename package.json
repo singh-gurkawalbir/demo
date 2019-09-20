@@ -32,8 +32,7 @@
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --no-cache --require dotenv/config && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config",
-    "styleguide-build": "neutrino styleguide:build --require dotenv/config",
-    "genscript": "node -r babel-register src/scripts/metaScript.js"
+    "styleguide-build": "neutrino styleguide:build --require dotenv/config"
   },
   "dependencies": {
     "@material-ui/core": "4.3.2",
