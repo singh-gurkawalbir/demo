@@ -17,6 +17,16 @@ export default {
     label: 'Operation',
     required: true,
   },
+  'assistantMetadata.ignoreExisting': {
+    type: 'importassistantoptions',
+    assistantFieldType: 'ignoreExisting',
+    label: 'Ignore Existing Records?',
+  },
+  'assistantMetadata.ignoreMissing': {
+    type: 'importassistantoptions',
+    assistantFieldType: 'ignoreMissing',
+    label: 'Ignore Missing Records?',
+  },
   'assistantMetadata.lookupType': {
     type: 'importassistantoptions',
     assistantFieldType: 'lookupType',

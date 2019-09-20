@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { isArray } from 'lodash';
-import MaterialUiSelect from '../DynaSelect';
+import DynaSelect from '../DynaSelect';
+import DynaCheckbox from '../DynaCheckbox';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
@@ -68,16 +69,24 @@ export default function DynaImportAssistantOptions(props) {
   }
 
   function onFieldChange(id, value) {
+    console.log(`onFieldChange id ${id} ${value}`);
     props.onFieldChange(id, value);
 
     if (
-      ['version', 'resource', 'operation', 'lookupType'].includes(
-        props.assistantFieldType
-      )
+      [
+        'version',
+        'resource',
+        'operation',
+        'ignoreExisting',
+        'ignoreMissing',
+        'lookupType',
+      ].includes(props.assistantFieldType)
     ) {
       const fieldDependencyMap = {
         version: ['resource', 'operation'],
-        resource: ['operation'],
+        resource: ['operation', 'ignoreExisting', 'ignoreMissing'],
+        ignoreExisting: ['lookupType'],
+        ignoreMissing: ['lookupType'],
       };
       const patch = [];
 
@@ -107,8 +116,12 @@ export default function DynaImportAssistantOptions(props) {
     }
   }
 
+  if (['ignoreExisting', 'ignoreMissing'].includes(props.assistantFieldType)) {
+    return <DynaCheckbox {...props} onFieldChange={onFieldChange} />;
+  }
+
   return (
-    <MaterialUiSelect
+    <DynaSelect
       {...props}
       label={label}
       options={[{ items: selectOptionsItems }]}

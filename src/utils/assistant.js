@@ -20,6 +20,7 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'headers',
   'paging',
   'queryParameters',
+  'requestMediaType',
   'successMediaType',
   'successPath',
 ]);
@@ -253,7 +254,7 @@ export function getVersionDetails({ version, assistantData }) {
     [versionDetails] = assistantData.versions;
   }
 
-  if (versionDetails && versionDetails.version) {
+  if (versionDetails && versionDetails.resources) {
     versionDetails = { ...versionDetails };
     OVERWRITABLE_PROPERTIES.forEach(prop => {
       if (['headers', 'queryParameters'].includes(prop)) {
@@ -324,7 +325,7 @@ export function getResourceDetails({ version, resource, assistantData }) {
     }
   }
 
-  return resourceDetails;
+  return { ...resourceDetails };
 }
 
 export function getExportOperationDetails({
@@ -432,10 +433,35 @@ export function getImportOperationDetails({
     if (operationDetails) {
       // rest- responseIdPath, flattenSampleData, body,successPath,successValues,headers,howToFindIdentifier
       // http- response.resourceIdPath, response.successPath,successMediaType,errorMediaType,requestMediaType,batchSize,body,ignoreEmptyNodes,headers,howToFindIdentifier
-      if (
-        operationDetails.howToFindIdentifier &&
-        operationDetails.howToFindIdentifier.lookup
-      ) {
+
+      OVERWRITABLE_PROPERTIES.forEach(prop => {
+        if (['headers', 'queryParameters'].includes(prop)) {
+          if (Object.prototype.hasOwnProperty.call(resourceDetails, prop)) {
+            if (prop === 'headers') {
+              operationDetails[prop] = mergeHeaders(
+                resourceDetails[prop],
+                operationDetails[prop]
+              );
+            } else if (prop === 'queryParameters') {
+              operationDetails[prop] = mergeQueryParameters(
+                resourceDetails[prop],
+                operationDetails[prop]
+              );
+            }
+          }
+        } else if (
+          !Object.prototype.hasOwnProperty.call(operationDetails, prop) &&
+          Object.prototype.hasOwnProperty.call(resourceDetails, prop)
+        ) {
+          operationDetails[prop] = resourceDetails[prop];
+        }
+      });
+
+      if (!operationDetails.howToFindIdentifier) {
+        operationDetails.howToFindIdentifier = {};
+      }
+
+      if (operationDetails.howToFindIdentifier.lookup) {
         const lookupOperationDetails = getExportOperationDetails({
           version,
           resource,
@@ -1149,7 +1175,27 @@ export function updateFormValues({
 }
 
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
-  let { version, resource, operation } = importDoc.assistantMetadata || {};
+  console.log(
+    `assistantData in convertFromImport ${JSON.stringify(assistantData)}`
+  );
+  let { version, resource, operation, lookupType } =
+    importDoc.assistantMetadata || {};
+  let { ignoreExisting, ignoreMissing } = importDoc;
+
+  if (importDoc.assistantMetadata) {
+    if (
+      Object.hasOwnProperty.call(importDoc.assistantMetadata, 'ignoreExisting')
+    ) {
+      ({ ignoreExisting } = importDoc.assistantMetadata);
+    }
+
+    if (
+      Object.hasOwnProperty.call(importDoc.assistantMetadata, 'ignoreMissing')
+    ) {
+      ({ ignoreMissing } = importDoc.assistantMetadata);
+    }
+  }
+
   const assistantMetadata = {
     pathParams: {},
     queryParams: {},
@@ -1223,6 +1269,11 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   }
 
   const importAdaptorSubSchema = importDoc[adaptorType] || {};
+
+  if (!importAdaptorSubSchema.lookups) {
+    importAdaptorSubSchema.lookups = [];
+  }
+
   let url1Info;
   let url2Info;
 
@@ -1247,7 +1298,6 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   const pathParams = {};
   let queryParams = {};
   const bodyParams = {};
-  let lookupType;
   let lookupUrl;
   let lookupQueryParams;
 
@@ -1299,7 +1349,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       }
 
       if (p.isIdentifier && !pathParams[p.id]) {
-        if (importDoc.ignoreExisting || importDoc.ignoreMissing) {
+        if (ignoreExisting || ignoreMissing) {
           if (importAdaptorSubSchema.ignoreExtract) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreExtract
               .replace(/{/g, '')
@@ -1396,8 +1446,8 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
     pathParams,
     queryParams,
     bodyParams,
-    ignoreExisting: !!importDoc.ignoreExisting,
-    ignoreMissing: !!importDoc.ignoreMissing,
+    ignoreExisting,
+    ignoreMissing,
     lookupType,
     lookupUrl,
     lookupQueryParams,
@@ -1415,6 +1465,8 @@ export function convertToImport({ assistantConfig }) {
     lookupUrl,
     lookupType,
     assistantData,
+    ignoreExisting = false,
+    ignoreMissing = false,
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
@@ -1478,11 +1530,6 @@ export function convertToImport({ assistantConfig }) {
     importDoc.response.successPath = operationDetails.successPath;
   }
   // const identifiers = operationDetails.parameters.filter(p => p.isIdentifier);
-
-  const { ignoreExisting, ignoreMissing } = importDoc;
-
-  delete importDoc.ignoreExisting;
-  delete importDoc.ignoreMissing;
 
   const assistantMetadata = { resource };
 

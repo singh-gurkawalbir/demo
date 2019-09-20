@@ -38,6 +38,11 @@ export default function assistantDefinition(
       assistantData,
       adaptorType: adaptorType === 'HTTPImport' ? 'http' : 'rest',
     });
+
+    console.log(
+      `convertFromImport assistantConfig ${JSON.stringify(assistantConfig)}`
+    );
+
     const { operationDetails } = assistantConfig;
     const { labels = {} } = assistantData.import;
 
@@ -128,16 +133,11 @@ export default function assistantDefinition(
       if (operationDetails.supportIgnoreExisting) {
         fields.push({
           fieldId: 'assistantMetadata.ignoreExisting',
-          label:
-            operationDetails.ignoreExisitngLabel || 'Ignore Existing Records?',
-          type: 'checkbox',
           value: !!assistantConfig.ignoreExisting,
         });
       } else if (operationDetails.supportIgnoreMissing) {
         fields.push({
           fieldId: 'assistantMetadata.ignoreMissing',
-          label: 'Ignore Missing Records?',
-          type: 'checkbox',
           value: !!assistantConfig.ignoreMissing,
         });
       }
@@ -244,8 +244,9 @@ export default function assistantDefinition(
 
           fields.push({
             id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
-            label: identifierPathParam.name,
+            label: 'Which field?',
             type: 'text',
+            required: true,
             value: assistantConfig.pathParams[identifierPathParam.id],
             placeholder: 'Enter field id, or JSON path if field is nested',
           });
@@ -292,7 +293,9 @@ export default function assistantDefinition(
         'version',
         'resource',
         'operation',
-        'exportType',
+        'ignoreExisting',
+        'ignoreMissing',
+        'lookupType',
       ].forEach(key => {
         values[key] = (
           fields.find(field => field.id === `assistantMetadata.${key}`) || {}
@@ -314,6 +317,8 @@ export default function assistantDefinition(
         'operation',
         'queryParams',
         'bodyParams',
+        'ignoreExisting',
+        'ignoreMissing',
         'lookupType',
         'lookupUrl',
         'lookupQueryParams',
@@ -338,6 +343,8 @@ export default function assistantDefinition(
           assistantData: formValues['/assistantMetadata/assistantData'],
         },
       });
+
+      // return {};
 
       return { ...otherFormValues, ...importDoc };
     },
