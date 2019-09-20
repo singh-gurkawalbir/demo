@@ -342,7 +342,7 @@ const metadata = {
       }),
   },
 };
-const integrationApps = {
+const integrationApp = {
   installer: {
     installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST, {
@@ -707,7 +707,7 @@ export default {
   connectors,
   cancelTask,
   reloadApp,
-  integrationApps,
+  integrationApp,
   clearComms,
   clearCommByKey,
   patchFilter,

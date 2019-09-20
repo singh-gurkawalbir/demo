@@ -3,6 +3,11 @@ import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
+import IntegrationSettings from '../../views/IntegrationSettings';
+import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
+import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
+import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
+import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -32,30 +37,6 @@ const IntegrationDashboard = loadable(() =>
   import(
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
-);
-const IntegrationAppInstallation = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationAppsInstaller' */ '../../views/IntegrationApps/Installer'
-  )
-);
-const IntegrationAppUninstallation = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationAppsUninstaller' */ '../../views/IntegrationApps/Uninstaller'
-  )
-);
-const IntegrationAppSettings = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationAppSettings' */ '../../views/IntegrationApps/Settings'
-  )
-);
-const IntegrationAppAddNewStore = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationAppAddNewStore' */ '../../views/IntegrationApps/AddNewStore'
-  )
-);
-/* webpackChunkName: 'IntegrationSettings' */
-const IntegrationSettings = loadable(() =>
-  import('../../views/IntegrationSettings')
 );
 
 @hot(module)

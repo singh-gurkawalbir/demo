@@ -140,7 +140,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'inProgress'
@@ -194,7 +194,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           integrationId,
           'installerFunction',
           'inProgress'
@@ -218,7 +218,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           123,
           'installerFunction',
           'inProgress'
@@ -240,7 +240,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'inProgress'
@@ -276,7 +276,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'failed'
@@ -326,7 +326,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           integrationId,
           'installerFunction',
           'failed'
@@ -350,7 +350,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           123,
           'installerFunction',
           'failed'
@@ -372,7 +372,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'failed'
@@ -409,7 +409,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.completedStepInstall(
+        actions.integrationApp.installer.completedStepInstall(
           { stepsToUpdate },
           1,
           'installerFunction'
@@ -434,7 +434,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.completedStepInstall(
+        actions.integrationApp.installer.completedStepInstall(
           [],
           123,
           'installerFunction'
@@ -456,7 +456,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.completedStepInstall(
+        actions.integrationApp.installer.completedStepInstall(
           [],
           1,
           'installerFunction'
@@ -492,7 +492,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'verify'
@@ -520,7 +520,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           123,
           'installerFunction',
           'verify'
@@ -542,7 +542,7 @@ describe('intetgrationApps installer reducer', () => {
       );
       state = reducer(
         state,
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           1,
           'installerFunction',
           'verify'

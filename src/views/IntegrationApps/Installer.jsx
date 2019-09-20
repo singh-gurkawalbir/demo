@@ -76,7 +76,7 @@ export default function ConnectorInstallation(props) {
 
   const initUninstall = storeId => {
     dispatch(
-      actions.integrationApps.uninstaller.preUninstall(storeId, integrationId)
+      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
     );
   };
 
@@ -118,7 +118,7 @@ export default function ConnectorInstallation(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             integrationId,
             installerFunction,
             'inProgress'
@@ -131,14 +131,14 @@ export default function ConnectorInstallation(props) {
         }
 
         dispatch(
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             integrationId,
             installerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApps.installer.installStep(
+          actions.integrationApp.installer.installStep(
             integrationId,
             installerFunction
           )
@@ -147,14 +147,14 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.installer.updateStep(
+        actions.integrationApp.installer.updateStep(
           integrationId,
           installerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApps.installer.installStep(
+        actions.integrationApp.installer.installStep(
           integrationId,
           installerFunction
         )
@@ -171,14 +171,14 @@ export default function ConnectorInstallation(props) {
     const step = installSteps.find(s => s.isCurrentStep);
 
     dispatch(
-      actions.integrationApps.installer.updateStep(
+      actions.integrationApp.installer.updateStep(
         integrationId,
         (step || {}).installerFunction,
         'inProgress'
       )
     );
     dispatch(
-      actions.integrationApps.installer.installStep(
+      actions.integrationApp.installer.installStep(
         integrationId,
         (step || {}).installerFunction
       )

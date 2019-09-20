@@ -18,7 +18,7 @@ export function* preUninstall({ storeId, id }) {
   }
 
   yield put(
-    actions.integrationApps.uninstaller.receivedUninstallSteps(
+    actions.integrationApp.uninstaller.receivedUninstallSteps(
       uninstallSteps,
       storeId,
       id
@@ -38,7 +38,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.uninstaller.updateStep(
+      actions.integrationApp.uninstaller.updateStep(
         id,
         uninstallerFunction,
         'failed'
@@ -50,7 +50,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
 
   if (stepCompleteResponse.success) {
     yield put(
-      actions.integrationApps.uninstaller.updateStep(
+      actions.integrationApp.uninstaller.updateStep(
         id,
         uninstallerFunction,
         'completed'

@@ -15,7 +15,7 @@ export function* installStep({ id, installerFunction }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.installer.updateStep(
+      actions.integrationApp.installer.updateStep(
         id,
         installerFunction,
         'failed'
@@ -27,7 +27,7 @@ export function* installStep({ id, installerFunction }) {
 
   if (stepCompleteResponse.success) {
     yield put(
-      actions.integrationApps.installer.completedStepInstall(
+      actions.integrationApp.installer.completedStepInstall(
         stepCompleteResponse,
         id,
         installerFunction
@@ -48,7 +48,7 @@ export function* installStoreStep({ id, installerFunction }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApps.store.updateStep(id, installerFunction, 'failed')
+      actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
     );
 
     return undefined;
@@ -56,7 +56,7 @@ export function* installStoreStep({ id, installerFunction }) {
 
   if (stepCompleteResponse.success) {
     yield put(
-      actions.integrationApps.store.completedStepInstall(
+      actions.integrationApp.store.completedStepInstall(
         id,
         installerFunction,
         stepCompleteResponse.stepsToUpdate
@@ -80,7 +80,7 @@ export function* addNewStore({ id }) {
   }
 
   if (steps) {
-    yield put(actions.integrationApps.store.receivedNewStoreSteps(id, steps));
+    yield put(actions.integrationApp.store.receivedNewStoreSteps(id, steps));
   }
 }
 

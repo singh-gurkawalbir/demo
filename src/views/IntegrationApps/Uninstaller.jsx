@@ -63,7 +63,7 @@ export default function IntegratorAppUninstalleer(props) {
   useEffect(() => {
     if ((!uninstallSteps || !uninstallSteps.length) && !requestPreUninstall) {
       dispatch(
-        actions.integrationApps.uninstaller.preUninstall(storeId, integrationId)
+        actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
       setRequestedPreUninstall(true);
     }
@@ -82,12 +82,12 @@ export default function IntegratorAppUninstalleer(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       if (integration.mode !== 'uninstall') {
-        dispatch(actions.integrationApps.uninstaller.clearSteps(integrationId));
+        dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
         dispatch(actions.resource.request('integrations', integrationId));
         props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
       } else {
         dispatch(
-          actions.integrationApps.uninstaller.deleteIntegration(integrationId)
+          actions.integrationApp.uninstaller.deleteIntegration(integrationId)
         );
         props.history.push('/pg');
       }
@@ -114,7 +114,7 @@ export default function IntegratorAppUninstalleer(props) {
     if (uninstallURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             uninstallerFunction,
             'inProgress'
@@ -127,14 +127,14 @@ export default function IntegratorAppUninstalleer(props) {
         }
 
         dispatch(
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             uninstallerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApps.uninstaller.stepUninstall(
+          actions.integrationApp.uninstaller.stepUninstall(
             integrationId,
             uninstallerFunction
           )
@@ -143,14 +143,14 @@ export default function IntegratorAppUninstalleer(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.uninstaller.updateStep(
+        actions.integrationApp.uninstaller.updateStep(
           integrationId,
           uninstallerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApps.uninstaller.stepUninstall(
+        actions.integrationApp.uninstaller.stepUninstall(
           storeId,
           integrationId,
           uninstallerFunction

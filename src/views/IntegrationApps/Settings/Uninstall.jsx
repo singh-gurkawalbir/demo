@@ -45,7 +45,7 @@ export default function Uninstall(props) {
 
   const initUninstall = () => {
     dispatch(
-      actions.integrationApps.uninstaller.preUninstall(storeId, integrationId)
+      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
     );
   };
 

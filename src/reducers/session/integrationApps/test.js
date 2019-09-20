@@ -13,7 +13,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
           {},
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             1,
             'installerFunction',
             'inProgress'
@@ -37,7 +37,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             integrationId,
             'installerFunction',
             'inProgress'
@@ -59,7 +59,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set isTriggered and verifying flag to true', () => {
         const state = reducer(
           {},
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             1,
             'installerFunction',
             'verify'
@@ -83,7 +83,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             integrationId,
             'installerFunction',
             'verify'
@@ -107,7 +107,7 @@ describe('integrationApps reducer test cases', () => {
           {
             installer: { '1': { isTriggered: true } },
           },
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             1,
             'installerFunction',
             'failed'
@@ -131,7 +131,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.installer.updateStep(
+          actions.integrationApp.installer.updateStep(
             integrationId,
             'installerFunction',
             'failed'
@@ -155,7 +155,7 @@ describe('integrationApps reducer test cases', () => {
           {
             installer: { '1': { isTriggered: true } },
           },
-          actions.integrationApps.installer.completedStepInstall(
+          actions.integrationApp.installer.completedStepInstall(
             { response: 's' },
             1,
             'installerFunction'
@@ -179,7 +179,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.installer.completedStepInstall(
+          actions.integrationApp.installer.completedStepInstall(
             {},
             integrationId
           )
@@ -219,7 +219,7 @@ describe('integrationApps reducer test cases', () => {
       test('should create an integrationId reference inside uninstaller state object', () => {
         const state = reducer(
           undefined,
-          actions.integrationApps.uninstaller.preUninstall(
+          actions.integrationApp.uninstaller.preUninstall(
             'storeId',
             'integrationId'
           )
@@ -234,7 +234,7 @@ describe('integrationApps reducer test cases', () => {
       test('should try to find the integrationId reference inside uninstaller reducer state and reset it if any data present', () => {
         const state = reducer(
           { uninstaller: { integrationId: uninstallSteps } },
-          actions.integrationApps.uninstaller.preUninstall(
+          actions.integrationApp.uninstaller.preUninstall(
             'storeId',
             'integrationId'
           )
@@ -251,7 +251,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'inProgress'
@@ -285,7 +285,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
             'inProgress'
@@ -328,7 +328,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             'uninstallConnectorComponents',
             'inProgress'
@@ -382,7 +382,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'verify'
@@ -416,7 +416,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set verifying flag to true', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
             'verify'
@@ -460,7 +460,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             'uninstallConnectorComponents',
             'verify'
@@ -515,7 +515,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'failed'
@@ -549,7 +549,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
             'failed'
@@ -593,7 +593,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             'uninstallConnectorComponents',
             'failed'
@@ -648,7 +648,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'completed'
@@ -682,7 +682,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
             'completed'
@@ -726,7 +726,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             integrationId,
             'uninstallConnectorComponents',
             'completed'
@@ -781,7 +781,7 @@ describe('integrationApps reducer test cases', () => {
       test('should update the uninstaller state to include the step received', () => {
         const state = reducer(
           undefined,
-          actions.integrationApps.uninstaller.receivedUninstallSteps(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
             'STOREID',
             2
@@ -815,7 +815,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect other integrations when new integration uninstall steps are received', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.receivedUninstallSteps(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
             'STOREID',
             2
@@ -865,7 +865,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state new integration uninstall steps are received and no integrationId is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.receivedUninstallSteps(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
             'STOREID',
             undefined
@@ -899,7 +899,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state new integration uninstall steps are received and no integrationId is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.receivedUninstallSteps(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
             undefined,
             'STOREID',
             2
@@ -935,7 +935,7 @@ describe('integrationApps reducer test cases', () => {
       test('should update the uninstaller state and remove the integrationId if found', () => {
         const state = reducer(
           undefined,
-          actions.integrationApps.uninstaller.clearSteps(2)
+          actions.integrationApp.uninstaller.clearSteps(2)
         );
         const expectedValue = {
           addStore: {},
@@ -949,7 +949,7 @@ describe('integrationApps reducer test cases', () => {
       test('should update the uninstaller state and remove the integrationId if found', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.clearSteps(1)
+          actions.integrationApp.uninstaller.clearSteps(1)
         );
         const expectedValue = {
           addStore: {},
@@ -962,7 +962,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect other integrations when clearSteps is called on one integration', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps, 2: uninstallSteps } },
-          actions.integrationApps.uninstaller.clearSteps(2)
+          actions.integrationApp.uninstaller.clearSteps(2)
         );
         const expectedValue = {
           addStore: {},
@@ -992,7 +992,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
           { uninstaller: { 1: uninstallSteps } },
-          actions.integrationApps.uninstaller.clearSteps()
+          actions.integrationApp.uninstaller.clearSteps()
         );
         const expectedValue = {
           addStore: {},
@@ -1044,7 +1044,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'inProgress'
@@ -1078,7 +1078,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
             'inProgress'
@@ -1121,7 +1121,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             'installConnectorComponents',
             'inProgress'
@@ -1175,7 +1175,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'verify'
@@ -1209,7 +1209,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and set verifying flag to true', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
             'verify'
@@ -1253,7 +1253,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             'installConnectorComponents',
             'verify'
@@ -1308,7 +1308,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'failed'
@@ -1342,7 +1342,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
             'failed'
@@ -1386,7 +1386,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             'installConnectorComponents',
             'failed'
@@ -1441,7 +1441,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'completed'
@@ -1475,7 +1475,7 @@ describe('integrationApps reducer test cases', () => {
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.uninstaller.updateStep(
+          actions.integrationApp.uninstaller.updateStep(
             1,
             'installConnectorComponents',
             'completed'
@@ -1517,7 +1517,7 @@ describe('integrationApps reducer test cases', () => {
         };
         const state = reducer(
           initialState,
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             'installConnectorComponents',
             'completed'
@@ -1572,7 +1572,7 @@ describe('integrationApps reducer test cases', () => {
       test('should update the addStore state to include the step received', () => {
         const state = reducer(
           undefined,
-          actions.integrationApps.store.receivedNewStoreSteps(
+          actions.integrationApp.store.receivedNewStoreSteps(
             2,
             addNewStoreSteps
           )
@@ -1605,7 +1605,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect other integrations when new store steps are received', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.receivedNewStoreSteps(
+          actions.integrationApp.store.receivedNewStoreSteps(
             2,
             addNewStoreSteps
           )
@@ -1654,7 +1654,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state when new integration store steps are received and no integrationId is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.receivedNewStoreSteps(
+          actions.integrationApp.store.receivedNewStoreSteps(
             undefined,
             addNewStoreSteps
           )
@@ -1687,7 +1687,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state new integration store steps are received and no integrationId is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.receivedNewStoreSteps(
+          actions.integrationApp.store.receivedNewStoreSteps(
             undefined,
             addNewStoreSteps
           )
@@ -1722,7 +1722,7 @@ describe('integrationApps reducer test cases', () => {
       test('should initialise the addStore state and remove the integrationId if found', () => {
         const state = reducer(
           undefined,
-          actions.integrationApps.store.clearSteps(2)
+          actions.integrationApp.store.clearSteps(2)
         );
         const expectedValue = {
           addStore: {},
@@ -1736,7 +1736,7 @@ describe('integrationApps reducer test cases', () => {
       test('should update the addStore state and remove the integrationId if found', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.clearSteps(1)
+          actions.integrationApp.store.clearSteps(1)
         );
         const expectedValue = {
           addStore: {},
@@ -1749,7 +1749,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect other integrations when new clearSteps are called on one integration', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps, 2: addNewStoreSteps } },
-          actions.integrationApps.store.clearSteps(2)
+          actions.integrationApp.store.clearSteps(2)
         );
         const expectedValue = {
           addStore: {
@@ -1779,7 +1779,7 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
-          actions.integrationApps.store.clearSteps()
+          actions.integrationApp.store.clearSteps()
         );
         const expectedValue = {
           addStore: {

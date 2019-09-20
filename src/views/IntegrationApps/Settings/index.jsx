@@ -143,7 +143,7 @@ export default function IntegrationAppSettings(props) {
   const handleAddNewStoreClick = e => {
     e.preventDefault();
     disableAddNewStoreButton(true);
-    dispatch(actions.integrationApps.store.addNew(integrationId));
+    dispatch(actions.integrationApp.store.addNew(integrationId));
   };
 
   const handleTagChangeHandler = tag => {

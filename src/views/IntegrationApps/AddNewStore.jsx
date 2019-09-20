@@ -67,7 +67,7 @@ export default function IntegrationAppAddNewStore(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
-      dispatch(actions.integrationApps.store.clearSteps(integrationId));
+      dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
     }
@@ -92,7 +92,7 @@ export default function IntegrationAppAddNewStore(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             installerFunction,
             'inProgress'
@@ -105,14 +105,14 @@ export default function IntegrationAppAddNewStore(props) {
         }
 
         dispatch(
-          actions.integrationApps.store.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             installerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApps.store.installStep(
+          actions.integrationApp.store.installStep(
             integrationId,
             installerFunction
           )
@@ -121,14 +121,14 @@ export default function IntegrationAppAddNewStore(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApps.store.updateStep(
+        actions.integrationApp.store.updateStep(
           integrationId,
           installerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApps.store.installStep(
+        actions.integrationApp.store.installStep(
           integrationId,
           installerFunction
         )
@@ -145,14 +145,14 @@ export default function IntegrationAppAddNewStore(props) {
     const step = addNewStoreSteps.find(s => s.isCurrentStep);
 
     dispatch(
-      actions.integrationApps.store.updateStep(
+      actions.integrationApp.store.updateStep(
         integrationId,
         (step || {}).installerFunction,
         'inProgress'
       )
     );
     dispatch(
-      actions.integrationApps.store.installStep(
+      actions.integrationApp.store.installStep(
         integrationId,
         (step || {}).installerFunction
       )
