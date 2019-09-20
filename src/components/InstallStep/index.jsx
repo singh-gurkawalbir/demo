@@ -3,25 +3,25 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Grid } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import formattedImageUrl from '../../utils/image';
+import SuccessIcon from '../icons/SuccessIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   step: {
     position: 'relative',
     height: '50px',
     padding: '25px 40px 25px 0',
     display: 'inline-flex',
   },
-  stepNumber: props => ({
+  stepNumber: step => ({
     // eslint-disable-next-line no-nested-ternary
-    background: ((props || {}).step || {}).completed
-      ? '#00A1E1'
-      : ((props || {}).step || {}).isCurrentStep
-      ? '#4CBB02'
-      : '#eee',
+    background: step.completed
+      ? theme.palette.primary.main
+      : step.isCurrentStep
+      ? theme.palette.success.main
+      : theme.palette.secondary.lightest,
     color:
-      ((props || {}).step || {}).isCurrentStep ||
-      ((props || {}).step || {}).completed
-        ? '#eee'
+      step.isCurrentStep || step.completed
+        ? theme.palette.background.paper
         : '',
     fontSize: '22px',
     borderRadius: '50%',
@@ -36,25 +36,24 @@ const useStyles = makeStyles(() => ({
   },
   successText: {
     paddingRight: '15px',
-    color: '#4CBB02',
+    color: theme.palette.success.main,
   },
   stepRow: {
-    borderBottom: '1px solid #e5e5e5',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     marginTop: '10px',
     marginBottom: '10px',
   },
 }));
 
 export default function InstallationStep(props) {
-  const classes = useStyles(props);
+  const classes = useStyles(props.step || {});
   const { step, index, handleStepClick, mode = 'install' } = props;
 
   if (!step) {
     return null;
   }
 
-  const onStepClick = e => {
-    e.preventDefault();
+  const onStepClick = () => {
     handleStepClick(step);
   };
 
@@ -94,10 +93,7 @@ export default function InstallationStep(props) {
               <Typography onClick={onStepClick} className={classes.successText}>
                 {integrationAppsUtil.getStepText(step, mode)}
               </Typography>
-              <img
-                alt=""
-                src={`${process.env.CDN_BASE_URI}icons/success.png`}
-              />
+              <SuccessIcon />
             </Fragment>
           )}
         </Grid>
