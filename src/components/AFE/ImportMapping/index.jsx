@@ -13,7 +13,7 @@ import {
 import { useDispatch } from 'react-redux';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
-import DynaMappingSettings from '../ImportMappingSettings/MappingSettingsField';
+import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import MappingUtil from '../../../utils/mapping';
@@ -384,7 +384,7 @@ export default function ImportMapping(props) {
                       />
                     </Grid>
                     <Grid item>
-                      <DynaMappingSettings
+                      <MappingSettings
                         id={mapping.index}
                         onSave={handleSettingsClose}
                         value={mapping}

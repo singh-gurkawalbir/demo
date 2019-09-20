@@ -26,7 +26,13 @@ export default {
 
   getDefaultActionValue: value => {
     if ('default' in value || 'hardCodedValue' in value) {
-      const defaultVal = value.default || value.hardCodedValue;
+      let defaultVal;
+
+      if ('default' in value) {
+        defaultVal = value.default;
+      } else if ('hardCodedValue' in value) {
+        defaultVal = value.hardCodedValue;
+      }
 
       switch (defaultVal) {
         case '':

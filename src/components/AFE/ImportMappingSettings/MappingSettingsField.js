@@ -20,8 +20,9 @@ export default function MappingSettingsField(props) {
     value,
   } = props;
   const [isSettingsShown, showSettings] = useState(false);
+  const isDisabled = !('generate' in value);
   const handleBtnClick = () => {
-    showSettings(!isSettingsShown);
+    if (!isDisabled) showSettings(!isSettingsShown);
   };
 
   const handleClose = (shouldCommit, settings) => {
@@ -46,7 +47,11 @@ export default function MappingSettingsField(props) {
           extractFields={extractFields}
         />
       )}
-      <IconButton aria-label="delete" onClick={handleBtnClick} key="settings">
+      <IconButton
+        disabled={isDisabled}
+        aria-label="delete"
+        onClick={handleBtnClick}
+        key="settings">
         <SettingsIcon style={svgFontSizes(24)} />
       </IconButton>
     </Fragment>

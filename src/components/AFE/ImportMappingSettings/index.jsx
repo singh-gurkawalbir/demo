@@ -40,11 +40,13 @@ export default function ImportMappingSettings(props) {
       formVal
     );
 
+    // Update lookup
     if (mappingObj.lookup) {
       const isDelete = false;
 
       updateLookup(isDelete, mappingObj.lookup);
-    } else {
+    } else if (lookup) {
+      // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
       const isDelete = true;
 
       updateLookup(isDelete, lookup);

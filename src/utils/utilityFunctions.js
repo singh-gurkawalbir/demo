@@ -1,7 +1,7 @@
-import uuid from 'uuid';
+import shortid from 'shortid';
 
 export default {
-  getRandomName: () => uuid.v4(),
+  getRandomName: () => shortid.generate(),
   getHandlebarHelperFormat: helper => {
     const toReturn = `{{${helper} arg1}}`;
     const singleArs = [
