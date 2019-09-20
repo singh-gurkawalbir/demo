@@ -85,10 +85,7 @@ export function* addNewStore({ id }) {
 }
 
 export default [
-  takeEvery(
-    actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.REQUEST,
-    installStep
-  ),
+  takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
 ];

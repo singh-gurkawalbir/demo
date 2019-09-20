@@ -15,13 +15,13 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL:
         draft[id] = [];
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_UNINSTALL_STEPS:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS:
         draft[id] = uninstallSteps;
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.CLEAR:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.CLEAR:
         delete draft[id];
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.UPDATE:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.UPDATE:
         step = (draft[id] || []).find(
           s => s.uninstallerFunction === uninstallerFunction
         );

@@ -81,7 +81,7 @@ export default [
     preUninstall
   ),
   takeLatest(
-    actionTypes.INTEGRATION_APPS.UNINSTALLER.UNINSTALL_STEP.REQUEST,
+    actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST,
     uninstallStep
   ),
   takeLatest(

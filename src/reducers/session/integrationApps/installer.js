@@ -11,10 +11,10 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.DONE:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
         draft[id] = {};
         break;
-      case actionTypes.INTEGRATION_APPS.INSTALLER.INSTALL_STEP.UPDATE:
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE:
         if (!draft[id]) {
           draft[id] = {};
         }
