@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
     padding: 2,
-    backgroundColor: fade(theme.palette.background.arrowAfter, 0.5),
+    backgroundColor: fade(theme.palette.secondary.lightest, 0.5),
     '& button': {
       marginLeft: 0,
       height: 20,

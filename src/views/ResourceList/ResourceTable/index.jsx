@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionCell: {
-    padding: 0,
+    padding: `0 !important`,
   },
   actionContainer: {
     position: 'sticky',
