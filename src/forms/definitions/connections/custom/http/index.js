@@ -45,6 +45,7 @@ import box from './box';
 import microsoftoffice365 from './microsoftoffice365';
 import faire from './faire';
 import ware2go from './ware2go';
+import namely from './namely';
 
 export default {
   activecampaign,
@@ -94,4 +95,5 @@ export default {
   microsoftoffice365,
   faire,
   ware2go,
+  namely,
 };
