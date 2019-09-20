@@ -80,10 +80,8 @@ export default function InstallationStep(props) {
         <Grid item xs={2} className={classes.step}>
           {!step.completed && (
             <Button
-              href="/"
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              underline="none"
               variant="text">
               {integrationAppsUtil.getStepText(step, mode)}
             </Button>
