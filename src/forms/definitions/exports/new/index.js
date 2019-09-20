@@ -7,6 +7,21 @@ const visibleWhen = [
     isNot: [''],
   },
 ];
+const appTypeToAdaptorType = {
+  salesforce: 'Salesforce',
+  mongodb: 'Mongodb',
+  postgresql: 'RDBMS',
+  mysql: 'RDBMS',
+  mssql: 'RDBMS',
+  netsuite: 'NetSuite',
+  ftp: 'FTP',
+  http: 'HTTP',
+  rest: 'REST',
+  s3: 'S3',
+  wrapper: 'Wrapper',
+  as2: 'AS2',
+  webhook: 'Webhook',
+};
 
 export default {
   preSubmit: ({ application, executionType, apiType, ...rest }) => {
@@ -17,10 +32,7 @@ export default {
     // should hold the map fn.
     const newValues = {
       ...rest,
-      '/adaptorType':
-        app.type === 'netsuite'
-          ? 'NetSuiteExport'
-          : `${app.type.toUpperCase()}Export`,
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}Export`,
     };
 
     if (app.assistant) {

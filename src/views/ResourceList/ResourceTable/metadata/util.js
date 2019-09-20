@@ -35,7 +35,7 @@ export const formatLastModified = lastModified => {
 };
 
 export const onlineStatus = r => (
-  <div style={{ display: 'flex' }}>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
     <StatusCircle size="small" variant={r.offline ? 'error' : 'success'} />
     {r.offline ? 'Offline' : 'Online'}
   </div>
