@@ -1,5 +1,5 @@
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
-import { all, call, put, take, race } from 'redux-saga/effects';
+import { all, call, put, take, race, delay } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
 import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
@@ -32,7 +32,7 @@ export function* unauthenticateAndDeleteProfile() {
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
-  const { path } = args;
+  const { path, timeout = 2 * 60 * 1000 } = args;
   const apiRequestAction = {
     type: 'API_WATCHER',
     request: { url: path, args },
@@ -41,13 +41,15 @@ export function* apiCallWithRetry(args) {
   try {
     let apiResp;
     let logout;
+    let timeoutEffect;
 
     if (path !== logoutParams.path) {
-      ({ apiResp, logout } = yield race({
+      ({ apiResp, logout, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
           dispatchRequestAction: true,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(timeout),
       }));
     } else {
       apiResp = yield call(sendRequest, apiRequestAction, {
@@ -56,8 +58,7 @@ export function* apiCallWithRetry(args) {
     }
 
     // logout effect succeeded then the apiResp would be undefined
-
-    if (logout) return null;
+    if (timeoutEffect || logout) return null;
 
     const { data } = apiResp.response;
 
