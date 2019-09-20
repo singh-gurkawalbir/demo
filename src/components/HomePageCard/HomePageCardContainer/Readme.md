@@ -17,6 +17,16 @@ const FooterActions = require('../Footer/FooterActions').default;
 const Manage = require('../Footer/Manage').default;
 const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').default;
 const TrialExpireNotification = require('../TrialExpireNotification').default;
+const ArrowPopper = require('../../Arrowpopper').default;
+const TooltipContent = require('../../TooltipContent').default;
+
+
+const handleOver = (event, placement) => setState({ 
+    anchorEl: event.currentTarget,
+    placement: placement
+});
+
+const handleOut = () => setState({ anchorEl: null });
 
 <Grid container spacing={1}>
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -41,11 +51,17 @@ const TrialExpireNotification = require('../TrialExpireNotification').default;
       </Content>
       <Footer>
         <FooterActions>
-            <Manage><PermissionsManageIcon /></Manage>
+            <Manage  onMouseOut={handleOut} onMouseOver={e => handleOver(e, 'bottom')}>
+                <PermissionsManageIcon />
+            </Manage>
              <Tag  variant="pro"/>
         </FooterActions> 
         <Info variant="Integration app" label="celigo" />
       </Footer>
+      
+        <ArrowPopper open={!!state.anchorEl} anchorEl={state.anchorEl} placement={state.placement} >
+            <TooltipContent>Manage.</TooltipContent>
+    </ArrowPopper>
     </HomePageCardContainer>
   </Grid>
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
