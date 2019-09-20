@@ -47,7 +47,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-
+  {
+    id: 'as2',
+    name: 'AS2',
+    type: 'as2',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
