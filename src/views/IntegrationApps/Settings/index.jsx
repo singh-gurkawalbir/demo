@@ -12,36 +12,16 @@ import { Switch, Route, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import actions from '../../../actions';
-import loadable from '../../../utils/loadable';
 import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
+import Flows from '../../IntegrationSettings/Flows';
+import Users from '../../IntegrationSettings/Users';
+import AuditLog from '../../IntegrationSettings/AuditLog';
+import Uninstall from './Uninstall';
+import Connections from '../../IntegrationSettings/Connections';
 
-const Flows = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.Flows' */ '../../IntegrationSettings/Flows'
-  )
-);
-const Users = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.Users' */ '../../IntegrationSettings/Users'
-  )
-);
-const AuditLog = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.AuditLog' */ '../../IntegrationSettings/AuditLog'
-  )
-);
-const Uninstall = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationSettings.Uninstall' */ './Uninstall')
-);
-/* webpackChunkName: 'IntegrationSettings.AccessTokens' */
-const Connections = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.Connections' */ '../../IntegrationSettings/Connections'
-  )
-);
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,

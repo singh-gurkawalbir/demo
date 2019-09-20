@@ -6,29 +6,17 @@ import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
-import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
+import Flows from './Flows';
+import Users from './Users';
+import AuditLog from './AuditLog';
+import AccessTokens from './AccessTokens';
+import Connections from './Connections';
 
-const Flows = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationSettings.Flows' */ './Flows')
-);
-const Users = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationSettings.Users' */ './Users')
-);
-const AuditLog = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationSettings.AuditLog' */ './AuditLog')
-);
-/* webpackChunkName: 'IntegrationSettings.AccessTokens' */
-const AccessTokens = loadable(() => import('./AccessTokens'));
-const Connections = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationSettings.Connections' */ './Connections'
-  )
-);
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,
