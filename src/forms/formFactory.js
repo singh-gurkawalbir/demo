@@ -114,6 +114,8 @@ const getResourceFormAssets = ({
         // get edit form meta branch
         else if (type === 'netsuite' && resourceType === 'exports') {
           meta = meta.netsuite[resource.netsuite.type];
+        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+          meta = meta.rdbms;
         } else if (resource && resource.assistant) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,

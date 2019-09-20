@@ -8,6 +8,36 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
+    if (retValues['/rest/pagingMethod'] !== 'pageargument') {
+      retValues['/rest/pageArgument'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'nextpageurl') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'relativeuri') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'linkheader') {
+      retValues['/rest/linkHeaderRelation'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'skipargument') {
+      retValues['/rest/skipArgument'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'token') {
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+    }
+
+    if (retValues['/rest/pagingMethod'] !== 'postbody') {
+      retValues['/rest/pagingPostBody'] = undefined;
+    }
+
     return {
       ...retValues,
     };

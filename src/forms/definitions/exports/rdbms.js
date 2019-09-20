@@ -1,4 +1,17 @@
 export default {
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    return {
+      ...retValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportRdbmsData: {
@@ -11,6 +24,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {

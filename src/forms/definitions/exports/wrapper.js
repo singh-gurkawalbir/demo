@@ -1,4 +1,17 @@
 export default {
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    return {
+      ...retValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {

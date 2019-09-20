@@ -1,4 +1,24 @@
 export default {
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    if (retValues['/salesforce/executionType'] === 'scheduled') {
+      retValues['/salesforce/type'] = 'soql';
+      retValues['/salesforce/api'] = 'rest';
+    } else if (retValues['/salesforce/executionType'] === 'realtime') {
+      retValues['/type'] = 'distributed';
+    }
+
+    return {
+      ...retValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
@@ -16,6 +36,7 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => (r && r.type ? r.type : 'all'),
       options: [
         {
           items: [

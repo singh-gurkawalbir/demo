@@ -1,5 +1,21 @@
 import applications from '../../../../constants/applications';
 
+const appTypeToAdaptorType = {
+  salesforce: 'Salesforce',
+  mongodb: 'Mongodb',
+  postgresql: 'RDBMS',
+  mysql: 'RDBMS',
+  mssql: 'RDBMS',
+  netsuite: 'NetSuite',
+  ftp: 'FTP',
+  http: 'HTTP',
+  rest: 'REST',
+  s3: 'S3',
+  wrapper: 'Wrapper',
+  as2: 'AS2',
+  webhook: 'Webhook',
+};
+
 export default {
   preSave: ({ application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
@@ -9,10 +25,7 @@ export default {
     // should hold the map fn.
     const newValues = {
       ...rest,
-      '/adaptorType':
-        app.type === 'netsuite'
-          ? 'NetSuiteExport'
-          : `${app.type.toUpperCase()}Export`,
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}Export`,
     };
 
     if (app.assistant) {
@@ -119,7 +132,11 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      let filter;
+
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        filter = { rdbms: { type: app.type } };
+      } else filter = { type: app.type };
 
       if (app.assistant) {
         filter.assistant = app.assistant;

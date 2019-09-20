@@ -6,15 +6,28 @@ import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 import * as selectors from '../../reducers';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   iconButton: {
     marginLeft: 5,
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    height: 50,
+    width: 50,
+    borderRadius: 2,
+    '&:hover': {
+      background: theme.palette.background.paper,
+      '& > span': {
+        color: theme.palette.primary.main,
+      },
+    },
   },
   root: { display: 'inline-block' },
-});
+}));
 const wrapper = {
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-start',
+  marginBottom: 6,
 };
 const fieldStyle = {
   flexGrow: '1',
@@ -28,7 +41,6 @@ const FieldActions = props => {
     helpText,
     formFieldsMeta,
     resourceContext,
-    children,
   } = props;
   const classes = useStyles();
   const { type: fieldType } = field;
@@ -55,7 +67,6 @@ const FieldActions = props => {
           helpText={helpText}
         />
       )}
-      {children}
     </div>
   );
 };
