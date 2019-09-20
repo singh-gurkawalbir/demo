@@ -33,6 +33,21 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'wrapper',
+    name: 'Wrapper',
+    type: 'wrapper',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  {
+    id: 'webhook',
+    name: 'Webhook',
+    type: 'webhook',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+
   // Database connectors
   {
     id: 'mongodb',

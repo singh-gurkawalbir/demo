@@ -1,4 +1,49 @@
 export default {
+  preSubmit: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    if (retValues['/http/paging/method'] !== 'page') {
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    }
+
+    if (retValues['/http/paging/method'] !== 'url') {
+      retValues['/http/paging/path'] = undefined;
+    }
+
+    if (retValues['/http/paging/method'] !== 'relativeuri') {
+      retValues['/http/paging/relativeURI'] = undefined;
+    }
+
+    if (retValues['/http/paging/method'] !== 'linkheader') {
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+    }
+
+    if (retValues['/http/paging/method'] !== 'skip') {
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    }
+
+    if (retValues['/http/paging/method'] !== 'token') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+    }
+
+    return {
+      ...retValues,
+    };
+  },
   fields: [
     { formId: 'common' },
     {
@@ -21,6 +66,7 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => (r && r.type ? r.type : 'all'),
       options: [
         {
           items: [
