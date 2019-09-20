@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Grid } from '@material-ui/core';
+import {
+  Typography,
+  IconButton,
+  Grid,
+  Paper,
+  Breadcrumbs,
+} from '@material-ui/core';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../components/InstallStep';
 
 const useStyles = makeStyles(theme => ({
@@ -26,6 +33,10 @@ const useStyles = makeStyles(theme => ({
   stepTable: { position: 'relative', marginTop: '-20px' },
   floatRight: {
     float: 'right',
+  },
+  paper: {
+    padding: theme.spacing(1, 2),
+    background: theme.palette.background.default,
   },
 }));
 
@@ -150,9 +161,9 @@ export default function IntegratorAppUninstalleer(props) {
     }
   };
 
-  const handleBackClick = e => {
-    e.preventDefault();
-    props.history.push(`/pg`);
+  const handleBackClick = () => {
+    dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
+    props.history.goBack();
   };
 
   return (
@@ -166,10 +177,17 @@ export default function IntegratorAppUninstalleer(props) {
               </IconButton>
             </Grid>
             <Grid item>
-              <Typography variant="h6">
-                Uninstall &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;{integration.name}{' '}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; {storeName}
-              </Typography>
+              <Paper elevation={0} className={classes.paper}>
+                <Breadcrumbs
+                  separator={<ArrowRightIcon />}
+                  aria-label="breadcrumb">
+                  <Typography color="textPrimary">Setup</Typography>
+                  <Typography color="textPrimary">
+                    {integration.name}
+                  </Typography>
+                  <Typography color="textPrimary">{storeName}</Typography>
+                </Breadcrumbs>
+              </Paper>
             </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.stepTable}>

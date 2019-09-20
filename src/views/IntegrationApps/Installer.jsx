@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Button, Grid } from '@material-ui/core';
+import {
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  Paper,
+  Breadcrumbs,
+} from '@material-ui/core';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import { confirmDialog } from '../../components/ConfirmDialog';
@@ -28,6 +36,10 @@ const useStyles = makeStyles(theme => ({
   stepTable: { position: 'relative', marginTop: '-20px' },
   floatRight: {
     float: 'right',
+  },
+  paper: {
+    padding: theme.spacing(1, 2),
+    background: theme.palette.background.default,
   },
 }));
 
@@ -198,11 +210,17 @@ export default function ConnectorInstallation(props) {
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>
-            <Grid item xs={1}>
-              <Typography variant="h6">Setup &gt;</Typography>
-            </Grid>
-            <Grid item xs className="connectorName">
-              <Typography variant="h6">{integration.name}</Typography>
+            <Grid item xs>
+              <Paper elevation={0} className={classes.paper}>
+                <Breadcrumbs
+                  separator={<ArrowRightIcon />}
+                  aria-label="breadcrumb">
+                  <Typography color="textPrimary">Setup</Typography>
+                  <Typography color="textPrimary">
+                    {integration.name}
+                  </Typography>
+                </Breadcrumbs>
+              </Paper>
             </Grid>
             <Grid item xs={1} className={classes.floatRight}>
               <Button
