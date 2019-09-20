@@ -390,7 +390,7 @@ const integrationApp = {
         id,
         storeId,
       }),
-    deleteIntegration: integrationId =>
+    uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
       }),

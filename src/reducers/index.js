@@ -493,8 +493,10 @@ export function integrationUninstallSteps(state, integrationId) {
   }
 
   return produce(uninstallSteps, draft => {
-    if (draft.find(s => !s.completed)) {
-      draft.find(s => !s.completed).isCurrentStep = true;
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
     }
   });
 }
@@ -510,8 +512,10 @@ export function addNewStoreSteps(state, integrationId) {
   }
 
   return produce(addNewStoreSteps, draft => {
-    if (draft.find(s => !s.completed)) {
-      draft.find(s => !s.completed).isCurrentStep = true;
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
     }
   });
 }

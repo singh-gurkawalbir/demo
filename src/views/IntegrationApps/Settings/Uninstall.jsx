@@ -11,8 +11,8 @@ import * as selectors from '../../../reducers';
 const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1),
-    color: 'red',
-    borderColor: 'red',
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
   },
   rightIcon: {
     marginLeft: theme.spacing(1),

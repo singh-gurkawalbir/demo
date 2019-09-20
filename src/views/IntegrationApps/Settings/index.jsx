@@ -16,7 +16,6 @@ import loadable from '../../../utils/loadable';
 import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
-import getRoutePath from '../../../utils/routePaths';
 import ChipInput from '../../../components/ChipInput';
 
 const Flows = loadable(() =>
@@ -262,28 +261,15 @@ export default function IntegrationAppSettings(props) {
           </div>
           <div className={classes.rightElement}>
             <Switch>
+              <Route path={`${props.match.url}/flows`} component={Flows} />
               <Route
-                path={getRoutePath(`/connectors/:integrationId/settings/flows`)}
-                component={Flows}
-              />
-              <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/connections`
-                )}
+                path={`${props.match.url}/connections`}
                 component={Connections}
               />
+              <Route path={`${props.match.url}/users`} component={Users} />
+              <Route path={`${props.match.url}/audit`} component={AuditLog} />
               <Route
-                path={getRoutePath(`/connectors/:integrationId/settings/users`)}
-                component={Users}
-              />
-              <Route
-                path={getRoutePath(`/connectors/:integrationId/settings/audit`)}
-                component={AuditLog}
-              />
-              <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/uninstall`
-                )}
+                path={`${props.match.url}/uninstall`}
                 render={props => (
                   <Uninstall
                     {...props}

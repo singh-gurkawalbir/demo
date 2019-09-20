@@ -35,7 +35,7 @@ function replaceOrInsertResource(state, type, resource) {
 }
 
 function getIntegrationAppsNextState(state, action) {
-  const { stepsToUpdate, id, type } = action;
+  const { stepsToUpdate, id } = action;
 
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
@@ -44,25 +44,18 @@ function getIntegrationAppsNextState(state, action) {
       return;
     }
 
-    // eslint-disable-next-line default-case
-    switch (type) {
-      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
-        stepsToUpdate.forEach(step => {
-          const stepIndex = integration.install.findIndex(
-            s => s.installerFunction === step.installerFunction
-          );
+    stepsToUpdate.forEach(step => {
+      const stepIndex = integration.install.findIndex(
+        s => s.installerFunction === step.installerFunction
+      );
 
-          if (stepIndex !== -1) {
-            integration.install[stepIndex] = {
-              ...integration.install[stepIndex],
-              ...step,
-              isTriggered: false,
-              verifying: false,
-            };
-          }
-        });
-        break;
-    }
+      if (stepIndex !== -1) {
+        integration.install[stepIndex] = {
+          ...integration.install[stepIndex],
+          ...step,
+        };
+      }
+    });
   });
 }
 

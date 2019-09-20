@@ -59,7 +59,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
   }
 }
 
-export function* deleteIntegration({ integrationId }) {
+export function* uninstallIntegration({ integrationId }) {
   const path = `/integrations/${integrationId}/install`;
 
   try {
@@ -86,6 +86,6 @@ export default [
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION,
-    deleteIntegration
+    uninstallIntegration
   ),
 ];

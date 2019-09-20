@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Grid } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
@@ -18,17 +18,8 @@ const useStyles = makeStyles(theme => ({
     padding: '10px 25px',
   },
   formHead: {
-    borderBottom: 'solid 1px #e5e5e5',
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: '29px',
-  },
-  backBtn: {
-    background: `url(${process.env.CDN_BASE_URI}images/icons/back.png) no-repeat scroll center center`,
-    height: '24px',
-    marginRight: '10px',
-    width: '17px',
-    padding: 0,
-    margin: '0 10px 0 0',
-    minHeight: '24px',
   },
   innerContent: {
     width: '80vw',
