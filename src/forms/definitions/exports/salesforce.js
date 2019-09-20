@@ -1,24 +1,4 @@
 export default {
-  preSubmit: formValues => {
-    const retValues = { ...formValues };
-
-    if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
-    } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
-    }
-
-    if (retValues['/salesforce/executionType'] === 'scheduled') {
-      retValues['/salesforce/type'] = 'soql';
-      retValues['/salesforce/api'] = 'rest';
-    } else if (retValues['/salesforce/executionType'] === 'realtime') {
-      retValues['/type'] = 'distributed';
-    }
-
-    return {
-      ...retValues,
-    };
-  },
   fields: [
     { formId: 'common' },
     { fieldId: 'salesforce.executionType' },
@@ -39,7 +19,6 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
-      defaultValue: r => (r && r.type ? r.type : 'all'),
       options: [
         {
           items: [
@@ -57,49 +36,14 @@ export default {
         },
       ],
     },
-    {
-      fieldId: 'delta.dateField',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
-    },
-    {
-      fieldId: 'delta.lagOffset',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
-    },
-    {
-      fieldId: 'once.booleanField',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
-    },
+    { fieldId: 'delta.dateField' },
+    { fieldId: 'delta.lagOffset' },
+    { fieldId: 'once.booleanField' },
     { fieldId: 'salesforce.sObjectType' },
-    {
-      id: 'salesforce.distributed.requiredTrigger',
-      type: 'text',
-      label: 'Required Trigger',
-      multiline: true,
-      visibleWhen: [
-        {
-          field: 'salesforce.executionType',
-          is: ['realtime'],
-        },
-      ],
-    },
-    { fieldId: 'salesforce.distributed.referencedFields' }, // TODO need to  modify the field once enhancemnt done.
-    { fieldId: 'salesforce.distributed.relatedLists.referencedFields' }, // TODO need to modify field once enhancemnt done.
-    { fieldId: 'salesforce.distributed.qualifier' }, // TODO need to modify field once enhancemnt done.
+    { fieldId: 'salesforce.distributed.requiredTrigger' },
+    { fieldId: 'salesforce.distributed.referencedFields' },
+    { fieldId: 'salesforce.distributed.relatedLists' },
+    { fieldId: 'salesforce.distributed.qualifier' },
   ],
   fieldSets: [
     {
