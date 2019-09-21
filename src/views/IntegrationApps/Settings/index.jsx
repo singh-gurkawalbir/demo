@@ -111,7 +111,7 @@ export default function IntegrationAppSettings(props) {
   };
 
   const handleAddNewStoreClick = () => {
-    props.history.push(`/pg/connectors/${integrationId}/installer/addNewStore`);
+    props.history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
   };
 
   const handleTagChangeHandler = tag => {

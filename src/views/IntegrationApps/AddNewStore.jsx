@@ -63,6 +63,7 @@ export default function IntegrationAppAddNewStore(props) {
   }, [addNewStoreSteps, requestedSteps, dispatch, integrationId]);
   useEffect(() => {
     if (
+      addNewStoreSteps.length &&
       !addNewStoreSteps.reduce(
         (result, step) => result || !step.completed,
         false
