@@ -1,19 +1,20 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../../components/icons/HookIcon';
-import AuditLogDialog from '../../../../../components/AuditLog/AuditLogDialog';
+import Icon from '../../../../icons/HookIcon';
+import ConfigureDebugger from '../../../../ConfigureDebugger';
 
 export default {
-  label: 'Audit log',
-  component: function AuditLogs({ resourceType, resource }) {
+  label: 'Config debugger',
+  component: function ConfigDebugger({ resource }) {
     const [show, setShow] = useState(false);
 
     return (
       <Fragment>
         {show && (
-          <AuditLogDialog
-            resourceType={resourceType}
-            resourceId={resource._id}
+          <ConfigureDebugger
+            id={resource._id}
+            name={resource.name}
+            debugDate={resource.debugDate}
             onClose={() => setShow(false)}
           />
         )}

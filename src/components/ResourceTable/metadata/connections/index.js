@@ -9,7 +9,7 @@ import {
   onlineStatus,
   formatLastModified,
   getConnectorName,
-} from '../../../../../components/CeligoTable/util';
+} from '../../../CeligoTable/util';
 
 export default {
   columns: [

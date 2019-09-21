@@ -1,19 +1,14 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import {
-  getResourceLink,
-  formatLastModified,
-  getConnectorName,
-} from '../../../../../components/CeligoTable/util';
+import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
 
-export default {
+export default resourceType => ({
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('exports', r),
+      value: r => getResourceLink(resourceType, r),
       orderBy: 'name',
     },
-    { heading: 'Connector', value: r => getConnectorName(r) },
     {
       heading: 'Updated on',
       value: r => formatLastModified(r.lastModified),
@@ -21,4 +16,4 @@ export default {
     },
   ],
   rowActions: [Delete, References],
-};
+});

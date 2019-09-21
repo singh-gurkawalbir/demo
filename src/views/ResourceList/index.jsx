@@ -13,7 +13,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from './ResourceTable';
+import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({

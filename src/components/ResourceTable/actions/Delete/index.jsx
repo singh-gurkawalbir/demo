@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
-import Icon from '../../../../../components/icons/CloseIcon';
-import actions from '../../../../../actions';
-import { MODEL_PLURAL_TO_LABEL } from '../../../../../utils/resource';
+import { confirmDialog } from '../../../ConfirmDialog';
+import Icon from '../../../icons/CloseIcon';
+import actions from '../../../../actions';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 export default {
   label: 'Delete',

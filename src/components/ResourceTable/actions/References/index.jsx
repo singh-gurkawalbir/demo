@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../../components/icons/HookIcon';
-import ResourceReferences from '../../../../../components/ResourceReferences';
+import Icon from '../../../icons/HookIcon';
+import ResourceReferences from '../../../ResourceReferences';
 
 export default {
   label: 'Used by',

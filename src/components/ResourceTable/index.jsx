@@ -1,5 +1,5 @@
 import metadata from './metadata';
-import CeligoTable from '../../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 
 export default function ResourceTable({
   resourceType,
