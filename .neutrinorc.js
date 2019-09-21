@@ -87,7 +87,7 @@ module.exports = {
           // 'src/utils/**/*.{js,jsx}',
         ],
 
-        setupFiles: ["jest-date-mock"],
+        setupFiles: ["jest-date-mock","core-js"],
         coverageThreshold: {
           global: {
             statements: 75,

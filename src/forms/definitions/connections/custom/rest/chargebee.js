@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'chargebee',
@@ -12,9 +12,9 @@ export default {
       formValues['/chargebeeSubdomain']
     }.chargebee.com/api`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    chargebeeSubdomain: {
       type: 'text',
       id: 'chargebeeSubdomain',
       startAdornment: 'https://',
@@ -40,17 +40,18 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key:',
       helpText: 'The API Key of your Chargebee account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'chargebeeSubdomain', 'rest.basicAuth.username'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
