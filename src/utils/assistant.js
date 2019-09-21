@@ -1552,12 +1552,10 @@ export function convertToImport({ assistantConfig, assistantData }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
-  const lookupOperationDetails = getExportOperationDetails({
-    version,
-    resource,
-    operation: lookupUrl,
-    assistantData,
-  });
+  const { lookupOperationDetails } = operationDetails;
+
+ 
+
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
     postBody: '',
