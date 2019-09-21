@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +8,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,8 +43,8 @@ export default function MarketPlaceGridList() {
     applications.includes(connector.id)
   );
   useEffect(() => {
-    dispatch(actions.marketPlace.requestConnectors());
-    dispatch(actions.marketPlace.requestTemplates());
+    dispatch(actions.marketplace.requestConnectors());
+    dispatch(actions.marketplace.requestTemplates());
   }, [dispatch]);
 
   return (
@@ -55,11 +56,7 @@ export default function MarketPlaceGridList() {
             key={connector.id}
             to={getRoutePath(`/marketplace/${connector.id}`)}>
             <Card className={classes.card}>
-              <img
-                width="150px"
-                src={`https://d142hkd03ds8ug.cloudfront.net/images/marketplace/large/${connector.id}.png`}
-                alt={connector.name}
-              />
+              <ApplicationImg assistant={connector.id} size="large" />
             </Card>
           </NavLink>
         ))}

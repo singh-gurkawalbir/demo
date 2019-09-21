@@ -10,7 +10,7 @@ describe('marketplace reducers', () => {
     test('should store connectors succesfully on state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedConnectors({ connectors: testConnectors })
+        actions.marketplace.receivedConnectors({ connectors: testConnectors })
       );
 
       expect(state.connectors).toEqual(testConnectors);
@@ -18,13 +18,13 @@ describe('marketplace reducers', () => {
     test('should replace existing connectors on state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedConnectors({ connectors: testConnectors })
+        actions.marketplace.receivedConnectors({ connectors: testConnectors })
       );
 
       expect(state.connectors).toEqual(testConnectors);
       const newState = reducer(
         state,
-        actions.marketPlace.receivedConnectors({
+        actions.marketplace.receivedConnectors({
           connectors: updatedTestConnectors,
         })
       );
@@ -39,7 +39,7 @@ describe('marketplace reducers', () => {
     test('should store templates succesfully on state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedTemplates({ templates: testTemplates })
+        actions.marketplace.receivedTemplates({ templates: testTemplates })
       );
 
       expect(state.templates).toEqual(testTemplates);
@@ -47,13 +47,13 @@ describe('marketplace reducers', () => {
     test('should replace existing templates on state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedTemplates({ templates: testTemplates })
+        actions.marketplace.receivedTemplates({ templates: testTemplates })
       );
 
       expect(state.templates).toEqual(testTemplates);
       const newState = reducer(
         state,
-        actions.marketPlace.receivedTemplates({
+        actions.marketplace.receivedTemplates({
           templates: updatedTestTemplates,
         })
       );
@@ -74,7 +74,7 @@ describe('marketplace selectors', () => {
     test('should return connectors on valid state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedConnectors({ connectors: testConnectors })
+        actions.marketplace.receivedConnectors({ connectors: testConnectors })
       );
 
       expect(selectors.connectors(state)).toEqual(state.connectors);
@@ -90,7 +90,7 @@ describe('marketplace selectors', () => {
     test('should return templates on valid state', () => {
       const state = reducer(
         undefined,
-        actions.marketPlace.receivedTemplates({ templates: testTemplates })
+        actions.marketplace.receivedTemplates({ templates: testTemplates })
       );
 
       expect(selectors.templates(state)).toEqual(state.templates);

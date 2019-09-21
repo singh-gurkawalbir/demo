@@ -64,7 +64,7 @@ const connection = {
       integrationId,
     }),
 };
-const marketPlace = {
+const marketplace = {
   requestConnectors: () =>
     action(actionTypes.MARKETPLACE.CONNECTORS_REQUEST, {}),
   requestTemplates: () => action(actionTypes.MARKETPLACE.TEMPLATES_REQUEST, {}),
@@ -660,5 +660,5 @@ export default {
   assistantMetadata,
   stack,
   connection,
-  marketPlace,
+  marketplace,
 };

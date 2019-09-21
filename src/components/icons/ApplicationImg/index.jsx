@@ -33,7 +33,7 @@ function ApplicationImg(props) {
   let path;
 
   if (assistant) {
-    path = `${process.env.CDN_BASE_URI}marketplace/small/${assistant}.png`;
+    path = `${process.env.CDN_BASE_URI}marketplace/${size}/${assistant}.png`;
   } else {
     path = `${
       process.env.CDN_BASE_URI

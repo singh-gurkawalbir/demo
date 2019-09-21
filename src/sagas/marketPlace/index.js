@@ -16,7 +16,7 @@ export function* requestConnectors() {
     return;
   }
 
-  yield put(actions.marketPlace.receivedConnectors({ connectors: response }));
+  yield put(actions.marketplace.receivedConnectors({ connectors: response }));
 }
 
 export function* requestTemplates() {
@@ -32,7 +32,7 @@ export function* requestTemplates() {
     return;
   }
 
-  yield put(actions.marketPlace.receivedTemplates({ templates: response }));
+  yield put(actions.marketplace.receivedTemplates({ templates: response }));
 }
 
 export function* installConnector({ connectorId, sandbox }) {

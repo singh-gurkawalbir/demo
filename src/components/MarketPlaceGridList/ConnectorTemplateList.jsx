@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -15,7 +15,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import { CONTACT_SALES_MESSAGE } from '../../utils/constants';
+import { CONTACT_SALES_MESSAGE } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -80,11 +80,11 @@ export default function ConnectorTemplateList(props) {
   };
 
   const handleConnectorInstallClick = connector => {
-    dispatch(actions.marketPlace.installConnector(connector._id, sandbox));
+    dispatch(actions.marketplace.installConnector(connector._id, sandbox));
   };
 
   const handleContactSalesClick = connector => {
-    dispatch(actions.marketPlace.contactSales(connector.name, connector._id));
+    dispatch(actions.marketplace.contactSales(connector.name, connector._id));
     setShowMessage(true);
   };
 

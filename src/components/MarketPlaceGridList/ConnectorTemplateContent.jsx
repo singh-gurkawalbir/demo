@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   description: {
@@ -16,7 +17,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     padding: theme.spacing(1),
     paddingTop: theme.spacing(2),
-    background: props => (props.type === 'connector' ? '#2B547E' : '#D3D3D2'),
+    background: props =>
+      props.type === 'connector'
+        ? theme.palette.primary.dark
+        : theme.palette.secondary.light,
     height: '50px',
   },
   user: {
@@ -45,15 +49,14 @@ export default function ConnectorTemplateContent(props) {
               resource.user.email)}
         </Typography>
       </div>
-      <img
-        width="100px"
-        src={`https://d142hkd03ds8ug.cloudfront.net/images/marketplace/large/${
+      <ApplicationImg
+        assistant={
           resource.applications.length >= 2 &&
           application === resource.applications[0]
             ? resource.applications[1]
             : resource.applications[0]
-        }.png`}
-        alt={resource.name}
+        }
+        size="large"
       />
       <Typography className={classes.name} variant="h3">
         {resource.name}

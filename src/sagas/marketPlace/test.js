@@ -24,7 +24,7 @@ describe('requestConnectors saga', () => {
     );
     expect(saga.next(testConnectors).value).toEqual(
       put(
-        actions.marketPlace.receivedConnectors({ connectors: testConnectors })
+        actions.marketplace.receivedConnectors({ connectors: testConnectors })
       )
     );
     expect(saga.next().done).toEqual(true);
@@ -56,7 +56,7 @@ describe('requestTemplates saga', () => {
       })
     );
     expect(saga.next(testTemplates).value).toEqual(
-      put(actions.marketPlace.receivedTemplates({ templates: testTemplates }))
+      put(actions.marketplace.receivedTemplates({ templates: testTemplates }))
     );
     expect(saga.next().done).toEqual(true);
   });

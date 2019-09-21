@@ -7,7 +7,7 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
-import marketPlace, * as fromMarketPlace from './marketPlace';
+import marketplace, * as fromMarketPlace from './marketplace';
 
 export default combineReducers({
   resources,
@@ -16,7 +16,7 @@ export default combineReducers({
   accessTokens,
   jobs,
   suiteScript,
-  marketPlace,
+  marketplace,
 });
 
 // #region resource selectors
@@ -163,11 +163,11 @@ export function suiteScriptIntegrations(state, connectionId) {
 }
 
 export function marketPlaceConnectors(state) {
-  return fromMarketPlace.connectors(state.marketPlace);
+  return fromMarketPlace.connectors(state.marketplace);
 }
 
 export function marketPlaceTemplates(state) {
-  return fromMarketPlace.templates(state.marketPlace);
+  return fromMarketPlace.templates(state.marketplace);
 }
 
 export function flowJobsPagingDetails(state) {

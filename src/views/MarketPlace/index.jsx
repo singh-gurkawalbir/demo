@@ -1,5 +1,5 @@
-import MarketPlaceGridList from '../../components/MarketPlaceGridList';
+import MarketplaceGridList from '../../components/MarketplaceGridList';
 
-export default function MarketPlace() {
-  return <MarketPlaceGridList />;
+export default function Marketplace() {
+  return <MarketplaceGridList />;
 }

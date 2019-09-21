@@ -25,8 +25,8 @@ const FlowBuilder = loadable(() =>
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
-const MarketPlace = loadable(() =>
-  import(/* webpackChunkName: 'MarketPlace' */ '../../views/MarketPlace')
+const Marketplace = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/Marketplace')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
@@ -42,7 +42,7 @@ const IntegrationSettings = loadable(() =>
 );
 const ConnectorTemplateList = loadable(() =>
   import(
-    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketPlaceGridList/ConnectorTemplateList'
+    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceGridList/ConnectorTemplateList'
   )
 );
 
@@ -70,7 +70,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
-        <Route path="/pg/marketplace" component={MarketPlace} />
+        <Route path="/pg/marketplace" component={Marketplace} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route path="/pg" exact component={Dashboard} />
 
