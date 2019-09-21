@@ -3,7 +3,7 @@ import {
   onlineStatus,
   formatLastModified,
   getConnectorName,
-} from '../util';
+} from '../CeligoTable/util';
 
 export default {
   columns: [

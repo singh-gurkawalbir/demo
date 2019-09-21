@@ -1,9 +1,11 @@
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
-import StatusCircle from '../../../../components/HomePageCard/Header/Status/StatusCircle';
-import getRoutePath from '../../../../utils/routePaths';
-import { getApp } from '../../../../constants/applications';
-import { getResourceSubType } from '../../../../utils/resource';
+// TODO: @Azhar, this status circle seems to be used more than just in
+// the homepage card. Can you move it under /components, pls?
+import StatusCircle from '../HomePageCard/Header/Status/StatusCircle';
+import getRoutePath from '../../utils/routePaths';
+import { getApp } from '../../constants/applications';
+import { getResourceSubType } from '../../utils/resource';
 
 export const getResourceLink = (resourceType, resource) => (
   <Link

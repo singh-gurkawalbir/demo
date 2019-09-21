@@ -2,7 +2,11 @@ import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../../../components/AgentList/AgentDownloadInstaller';
 import AgentToken from '../../../../../components/AgentToken';
-import { getResourceLink, onlineStatus, formatLastModified } from '../util';
+import {
+  getResourceLink,
+  onlineStatus,
+  formatLastModified,
+} from '../../../../../components/CeligoTable/util';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />

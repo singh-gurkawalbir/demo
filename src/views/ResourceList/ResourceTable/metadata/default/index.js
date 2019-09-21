@@ -1,6 +1,9 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import { getResourceLink, formatLastModified } from '../util';
+import {
+  getResourceLink,
+  formatLastModified,
+} from '../../../../../components/CeligoTable/util';
 
 export default resourceType => ({
   columns: [

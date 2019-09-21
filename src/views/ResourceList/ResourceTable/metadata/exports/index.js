@@ -1,6 +1,10 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import { getResourceLink, formatLastModified, getConnectorName } from '../util';
+import {
+  getResourceLink,
+  formatLastModified,
+  getConnectorName,
+} from '../../../../../components/CeligoTable/util';
 
 export default {
   columns: [
