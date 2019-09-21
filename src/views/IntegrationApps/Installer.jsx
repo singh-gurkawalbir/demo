@@ -47,7 +47,6 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
-  const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const integration = useSelector(state =>
@@ -116,7 +115,6 @@ export default function ConnectorInstallation(props) {
       }
 
       setSelectedConnectionId(_connectionId);
-      setShowConnectionDialog(true);
       // handle Installation step click
     } else if (installURL) {
       if (!step.isTriggered) {
@@ -186,16 +184,16 @@ export default function ConnectorInstallation(props) {
         (step || {}).installerFunction
       )
     );
-    setShowConnectionDialog(false);
+    setSelectedConnectionId(false);
   };
 
   const handleClose = () => {
-    setShowConnectionDialog(false);
+    setSelectedConnectionId(false);
   };
 
   return (
     <LoadResources required resources="connections,integrations">
-      {showConnectionDialog && (
+      {selectedConnectionId && (
         <ConnectionSetupDialog
           _connectionId={selectedConnectionId}
           onClose={handleClose}
