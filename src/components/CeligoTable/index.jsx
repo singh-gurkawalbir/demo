@@ -58,6 +58,7 @@ export default function CeligoTable({
   onSelectChange,
   selectableRows,
   filterKey,
+  actionProps = {},
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -176,9 +177,7 @@ export default function CeligoTable({
                 <ActionMenu
                   actions={rowActions.map(({ label, component: Action }) => ({
                     label,
-                    component: (
-                      <Action /* resourceType={resourceType} */ resource={r} />
-                    ),
+                    component: <Action {...actionProps} resource={r} />,
                   }))}
                 />
               </TableCell>

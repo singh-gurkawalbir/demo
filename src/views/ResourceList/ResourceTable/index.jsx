@@ -12,6 +12,7 @@ export default function ResourceTable({
       filterKey={resourceType}
       {...metadata(resourceType)}
       {...rest}
+      actionProps={{ resourceType }}
     />
   );
 }
