@@ -46,6 +46,7 @@ export default function IntegrationAppAddNewStore(props) {
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
@@ -54,6 +55,12 @@ export default function IntegrationAppAddNewStore(props) {
     selectors.addNewStoreSteps(state, integrationId)
   );
 
+  useEffect(() => {
+    if ((!addNewStoreSteps || !addNewStoreSteps.length) && !requestedSteps) {
+      dispatch(actions.integrationApp.store.addNew(integrationId));
+      setRequestedSteps(true);
+    }
+  }, [addNewStoreSteps, requestedSteps, dispatch, integrationId]);
   useEffect(() => {
     if (
       !addNewStoreSteps.reduce(
@@ -74,7 +81,11 @@ export default function IntegrationAppAddNewStore(props) {
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
-  if (!addNewStoreSteps || !integration || !integration._connectorId) {
+  if (!addNewStoreSteps) {
+    return <Typography>Loading new store installation steps</Typography>;
+  }
+
+  if (!integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;
   }
 
