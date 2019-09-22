@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'coupa',
@@ -20,10 +20,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.coupaSubdomain': {
       type: 'text',
       id: 'rest.coupaSubdomain',
       startAdornment: 'https://',
@@ -49,20 +48,20 @@ export default {
         return subdomain;
       },
     },
-
-    {
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       required: true,
       label: 'API Key:',
       helpText:
         'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. A token can be created from the API Keys section of the Administration tab by an admin user. The token is a 40-character long case-sensitive alphanumeric code.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.coupaSubdomain', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

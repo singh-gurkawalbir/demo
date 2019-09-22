@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const date = new Date();
     const dateString = new Date(
       date.getTime() - date.getTimezoneOffset() * 60000
@@ -39,10 +39,9 @@ export default {
       ],
     };
   },
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment:',
@@ -68,14 +67,14 @@ export default {
         return 'production';
       },
     },
-    {
+    'http.unencrypted.p3plUserID': {
       id: 'http.unencrypted.p3plUserID',
       type: 'text',
       label: 'P3PL User ID:',
       helpText: 'Please enter your P3PL account User ID.',
       required: true,
     },
-    {
+    'http.encrypted.p3plUserPassword': {
       id: 'http.encrypted.p3plUserPassword',
       type: 'text',
       label: 'P3PL User Password:',
@@ -85,12 +84,18 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'environment',
+      'http.unencrypted.p3plUserID',
+      'http.encrypted.p3plUserPassword',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

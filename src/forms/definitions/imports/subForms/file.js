@@ -19,13 +19,21 @@ export default {
 
     return null;
   },
-  fields: [
-    {
+  fieldMap: {
+    uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
     },
-    { fieldId: 'file.csv.columnDelimiter' },
-    { fieldId: 'file.csv.includeHeader' },
-    { fieldId: 'file.xlsx.includeHeader' },
-  ],
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
+  },
+  layout: {
+    fields: [
+      'uploadFile',
+      'file.csv.columnDelimiter',
+      'file.csv.includeHeader',
+      'file.xlsx.includeHeader',
+    ],
+  },
 };

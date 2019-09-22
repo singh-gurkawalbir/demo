@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'splunk',
@@ -9,21 +9,23 @@ export default {
     '/rest/pingMethod': 'GET',
     '/rest/disableStrictSSL': true,
   }),
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: 'rest.baseURI' },
-    {
-      fieldId: 'rest.basicAuth.username',
-    },
-    {
-      fieldId: 'rest.basicAuth.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.baseURI': { fieldId: 'rest.baseURI' },
+    'rest.basicAuth.username': { fieldId: 'rest.basicAuth.username' },
+    'rest.basicAuth.password': { fieldId: 'rest.basicAuth.password' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.baseURI',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

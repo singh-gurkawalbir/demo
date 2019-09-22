@@ -24,29 +24,29 @@ export default {
 
     return null;
   },
-  fields: [
-    { formId: 'common' },
-    {
+
+  fieldMap: {
+    common: { formId: 'common' },
+    importData: {
       id: 'importData',
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
-    { fieldId: 'http.method' },
-    { fieldId: 'http.headers' },
-    { fieldId: 'http.requestMediaType' },
-    { fieldId: 'http.compositeType' },
-    { fieldId: 'http.relativeURI' },
-    // Manage lookup option is not visible directly  in form
-    { fieldId: 'http.lookups', visible: false },
-    { fieldId: 'http.response.successPath' },
-    { fieldId: 'http.response.successValues' },
-    { fieldId: 'http.response.resourceIdPath' },
-    { fieldId: 'http.response.resourcePath' },
-    { fieldId: 'http.response.errorPath' },
-    { fieldId: 'http.batchSize' },
-    {
+    oneToMany: { fieldId: 'oneToMany' },
+    pathToMany: { fieldId: 'pathToMany' },
+    'http.method': { fieldId: 'http.method' },
+    'http.headers': { fieldId: 'http.headers' },
+    'http.requestMediaType': { fieldId: 'http.requestMediaType' },
+    'http.compositeType': { fieldId: 'http.compositeType' },
+    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.lookups': { fieldId: 'http.lookups', visible: false },
+    'http.response.successPath': { fieldId: 'http.response.successPath' },
+    'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
+    'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
+    'http.response.errorPath': { fieldId: 'http.response.errorPath' },
+    'http.batchSize': { fieldId: 'http.batchSize' },
+    createNewData: {
       id: 'createNewData',
       type: 'labeltitle',
       label: 'Create New Data',
@@ -57,12 +57,11 @@ export default {
         },
       ],
     },
-    { fieldId: 'http.compositeMethodCreate' },
-    { fieldId: 'http.bodyCreate' },
-    { fieldId: 'http.resourceIdPathCreate' },
-    { fieldId: 'http.resourceIdPathCreate' },
-    { fieldId: 'http.resourcePathCreate' },
-    {
+    'http.compositeMethodCreate': { fieldId: 'http.compositeMethodCreate' },
+    'http.bodyCreate': { fieldId: 'http.bodyCreate' },
+    'http.resourceIdPathCreate': { fieldId: 'http.resourceIdPathCreate' },
+    'http.resourcePathCreate': { fieldId: 'http.resourcePathCreate' },
+    upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
       label: 'Upate Existing Data',
@@ -73,11 +72,11 @@ export default {
         },
       ],
     },
-    { fieldId: 'http.compositeMethodUpdate' },
-    { fieldId: 'http.relativeURIUpdate' },
-    { fieldId: 'http.resourceIdPathUpdate' },
-    { fieldId: 'http.resourcePathUpdate' },
-    {
+    'http.compositeMethodUpdate': { fieldId: 'http.compositeMethodUpdate' },
+    'http.relativeURIUpdate': { fieldId: 'http.relativeURIUpdate' },
+    'http.resourceIdPathUpdate': { fieldId: 'http.resourceIdPathUpdate' },
+    'http.resourcePathUpdate': { fieldId: 'http.resourcePathUpdate' },
+    ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
       label: 'Ignore Existing Data',
@@ -88,79 +87,105 @@ export default {
         },
       ],
     },
-    { fieldId: 'http.existingDataId' },
-    {
+    'http.existingDataId': { fieldId: 'http.existingDataId' },
+    mediatypeInformation: {
       id: 'mediatypeInformation',
       type: 'labeltitle',
       label: 'Media type information',
     },
-    { fieldId: 'http.successMediaType' },
-    { fieldId: 'http.errorMediaType' },
-    { fieldId: 'uploadFile' },
-    {
+    'http.successMediaType': { fieldId: 'http.successMediaType' },
+    'http.errorMediaType': { fieldId: 'http.errorMediaType' },
+    uploadFile: { fieldId: 'uploadFile' },
+    'file.csv.columnDelimiter': {
       fieldId: 'file.csv.columnDelimiter',
-      visibleWhen: [
-        {
-          field: 'http.requestMediaType',
-          is: ['csv'],
-        },
-      ],
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    {
+    'file.csv.includeHeader': {
       fieldId: 'file.csv.includeHeader',
-      visibleWhen: [
-        {
-          field: 'http.requestMediaType',
-          is: ['csv'],
-        },
-      ],
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    { fieldId: 'file.csv.customHeaderRows' },
-    { formId: 'dataMappings' },
-    { fieldId: 'http.body' },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [
-        {
-          fieldId: 'file.csv.rowDelimiter',
-          visibleWhen: [
-            {
-              field: 'http.requestMediaType',
-              is: ['csv'],
-            },
-          ],
-        },
-        {
-          fieldId: 'file.csv.replaceTabWithSpace',
-          visibleWhen: [
-            {
-              field: 'http.requestMediaType',
-              is: ['csv'],
-            },
-          ],
-        },
-        {
-          fieldId: 'file.csv.replaceNewLineWithSpace',
-          visibleWhen: [
-            {
-              field: 'http.requestMediaType',
-              is: ['csv'],
-            },
-          ],
-        },
-        { fieldId: 'http.ignoreEmptyNodes' },
-        { formId: 'advancedSettings' },
-        { fieldId: 'http.configureAsyncHelper' },
-        { fieldId: 'http._asyncHelperId' },
-      ],
+    'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
+    dataMappings: { formId: 'dataMappings' },
+    'http.body': { fieldId: 'http.body' },
+    'file.csv.rowDelimiter': {
+      fieldId: 'file.csv.rowDelimiter',
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
-      fields: [{ formId: 'hooks' }],
+    'file.csv.replaceTabWithSpace': {
+      fieldId: 'file.csv.replaceTabWithSpace',
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-  ],
+    'file.csv.replaceNewLineWithSpace': {
+      fieldId: 'file.csv.replaceNewLineWithSpace',
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+    },
+    'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
+    advancedSettings: { formId: 'advancedSettings' },
+    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
+    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
+    hooks: { formId: 'hooks' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'importData',
+      'oneToMany',
+      'pathToMany',
+      'http.method',
+      'http.headers',
+      'http.requestMediaType',
+      'http.compositeType',
+      'http.relativeURI',
+      'http.lookups',
+      'http.response.successPath',
+      'http.response.successValues',
+      'http.response.resourceIdPath',
+      'http.response.resourcePath',
+      'http.response.errorPath',
+      'http.batchSize',
+      'createNewData',
+      'http.compositeMethodCreate',
+      'http.bodyCreate',
+      'http.resourceIdPathCreate',
+      'http.resourceIdPathCreate',
+      'http.resourcePathCreate',
+      'upateExistingData',
+      'http.compositeMethodUpdate',
+      'http.relativeURIUpdate',
+      'http.resourceIdPathUpdate',
+      'http.resourcePathUpdate',
+      'ignoreExistingData',
+      'http.existingDataId',
+      'mediatypeInformation',
+      'http.successMediaType',
+      'http.errorMediaType',
+      'uploadFile',
+      'file.csv.columnDelimiter',
+      'file.csv.includeHeader',
+      'file.csv.customHeaderRows',
+      'dataMappings',
+      'http.body',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'file.csv.rowDelimiter',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.replaceNewLineWithSpace',
+          'http.ignoreEmptyNodes',
+          'advancedSettings',
+          'http.configureAsyncHelper',
+          'http._asyncHelperId',
+        ],
+      },
+      {
+        collapsed: false,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+    ],
+  },
 };
