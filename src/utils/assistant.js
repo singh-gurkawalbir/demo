@@ -254,7 +254,7 @@ export function getVersionDetails({ version, assistantData }) {
     [versionDetails] = assistantData.versions;
   }
 
-  if (versionDetails && versionDetails.resources) {
+  if (versionDetails && (versionDetails.version || versionDetails.resources)) {
     versionDetails = { ...versionDetails };
     OVERWRITABLE_PROPERTIES.forEach(prop => {
       if (['headers', 'queryParameters'].includes(prop)) {
@@ -1175,9 +1175,6 @@ export function updateFormValues({
 }
 
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
-  console.log(
-    `assistantData in convertFromImport ${JSON.stringify(assistantData)}`
-  );
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -1462,7 +1459,6 @@ export function convertToImport({ assistantConfig, assistantData }) {
     resource,
     operation,
     pathParams = {},
-    lookupUrl,
     lookupType,
     ignoreExisting = false,
     ignoreMissing = false,
@@ -1495,7 +1491,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (adaptorType === 'rest') {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
-      importDoc.relativeURI = operationDetails.url;
+      importDoc.relativeURI = [...operationDetails.url];
       importDoc.body = operationDetails.body || [null, null];
       importDoc.responseIdPath = operationDetails.responseIdPath;
       importDoc.successPath = operationDetails.successPath;
@@ -1511,7 +1507,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   } else if (adaptorType === 'http') {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
-      importDoc.relativeURI = operationDetails.url;
+      importDoc.relativeURI = [...operationDetails.url];
     } else {
       importDoc.method = [operationDetails.method];
       importDoc.relativeURI = [operationDetails.url];
@@ -1552,10 +1548,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
-  const { lookupOperationDetails } = operationDetails;
-
- 
-
+  const { lookupOperationDetails = {} } = operationDetails;
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
     postBody: '',
