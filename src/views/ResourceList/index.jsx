@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link, Route } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Paper } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
@@ -15,6 +14,7 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
+import ShowMoreDrawer from '../../components/drawer/ShowMore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -23,21 +23,9 @@ const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
-
-  pagingBar: {
-    position: 'fixed',
-    padding: theme.spacing(2),
-    paddingLeft: theme.drawerWidth,
-    // position: 'absolute',
-    right: 0,
-    bottom: 0,
-    left: 0,
-    textAlign: 'center',
-    zIndex: theme.zIndex.appBar,
-  },
 }));
 
-function PageContent(props) {
+function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
   const classes = useStyles();
@@ -52,12 +40,6 @@ function PageContent(props) {
       ...filter,
     })
   );
-  const handleMore = () => {
-    dispatch(
-      actions.patchFilter(resourceType, { take: (filter.take || 3) + 2 })
-    );
-  };
-
   const handleKeywordChange = e => {
     dispatch(
       actions.patchFilter(resourceType, { take: 3, keyword: e.target.value })
@@ -101,20 +83,13 @@ function PageContent(props) {
           />
         </LoadResources>
       </div>
-      {list.filtered > list.count && (
-        <Paper elevation={10} className={classes.pagingBar}>
-          <Button
-            onClick={handleMore}
-            variant="text"
-            size="medium"
-            color="primary"
-            className={classes.button}>
-            Show more results ({list.filtered - list.count} left)
-          </Button>
-        </Paper>
-      )}
+      <ShowMoreDrawer
+        filterKey={resourceType}
+        count={list.count}
+        maxCount={list.filtered}
+      />
     </Fragment>
   );
 }
 
-export default withRouter(PageContent);
+export default withRouter(ResourceList);
