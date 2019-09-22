@@ -41,8 +41,6 @@ export default function AttachStandAloneFlows({
     setSelected(flows);
   };
 
-  console.log('Resources *****', Resources);
-
   const exports = Resources('exports');
   const imports = Resources('imports');
   const connections = Resources('connections');
