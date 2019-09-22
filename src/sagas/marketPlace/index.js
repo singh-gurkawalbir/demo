@@ -69,7 +69,7 @@ export function* contactSales({ connectorName, _connectorId }) {
   }
 }
 
-export const marketPlaceSagas = [
+export const marketplaceSagas = [
   takeEvery(actionTypes.MARKETPLACE.CONNECTORS_REQUEST, requestConnectors),
   takeEvery(actionTypes.MARKETPLACE.TEMPLATES_REQUEST, requestTemplates),
   takeEvery(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, installConnector),

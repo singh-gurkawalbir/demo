@@ -162,7 +162,7 @@ export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }
 
-export function marketPlaceConnectors(state, application, sandbox, licenses) {
+export function marketplaceConnectors(state, application, sandbox, licenses) {
   return fromMarketPlace.connectors(
     state.marketplace,
     application,
@@ -171,7 +171,7 @@ export function marketPlaceConnectors(state, application, sandbox, licenses) {
   );
 }
 
-export function marketPlaceTemplates(state, application) {
+export function marketplaceTemplates(state, application) {
   return fromMarketPlace.templates(state.marketplace, application);
 }
 

@@ -36,10 +36,10 @@ export default function MarketPlaceGridList() {
   const sandbox = userPreferences.environment === 'sandbox';
   const connectors =
     useSelector(state =>
-      selectors.marketPlaceConnectors(state, undefined, sandbox)
+      selectors.marketplaceConnectors(state, undefined, sandbox)
     ) || [];
   const templates =
-    useSelector(state => selectors.marketPlaceTemplates(state)) || [];
+    useSelector(state => selectors.marketplaceTemplates(state)) || [];
   let applicationConnectors = getApplicationConnectors();
   let applications = [];
 

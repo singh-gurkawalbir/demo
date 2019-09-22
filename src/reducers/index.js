@@ -412,10 +412,10 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
-export function marketPlaceConnectors(state, application, sandbox) {
+export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
 
-  return fromData.marketPlaceConnectors(
+  return fromData.marketplaceConnectors(
     state.data,
     application,
     sandbox,
@@ -423,8 +423,8 @@ export function marketPlaceConnectors(state, application, sandbox) {
   );
 }
 
-export function marketPlaceTemplates(state, application) {
-  return fromData.marketPlaceTemplates(state.data, application);
+export function marketplaceTemplates(state, application) {
+  return fromData.marketplaceTemplates(state.data, application);
 }
 
 export function integrationConnectionList(state, integrationId) {

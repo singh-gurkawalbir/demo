@@ -49,10 +49,10 @@ export default function ConnectorTemplateList(props) {
   );
   const sandbox = userPreferences.environment === 'sandbox';
   const connectors = useSelector(state =>
-    selectors.marketPlaceConnectors(state, application, sandbox)
+    selectors.marketplaceConnectors(state, application, sandbox)
   );
   const templates = useSelector(state =>
-    selectors.marketPlaceTemplates(state, application)
+    selectors.marketplaceTemplates(state, application)
   );
   const applicationConnectors = getApplicationConnectors();
   const connector = applicationConnectors.find(c => c.id === application);
