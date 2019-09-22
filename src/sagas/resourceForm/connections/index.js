@@ -7,7 +7,6 @@ import { pingConnectionParams } from '../../api/apiPaths';
 import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
-import { accountShareHeader } from '../../../sagas/api/requestInterceptors';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 
@@ -258,7 +257,7 @@ export function* pingConnection({ resourceId, values }) {
 export function* openOAuthWindowForConnection(resourceId) {
   const options = 'scrollbars=1,height=600,width=800';
   let url = `/connection/${resourceId}/oauth2`;
-  const additionalHeaders = yield call(accountShareHeader, url);
+  const additionalHeaders = yield select(selectors.accountShareHeader, url);
 
   if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
     url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;

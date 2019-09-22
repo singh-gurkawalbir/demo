@@ -5,6 +5,23 @@ import {
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
 
+const refGeneration = field => {
+  const { fieldId, id, formId } = field;
+
+  if (fieldId) return fieldId;
+  else if (id) return id;
+  else if (formId) return formId;
+  throw new Error('cant generate reference');
+};
+
+const addMetaIntoFieldMapAndFields = (fieldMap, fields, newMeta) => {
+  const id = refGeneration(newMeta);
+
+  // eslint-disable-next-line no-param-reassign
+  fieldMap[id] = newMeta;
+  fields.push(id);
+};
+
 export default function assistantDefinition(
   resourceId,
   resource,
@@ -229,9 +246,22 @@ export default function assistantDefinition(
     }
   }
 
-  return {
-    fields: [{ formId: 'common' }],
-    fieldSets: [
+  const fieldMap = {};
+  const layoutFields = [];
+
+  fields.forEach(field =>
+    addMetaIntoFieldMapAndFields(fieldMap, layoutFields, field)
+  );
+
+  // we are adding hooks seperately because they should move into a container
+  fieldMap.hooks = {
+    formId: 'hooks',
+  };
+
+  const layout = {
+    fields: layoutFields,
+    type: 'collapse',
+    containers: [
       {
         header: 'What would you like to export?',
         collapsed: false,
@@ -240,9 +270,14 @@ export default function assistantDefinition(
       {
         header: 'Hooks (Optional, Developers Only)',
         collapsed: false,
-        fields: [{ formId: 'hooks' }],
+        fields: ['hooks'],
       },
     ],
+  };
+
+  return {
+    fieldMap,
+    layout,
     optionsHandler(fieldId, fields) {
       const values = {};
 
@@ -261,7 +296,7 @@ export default function assistantDefinition(
 
       return values;
     },
-    preSubmit: formValues => {
+    preSave: formValues => {
       const assistantMetadata = {
         pathParams: {},
       };

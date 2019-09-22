@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'jobvite',
@@ -11,9 +11,9 @@ export default {
     '/rest/pingRelativeURI':
       '/api/v2/candidate?api={{connection.rest.unencrypted.api}}&sc={{connection.rest.encrypted.sc}}',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment:',
@@ -41,21 +41,21 @@ export default {
         return 'production';
       },
     },
-    {
+    'rest.unencrypted.companyId': {
       id: 'rest.unencrypted.companyId',
       type: 'text',
       label: 'Company Id:',
       required: true,
       helpText: 'The company ID of your Jobvite account.',
     },
-    {
+    'rest.unencrypted.api': {
       id: 'rest.unencrypted.api',
       type: 'text',
       label: 'API key:',
       required: true,
       helpText: 'The API Key of your Jobvite account.',
     },
-    {
+    'rest.encrypted.sc': {
       id: 'rest.encrypted.sc',
       type: 'text',
       label: 'Secret:',
@@ -65,12 +65,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'environment',
+      'rest.unencrypted.companyId',
+      'rest.unencrypted.api',
+      'rest.encrypted.sc',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
