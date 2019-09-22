@@ -136,9 +136,8 @@ const getResourceFormAssets = ({
     case 'agents':
     case 'scripts':
     case 'stacks':
-      // TODO:check layout should be here
       meta = formMeta[resourceType];
-      ({ fieldMap } = meta);
+      ({ fieldMap, layout } = meta);
 
       break;
 
