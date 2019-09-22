@@ -19,12 +19,8 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-
   pagingBarShift: {
     left: theme.drawerWidth,
-  },
-  pageHeader: {
-    width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
   },
 }));
 
