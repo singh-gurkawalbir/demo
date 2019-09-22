@@ -26,7 +26,7 @@ const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
 const Marketplace = loadable(() =>
-  import(/* webpackChunkName: 'Marketplace' */ '../../views/Marketplace')
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
@@ -42,7 +42,7 @@ const IntegrationSettings = loadable(() =>
 );
 const ConnectorTemplateList = loadable(() =>
   import(
-    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceGridList/ConnectorTemplateList'
+    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
   )
 );
 

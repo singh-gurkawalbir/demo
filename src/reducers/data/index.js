@@ -7,7 +7,7 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
-import marketplace, * as fromMarketPlace from './marketplace';
+import marketplace, * as fromMarketPlace from './marketPlace';
 
 export default combineReducers({
   resources,
