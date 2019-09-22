@@ -2,7 +2,7 @@ import { IconButton } from '@material-ui/core';
 import Icon from '../../../../../../components/icons/CloseIcon';
 
 export default {
-  label: 'Filed Mappings',
+  label: 'Field Mappings',
   component: function FiledMappings() {
     const onFieldMappingsClick = () => {};
 

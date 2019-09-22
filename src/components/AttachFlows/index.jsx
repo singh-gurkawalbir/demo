@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import _ from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   Button,
   IconButton,
@@ -9,13 +9,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  makeStyles,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../views/ResourceList/ResourceTable';
-import * as selectors from '../../reducers';
+import Resources from '../../utils/globalResources';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -41,17 +41,13 @@ export default function AttachStandAloneFlows({
     setSelected(flows);
   };
 
-  const exports = useSelector(
-    state => selectors.resourceList(state, { type: 'exports' }).resources
-  );
-  const imports = useSelector(
-    state => selectors.resourceList(state, { type: 'imports' }).resources
-  );
-  const connections = useSelector(
-    state => selectors.resourceList(state, { type: 'connections' }).resources
-  );
+  console.log('Resources *****', Resources);
+
+  const exports = Resources('exports');
+  const imports = Resources('imports');
+  const connections = Resources('connections');
   const dispatch = useDispatch();
-  const getAllTheConnectionIdsUsedInTheFlow = flow => {
+  const getAllConnectionIdsUsedInTheFlow = flow => {
     const exportIds = [];
     const importIds = [];
     const connectionIds = [];
@@ -141,7 +137,7 @@ export default function AttachStandAloneFlows({
       dispatch(actions.resource.patchStaged(f._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', f._id, 'value'));
       connectionIdsToRegister = connectionIdsToRegister.concat(
-        getAllTheConnectionIdsUsedInTheFlow(f)
+        getAllConnectionIdsUsedInTheFlow(f)
       );
     });
     dispatch(
