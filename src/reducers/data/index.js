@@ -7,7 +7,7 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
-import marketplace, * as fromMarketPlace from './marketPlace';
+import marketplace, * as fromMarketplace from './marketPlace';
 
 export default combineReducers({
   resources,
@@ -163,7 +163,7 @@ export function suiteScriptIntegrations(state, connectionId) {
 }
 
 export function marketplaceConnectors(state, application, sandbox, licenses) {
-  return fromMarketPlace.connectors(
+  return fromMarketplace.connectors(
     state.marketplace,
     application,
     sandbox,
@@ -172,7 +172,7 @@ export function marketplaceConnectors(state, application, sandbox, licenses) {
 }
 
 export function marketplaceTemplates(state, application) {
-  return fromMarketPlace.templates(state.marketplace, application);
+  return fromMarketplace.templates(state.marketplace, application);
 }
 
 export function flowJobsPagingDetails(state) {

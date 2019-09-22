@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MarketPlaceGridList() {
+export default function MarketplaceList() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const userPreferences = useSelector(state =>
