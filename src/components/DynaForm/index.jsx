@@ -8,8 +8,9 @@ import ButtonGroup from '../ButtonGroup';
 
 @withStyles(theme => ({
   fieldContainer: {
-    border: 'solid 1px',
-    backgroundColor: theme.palette.background.paper2,
+    borderStyle: 'solid',
+    borderWidth: '1px 0',
+    // backgroundColor: theme.palette.background.paper2,
     borderColor: 'rgb(0,0,0,0.1)',
     minHeight: '30vh',
     maxHeight: `60vh`,
@@ -26,7 +27,7 @@ import ButtonGroup from '../ButtonGroup';
   },
   actions: {
     textAlign: 'right',
-    padding: theme.spacing(2, 0, 0),
+    padding: theme.spacing(2, 3, 0),
   },
 }))
 export default class DynaForm extends Component {

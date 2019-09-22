@@ -4,6 +4,9 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
 
+const RecycleBin = loadable(() =>
+  import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
+);
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
 );
@@ -44,6 +47,11 @@ export default class AppRouting extends Component {
     return (
       <Switch>
         <Route
+          path="/pg"
+          exact
+          render={({ history }) => history.replace('/pg/dashboard')}
+        />
+        <Route
           path="/pg/integrations/:integrationId/dashboard"
           component={IntegrationDashboard}
         />
@@ -51,15 +59,15 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
+        <Route path="/pg/dashboard" component={Dashboard} />
+        <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
-        <Route path="/pg/flowbuilder" component={FlowBuilder} />
+        <Route path="/pg/flowBuilder" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
-        <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/:resourceType" component={ResourceList} />
-        <Route path="/pg" exact component={Dashboard} />
 
         <Route component={NotFound} />
       </Switch>

@@ -15,13 +15,13 @@ const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
     border: 'solid 1px',
-    borderColor: 'rgb(0,0,0,0.3)',
+    borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
     width: props => (props.match.isExact ? 450 : 150),
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
-    padding: theme.spacing(2, 2, 0, 2),
+    padding: theme.spacing(2, 0, 0, 0),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
   form: {
@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     width: props => (props.match.isExact ? undefined : 400),
     maxHeight: 'unset',
     marginTop: theme.spacing(1),
+  },
+  title: {
+    padding: theme.spacing(0, 0, 0, 3),
   },
 }));
 
@@ -98,7 +101,7 @@ export default function Panel(props) {
   return (
     <Fragment>
       <div className={classes.root}>
-        <Typography variant="h5">
+        <Typography variant="h5" className={classes.title}>
           {isNew ? `Create` : 'Edit'} {resourceLabel}
         </Typography>
         <LoadResources required resources={resourceType}>
