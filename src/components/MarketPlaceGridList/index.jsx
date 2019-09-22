@@ -4,7 +4,6 @@ import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
 import { getApplicationConnectors } from '../../constants/applications';
-import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
@@ -34,12 +33,10 @@ export default function MarketPlaceGridList() {
     selectors.userPreferences(state)
   );
   const sandbox = userPreferences.environment === 'sandbox';
-  const connectors =
-    useSelector(state =>
-      selectors.marketplaceConnectors(state, undefined, sandbox)
-    ) || [];
-  const templates =
-    useSelector(state => selectors.marketplaceTemplates(state)) || [];
+  const connectors = useSelector(state =>
+    selectors.marketplaceConnectors(state, undefined, sandbox)
+  );
+  const templates = useSelector(state => selectors.marketplaceTemplates(state));
   let applicationConnectors = getApplicationConnectors();
   let applications = [];
 
@@ -55,7 +52,6 @@ export default function MarketPlaceGridList() {
 
   return (
     <Fragment>
-      <CeligoPageBar title="Marketplace" />
       <div className={classes.root}>
         {applicationConnectors.map(connector => (
           <NavLink

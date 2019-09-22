@@ -172,10 +172,6 @@ export function userOwnPreferences(state) {
   return fromUser.userOwnPreferences(state && state.user);
 }
 
-export function licenses(state) {
-  return fromUser.licenses(state && state.user);
-}
-
 export function userProfilePreferencesProps(state) {
   const profile = userProfile(state);
   const preferences = userPreferences(state);

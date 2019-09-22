@@ -556,6 +556,6 @@ export const getApp = (type, assistant) => {
 };
 
 export const getApplicationConnectors = () =>
-  connectors.filter(conn => !!conn.assistant === true);
+  connectors.filter(conn => !!conn.assistant);
 
 export default connectors;
