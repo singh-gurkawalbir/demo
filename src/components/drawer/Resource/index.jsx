@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
   panelContainer: {
     display: 'flex',
+    // TODO: @Azhar: why doesn't this work?
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
 }));
