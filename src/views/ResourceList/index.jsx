@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link, Route } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
@@ -50,14 +50,7 @@ function ResourceList(props) {
 
   return (
     <Fragment>
-      <Route
-        path={`${match.url}/:operation/:resourceType/:id`}
-        // Note that we disable the eslint warning since Route
-        // uses "children" as a prop and this is the intended
-        // use (per their docs)
-        // eslint-disable-next-line react/no-children-prop
-        children={props => <ResourceDrawer {...props} />}
-      />
+      <ResourceDrawer {...props} />
 
       <CeligoPageBar
         title={`${resourceName}s`}
