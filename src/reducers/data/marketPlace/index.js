@@ -26,20 +26,57 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 
-export function connectors(state) {
+export function connectors(state, application, sandbox, licenses) {
   if (!state) {
     return [];
   }
 
-  return state.connectors || [];
+  let connectors = state.connectors || [];
+
+  connectors = connectors.map(c => {
+    const conn = c;
+    let hasLicense = false;
+
+    licenses &&
+      licenses.forEach(l => {
+        if (
+          !hasLicense &&
+          !l.hasExpired &&
+          l.type === 'connector' &&
+          l._connectorId === conn._id &&
+          !l._integrationId &&
+          !!l.sandbox === sandbox
+        ) {
+          hasLicense = true;
+        }
+      });
+
+    return { ...conn, canInstall: hasLicense };
+  });
+
+  if (application) {
+    connectors = connectors.filter(
+      c => c.applications && c.applications.includes(application)
+    );
+  }
+
+  return connectors;
 }
 
-export function templates(state) {
+export function templates(state, application) {
   if (!state) {
     return [];
   }
 
-  return state.templates || [];
+  let templates = state.templates || [];
+
+  if (application) {
+    templates = templates.filter(
+      t => t.applications && t.applications.includes(application)
+    );
+  }
+
+  return templates;
 }
 
 // #endregion

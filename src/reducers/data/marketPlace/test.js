@@ -65,7 +65,17 @@ describe('marketplace reducers', () => {
 
 describe('marketplace selectors', () => {
   describe('connectors', () => {
-    const testConnectors = [{ _id: '123' }, { _id: '456' }];
+    const testConnectors = [
+      { _id: '123' },
+      { _id: '456', applications: ['some application'] },
+    ];
+    const licenses = [
+      {
+        hasExpired: false,
+        type: 'connector',
+        _connectorId: '456',
+      },
+    ];
 
     test('should return empty array on empty/undefined state', () => {
       expect(selectors.connectors(undefined)).toEqual([]);
@@ -77,11 +87,16 @@ describe('marketplace selectors', () => {
         actions.marketplace.receivedConnectors({ connectors: testConnectors })
       );
 
-      expect(selectors.connectors(state)).toEqual(state.connectors);
+      expect(
+        selectors.connectors(state, 'some application', false, licenses)
+      ).toEqual([{ ...state.connectors[1], canInstall: true }]);
     });
   });
   describe('templates', () => {
-    const testTemplates = [{ _id: '123' }, { _id: '456' }];
+    const testTemplates = [
+      { _id: '123' },
+      { _id: '456', applications: ['some application'] },
+    ];
 
     test('should return empty array on empty/undefined state', () => {
       expect(selectors.templates(undefined)).toEqual([]);
@@ -93,7 +108,9 @@ describe('marketplace selectors', () => {
         actions.marketplace.receivedTemplates({ templates: testTemplates })
       );
 
-      expect(selectors.templates(state)).toEqual(state.templates);
+      expect(selectors.templates(state, 'some application')).toEqual([
+        state.templates[1],
+      ]);
     });
   });
 });

@@ -30,8 +30,14 @@ const useStyles = makeStyles(theme => ({
 export default function MarketPlaceGridList() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const userPreferences = useSelector(state =>
+    selectors.userPreferences(state)
+  );
+  const sandbox = userPreferences.environment === 'sandbox';
   const connectors =
-    useSelector(state => selectors.marketPlaceConnectors(state)) || [];
+    useSelector(state =>
+      selectors.marketPlaceConnectors(state, undefined, sandbox)
+    ) || [];
   const templates =
     useSelector(state => selectors.marketPlaceTemplates(state)) || [];
   let applicationConnectors = getApplicationConnectors();
@@ -56,7 +62,11 @@ export default function MarketPlaceGridList() {
             key={connector.id}
             to={getRoutePath(`/marketplace/${connector.id}`)}>
             <Card className={classes.card}>
-              <ApplicationImg assistant={connector.id} size="large" />
+              <ApplicationImg
+                assistant={connector.id}
+                size="large"
+                imgType="large"
+              />
             </Card>
           </NavLink>
         ))}

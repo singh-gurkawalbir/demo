@@ -44,41 +44,19 @@ export default function ConnectorTemplateList(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showMessage, setShowMessage] = useState(false);
-  let connectors = useSelector(state => selectors.marketPlaceConnectors(state));
-  let templates = useSelector(state => selectors.marketPlaceTemplates(state));
-  const licenses = useSelector(state => selectors.licenses(state));
   const userPreferences = useSelector(state =>
     selectors.userPreferences(state)
   );
   const sandbox = userPreferences.environment === 'sandbox';
-
-  connectors = connectors.filter(
-    c => c.applications && c.applications.includes(application)
+  const connectors = useSelector(state =>
+    selectors.marketPlaceConnectors(state, application, sandbox)
   );
-  templates = templates.filter(
-    t => t.applications && t.applications.includes(application)
+  const templates = useSelector(state =>
+    selectors.marketPlaceTemplates(state, application)
   );
   const applicationConnectors = getApplicationConnectors();
   const connector = applicationConnectors.find(c => c.id === application);
   const applicationName = connector && connector.name;
-  const canInstallConnector = connector => {
-    let hasLicense = false;
-
-    licenses.forEach(l => {
-      if (
-        !l.hasExpired &&
-        l.type === 'connector' &&
-        l._connectorId === connector._id &&
-        !l._integrationId &&
-        !!l.sandbox === sandbox
-      ) {
-        hasLicense = true;
-      }
-    });
-
-    return hasLicense;
-  };
-
   const handleConnectorInstallClick = connector => {
     dispatch(actions.marketplace.installConnector(connector._id, sandbox));
   };
@@ -101,7 +79,7 @@ export default function ConnectorTemplateList(props) {
               type="connector"
             />
             <CardActions>
-              {canInstallConnector(connector) ? (
+              {connector.canInstall ? (
                 <Button
                   to={getRoutePath('/integrations')}
                   component={RouterLink}

@@ -412,12 +412,19 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
-export function marketPlaceConnectors(state) {
-  return fromData.marketPlaceConnectors(state.data);
+export function marketPlaceConnectors(state, application, sandbox) {
+  const licenses = fromUser.licenses(state && state.user);
+
+  return fromData.marketPlaceConnectors(
+    state.data,
+    application,
+    sandbox,
+    licenses
+  );
 }
 
-export function marketPlaceTemplates(state) {
-  return fromData.marketPlaceTemplates(state.data);
+export function marketPlaceTemplates(state, application) {
+  return fromData.marketPlaceTemplates(state.data, application);
 }
 
 export function integrationConnectionList(state, integrationId) {

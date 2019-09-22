@@ -162,12 +162,17 @@ export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }
 
-export function marketPlaceConnectors(state) {
-  return fromMarketPlace.connectors(state.marketplace);
+export function marketPlaceConnectors(state, application, sandbox, licenses) {
+  return fromMarketPlace.connectors(
+    state.marketplace,
+    application,
+    sandbox,
+    licenses
+  );
 }
 
-export function marketPlaceTemplates(state) {
-  return fromMarketPlace.templates(state.marketplace);
+export function marketPlaceTemplates(state, application) {
+  return fromMarketPlace.templates(state.marketplace, application);
 }
 
 export function flowJobsPagingDetails(state) {
