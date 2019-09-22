@@ -424,7 +424,7 @@ const integrationApp = {
       }),
   },
 };
-const ashares = {
+const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
@@ -718,7 +718,7 @@ export default {
   resource,
   user,
   api,
-  ashares,
+  ashare,
   auth,
   auditLogs,
   accessToken,
