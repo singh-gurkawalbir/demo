@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -33,8 +34,41 @@ function replaceOrInsertResource(state, type, resource) {
   return { ...state, [type]: newCollection };
 }
 
+function getIntegrationAppsNextState(state, action) {
+  const { stepsToUpdate, id } = action;
+
+  return produce(state, draft => {
+    const integration = draft.integrations.find(i => i._id === id);
+
+    if (!integration || !integration.install) {
+      return;
+    }
+
+    stepsToUpdate.forEach(step => {
+      const stepIndex = integration.install.findIndex(
+        s => s.installerFunction === step.installerFunction
+      );
+
+      if (stepIndex !== -1) {
+        integration.install[stepIndex] = {
+          ...integration.install[stepIndex],
+          ...step,
+        };
+      }
+    });
+  });
+}
+
 export default (state = {}, action) => {
-  const { id, type, resource, collection, resourceType } = action;
+  const {
+    id,
+    type,
+    resource,
+    collection,
+    resourceType,
+    connectionIds,
+    integrationId,
+  } = action;
 
   // Some resources are managed by custom reducers.
   // Lets skip those for this generic implementation
@@ -71,6 +105,8 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
+    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
+      return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);
 
@@ -87,6 +123,21 @@ export default (state = {}, action) => {
         newState = { ...state, sshares: newState };
 
         return newState;
+      }
+
+      return state;
+
+    case actionTypes.CONNECTION.REGISTER_COMPLETE:
+      resourceIndex = state.integrations.findIndex(
+        r => r._id === integrationId
+      );
+
+      if (resourceIndex > -1) {
+        return produce(state, draft => {
+          connectionIds.forEach(cId =>
+            draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
+          );
+        });
       }
 
       return state;
@@ -111,7 +162,60 @@ export function resource(state, resourceType, id) {
 
   if (!match) return null;
 
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (match.assistant && !match.assistantMetadata) {
+      match.assistantMetadata = {};
+    }
+  }
+
   return match;
+}
+
+export function integrationInstallSteps(state, id) {
+  const integration = resource(state, 'integrations', id);
+
+  if (!integration || !integration.install) {
+    return [];
+  }
+
+  return produce(integration.install, draft => {
+    if (draft.find(step => !step.completed)) {
+      draft.find(step => !step.completed).isCurrentStep = true;
+    }
+  });
+}
+
+export function integrationAppSettings(state, id) {
+  const integration = resource(state, 'integrations', id);
+
+  if (!integration) {
+    return {};
+  }
+
+  return produce(integration, draft => {
+    if (draft.settings.general) {
+      draft.hasGeneralSettings = true;
+    }
+
+    if (draft.settings.supportsMultiStore) {
+      draft.stores = draft.settings.sections.map(s => ({
+        label: s.title,
+        hidden: !!s.hidden,
+        mode: s.mode,
+        value: s.id,
+      }));
+    }
+  });
+}
+
+export function defaultStoreId(state, id) {
+  const settings = integrationAppSettings(state, id);
+
+  if (settings.stores && settings.stores.length) {
+    return settings.stores[0].value;
+  }
+
+  return undefined;
 }
 
 export function resourceList(state, { type, take, keyword, sort, sandbox }) {
@@ -253,4 +357,5 @@ export function isAgentOnline(state, agentId) {
       process.env.AGENT_STATUS_INTERVAL
   );
 }
+
 // #endregion

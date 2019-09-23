@@ -3,13 +3,13 @@ import abstractImport from './import';
 import ftp from './ftp';
 import http from './http';
 import mongodb from './mongodb';
-import netsuite from './netsuite';
 import netsuiteDistributed from './netsuiteDistributed';
 import rdbms from './rdbms';
 import rest from './rest';
 import s3 from './s3';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
+import file from './file';
 
 const allFieldDefinitions = {
   ...as2,
@@ -17,13 +17,13 @@ const allFieldDefinitions = {
   ...ftp,
   ...http,
   ...mongodb,
-  ...netsuite,
   ...netsuiteDistributed,
   ...rdbms,
   ...rest,
   ...s3,
   ...salesforce,
   ...wrapper,
+  ...file,
 };
 
 export default allFieldDefinitions;

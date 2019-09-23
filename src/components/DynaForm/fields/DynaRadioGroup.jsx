@@ -26,7 +26,7 @@ export default function DynaRadio(props) {
               <FormControlLabel
                 key={item}
                 value={item}
-                control={<Radio />}
+                control={<Radio color="primary" />}
                 label={item}
               />
             );
@@ -36,7 +36,7 @@ export default function DynaRadio(props) {
             <FormControlLabel
               key={item.value}
               value={item.value}
-              control={<Radio />}
+              control={<Radio color="primary" />}
               label={item.label || item.value}
             />
           );
@@ -53,6 +53,7 @@ export default function DynaRadio(props) {
         name={name}
         defaultValue={defaultValue}
         value={value}
+        color="primary"
         onChange={evt => {
           onFieldChange(id, evt.target.value);
         }}>

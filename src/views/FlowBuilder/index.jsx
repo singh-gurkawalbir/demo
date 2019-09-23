@@ -1,8 +1,9 @@
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { withRouter, Route } from 'react-router-dom';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 // import actions from '../../actions';
@@ -11,6 +12,8 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
+import TrashCan from './TrashCan';
+import itemTypes from './itemTypes';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -32,48 +35,56 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     display: 'flex',
+    overflow: 'auto',
     // border: 'solid 1px lightgrey',
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
-    width: 250,
-    overflowY: 'auto',
   },
   processorContainer: {
     display: 'flex',
-    flexGrow: '1',
-    overflowX: 'auto',
+    alignItems: 'flex-start',
+    paddingRight: theme.spacing(3),
   },
-  processorBlocks: {
-    display: 'flex',
+  trash: {
+    position: 'absolute',
+    right: theme.spacing(3),
+    transition: theme.transitions.create(['bottom', 'width', 'height'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
-  appBlock: {
-    width: '20vw',
-    height: '20vh',
-    border: 'solid 1px lightblue',
+  title: {
+    textAlign: 'center',
+  },
+  generatorRoot: {
+    backgroundColor: 'rgba(0,0,0,0.02)',
+    padding: theme.spacing(3, 0, 3, 3),
+  },
+  processorRoot: {
+    padding: theme.spacing(3, 3, 3, 0),
   },
 }));
-const pageGenerators = [
-  { name: 'g1' },
-  { name: 'g2' },
-  { name: 'g3' },
-  { name: 'g4' },
-];
 
 function FlowBuilder(props) {
-  const { match } = props;
   const classes = useStyles();
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [size, setSize] = useState(0);
-  const [pageProcessors, setPageProcessors] = useState([
-    { _id: 11, name: 'p1' },
-    { _id: 22, name: 'p2' },
-    { _id: 33, name: 'p3' },
-    { _id: 44, name: 'p4' },
+  const [pageGenerators, setPageGenerators] = useState([
+    { _id: 1, name: 'G1' },
+    { _id: 2, name: 'G2' },
+    { _id: 3, name: 'G3' },
+    { _id: 4, name: 'G4' },
   ]);
-  const moveItem = useCallback(
+  const [pageProcessors, setPageProcessors] = useState([
+    { _id: 11, name: 'P1' },
+    { _id: 22, name: 'P2' },
+    { _id: 33, name: 'P3' },
+    { _id: 44, name: 'P4' },
+  ]);
+  const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -81,39 +92,36 @@ function FlowBuilder(props) {
       newOrder.splice(dragIndex, 1);
       newOrder.splice(hoverIndex, 0, dragItem);
       setPageProcessors(newOrder);
-
-      // The below 'update' function is an example of another immutable
-      // library that helps simplify common mutation patterns as in
-      // the code above.
-      // update(pageProcessors, {
-      //   $splice: [[dragIndex, 1], [hoverIndex, 0, dragItem]],
-      // })
-      //
-      // {$splice: array of arrays} for each item in arrays call splice() on the target with the parameters
     },
     [pageProcessors]
   );
-  const renderBlock = (pp, index) => (
-    <PageProcessor {...pp} key={pp.name} index={index} moveItem={moveItem} />
+  const handleDelete = useCallback(
+    ({ index, type }) => {
+      if (type === itemTypes.PAGE_PROCESSOR) {
+        const newOrder = [...pageProcessors];
+
+        newOrder.splice(index, 1);
+        setPageProcessors(newOrder);
+      }
+
+      if (type === itemTypes.PAGE_GENERATOR) {
+        const newOrder = [...pageGenerators];
+
+        newOrder.splice(index, 1);
+        setPageGenerators(newOrder);
+      }
+    },
+    [pageGenerators, pageProcessors]
   );
 
   return (
     <Fragment>
-      <Route
-        path={`${match.url}/:operation/:resourceType/:id`}
-        // TODO: This <Route> could be moved into the ResourceDrawer
-        // component itself, this would prevent the need to use the children
-        // prop, and also remove some boilerplate wherever we use this
-        // component...
-        //
-        // Note that we disable the eslint warning since Route
-        // uses "children" as a prop and this is the intended
-        // use (per their docs)
-        // eslint-disable-next-line react/no-children-prop
-        children={props => <ResourceDrawer {...props} />}
-      />
+      <ResourceDrawer {...props} />
 
-      <CeligoPageBar title="Flow Builder" infoText="Blah, blah, blah...">
+      <CeligoPageBar
+        title="Flow Builder"
+        subtitle=" Last saved: 1/11/11 13:45"
+        infoText="Blah, blah, blah...">
         <div className={classes.actions}>Actions!</div>
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
@@ -127,17 +135,53 @@ function FlowBuilder(props) {
               (size ? 0 : 64)}px)`,
           }}>
           <div className={classes.canvas}>
-            <div className={classes.generatorContainer}>
-              {pageGenerators.map(pg => (
-                <PageGenerator key={pg.name} name={pg.name} />
-              ))}
+            {/* CANVAS START */}
+            <div className={classes.generatorRoot}>
+              <Typography className={classes.title} variant="h6">
+                SOURCE APPLICATIONS
+              </Typography>
+
+              <div className={classes.generatorContainer}>
+                {pageGenerators.map((pg, i) => (
+                  <PageGenerator
+                    key={pg.name}
+                    name={pg.name}
+                    index={i}
+                    isLast={pageProcessors.length === i + 1}
+                  />
+                ))}
+              </div>
             </div>
-            <div className={classes.processorContainer}>
-              <div className={classes.processorBlocks}>
-                {pageProcessors.map((pp, i) => renderBlock(pp, i))}
+            <div className={classes.processorRoot}>
+              <Typography className={classes.title} variant="h6">
+                DESTINATION &amp; LOOKUP APPLICATIONS
+              </Typography>
+              <div className={classes.processorContainer}>
+                {pageProcessors.map((pp, i) => (
+                  <PageProcessor
+                    {...pp}
+                    key={pp.name}
+                    index={i}
+                    isLast={pageProcessors.length === i + 1}
+                    onMove={handleMove}
+                  />
+                ))}
               </div>
             </div>
           </div>
+          {size < 3 && (
+            <TrashCan
+              onDrop={handleDelete}
+              className={classes.trash}
+              style={{
+                bottom: size
+                  ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+                  : 64 + theme.spacing(3),
+              }}
+            />
+          )}
+
+          {/* CANVAS END */}
         </div>
       </LoadResources>
       <BottomDrawer size={size} setSize={setSize} />

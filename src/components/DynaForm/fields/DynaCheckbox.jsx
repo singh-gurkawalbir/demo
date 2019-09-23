@@ -18,6 +18,7 @@ export default function DynaCheckbox(props) {
         <Checkbox
           key={id}
           name={name}
+          color="primary"
           disabled={disabled}
           // isInvalid={!isValid}
           value={typeof value === 'string' ? value : value.toString()}

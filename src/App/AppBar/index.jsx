@@ -47,7 +47,7 @@ const mapStateToProps = state => ({
     position: 'static',
     height: 55,
     width: 140,
-    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   navLink: {
     color: theme.appBar.contrast,

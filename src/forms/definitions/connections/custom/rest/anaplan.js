@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'anaplan',
@@ -9,23 +9,23 @@ export default {
     '/rest/baseURI': 'https://api.anaplan.com/',
   }),
 
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The username of your Anaplan account.',
     },
-
-    {
+    'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your Anaplan account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.basicAuth.username', 'rest.basicAuth.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

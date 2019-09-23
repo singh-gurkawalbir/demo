@@ -19,146 +19,21 @@ export default {
 
     return null;
   },
-  fields: [
-    { fieldId: 'exportData' },
-    { fieldId: 'file.type' },
-    { fieldId: 'file.output' },
-    {
+  fieldMap: {
+    uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
-      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
     },
-
-    {
-      fieldId: 'file.csv.columnDelimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.keyColumns',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.hasHeaderRow',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.trimSpaces',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.csv.rowsToSkip',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.json.resourcePath',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['json'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.xlsx.hasHeaderRow',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xlsx'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.xlsx.keyColumns',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xlsx'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.xml.resourcePath',
-
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.fileDefinition.resourcePath',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['edi', 'fixedWidth'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.fileDefinition._fileDefinitionId',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['edi', 'fixedWidth'],
-        },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    {
-      fieldId: 'file.purgeInternalBackup',
-      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
-    },
-  ],
-  fieldSets: [],
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
+  },
+  layout: {
+    fields: [
+      'uploadFile',
+      'file.csv.columnDelimiter',
+      'file.csv.includeHeader',
+      'file.xlsx.includeHeader',
+    ],
+  },
 };

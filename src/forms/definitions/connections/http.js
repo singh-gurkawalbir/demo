@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
     if (!newValues['/http/ping/successPath']) {
@@ -62,97 +62,92 @@ export default {
 
     return newValues;
   },
-  fields: [
-    { fieldId: 'type' },
-    { fieldId: 'name' },
-    { fieldId: 'http.auth.type', required: true },
-    {
+  fieldMap: {
+    type: { fieldId: 'type' },
+    name: { fieldId: 'name' },
+    'http.auth.type': { fieldId: 'http.auth.type', required: true },
+    'http.headers': {
       fieldId: 'http.headers',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          isNot: [''],
-        },
-      ],
+      visibleWhenAll: [{ field: 'http.auth.type', isNot: [''] }],
     },
-    { fieldId: 'http.baseURI', required: true },
-    { fieldId: 'http.mediaType', required: true },
-    {
+    'http.baseURI': { fieldId: 'http.baseURI', required: true },
+    'http.mediaType': { fieldId: 'http.mediaType', required: true },
+    'http.encrypted': {
       fieldId: 'http.encrypted',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'custom'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'custom'] }],
       defaultValue: '{"field": "value"}',
     },
-    {
+    'http.unencrypted': {
       fieldId: 'http.unencrypted',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'custom'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'custom'] }],
       defaultValue: r =>
         r && r.http && r.http.unencrypted && JSON.stringify(r.http.unencrypted),
     },
-    {
+    httpBasic: {
       formId: 'httpBasic',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['basic'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['basic'] }],
     },
-    {
+    httpToken: {
       formId: 'httpToken',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-      ],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['token'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'API Rate Limits',
-      collapsed: false,
-      fields: [
-        { fieldId: 'http.rateLimit.limit' },
-        { fieldId: 'http.rateLimit.failStatusCode' },
-        { fieldId: 'http.rateLimit.failPath' },
-        { fieldId: 'http.rateLimit.failValues' },
-        { fieldId: 'http.retryHeader' },
-      ],
+    'http.rateLimit.limit': { fieldId: 'http.rateLimit.limit' },
+    'http.rateLimit.failStatusCode': {
+      fieldId: 'http.rateLimit.failStatusCode',
     },
-    {
-      header: 'How to test connection?',
-      collapsed: false,
-      fields: [
-        { fieldId: 'http.ping.relativeURI' },
-        { fieldId: 'http.ping.method' },
-        {
-          fieldId: 'http.ping.body',
-          visibleWhenAll: [
-            {
-              field: 'http.ping.method',
-              is: ['POST', 'PUT'],
-            },
-          ],
-        },
-        { fieldId: 'http.ping.successPath' },
-        { fieldId: 'http.ping.successValues' },
-        { fieldId: 'http.ping.errorPath' },
-      ],
+    'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
+    'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
+    'http.retryHeader': { fieldId: 'http.retryHeader' },
+    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
+    'http.ping.method': { fieldId: 'http.ping.method' },
+    'http.ping.body': {
+      fieldId: 'http.ping.body',
+      visibleWhenAll: [{ field: 'http.ping.method', is: ['POST', 'PUT'] }],
     },
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    'http.ping.successPath': { fieldId: 'http.ping.successPath' },
+    'http.ping.successValues': { fieldId: 'http.ping.successValues' },
+    'http.ping.errorPath': { fieldId: 'http.ping.errorPath' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'type',
+      'name',
+      'http.auth.type',
+      'http.headers',
+      'http.baseURI',
+      'http.mediaType',
+      'http.encrypted',
+      'http.unencrypted',
+      'httpBasic',
+      'httpToken',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: false,
+        label: 'API Rate Limits',
+        fields: [
+          'http.rateLimit.limit',
+          'http.rateLimit.failStatusCode',
+          'http.rateLimit.failPath',
+          'http.rateLimit.failValues',
+          'http.retryHeader',
+        ],
+      },
+      {
+        collapsed: false,
+        label: 'How to test connection?',
+        fields: [
+          'http.ping.relativeURI',
+          'http.ping.method',
+          'http.ping.body',
+          'http.ping.successPath',
+          'http.ping.successValues',
+          'http.ping.errorPath',
+        ],
+      },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

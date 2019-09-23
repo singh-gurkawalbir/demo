@@ -12,7 +12,6 @@ export default {
     '/http/auth/token/headerName': 'autopilotapikey',
     '/http/auth/token/scheme': ' ',
   }),
-
   fieldMap: {
     name: { fieldId: 'name' },
     'http.auth.token.token': {

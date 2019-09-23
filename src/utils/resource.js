@@ -68,7 +68,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
-  NetSuiteImport: 'netsuite',
+  NetSuiteDistributedImport: 'netsuiteDistributed',
   XMLImport: 'xml',
   XMLExport: 'xml',
   FTPExport: 'ftp',
@@ -82,6 +82,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  MongodbImport: 'mongodb',
+  S3Import: 's3',
+  WrapperImport: 'wrapper',
+  AS2Import: 'as2',
+  RDBMSImport: 'rdbms',
+  SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
 };
 

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'shipstation',
@@ -8,24 +8,25 @@ export default {
     '/rest/pingRelativeURI': 'carriers',
     '/rest/baseURI': `https://ssapi.shipstation.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       label: 'API Key:',
       helpText: 'The API Key of your ShipStation account.',
     },
-    {
+    'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The API Secret of your ShipStation account.',
       label: 'API Secret:',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.basicAuth.username', 'rest.basicAuth.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

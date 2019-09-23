@@ -1,6 +1,10 @@
 import zendesk from './zendesk';
 import anaplan from './anaplan';
 import atera from './atera';
+<<<<<<< HEAD
+=======
+import chargebee from './chargebee';
+>>>>>>> 5b0727af7fe2dee9e4583203f0e0d7f4e6ea8202
 import greenhouse from './greenhouse';
 import insightly from './insightly';
 import mailgun from './mailgun';
@@ -16,7 +20,6 @@ import acton from './acton';
 import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
-import etsy from './etsy';
 import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
@@ -62,13 +65,17 @@ import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
 import zohomail from './zohomail';
-import zoom from './zoom';
 import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
+<<<<<<< HEAD
 import powerbi from './powerbi';
 import procurify from './procurify';
 import zimbra from './zimbra';
+=======
+import procurify from './procurify';
+import strata from './strata';
+>>>>>>> 5b0727af7fe2dee9e4583203f0e0d7f4e6ea8202
 import postmark from './postmark';
 import klaviyo from './klaviyo';
 import returnly from './returnly';
@@ -84,7 +91,12 @@ import marketo from './marketo';
 import retailops from './retailops';
 import sharepoint from './sharepoint';
 import parseur from './parseur';
+<<<<<<< HEAD
 import merchantesolutions from './merchantesolutions';
+=======
+import skubana from './skubana';
+import dunandbradstreet from './dunandbradstreet';
+>>>>>>> 5b0727af7fe2dee9e4583203f0e0d7f4e6ea8202
 import threedcart from './threedcart';
 
 export default {
@@ -93,13 +105,16 @@ export default {
   tsheets,
   splunk,
   anaplan,
-  etsy,
   googledrive,
   namely,
   newegg,
   asana,
   dropbox,
   google,
+<<<<<<< HEAD
+=======
+  jira,
+>>>>>>> 5b0727af7fe2dee9e4583203f0e0d7f4e6ea8202
   jobvite,
   smartsheet,
   linkedin,
@@ -151,12 +166,10 @@ export default {
   acton,
   acumatica,
   zohomail,
-  zoom,
   myobessentials,
   exacterp,
   nimble,
   greenhouse,
-  powerbi,
   mailgun,
   procurify,
   postmark,
@@ -171,9 +184,18 @@ export default {
   tophatter,
   spreecommerce,
   marketo,
+<<<<<<< HEAD
   zimbra,
   retailops,
   sharepoint,
   parseur,
   merchantesolutions,
+=======
+  grms,
+  retailops,
+  sharepoint,
+  parseur,
+  skubana,
+  dunandbradstreet,
+>>>>>>> 5b0727af7fe2dee9e4583203f0e0d7f4e6ea8202
 };

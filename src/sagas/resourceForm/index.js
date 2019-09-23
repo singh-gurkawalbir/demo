@@ -4,14 +4,16 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import {
-  getFieldPosition,
   sanitizePatchSet,
   defaultPatchSetConverter,
+  getPatchPathForCustomForms,
+  getFieldWithReferenceById,
 } from '../../forms/utils';
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
+import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 
 export const SCOPES = {
@@ -41,15 +43,36 @@ export function* patchFormField({
 
   if (!meta) return; // nothing to do
 
-  const { index, fieldSetIndex } = getFieldPosition({ meta, id: fieldId });
+  const path = getPatchPathForCustomForms(meta, fieldId, offset);
+  // we try to get the corresponding fieldReference for the field so that we can patch fieldReference
+  const { fieldReference } = getFieldWithReferenceById({
+    meta,
+    id: fieldId,
+  });
 
-  if (index === undefined) return; // nothing to do.
+  if (!path) return; // nothing to do.
+  let patchFieldReference = [];
+  let patchLayout = [];
 
-  const path =
-    fieldSetIndex === undefined
-      ? `/customForm/form/fields/${index + offset}`
-      : `/customForm/form/fieldSets/${fieldSetIndex}/fields/${index + offset}`;
-  const patchSet = [{ op, path, value }];
+  // patch the entire value into the fieldReference
+  if (op === 'add') {
+    // when adding a new field reference use field Id to generate the name of the field reference
+    patchFieldReference = [
+      {
+        op,
+        path: `/customForm/form/fieldMap/${value && value.id}`,
+        value,
+      },
+    ];
+    patchLayout = [{ op, path, value: value && value.id }];
+  } else {
+    patchFieldReference = [
+      { op, path: `/customForm/form/fieldMap/${fieldReference}`, value },
+    ];
+  }
+
+  // patch layout field with the reference
+  const patchSet = [...patchFieldReference, ...patchLayout];
 
   // Apply the new patch to the session
   yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
@@ -114,25 +137,25 @@ export function* createFormValuesPatchSet({
   const { customForm } = resource;
   let finalValues = values;
 
-  if (customForm && customForm.preSubmit) {
+  if (customForm && customForm.preSave) {
     // pre-save-resource
     // this resource has an embedded custom form.
 
     finalValues = yield call(runHook, {
-      hook: customForm.preSubmit,
+      hook: customForm.preSave,
       data: values,
     });
   } else {
-    const { preSubmit } = factory.getResourceFormAssets({
+    const { preSave } = factory.getResourceFormAssets({
       resourceType,
       resource,
       isNew: formState.isNew,
     });
 
-    if (typeof preSubmit === 'function') {
-      // stock preSubmit handler present...
+    if (typeof preSave === 'function') {
+      // stock preSave handler present...
 
-      finalValues = preSubmit(values);
+      finalValues = preSave(values);
     }
   }
 
@@ -216,11 +239,37 @@ export function* initFormValues({
   }
 
   if (!resource) return; // nothing to do.
+  let assistantData;
+
+  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
+    if (!resource.assistantMetadata) {
+      yield put(
+        actions.resource.patchStaged(
+          resourceId,
+          [{ op: 'add', path: '/assistantMetadata', value: {} }],
+          SCOPES.VALUE
+        )
+      );
+    }
+
+    assistantData = yield select(selectors.assistantData, {
+      adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+      assistant: resource.assistant,
+    });
+
+    if (!assistantData) {
+      assistantData = yield call(requestAssistantMetadata, {
+        adaptorType: resource.adaptorType === 'RESTExport' ? 'rest' : 'http',
+        assistant: resource.assistant,
+      });
+    }
+  }
 
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
     isNew,
+    assistantData,
   });
   const { customForm } = resource;
   const form =
@@ -286,18 +335,21 @@ export function* initCustomForm({ resourceType, resourceId }) {
     resourceType,
     resource,
   });
-  const flattenedFields = factory.getFlattenedFieldMetaWithRules(
-    defaultFormAssets.fieldMeta,
+  const {
+    extractedInitFunctions,
+    ...remainingMeta
+  } = factory.getFieldsWithoutFuncs(
+    defaultFormAssets && defaultFormAssets.fieldMeta,
+    resource,
     resourceType
   );
-  // I have fixed it with a flattened fields...but it does cascade
-  // form visibility rules to its children
+  // Todo: have to write code to merge init functions
   const patchSet = [
     {
       op: 'replace',
       path: '/customForm',
       value: {
-        form: flattenedFields,
+        form: remainingMeta,
       },
     },
   ];

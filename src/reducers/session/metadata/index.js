@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 function generateSalesforceOptions(data = {}, sObjectType, selectField) {
@@ -116,7 +117,11 @@ function generateNetsuiteOptions(
 }
 
 export default (
-  state = { netsuite: { webservices: {}, suitescript: {} }, salesforce: {} },
+  state = {
+    netsuite: { webservices: {}, suitescript: {} },
+    salesforce: {},
+    assistants: { rest: {}, http: {} },
+  },
   action
 ) => {
   const {
@@ -372,6 +377,17 @@ export default (
       return { ...state, ...{ salesforce: newState } };
     }
 
+    case actionTypes.METADATA.ASSISTANT_RECEIVED: {
+      const { adaptorType, assistant, metadata } = action;
+
+      return produce(state, draft => {
+        if (draft.assistants[adaptorType]) {
+          // eslint-disable-next-line no-param-reassign
+          draft.assistants[adaptorType][assistant] = metadata;
+        }
+      });
+    }
+
     default:
       return state;
   }
@@ -464,3 +480,16 @@ export const optionsMapFromMetadata = (
     },
   };
 };
+
+export function assistantData(state, { adaptorType, assistant }) {
+  if (
+    !state ||
+    !state.assistants ||
+    !state.assistants[adaptorType] ||
+    !state.assistants[adaptorType][assistant]
+  ) {
+    return undefined;
+  }
+
+  return state.assistants[adaptorType][assistant];
+}

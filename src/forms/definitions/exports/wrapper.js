@@ -1,32 +1,56 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    {
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    return {
+      ...retValues,
+    };
+  },
+  fieldMap: {
+    common: { formId: 'common' },
+    exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
-    { fieldId: 'wrapper.function' },
-    { fieldId: 'wrapper.configuration' },
-    { fieldId: 'type' },
-    { fieldId: 'delta.dateField' },
-    { fieldId: 'once.booleanField' },
-  ],
-  fieldSets: [
-    {
-      header: 'Would you like to transform the records?',
-      collapsed: true,
-      fields: [{ fieldId: 'transform.expression.rules' }],
-    },
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: true,
-      fields: [{ formId: 'hooks' }],
-    },
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [{ formId: 'advancedSettings' }],
-    },
-  ],
+    'wrapper.function': { fieldId: 'wrapper.function' },
+    'wrapper.configuration': { fieldId: 'wrapper.configuration' },
+    type: { fieldId: 'type' },
+    'delta.dateField': { fieldId: 'delta.dateField' },
+    'once.booleanField': { fieldId: 'once.booleanField' },
+    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    hooks: { formId: 'hooks' },
+    advancedSettings: { formId: 'advancedSettings' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'exportData',
+      'wrapper.function',
+      'wrapper.configuration',
+      'type',
+      'delta.dateField',
+      'once.booleanField',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Would you like to transform the records?',
+        fields: ['transform.expression.rules'],
+      },
+      {
+        collapsed: true,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+    ],
+  },
 };

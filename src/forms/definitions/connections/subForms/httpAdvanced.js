@@ -1,6 +1,16 @@
 export default {
-  fields: [
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
-  ],
+  fieldMap: {
+    'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
+    },
+    'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
+  },
+  layout: {
+    fields: [
+      'http.disableStrictSSL',
+      '_borrowConcurrencyFromConnectionId',
+      'http.concurrencyLevel',
+    ],
+  },
 };

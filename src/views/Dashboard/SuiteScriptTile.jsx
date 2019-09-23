@@ -18,7 +18,7 @@ const styles = theme => ({
     marginLeft: 'auto',
   },
   navLink: {
-    color: theme.appBar.contrast,
+    color: theme.palette.primary.color,
     paddingRight: theme.spacing(3),
     letterSpacing: '1.3px',
     fontSize: '13px',
