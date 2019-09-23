@@ -157,23 +157,8 @@ export default function CeligoTable({
                 />
               </TableCell>
             )}
-            {columns.map((col, index) => {
-              if (col.colAction) {
-                return (
-                  <TableCell className={classes.actionCell}>
-                    <ActionMenu
-                      actions={col.colAction.map(
-                        ({ label, component: Action }) => ({
-                          label,
-                          component: <Action {...actionProps} resource={r} />,
-                        })
-                      )}
-                    />
-                  </TableCell>
-                );
-              }
-
-              return index === 0 ? (
+            {columns.map((col, index) =>
+              index === 0 ? (
                 <TableCell
                   component="th"
                   scope="row"
@@ -185,15 +170,17 @@ export default function CeligoTable({
                 <TableCell key={col.heading} align={col.align || 'left'}>
                   {col.value(r)}
                 </TableCell>
-              );
-            })}
+              )
+            )}
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map(({ label, component: Action }) => ({
-                    label,
-                    component: <Action {...actionProps} resource={r} />,
-                  }))}
+                  actions={rowActions(r).map(
+                    ({ label, component: Action }) => ({
+                      label,
+                      component: <Action {...actionProps} resource={r} />,
+                    })
+                  )}
                 />
               </TableCell>
             )}

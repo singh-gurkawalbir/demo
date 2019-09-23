@@ -19,24 +19,34 @@ export default {
     { heading: 'Description', value: r => r && r.description },
     {
       heading: 'Field Mappings',
-      value: () => null,
-      colAction: [FieldMappings],
+      value: function action(r) {
+        return <FieldMappings.component resource={r} />;
+      },
     },
     {
       heading: 'Schedule',
-      value: () => null,
-      colAction: [Schedule],
+      value: function action(r) {
+        return <Schedule.component resource={r} />;
+      },
     },
     {
       heading: 'Run',
-      value: () => null,
-      colAction: [Run],
+      value: function action(r) {
+        return <Run.component resource={r} />;
+      },
     },
     {
       heading: 'Off/On',
-      value: () => null,
-      colAction: [OnOff],
+      value: function action(r) {
+        return <OnOff.component resource={r} />;
+      },
     },
   ],
-  rowActions: [DetachFlow, ViewAuditLog, DownloadFlow, ViewReferences, Delete],
+  rowActions: () => [
+    DetachFlow,
+    ViewAuditLog,
+    DownloadFlow,
+    ViewReferences,
+    Delete,
+  ],
 };

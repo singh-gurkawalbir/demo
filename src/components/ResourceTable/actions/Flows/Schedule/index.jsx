@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react';
 import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/CalendarIcon';
-import FlowSchedule from '../../../..//FlowSchedule';
+import FlowSchedule from '../../../../FlowSchedule';
 
 export default {
   label: 'Schedule',
@@ -12,7 +12,6 @@ export default {
     };
 
     const handleClose = () => {
-      // console.log(values);
       showSchedule(false);
     };
 

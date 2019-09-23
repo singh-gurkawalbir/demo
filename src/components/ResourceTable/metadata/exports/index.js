@@ -20,5 +20,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Delete, References],
+  rowActions: () => [Delete, References],
 };

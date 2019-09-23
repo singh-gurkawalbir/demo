@@ -46,7 +46,7 @@ export default {
       },
     },
   ],
-  rowActions: [
+  rowActions: () => [
     Delete,
     References,
     ConfigureDebugger,

@@ -17,8 +17,7 @@ import { getCronExpression } from '../../utils/util';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
-    height: '100vh',
-    width: '80vw',
+    width: '60vw',
   },
   closeButton: {
     position: 'absolute',
@@ -543,7 +542,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
   };
 
   return (
-    <Dialog open max-width={false}>
+    <Dialog open maxWidth={false}>
       <IconButton
         aria-label="Close"
         className={classes.closeButton}
