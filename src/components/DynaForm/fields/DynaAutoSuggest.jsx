@@ -1,228 +1,47 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
+import Select from 'react-select';
 import { makeStyles } from '@material-ui/core/styles';
-import { Input, FormControl } from '@material-ui/core';
-import KeyCodes from '../../../utils/keyCodes';
+import { FormControl } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
   },
-
-  noSuggestions: {
-    padding: '0.5rem',
-  },
-  items: {
-    padding: '0.5rem',
-  },
-  input: {
-    height: '100%',
-    margin: '2px 0px',
-    borderColor: theme.palette.divider,
-    borderRadius: '2px',
-    // backgroundColor: theme.selectFormControl.background,
-    alignItems: 'center',
-    cursor: 'default',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    minHeight: '38px',
-    position: 'relative',
-    boxSizing: 'border-box',
-    transition: 'all 100ms ease 0s',
-    outline: `0px !important`,
-    // color: theme.selectFormControl.color,
-    padding: '2px 8px',
-    fontSize: 16,
-  },
-  suggestions: {
-    listStyle: 'none',
-    maxHeight: '300px',
-    padding: '0px',
-    overflowY: 'auto',
-    paddingLeft: 0,
-    position: 'absolute',
-    zIndex: 9999,
-    // background: theme.selectFormControl.background,
-    // color: theme.selectFormControl.color,
-    width: '100%',
-    top: 32,
-    boxShadow: theme.shadows[1],
-    borderRadius: [[0, 0, 4, 4]],
-    '& li': {
-      padding: 8,
-      zIndex: 9999,
-      wordBreak: 'break-word',
-      '&:hover': {
-        // backgroundColor: theme.selectFormControl.hover,
-        // color: theme.selectFormControl.text,
-      },
-    },
-  },
 }));
 
 export default function DynaAutoSuggest(props) {
-  const {
-    id,
-    disabled,
-    value,
-    placeholder,
-    onFieldChange,
-    onBlur,
-    options = [],
-  } = props;
-  const wrapperRef = useRef(null);
+  const { id, disabled, value, onFieldChange, onBlur, options = [] } = props;
+  const suggestions = options.map(option => ({ label: option, value: option }));
+  const [inputValue, setInputValue] = useState(value || '');
   const classes = useStyles();
-  const [suggestionConfig, setSuggestionConfig] = useState({
-    // The active selection's index
-    activeSuggestion: 0,
-    // The suggestions that match the user's input
-    filteredSuggestions: [],
-    // Whether or not the suggestion list is shown
-    showSuggestions: false,
-    // What the user has entered
-    userInput: value || '',
-  });
-  const {
-    activeSuggestion,
-    filteredSuggestions,
-    showSuggestions,
-    userInput,
-  } = suggestionConfig;
-  const handleClickOutside = useCallback(
-    event => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setSuggestionConfig({
-          ...suggestionConfig,
-          showSuggestions: false,
-        });
-      }
-    },
-    [suggestionConfig]
-  );
+  const handleChange = newVal => {
+    setInputValue(newVal.value);
 
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside, false);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside, false);
-    };
-  }, [handleClickOutside]);
-
-  const handleChange = e => {
-    const userInput = e.currentTarget.value;
-    // Filter our suggestions that don't contain the user's input
-    const filteredSuggestions = options.filter(
-      suggestion =>
-        suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-    );
-
-    // Update the user input and filtered suggestions, reset the active
-    // suggestion and make sure the suggestions are shown
-    setSuggestionConfig({
-      activeSuggestion: 0,
-      filteredSuggestions,
-      showSuggestions: true,
-      userInput,
-    });
-
-    if (onFieldChange) onFieldChange(id, e.currentTarget.value);
+    if (onFieldChange) onFieldChange(id, newVal);
   };
 
   const handleBlur = () => {
-    onBlur(id, userInput);
+    onBlur(id, inputValue);
   };
 
-  // Event fired when the user clicks on a suggestion
-  const onClick = e => {
-    // Update the user input and reset the rest of the state
-    setSuggestionConfig({
-      ...suggestionConfig,
-      activeSuggestion: 0,
-      filteredSuggestions: [],
-      showSuggestions: false,
-      userInput: e.currentTarget.innerText,
-    });
+  const handleInputChange = newVal => {
+    setInputValue(newVal);
+
+    if (onFieldChange) onFieldChange(id, newVal);
   };
-
-  // Event fired when the user presses a key down
-  const handleKeyDown = e => {
-    const { activeSuggestion, filteredSuggestions } = suggestionConfig;
-
-    // User pressed the enter key, update the input and close the
-    // suggestions
-    if (e.keyCode === KeyCodes.ENTER) {
-      setSuggestionConfig({
-        ...suggestionConfig,
-        activeSuggestion: 0,
-        showSuggestions: false,
-        userInput: filteredSuggestions[activeSuggestion],
-      });
-    }
-    // User pressed the up arrow, decrement the index
-    else if (e.keyCode === KeyCodes.ARROW_UP) {
-      if (activeSuggestion === 0) {
-        return;
-      }
-
-      setSuggestionConfig({
-        ...suggestionConfig,
-        activeSuggestion: activeSuggestion - 1,
-      });
-    }
-    // User pressed the down arrow, increment the index
-    else if (e.keyCode === KeyCodes.ARROW_DOWN) {
-      if (activeSuggestion - 1 === filteredSuggestions.length) {
-        return;
-      }
-
-      setSuggestionConfig({
-        ...suggestionConfig,
-        activeSuggestion: activeSuggestion + 1,
-      });
-    }
-  };
-
-  let suggestionsListComponent;
-
-  if (showSuggestions && userInput) {
-    if (filteredSuggestions.length) {
-      suggestionsListComponent = (
-        <ul key="suggestions" className={classes.suggestions}>
-          {filteredSuggestions.map((suggestion, index) => {
-            let className;
-
-            // Flag the active suggestion with a class
-            if (index === activeSuggestion) {
-              className = classes.suggestionActive;
-            }
-
-            return (
-              // TODO (Aditya): Check for alternative. Tslint is through error for onClick on li element
-              // eslint-disable-next-line
-              <li className={className} key={options} onClick={onClick}>
-                {suggestion}
-              </li>
-            );
-          })}
-        </ul>
-      );
-    }
-  }
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
-      <Input
-        ref={wrapperRef}
-        placeholder={placeholder}
-        type="text"
-        className={classes.input}
+      <Select
+        inputValue={inputValue}
+        isClearable
+        noOptionsMessage={() => null}
+        onInputChange={handleInputChange}
         onChange={handleChange}
         onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        value={userInput}
+        options={suggestions}
       />
-      {suggestionsListComponent}
     </FormControl>
   );
 }

@@ -32,6 +32,7 @@ import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaImportMapping from './DynaImportMapping';
+import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 
 export default {
   mapping: DynaImportMapping,
@@ -70,4 +71,5 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
+  fieldexpressionselect: DynaFieldExpressionSelect,
 };
