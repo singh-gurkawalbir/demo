@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'zendesk',
@@ -8,9 +8,9 @@ export default {
     '/rest/pingRelativeURI': '/api/v2/users.json',
     '/rest/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'zendesk.subdomain': {
       id: 'zendesk.subdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -36,16 +36,20 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'rest.basicAuth.username' },
-    {
-      fieldId: 'rest.basicAuth.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    'rest.basicAuth.username': { fieldId: 'rest.basicAuth.username' },
+    'rest.basicAuth.password': { fieldId: 'rest.basicAuth.password' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'zendesk.subdomain',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': '3dcart',
@@ -21,14 +21,14 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.threedcartSecureUrl': {
       id: 'rest.threedcartSecureUrl',
       type: 'text',
       label: 'Secure URL:',
       required: true,
-      helpText: `3dcart merchant's Secure URL.`,
+      helpText: "3dcart merchant's Secure URL.",
       defaultValue: r =>
         r &&
         r.rest &&
@@ -36,26 +36,32 @@ export default {
         r.rest.headers.find(header => header.name === 'SecureUrl') &&
         r.rest.headers.find(header => header.name === 'SecureUrl').value,
     },
-    {
+    'rest.encrypted.PrivateKey': {
       id: 'rest.encrypted.PrivateKey',
       type: 'text',
       label: 'Private Key:',
       required: true,
-      helpText: `Your application's private key.`,
+      helpText: "Your application's private key.",
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       required: true,
-      helpText: `The 3dcart merchant's token.`,
+      helpText: "The 3dcart merchant's token.",
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'rest.threedcartSecureUrl',
+      'rest.encrypted.PrivateKey',
+      'rest.bearerToken',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

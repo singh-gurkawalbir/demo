@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     let headers = [];
 
     if (formValues['/rest/sandbox'] === 'true') {
@@ -43,8 +43,8 @@ export default {
       ],
     };
   },
-  fields: [
-    {
+  fieldMap: {
+    'rest.sandbox': {
       id: 'rest.sandbox',
       type: 'select',
       label: 'Account Type:',
@@ -69,15 +69,14 @@ export default {
         return 'false';
       },
     },
-    {
+    'rest.unencrypted.apiKey': {
       id: 'rest.unencrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key:',
       helpText: 'Please enter API Key of your Pitney Bowes Account.',
     },
-
-    {
+    'rest.encrypted.apiSecret': {
       id: 'rest.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -87,31 +86,31 @@ export default {
       helpText:
         'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
-    {
+    'rest.bearerToken': {
       id: 'rest.bearerToken',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'rest.unencrypted.apiKey',
-          is: [''],
-        },
-        {
-          field: 'rest.encrypted.apiSecret',
-          is: [''],
-        },
+        { field: 'rest.unencrypted.apiKey', is: [''] },
+        { field: 'rest.encrypted.apiSecret', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The access token of your Pitney Bowes account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'rest.sandbox',
+      'rest.unencrypted.apiKey',
+      'rest.encrypted.apiSecret',
+      'rest.bearerToken',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

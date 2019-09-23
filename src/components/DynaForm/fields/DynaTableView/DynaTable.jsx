@@ -42,9 +42,7 @@ function reducer(state, action) {
     onRowChange,
   } = action;
 
-  return produce(state, d => {
-    let draft = d;
-
+  return produce(state, draft => {
     // eslint-disable-next-line default-case
     switch (type) {
       case 'remove':
@@ -57,6 +55,7 @@ function reducer(state, action) {
       case 'updateField':
         if (state[index]) {
           if (onRowChange) {
+            // eslint-disable-next-line no-param-reassign
             draft = onRowChange(state, index, field, value);
           } else {
             draft[index][field] = value;

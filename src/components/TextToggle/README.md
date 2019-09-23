@@ -5,11 +5,9 @@ Toggles at minimum need 2 options.
 Options can be exclusive (only one allowed). Alternatively, 
 if the "exclusive" prop is not set, any/all of the options can be selected.
 ```js
-const colors = require('../../theme/colors.js').default;
 
 const demoContainer = {
     padding: 8,
-    backgroundColor: colors.celigoNeutral8,
 };
 
 const opts = [

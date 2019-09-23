@@ -28,7 +28,8 @@ const getProxyOpts = () => {
   const opts = {
     target,
     secure,
-    changeOrigin: true
+    changeOrigin: true,
+    timeout: 10 * 60 * 1000,
     // pathRewrite: {
     //  '^/api': '',
     // },
@@ -86,7 +87,7 @@ module.exports = {
           // 'src/utils/**/*.{js,jsx}',
         ],
 
-        setupFiles: ["jest-date-mock"],
+        setupFiles: ["jest-date-mock","core-js"],
         coverageThreshold: {
           global: {
             statements: 75,
@@ -151,7 +152,16 @@ module.exports = {
             "react/no-did-mount-set-state": "off",
             "no-underscore-dangle": "off",
             "react-hooks/rules-of-hooks": "error",
-            "react-hooks/exhaustive-deps": "warn"
+            "react-hooks/exhaustive-deps": "warn",
+            "no-param-reassign": [
+              "error",
+              {
+                "props": true,
+                "ignorePropertyModificationsFor": [
+                  "draft", "acc", "response"
+                ]
+              }
+            ]
           }
         }
       }

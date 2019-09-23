@@ -1,12 +1,12 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rdbms',
     '/rdbms/type': 'postgresql',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    type: {
       fieldId: 'type',
       defaultValue: r => {
         let rdbmsSubType;
@@ -20,7 +20,7 @@ export default {
         return rdbmsSubType;
       },
     },
-    {
+    mode: {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode:',
@@ -34,55 +34,52 @@ export default {
         },
       ],
     },
-    {
+    _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
-    { formId: 'rdbmsFields' },
-    { fieldId: 'rdbms.port' },
-    { id: 'rdbms.useSSL', type: 'checkbox', label: 'Use SSL' },
-    {
+    rdbmsFields: { formId: 'rdbmsFields' },
+    'rdbms.port': { fieldId: 'rdbms.port' },
+    'rdbms.useSSL': { id: 'rdbms.useSSL', type: 'checkbox', label: 'Use SSL' },
+    'rdbms.ssl.ca': {
       fieldId: 'rdbms.ssl.ca',
-      visibleWhen: [
-        {
-          field: 'rdbms.useSSL',
-          is: [true],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
-    {
+    'rdbms.ssl.key': {
       fieldId: 'rdbms.ssl.key',
-      visibleWhen: [
-        {
-          field: 'rdbms.useSSL',
-          is: [true],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
-    {
+    'rdbms.ssl.cert': {
       fieldId: 'rdbms.ssl.cert',
-      visibleWhen: [
-        {
-          field: 'rdbms.useSSL',
-          is: [true],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
-    {
+    'rdbms.ssl.passphrase': {
       fieldId: 'rdbms.ssl.passphrase',
-      visibleWhen: [
-        {
-          field: 'rdbms.useSSL',
-          is: [true],
-        },
-      ],
+      visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'rdbmsAdvanced' }],
-    },
-  ],
+    rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'type',
+      'mode',
+      '_agentId',
+      'rdbmsFields',
+      'rdbms.port',
+      'rdbms.useSSL',
+      'rdbms.ssl.ca',
+      'rdbms.ssl.key',
+      'rdbms.ssl.cert',
+      'rdbms.ssl.passphrase',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['rdbmsAdvanced'],
+      },
+    ],
+  },
 };

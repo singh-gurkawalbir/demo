@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const pingBody = {
       authenticateTestRequest: {
         merchantAuthentication: {
@@ -25,10 +25,11 @@ export default {
       '/http/ping/method': 'POST',
     };
   },
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: {
+      fieldId: 'name',
+    },
+    'authorizeNet.accType': {
       id: 'authorizeNet.accType',
       type: 'select',
       label: 'Account Type:',
@@ -37,8 +38,14 @@ export default {
       options: [
         {
           items: [
-            { label: 'Production', value: 'production' },
-            { label: 'Sandbox', value: 'sandbox' },
+            {
+              label: 'Production',
+              value: 'production',
+            },
+            {
+              label: 'Sandbox',
+              value: 'sandbox',
+            },
           ],
         },
       ],
@@ -56,7 +63,7 @@ export default {
         return '';
       },
     },
-    {
+    'http.encrypted.apiLoginID': {
       id: 'http.encrypted.apiLoginID',
       type: 'text',
       label: 'API Login ID:',
@@ -67,7 +74,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered',
     },
-    {
+    'http.encrypted.transactionKey': {
       id: 'http.encrypted.transactionKey',
       type: 'text',
       label: 'Transaction Key:',
@@ -78,12 +85,24 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
+    httpAdvanced: {
+      formId: 'httpAdvanced',
     },
-  ],
+  },
+  layout: {
+    fields: [
+      'name',
+      'authorizeNet.accType',
+      'http.encrypted.apiLoginID',
+      'http.encrypted.transactionKey',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['httpAdvanced'],
+      },
+    ],
+  },
 };

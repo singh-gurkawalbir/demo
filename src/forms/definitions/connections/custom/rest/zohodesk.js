@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'zohodesk',
@@ -17,9 +17,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.unencrypted.organizationId': {
       id: 'rest.unencrypted.organizationId',
       label: 'Organization Id:',
       required: true,
@@ -27,7 +27,7 @@ export default {
       helpText:
         'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
     },
-    {
+    'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
         'Desk.tickets.ALL',
@@ -58,12 +58,13 @@ export default {
         'Desk.search.READ',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.unencrypted.organizationId', 'rest.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

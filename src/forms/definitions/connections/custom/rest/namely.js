@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'namely',
@@ -18,9 +18,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.namelyCompanyName': {
       id: 'rest.namelyCompanyName',
       type: 'text',
       startAdornment: 'https://',
@@ -45,18 +45,19 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       label: 'Personal Access Token:',
       required: true,
       helpText: 'The personal access token of your account on namely.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.namelyCompanyName', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

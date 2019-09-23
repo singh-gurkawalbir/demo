@@ -1,31 +1,41 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    {
+  fieldMap: {
+    common: { formId: 'common' },
+    importData: {
       id: 'importData',
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    { fieldId: 'wrapper.function' },
-    { fieldId: 'wrapper.configuration' },
-    {
+    'wrapper.function': { fieldId: 'wrapper.function' },
+    'wrapper.configuration': { fieldId: 'wrapper.configuration' },
+    sampleData: {
       id: 'sampleData',
       type: 'labeltitle',
       label: 'Do you have sample data?',
     },
-    { fieldId: 'wrapper.sampleData' },
-    { formId: 'dataMappings' },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [{ fieldId: 'idLockTemplate' }, { fieldId: 'dataURITemplate' }],
-    },
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
-      fields: [{ formId: 'hooks' }],
-    },
-  ],
+    'wrapper.sampleData': { fieldId: 'wrapper.sampleData' },
+    dataMappings: { formId: 'dataMappings' },
+    advancedSettings: { formId: 'advancedSettings' },
+    hooks: { formId: 'hooks' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'importData',
+      'wrapper.function',
+      'wrapper.configuration',
+      'sampleData',
+      'wrapper.sampleData',
+      'dataMappings',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      {
+        collapsed: false,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+    ],
+  },
 };

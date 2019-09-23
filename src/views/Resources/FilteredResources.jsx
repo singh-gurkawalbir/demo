@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch, { list }) => ({
   avatar: {
     backgroundColor: theme.palette.background.paper2,
     border: '1px solid',
-    borderColor: theme.palette.text.primary,
+    borderColor: theme.palette.secondary.lightest,
   },
   listName: {
     wordBreak: 'break-word',

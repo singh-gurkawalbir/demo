@@ -1,11 +1,12 @@
 export default {
-  fields: [
-    {
+  fieldMap: {
+    dataMapping: {
       id: 'dataMapping',
       type: 'labeltitle',
       label: 'How should the data be mapped?',
     },
-    { fieldId: 'oneToMany' },
-    { fieldId: 'pathToMany' },
-  ],
+    oneToMany: { fieldId: 'oneToMany' },
+    pathToMany: { fieldId: 'pathToMany' },
+  },
+  layout: { fields: ['dataMapping', 'oneToMany', 'pathToMany'] },
 };
