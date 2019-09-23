@@ -39,9 +39,21 @@ const mapStateToProps = (state, { match }) => {
     ? selectors.resource(state, 'connections', _connectionId)
     : null;
   const newResourceId = selectors.createdResourceId(state, id);
+  // exclude add fieldMap patches as well as the initial custom form patch
+  /*
+
+  */
   const metaPatches =
     (metaChanges.patch &&
-      metaChanges.patch.filter(patch => patch.path !== '/customForm').length) ||
+      metaChanges.patch
+        .filter(patch => patch.path !== '/customForm')
+        .filter(
+          patch =>
+            !(
+              patch.op === 'add' &&
+              patch.path.startsWith('/customForm/form/fieldMap/')
+            )
+        ).length) ||
     0;
 
   return {
@@ -102,11 +114,17 @@ class Edit extends Component {
   };
 
   handleToggleEdit = () => {
-    const { handleInitCustomResourceForm } = this.props;
+    const {
+      handleInitCustomResourceForm,
+      handleUndoAllMetaChanges,
+    } = this.props;
     const { editMode } = this.state;
 
     if (!editMode) {
       handleInitCustomResourceForm();
+    } else {
+      // when the user exits edit mode clear all resource meta patches
+      handleUndoAllMetaChanges();
     }
 
     this.setState({ editMode: !editMode });
@@ -204,6 +222,7 @@ class Edit extends Component {
                 onChange={this.handleToggleEdit}
                 control={<Switch color="primary" />}
                 label="Edit"
+                checked={editMode}
                 labelPlacement="start"
               />
             )}
@@ -239,7 +258,11 @@ class Edit extends Component {
                   size="small"
                   color="secondary"
                   disabled={metaPatches === 0}
-                  onClick={handleUndoAllMetaChanges}>
+                  onClick={() => {
+                    // we clear all meta patches and disable edit mode
+                    handleUndoAllMetaChanges();
+                    this.setState({ editMode: false });
+                  }}>
                   Cancel Meta Changes
                 </Button>
               </div>

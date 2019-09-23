@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'ebay',
@@ -21,9 +21,9 @@ export default {
         ? formValues['/rest/scopeSandbox']
         : formValues['/rest/scopeProduction'],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accountType: {
       id: 'accountType',
       type: 'select',
       label: 'Account Type:',
@@ -49,16 +49,11 @@ export default {
         return 'sandbox';
       },
     },
-    {
+    'rest.scopeSandbox': {
       id: 'rest.scopeSandbox',
       type: 'selectscopes',
       label: 'Configure Scopes',
-      visibleWhen: [
-        {
-          field: 'accountType',
-          is: ['sandbox'],
-        },
-      ],
+      visibleWhen: [{ field: 'accountType', is: ['sandbox'] }],
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
         'https://api.ebay.com/oauth/api_scope/buy.order.readonly',
@@ -85,14 +80,12 @@ export default {
         return [];
       },
     },
-    {
+    'rest.scopeProduction': {
       id: 'rest.scopeProduction',
       type: 'selectscopes',
       label: 'Configure Scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
-        // 'https://api.ebay.com/oauth/api_scope/buy.order.readonly',
-        // 'https://api.ebay.com/oauth/api_scope/buy.guest.order',
         'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',
         'https://api.ebay.com/oauth/api_scope/sell.marketing',
         'https://api.ebay.com/oauth/api_scope/sell.inventory.readonly',
@@ -114,19 +107,20 @@ export default {
 
         return [];
       },
-      visibleWhen: [
-        {
-          field: 'accountType',
-          is: ['production'],
-        },
-      ],
+      visibleWhen: [{ field: 'accountType', is: ['production'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'accountType',
+      'rest.scopeSandbox',
+      'rest.scopeProduction',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

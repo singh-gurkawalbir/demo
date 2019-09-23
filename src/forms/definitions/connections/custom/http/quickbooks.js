@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     let baseURI = '';
     let scope = [];
 
@@ -49,9 +49,9 @@ export default {
       '/http/auth/oauth/scope': scope,
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.quickbooksEnvironment': {
       id: 'http.quickbooksEnvironment',
       type: 'select',
       label: 'Environment:',
@@ -88,12 +88,13 @@ export default {
         return 'paapi';
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.quickbooksEnvironment'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

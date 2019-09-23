@@ -1,20 +1,37 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    { fieldId: 'salesforce.executionType' },
-    {
+  preSubmit: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+    }
+
+    if (retValues['/salesforce/executionType'] === 'scheduled') {
+      retValues['/salesforce/type'] = 'soql';
+      retValues['/salesforce/api'] = 'rest';
+    } else if (retValues['/salesforce/executionType'] === 'realtime') {
+      retValues['/type'] = 'distributed';
+    }
+
+    return {
+      ...retValues,
+    };
+  },
+  fieldMap: {
+    common: { formId: 'common' },
+    'salesforce.executionType': { fieldId: 'salesforce.executionType' },
+    exportData: {
       id: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to export from Salesforce?',
       visibleWhen: [
-        {
-          field: 'salesforce.executionType',
-          is: ['scheduled', 'realtime'],
-        },
+        { field: 'salesforce.executionType', is: ['scheduled', 'realtime'] },
       ],
     },
-    { fieldId: 'salesforce.soql.query' },
-    {
+    'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
+    type: {
       id: 'type',
       type: 'select',
       label: 'Export Type',
@@ -29,32 +46,78 @@ export default {
           ],
         },
       ],
+      visibleWhen: [{ field: 'salesforce.executionType', is: ['scheduled'] }],
+    },
+    'delta.dateField': {
+      fieldId: 'delta.dateField',
       visibleWhen: [
         {
-          field: 'salesforce.executionType',
-          is: ['scheduled'],
+          field: 'type',
+          is: ['delta'],
         },
       ],
     },
-    { fieldId: 'delta.dateField' },
-    { fieldId: 'delta.lagOffset' },
-    { fieldId: 'once.booleanField' },
-    { fieldId: 'salesforce.sObjectType' },
-    { fieldId: 'salesforce.distributed.requiredTrigger' },
-    { fieldId: 'salesforce.distributed.referencedFields' },
-    { fieldId: 'salesforce.distributed.relatedLists' },
-    { fieldId: 'salesforce.distributed.qualifier' },
-  ],
-  fieldSets: [
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: true,
-      fields: [{ formId: 'hooks' }],
+    'delta.lagOffset': {
+      fieldId: 'delta.lagOffset',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
     },
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [{ formId: 'advancedSettings' }],
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
     },
-  ],
+    'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
+    'salesforce.distributed.requiredTrigger': {
+      fieldId: 'salesforce.distributed.requiredTrigger',
+    },
+    'salesforce.distributed.referencedFields': {
+      fieldId: 'salesforce.distributed.referencedFields',
+    },
+    'salesforce.distributed.relatedLists': {
+      fieldId: 'salesforce.distributed.relatedLists',
+    },
+    'salesforce.distributed.relatedLists.referencedFields': {
+      fieldId: 'salesforce.distributed.relatedLists.referencedFields',
+    },
+    'salesforce.distributed.qualifier': {
+      fieldId: 'salesforce.distributed.qualifier',
+    },
+    hooks: { formId: 'hooks' },
+    advancedSettings: { formId: 'advancedSettings' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'salesforce.executionType',
+      'exportData',
+      'salesforce.soql.query',
+      'type',
+      'delta.dateField',
+      'delta.lagOffset',
+      'once.booleanField',
+      'salesforce.sObjectType',
+      'salesforce.distributed.requiredTrigger',
+      'salesforce.distributed.referencedFields',
+      'salesforce.distributed.relatedLists.referencedFields',
+      'salesforce.distributed.qualifier',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+    ],
+  },
 };

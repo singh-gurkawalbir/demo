@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'chargify',
@@ -17,10 +17,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.chargifySubdomain': {
       type: 'text',
       id: 'rest.chargifySubdomain',
       startAdornment: 'https://',
@@ -46,8 +45,7 @@ export default {
         return subdomain;
       },
     },
-
-    {
+    'rest.encrypted.apiKey': {
       id: 'rest.encrypted.apiKey',
       required: true,
       type: 'text',
@@ -55,12 +53,13 @@ export default {
       inputType: 'password',
       helpText: 'The API key of your Chargify account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.chargifySubdomain', 'rest.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

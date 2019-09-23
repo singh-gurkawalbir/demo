@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'squareup',
@@ -12,10 +12,9 @@ export default {
     '/rest/authScheme': 'Bearer',
     '/rest/pingSuccessPath': 'locations',
   }),
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       label: 'Access Token:',
       required: true,
@@ -24,12 +23,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

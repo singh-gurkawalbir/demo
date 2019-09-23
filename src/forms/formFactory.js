@@ -4,49 +4,60 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 
-const getAllOptionsHandlerSubForms = (fields, resourceType, optionsHandler) => {
-  fields.forEach(field => {
-    const { formId } = field;
+const getAllOptionsHandlerSubForms = (
+  fieldMap,
+  resourceType,
+  optionsHandler
+) => {
+  fieldMap &&
+    Object.keys(fieldMap).forEach(field => {
+      const { formId } = fieldMap[field];
 
-    if (formId) {
-      const { optionsHandler: foundOptionsHandler, fields } = formMeta[
-        resourceType
-      ].subForms[formId];
+      if (formId) {
+        const { optionsHandler: foundOptionsHandler, fieldMap } = formMeta[
+          resourceType
+        ].subForms[formId];
 
-      // Is it necessary to make a deepClone
-      if (foundOptionsHandler)
-        optionsHandler.push(deepClone(foundOptionsHandler));
+        // Is it necessary to make a deepClone
+        if (foundOptionsHandler)
+          optionsHandler.push(deepClone(foundOptionsHandler));
 
-      return getAllOptionsHandlerSubForms(fields, resourceType, optionsHandler);
-    }
-  });
-
-  return optionsHandler;
+        return getAllOptionsHandlerSubForms(
+          fieldMap,
+          resourceType,
+          optionsHandler
+        );
+      }
+    });
 };
 
-const getAmalgamatedOptionsHandler = (meta, fields, resourceType) => {
+export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   if (!meta) return null;
 
-  const allOptionsHandler = getAllOptionsHandlerSubForms(
-    fields,
-    resourceType,
-    meta.optionsHandler ? [meta.optionsHandler] : []
-  );
-  const optionsHandler = (fieldId, fields) => {
-    const finalRes = allOptionsHandler
-      .map(indvOptionsHandler => {
-        if (indvOptionsHandler) {
-          return indvOptionsHandler(fieldId, fields);
-        }
+  const { optionsHandler, fieldMap } = meta;
+  const allOptionsHandler = optionsHandler ? [optionsHandler] : [];
 
-        return null;
-      })
-      .reduce((acc, curr) => curr || acc, {});
+  getAllOptionsHandlerSubForms(fieldMap, resourceType, allOptionsHandler);
+
+  const amalgamatedOptionsHandler = (fieldId, fields) => {
+    const finalRes =
+      allOptionsHandler &&
+      allOptionsHandler
+        .map(indvOptionsHandler => {
+          if (indvOptionsHandler) {
+            const res = indvOptionsHandler(fieldId, fields);
+
+            return res;
+          }
+
+          return null;
+        })
+        .reduce((acc, curr) => curr || acc, {});
 
     return finalRes;
   };
 
-  return optionsHandler;
+  return amalgamatedOptionsHandler;
 };
 
 const getResourceFormAssets = ({
@@ -55,9 +66,9 @@ const getResourceFormAssets = ({
   isNew = false,
   assistantData,
 }) => {
-  let fields;
-  let fieldSets = [];
-  let preSubmit;
+  let fieldMap;
+  let layout = [];
+  let preSave;
   let init;
   let actions;
   let meta;
@@ -87,7 +98,7 @@ const getResourceFormAssets = ({
       }
 
       if (meta) {
-        ({ fields, fieldSets, preSubmit, init, actions } = meta);
+        ({ fieldMap, layout, preSave, init, actions } = meta);
       }
 
       break;
@@ -116,7 +127,7 @@ const getResourceFormAssets = ({
         }
 
         if (meta) {
-          ({ fields, fieldSets, init, preSubmit, actions } = meta);
+          ({ fieldMap, layout, init, preSave, actions } = meta);
         }
       }
 
@@ -125,8 +136,9 @@ const getResourceFormAssets = ({
     case 'agents':
     case 'scripts':
     case 'stacks':
+      // TODO:check layout should be here
       meta = formMeta[resourceType];
-      ({ fields } = meta);
+      ({ fieldMap } = meta);
 
       break;
 
@@ -135,66 +147,91 @@ const getResourceFormAssets = ({
       break;
   }
 
-  const optionsHandler = getAmalgamatedOptionsHandler(
-    meta,
-    fields,
-    resourceType
-  );
+  const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
 
   return {
-    fieldMeta: { fields, fieldSets, actions },
+    fieldMeta: { fieldMap, layout, actions },
     init,
-    preSubmit,
+    preSave,
     optionsHandler,
   };
 };
 
 const applyVisibilityRulesToSubForm = (f, resourceType) => {
-  // TODO: We are assuming this factory applies defaults to edit exports
-  // no create export has been considered here
-  const fieldsFromForm = formMeta[resourceType].subForms[f.formId].fields;
-
-  if (!fieldsFromForm) {
-    throw new Error('no subform for', f.formId);
+  // subforms containers are not supported
+  if (
+    !formMeta[resourceType] ||
+    !formMeta[resourceType].subForms ||
+    !formMeta[resourceType].subForms[f.formId] ||
+    !formMeta[resourceType].subForms[f.formId].fieldMap
+  ) {
+    throw new Error(`could not find fieldMap for given form id ${f.formId}`);
   }
 
+  if (
+    !formMeta[resourceType].subForms[f.formId].layout ||
+    !formMeta[resourceType].subForms[f.formId].layout.fields
+  ) {
+    throw new Error(`could not find fields for given form id ${f.formId}`);
+  }
+
+  const fieldMapFromSubForm =
+    formMeta[resourceType].subForms[f.formId].fieldMap;
+
+  // todo: cannot support visibleWhen rule....there is no point propogating that rule
   if (f.visibleWhen && f.visibleWhenAll)
     throw new Error(
       'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
     );
 
-  return fieldsFromForm.map(field => {
-    if (field.visibleWhen && field.visibleWhenAll)
-      throw new Error(
-        'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
-      );
-    const fieldCopy = deepClone(field);
+  const transformedFieldMap = Object.keys(fieldMapFromSubForm)
+    .map(key => {
+      const field = fieldMapFromSubForm[key];
 
-    if (f.visibleWhen) {
-      fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
-      fieldCopy.visibleWhen.push(...f.visibleWhen);
-    } else if (f.visibleWhenAll) {
-      fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
+      if (field.visibleWhen && field.visibleWhenAll)
+        throw new Error(
+          'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
+        );
+      const fieldCopy = deepClone(field);
 
-      fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
-    }
+      if (f.visibleWhen) {
+        fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
+        fieldCopy.visibleWhen.push(...f.visibleWhen);
+      } else if (f.visibleWhenAll) {
+        fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
 
-    return fieldCopy;
-  });
+        fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
+      }
+
+      return { field: fieldCopy, key };
+    })
+    .reduce((acc, curr) => {
+      const { field, key } = curr;
+
+      acc[key] = field;
+
+      return acc;
+    }, {});
+  const subformFields = formMeta[resourceType].subForms[f.formId].layout.fields;
+
+  return { subformFieldMap: transformedFieldMap, subformFields };
 };
 
 const applyingMissedOutFieldMetaProperties = (
   incompleteField,
   resource,
-  resourceType
+  resourceType,
+  ignoreFunctionTransformations
 ) => {
   const field = incompleteField;
 
-  Object.keys(field).forEach(key => {
-    if (typeof field[key] === 'function') {
-      field[key] = field[key](resource);
-    }
-  });
+  if (!ignoreFunctionTransformations) {
+    Object.keys(field).forEach(key => {
+      if (typeof field[key] === 'function') {
+        field[key] = field[key](resource);
+      }
+    });
+  }
 
   if (!field.id) {
     field.id = field.fieldId;
@@ -229,21 +266,34 @@ const applyingMissedOutFieldMetaProperties = (
   return field;
 };
 
-const setDefaults = (fields, resourceType, resource) => {
-  if (!fields || fields.length === 0) return fields;
+const flattenedFieldMap = (
+  fields,
+  fieldMap,
+  resourceType,
+  resource,
+  ignoreFunctionTransformations,
+  resObjectRefs = {},
+  resFields = []
+) => {
+  fields &&
+    fields.forEach(fieldReferenceName => {
+      const f = fieldMap[fieldReferenceName];
 
-  return fields
-    .map(f => {
-      if (f.formId) {
-        const fieldMetaHavingVisibilityRules = applyVisibilityRulesToSubForm(
-          f,
-          resourceType
-        );
+      if (f && f.formId) {
+        const {
+          subformFields,
+          subformFieldMap,
+        } = applyVisibilityRulesToSubForm(f, resourceType);
 
-        return setDefaults(
-          fieldMetaHavingVisibilityRules,
+        resFields.push(...subformFields);
+
+        return flattenedFieldMap(
+          subformFields,
+          subformFieldMap,
           resourceType,
-          resource
+          resource,
+          ignoreFunctionTransformations,
+          resObjectRefs
         );
       }
 
@@ -256,75 +306,175 @@ const setDefaults = (fields, resourceType, resource) => {
         ...masterFields,
         ...f,
       };
-
-      return applyingMissedOutFieldMetaProperties(
+      const value = applyingMissedOutFieldMetaProperties(
         merged,
         resource,
-        resourceType
+        resourceType,
+        ignoreFunctionTransformations
       );
-    })
-    .flat();
-};
 
-const getFieldsWithDefaults = (fieldMeta, resourceType, resource) => {
-  const filled = [];
-  const { fields, fieldSets, actions } = fieldMeta;
-
-  if (fieldSets && fieldSets.length > 0) {
-    fieldSets.forEach(set => {
-      const { fields, ...rest } = set;
-
-      filled.push({
-        ...rest,
-        fields: setDefaults(fields, resourceType, resource),
-      });
+      resFields.push(fieldReferenceName);
+      // eslint-disable-next-line no-param-reassign
+      resObjectRefs[fieldReferenceName] = value;
     });
-  }
 
   return {
-    fields: setDefaults(fields, resourceType, resource),
-    fieldSets: filled,
+    fieldMap: resObjectRefs,
+    fields: resFields,
+  };
+};
+
+const setDefaultsToLayout = (
+  layout,
+  fieldMap,
+  resourceType,
+  resource,
+  ignoreFunctionTransformations
+) => {
+  const { fields, containers, ...rest } = layout;
+
+  if (!fields && !containers) return null;
+
+  const {
+    fields: transformedFields,
+    fieldMap: transformedFieldRef,
+  } = flattenedFieldMap(
+    fields,
+    fieldMap,
+    resourceType,
+    resource,
+    ignoreFunctionTransformations
+  );
+  let transformedFieldRefs = transformedFieldRef;
+  const transformedContainers =
+    containers &&
+    containers.map(container => {
+      const {
+        transformedLayout: transformedLayoutRes,
+        transformedFieldMap: transfieldMap,
+      } = setDefaultsToLayout(
+        container,
+        fieldMap,
+        resourceType,
+        resource,
+        ignoreFunctionTransformations
+      );
+      const { fields, containers } = transformedLayoutRes;
+
+      transformedFieldRefs = {
+        ...transformedFieldRefs,
+        ...transfieldMap,
+      };
+
+      return { ...container, fields, containers };
+    });
+
+  return {
+    transformedLayout: {
+      ...rest,
+      ...(transformedFields && transformedFields.length > 0
+        ? { fields: transformedFields }
+        : {}),
+      ...(transformedContainers && transformedContainers.length > 0
+        ? { containers: transformedContainers }
+        : {}),
+    },
+    transformedFieldMap: transformedFieldRefs,
+  };
+};
+
+const getFieldsWithDefaults = (
+  fieldMeta,
+  resourceType,
+  resource,
+  ignoreFunctionTransformations = false
+) => {
+  const { layout, fieldMap, actions } = fieldMeta;
+
+  if (!layout || !fieldMap) {
+    let str = !fieldMap ? 'fieldMap ' : '';
+
+    str += !layout ? 'layout ' : '';
+
+    throw new Error(`No ${str}in the metadata `);
+  }
+
+  const { transformedFieldMap, transformedLayout } = setDefaultsToLayout(
+    layout,
+    fieldMap,
+    resourceType,
+    resource,
+    ignoreFunctionTransformations
+  );
+
+  return {
+    layout: transformedLayout,
+    fieldMap: transformedFieldMap,
     actions,
   };
 };
 
-const returnFieldWithJustVisibilityRules = f => {
-  const { fieldId, visibleWhen, visibleWhenAll } = f;
+const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
+  const transformedMeta = getFieldsWithDefaults(
+    meta,
+    resourceType,
+    resource,
+    true
+  );
+  const { fieldMap: transformedFieldMap } = transformedMeta;
+  const extractedInitFunctions = Object.keys(transformedFieldMap)
+    .map(key => {
+      const field = transformedFieldMap[key];
+      const fieldReferenceWithFunc = Object.keys(field)
+        .filter(key => typeof field[key] === 'function')
+        .reduce((acc, key) => {
+          if (field[key]) acc[key] = field[key];
 
-  if (fieldId) {
-    if (visibleWhen) return { fieldId, visibleWhen };
-    else if (visibleWhenAll) return { fieldId, visibleWhenAll };
+          return acc;
+        }, {});
 
-    return { fieldId };
-  }
-  // else it could be a custom form field
-  // just return it completely
+      return { key, value: fieldReferenceWithFunc };
+    })
+    .filter(val => Object.keys(val.value).length !== 0)
+    .reduce((acc, curr) => {
+      const { key, value } = curr;
 
-  return f;
-};
+      if (value) {
+        acc[key] = value;
+      }
 
-const getFlattenedFieldMetaWithRules = (fieldMeta, resourceType) => {
-  const { fields, fieldSets, actions } = fieldMeta;
-  const modifiedFields = fields.flatMap(field => {
-    if (field.formId) {
-      const fieldsWithVisibility = applyVisibilityRulesToSubForm(
-        field,
-        resourceType
-      ).map(returnFieldWithJustVisibilityRules);
-      const updatedFieldMeta = { fields: fieldsWithVisibility, fieldSets };
+      return acc;
+    }, {});
+  const transformedFieldMapWithoutFuncs = Object.keys(transformedFieldMap)
+    .map(key => {
+      const field = transformedFieldMap[key];
+      const fieldReferenceWithoutFunc = Object.keys(field)
+        .filter(key => typeof field[key] !== 'function')
+        .reduce((acc, key) => {
+          acc[key] = field[key];
 
-      return getFlattenedFieldMetaWithRules(updatedFieldMeta, resourceType)
-        .fields;
-    }
+          return acc;
+        }, {});
 
-    return returnFieldWithJustVisibilityRules(field);
-  });
+      return { key, value: fieldReferenceWithoutFunc };
+    })
+    .reduce((acc, curr) => {
+      const { key, value } = curr;
 
-  return { fields: modifiedFields, fieldSets, actions };
+      acc[key] = value;
+
+      return acc;
+    }, {});
+
+  return {
+    ...transformedMeta,
+    fieldMap: transformedFieldMapWithoutFuncs,
+    extractedInitFunctions,
+  };
 };
 
 export default {
   getResourceFormAssets,
   getFieldsWithDefaults,
-  getFlattenedFieldMetaWithRules,
+  getFieldsWithoutFuncs,
 };
