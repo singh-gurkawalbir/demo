@@ -1,20 +1,4 @@
 export default {
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rest.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'rest.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
-    return null;
-  },
   fields: [
     { formId: 'common' },
     {
@@ -25,12 +9,6 @@ export default {
     { fieldId: 'rest.method' },
     { fieldId: 'rest.headers' },
     { fieldId: 'rest.compositeType' },
-    { fieldId: 'rest.lookups', visible: false },
-    {
-      fieldId: 'mapping',
-      application: 'rest',
-      refreshOptionsOnChangesTo: ['rest.lookups'],
-    },
     { fieldId: 'rest.relativeURI' },
     { fieldId: 'rest.successPath' },
     { fieldId: 'rest.successValues' },

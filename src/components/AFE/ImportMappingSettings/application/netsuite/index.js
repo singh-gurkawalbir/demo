@@ -1,13 +1,11 @@
-import fieldExpressions from '../../../../../utils/fieldExpressions';
-import utilityFunctions from '../../../../../utils/utilityFunctions';
 import MappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
     const { value, lookup = {}, extractFields } = options;
     const fieldMeta = {
-      fields: [
-        {
+      fieldMap: {
+        dataType: {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
@@ -26,29 +24,28 @@ export default {
             },
           ],
         },
-        {
+        discardIfEmpty: {
           id: 'discardIfEmpty',
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           label: 'Discard If Empty',
         },
-
-        {
+        immutable: {
           id: 'immutable',
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
           label: 'Immutable (Advanced)',
         },
-        {
+        useAsAnInitializeValue: {
           id: 'useAsAnInitializeValue',
           name: 'useAsAnInitializeValue',
           type: 'checkbox',
           defaultValue: value.useAsAnInitializeValue || false,
           label: 'Use This Field During Record Initialization',
         },
-        {
+        fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
           type: 'radiogroup',
@@ -67,20 +64,15 @@ export default {
             },
           ],
         },
-        {
+        'lookup.mode': {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
           label: '',
           showOptionsHorizontally: true,
           fullWidth: true,
+          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.map ? 'static' : 'dynamic',
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-          ],
           options: [
             {
               items: [
@@ -90,85 +82,7 @@ export default {
             },
           ],
         },
-        // TODO
-
-        // {
-        //   id: 'lookup.recordType',
-        //   name: '_recordType',
-        //   label: 'Search Record Type',
-        //   type: 'refreshableselect',
-        //   mode: 'suitescript',
-        //   resourceType: 'recordTypes',
-        //   connectionId: '5c88a4bb26a9676c5d706324',
-        //   // TODO
-        //   defaultValue: '',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'fieldMappingType',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.queryBuilder',
-        //   name: '_queryBuilder',
-        //   label: '',
-        //   type: 'queryBuilder',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'fieldMappingType',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.expression',
-        //   name: '_expression',
-        //   label: 'Lookup Filter Expression',
-        //   type: 'text',
-
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'fieldMappingType',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 'lookup.resultField',
-        //   name: '_resultField',
-        //   label: 'Value Field',
-        //   refreshOptionsOnChangesTo: ['lookup.recordType'],
-        //   type: 'refreshableselect',
-        //   mode: 'suitescript',
-        //   resourceType: 'recordTypes',
-        //   connectionId: '5c88a4bb26a9676c5d706324',
-        //   filterKey: 'myFilter',
-        //   defaultValue: '',
-        //   visibleWhenAll: [
-        //     {
-        //       field: 'fieldMappingType',
-        //       is: ['lookup'],
-        //     },
-        //     {
-        //       field: 'lookup.mode',
-        //       is: ['dynamic'],
-        //     },
-        //   ],
-        // },
-        {
+        'lookup.mapList': {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
@@ -179,44 +93,23 @@ export default {
           valueLabel: 'Import Field (HTTP)',
           map: lookup.map,
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['static'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['static'] },
           ],
         },
-        {
+        functions: {
           id: 'functions',
           name: 'functions',
           type: 'select',
           label: 'Function',
-          options: [
-            {
-              items:
-                (fieldExpressions &&
-                  fieldExpressions.map(field => ({
-                    label: field[1],
-                    value: field[0],
-                  }))) ||
-                [],
-            },
-          ],
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        {
+        extract: {
           id: 'extract',
           name: 'extract',
           type: 'select',
           label: 'Field',
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
               items:
@@ -228,28 +121,17 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
         },
-        {
+        expression: {
           id: 'expression',
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
           defaultValue: MappingUtil.getDefaultExpression(value),
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        {
+        standardAction: {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
@@ -257,31 +139,36 @@ export default {
           refreshOptionsOnChangesTo: ['fieldMappingType'],
           label: '',
           visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['hardCoded'],
-            },
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
           ],
         },
-        {
+        default: {
           id: 'default',
           name: 'default',
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
           defaultValue: value.default,
-          visibleWhen: [
-            {
-              field: 'standardAction',
-              is: ['default'],
-            },
-          ],
+          visibleWhen: [{ field: 'standardAction', is: ['default'] }],
         },
-      ],
+      },
+      layout: {
+        fields: [
+          'dataType',
+          'discardIfEmpty',
+          'immutable',
+          'useAsAnInitializeValue',
+          'fieldMappingType',
+          'lookup.mode',
+          'lookup.mapList',
+          'functions',
+          'extract',
+          'expression',
+          'standardAction',
+          'default',
+        ],
+      },
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
           const functionsField = fields.find(field => field.id === 'functions');
@@ -295,10 +182,7 @@ export default {
 
           if (extractField.value) expressionValue += extractField.value;
 
-          if (functionsField.value)
-            expressionValue += utilityFunctions.getHandlebarHelperFormat(
-              functionsField.value
-            );
+          if (functionsField.value) expressionValue += functionsField.value;
 
           return expressionValue;
         } else if (fieldId === 'lookup.resultField') {

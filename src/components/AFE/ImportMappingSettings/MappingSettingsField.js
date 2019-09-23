@@ -4,11 +4,6 @@ import ImportMappingSettings from './';
 
 const SettingsIcon = require('../../../components/icons/SettingsIcon').default;
 
-const svgFontSizes = size => ({
-  fontSize: size,
-  marginRight: 10,
-});
-
 export default function MappingSettingsField(props) {
   const {
     id,
@@ -19,10 +14,10 @@ export default function MappingSettingsField(props) {
     updateLookup,
     value,
   } = props;
-  const [isSettingsShown, showSettings] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const isDisabled = !('generate' in value);
   const handleBtnClick = () => {
-    if (!isDisabled) showSettings(!isSettingsShown);
+    if (!isDisabled) setShowSettings(!showSettings);
   };
 
   const handleClose = (shouldCommit, settings) => {
@@ -35,7 +30,7 @@ export default function MappingSettingsField(props) {
 
   return (
     <Fragment>
-      {isSettingsShown && (
+      {showSettings && (
         <ImportMappingSettings
           id={id}
           application={application}
@@ -52,7 +47,7 @@ export default function MappingSettingsField(props) {
         aria-label="delete"
         onClick={handleBtnClick}
         key="settings">
-        <SettingsIcon style={svgFontSizes(24)} />
+        <SettingsIcon />
       </IconButton>
     </Fragment>
   );

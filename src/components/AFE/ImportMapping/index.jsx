@@ -422,7 +422,8 @@ export default function ImportMapping(props) {
               onClose(false);
             }}
             variant="contained"
-            size="small">
+            size="small"
+            color="secondary">
             Cancel
           </Button>
         )}

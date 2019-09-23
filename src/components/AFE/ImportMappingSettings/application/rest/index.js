@@ -1,14 +1,12 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import fieldExpressions from '../../../../../utils/fieldExpressions';
-import utilityFunctions from '../../../../../utils/utilityFunctions';
 import MappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
     const { value, lookup = {}, extractFields } = options;
     const fieldMeta = {
-      fields: [
-        {
+      fieldMap: {
+        dataType: {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
@@ -27,21 +25,21 @@ export default {
             },
           ],
         },
-        {
+        discardIfEmpty: {
           id: 'discardIfEmpty',
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           label: 'Discard If Empty',
         },
-        {
+        immutable: {
           id: 'immutable',
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
           label: 'Immutable (Advanced)',
         },
-        {
+        fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
           type: 'radiogroup',
@@ -60,7 +58,7 @@ export default {
             },
           ],
         },
-        {
+        'lookup.mode': {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
@@ -68,12 +66,7 @@ export default {
           showOptionsHorizontally: true,
           fullWidth: true,
           defaultValue: lookup.map ? 'static' : 'dynamic',
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           options: [
             {
               items: [
@@ -83,7 +76,7 @@ export default {
             },
           ],
         },
-        {
+        'lookup.relativeURI': {
           id: 'lookup.relativeURI',
           name: '_relativeURI',
           type: 'text',
@@ -91,17 +84,11 @@ export default {
           placeholder: 'Relative URI',
           defaultValue: lookup.relativeURI,
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['dynamic'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
-        {
+        'lookup.method': {
           id: 'lookup.method',
           name: '_method',
           type: 'select',
@@ -112,50 +99,29 @@ export default {
             {
               heading: 'Select Http Method',
               items: [
-                {
-                  label: 'GET',
-                  value: 'GET',
-                },
-                {
-                  label: 'POST',
-                  value: 'POST',
-                },
+                { label: 'GET', value: 'GET' },
+                { label: 'POST', value: 'POST' },
               ],
             },
           ],
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['dynamic'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
-        {
+        'lookup.body': {
           id: 'lookup.body',
           name: '_body',
           type: 'httprequestbody',
           label: 'Build HTTP Request Body',
           defaultValue: lookup.body || '',
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['dynamic'],
-            },
-            {
-              field: 'lookup.method',
-              is: ['POST'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.method', is: ['POST'] },
           ],
         },
-        {
+        'lookup.extract': {
           id: 'lookup.extract',
           name: '_extract',
           type: 'text',
@@ -163,18 +129,11 @@ export default {
           placeholder: 'Resource Identifier Path',
           defaultValue: lookup.extract,
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['dynamic'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
-
-        {
+        'lookup.mapList': {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
@@ -185,42 +144,19 @@ export default {
           valueLabel: 'Import Field (REST)',
           map: lookup.map,
           visibleWhenAll: [
-            {
-              field: 'fieldMappingType',
-              is: ['lookup'],
-            },
-            {
-              field: 'lookup.mode',
-              is: ['static'],
-            },
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['static'] },
           ],
         },
-        // TODO (Aditya) : resetting function after selection
-        {
+        functions: {
           id: 'functions',
           name: 'functions',
-          type: 'select',
+          type: 'fieldexpressionselect',
           label: 'Function',
-          options: [
-            {
-              items:
-                (fieldExpressions &&
-                  fieldExpressions.map(field => ({
-                    label: field[1],
-                    value: field[0],
-                  }))) ||
-                [],
-            },
-          ],
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         // TODO (Aditya) : resetting Field after selection
-        {
+        extract: {
           id: 'extract',
           name: 'extract',
           type: 'select',
@@ -236,28 +172,18 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        {
+        expression: {
           id: 'expression',
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
           defaultValue: MappingUtil.getDefaultExpression(value),
-          visibleWhen: [
-            {
-              field: 'fieldMappingType',
-              is: ['multifield'],
-            },
-          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        {
+        standardAction: {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
@@ -268,49 +194,33 @@ export default {
             {
               items: [
                 {
-                  label: `Use Empty String as Default Value`,
+                  label: 'Use Empty String as Default Value',
                   value: 'useEmptyString',
                 },
-                {
-                  label: 'Use Null as Default Value',
-                  value: 'useNull',
-                },
-                {
-                  label: 'Use Custom Default Value',
-                  value: 'default',
-                },
+                { label: 'Use Null as Default Value', value: 'useNull' },
+                { label: 'Use Custom Default Value', value: 'default' },
               ],
             },
           ],
         },
-        {
+        default: {
           id: 'default',
           name: 'default',
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          visibleWhen: [{ field: 'standardAction', is: ['default'] }],
           defaultValue: value.default,
-          visibleWhen: [
-            {
-              field: 'standardAction',
-              is: ['default'],
-            },
-          ],
         },
-        {
+        exportDateFormat: {
           id: 'exportDateFormat',
           name: 'exportDateFormat',
           type: 'text',
           label: 'Export Date Format',
           placeholder: '',
-          visibleWhen: [
-            {
-              field: 'dataType',
-              is: ['date'],
-            },
-          ],
+          visibleWhen: [{ field: 'dataType', is: ['date'] }],
         },
-        {
+        exportDateTimeZone: {
           id: 'exportDateTimeZone',
           name: 'exportDateTimeZone',
           type: 'select',
@@ -326,27 +236,17 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [
-            {
-              field: 'dataType',
-              is: ['date'],
-            },
-          ],
+          visibleWhen: [{ field: 'dataType', is: ['date'] }],
         },
-        {
+        importDateFormat: {
           id: 'importDateFormat',
           name: 'importDateFormat',
           type: 'text',
           label: 'Import Date Format',
           placeholder: '',
-          visibleWhen: [
-            {
-              field: 'dataType',
-              is: ['date'],
-            },
-          ],
+          visibleWhen: [{ field: 'dataType', is: ['date'] }],
         },
-        {
+        importDateTimeZone: {
           id: 'importDateTimeZone',
           name: 'importDateTimeZone',
           type: 'select',
@@ -362,14 +262,32 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [
-            {
-              field: 'dataType',
-              is: ['date'],
-            },
-          ],
+          visibleWhen: [{ field: 'dataType', is: ['date'] }],
         },
-      ],
+      },
+      layout: {
+        fields: [
+          'dataType',
+          'discardIfEmpty',
+          'immutable',
+          'fieldMappingType',
+          'lookup.mode',
+          'lookup.relativeURI',
+          'lookup.method',
+          'lookup.body',
+          'lookup.extract',
+          'lookup.mapList',
+          'functions',
+          'extract',
+          'expression',
+          'standardAction',
+          'default',
+          'exportDateFormat',
+          'exportDateTimeZone',
+          'importDateFormat',
+          'importDateTimeZone',
+        ],
+      },
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
           const functionsField = fields.find(field => field.id === 'functions');
@@ -383,10 +301,7 @@ export default {
 
           if (extractField.value) expressionValue += extractField.value;
 
-          if (functionsField.value)
-            expressionValue += utilityFunctions.getHandlebarHelperFormat(
-              functionsField.value
-            );
+          if (functionsField.value) expressionValue += functionsField.value;
 
           return expressionValue;
         } else if (fieldId === 'standardAction') {

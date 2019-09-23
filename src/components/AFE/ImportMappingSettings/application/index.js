@@ -1,4 +1,4 @@
-import utilityFunctions from '../../../../utils/utilityFunctions';
+import shortid from 'shortid';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
 
@@ -10,7 +10,8 @@ const getFormattedLookup = (lookup, formVal) => {
   if (lookup && lookup.name) {
     lookupTmp.name = lookup.name;
   } else {
-    lookupTmp.name = utilityFunctions.getRandomName();
+    // generating random lookup name
+    lookupTmp.name = shortid.generate();
   }
 
   if (formVal._mode === 'dynamic') {
