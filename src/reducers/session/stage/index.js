@@ -34,10 +34,20 @@ export default (state = {}, action) => {
       newState[id] = { ...newState[id], patch: [...newState[id].patch] };
 
       if (scope) {
+        let timestampOfPatch;
+
         for (let i = newState[id].patch.length - 1; i >= 0; i -= 1) {
-          if (newState[id].patch[i].scope === scope) {
+          if (!timestampOfPatch && newState[id].patch[i].scope === scope) {
+            timestampOfPatch = newState[id].patch.timestamp;
             newState[id].patch.splice(i, 1);
-            break;
+          }
+          // removing older ones matching the same timestamp
+
+          if (
+            timestampOfPatch &&
+            newState[id].patch[i].timestamp === timestampOfPatch
+          ) {
+            newState[id].patch.splice(i, 1);
           }
         }
 

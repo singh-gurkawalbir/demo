@@ -33,6 +33,27 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'wrapper',
+    name: 'Wrapper',
+    type: 'wrapper',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  {
+    id: 'webhook',
+    name: 'Webhook',
+    type: 'webhook',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  {
+    id: 'as2',
+    name: 'AS2',
+    type: 'as2',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
@@ -255,11 +276,10 @@ const connectors = [
   { id: 'harvest', name: 'Harvest', type: 'http', assistant: 'harvest' },
   // { id: 'hoovers', name: 'hoovers', type: 'http', assistant: 'hoovers' },
   { id: 'hubspot', name: 'HubSpot', type: 'http', assistant: 'hubspot' },
-  // { id: 'hybris', name: 'hybris', type: 'http', assistant: 'hybris' },
   { id: 'insightly', name: 'Insightly', type: 'http', assistant: 'insightly' },
   {
     id: 'integratorio',
-    name: 'integrator.io',
+    name: 'Integrator.io',
     type: 'http',
     assistant: 'integratorio',
   },
@@ -315,12 +335,12 @@ const connectors = [
     type: 'http',
     assistant: 'microsoftdynamics365',
   },
-  // {
-  //   id: 'microsoftoffice365',
-  //   name: 'microsoftoffice365',
-  //   type: 'http',
-  //   assistant: 'microsoftoffice365',
-  // },
+  {
+    id: 'microsoftoffice365',
+    name: 'microsoftoffice365',
+    type: 'http',
+    assistant: 'microsoftoffice365',
+  },
   {
     id: 'microsoftonenote',
     name: 'Microsoft OneNote',
@@ -554,5 +574,8 @@ export const getApp = (type, assistant) => {
 
   return connectors.find(c => c.id === id) || {};
 };
+
+export const getApplicationConnectors = () =>
+  connectors.filter(conn => !!conn.assistant);
 
 export default connectors;

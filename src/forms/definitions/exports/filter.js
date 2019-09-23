@@ -1,9 +1,16 @@
 export default {
-  fields: [
-    { fieldId: 'filter.expression.version' },
-    { fieldId: 'filter.expression.rules' },
-    { fieldId: 'filter.script._scriptId' },
-    { fieldId: 'filter.script.function' },
-  ],
-  fieldSets: [],
+  fieldMap: {
+    'filter.expression.version': { fieldId: 'filter.expression.version' },
+    'filter.expression.rules': { fieldId: 'filter.expression.rules' },
+    'filter.script._scriptId': { fieldId: 'filter.script._scriptId' },
+    'filter.script.function': { fieldId: 'filter.script.function' },
+  },
+  layout: {
+    fields: [
+      'filter.expression.version',
+      'filter.expression.rules',
+      'filter.script._scriptId',
+      'filter.script.function',
+    ],
+  },
 };

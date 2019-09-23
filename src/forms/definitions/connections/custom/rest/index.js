@@ -1,12 +1,7 @@
 import anaplan from './anaplan';
 import atera from './atera';
-import avalara from './avalara';
-import desk from './desk';
-import easypost from './easypost';
-import freshdesk from './freshdesk';
 import greenhouse from './greenhouse';
 import insightly from './insightly';
-import integratorio from './integratorio';
 import mailgun from './mailgun';
 import pulseway from './pulseway';
 import shipstation from './shipstation';
@@ -16,36 +11,24 @@ import snapfulfil from './snapfulfil';
 import woocommerce from './woocommerce';
 import acton from './acton';
 import accelo from './accelo';
-import etsy from './etsy';
+import acumatica from './acumatica';
 import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
-import bigcommerce from './bigcommerce';
-import slack from './slack';
-import certify from './certify';
-import chargify from './chargify';
-import docusign from './docusign';
 import dropbox from './dropbox';
-import ebay from './ebay';
 import google from './google';
-import jet from './jet';
 import jobvite from './jobvite';
-import liquidplanner from './liquidplanner';
-import magento from './magento';
-import mailchimp from './mailchimp';
 import smartsheet from './smartsheet';
 import linkedin from './linkedin';
 import box from './box';
-import sageone from './sageone';
 import yahoo from './yahoo';
+import steelbrick from './steelbrick';
 import zuora from './zuora';
 import wrike from './wrike';
 import eventbrite from './eventbrite';
 import yammer from './yammer';
 import doubleclick from './doubleclick';
-import campaignmonitor from './campaignmonitor';
-import hubspot from './hubspot';
 import xcart from './xcart';
 import freshbooks from './freshbooks';
 import lightspeed from './lightspeed';
@@ -62,26 +45,27 @@ import googlecontacts from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
+import pitneybowes from './pitneybowes';
+import expensify from './expensify';
+import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
-import zoom from './zoom';
+import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
-import bronto from './bronto';
-import powerbi from './powerbi';
 import procurify from './procurify';
 import zimbra from './zimbra';
+import klaviyo from './klaviyo';
+import returnly from './returnly';
 import aptrinsic from './aptrinsic';
 import cardknox from './cardknox';
-import coupa from './coupa';
-import microsoftdynamics365 from './microsoftdynamics365';
-import microsoftbusinesscentral from './microsoftbusinesscentral';
 import quip from './quip';
 import concur from './concur';
 import spreecommerce from './spreecommerce';
+import marketo from './marketo';
 import retailops from './retailops';
+import parseur from './parseur';
 import merchantesolutions from './merchantesolutions';
-import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 
 export default {
@@ -89,49 +73,32 @@ export default {
   snapfulfil,
 
   anaplan,
-  etsy,
   googledrive,
   namely,
   newegg,
   asana,
-  slack,
-  bigcommerce,
-  certify,
-  chargify,
-  docusign,
   dropbox,
-  ebay,
   google,
-  jet,
   jobvite,
-  liquidplanner,
-  magento,
-  mailchimp,
   smartsheet,
   linkedin,
   box,
-  sageone,
   yahoo,
+  steelbrick,
   shipstation,
   shopify,
   woocommerce,
   shipwire,
   zuora,
-  desk,
   wrike,
   eventbrite,
   yammer,
   doubleclick,
-  campaignmonitor,
   atera,
-  hubspot,
   xcart,
   freshbooks,
   insightly,
-  integratorio,
   lightspeed,
-  freshdesk,
-  avalara,
   accelo,
   harvest,
   pulseway,
@@ -147,28 +114,29 @@ export default {
   googleshopping,
   googleanalytics,
   taxjar,
+  pitneybowes,
+  expensify,
+  wish,
   pdffiller,
   signnow,
   acton,
-  zoom,
+  acumatica,
+  myobessentials,
   exacterp,
   nimble,
-  bronto,
   greenhouse,
-  powerbi,
   mailgun,
   procurify,
+  klaviyo,
+  returnly,
   aptrinsic,
   cardknox,
-  coupa,
-  easypost,
-  microsoftdynamics365,
-  microsoftbusinesscentral,
   quip,
   concur,
   spreecommerce,
+  marketo,
   zimbra,
   retailops,
+  parseur,
   merchantesolutions,
-  dunandbradstreet,
 };

@@ -1,84 +1,60 @@
 export default {
-  'salesforce.sObjectType': {
-    type: 'text',
-    label: 'SObject Type',
-    required: true,
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realtime'],
-      },
-    ],
-  },
-  'delta.dateField': {
-    type: 'text',
-    label: 'Date Field',
-    required: true,
-  },
-  'delta.lagOffset': {
-    type: 'text',
-    label: 'Offset',
-  },
-  'salesforce.executionType': {
-    type: 'radiogroup',
-    label: 'Execution Type',
-    options: [
-      {
-        items: [
-          { label: 'Real-time', value: 'realtime' },
-          { label: 'Scheduled', value: 'scheduled' },
-        ],
-      },
-    ],
-  },
-  'salesforce.soql.query': {
-    type: 'editor',
-    mode: 'sql',
-    label: 'SOQL Query',
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['scheduled'],
-      },
-    ],
-  },
-  'salesforce.distributed.referencedFields': {
-    type: 'text',
-    keyName: 'name',
-    multiline: true,
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Referenced Fields',
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realtime'],
-      },
-    ],
-  },
-  'salesforce.distributed.qualifier': {
-    type: 'text',
-    label: 'Field Specific Qualification Criteria',
-    multiline: true,
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realtime'],
-      },
-    ],
-  },
-  'salesforce.distributed.relatedLists.referencedFields': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Related Lists',
-    multiline: true,
-    visibleWhen: [
-      {
-        field: 'salesforce.executionType',
-        is: ['realtime'],
-      },
-    ],
-  },
+  fields: [
+    { formId: 'common' },
+    { fieldId: 'salesforce.executionType' },
+    {
+      id: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to export from Salesforce?',
+      visibleWhen: [
+        {
+          field: 'salesforce.executionType',
+          is: ['scheduled', 'realtime'],
+        },
+      ],
+    },
+    { fieldId: 'salesforce.soql.query' },
+    {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'salesforce.executionType',
+          is: ['scheduled'],
+        },
+      ],
+    },
+    { fieldId: 'delta.dateField' },
+    { fieldId: 'delta.lagOffset' },
+    { fieldId: 'once.booleanField' },
+    { fieldId: 'salesforce.sObjectType' },
+    { fieldId: 'salesforce.distributed.requiredTrigger' },
+    { fieldId: 'salesforce.distributed.referencedFields' },
+    { fieldId: 'salesforce.distributed.relatedLists' },
+    { fieldId: 'salesforce.distributed.qualifier' },
+  ],
+  fieldSets: [
+    {
+      header: 'Hooks (Optional, Developers Only)',
+      collapsed: true,
+      fields: [{ formId: 'hooks' }],
+    },
+    {
+      header: 'Advanced',
+      collapsed: true,
+      fields: [{ formId: 'advancedSettings' }],
+    },
+  ],
 };

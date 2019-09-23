@@ -18,10 +18,9 @@ import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
+import magento from './magento';
 import clio from './clio';
-import onelogin from './onelogin';
 import recharge from './recharge';
-import autopilot from './autopilot';
 import drift from './drift';
 import stripe from './stripe';
 import zendesk from './zendesk';
@@ -78,6 +77,7 @@ export default {
   'ebay-xml': ebayXml,
   openair,
   quickbooks,
+  magento,
   trinet,
   pacejet,
   bamboohr,
@@ -89,7 +89,5 @@ export default {
   solidcommerce,
   propack,
   clio,
-  onelogin,
   recharge,
-  autopilot,
 };

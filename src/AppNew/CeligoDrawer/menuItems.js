@@ -1,5 +1,3 @@
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import HomeIcon from '../../components/icons/HomeIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
@@ -11,6 +9,13 @@ import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
 import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
+import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
+import AgentsIcon from '../../components/icons/AgentsIcon';
+import ScriptsIcon from '../../components/icons/ScriptsIcon';
+import ImportsIcon from '../../components/icons/ImportsIcon';
+import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
+import TicketTagIcon from '../../components/icons/TicketTagIcon';
+import TrashIcon from '../../components/icons/TrashIcon';
 
 export default [
   { label: 'Home', path: '/', Icon: HomeIcon },
@@ -18,8 +23,9 @@ export default [
     label: 'Tools',
     Icon: ToolsIcon,
     children: [
-      { label: 'Flow builder', path: '/flowbuilder', Icon: FlowBuilderIcon },
-      { label: 'Data loader', path: '/dataloader', Icon: DataLoaderIcon },
+      { label: 'Flow builder', path: '/flowBuilder', Icon: FlowBuilderIcon },
+      { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
+      { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
     ],
   },
   {
@@ -27,10 +33,10 @@ export default [
     Icon: ResourcesIcon,
     children: [
       { label: 'Exports', path: '/exports', Icon: ExportsIcon },
-      { label: 'Imports', path: '/imports', Icon: InboxIcon },
-      { label: 'Connections', path: '/connections', Icon: MailIcon },
-      { label: 'Scripts', path: '/scripts', Icon: MailIcon },
-      { label: 'Agents', path: '/agents', Icon: MailIcon },
+      { label: 'Imports', path: '/imports', Icon: ImportsIcon },
+      { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },
+      { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
+      { label: 'Agents', path: '/agents', Icon: AgentsIcon },
     ],
   },
   { label: 'Marketplace', path: '/marketplace', Icon: MarketplaceIcon },
@@ -38,8 +44,8 @@ export default [
     label: 'Support',
     Icon: SupportIcon,
     children: [
-      { label: 'Knowledge base', Icon: InboxIcon },
-      { label: 'Support ticket', Icon: MailIcon },
+      { label: 'Knowledge base', Icon: KnowledgeBaseIcon },
+      { label: 'Submit ticket', Icon: TicketTagIcon },
     ],
   },
   {

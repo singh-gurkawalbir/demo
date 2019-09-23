@@ -97,6 +97,37 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   }
 }
 
+export function* patchResource({ resourceType, id, patchSet, options = {} }) {
+  const isNew = isNewId(id);
+
+  if (!patchSet || isNew) return; // nothing to do.
+
+  const path = `/${resourceType}/${id}`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PATCH',
+        body: patchSet,
+      },
+    });
+
+    if (!options.doNotRefetch) {
+      const resource = yield select(selectors.resource, resourceType, id);
+      const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
+        .newDocument;
+
+      yield put(actions.resource.received(resourceType, resourceUpdated));
+    } else {
+      yield put(actions.resource.request('integrations', id));
+    }
+  } catch (error) {
+    // TODO: What should we do for 4xx errors? where the resource to put/post
+    // violates some API business rules?
+  }
+}
+
 export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
@@ -189,6 +220,7 @@ export function* requestRegister({ connectionIds, integrationId }) {
 
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
+  takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),

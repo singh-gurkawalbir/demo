@@ -64,6 +64,22 @@ const connection = {
       integrationId,
     }),
 };
+const marketplace = {
+  requestConnectors: () =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_REQUEST, {}),
+  requestTemplates: () => action(actionTypes.MARKETPLACE.TEMPLATES_REQUEST, {}),
+  receivedConnectors: ({ connectors }) =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
+  receivedTemplates: ({ templates }) =>
+    action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
+  installConnector: (connectorId, sandbox) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  contactSales: (connectorName, _connectorId) =>
+    action(actionTypes.MARKETPLACE.SALES_CONTACT, {
+      connectorName,
+      _connectorId,
+    }),
+};
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
@@ -81,7 +97,8 @@ const resource = {
       resourceType,
       collection,
     }),
-
+  patch: (resourceType, id, patchSet) =>
+    action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
   delete: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETE, { resourceType, id }),
 
@@ -338,6 +355,88 @@ const metadata = {
         connectionId,
         recordType,
         selectField,
+      }),
+  },
+};
+const integrationApp = {
+  installer: {
+    installStep: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
+        id: integrationId,
+        installerFunction,
+      }),
+    updateStep: (integrationId, installerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
+        id: integrationId,
+        installerFunction,
+        update,
+      }),
+    completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
+        stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+        id,
+        installerFunction,
+      }),
+  },
+  uninstaller: {
+    preUninstall: (storeId, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL, {
+        storeId,
+        id: integrationId,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.CLEAR, {
+        id: integrationId,
+      }),
+    updateStep: (integrationId, uninstallerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.UPDATE, {
+        id: integrationId,
+        uninstallerFunction,
+        update,
+      }),
+    stepUninstall: (storeId, integrationId, uninstallerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
+        storeId,
+        id: integrationId,
+        uninstallerFunction,
+      }),
+    receivedUninstallSteps: (uninstallSteps, storeId, id) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
+        uninstallSteps,
+        id,
+        storeId,
+      }),
+    uninstallIntegration: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
+        integrationId,
+      }),
+  },
+  store: {
+    addNew: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
+    updateStep: (integrationId, installerFunction, update) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
+        id: integrationId,
+        installerFunction,
+        update,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
+    completedStepInstall: (integrationId, installerFunction, steps) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
+        id: integrationId,
+        installerFunction,
+        steps,
+      }),
+    installStep: (integrationId, installerFunction) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
+        id: integrationId,
+        installerFunction,
+      }),
+    receivedNewStoreSteps: (integrationId, steps) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
+        id: integrationId,
+        steps,
       }),
   },
 };
@@ -625,6 +724,7 @@ export default {
   connectors,
   cancelTask,
   reloadApp,
+  integrationApp,
   clearComms,
   clearCommByKey,
   patchFilter,
@@ -644,4 +744,5 @@ export default {
   assistantMetadata,
   stack,
   connection,
+  marketplace,
 };
