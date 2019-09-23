@@ -13,7 +13,7 @@ import {
 
 const SearchParamsModal = props => {
   const { paramMeta, onClose, id, onFieldChange, value } = props;
-  const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields({
+  const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
   });
@@ -37,8 +37,8 @@ const SearchParamsModal = props => {
       <Fragment>
         <DynaForm
           fieldMeta={{
-            fields,
-            fieldSets,
+            fieldMap,
+            layout,
           }}>
           <div>
             <Button

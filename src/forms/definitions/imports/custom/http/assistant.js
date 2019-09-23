@@ -8,33 +8,20 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    fields: [{ formId: 'common' }],
-    fieldSets: [
-      {
-        header: 'How would you like the data imported?',
-        collapsed: false,
-        fields: fieldMeta({ resource, assistantData }),
-      },
-      {
-        header: 'Hooks (Optional, Developers Only)',
-        collapsed: false,
-        fields: [{ formId: 'hooks' }],
-      },
-    ],
+    ...fieldMeta({ resource, assistantData }),
     optionsHandler(fieldId, fields) {
       return reduce(
         ['assistant', 'adaptorType', 'version', 'resource', 'operation'],
-        (values, fieldId) => ({
+        (values, fId) => ({
           ...values,
-          [fieldId]: (
-            fields.find(field => field.id === `assistantMetadata.${fieldId}`) ||
-            {}
+          [fId]: (
+            fields.find(field => field.id === `assistantMetadata.${fId}`) || {}
           ).value,
         }),
         {}
       );
     },
-    preSubmit: formValues => {
+    preSave: formValues => {
       const assistantMetadata = {
         pathParams: {},
       };
@@ -47,7 +34,7 @@ export default function assistantDefinition(
         'operation',
         'ignoreExisting',
         'ignoreMissing',
-        'lookupUrl',
+        // 'lookupUrl',
         'lookupType',
         'lookupQueryParams',
       ].forEach(prop => {
@@ -64,13 +51,10 @@ export default function assistantDefinition(
           ] = formValues[key];
         }
       });
-
       const importDoc = convertToImport({
         assistantConfig: assistantMetadata,
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
-
-      // return {};
 
       return { ...otherFormValues, ...importDoc };
     },

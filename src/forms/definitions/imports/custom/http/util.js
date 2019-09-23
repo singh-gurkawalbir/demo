@@ -280,11 +280,45 @@ export function fieldMeta({ resource, assistantData }) {
     }
   }
 
-  return [
+  const fields = [
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
     ...ignoreConfigFields,
     ...howToFindIdentifierFields,
   ];
+  const fieldMap = {
+    common: {
+      formId: 'common',
+    },
+    hooks: {
+      formId: 'hooks',
+    },
+  };
+  const fieldIds = [];
+
+  fields.forEach(field => {
+    fieldMap[field.id || field.fieldId] = field;
+    fieldIds.push(field.id || field.fieldId);
+  });
+
+  return {
+    fieldMap,
+    layout: {
+      fields: ['common'],
+      type: 'collapse',
+      containers: [
+        {
+          label: 'How would you like the data imported?',
+          collapsed: false,
+          fields: fieldIds,
+        },
+        {
+          label: 'Hooks (Optional, Developers Only)',
+          collapsed: true,
+          fields: ['hooks'],
+        },
+      ],
+    },
+  };
 }

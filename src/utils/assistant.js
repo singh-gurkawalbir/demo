@@ -15,14 +15,22 @@ import {
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
+  'batchSize',
+  'body',
   'delta',
+  'doesNotSupportPaging',
   'errorMediaType',
+  'flattenSampleData',
   'headers',
+  'ignoreEmptyNodes',
   'paging',
   'queryParameters',
   'requestMediaType',
+  'response',
+  'responseIdPath',
   'successMediaType',
   'successPath',
+  'successValues',
 ]);
 
 export const PARAMETER_LOCATION = Object.freeze({
@@ -150,6 +158,73 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
+export function populateDefaults({
+  child = {},
+  parent = {},
+  isChildAnOperation = false,
+}) {
+  const childWithDefaults = { ...child };
+
+  OVERWRITABLE_PROPERTIES.forEach(prop => {
+    if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
+      if (Object.prototype.hasOwnProperty.call(parent, prop)) {
+        if (prop === 'headers') {
+          childWithDefaults[prop] = mergeHeaders(
+            parent[prop],
+            childWithDefaults[prop]
+          );
+        } else if (prop === 'queryParameters') {
+          childWithDefaults[prop] = mergeQueryParameters(
+            parent[prop],
+            childWithDefaults[prop]
+          );
+        } else if (isChildAnOperation) {
+          if (
+            prop === 'paging' &&
+            !childWithDefaults.doesNotSupportPaging &&
+            !Object.prototype.hasOwnProperty.call(childWithDefaults, prop)
+          ) {
+            childWithDefaults[prop] = parent[prop];
+          } else if (
+            prop === 'delta' &&
+            (childWithDefaults.supportedExportTypes &&
+              childWithDefaults.supportedExportTypes.includes('delta')) &&
+            !Object.prototype.hasOwnProperty.call(childWithDefaults, prop)
+          ) {
+            childWithDefaults[prop] = parent[prop];
+          }
+        } else if (
+          !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
+          Object.prototype.hasOwnProperty.call(parent, prop)
+        ) {
+          if (isObject(parent[prop])) {
+            childWithDefaults[prop] = defaultsDeep(
+              childWithDefaults[prop],
+              parent[prop]
+            );
+          } else {
+            childWithDefaults[prop] = parent[prop];
+          }
+        }
+      }
+    } else if (
+      !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
+      Object.prototype.hasOwnProperty.call(parent, prop)
+    ) {
+      if (isObject(parent[prop])) {
+        childWithDefaults[prop] = defaultsDeep(
+          childWithDefaults[prop],
+          parent[prop]
+        );
+      } else {
+        childWithDefaults[prop] = parent[prop];
+      }
+    }
+  });
+
+  return childWithDefaults;
+}
+
 export function getExportVersionAndResource({
   assistantVersion,
   assistantOperation,
@@ -255,28 +330,9 @@ export function getVersionDetails({ version, assistantData }) {
   }
 
   if (versionDetails && (versionDetails.version || versionDetails.resources)) {
-    versionDetails = { ...versionDetails };
-    OVERWRITABLE_PROPERTIES.forEach(prop => {
-      if (['headers', 'queryParameters'].includes(prop)) {
-        if (Object.prototype.hasOwnProperty.call(assistantData, prop)) {
-          if (prop === 'headers') {
-            versionDetails[prop] = mergeHeaders(
-              assistantData[prop],
-              versionDetails[prop]
-            );
-          } else if (prop === 'queryParameters') {
-            versionDetails[prop] = mergeQueryParameters(
-              assistantData[prop],
-              versionDetails[prop]
-            );
-          }
-        }
-      } else if (
-        !Object.prototype.hasOwnProperty.call(versionDetails, prop) &&
-        Object.prototype.hasOwnProperty.call(assistantData, prop)
-      ) {
-        versionDetails[prop] = assistantData[prop];
-      }
+    versionDetails = populateDefaults({
+      child: versionDetails,
+      parent: assistantData,
     });
   }
 
@@ -294,33 +350,9 @@ export function getResourceDetails({ version, resource, assistantData }) {
     resourceDetails = versionDetails.resources.find(r => r.id === resource);
 
     if (resourceDetails) {
-      OVERWRITABLE_PROPERTIES.forEach(prop => {
-        if (['headers', 'paging', 'queryParameters'].includes(prop)) {
-          if (Object.prototype.hasOwnProperty.call(versionDetails, prop)) {
-            if (prop === 'headers') {
-              resourceDetails[prop] = mergeHeaders(
-                versionDetails[prop],
-                resourceDetails[prop]
-              );
-            } else if (prop === 'queryParameters') {
-              resourceDetails[prop] = mergeQueryParameters(
-                versionDetails[prop],
-                resourceDetails[prop]
-              );
-            } else if (
-              prop === 'paging' &&
-              !resourceDetails.doesNotSupportPaging &&
-              !Object.prototype.hasOwnProperty.call(resourceDetails, prop)
-            ) {
-              resourceDetails[prop] = versionDetails[prop];
-            }
-          }
-        } else if (
-          !Object.prototype.hasOwnProperty.call(resourceDetails, prop) &&
-          Object.prototype.hasOwnProperty.call(versionDetails, prop)
-        ) {
-          resourceDetails[prop] = versionDetails[prop];
-        }
+      resourceDetails = populateDefaults({
+        child: resourceDetails,
+        parent: versionDetails,
       });
     }
   }
@@ -354,50 +386,20 @@ export function getExportOperationDetails({
         delete operationDetails.delta;
       }
 
-      OVERWRITABLE_PROPERTIES.forEach(prop => {
-        if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
-          if (Object.prototype.hasOwnProperty.call(resourceDetails, prop)) {
-            if (prop === 'headers') {
-              operationDetails[prop] = mergeHeaders(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            } else if (prop === 'queryParameters') {
-              operationDetails[prop] = mergeQueryParameters(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            } else if (
-              prop === 'paging' &&
-              !operationDetails.doesNotSupportPaging &&
-              !Object.prototype.hasOwnProperty.call(operationDetails, prop)
-            ) {
-              operationDetails[prop] = resourceDetails[prop];
-            } else if (
-              prop === 'delta' &&
-              (operationDetails.supportedExportTypes &&
-                operationDetails.supportedExportTypes.includes('delta')) &&
-              !Object.prototype.hasOwnProperty.call(operationDetails, prop)
-            ) {
-              operationDetails[prop] = resourceDetails[prop];
-            }
-          }
-        } else if (
-          !Object.prototype.hasOwnProperty.call(operationDetails, prop) &&
-          Object.prototype.hasOwnProperty.call(resourceDetails, prop)
-        ) {
-          operationDetails[prop] = resourceDetails[prop];
-        }
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
       });
     }
   }
 
-  return {
+  return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
-  };
+  });
 }
 
 export function getImportOperationDetails({
@@ -431,30 +433,10 @@ export function getImportOperationDetails({
     });
 
     if (operationDetails) {
-      // rest- responseIdPath, flattenSampleData, body,successPath,successValues,headers,howToFindIdentifier
-      // http- response.resourceIdPath, response.successPath,successMediaType,errorMediaType,requestMediaType,batchSize,body,ignoreEmptyNodes,headers,howToFindIdentifier
-
-      OVERWRITABLE_PROPERTIES.forEach(prop => {
-        if (['headers', 'queryParameters'].includes(prop)) {
-          if (Object.prototype.hasOwnProperty.call(resourceDetails, prop)) {
-            if (prop === 'headers') {
-              operationDetails[prop] = mergeHeaders(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            } else if (prop === 'queryParameters') {
-              operationDetails[prop] = mergeQueryParameters(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            }
-          }
-        } else if (
-          !Object.prototype.hasOwnProperty.call(operationDetails, prop) &&
-          Object.prototype.hasOwnProperty.call(resourceDetails, prop)
-        ) {
-          operationDetails[prop] = resourceDetails[prop];
-        }
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
       });
 
       if (!operationDetails.howToFindIdentifier) {
@@ -501,12 +483,12 @@ export function getImportOperationDetails({
     }
   }
 
-  return {
+  return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
-  };
+  });
 }
 
 export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
@@ -652,7 +634,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig }) {
+export function convertToExport({ assistantConfig, assistantData }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -662,7 +644,6 @@ export function convertToExport({ assistantConfig }) {
     pathParams,
     queryParams,
     bodyParams,
-    assistantData,
   } = assistantConfig;
 
   if (!assistant || !resource || !operation || !assistantData) {
@@ -943,9 +924,9 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      if (field.readOnly) {
-        return true;
-      }
+      // if (field.readOnly) {
+      //   return true;
+      // }
 
       if (field.type === 'repeat' && field.indexed) {
         const fieldValue = [];
@@ -996,9 +977,9 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      if (field.readOnly) {
-        return true;
-      }
+      // if (field.readOnly) {
+      //   return true;
+      // }
 
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
@@ -1032,6 +1013,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         placeholder: field.placeholder,
         required: !!field.required,
         type: inputType,
+        readOnly: !!field.readOnly,
       };
 
       if (['multiselect', 'select'].includes(fieldDef.type)) {
@@ -1078,23 +1060,35 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   const requiredFields = fields.filter(field => field.required);
   const optionalFields = fields.filter(field => !field.required);
+  const fieldMap = {};
+
+  fields.forEach(field => {
+    fieldMap[field.id] = field;
+  });
 
   if (requiredFields.length > 0 && optionalFields.length > 0) {
     return {
-      fields: requiredFields,
-      fieldSets: [
-        {
-          header: 'Optional',
-          collapsed: true,
-          fields: optionalFields,
-        },
-      ],
+      fieldMap,
+      layout: {
+        fields: requiredFields.map(field => field.id),
+        type: 'collapse',
+        containers: [
+          {
+            label: 'Optional',
+            collapsed: true,
+            fields: optionalFields.map(field => field.id),
+          },
+        ],
+      },
       fieldDetailsMap,
     };
   }
 
   return {
-    fields: requiredFields.length > 0 ? requiredFields : optionalFields,
+    fieldMap,
+    layout: {
+      fields: fields.map(field => field.id),
+    },
     fieldDetailsMap,
   };
 }
@@ -1491,7 +1485,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (adaptorType === 'rest') {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
-      importDoc.relativeURI = [...operationDetails.url];
+      importDoc.relativeURI = operationDetails.url;
       importDoc.body = operationDetails.body || [null, null];
       importDoc.responseIdPath = operationDetails.responseIdPath;
       importDoc.successPath = operationDetails.successPath;
@@ -1507,7 +1501,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   } else if (adaptorType === 'http') {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
-      importDoc.relativeURI = [...operationDetails.url];
+      importDoc.relativeURI = operationDetails.url;
     } else {
       importDoc.method = [operationDetails.method];
       importDoc.relativeURI = [operationDetails.url];
@@ -1524,7 +1518,6 @@ export function convertToImport({ assistantConfig, assistantData }) {
     importDoc.response.resourceIdPath = operationDetails.responseIdPath;
     importDoc.response.successPath = operationDetails.successPath;
   }
-  // const identifiers = operationDetails.parameters.filter(p => p.isIdentifier);
 
   const assistantMetadata = { resource };
 
@@ -1555,7 +1548,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   };
   const luMetadata = {};
 
-  if (identifiers.length > 0) {
+  if (identifiers && identifiers.length > 0) {
     if (lookupType === 'lookup') {
       luConfig.name = identifiers[0].id;
 

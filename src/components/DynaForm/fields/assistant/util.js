@@ -8,10 +8,22 @@ export function versionOptions({ assistantData }) {
 }
 
 export function resourceOptions({ versionData = { resources: [] } }) {
-  return versionData.resources.map(resource => ({
-    label: resource.name,
-    value: resource.id,
-  }));
+  return versionData.resources
+    .map(resource => ({
+      label: resource.name,
+      value: resource.id,
+    }))
+    .sort((a, b) => {
+      if (a.label < b.label) {
+        return -1;
+      }
+
+      if (a.label > b.label) {
+        return 1;
+      }
+
+      return 0;
+    });
 }
 
 export function exportOperationOptions({ resourceData = { endpoints: [] } }) {
