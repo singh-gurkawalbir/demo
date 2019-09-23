@@ -6,8 +6,8 @@ const styles = theme => ({
     maxHeight: theme.spacing(4),
   },
   large: {
-    maxWidth: theme.spacing(8),
-    maxHeight: theme.spacing(8),
+    maxWidth: theme.spacing(16),
+    maxHeight: theme.spacing(16),
   },
 });
 const iconMap = (type = '') => {
@@ -29,11 +29,11 @@ const iconMap = (type = '') => {
 };
 
 function ApplicationImg(props) {
-  const { size = 'small', assistant, type, classes } = props;
+  const { size = 'small', imgType = 'small', assistant, type, classes } = props;
   let path;
 
   if (assistant) {
-    path = `${process.env.CDN_BASE_URI}images/marketplace/small/${assistant}.png`;
+    path = `${process.env.CDN_BASE_URI}marketplace/${imgType}/${assistant}.png`;
   } else {
     path = `${
       process.env.CDN_BASE_URI
