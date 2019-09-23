@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'mailchimp',
@@ -13,9 +13,9 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://login.mailchimp.com/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.mailchimpDataCenter': {
       id: 'http.mailchimpDataCenter',
       type: 'text',
       label: 'Data Center:',
@@ -39,12 +39,13 @@ export default {
         return subdomain;
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.mailchimpDataCenter'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     if (retValues['/authType'] === 'token') {
@@ -41,9 +41,10 @@ export default {
       '/http/ping/successPath': 'id',
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+
+  fieldMap: {
+    name: { fieldId: 'name' },
+    authType: {
       id: 'authType',
       required: true,
       type: 'select',
@@ -59,65 +60,38 @@ export default {
         },
       ],
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'Client ID will be the Username.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['basic'] }],
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'Access Token will be the Password.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['basic'] }],
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      required: true,
       defaultValue: '',
-      type: 'text',
       label: 'Access Token',
       helpText: 'This Access Token works in tandem with the Client ID.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['token'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['token'] }],
     },
-    {
+    'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
       label: 'Client ID',
       helpText:
         'This Client ID works together with the Access Token to grant authorization.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['token'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['token'] }],
     },
-    {
+    storeHash: {
       id: 'storeHash',
       required: true,
       type: 'text',
       label: 'Store HASH',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['token', 'basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';
 
@@ -138,12 +112,21 @@ export default {
       helpText:
         'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'authType',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+      'http.auth.token.token',
+      'http.unencrypted.clientId',
+      'storeHash',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

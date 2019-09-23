@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'certify',
@@ -17,10 +17,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       defaultValue: '',
       required: true,
@@ -29,7 +28,7 @@ export default {
       inputType: 'password',
       helpText: 'The API Key of your Certify account.',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       defaultValue: '',
       required: true,
@@ -38,12 +37,13 @@ export default {
       inputType: 'password',
       helpText: 'The API Secret of your Certify account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.encrypted.apiKey', 'http.encrypted.apiSecret'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

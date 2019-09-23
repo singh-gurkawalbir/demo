@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'strata',
@@ -50,16 +50,16 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.applicationKey': {
       id: 'http.unencrypted.applicationKey',
       required: true,
       type: 'text',
       label: 'Application Key:',
       helpText: 'Please enter application key of your Strata account',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -68,31 +68,31 @@ export default {
       label: 'Ocp-Apim-Subscription-Key',
       helpText: 'Please enter Ocp-Apim-Subscription-Key of your Strata account',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.applicationKey',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.apiSecret',
-          is: [''],
-        },
+        { field: 'http.unencrypted.applicationKey', is: [''] },
+        { field: 'http.encrypted.apiSecret', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The Access Token of your Strata account',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.applicationKey',
+      'http.encrypted.apiSecret',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

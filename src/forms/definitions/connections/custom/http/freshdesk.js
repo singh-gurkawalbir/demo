@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'freshdesk',
@@ -11,9 +11,9 @@ export default {
       formValues['/http/freshdeskSubdomain']
     }.freshdesk.com/`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.freshdeskSubdomain': {
       type: 'text',
       id: 'http.freshdeskSubdomain',
       helpText:
@@ -39,21 +39,27 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText:
         'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'The password of your Freshdesk account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.freshdeskSubdomain',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

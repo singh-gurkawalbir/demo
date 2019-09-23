@@ -424,7 +424,7 @@ const connectors = [
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'RetailOps', type: 'http', assistant: 'retailops' },
   { id: 'returnly', name: 'Returnly', type: 'http', assistant: 'returnly' },
-  { id: 's3', name: 's3', type: 'Amazon S3' },
+  { id: 's3', name: 'Amazon S3', type: 's3' },
   { id: 'sageone', name: 'Sage One', type: 'http', assistant: 'sageone' },
   {
     id: 'salesforce',

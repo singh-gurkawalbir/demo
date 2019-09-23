@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'chargebee',
@@ -12,9 +12,9 @@ export default {
       formValues['/chargebeeSubdomain']
     }.chargebee.com/api`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    chargebeeSubdomain: {
       type: 'text',
       id: 'chargebeeSubdomain',
       startAdornment: 'https://',
@@ -40,17 +40,18 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key:',
       helpText: 'The API Key of your Chargebee account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'chargebeeSubdomain', 'http.auth.basic.username'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'microsoftdynamics365',
@@ -13,9 +13,9 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.microsoftDynamics365Subdomain': {
       id: 'http.microsoftDynamics365Subdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -41,12 +41,13 @@ export default {
         return subdomain;
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.microsoftDynamics365Subdomain'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

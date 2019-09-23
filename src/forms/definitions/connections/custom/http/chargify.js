@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'chargify',
@@ -18,10 +18,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.chargifySubdomain': {
       type: 'text',
       id: 'http.chargifySubdomain',
       startAdornment: 'https://',
@@ -47,8 +46,7 @@ export default {
         return subdomain;
       },
     },
-
-    {
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       required: true,
       defaultValue: '',
@@ -57,12 +55,13 @@ export default {
       inputType: 'password',
       helpText: 'The API key of your Chargify account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.chargifySubdomain', 'http.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

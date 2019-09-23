@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'coupa',
@@ -20,10 +20,9 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.coupaSubdomain': {
       type: 'text',
       id: 'http.coupaSubdomain',
       startAdornment: 'https://',
@@ -49,17 +48,18 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key:',
       helpText: 'Please enter API Key of your Coupa account',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.coupaSubdomain', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

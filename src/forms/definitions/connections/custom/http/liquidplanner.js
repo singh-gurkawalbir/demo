@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     if (retValues['/authType'] === 'basic') {
@@ -19,9 +19,9 @@ export default {
       '/http/ping/method': 'GET',
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    authType: {
       id: 'authType',
       required: true,
       type: 'select',
@@ -37,28 +37,18 @@ export default {
         },
       ],
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'Enter Username of your registered LiquidPlanner account.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['basic'] }],
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText:
         'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['basic'] }],
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
       type: 'text',
@@ -66,19 +56,21 @@ export default {
       label: 'API Token:',
       helpText:
         'The API Token of your LiquidPlanner account when using the Token authentication.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['token'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['token'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'authType',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

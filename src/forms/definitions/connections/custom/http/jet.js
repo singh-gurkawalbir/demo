@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const refreshTokenBody = {};
 
     refreshTokenBody.pass = '{{{connection.http.encrypted.password}}}';
@@ -22,13 +22,13 @@ export default {
       '/http/auth/token/refreshBody': JSON.stringify(refreshTokenBody),
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.refreshTokenBody.user': {
       id: 'http.refreshTokenBody.user',
       type: 'text',
       helpText:
-        'API User Key available from Jet under API Section-> Get API Keys', // Secret Key available from Jet under API Section-> Get API Keys
+        'API User Key available from Jet under API Section-> Get API Keys',
       label: 'API User:',
       required: true,
       defaultValue: r => {
@@ -44,7 +44,7 @@ export default {
         return toReturn;
       },
     },
-    {
+    'http.encrypted.password': {
       id: 'http.encrypted.password',
       type: 'text',
       inputType: 'password',
@@ -56,12 +56,13 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.refreshTokenBody.user', 'http.encrypted.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

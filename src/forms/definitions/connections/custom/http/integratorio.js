@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'integratorio',
@@ -18,9 +18,9 @@ export default {
       { name: 'Content-Type', value: 'application/json' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'integrator.environment': {
       id: 'integrator.environment',
       type: 'select',
       label: 'Environment:',
@@ -49,7 +49,7 @@ export default {
         return 'production';
       },
     },
-    {
+    'integrator.token': {
       id: 'integrator.token',
       type: 'text',
       label: 'Token:',
@@ -60,12 +60,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'integrator.environment', 'integrator.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

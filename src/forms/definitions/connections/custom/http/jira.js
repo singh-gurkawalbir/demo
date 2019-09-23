@@ -19,7 +19,7 @@ export default {
   // converted to a patch-set and applied against the resource.
   // This handler can be used to add/modify the form values
   // programmatically if needed. Typical example is to add hardcoded values...
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'jira',
@@ -28,32 +28,34 @@ export default {
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/',
   }),
-
-  fields: [
-    // Fields can be referenced by their fieldDefinition key, and the
-    // framework will fetch the missing values. Any values present in
-    // this file override the references field's props.
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.baseURI': {
       fieldId: 'http.baseURI',
       helpText:
         'The base URI for JIRA. For example, http://www.company.com/confluence',
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'The username of your JIRA account.',
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API Token:',
       helpText: 'The password of your JIRA account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.baseURI',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

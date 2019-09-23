@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'avalara',
@@ -11,11 +11,9 @@ export default {
       formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
     }rest.avatax.com/api/`,
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accType: {
       id: 'accType',
       type: 'select',
       label: 'Account Type',
@@ -44,19 +42,20 @@ export default {
         return 'production';
       },
     },
-    {
-      fieldId: 'http.auth.basic.username',
-    },
-
-    {
-      fieldId: 'http.auth.basic.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
+    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'accType',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

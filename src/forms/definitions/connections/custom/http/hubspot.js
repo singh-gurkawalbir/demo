@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     if (retValues['/authType'] === 'token') {
@@ -27,9 +27,9 @@ export default {
       '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    authType: {
       id: 'authType',
       required: true,
       type: 'select',
@@ -45,19 +45,14 @@ export default {
         },
       ],
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
       label: 'HAPI Key:',
       helpText: 'Please enter API Key of your Hubspot Account.',
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['token'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['token'] }],
     },
-    {
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'contacts',
@@ -70,22 +65,22 @@ export default {
         'tickets',
         'hubdb',
       ],
-      visibleWhen: [
-        {
-          field: 'authType',
-          is: ['oauth'],
-        },
-      ],
+      visibleWhen: [{ field: 'authType', is: ['oauth'] }],
     },
-  ],
-
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'authType',
+      'http.auth.token.token',
+      'http.auth.oauth.scope',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
   actions: [
     {
       id: 'oauth',

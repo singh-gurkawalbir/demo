@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'magento',
@@ -25,19 +25,19 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.baseURI': {
       fieldId: 'http.baseURI',
       helpText: 'The Base URI of Magento.',
     },
-    {
+    'http.unencrypted.username': {
       id: 'http.unencrypted.username',
       type: 'text',
       label: 'Username',
       required: true,
     },
-    {
+    'http.encrypted.password': {
       id: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
@@ -47,35 +47,33 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.username',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.password',
-          is: [''],
-        },
-        {
-          field: 'http.baseURI',
-          is: [''],
-        },
+        { field: 'http.unencrypted.username', is: [''] },
+        { field: 'http.encrypted.password', is: [''] },
+        { field: 'http.baseURI', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The access token of your Magento account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.baseURI',
+      'http.unencrypted.username',
+      'http.encrypted.password',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
