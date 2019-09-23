@@ -12,29 +12,32 @@ function General(props) {
     selectors.resource(state, 'integrations', integrationId)
   );
   const fieldMeta = {
-    fields: [
-      {
+    fieldMap: {
+      name: {
         id: 'name',
         name: 'name',
         type: 'text',
         label: 'Name:',
         defaultValue: integration && integration.name,
       },
-      {
+      description: {
         id: 'description',
         name: 'description',
         type: 'text',
         label: 'Description:',
         defaultValue: integration && integration.description,
       },
-      {
+      readme: {
         id: 'readme',
         name: 'readme',
         type: 'textarea',
         label: 'ReadMe:',
         defaultValue: integration && integration.readme,
       },
-    ],
+    },
+    layout: {
+      fields: ['name', 'description', 'readme'],
+    },
   };
   const handleSubmit = formVal => {
     const patchSet = [
@@ -62,7 +65,7 @@ function General(props) {
   };
 
   return (
-    <DynaForm fieldMeta={fieldMeta}>
+    <DynaForm fieldMeta={fieldMeta} render>
       <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
     </DynaForm>
   );

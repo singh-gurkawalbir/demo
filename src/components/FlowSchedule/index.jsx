@@ -4,6 +4,8 @@ import {
   DialogContent,
   DialogTitle,
   makeStyles,
+  Close,
+  IconButton,
 } from '@material-ui/core';
 import moment from 'moment';
 import _ from 'lodash';
@@ -608,8 +610,8 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
     endTimeOptions.push({ label: opt, value: opt });
   });
   const fieldMeta = {
-    fields: [
-      {
+    fieldMap: {
+      timeZone: {
         id: 'timeZone',
         name: 'timeZone',
         type: 'select',
@@ -624,13 +626,13 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      activeTab: {
         id: 'activeTab',
         name: 'activeTab',
         type: 'radiogroup',
         label: '',
-        // showOptionsHorizontally: true,
-        // fullWidth: true,
+        showOptionsHorizontally: true,
+        fullWidth: true,
         defaultValue: resource.activeTab,
         options: [
           {
@@ -641,7 +643,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      frequency: {
         id: 'frequency',
         name: 'frequency',
         type: 'select',
@@ -670,7 +672,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      startTime: {
         id: 'startTime',
         name: 'startTime',
         type: 'select',
@@ -694,7 +696,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
         description:
           'Please note that start time represents when your flow will get placed in the queue for processing. The actual run time for your flow may vary based on the current message load in your queue, or other flows that are ahead of your flow in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time to help maintain balance regarding the total number of flows that are starting at any specific time.',
       },
-      {
+      endTime: {
         id: 'endTime',
         name: 'endTime',
         type: 'select',
@@ -716,7 +718,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      daysToRunOn: {
         id: 'daysToRunOn',
         name: 'daysToRunOn',
         type: 'multiselect',
@@ -754,7 +756,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      dayToRunOn: {
         id: 'dayToRunOn',
         name: 'dayToRunOn',
         type: 'select',
@@ -784,7 +786,7 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-      {
+      schedule: {
         id: 'schedule',
         name: 'schedule',
         type: 'text',
@@ -797,11 +799,29 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           },
         ],
       },
-    ],
+    },
+    layout: {
+      fields: [
+        'timeZone',
+        'activeTab',
+        'frequency',
+        'startTime',
+        'endTime',
+        'daysToRunOn',
+        'dayToRunOn',
+        'schedule',
+      ],
+    },
   };
 
   return (
     <Dialog open max-width={false}>
+      <IconButton
+        aria-label="Close"
+        className={classes.closeButton}
+        onClick={onClose}>
+        <Close />
+      </IconButton>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent className={classes.modalContent}>
         <DynaForm

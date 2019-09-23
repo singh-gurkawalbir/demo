@@ -16,6 +16,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import Resources from '../../utils/globalResources';
+import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -37,7 +38,7 @@ export default function AttachStandAloneFlows({
   const classes = useStyles();
   const flowsToAttch = standAloneFlows;
   const [selected, setSelected] = useState({});
-  const selectedFlows = flows => {
+  const handleSelectChange = flows => {
     setSelected(flows);
   };
 
@@ -161,9 +162,9 @@ export default function AttachStandAloneFlows({
           resources="flows, connections, exports, imports">
           <ResourceTable
             resources={flowsToAttch}
-            selectResourceRef={selectedFlows}
-            metadataType="attachFlows"
-            isSelectableListing
+            onSelectChange={handleSelectChange}
+            {...metadata}
+            selectableRows
           />
         </LoadResources>
       </DialogContent>

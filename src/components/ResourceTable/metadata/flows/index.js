@@ -20,23 +20,23 @@ export default {
     {
       heading: 'Field Mappings',
       value: () => null,
-      action: [FieldMappings],
+      colAction: [FieldMappings],
     },
     {
       heading: 'Schedule',
       value: () => null,
-      action: [Schedule],
+      colAction: [Schedule],
     },
     {
       heading: 'Run',
       value: () => null,
-      action: [Run],
+      colAction: [Run],
     },
     {
       heading: 'Off/On',
       value: () => null,
-      action: [OnOff],
+      colAction: [OnOff],
     },
   ],
-  actions: [DetachFlow, ViewAuditLog, DownloadFlow, ViewReferences, Delete],
+  rowActions: [DetachFlow, ViewAuditLog, DownloadFlow, ViewReferences, Delete],
 };
