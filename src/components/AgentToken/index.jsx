@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import ViewIcon from '@material-ui/icons/ViewArray';
-import CopyIcon from '@material-ui/icons/FileCopyOutlined';
-import GenerateIcon from '@material-ui/icons/BeachAccessOutlined';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import CopyIcon from '../icons/CopyIcon';
+import ViewIcon from '../icons/InfoIcon';
+import GenerateIcon from '../icons/TransferIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 

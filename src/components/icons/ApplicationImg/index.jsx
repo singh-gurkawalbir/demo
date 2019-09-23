@@ -33,11 +33,11 @@ function ApplicationImg(props) {
   let path;
 
   if (assistant) {
-    path = `${process.env.CDN_BASE_URI}marketplace/${imgType}/${assistant}.png`;
+    path = `${process.env.CDN_BASE_URI}images/marketplace/${imgType}/${assistant}.png`;
   } else {
     path = `${
       process.env.CDN_BASE_URI
-    }flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+    }images/flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
   }
 
   return <img className={classes[size]} alt={assistant} src={path} />;

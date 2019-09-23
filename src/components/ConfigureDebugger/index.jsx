@@ -52,8 +52,7 @@ export default function ConfigureDebugger(props) {
       },
     ];
 
-    dispatch(actions.resource.patchStaged(id, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('connections', id, 'value'));
+    dispatch(actions.resource.patch('connections', id, patchSet));
     onClose();
   };
 
