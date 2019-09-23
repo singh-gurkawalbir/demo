@@ -417,6 +417,21 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function marketplaceConnectors(state, application, sandbox) {
+  const licenses = fromUser.licenses(state && state.user);
+
+  return fromData.marketplaceConnectors(
+    state.data,
+    application,
+    sandbox,
+    licenses
+  );
+}
+
+export function marketplaceTemplates(state, application) {
+  return fromData.marketplaceTemplates(state.data, application);
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });

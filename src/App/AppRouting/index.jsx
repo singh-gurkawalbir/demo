@@ -33,12 +33,20 @@ const FlowBuilder = loadable(() =>
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
+const Marketplace = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
 const IntegrationDashboard = loadable(() =>
   import(
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
+  )
+);
+const ConnectorTemplateList = loadable(() =>
+  import(
+    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
   )
 );
 
@@ -59,6 +67,10 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
+        />
+        <Route
+          path="/pg/marketplace/:application"
+          component={ConnectorTemplateList}
         />
         <Route
           path="/pg/connectors/:integrationId/setup"
@@ -82,7 +94,6 @@ export default class AppRouting extends Component {
           ]}
           component={IntegrationAppUninstallation}
         />
-
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
@@ -91,8 +102,8 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/marketplace" component={Marketplace} />
         <Route path="/pg/:resourceType" component={ResourceList} />
-
         <Route component={NotFound} />
       </Switch>
     );

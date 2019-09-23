@@ -26,7 +26,9 @@ export default {
     };
   },
   fieldMap: {
-    name: { fieldId: 'name' },
+    name: {
+      fieldId: 'name',
+    },
     'authorizeNet.accType': {
       id: 'authorizeNet.accType',
       type: 'select',
@@ -36,8 +38,14 @@ export default {
       options: [
         {
           items: [
-            { label: 'Production', value: 'production' },
-            { label: 'Sandbox', value: 'sandbox' },
+            {
+              label: 'Production',
+              value: 'production',
+            },
+            {
+              label: 'Sandbox',
+              value: 'sandbox',
+            },
           ],
         },
       ],
@@ -77,7 +85,9 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    httpAdvanced: { formId: 'httpAdvanced' },
+    httpAdvanced: {
+      formId: 'httpAdvanced',
+    },
   },
   layout: {
     fields: [
@@ -88,7 +98,11 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['httpAdvanced'],
+      },
     ],
   },
 };

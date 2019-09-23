@@ -25,6 +25,7 @@ import { agentSagas } from './agent';
 import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
 import fileDefinitionSagas from './fileDefinitions';
+import { marketplaceSagas } from './marketPlace';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -98,5 +99,6 @@ export default function* rootSaga() {
     ...stackSagas,
     ...sampleDataSagas,
     ...fileDefinitionSagas,
+    ...marketplaceSagas,
   ]);
 }
