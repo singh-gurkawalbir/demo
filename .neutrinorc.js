@@ -29,6 +29,7 @@ const getProxyOpts = () => {
     target,
     secure,
     changeOrigin: true,
+    timeout: 10 * 60 * 1000,
     // pathRewrite: {
     //  '^/api': '',
     // },
@@ -152,6 +153,13 @@ module.exports = {
             'no-underscore-dangle': 'off',
             'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': 'warn',
+            'no-param-reassign': [
+              'error',
+              {
+                props: true,
+                ignorePropertyModificationsFor: ['draft', 'acc', 'response'],
+              },
+            ],
           },
         },
       },

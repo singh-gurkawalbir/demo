@@ -1,6 +1,6 @@
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { withRouter, Route } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -68,7 +68,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const { match } = props;
   const classes = useStyles();
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -117,19 +116,7 @@ function FlowBuilder(props) {
 
   return (
     <Fragment>
-      <Route
-        path={`${match.url}/:operation/:resourceType/:id`}
-        // TODO: This <Route> could be moved into the ResourceDrawer
-        // component itself, this would prevent the need to use the children
-        // prop, and also remove some boilerplate wherever we use this
-        // component...
-        //
-        // Note that we disable the eslint warning since Route
-        // uses "children" as a prop and this is the intended
-        // use (per their docs)
-        // eslint-disable-next-line react/no-children-prop
-        children={props => <ResourceDrawer {...props} />}
-      />
+      <ResourceDrawer {...props} />
 
       <CeligoPageBar
         title="Flow Builder"
