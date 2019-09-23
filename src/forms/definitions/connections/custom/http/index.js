@@ -5,6 +5,7 @@ import cartrover from './cartrover';
 import practicepanther from './practicepanther';
 import outreach from './outreach';
 import amazonmws from './amazonmws';
+import autopilot from './autopilot';
 import ebayXml from './ebayXml';
 import openair from './openair';
 import quickbooks from './quickbooks';
@@ -22,7 +23,6 @@ import magento from './magento';
 import clio from './clio';
 import onelogin from './onelogin';
 import recharge from './recharge';
-import autopilot from './autopilot';
 import drift from './drift';
 import strata from './strata';
 import avalara from './avalara';
@@ -58,6 +58,7 @@ import servicenow from './servicenow';
 
 export default {
   servicenow,
+  autopilot,
   skubana,
   shippo,
   slack,
@@ -110,7 +111,6 @@ export default {
   onelogin,
   campaignmonitor,
   recharge,
-  autopilot,
   certify,
   strata,
   avalara,
