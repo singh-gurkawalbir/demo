@@ -15,13 +15,22 @@ import {
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
+  'batchSize',
+  'body',
   'delta',
+  'doesNotSupportPaging',
   'errorMediaType',
+  'flattenSampleData',
   'headers',
+  'ignoreEmptyNodes',
   'paging',
   'queryParameters',
+  'requestMediaType',
+  'response',
+  'responseIdPath',
   'successMediaType',
   'successPath',
+  'successValues',
 ]);
 
 export const PARAMETER_LOCATION = Object.freeze({
@@ -59,6 +68,35 @@ export const DEFAULT_PROPS = Object.freeze({
         errorPath: undefined,
         blobFormat: undefined,
       },
+    },
+  },
+  IMPORT: {
+    REST: {
+      method: [],
+      relativeURI: [],
+      body: [],
+      responseIdPath: [],
+      successPath: [],
+      successValues: [],
+      ignoreExisting: false,
+      ignoreMissing: false,
+      ignoreLookupName: undefined,
+      ignoreExtract: undefined,
+      headers: [],
+    },
+    HTTP: {
+      successMediaType: 'xml',
+      errorMediaType: 'xml',
+      batchSize: undefined,
+      ignoreEmptyNodes: undefined,
+      requestMediaType: 'xml',
+      method: [],
+      relativeURI: [],
+      headers: [],
+      ignoreExisting: false,
+      ignoreMissing: false,
+      ignoreLookupName: undefined,
+      ignoreExtract: undefined,
     },
   },
 });
@@ -120,6 +158,73 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
+export function populateDefaults({
+  child = {},
+  parent = {},
+  isChildAnOperation = false,
+}) {
+  const childWithDefaults = { ...child };
+
+  OVERWRITABLE_PROPERTIES.forEach(prop => {
+    if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
+      if (Object.prototype.hasOwnProperty.call(parent, prop)) {
+        if (prop === 'headers') {
+          childWithDefaults[prop] = mergeHeaders(
+            parent[prop],
+            childWithDefaults[prop]
+          );
+        } else if (prop === 'queryParameters') {
+          childWithDefaults[prop] = mergeQueryParameters(
+            parent[prop],
+            childWithDefaults[prop]
+          );
+        } else if (isChildAnOperation) {
+          if (
+            prop === 'paging' &&
+            !childWithDefaults.doesNotSupportPaging &&
+            !Object.prototype.hasOwnProperty.call(childWithDefaults, prop)
+          ) {
+            childWithDefaults[prop] = parent[prop];
+          } else if (
+            prop === 'delta' &&
+            (childWithDefaults.supportedExportTypes &&
+              childWithDefaults.supportedExportTypes.includes('delta')) &&
+            !Object.prototype.hasOwnProperty.call(childWithDefaults, prop)
+          ) {
+            childWithDefaults[prop] = parent[prop];
+          }
+        } else if (
+          !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
+          Object.prototype.hasOwnProperty.call(parent, prop)
+        ) {
+          if (isObject(parent[prop])) {
+            childWithDefaults[prop] = defaultsDeep(
+              childWithDefaults[prop],
+              parent[prop]
+            );
+          } else {
+            childWithDefaults[prop] = parent[prop];
+          }
+        }
+      }
+    } else if (
+      !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
+      Object.prototype.hasOwnProperty.call(parent, prop)
+    ) {
+      if (isObject(parent[prop])) {
+        childWithDefaults[prop] = defaultsDeep(
+          childWithDefaults[prop],
+          parent[prop]
+        );
+      } else {
+        childWithDefaults[prop] = parent[prop];
+      }
+    }
+  });
+
+  return childWithDefaults;
+}
+
 export function getExportVersionAndResource({
   assistantVersion,
   assistantOperation,
@@ -156,6 +261,57 @@ export function getExportVersionAndResource({
   return versionAndResource;
 }
 
+export function getImportVersionAndResource({
+  assistantVersion,
+  assistantOperation,
+  assistantData,
+}) {
+  const versionAndResource = {};
+
+  if (
+    !assistantOperation ||
+    !assistantData ||
+    !assistantData.versions ||
+    assistantData.versions.length === 0
+  ) {
+    return versionAndResource;
+  }
+
+  assistantData.versions.forEach(version => {
+    if (assistantVersion && version.version !== assistantVersion) {
+      return true;
+    }
+
+    version.resources.forEach(resource => {
+      const ep = resource.operations.find(ep => {
+        if (ep.id === assistantOperation) {
+          return true;
+        }
+
+        if (isArray(ep.url)) {
+          if (
+            [ep.method.join(':'), ep.url.join(':')].join(':') ===
+            assistantOperation
+          ) {
+            return true;
+          }
+        } else if ([ep.method, ep.url].join(':') === assistantOperation) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (ep) {
+        versionAndResource.version = version.version;
+        versionAndResource.resource = resource.id;
+      }
+    });
+  });
+
+  return versionAndResource;
+}
+
 export function getVersionDetails({ version, assistantData }) {
   let versionDetails = {};
 
@@ -173,29 +329,10 @@ export function getVersionDetails({ version, assistantData }) {
     [versionDetails] = assistantData.versions;
   }
 
-  if (versionDetails && versionDetails.version) {
-    versionDetails = { ...versionDetails };
-    OVERWRITABLE_PROPERTIES.forEach(prop => {
-      if (['headers', 'queryParameters'].includes(prop)) {
-        if (Object.prototype.hasOwnProperty.call(assistantData, prop)) {
-          if (prop === 'headers') {
-            versionDetails[prop] = mergeHeaders(
-              assistantData[prop],
-              versionDetails[prop]
-            );
-          } else if (prop === 'queryParameters') {
-            versionDetails[prop] = mergeQueryParameters(
-              assistantData[prop],
-              versionDetails[prop]
-            );
-          }
-        }
-      } else if (
-        !Object.prototype.hasOwnProperty.call(versionDetails, prop) &&
-        Object.prototype.hasOwnProperty.call(assistantData, prop)
-      ) {
-        versionDetails[prop] = assistantData[prop];
-      }
+  if (versionDetails && (versionDetails.version || versionDetails.resources)) {
+    versionDetails = populateDefaults({
+      child: versionDetails,
+      parent: assistantData,
     });
   }
 
@@ -213,38 +350,14 @@ export function getResourceDetails({ version, resource, assistantData }) {
     resourceDetails = versionDetails.resources.find(r => r.id === resource);
 
     if (resourceDetails) {
-      OVERWRITABLE_PROPERTIES.forEach(prop => {
-        if (['headers', 'paging', 'queryParameters'].includes(prop)) {
-          if (Object.prototype.hasOwnProperty.call(versionDetails, prop)) {
-            if (prop === 'headers') {
-              resourceDetails[prop] = mergeHeaders(
-                versionDetails[prop],
-                resourceDetails[prop]
-              );
-            } else if (prop === 'queryParameters') {
-              resourceDetails[prop] = mergeQueryParameters(
-                versionDetails[prop],
-                resourceDetails[prop]
-              );
-            } else if (
-              prop === 'paging' &&
-              !resourceDetails.doesNotSupportPaging &&
-              !Object.prototype.hasOwnProperty.call(resourceDetails, prop)
-            ) {
-              resourceDetails[prop] = versionDetails[prop];
-            }
-          }
-        } else if (
-          !Object.prototype.hasOwnProperty.call(resourceDetails, prop) &&
-          Object.prototype.hasOwnProperty.call(versionDetails, prop)
-        ) {
-          resourceDetails[prop] = versionDetails[prop];
-        }
+      resourceDetails = populateDefaults({
+        child: resourceDetails,
+        parent: versionDetails,
       });
     }
   }
 
-  return resourceDetails;
+  return { ...resourceDetails };
 }
 
 export function getExportOperationDetails({
@@ -273,50 +386,109 @@ export function getExportOperationDetails({
         delete operationDetails.delta;
       }
 
-      OVERWRITABLE_PROPERTIES.forEach(prop => {
-        if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
-          if (Object.prototype.hasOwnProperty.call(resourceDetails, prop)) {
-            if (prop === 'headers') {
-              operationDetails[prop] = mergeHeaders(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            } else if (prop === 'queryParameters') {
-              operationDetails[prop] = mergeQueryParameters(
-                resourceDetails[prop],
-                operationDetails[prop]
-              );
-            } else if (
-              prop === 'paging' &&
-              !operationDetails.doesNotSupportPaging &&
-              !Object.prototype.hasOwnProperty.call(operationDetails, prop)
-            ) {
-              operationDetails[prop] = resourceDetails[prop];
-            } else if (
-              prop === 'delta' &&
-              (operationDetails.supportedExportTypes &&
-                operationDetails.supportedExportTypes.includes('delta')) &&
-              !Object.prototype.hasOwnProperty.call(operationDetails, prop)
-            ) {
-              operationDetails[prop] = resourceDetails[prop];
-            }
-          }
-        } else if (
-          !Object.prototype.hasOwnProperty.call(operationDetails, prop) &&
-          Object.prototype.hasOwnProperty.call(resourceDetails, prop)
-        ) {
-          operationDetails[prop] = resourceDetails[prop];
-        }
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
       });
     }
   }
 
-  return {
+  return cloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
     ...operationDetails,
-  };
+  });
+}
+
+export function getImportOperationDetails({
+  version,
+  resource,
+  operation,
+  assistantData = {},
+}) {
+  const resourceDetails = getResourceDetails({
+    version,
+    resource,
+    assistantData: assistantData.import,
+  });
+  let operationDetails = {};
+
+  if (resourceDetails && resourceDetails.operations) {
+    operationDetails = resourceDetails.operations.find(op => {
+      if (op.id === operation) {
+        return true;
+      }
+
+      if (isArray(op.url)) {
+        if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
+          return true;
+        }
+      } else if ([op.method, op.url].join(':') === operation) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (operationDetails) {
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
+      });
+
+      if (!operationDetails.howToFindIdentifier) {
+        operationDetails.howToFindIdentifier = {};
+      }
+
+      if (operationDetails.howToFindIdentifier.lookup) {
+        const lookupOperationDetails = getExportOperationDetails({
+          version,
+          resource,
+          operation:
+            operationDetails.howToFindIdentifier.lookup.id ||
+            operationDetails.howToFindIdentifier.lookup.url,
+          assistantData,
+        });
+
+        if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+          Object.keys(
+            operationDetails.howToFindIdentifier.lookup.parameterValues
+          ).forEach(p => {
+            if (lookupOperationDetails.queryParameters) {
+              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                qp => {
+                  if (qp.id === p) {
+                    // eslint-disable-next-line no-param-reassign
+                    qp = {
+                      ...qp,
+                      readOnly: true,
+                      defaultValue:
+                        operationDetails.howToFindIdentifier.lookup
+                          .parameterValues[p],
+                    };
+                  }
+
+                  return qp;
+                }
+              );
+            }
+          });
+        }
+
+        operationDetails.lookupOperationDetails = lookupOperationDetails;
+      }
+    }
+  }
+
+  return cloneDeep({
+    queryParameters: [],
+    pathParameters: [],
+    headers: {},
+    ...operationDetails,
+  });
 }
 
 export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
@@ -462,7 +634,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   };
 }
 
-export function convertToExport({ assistantConfig }) {
+export function convertToExport({ assistantConfig, assistantData }) {
   const {
     adaptorType = 'http',
     assistant,
@@ -472,7 +644,6 @@ export function convertToExport({ assistantConfig }) {
     pathParams,
     queryParams,
     bodyParams,
-    assistantData,
   } = assistantConfig;
 
   if (!assistant || !resource || !operation || !assistantData) {
@@ -753,9 +924,9 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      if (field.readOnly) {
-        return true;
-      }
+      // if (field.readOnly) {
+      //   return true;
+      // }
 
       if (field.type === 'repeat' && field.indexed) {
         const fieldValue = [];
@@ -806,9 +977,9 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      if (field.readOnly) {
-        return true;
-      }
+      // if (field.readOnly) {
+      //   return true;
+      // }
 
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
@@ -842,6 +1013,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         placeholder: field.placeholder,
         required: !!field.required,
         type: inputType,
+        readOnly: !!field.readOnly,
       };
 
       if (['multiselect', 'select'].includes(fieldDef.type)) {
@@ -888,23 +1060,35 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
 
   const requiredFields = fields.filter(field => field.required);
   const optionalFields = fields.filter(field => !field.required);
+  const fieldMap = {};
+
+  fields.forEach(field => {
+    fieldMap[field.id] = field;
+  });
 
   if (requiredFields.length > 0 && optionalFields.length > 0) {
     return {
-      fields: requiredFields,
-      fieldSets: [
-        {
-          header: 'Optional',
-          collapsed: true,
-          fields: optionalFields,
-        },
-      ],
+      fieldMap,
+      layout: {
+        fields: requiredFields.map(field => field.id),
+        type: 'collapse',
+        containers: [
+          {
+            label: 'Optional',
+            collapsed: true,
+            fields: optionalFields.map(field => field.id),
+          },
+        ],
+      },
       fieldDetailsMap,
     };
   }
 
   return {
-    fields: requiredFields.length > 0 ? requiredFields : optionalFields,
+    fieldMap,
+    layout: {
+      fields: fields.map(field => field.id),
+    },
     fieldDetailsMap,
   };
 }
@@ -982,4 +1166,588 @@ export function updateFormValues({
   }
 
   return updatedFormValues;
+}
+
+export function convertFromImport({ importDoc, assistantData, adaptorType }) {
+  let { version, resource, operation, lookupType } =
+    importDoc.assistantMetadata || {};
+  let { ignoreExisting, ignoreMissing } = importDoc;
+
+  if (importDoc.assistantMetadata) {
+    if (
+      Object.hasOwnProperty.call(importDoc.assistantMetadata, 'ignoreExisting')
+    ) {
+      ({ ignoreExisting } = importDoc.assistantMetadata);
+    }
+
+    if (
+      Object.hasOwnProperty.call(importDoc.assistantMetadata, 'ignoreMissing')
+    ) {
+      ({ ignoreMissing } = importDoc.assistantMetadata);
+    }
+  }
+
+  const assistantMetadata = {
+    pathParams: {},
+    queryParams: {},
+    bodyParams: {},
+  };
+  const importURLs = [];
+
+  if (!resource || !operation) {
+    if (
+      importDoc &&
+      importDoc[adaptorType] &&
+      importDoc[adaptorType].relativeURI
+    ) {
+      const url1Info = getMatchingRoute(
+        assistantData.import.urlResolution,
+        importDoc[adaptorType].relativeURI[0]
+      );
+
+      importURLs.push(url1Info.urlMatch);
+
+      if (importDoc[adaptorType].relativeURI[1]) {
+        const url2Info = getMatchingRoute(
+          assistantData.import.urlResolution,
+          importDoc[adaptorType].relativeURI[1]
+        );
+
+        importURLs.push(url2Info.urlMatch);
+      }
+
+      if (!operation) {
+        operation = [
+          importDoc[adaptorType].method.join(':'),
+          importURLs.join(':'),
+        ].join(':');
+      }
+
+      const versionAndResource = getImportVersionAndResource({
+        assistantVersion: version,
+        assistantOperation: operation,
+        assistantData: assistantData.import,
+      });
+
+      ({ version, resource } = versionAndResource);
+    }
+  }
+
+  assistantMetadata.version = version;
+  assistantMetadata.resource = resource;
+  assistantMetadata.operation = operation;
+
+  if (!operation) {
+    return assistantMetadata;
+  }
+
+  const operationDetails = getImportOperationDetails({
+    version,
+    resource,
+    operation,
+    assistantData,
+  });
+
+  if (!operationDetails || !operationDetails.url) {
+    return assistantMetadata;
+  }
+
+  let howToFindIdentifierLookupConfig = {};
+
+  if (operationDetails && operationDetails.howToFindIdentifier) {
+    howToFindIdentifierLookupConfig =
+      operationDetails.howToFindIdentifier.lookup;
+  }
+
+  const importAdaptorSubSchema = importDoc[adaptorType] || {};
+
+  if (!importAdaptorSubSchema.lookups) {
+    importAdaptorSubSchema.lookups = [];
+  }
+
+  let url1Info;
+  let url2Info;
+
+  if (importAdaptorSubSchema.relativeURI) {
+    url1Info = getMatchingRoute(
+      [
+        isArray(operationDetails.url)
+          ? operationDetails.url[0]
+          : operationDetails.url,
+      ],
+      importAdaptorSubSchema.relativeURI[0] || ''
+    );
+
+    if (importAdaptorSubSchema.relativeURI[1]) {
+      url2Info = getMatchingRoute(
+        [operationDetails.url[1]],
+        importAdaptorSubSchema.relativeURI[1] || ''
+      );
+    }
+  }
+
+  const pathParams = {};
+  let queryParams = {};
+  const bodyParams = {};
+  let lookupUrl;
+  let lookupQueryParams;
+
+  if (operationDetails.parameters && operationDetails.parameters.length > 0) {
+    operationDetails.parameters.forEach((p, index) => {
+      if (p.in !== 'query') {
+        if (url1Info && url1Info.urlParts && url1Info.urlParts[index]) {
+          if (p.isIdentifier) {
+            pathParams[p.id] = url1Info.urlParts[index]
+              .replace(/{/g, '')
+              .replace(/}/g, '');
+          } else {
+            pathParams[p.id] = url1Info.urlParts[index];
+          }
+        } else if (url2Info && url2Info.urlParts && url2Info.urlParts[index]) {
+          if (p.isIdentifier) {
+            pathParams[p.id] = url2Info.urlParts[index]
+              .replace(/{/g, '')
+              .replace(/}/g, '');
+          } else {
+            pathParams[p.id] = url2Info.urlParts[index];
+          }
+        }
+
+        if (pathParams[p.id]) {
+          if (p.config) {
+            if (p.config.prefix) {
+              pathParams[p.id] = pathParams[p.id].replace(p.config.prefix, '');
+            }
+
+            if (p.config.suffix) {
+              pathParams[p.id] = pathParams[p.id].replace(p.config.suffix, '');
+            }
+          }
+
+          /* IO-3665 */
+          if (
+            pathParams[p.id].indexOf('(') === 0 &&
+            pathParams[p.id].indexOf(')') === pathParams[p.id].length - 1
+          ) {
+            pathParams[p.id] = pathParams[p.id].substring(
+              1,
+              pathParams[p.id].length - 1
+            );
+          }
+
+          pathParams[p.id] = pathParams[p.id].replace('lookup.', '');
+        }
+      }
+
+      if (p.isIdentifier && !pathParams[p.id]) {
+        if (ignoreExisting || ignoreMissing) {
+          if (importAdaptorSubSchema.ignoreExtract) {
+            pathParams[p.id] = importAdaptorSubSchema.ignoreExtract
+              .replace(/{/g, '')
+              .replace(/}/g, '');
+          } else if (importAdaptorSubSchema.ignoreLookupName) {
+            pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
+          }
+        }
+      }
+
+      if (p.isIdentifier && pathParams[p.id]) {
+        const lookup = importAdaptorSubSchema.lookups.find(
+          lu => lu.name === pathParams[p.id]
+        );
+
+        if (lookup) {
+          lookupType = 'lookup';
+          lookupUrl = lookup.relativeURI;
+          let lookupUrlInfo;
+
+          if (
+            howToFindIdentifierLookupConfig.id &&
+            assistantMetadata &&
+            assistantMetadata.lookups &&
+            assistantMetadata.lookups[pathParams[p.id]]
+          ) {
+            const luEndpoint = getExportOperationDetails({
+              version: assistantMetadata.version,
+              resource:
+                assistantMetadata.lookups[pathParams[p.id]].resource ||
+                assistantMetadata.resource,
+              operation: assistantMetadata.lookups[pathParams[p.id]].operation,
+              assistantData,
+            });
+
+            lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
+          } else {
+            lookupUrlInfo = getMatchingRoute(
+              assistantData.export.urlResolution,
+              lookupUrl
+            );
+          }
+
+          if (
+            lookupUrlInfo.urlParts &&
+            lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1]
+          ) {
+            lookupQueryParams = qs.parse(
+              lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1],
+              { delimiter: /[?&]/, depth: 0 }
+            ); /* depth should be 0 to handle IO-1683 */
+          }
+
+          lookupUrl = lookupUrlInfo.urlMatch;
+        } else {
+          lookupType = 'source';
+        }
+      }
+    });
+  }
+
+  if (
+    importAdaptorSubSchema.relativeURI &&
+    importAdaptorSubSchema.relativeURI[0].indexOf('?') > 0
+  ) {
+    if (url1Info.urlParts && url1Info.urlParts[url1Info.urlParts.length - 1]) {
+      queryParams = qs.parse(url1Info.urlParts[url1Info.urlParts.length - 1], {
+        delimiter: /[?&]/,
+        depth: 0,
+      }); /* depth should be 0 to handle IO-1683 */
+      url1Info.urlParts.splice(
+        url1Info.urlParts.length - 1
+      ); /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
+    }
+  }
+
+  if (!operation) {
+    if (operationDetails.id) {
+      operation = operationDetails.id;
+    } else if (isArray(operationDetails.url)) {
+      operation = [
+        operationDetails.method.join(':'),
+        operationDetails.url.join(':'),
+      ].join(':');
+    } else {
+      operation = [operationDetails.method, operationDetails.url].join(':');
+    }
+  }
+
+  return {
+    ...assistantMetadata,
+    operation,
+    operationDetails,
+    pathParams,
+    queryParams,
+    bodyParams,
+    ignoreExisting,
+    ignoreMissing,
+    lookupType,
+    lookupUrl,
+    lookupQueryParams,
+  };
+}
+
+export function convertToImport({ assistantConfig, assistantData }) {
+  const {
+    adaptorType = 'http',
+    assistant,
+    version,
+    resource,
+    operation,
+    pathParams = {},
+    lookupType,
+    ignoreExisting = false,
+    ignoreMissing = false,
+  } = assistantConfig;
+  let { lookupQueryParams = {} } = assistantConfig;
+
+  if (!assistant || !resource || !operation || !assistantData) {
+    return undefined;
+  }
+
+  const operationDetails = getImportOperationDetails({
+    version,
+    resource,
+    operation,
+    assistantData,
+  });
+  const importDefaults = {
+    rest: {
+      ...DEFAULT_PROPS.IMPORT.REST,
+    },
+    http: {
+      ...DEFAULT_PROPS.IMPORT.HTTP,
+    },
+  };
+  const importDoc = {
+    ...importDefaults[adaptorType],
+    lookups: [],
+  };
+
+  if (adaptorType === 'rest') {
+    if (isArray(operationDetails.method)) {
+      importDoc.method = operationDetails.method;
+      importDoc.relativeURI = operationDetails.url;
+      importDoc.body = operationDetails.body || [null, null];
+      importDoc.responseIdPath = operationDetails.responseIdPath;
+      importDoc.successPath = operationDetails.successPath;
+      importDoc.successValues = operationDetails.successValues;
+    } else {
+      importDoc.method = [operationDetails.method];
+      importDoc.relativeURI = [operationDetails.url];
+      importDoc.body = [operationDetails.body || null];
+      importDoc.responseIdPath = [operationDetails.responseIdPath];
+      importDoc.successPath = [operationDetails.successPath];
+      importDoc.successValues = [operationDetails.successValues];
+    }
+  } else if (adaptorType === 'http') {
+    if (isArray(operationDetails.method)) {
+      importDoc.method = operationDetails.method;
+      importDoc.relativeURI = operationDetails.url;
+    } else {
+      importDoc.method = [operationDetails.method];
+      importDoc.relativeURI = [operationDetails.url];
+    }
+
+    if (operationDetails.body) {
+      importDoc.body = operationDetails.body;
+    }
+
+    if (!importDoc.response) {
+      importDoc.response = {};
+    }
+
+    importDoc.response.resourceIdPath = operationDetails.responseIdPath;
+    importDoc.response.successPath = operationDetails.successPath;
+  }
+
+  const assistantMetadata = { resource };
+
+  if (version) {
+    assistantMetadata.version = version;
+  }
+
+  let identifiers;
+  const lookupOperationQueryParams = {};
+
+  if (operationDetails.parameters) {
+    identifiers = operationDetails.parameters.filter(p => !!p.isIdentifier);
+
+    if (identifiers.length > 0) {
+      importDoc.lookups = importDoc.lookups.filter(
+        lu => lu.name !== identifiers[0].id
+      );
+    }
+  }
+
+  const lookupConfigMetadata = operationDetails.howToFindIdentifier
+    ? operationDetails.howToFindIdentifier.lookup
+    : undefined;
+  const { lookupOperationDetails = {} } = operationDetails;
+  const luConfig = {
+    method: lookupOperationDetails.method || 'GET',
+    postBody: '',
+  };
+  const luMetadata = {};
+
+  if (identifiers && identifiers.length > 0) {
+    if (lookupType === 'lookup') {
+      luConfig.name = identifiers[0].id;
+
+      if (lookupConfigMetadata && lookupConfigMetadata.extract) {
+        luConfig.extract = lookupConfigMetadata.extract;
+      } else {
+        luConfig.extract = lookupOperationDetails.resourcePath
+          ? `${lookupOperationDetails.resourcePath}[0].${identifiers[0].id}`
+          : '';
+      }
+
+      if (lookupOperationDetails.queryParameters) {
+        lookupOperationDetails.queryParameters.forEach(p => {
+          lookupOperationQueryParams[p.id] = p.defaultValue;
+        });
+      }
+
+      if (lookupConfigMetadata && lookupConfigMetadata.parameterValues) {
+        Object.keys(lookupConfigMetadata.parameterValues).forEach(p => {
+          lookupOperationQueryParams[p] =
+            lookupConfigMetadata.parameterValues[p];
+        });
+      }
+
+      lookupQueryParams = {
+        ...lookupOperationQueryParams,
+        ...lookupQueryParams,
+      };
+
+      let lookupOperationRelativeURI = lookupOperationDetails.url;
+
+      if (luConfig.method === 'GET') {
+        const queryString = qs.stringify(lookupQueryParams, {
+          encode: false,
+          indices: false,
+        }); /* indices should be false to handle IO-1776 */
+
+        if (queryString) {
+          lookupOperationRelativeURI += `?${queryString}`;
+        }
+      } else if (luConfig.method === 'POST') {
+        luConfig.postBody = lookupQueryParams;
+      }
+
+      luConfig.relativeURI = lookupOperationRelativeURI;
+      Object.keys(pathParams).forEach(p => {
+        luConfig.relativeURI = luConfig.relativeURI.replace(
+          new RegExp(`:_${p}`, 'g'),
+          pathParams[p]
+        );
+      });
+
+      importDoc.lookups = [...importDoc.lookups, luConfig];
+
+      if (lookupOperationDetails.id) {
+        luMetadata[luConfig.name] = {
+          operation: lookupOperationDetails.id,
+        };
+      }
+
+      importDoc.ignoreLookupName = luConfig.name;
+    }
+  }
+
+  if (ignoreExisting) {
+    if (identifiers.length > 0) {
+      if (lookupType === 'source') {
+        importDoc.ignoreExtract = pathParams[identifiers[0].id];
+      }
+    }
+  } else if (
+    importDoc.method.length === 2 ||
+    lookupType === 'lookup' ||
+    ignoreMissing
+  ) {
+    if (identifiers.length > 0) {
+      if (lookupType === 'source') {
+        importDoc.ignoreExtract = pathParams[identifiers[0].id];
+      } else if (lookupType === 'lookup') {
+        pathParams[identifiers[0].id] = identifiers[0].id;
+      }
+    }
+  }
+
+  let paramValue;
+
+  if (operationDetails.parameters) {
+    operationDetails.parameters.forEach(p => {
+      paramValue = pathParams[p.id];
+
+      if (p.isIdentifier) {
+        if (adaptorType === 'rest') {
+          paramValue = `{{{${paramValue}}}}`;
+        } else if (adaptorType === 'http') {
+          if (importDoc.ignoreLookupName) {
+            paramValue = `{{{lookup.${paramValue}}}}`;
+          } else {
+            paramValue = `{{{data.0.${paramValue}}}}`;
+          }
+        }
+      }
+
+      if (paramValue && p.config) {
+        if (p.config.prefix) {
+          paramValue = p.config.prefix + paramValue;
+        }
+
+        if (p.config.suffix) {
+          paramValue += p.config.suffix;
+        }
+      }
+
+      importDoc.relativeURI[0] = importDoc.relativeURI[0].replace(
+        new RegExp(`:_${p.id}`, 'g'),
+        paramValue
+      );
+
+      if (importDoc.relativeURI[1]) {
+        importDoc.relativeURI[1] = importDoc.relativeURI[1].replace(
+          new RegExp(`:_${p.id}`, 'g'),
+          paramValue
+        );
+      }
+    });
+
+    let defaultQueryString = '';
+
+    if (operationDetails.queryParameters) {
+      operationDetails.queryParameters.forEach(p => {
+        if (defaultQueryString.length > 0) {
+          defaultQueryString += '&';
+        }
+
+        defaultQueryString += [p.id, p.defaultValue].join('=');
+      });
+    }
+
+    if (defaultQueryString) {
+      importDoc.relativeURI = importDoc.relativeURI.map(
+        u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
+      );
+    }
+
+    if (operationDetails.headers) {
+      Object.keys(operationDetails.headers).forEach(h => {
+        if (operationDetails.headers[h] !== null) {
+          const hv = operationDetails.headers[h].replace(
+            /RECORD_IDENTIFIER/gi,
+            pathParams[identifiers[0].id] || ''
+          ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
+
+          importDoc.headers.push({ name: h, value: hv });
+        }
+      });
+    }
+
+    if (adaptorType === 'http') {
+      [
+        'successMediaType',
+        'errorMediaType',
+        'requestMediaType',
+        'batchSize',
+        'ignoreEmptyNodes',
+      ].forEach(p => {
+        if (operationDetails[p]) {
+          if (p === 'batchSize') {
+            importDoc[p] = parseInt(operationDetails[p], 10);
+          } else {
+            importDoc[p] = operationDetails[p];
+          }
+        }
+      });
+    }
+  }
+
+  /** We need to set operation only if id is set on endpoint in metadata. Otherwise, the conversion logic in ampersand app fails */
+  if (operationDetails.id) {
+    assistantMetadata.operation = operationDetails.id;
+  } else if (isArray(operationDetails.url)) {
+    assistantMetadata.operationUrl = [
+      operationDetails.method.join(':'),
+      operationDetails.url.join(':'),
+    ].join(':');
+  } else {
+    assistantMetadata.operationUrl = [
+      operationDetails.method,
+      operationDetails.url,
+    ].join(':');
+  }
+
+  if (luMetadata) {
+    assistantMetadata.lookups = luMetadata;
+  }
+
+  return {
+    [`/${adaptorType}`]: importDoc,
+    '/assistant': assistant,
+    '/assistantMetadata': assistantMetadata,
+    '/ignoreExisting': !!ignoreExisting,
+    '/ignoreMissing': !!ignoreMissing,
+  };
 }
