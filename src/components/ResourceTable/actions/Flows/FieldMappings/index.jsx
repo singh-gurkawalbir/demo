@@ -1,5 +1,5 @@
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../icons/CloseIcon';
+import Icon from '../../../../icons/MapDataIcon';
 
 export default {
   label: 'Field Mappings',

@@ -4,9 +4,9 @@ import {
   DialogContent,
   DialogTitle,
   makeStyles,
-  Close,
   IconButton,
 } from '@material-ui/core';
+import Close from '@material-ui/icons/Close';
 import moment from 'moment';
 import _ from 'lodash';
 import actions from '../../actions';
@@ -15,10 +15,15 @@ import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import { TIMEZONES } from '../../utils/constants';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   modalContent: {
     height: '100vh',
     width: '80vw',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
   },
 }));
 
