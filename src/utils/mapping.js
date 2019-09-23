@@ -24,17 +24,37 @@ export default {
     return 'standard';
   },
 
-  getDefaultActionValue: value => {
-    if ('default' in value || 'hardCodedValue' in value) {
-      let defaultVal;
-
-      if ('default' in value) {
-        defaultVal = value.default;
-      } else if ('hardCodedValue' in value) {
-        defaultVal = value.hardCodedValue;
+  getHardCodedActionValue: value => {
+    if ('hardCodedValue' in value) {
+      switch (value.hardCodedValue) {
+        case '':
+          return 'useEmptyString';
+        case null:
+          return 'useNull';
+        default:
+          return 'default';
       }
+    }
+  },
+  getDefaultLookupActionValue: (value, lookup) => {
+    if (value && value.lookupName && lookup && !lookup.allowFailures) {
+      return 'disallowFailure';
+    }
 
-      switch (defaultVal) {
+    if ('default' in lookup) {
+      switch (lookup.default) {
+        case '':
+          return 'useEmptyString';
+        case null:
+          return 'useNull';
+        default:
+          return 'default';
+      }
+    }
+  },
+  getDefaultActionValue: value => {
+    if ('default' in value) {
+      switch (value.default) {
         case '':
           return 'useEmptyString';
         case null:

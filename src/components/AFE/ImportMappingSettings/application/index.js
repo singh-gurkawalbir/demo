@@ -26,12 +26,12 @@ const getFormattedLookup = (lookup, formVal) => {
     });
   }
 
-  if (formVal.standardAction === 'disallowFailure')
+  if (formVal.lookupAction === 'disallowFailure')
     lookupTmp.allowFailures = false;
   else {
     lookupTmp.allowFailures = true;
 
-    switch (formVal.standardAction) {
+    switch (formVal.lookupAction) {
       case 'useEmptyString':
         lookupTmp.default = '';
         break;
@@ -39,7 +39,7 @@ const getFormattedLookup = (lookup, formVal) => {
         lookupTmp.default = null;
         break;
       case 'default':
-        lookupTmp.default = formVal.default;
+        lookupTmp.default = formVal.lookupDefault;
         break;
       default:
     }
@@ -103,7 +103,7 @@ export default {
 
     if (formVal.fieldMappingType === 'hardCoded') {
       // in case of hardcoded value, we dont save extract property
-      switch (formVal.standardAction) {
+      switch (formVal.hardcodedAction) {
         case 'useEmptyString':
           settings.hardCodedValue = '';
           break;
@@ -111,17 +111,14 @@ export default {
           settings.hardCodedValue = null;
           break;
         case 'default':
-          settings.hardCodedValue = formVal.default;
+          settings.hardCodedValue = formVal.hardcodedDefault;
           break;
         default:
       }
-    } else {
-      if (formVal.fieldMappingType === 'multifield') {
-        settings.extract = formVal.expression;
-      } else {
-        settings.extract = extract;
-      }
-
+    } else if (
+      formVal.fieldMappingType === 'standard' ||
+      formVal.fieldMappingType === 'multifield'
+    ) {
       switch (formVal.standardAction) {
         case 'useEmptyString':
           settings.default = '';
@@ -134,6 +131,12 @@ export default {
           break;
         default:
       }
+    }
+
+    if (formVal.fieldMappingType === 'multifield') {
+      settings.extract = formVal.expression;
+    } else {
+      settings.extract = extract;
     }
 
     let updatedLookup;

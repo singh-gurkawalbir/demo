@@ -100,7 +100,7 @@ export default {
         functions: {
           id: 'functions',
           name: 'functions',
-          type: 'select',
+          type: 'fieldexpressionselect',
           label: 'Function',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
@@ -131,26 +131,85 @@ export default {
           defaultValue: MappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        standardAction: {
-          id: 'standardAction',
-          name: 'standardAction',
+        hardcodedAction: {
+          id: 'hardcodedAction',
+          name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultActionValue(value),
-          refreshOptionsOnChangesTo: ['fieldMappingType'],
-          label: '',
-          visibleWhen: [
-            { field: 'fieldMappingType', is: ['hardCoded'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
+          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          label: 'Options',
+          options: [
+            {
+              items: [
+                {
+                  label: `Use Empty String as hardcoded Value`,
+                  value: 'useEmptyString',
+                },
+                {
+                  label: 'Use Null as hardcoded Value',
+                  value: 'useNull',
+                },
+                {
+                  label: 'Use Custom Value',
+                  value: 'default',
+                },
+              ],
+            },
           ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
-        default: {
-          id: 'default',
-          name: 'default',
+        lookupAction: {
+          id: 'lookupAction',
+          name: 'lookupAction',
+          type: 'radiogroup',
+          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          label: 'Action to take if unique match not found',
+          options: [
+            {
+              items: [
+                {
+                  label: 'Fail Record',
+                  value: 'disallowFailure',
+                },
+                {
+                  label: 'Use Empty String as Default Value',
+                  value: 'useEmptyString',
+                },
+                {
+                  label: 'Use Null as Default Value',
+                  value: 'useNull',
+                },
+                {
+                  label: 'Use Custom Default Value',
+                  value: 'default',
+                },
+              ],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+        },
+        hardcodedDefault: {
+          id: 'hardcodedDefault',
+          name: 'hardcodedDefault',
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
-          defaultValue: value.default,
-          visibleWhen: [{ field: 'standardAction', is: ['default'] }],
+          visibleWhenAll: [
+            { field: 'hardcodedAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+          ],
+          defaultValue: value.hardCodedValue,
+        },
+        lookupDefault: {
+          id: 'lookupDefault',
+          name: 'lookupDefault',
+          type: 'text',
+          label: 'Enter Default Value',
+          placeholder: 'Enter Default Value',
+          visibleWhenAll: [
+            { field: 'lookupAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
+          defaultValue: lookup.default,
         },
       },
       layout: {
@@ -165,8 +224,10 @@ export default {
           'functions',
           'extract',
           'expression',
-          'standardAction',
-          'default',
+          'hardcodedAction',
+          'lookupAction',
+          'hardcodedDefault',
+          'lookupDefault',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -197,56 +258,6 @@ export default {
               `recordTypes/${recordTypeField.value}/searchColumns`,
             resetValue: [],
           };
-        } else if (fieldId === 'standardAction') {
-          const actionField = fields.find(
-            field => field.id === 'fieldMappingType'
-          );
-
-          switch (actionField.value) {
-            case 'hardCoded':
-              return [
-                {
-                  items: [
-                    {
-                      label: `Use Empty String as hardcoded Value`,
-                      value: 'useEmptyString',
-                    },
-                    {
-                      label: 'Use Null as hardcoded Value',
-                      value: 'useNull',
-                    },
-                    {
-                      label: 'Use Custom Value',
-                      value: 'default',
-                    },
-                  ],
-                },
-              ];
-            case 'lookup':
-              return [
-                {
-                  items: [
-                    {
-                      label: 'Fail Record',
-                      value: 'disallowFailure',
-                    },
-                    {
-                      label: `Use Empty String as hardcoded Value`,
-                      value: 'useEmptyString',
-                    },
-                    {
-                      label: 'Use Null as hardcoded Value',
-                      value: 'useNull',
-                    },
-                    {
-                      label: 'Use Custom Value',
-                      value: 'default',
-                    },
-                  ],
-                },
-              ];
-            default:
-          }
         }
 
         return null;

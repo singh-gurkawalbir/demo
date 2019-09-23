@@ -96,6 +96,7 @@ export default {
       'rest.method',
       'rest.headers',
       'rest.compositeType',
+      'rest.lookups',
       'mapping',
       'rest.relativeURI',
       'rest.successPath',

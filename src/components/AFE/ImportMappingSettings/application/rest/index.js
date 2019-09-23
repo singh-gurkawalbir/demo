@@ -188,7 +188,6 @@ export default {
           name: 'standardAction',
           type: 'radiogroup',
           defaultValue: MappingUtil.getDefaultActionValue(value),
-          refreshOptionsOnChangesTo: ['fieldMappingType'],
           label: 'Action to take if value not found',
           options: [
             {
@@ -202,6 +201,60 @@ export default {
               ],
             },
           ],
+          visibleWhen: [
+            { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'fieldMappingType', is: ['multifield'] },
+          ],
+        },
+        hardcodedAction: {
+          id: 'hardcodedAction',
+          name: 'hardcodedAction',
+          type: 'radiogroup',
+          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          label: 'Options',
+          options: [
+            {
+              items: [
+                {
+                  label: `Use Empty String as hardcoded Value`,
+                  value: 'useEmptyString',
+                },
+                {
+                  label: 'Use Null as hardcoded Value',
+                  value: 'useNull',
+                },
+                {
+                  label: 'Use Custom Value',
+                  value: 'default',
+                },
+              ],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
+        },
+        lookupAction: {
+          id: 'lookupAction',
+          name: 'lookupAction',
+          type: 'radiogroup',
+          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          label: 'Action to take if unique match not found',
+          options: [
+            {
+              items: [
+                {
+                  label: 'Fail Record',
+                  value: 'disallowFailure',
+                },
+                {
+                  label: 'Use Empty String as Default Value',
+                  value: 'useEmptyString',
+                },
+                { label: 'Use Null as Default Value', value: 'useNull' },
+                { label: 'Use Custom Default Value', value: 'default' },
+              ],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         default: {
           id: 'default',
@@ -209,8 +262,36 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
-          visibleWhen: [{ field: 'standardAction', is: ['default'] }],
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded'] },
+            { field: 'fieldMappingType', isNot: ['lookup'] },
+          ],
           defaultValue: value.default,
+        },
+        hardcodedDefault: {
+          id: 'hardcodedDefault',
+          name: 'hardcodedDefault',
+          type: 'text',
+          label: 'Enter Default Value',
+          placeholder: 'Enter Default Value',
+          visibleWhenAll: [
+            { field: 'hardcodedAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+          ],
+          defaultValue: value.hardCodedValue,
+        },
+        lookupDefault: {
+          id: 'lookupDefault',
+          name: 'lookupDefault',
+          type: 'text',
+          label: 'Enter Default Value',
+          placeholder: 'Enter Default Value',
+          visibleWhenAll: [
+            { field: 'lookupAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
+          defaultValue: lookup.default,
         },
         exportDateFormat: {
           id: 'exportDateFormat',
@@ -281,7 +362,11 @@ export default {
           'extract',
           'expression',
           'standardAction',
+          'hardcodedAction',
+          'lookupAction',
           'default',
+          'hardcodedDefault',
+          'lookupDefault',
           'exportDateFormat',
           'exportDateTimeZone',
           'importDateFormat',
@@ -304,74 +389,6 @@ export default {
           if (functionsField.value) expressionValue += functionsField.value;
 
           return expressionValue;
-        } else if (fieldId === 'standardAction') {
-          const actionField = fields.find(
-            field => field.id === 'fieldMappingType'
-          );
-
-          switch (actionField.value) {
-            case 'hardCoded':
-              return [
-                {
-                  items: [
-                    {
-                      label: `Use Empty String as hardcoded Value`,
-                      value: 'useEmptyString',
-                    },
-                    {
-                      label: 'Use Null as hardcoded Value',
-                      value: 'useNull',
-                    },
-                    {
-                      label: 'Use Custom Value',
-                      value: 'default',
-                    },
-                  ],
-                },
-              ];
-            case 'lookup':
-              return [
-                {
-                  items: [
-                    {
-                      label: 'Fail Record',
-                      value: 'disallowFailure',
-                    },
-                    {
-                      label: `Use Empty String as hardcoded Value`,
-                      value: 'useEmptyString',
-                    },
-                    {
-                      label: 'Use Null as hardcoded Value',
-                      value: 'useNull',
-                    },
-                    {
-                      label: 'Use Custom Value',
-                      value: 'default',
-                    },
-                  ],
-                },
-              ];
-            default:
-              return [
-                {
-                  items: [
-                    {
-                      label: `Use Empty String as Default Value`,
-                      value: 'useEmptyString',
-                    },
-                    {
-                      label: 'Use Null as Default Value',
-                      value: 'useNull',
-                    },
-                    {
-                      label: 'Use Custom Default Value',
-                      value: 'default',
-                    },
-                  ],
-                },
-              ];
-          }
         }
 
         return null;
