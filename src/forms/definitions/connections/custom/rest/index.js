@@ -11,7 +11,6 @@ import snapfulfil from './snapfulfil';
 import woocommerce from './woocommerce';
 import acton from './acton';
 import accelo from './accelo';
-import acumatica from './acumatica';
 import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
@@ -23,7 +22,6 @@ import smartsheet from './smartsheet';
 import linkedin from './linkedin';
 import box from './box';
 import yahoo from './yahoo';
-import steelbrick from './steelbrick';
 import zuora from './zuora';
 import wrike from './wrike';
 import eventbrite from './eventbrite';
@@ -46,25 +44,18 @@ import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
 import pitneybowes from './pitneybowes';
-import expensify from './expensify';
-import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
-import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
 import procurify from './procurify';
 import zimbra from './zimbra';
-import klaviyo from './klaviyo';
-import returnly from './returnly';
 import aptrinsic from './aptrinsic';
 import cardknox from './cardknox';
 import quip from './quip';
 import concur from './concur';
 import spreecommerce from './spreecommerce';
-import marketo from './marketo';
 import retailops from './retailops';
-import parseur from './parseur';
 import merchantesolutions from './merchantesolutions';
 import threedcart from './threedcart';
 
@@ -84,7 +75,6 @@ export default {
   linkedin,
   box,
   yahoo,
-  steelbrick,
   shipstation,
   shopify,
   woocommerce,
@@ -115,28 +105,20 @@ export default {
   googleanalytics,
   taxjar,
   pitneybowes,
-  expensify,
-  wish,
   pdffiller,
   signnow,
   acton,
-  acumatica,
-  myobessentials,
   exacterp,
   nimble,
   greenhouse,
   mailgun,
   procurify,
-  klaviyo,
-  returnly,
   aptrinsic,
   cardknox,
   quip,
   concur,
   spreecommerce,
-  marketo,
   zimbra,
   retailops,
-  parseur,
   merchantesolutions,
 };
