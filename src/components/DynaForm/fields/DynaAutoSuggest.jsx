@@ -11,18 +11,30 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function DynaAutoSuggest(props) {
-  const { id, disabled, value, onFieldChange, onBlur, options = [] } = props;
+  const {
+    id,
+    disabled,
+    value,
+    placeholder,
+    onFieldChange,
+    onBlur,
+    options = [],
+  } = props;
   const suggestions = options.map(option => ({ label: option, value: option }));
   const [inputValue, setInputValue] = useState(value || '');
   const classes = useStyles();
-  const handleChange = newVal => {
-    setInputValue(newVal.value);
+  const handleChange = newObj => {
+    const newVal = newObj.value;
+
+    setInputValue(newVal);
 
     if (onFieldChange) onFieldChange(id, newVal);
+
+    if (onBlur) onBlur(id, newVal);
   };
 
   const handleBlur = () => {
-    onBlur(id, inputValue);
+    if (onBlur) onBlur(id, inputValue);
   };
 
   const handleInputChange = newVal => {
@@ -35,8 +47,8 @@ export default function DynaAutoSuggest(props) {
     <FormControl disabled={disabled} className={classes.root}>
       <Select
         inputValue={inputValue}
-        isClearable
         noOptionsMessage={() => null}
+        placeholder={placeholder || ''}
         onInputChange={handleInputChange}
         onChange={handleChange}
         onBlur={handleBlur}
