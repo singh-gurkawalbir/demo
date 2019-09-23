@@ -8,9 +8,7 @@ export default (state = {}, action) => {
     return state;
   }
 
-  return produce(state, d => {
-    const draft = d;
-
+  return produce(state, draft => {
     switch (type) {
       case actionTypes.MARKETPLACE.CONNECTORS_RECEIVED:
         draft.connectors = connectors || [];

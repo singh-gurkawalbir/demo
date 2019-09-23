@@ -115,7 +115,9 @@ export default function ConnectorTemplateList(props) {
         <Dialog open onClose={() => setShowMessage(false)}>
           <DialogContent>
             {CONTACT_SALES_MESSAGE}
-            <Link href="http://www.celigo.com/integration-marketplace">
+            <Link
+              href="http://www.celigo.com/integration-marketplace"
+              target="_blank">
               http://www.celigo.com/integration-marketplace
             </Link>
           </DialogContent>
