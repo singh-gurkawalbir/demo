@@ -1,13 +1,10 @@
-import jira from './jira';
 import zendesk from './zendesk';
 import anaplan from './anaplan';
 import atera from './atera';
-import chargebee from './chargebee';
 import greenhouse from './greenhouse';
 import insightly from './insightly';
 import mailgun from './mailgun';
 import pulseway from './pulseway';
-import servicenow from './servicenow';
 import shipstation from './shipstation';
 import shopify from './shopify';
 import shipwire from './shipwire';
@@ -30,7 +27,6 @@ import smartsheet from './smartsheet';
 import linkedin from './linkedin';
 import box from './box';
 import yahoo from './yahoo';
-import hybris from './hybris';
 import steelbrick from './steelbrick';
 import squareup from './squareup';
 import surveymonkey from './surveymonkey';
@@ -56,17 +52,11 @@ import googlecontacts from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
-import microsoftoffice365 from './microsoftoffice365';
 import zohodesk from './zohodesk';
 import zohocrm from './zohocrm';
 import pitneybowes from './pitneybowes';
 import zohobooks from './zohobooks';
-import shippo from './shippo';
 import expensify from './expensify';
-import microsoftoutlookcalendar from './microsoftoutlookcalendar';
-import microsoftoutlookmail from './microsoftoutlookmail';
-import microsoftoutlookcontacts from './microsoftoutlookcontacts';
-import microsoftonenote from './microsoftonenote';
 import wish from './wish';
 import pdffiller from './pdffiller';
 import signnow from './signnow';
@@ -75,7 +65,7 @@ import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
 import procurify from './procurify';
-import strata from './strata';
+import zimbra from './zimbra';
 import postmark from './postmark';
 import klaviyo from './klaviyo';
 import returnly from './returnly';
@@ -87,14 +77,11 @@ import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
 import tophatter from './tophatter';
 import spreecommerce from './spreecommerce';
-import sugarcrm from './sugarcrm';
 import marketo from './marketo';
-import grms from './grms';
 import retailops from './retailops';
 import sharepoint from './sharepoint';
 import parseur from './parseur';
-import skubana from './skubana';
-import dunandbradstreet from './dunandbradstreet';
+import merchantesolutions from './merchantesolutions';
 import threedcart from './threedcart';
 
 export default {
@@ -109,15 +96,12 @@ export default {
   asana,
   dropbox,
   google,
-  jira,
   jobvite,
   smartsheet,
   linkedin,
   box,
   yahoo,
-  hybris,
   steelbrick,
-  servicenow,
   shipstation,
   shopify,
   squareup,
@@ -151,19 +135,12 @@ export default {
   googlecontacts,
   googleshopping,
   googleanalytics,
-  chargebee,
   taxjar,
-  microsoftoffice365,
   zohodesk,
   zohocrm,
   pitneybowes,
   zohobooks,
-  shippo,
   expensify,
-  microsoftoutlookcalendar,
-  microsoftoutlookmail,
-  microsoftoutlookcontacts,
-  microsoftonenote,
   wish,
   pdffiller,
   signnow,
@@ -176,7 +153,6 @@ export default {
   greenhouse,
   mailgun,
   procurify,
-  strata,
   postmark,
   klaviyo,
   returnly,
@@ -188,12 +164,10 @@ export default {
   oandav20fxtrade,
   tophatter,
   spreecommerce,
-  sugarcrm,
   marketo,
-  grms,
+  zimbra,
   retailops,
   sharepoint,
   parseur,
-  skubana,
-  dunandbradstreet,
+  merchantesolutions,
 };
