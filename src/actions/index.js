@@ -64,6 +64,22 @@ const connection = {
       integrationId,
     }),
 };
+const marketplace = {
+  requestConnectors: () =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_REQUEST, {}),
+  requestTemplates: () => action(actionTypes.MARKETPLACE.TEMPLATES_REQUEST, {}),
+  receivedConnectors: ({ connectors }) =>
+    action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
+  receivedTemplates: ({ templates }) =>
+    action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
+  installConnector: (connectorId, sandbox) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  contactSales: (connectorName, _connectorId) =>
+    action(actionTypes.MARKETPLACE.SALES_CONTACT, {
+      connectorName,
+      _connectorId,
+    }),
+};
 const resource = {
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
@@ -728,4 +744,5 @@ export default {
   assistantMetadata,
   stack,
   connection,
+  marketplace,
 };
