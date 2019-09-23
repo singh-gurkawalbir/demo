@@ -2,14 +2,14 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'practicepanther',
+    '/assistant': 'microsoftbusinesscentral',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://app.practicepanther.com/`,
+    '/http/baseURI': 'https://api.businesscentral.dynamics.com',
     '/http/auth/oauth/authURI':
-      'https://app.practicepanther.com/oauth/authorize',
-    '/http/auth/oauth/tokenURI': 'https://app.practicepanther.com/oauth/token',
-    '/http/auth/oauth/accessTokenPath': 'access_token',
+      'https://login.microsoftonline.com/common/oauth2/authorize',
+    '/http/auth/oauth/tokenURI':
+      'https://login.microsoftonline.com/common/oauth2/token',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

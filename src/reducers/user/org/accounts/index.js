@@ -177,6 +177,20 @@ export function integratorLicense(state, accountId) {
 }
 // #endregion INTEGRATOR LICENSE
 
+export function licenses(state) {
+  if (!state) {
+    return [];
+  }
+
+  const account = state.find(a => a.accessLevel === 'owner');
+
+  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
+    return [];
+  }
+
+  return account.ownerUser.licenses;
+}
+
 export function sharedAccounts(state) {
   if (!state) {
     return [];

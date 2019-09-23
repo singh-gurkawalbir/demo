@@ -23,6 +23,7 @@ import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { stackSagas } from './stack';
+import { marketplaceSagas } from './marketPlace';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -94,5 +95,6 @@ export default function* rootSaga() {
     ...flowSagas,
     ...agentSagas,
     ...stackSagas,
+    ...marketplaceSagas,
   ]);
 }
