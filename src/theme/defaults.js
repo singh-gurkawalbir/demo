@@ -20,6 +20,21 @@ export default {
       error: colors.celigoError,
       info: colors.celigoAccent1,
     },
+    /* Adding states only for the styleGuide later I will remove, 
+        once we point styleguide to the new ThemeProvider,
+    */
+    success: {
+      main: colors.celigoSuccess,
+    },
+    error: {
+      main: colors.celigoError,
+    },
+    warning: {
+      main: colors.celigoWarning,
+    },
+    info: {
+      main: colors.celigoAccent2,
+    },
   },
   spacing: 8,
   drawerWidth: 300,

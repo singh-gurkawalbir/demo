@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/assistant': 'stripe',
     '/rest/authType': 'token',
@@ -11,21 +11,21 @@ export default {
     '/rest/authHeader': 'Authorization',
     '/rest/authScheme': 'Bearer',
   }),
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       label: 'Secret Key:',
       required: true,
       helpText: 'The secret key of your Stripe account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

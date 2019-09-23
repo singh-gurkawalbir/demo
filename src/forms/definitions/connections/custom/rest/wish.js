@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const environment = 'production';
 
     return {
@@ -29,12 +29,15 @@ export default {
       '/rest/refreshTokenPath': 'data.refresh_token',
     };
   },
-  fields: [{ fieldId: 'name' }],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

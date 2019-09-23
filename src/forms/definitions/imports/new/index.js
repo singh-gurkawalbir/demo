@@ -7,13 +7,28 @@ const visibleWhen = [
     isNot: [''],
   },
 ];
+const appTypeToAdaptorType = {
+  salesforce: 'Salesforce',
+  mongodb: 'Mongodb',
+  postgresql: 'RDBMS',
+  mysql: 'RDBMS',
+  mssql: 'RDBMS',
+  netsuite: 'NetSuite',
+  ftp: 'FTP',
+  http: 'HTTP',
+  rest: 'REST',
+  s3: 'S3',
+  wrapper: 'Wrapper',
+  as2: 'AS2',
+  webhook: 'Webhook',
+};
 
 export default {
-  preSubmit: ({ application, ...rest }) => {
+  preSave: ({ application, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
-      '/adaptorType': `${app.type.toUpperCase()}Import`,
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}Import`,
     };
 
     if (app.assistant) {
@@ -22,8 +37,8 @@ export default {
 
     return newValues;
   },
-  fields: [
-    {
+  fieldMap: {
+    application: {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
@@ -31,7 +46,7 @@ export default {
       defaultValue: '',
       required: true,
     },
-    {
+    connection: {
       id: 'connection',
       name: '/_connectionId',
       type: 'selectresource',
@@ -42,7 +57,7 @@ export default {
       refreshOptionsOnChangesTo: ['application'],
       visibleWhen,
     },
-    {
+    name: {
       id: 'name',
       name: '/name',
       type: 'text',
@@ -52,7 +67,7 @@ export default {
       refreshOptionsOnChangesTo: ['application'],
       visibleWhen,
     },
-    {
+    description: {
       id: 'description',
       name: '/description',
       type: 'text',
@@ -62,7 +77,10 @@ export default {
       defaultValue: '',
       visibleWhen,
     },
-  ],
+  },
+  layout: {
+    fields: ['application', 'connection', 'name', 'description'],
+  },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};

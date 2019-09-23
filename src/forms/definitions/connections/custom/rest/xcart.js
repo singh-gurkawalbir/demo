@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'xcart',
@@ -10,13 +10,10 @@ export default {
     '/rest/pingRelativeURI': '/admin.php?target=RESTAPI&_path=product/1',
     '/rest/pingMethod': 'GET',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
-      fieldId: 'rest.baseURI',
-      label: 'Base URI:',
-    },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.baseURI': { fieldId: 'rest.baseURI', label: 'Base URI:' },
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       label: 'Token:',
       required: true,
@@ -25,12 +22,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.baseURI', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

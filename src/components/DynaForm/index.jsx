@@ -1,19 +1,16 @@
 import { Component } from 'react';
-import { Form, FormFragment } from 'react-forms-processor/dist';
+import { Form } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 import getRenderer from './renderer';
+import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
 
 @withStyles(theme => ({
   fieldContainer: {
-    border: 'solid 1px',
-    backgroundColor: theme.palette.background.paper2,
+    borderStyle: 'solid',
+    borderWidth: '1px 0',
+    // backgroundColor: theme.palette.background.paper2,
     borderColor: 'rgb(0,0,0,0.1)',
     minHeight: '30vh',
     maxHeight: `60vh`,
@@ -30,7 +27,7 @@ import ButtonGroup from '../ButtonGroup';
   },
   actions: {
     textAlign: 'right',
-    padding: theme.spacing(2, 0, 0),
+    padding: theme.spacing(2, 3, 0),
   },
 }))
 export default class DynaForm extends Component {
@@ -46,33 +43,17 @@ export default class DynaForm extends Component {
       full,
       ...rest
     } = this.props;
-    const { fields, fieldSets } = fieldMeta;
+    const { layout, fieldMap } = fieldMeta;
     const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
 
-    if (!fields && !fieldSets) {
+    if (!layout) {
       return null;
     }
 
     return (
       <Form {...rest} renderer={renderer}>
         <div className={clsx(classes.fieldContainer, className)}>
-          {fields && <FormFragment defaultFields={fields} />}
-          {fieldSets &&
-            fieldSets.map(set => (
-              <ExpansionPanel
-                defaultExpanded={!set.collapsed}
-                key={set.header}
-                className={classes.expansionPanel}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>
-                    {set.header}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.details}>
-                  <FormFragment defaultFields={set.fields} />
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ))}
+          <DynaFormGenerator layout={layout} fieldMap={fieldMap} />
         </div>
         {/* The children are action buttons for the form */}
 

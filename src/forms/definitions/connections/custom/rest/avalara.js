@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'avalara',
@@ -10,11 +10,9 @@ export default {
       formValues['/accType'] === 'sandbox' ? 'sandbox-' : ''
     }rest.avatax.com/api/`,
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accType: {
       id: 'accType',
       type: 'select',
       label: 'Account Type',
@@ -43,19 +41,20 @@ export default {
         return 'production';
       },
     },
-    {
-      fieldId: 'rest.basicAuth.username',
-    },
-
-    {
-      fieldId: 'rest.basicAuth.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    'rest.basicAuth.username': { fieldId: 'rest.basicAuth.username' },
+    'rest.basicAuth.password': { fieldId: 'rest.basicAuth.password' },
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'accType',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

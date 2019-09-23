@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'recurly',
@@ -9,9 +9,9 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://${formValues['/recurly/subdomain']}.recurly.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'recurly.subdomain': {
       fieldId: 'recurly.subdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -37,21 +37,25 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key:',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
     },
-    {
-      fieldId: 'http.auth.basic.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'recurly.subdomain',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

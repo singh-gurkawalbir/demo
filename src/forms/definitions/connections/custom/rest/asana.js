@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'asana',
@@ -10,23 +10,22 @@ export default {
     '/rest/tokenLocation': 'header',
     '/rest/authHeader': 'Authorization',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       required: true,
       label: 'Personal Access Token:',
       helpText:
-        'Enter your personal access token.\n\n Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+        'Enter your personal access token. Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.bearerToken'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };

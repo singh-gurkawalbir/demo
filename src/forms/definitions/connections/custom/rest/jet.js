@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const refreshTokenBody = {};
 
     refreshTokenBody.pass = '{{{connection.rest.encrypted.password}}}';
@@ -21,13 +21,13 @@ export default {
       '/rest/refreshTokenBody': JSON.stringify(refreshTokenBody),
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'rest.refreshTokenBody.user': {
       id: 'rest.refreshTokenBody.user',
       type: 'text',
       helpText:
-        'API User Key available from Jet under API Section-> Get API Keys', // Secret Key available from Jet under API Section-> Get API Keys
+        'API User Key available from Jet under API Section-> Get API Keys',
       label: 'API User:',
       required: true,
       defaultValue: r => {
@@ -43,7 +43,7 @@ export default {
         return toReturn;
       },
     },
-    {
+    'rest.encrypted.password': {
       id: 'rest.encrypted.password',
       type: 'text',
       inputType: 'password',
@@ -54,12 +54,13 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'rest.refreshTokenBody.user', 'rest.encrypted.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
