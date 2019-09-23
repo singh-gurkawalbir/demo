@@ -14,7 +14,7 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../../views/ResourceList/ResourceTable';
+import ResourceTable from '../../components/ResourceTable';
 import Resources from '../../utils/globalResources';
 
 const useStyles = makeStyles(theme => ({

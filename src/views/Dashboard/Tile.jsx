@@ -54,33 +54,46 @@ function Tile({ classes, tile }) {
       </CardContent>
       <Divider component="br" />
       <CardActions>
-        {tile.status === 'IS_PENDING_SETUP' && (
-          <Typography>Click to continue setup.</Typography>
-        )}
-        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+        {tile.status === 'is_pending_setup' && (
           <Link
             className={classes.navLink}
-            to={getRoutePath(
-              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
-                tile._integrationId
-              }/settings/flows`
-            )}>
-            {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
-              ? 'Monitor'
-              : 'Manage'}
+            to={getRoutePath(`/connectors/${tile._integrationId}/setup`)}>
+            Click to continue setup.
           </Link>
         )}
-        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
+        {tile.status === 'uninstall' && (
           <Link
             className={classes.navLink}
-            to={getRoutePath(
-              `/${tile._connectorId ? 'integrations' : 'integrations'}/${
-                tile._integrationId
-              }/dashboard`
-            )}>
-            Dashboard
+            to={getRoutePath(`/connectors/${tile._integrationId}/uninstall`)}>
+            Click to continue uninstall.
           </Link>
         )}
+        {!['is_pending_setup', 'uninstall'].includes(tile.status) &&
+          accessLevel && (
+            <Link
+              className={classes.navLink}
+              to={getRoutePath(
+                `/${tile._connectorId ? 'connectors' : 'integrations'}/${
+                  tile._integrationId
+                }/settings/flows`
+              )}>
+              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
+                ? 'Monitor'
+                : 'Manage'}
+            </Link>
+          )}
+        {!['is_pending_setup', 'uninstall'].includes(tile.status) &&
+          accessLevel && (
+            <Link
+              className={classes.navLink}
+              to={getRoutePath(
+                `/${tile._connectorId ? 'connectors' : 'integrations'}/${
+                  tile._integrationId
+                }/dashboard`
+              )}>
+              Dashboard
+            </Link>
+          )}
         {tile.tag && (
           <Chip label={tile.tag} color="secondary" className={classes.tag} />
         )}

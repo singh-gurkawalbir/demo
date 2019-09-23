@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'solidcommerce',
@@ -22,9 +22,9 @@ export default {
       { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.securityKey': {
       id: 'http.encrypted.securityKey',
       label: 'Security Key:',
       type: 'text',
@@ -34,7 +34,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.appKey': {
       id: 'http.encrypted.appKey',
       label: 'Application Key:',
       type: 'text',
@@ -45,12 +45,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.encrypted.securityKey', 'http.encrypted.appKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

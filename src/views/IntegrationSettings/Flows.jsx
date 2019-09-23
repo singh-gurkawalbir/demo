@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../ResourceList/ResourceTable';
+import ResourceTable from '../../components/ResourceTable';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import AttachFlows from '../../components/AttachFlows';
 import getRoutePath from '../../utils/routePaths';

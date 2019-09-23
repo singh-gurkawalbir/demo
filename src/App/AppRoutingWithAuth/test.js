@@ -198,7 +198,8 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       );
     });
 
-    test('should redirect the user to the /pg route when the user successfully authenticates and the user has never previously intialized to a route', () => {
+    test(`should redirect the user to the /pg/dashboard route when the user 
+    successfully authenticates and the user has never previously initialized to a route`, () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -216,7 +217,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe('/pg');
+      expect(history.location.pathname).toBe('/pg/dashboard');
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -234,7 +235,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {
-          pathname: '/pg',
+          pathname: '/pg/dashboard',
         },
       ],
     });
@@ -248,7 +249,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe('/pg');
+    expect(history.location.pathname).toBe('/pg/dashboard');
   });
 
   const loggedOut = {

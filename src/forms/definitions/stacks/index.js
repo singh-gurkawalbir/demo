@@ -1,11 +1,22 @@
 export default {
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: 'type' },
-    { fieldId: 'server.hostURI' },
-    { fieldId: 'lambda.accessKeyId' },
-    { fieldId: 'lambda.secretAccessKey' },
-    { fieldId: 'lambda.awsRegion' },
-    { fieldId: 'lambda.functionName' },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    type: { fieldId: 'type' },
+    'server.hostURI': { fieldId: 'server.hostURI' },
+    'lambda.accessKeyId': { fieldId: 'lambda.accessKeyId' },
+    'lambda.secretAccessKey': { fieldId: 'lambda.secretAccessKey' },
+    'lambda.awsRegion': { fieldId: 'lambda.awsRegion' },
+    'lambda.functionName': { fieldId: 'lambda.functionName' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'type',
+      'server.hostURI',
+      'lambda.accessKeyId',
+      'lambda.secretAccessKey',
+      'lambda.awsRegion',
+      'lambda.functionName',
+    ],
+  },
 };

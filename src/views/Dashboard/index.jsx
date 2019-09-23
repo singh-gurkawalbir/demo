@@ -10,6 +10,7 @@ import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import sortTiles from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const styles = theme => ({
   root: {
@@ -73,6 +74,8 @@ function Dashboard(props) {
 
   return (
     <Fragment>
+      <ResourceDrawer {...props} />
+
       <CeligoPageBar title="My integrations" />
       <LoadResources required resources="published,integrations,connections">
         <div className={classes.root}>

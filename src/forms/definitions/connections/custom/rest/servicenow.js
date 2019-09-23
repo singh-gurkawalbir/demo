@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rest',
     '/assistant': 'servicenow',
@@ -8,9 +8,9 @@ export default {
     '/rest/pingRelativeURI': '/api/now/pa/scorecards',
     '/rest/baseURI': `https://${formValues['/instanceName']}.service-now.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    instanceName: {
       type: 'text',
       id: 'instanceName',
       helpText:
@@ -36,20 +36,26 @@ export default {
         return subdomain;
       },
     },
-    {
+    'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       helpText: 'The username of your ServiceNow account.',
     },
-    {
+    'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       helpText: 'The password of your ServiceNow account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+    restAdvanced: { formId: 'restAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'instanceName',
+      'rest.basicAuth.username',
+      'rest.basicAuth.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+    ],
+  },
 };
