@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'twilio',

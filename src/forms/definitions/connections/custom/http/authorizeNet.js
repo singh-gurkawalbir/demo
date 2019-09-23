@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const pingBody = {
       authenticateTestRequest: {
         merchantAuthentication: {
