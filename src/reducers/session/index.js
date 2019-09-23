@@ -11,6 +11,7 @@ import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
 import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
+import integrationApps, * as fromIntegrationApps from './integrationApps';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -27,6 +28,7 @@ export default combineReducers({
   netsuiteUserRole,
   sampleData,
   fileDefinitions,
+  integrationApps,
 });
 
 // #region PUBLIC SELECTORS
@@ -171,6 +173,28 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
     state && state.sampleData,
     resourceId,
     stage
+  );
+}
+
+export function integrationAppsInstaller(state, id) {
+  return fromIntegrationApps.integrationAppsInstaller(
+    state && state.integrationApps,
+    id
+  );
+}
+
+export function uninstallSteps(state, id, storeId) {
+  return fromIntegrationApps.uninstallSteps(
+    state && state.integrationApps,
+    id,
+    storeId
+  );
+}
+
+export function addNewStoreSteps(state, id) {
+  return fromIntegrationApps.addNewStoreSteps(
+    state && state.integrationApps,
+    id
   );
 }
 

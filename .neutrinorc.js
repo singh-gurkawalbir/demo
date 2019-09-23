@@ -28,7 +28,8 @@ const getProxyOpts = () => {
   const opts = {
     target,
     secure,
-    changeOrigin: true
+    changeOrigin: true,
+    timeout: 10 * 60 * 1000,
     // pathRewrite: {
     //  '^/api': '',
     // },
