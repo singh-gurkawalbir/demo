@@ -1,7 +1,7 @@
 /* global describe, test, expect, fail,beforeEach,afterEach */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
-import { call, take, race, put } from 'redux-saga/effects';
+import { call, take, race, put, delay } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
@@ -188,6 +188,7 @@ describe(`apiCallWithRetry saga`, () => {
           dispatchRequestAction: true,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(2 * 60 * 1000),
       });
       // if an effect does not succeeds in a race...we get an undefined
       const resp = {
@@ -239,6 +240,7 @@ describe(`apiCallWithRetry saga`, () => {
           dispatchRequestAction: true,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(120000),
       });
 
       // How can we inject a logout action to resolve
@@ -264,6 +266,7 @@ describe(`apiCallWithRetry saga`, () => {
           dispatchRequestAction: true,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(120000),
       });
 
       // How can we inject a logout action
@@ -289,6 +292,7 @@ describe(`apiCallWithRetry saga`, () => {
           dispatchRequestAction: true,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(120000),
       });
 
       // to resolve the race between two effects

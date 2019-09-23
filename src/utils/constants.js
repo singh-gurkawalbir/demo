@@ -14,6 +14,7 @@ export const INTEGRATION_ACCESS_LEVELS = Object.freeze({
 });
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',
+  UNINSTALL: 'uninstall',
   HAS_OFFLINE_CONNECTIONS: 'has_offline_connections',
   HAS_ERRORS: 'has_errors',
   SUCCESS: 'success',
@@ -24,6 +25,7 @@ export const STANDALONE_INTEGRATION = Object.freeze({
 });
 export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
+  UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
 });
 export const PERMISSIONS = Object.freeze({
