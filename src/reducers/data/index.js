@@ -30,6 +30,20 @@ export function resourceDetailsMap(state, options) {
   return fromResources.resourceDetailsMap(state && state.resources, options);
 }
 
+// #region integration resource selectors
+export function integrationInstallSteps(state, id) {
+  return fromResources.integrationInstallSteps(state && state.resources, id);
+}
+
+export function integrationAppSettings(state, id) {
+  return fromResources.integrationAppSettings(state && state.resources, id);
+}
+
+export function defaultStoreId(state, id) {
+  return fromResources.defaultStoreId(state && state.resources, id);
+}
+
+// #endregion
 export function processors(state) {
   return fromResources.processors(state && state.resources);
 }
