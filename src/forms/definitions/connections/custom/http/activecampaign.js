@@ -13,9 +13,9 @@ export default {
     '/http/auth/token/location': 'url',
     '/http/auth/token/paramName': 'api_key',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.activecampaignSubdomain': {
       id: 'http.activecampaignSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -41,19 +41,20 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.activecampaignSubdomain', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

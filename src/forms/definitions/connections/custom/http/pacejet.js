@@ -19,17 +19,16 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.pacejetLocation': {
       id: 'http.unencrypted.pacejetLocation',
       type: 'text',
       label: 'Pacejet Location',
       helpText: 'Please reach out to Pacejet support team for location header.',
       required: true,
     },
-    {
+    'http.encrypted.pacejetLicenseKey': {
       id: 'http.encrypted.pacejetLicenseKey',
       type: 'text',
       label: 'Pacejet License Key',
@@ -40,12 +39,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.pacejetLocation',
+      'http.encrypted.pacejetLicenseKey',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

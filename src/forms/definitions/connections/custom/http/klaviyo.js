@@ -10,9 +10,9 @@ export default {
     '/http/ping/relativeURI':
       '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       type: 'text',
       label: 'API Key',
@@ -24,12 +24,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

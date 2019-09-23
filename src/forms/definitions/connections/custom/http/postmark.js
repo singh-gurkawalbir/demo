@@ -16,9 +16,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.serverToken': {
       id: 'http.encrypted.serverToken',
       label: 'Server Token',
       defaultValue: '',
@@ -30,7 +30,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.accountToken': {
       id: 'http.encrypted.accountToken',
       label: 'Account Token',
       defaultValue: '',
@@ -42,12 +42,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.encrypted.serverToken',
+      'http.encrypted.accountToken',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -9,24 +9,25 @@ export default {
     '/http/ping/relativeURI': '/2010-04-01/Accounts',
     '/http/ping/method': 'GET',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'The Account Sid of your Twilio account.',
       label: 'Account Sid',
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'The token of your Twilio account.',
       label: 'Auth Token',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.basic.username', 'http.auth.basic.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -12,9 +12,9 @@ export default {
     '/http/ping/relativeURI': '/v3/accounts',
     '/http/headers': [{ name: 'Content-Type', value: 'application/json' }],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accountType: {
       id: 'accountType',
       type: 'select',
       label: 'Account Type:',
@@ -40,16 +40,17 @@ export default {
         return 'trading';
       },
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       helpText: 'Please enter your API token here.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'accountType', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

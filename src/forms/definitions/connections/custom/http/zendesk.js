@@ -9,9 +9,9 @@ export default {
     '/http/ping/relativeURI': '/api/v2/users.json',
     '/http/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'zendesk.subdomain': {
       id: 'zendesk.subdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -37,16 +37,20 @@ export default {
         return subdomain;
       },
     },
-    { fieldId: 'http.auth.basic.username' },
-    {
-      fieldId: 'http.auth.basic.password',
-    },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
+    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'zendesk.subdomain',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

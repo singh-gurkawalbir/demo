@@ -26,9 +26,9 @@ export default {
       '/http/ping/body': JSON.stringify(pingBody),
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.partnerUserId': {
       id: 'http.unencrypted.partnerUserId',
       type: 'text',
       label: 'Partner User ID',
@@ -36,7 +36,7 @@ export default {
         'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
       required: true,
     },
-    {
+    'http.encrypted.partnerUserSecret': {
       id: 'http.encrypted.partnerUserSecret',
       type: 'text',
       inputType: 'password',
@@ -47,12 +47,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.partnerUserId',
+      'http.encrypted.partnerUserSecret',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

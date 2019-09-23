@@ -12,9 +12,9 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ',',
     '/http/headers': [{ name: 'Accept', value: 'application/json' }],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'ZohoCRM.settings.all',
@@ -185,12 +185,13 @@ export default {
         'ZohoCRM.modules.notes.DELETE',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.oauth.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

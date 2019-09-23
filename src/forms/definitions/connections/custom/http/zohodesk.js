@@ -17,9 +17,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.organizationId': {
       id: 'http.unencrypted.organizationId',
       label: 'Organization Id',
       required: true,
@@ -27,7 +27,7 @@ export default {
       helpText:
         'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
     },
-    {
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'Desk.tickets.ALL',
@@ -58,12 +58,17 @@ export default {
         'Desk.search.READ',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.organizationId',
+      'http.auth.oauth.scope',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

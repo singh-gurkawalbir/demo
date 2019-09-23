@@ -12,9 +12,9 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://rest.tsheets.com/api/v1/grant',
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.tsheetsSubdomain': {
       id: 'http.tsheetsSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -40,12 +40,13 @@ export default {
         return subdomain;
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.tsheetsSubdomain'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
