@@ -15,6 +15,7 @@ import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
+import TrashIcon from '../../components/icons/TrashIcon';
 
 export default [
   { label: 'Home', path: '/', Icon: HomeIcon },
@@ -22,8 +23,9 @@ export default [
     label: 'Tools',
     Icon: ToolsIcon,
     children: [
-      { label: 'Flow builder', path: '/flowbuilder', Icon: FlowBuilderIcon },
-      { label: 'Data loader', path: '/dataloader', Icon: DataLoaderIcon },
+      { label: 'Flow builder', path: '/flowBuilder', Icon: FlowBuilderIcon },
+      { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
+      { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
     ],
   },
   {

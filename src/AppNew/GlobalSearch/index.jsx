@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   searchResults: {
     position: 'fixed',
-    zIndex: theme.zIndex.appBar + 1,
+    zIndex: theme.zIndex.modal - 1,
     maxHeight: '75vh',
     overflow: 'auto',
     width: '100%',
@@ -136,8 +136,8 @@ function GlobalSearch({ location }) {
       return 0; // names must be equal
     });
   });
-  const handleChange = e => {
-    dispatch(actions.patchFilter('global', { keyword: e.target.value }));
+  const handleChange = keyword => {
+    dispatch(actions.patchFilter('global', { keyword }));
   };
 
   return (
@@ -152,6 +152,7 @@ function GlobalSearch({ location }) {
                     <Typography
                       color="inherit"
                       component={Link}
+                      onClick={() => handleChange('')}
                       to={`${location.pathname}/edit/${r.type}/${r.id}`}>
                       {r.name}
                     </Typography>
@@ -170,7 +171,7 @@ function GlobalSearch({ location }) {
           <SearchIcon />
         </div>
         <InputBase
-          onChange={handleChange}
+          onChange={e => handleChange(e.target.value)}
           placeholder="Global search…"
           classes={{
             root: classes.inputRoot,
