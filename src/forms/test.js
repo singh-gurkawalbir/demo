@@ -1,6 +1,96 @@
-/* global describe, test, expect */
+/* global describe, test, expect, jest, fail */
+
 import jsonPatch from 'fast-json-patch';
-import { getMissingPatchSet, sanitizePatchSet } from './utils';
+import {
+  getMissingPatchSet,
+  sanitizePatchSet,
+  getPatchPathForCustomForms,
+  getFieldById,
+  getFieldByName,
+} from './utils';
+import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
+
+jest.mock('./definitions/index', () => ({
+  __esModule: true,
+  default: {
+    someResourceType: {
+      subForms: {
+        someSubform: {
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+            'custom.Field': {
+              fieldId: 'custom.Field',
+              someProp: 'faa',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField', 'custom.Field'],
+          },
+        },
+        common: {
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
+          },
+        },
+        bunchOfFieldsWithoutfieldMap: {
+          layout: {
+            fields: ['bunchOfFieldsWithoutfieldMap'],
+          },
+        },
+        bunchOfFieldsWithoutLayoutFields: {
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+        },
+        bunchOffieldsWithOptionsHanlders: {
+          optionsHandler: (fieldId, fields) => {
+            if (fieldId === 'someField') {
+              return fields.find(field => field.id === 'someField').value;
+            }
+          },
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
+          },
+        },
+      },
+    },
+  },
+}));
+
+jest.mock('./fieldDefinitions/index', () => ({
+  __esModule: true,
+  default: {
+    someResourceType: {
+      someField: {},
+      exportData: {},
+      'file.decompressFiles': {},
+      'custom.Field': {},
+    },
+  },
+}));
 
 describe('Form Utils', () => {
   describe('getMissingPatchSet', () => {
@@ -147,5 +237,632 @@ describe('Form Utils', () => {
         html: { name: 'abc', rateLimit: { failValues: ['bad', 'fail'] } },
       });
     });
+  });
+
+  describe('getPatchPathFromCustomForms', () => {
+    test('should return null for meta having a non-existent field ', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['exportData'],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'non-existentField', 1);
+
+      expect(res).toEqual(null);
+    });
+    test('should generate field path for meta having just fields in the root ', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['exportData'],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual('/customForm/form/layout/fields/1');
+    });
+    test('should generate field path for meta having fields in containers ', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          type: 'tab||col||collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData'],
+            },
+            // either or containers or fields
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
+    });
+
+    test('generate field path for meta having fields in containers and in the root', () => {
+      const testMeta = {
+        fieldMap: {
+          someField: {
+            fieldId: 'someField',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          fields: ['someField'],
+          type: 'tab||col||collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData'],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual('/customForm/form/layout/containers/0/fields/1');
+    });
+
+    test('generate field path for meta having fields in deep containers', () => {
+      const testMeta = {
+        fieldMap: {
+          someField: {
+            fieldId: 'someField',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          exportData: {
+            fieldId: 'exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+        layout: {
+          type: 'tab||col||collapse',
+          containers: [
+            {
+              type: 'tab||col||collapse',
+              containers: [
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['someField'],
+                },
+                {
+                  label: 'optional some label or tab name',
+                  fields: ['exportData'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const res = getPatchPathForCustomForms(testMeta, 'exportData', 1);
+
+      expect(res).toEqual(
+        '/customForm/form/layout/containers/0/containers/1/fields/1'
+      );
+    });
+  });
+
+  describe('search field by id through the layout ', () => {
+    test('should correctly search for a field in the metadata', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            name: '/exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          someField: {
+            fieldId: 'someField',
+            name: '/someField',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+      };
+      const foundField = getFieldById({ meta: testMeta, id: 'someField' });
+
+      expect(foundField).toEqual({
+        fieldId: 'someField',
+        name: '/someField',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      });
+    });
+  });
+
+  describe('search field by name through the fieldMap ', () => {
+    test('should correctly search for a field in the fieldMap', () => {
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            name: '/exportData',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+          someField: {
+            fieldId: 'someField',
+            name: '/someField',
+            visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+          },
+        },
+      };
+      const foundField = getFieldByName({
+        fieldMeta: testMeta,
+        name: '/exportData',
+      });
+
+      expect(foundField).toEqual({
+        fieldId: 'exportData',
+        name: '/exportData',
+        visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+      });
+    });
+  });
+});
+
+describe('form factory new layout', () => {
+  describe('field references filling behavior', () => {
+    test('should set defaults for multiple fields references correctly ', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldMap: {
+          exportData: { fieldId: 'exportData', someProp: 'blah' },
+          'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+        },
+        layout: {
+          fields: ['exportData'],
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData', 'file.decompressFiles'],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource
+      );
+
+      expect(val.fieldMap).toEqual({
+        exportData: {
+          defaultValue: '',
+          fieldId: 'exportData',
+          helpKey: 'someResourceType.exportData',
+          id: 'exportData',
+          name: '/exportData',
+          resourceId: undefined,
+          resourceType: 'someResourceType',
+          someProp: 'blah',
+        },
+        'file.decompressFiles': {
+          defaultValue: '',
+          fieldId: 'file.decompressFiles',
+          helpKey: 'someResourceType.file.decompressFiles',
+          id: 'file.decompressFiles',
+          name: '/file/decompressFiles',
+          resourceId: undefined,
+          resourceType: 'someResourceType',
+        },
+      });
+    });
+    test('should set defaults for multiple fields references located in different containers correctly ', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldMap: {
+          exportData: { fieldId: 'exportData', someProp: 'blah' },
+          'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+        },
+        layout: {
+          fields: ['exportData'],
+          type: 'tab||col||collapse',
+
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData'],
+            },
+            {
+              label: 'optional some label or tab name',
+              fields: ['file.decompressFiles'],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource
+      );
+
+      expect(val.fieldMap).toEqual({
+        exportData: {
+          defaultValue: '',
+          fieldId: 'exportData',
+          helpKey: 'someResourceType.exportData',
+          id: 'exportData',
+          name: '/exportData',
+          resourceId: undefined,
+          resourceType: 'someResourceType',
+          someProp: 'blah',
+        },
+        'file.decompressFiles': {
+          defaultValue: '',
+          fieldId: 'file.decompressFiles',
+          helpKey: 'someResourceType.file.decompressFiles',
+          id: 'file.decompressFiles',
+          name: '/file/decompressFiles',
+          resourceId: undefined,
+          resourceType: 'someResourceType',
+        },
+      });
+
+      expect(val.layout).toEqual({
+        fields: ['exportData'],
+        type: 'tab||col||collapse',
+        containers: [
+          {
+            label: 'optional some label or tab name',
+            fields: ['exportData'],
+          },
+          {
+            label: 'optional some label or tab name',
+            fields: ['file.decompressFiles'],
+          },
+        ],
+      });
+    });
+    describe('formId fields', () => {
+      test('should pick up references for a formId fields correctly and cascade visibility rules', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldMap: {
+            common: {
+              formId: 'common',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                label: 'optional some label or tab name',
+                fields: ['common'],
+                // either or containers or fields
+              },
+            ],
+          },
+        };
+        const val = formFactory.getFieldsWithDefaults(
+          testMeta,
+          resourceType,
+          resource
+        );
+
+        expect(val).toEqual({
+          fieldMap: {
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              someProp: 'foo',
+              resourceType: 'someResourceType',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                { field: 'someOtherField', is: ['foo'] },
+              ],
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                label: 'optional some label or tab name',
+                fields: ['someField'],
+              },
+            ],
+          },
+        });
+      });
+      test('should pick up references for a formId fields and correctly club them with other fields', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldMap: {
+            'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+            someSubform: {
+              formId: 'someSubform',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+            exportData: { fieldId: 'exportData' },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: ['file.decompressFiles', 'someSubform', 'exportData'],
+              },
+            ],
+          },
+        };
+        const val = formFactory.getFieldsWithDefaults(
+          testMeta,
+          resourceType,
+          resource
+        );
+
+        // we are checking if its flatteing in the references and layout correctly
+        expect(val).toEqual({
+          actions: undefined,
+          fieldMap: {
+            'custom.Field': {
+              defaultValue: '',
+              fieldId: 'custom.Field',
+              helpKey: 'someResourceType.custom.Field',
+              id: 'custom.Field',
+              name: '/custom/Field',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someProp: 'faa',
+              visibleWhenAll: [
+                {
+                  field: 'fieldA',
+                  is: ['someValue'],
+                },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
+                },
+              ],
+            },
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              someProp: 'foo',
+              resourceType: 'someResourceType',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                { field: 'someOtherField', is: ['foo'] },
+              ],
+            },
+            'file.decompressFiles': {
+              defaultValue: '',
+              fieldId: 'file.decompressFiles',
+              helpKey: 'someResourceType.file.decompressFiles',
+              id: 'file.decompressFiles',
+              name: '/file/decompressFiles',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: [
+                  'file.decompressFiles',
+                  'someField',
+                  'custom.Field',
+                  'exportData',
+                ],
+              },
+            ],
+          },
+        });
+      });
+
+      test('should throw an error when fieldMap do not exist for the subform', () => {
+        const resourceType = 'someResourceType';
+        const resource = {};
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldMap: {
+            bunchOfFieldsWithoutfieldMap: {
+              formId: 'bunchOfFieldsWithoutfieldMap',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+          },
+          layout: {
+            type: 'tab||col||collapse',
+            containers: [
+              {
+                label: 'optional some label or tab name',
+                fields: ['bunchOfFieldsWithoutfieldMap'],
+              },
+            ],
+          },
+        };
+
+        try {
+          formFactory.getFieldsWithDefaults(testMeta, resourceType, resource);
+          fail();
+        } catch (e) {
+          expect(e.message).toEqual(
+            'could not find fieldMap for given form id bunchOfFieldsWithoutfieldMap'
+          );
+        }
+      });
+    });
+  });
+});
+
+describe('getFieldsWithoutFuncs ', () => {
+  test('should apply all default fields and exclude any function props', () => {
+    const resourceType = 'someResourceType';
+    const resource = {};
+    const testMeta = {
+      fieldMap: {
+        common: {
+          formId: 'common',
+          visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+        },
+        exportData: { fieldId: 'exportData', someFuncProp: a => a },
+      },
+      layout: {
+        type: 'tab||col||collapse',
+        containers: [
+          {
+            label: 'optional some label or tab name',
+            fields: ['common', 'exportData'],
+          },
+        ],
+      },
+    };
+    const val = formFactory.getFieldsWithoutFuncs(
+      testMeta,
+      resource,
+      resourceType
+    );
+    const expectedfieldMap = {
+      exportData: {
+        defaultValue: '',
+        fieldId: 'exportData',
+        helpKey: 'someResourceType.exportData',
+        id: 'exportData',
+        name: '/exportData',
+        resourceId: undefined,
+        resourceType: 'someResourceType',
+      },
+      someField: {
+        defaultValue: '',
+        fieldId: 'someField',
+        helpKey: 'someResourceType.someField',
+        id: 'someField',
+        name: '/someField',
+        resourceId: undefined,
+        resourceType: 'someResourceType',
+        someProp: 'foo',
+        visibleWhenAll: [
+          {
+            field: 'fieldA',
+            is: ['someValue'],
+          },
+          {
+            field: 'someOtherField',
+            is: ['foo'],
+          },
+        ],
+      },
+    };
+
+    expect(val.fieldMap).toEqual(expectedfieldMap);
+
+    expect(val.extractedInitFunctions.exportData.someFuncProp('xyz')).toEqual(
+      'xyz'
+    );
+  });
+  test('should extract all function props and tie it the corresponding field reference', () => {
+    const resourceType = 'someResourceType';
+    const resource = {};
+    const testMeta = {
+      fieldMap: {
+        common: {
+          formId: 'common',
+          visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+        },
+        exportData: { fieldId: 'exportData', someFuncProp: a => a },
+      },
+      layout: {
+        type: 'tab||col||collapse',
+        containers: [
+          {
+            label: 'optional some label or tab name',
+            fields: ['common', 'exportData'],
+          },
+          // either or containers or fields
+        ],
+      },
+    };
+    const val = formFactory.getFieldsWithoutFuncs(
+      testMeta,
+      resource,
+      resourceType
+    );
+
+    // TODO: is there any matcher for type function...that would be better than using anything
+
+    expect(val.extractedInitFunctions).toEqual({
+      exportData: {
+        someFuncProp: expect.anything(),
+      },
+    });
+    // trying to assert that the function works as expected
+    expect(val.extractedInitFunctions.exportData.someFuncProp('xyz')).toEqual(
+      'xyz'
+    );
+  });
+});
+
+describe('form factory options handler amalgamation getAmalgamatedOptionsHandler', () => {
+  test('should club options handlers both in the root metadata as well within the containers', () => {
+    const resourceType = 'someResourceType';
+    // metadata with a form visibility rule
+    const testMeta = {
+      optionsHandler: fieldId => {
+        if (fieldId === 'anotherFieldId') {
+          return 'someValue';
+        }
+      },
+      fieldMap: {
+        bunchOffieldsWithOptionsHanlders: {
+          formId: 'bunchOffieldsWithOptionsHanlders',
+          visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+        },
+      },
+    };
+    const amalgamatedOptionsHandlers = getAmalgamatedOptionsHandler(
+      testMeta,
+      resourceType
+    );
+
+    // checking for the optionsHandler within the meta
+    expect(amalgamatedOptionsHandlers('anotherFieldId')).toEqual('someValue');
+    expect(
+      amalgamatedOptionsHandlers('someField', [
+        { id: 'someField', value: 'hi' },
+      ])
+    ).toEqual('hi');
   });
 });

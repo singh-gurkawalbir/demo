@@ -41,7 +41,11 @@ const SearchParamsModal = props => {
             fieldSets,
           }}>
           <div>
-            <Button onClick={onClose} size="small" variant="contained">
+            <Button
+              onClick={onClose}
+              size="small"
+              variant="contained"
+              color="secondary">
               Cancel
             </Button>
             <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
@@ -72,15 +76,19 @@ export default function DynaAssistantSearchParams(props) {
       )}
       <Button
         variant="contained"
+        color="primary"
         onClick={() => setShowSearchParamsModal(true)}>
         {label || paramMeta.paramLocation === PARAMETER_LOCATION.BODY
           ? 'Configure Body Parameters'
           : 'Configure Search Parameters'}{' '}
         {required && !isValid ? '*' : ''}
       </Button>
-      <FormHelperText error={!isValid}>
-        {!isValid ? 'Please enter required parameters' : ''}
-      </FormHelperText>
+
+      {!isValid && (
+        <FormHelperText error={!isValid}>
+          {!isValid ? 'Please enter required parameters' : ''}
+        </FormHelperText>
+      )}
     </Fragment>
   );
 }

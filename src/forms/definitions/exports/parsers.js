@@ -1,4 +1,7 @@
 export default {
-  fields: [{ fieldId: 'parsers[*].version' }, { fieldId: 'parsers[*].rules' }],
-  fieldSets: [],
+  fieldMap: {
+    'parsers[*].version': { fieldId: 'parsers[*].version' },
+    'parsers[*].rules': { fieldId: 'parsers[*].rules' },
+  },
+  layout: { fields: ['parsers[*].version', 'parsers[*].rules'] },
 };
