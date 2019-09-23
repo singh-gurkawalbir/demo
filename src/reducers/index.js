@@ -186,6 +186,7 @@ export function userProfilePreferencesProps(state) {
     dateFormat,
     timezone,
     timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
   } = { ...profile, ...preferences };
 
   return {
@@ -199,6 +200,7 @@ export function userProfilePreferencesProps(state) {
     dateFormat,
     timezone,
     timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
   };
 }
 
