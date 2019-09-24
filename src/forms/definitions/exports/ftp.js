@@ -1,4 +1,28 @@
 export default {
+  init: fieldMeta => {
+    const fileDefinitionRulesField =
+      fieldMeta.fieldMap['file.filedefinition.rules'];
+
+    if (!fileDefinitionRulesField.userDefinitionId) {
+      delete fileDefinitionRulesField.visibleWhenAll;
+      fileDefinitionRulesField.visibleWhen = [
+        {
+          field: 'edix12.format',
+          isNot: [''],
+        },
+        {
+          field: 'fixed.format',
+          isNot: [''],
+        },
+        {
+          field: 'edifact.format',
+          isNot: [''],
+        },
+      ];
+    }
+
+    return fieldMeta;
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {
@@ -43,4 +67,28 @@ export default {
       { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'saverawdata',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // will be button that saves file defs and then submit resource
+      id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+  ],
 };

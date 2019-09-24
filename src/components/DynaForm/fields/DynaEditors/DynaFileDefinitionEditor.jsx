@@ -11,8 +11,6 @@ import actions from '../../../../actions';
  *  1. In Export creation , when specific format is selected to fetch parser rules
  *  2. When editing an export, resource has a userDefinitionId using which we get rules
  *    customized and saved by user while creation
- *  3. So 'hideFileDefinitionEditor' checks if neither of userDefinitionId nor format is selected
- * Rule is always in a String format saved against 'id'
  */
 
 function DynaFileDefinitionEditor(props) {
@@ -27,11 +25,6 @@ function DynaFileDefinitionEditor(props) {
     options = {},
     value,
   } = props;
-  const hideFileDefinitionEditor =
-    !userDefinitionId &&
-    !formContext.value['/edix12/format'] &&
-    !formContext.value['/edifact/format'] &&
-    !formContext.value['/fixed/format'];
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
   const dispatch = useDispatch();
@@ -127,10 +120,6 @@ function DynaFileDefinitionEditor(props) {
       setIsRuleChanged(true);
     }
   }, [rule]);
-
-  if (hideFileDefinitionEditor) {
-    return null;
-  }
 
   return (
     <Fragment>
