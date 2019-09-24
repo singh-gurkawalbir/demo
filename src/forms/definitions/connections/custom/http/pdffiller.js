@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
@@ -9,12 +9,15 @@ export default {
     '/http/auth/oauth/authURI': 'https://developers.pdffiller.com/api_access',
     '/http/auth/oauth/tokenURI': 'https://api.pdffiller.com/v2/oauth/token',
   }),
-  fields: [{ fieldId: 'name' }],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     if (retValues['/http/authType'] === 'oauth') {
@@ -34,9 +34,9 @@ export default {
       '/http/ping/method': 'GET',
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.authType': {
       id: 'http.authType',
       type: 'select',
       label: 'Authentication Type',
@@ -52,7 +52,7 @@ export default {
       helpText:
         'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
     },
-    {
+    'http.storeURL': {
       id: 'http.storeURL',
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
@@ -67,30 +67,20 @@ export default {
         },
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
     },
-    {
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'read_content',
@@ -135,51 +125,54 @@ export default {
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
       ],
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['oauth'],
-        },
-      ],
+      visibleWhen: [{ field: 'http.authType', is: ['oauth'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
-  actions: [
-    {
-      id: 'oauth',
-      label: 'Save & Authorize',
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['oauth'],
-        },
-      ],
-    },
-    {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['basic'],
-        },
-      ],
-    },
-    {
-      id: 'save',
-      label: 'Test and Save',
-      visibleWhen: [
-        {
-          field: 'http.authType',
-          is: ['basic'],
-        },
-      ],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+    actions: [
+      {
+        id: 'oauth',
+        label: 'Save & Authorize',
+        visibleWhen: [
+          {
+            field: 'http.authType',
+            is: ['oauth'],
+          },
+        ],
+      },
+      {
+        id: 'test',
+        label: 'Test',
+        visibleWhen: [
+          {
+            field: 'http.authType',
+            is: ['basic'],
+          },
+        ],
+      },
+      {
+        id: 'save',
+        label: 'Test and Save',
+        visibleWhen: [
+          {
+            field: 'http.authType',
+            is: ['basic'],
+          },
+        ],
+      },
+    ],
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.authType',
+      'http.storeURL',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+      'http.auth.oauth.scope',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

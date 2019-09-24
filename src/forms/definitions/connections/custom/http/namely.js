@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'namely',
@@ -19,9 +19,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.namelyCompanyName': {
       id: 'http.namelyCompanyName',
       type: 'text',
       startAdornment: 'https://',
@@ -46,18 +46,20 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'Personal Access Token',
       required: true,
-      helpText: 'The personal access token of your account on namely.',
+      helpText:
+        'The personal access token of your account on namely. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Personal Access Token safe. This can be obtained from the Settings section and Personal Access Token subsection.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.namelyCompanyName', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

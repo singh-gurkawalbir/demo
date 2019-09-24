@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'spreecommerce',
@@ -12,9 +12,9 @@ export default {
     '/http/auth/token/headerName': 'X-Spree-Token',
     '/http/auth/token/scheme': ' ',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.baseURI': {
       fieldId: 'http.baseURI',
       endAdornment: '/api',
       label: 'Base URI',
@@ -26,16 +26,17 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.baseURI', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

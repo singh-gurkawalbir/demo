@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'solidcommerce',
@@ -15,26 +15,26 @@ export default {
     '/http/encrypted/securityKey': encodeURIComponent(
       formValues['/http/encrypted/securityKey']
     ),
-    '/http/auth/ping/successPath':
-      '/LiquidateDirect/GetAllCompanyLists/DateTime',
-    '/http/auth/ping/errorPath': '/LiquidateDirect/Error/ErrorText',
+    '/http/ping/successPath': '/LiquidateDirect/GetAllCompanyLists/DateTime',
+    '/http/ping/errorPath': '/LiquidateDirect/Error/ErrorText',
     '/http/headers': [
       { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.securityKey': {
       id: 'http.encrypted.securityKey',
       label: 'Security Key:',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText: 'Enter your Solid Commerce Developer Key or Security Key here.',
+      helpText:
+        'Enter your Solid Commerce Developer Key or Security Key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Security Key safe. This can be obtained from the Settings section and Security Key subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.appKey': {
       id: 'http.encrypted.appKey',
       label: 'Application Key:',
       type: 'text',
@@ -45,12 +45,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.encrypted.securityKey', 'http.encrypted.appKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

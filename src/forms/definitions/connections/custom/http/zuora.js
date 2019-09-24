@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'zuora',
@@ -23,10 +23,9 @@ export default {
       formValues['/http/sandbox'] === 'sandbox' ? 'sandbox-api' : ''
     }.zuora.com/http/`,
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.apiAccessKeyId': {
       id: 'http.unencrypted.apiAccessKeyId',
       required: true,
       type: 'text',
@@ -35,7 +34,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.apiSecretAccessKey': {
       id: 'http.encrypted.apiSecretAccessKey',
       required: true,
       type: 'text',
@@ -46,7 +45,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
       label: 'Account Type:',
@@ -71,12 +70,18 @@ export default {
         return 'production';
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.apiAccessKeyId',
+      'http.encrypted.apiSecretAccessKey',
+      'http.sandbox',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

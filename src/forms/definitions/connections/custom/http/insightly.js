@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'insightly',
@@ -9,11 +9,12 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://api.insight.ly`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The API key of your Insightly account.',
+      helpText:
+        'The API key of your Insightly account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
       inputType: 'password',
       defaultValue: '',
       label: 'API Key',
@@ -21,12 +22,13 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.basic.username'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'faire',
@@ -21,9 +21,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.accountType': {
       id: 'http.accountType',
       type: 'select',
       label: 'Account Type',
@@ -46,23 +46,25 @@ export default {
 
         return 'production';
       },
-      helpText: `Please select your environment here.`,
+      helpText: 'Please select your environment here.',
     },
-    {
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       label: 'API Access Token',
       required: true,
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      helpText: 'Please Enter the access token got from Faire support.',
+      helpText:
+        'Please Enter the access token got from Faire support. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.accountType', 'http.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
