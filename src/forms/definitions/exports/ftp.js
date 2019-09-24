@@ -7,11 +7,14 @@ export default {
       label: 'What would you like to Export?',
     },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-    'file.output': { fieldId: 'file.output' },
+    'file.output': {
+      fieldId: 'file.output',
+      defaultValue: r => (r && r.file && r.file.output) || 'records',
+    },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     file: { formId: 'file' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
@@ -30,7 +33,7 @@ export default {
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,

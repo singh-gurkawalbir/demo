@@ -1,38 +1,40 @@
 export default {
-  optionsHandler(fieldId, fields) {
+  optionsHandler: (fieldId, fields) => {
+    const fileType = fields.find(field => field.id === 'file.type');
+
     if (fieldId === 'uploadFile') {
-      const uploadFileField = fields.find(
-        field => field.fieldId === 'uploadFile'
-      );
-
-      // if there is a uploadFileField in the form meta
-      // then provide the file type if not return null
-      // then the prevalent mode value will take over
-      if (uploadFileField) {
-        const fileTypeField = fields.find(
-          field => field.fieldId === 'file.type'
-        );
-
-        return fileTypeField.value.toLowerCase();
-      }
+      return fileType.value;
     }
 
-    return null;
+    if (fieldId === 'file.filedefinition.rules') {
+      let definitionFieldId;
+
+      // Fetch format specific Field Definition field to fetch id
+      if (fileType.value === 'filedefinition')
+        definitionFieldId = 'edix12.format';
+      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
+      else definitionFieldId = 'edifact.format';
+      const definition = fields.find(field => field.id === definitionFieldId);
+      const resourcePath = fields.find(
+        field => field.id === 'file.fileDefinition.resourcePath'
+      );
+
+      return {
+        format: definition && definition.format,
+        definitionId: definition && definition.value,
+        resourcePath: resourcePath && resourcePath.value,
+      };
+    }
   },
   fieldMap: {
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: ['file.type'],
-      visibleWhenAll: [{ field: 'file.output', is: ['records'] }],
+      refreshOptionsOnChangesTo: 'file.type',
     },
-    'file.csv': {
-      fieldId: 'file.csv',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['csv'] },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
+    'file.csv': { fieldId: 'file.csv' },
+    'file.xlsx': { fieldId: 'file.xlsx' },
+    'file.xml': { fieldId: 'file.xml' },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
       visibleWhenAll: [
@@ -40,40 +42,20 @@ export default {
         { field: 'file.output', is: ['records'] },
       ],
     },
-    'file.xlsx.hasHeaderRow': {
-      fieldId: 'file.xlsx.hasHeaderRow',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['xlsx'] },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    'file.xlsx.keyColumns': {
-      fieldId: 'file.xlsx.keyColumns',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['xlsx'] },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    'file.xml.resourcePath': {
-      fieldId: 'file.xml.resourcePath',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['xml'] },
-        { field: 'file.output', is: ['records'] },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
+    'file.filedefinition.rules': {
+      fieldId: 'file.filedefinition.rules',
+      refreshOptionsOnChangesTo: [
+        'edix12.format',
+        'fixed.format',
+        'edifact.format',
+        'file.fileDefinition.resourcePath',
       ],
     },
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['edi', 'fixedWidth'] },
-        { field: 'file.output', is: ['records'] },
-      ],
-    },
-    'file.fileDefinition._fileDefinitionId': {
-      fieldId: 'file.fileDefinition._fileDefinitionId',
-      visibleWhenAll: [
-        { field: 'file.type', is: ['edi', 'fixedWidth'] },
-        { field: 'file.output', is: ['records'] },
-      ],
     },
   },
   layout: {
@@ -81,12 +63,13 @@ export default {
       'file.type',
       'uploadFile',
       'file.csv',
+      'file.xlsx',
+      'file.xml',
       'file.json.resourcePath',
-      'file.xlsx.hasHeaderRow',
-      'file.xlsx.keyColumns',
-      'file.xml.resourcePath',
-      'file.fileDefinition.resourcePath',
-      'file.fileDefinition._fileDefinitionId',
+      'edix12.format',
+      'fixed.format',
+      'edifact.format',
+      'file.filedefinition.rules',
     ],
   },
 };

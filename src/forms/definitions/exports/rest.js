@@ -106,7 +106,6 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     rawData: { fieldId: 'rawData' },
-    sampleData: { fieldId: 'sampleData' },
     'rest.pagingMethod': { fieldId: 'rest.pagingMethod' },
     'rest.nextPagePath': { fieldId: 'rest.nextPagePath' },
     'rest.linkHeaderRelation': { fieldId: 'rest.linkHeaderRelation' },
@@ -142,7 +141,6 @@ export default {
       'rest.once.method',
       'rest.once.postBody',
       'rawData',
-      'sampleData',
     ],
     type: 'collapse',
     containers: [

@@ -568,7 +568,7 @@ export default {
   },
   rawData: {
     type: 'rawdata',
-    label: 'Raw Data',
+    label: 'Refresh Sample Data',
   },
   sampleData: {
     type: 'sampledata',

@@ -106,7 +106,6 @@ export default {
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
     rawData: { fieldId: 'rawData' },
-    sampleData: { fieldId: 'sampleData' },
     transform: { fieldId: 'transform' },
   },
   layout: {
@@ -121,7 +120,6 @@ export default {
       'once.booleanField',
       'netsuite.skipGrouping',
       'rawData',
-      'sampleData',
     ],
 
     type: 'collapse',

@@ -1,27 +1,16 @@
 import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import { FormContext } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
-import CodeEditor from '../../CodeEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { isNewId } from '../../../utils/resource';
 
-const useStyles = makeStyles(() => ({
-  container: {
-    height: '25vh',
-    width: '80%',
-  },
-}));
-
 function DynaRawData(props) {
-  const classes = useStyles();
   const {
     label,
-    mode,
     id,
     onFieldChange,
     resourceId,
@@ -76,13 +65,7 @@ function DynaRawData(props) {
   return (
     <div>
       <Typography>{label}</Typography>
-      <div className={classes.container}>
-        <CodeEditor
-          name="rawData"
-          value={rawData}
-          mode={mode || 'json'}
-          readOnly
-        />
+      <div>
         {status === 'requested' && <Spinner />}
         {status !== 'requested' && (
           <RefreshIcon onClick={handleRefreshRawData} />

@@ -1,7 +1,7 @@
 export default {
   uploadFile: {
     type: 'uploadfile',
-    required: true,
+    // required: true,
     label: 'Sample File (that would be exported)',
     resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
@@ -119,6 +119,7 @@ export default {
       },
       { field: 'file.output', is: ['records'] },
     ],
+    defaultValue: r => r && r.file && r.file.csv,
   },
   'file.xlsx': {
     type: 'csvparse',
@@ -130,6 +131,7 @@ export default {
       },
       { field: 'file.output', is: ['records'] },
     ],
+    defaultValue: r => r && r.file && r.file.xlsx,
   },
   'file.xml': {
     type: 'xmlparse',
@@ -141,6 +143,7 @@ export default {
       },
       { field: 'file.output', is: ['records'] },
     ],
+    defaultValue: r => r && r.file && r.file.xml,
   },
   'edix12.format': {
     type: 'filedefinitionselect',
@@ -191,6 +194,11 @@ export default {
       },
       { field: 'file.output', is: ['records'] },
     ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
 
   pageSize: {
