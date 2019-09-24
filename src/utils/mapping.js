@@ -1,3 +1,5 @@
+import { adaptorTypeMap } from './resource';
+
 export default {
   getDefaultDataType: value => {
     if (
@@ -72,30 +74,81 @@ export default {
   },
   getMappingPath: application => {
     switch (application) {
-      case 'rest':
+      case adaptorTypeMap.RESTImport:
         return '/mapping/fields';
-      case 'netsuite':
+      case adaptorTypeMap.NetSuiteDistributedImport:
         // TODO
         return '';
       default:
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.RDBMSImport:
+      case adaptorTypeMap.SalesforceImport:
     }
   },
   getLookupPath: application => {
     switch (application) {
-      case 'rest':
+      case adaptorTypeMap.RESTImport:
         return '/rest/lookup';
-      case 'netsuite':
+      case adaptorTypeMap.NetSuiteDistributedImport:
         // TODO
         return '';
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.RDBMSImport:
+      case adaptorTypeMap.SalesforceImport:
       default:
     }
   },
   getGenerateLabelForMapping: application => {
     switch (application) {
-      case 'rest':
+      case adaptorTypeMap.RESTImport:
         return 'REST API Field';
-      case 'netsuite':
+      case adaptorTypeMap.NetSuiteDistributedImport:
         return 'NetSuite Field';
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.RDBMSImport:
+      case adaptorTypeMap.SalesforceImport:
+      default:
+    }
+  },
+  getMappingFromResource: (resourceObj, appType) => {
+    if (!resourceObj) {
+      return;
+    }
+
+    /* TODO: With support for different application being adding up, 
+    path for mapping to be updated below */
+    switch (appType) {
+      case adaptorTypeMap.NetSuiteDistributedImport:
+        return resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
+      case adaptorTypeMap.RESTImport:
+        return resourceObj.mapping;
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.RDBMSImport:
+      case adaptorTypeMap.SalesforceImport:
       default:
     }
   },

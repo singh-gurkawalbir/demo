@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
+import { adaptorTypeMap } from '../../../../utils/resource';
 
 // TODO (Aditya) test cases to be added for save functionality
 
@@ -54,14 +55,14 @@ export default {
     let fieldMeta = {};
 
     switch (application) {
-      case 'rest':
+      case adaptorTypeMap.RESTImport:
         fieldMeta = RestMappingSettings.getMetaData({
           value,
           lookup,
           extractFields,
         });
         break;
-      case 'netsuite':
+      case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = NetsuiteMappingSettings.getMetaData({
           value,
           lookup,
