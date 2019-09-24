@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
+import { sanitizePreConstructedPatch } from '../../../forms/utils';
 import LookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -65,7 +66,14 @@ export default function StandaloneImportMapping(props) {
         });
       }
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      const sanitizedPatchSet = sanitizePreConstructedPatch(
+        patchSet,
+        resourceData
+      );
+
+      dispatch(
+        actions.resource.patchStaged(resourceId, sanitizedPatchSet, 'value')
+      );
       dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
     }
 

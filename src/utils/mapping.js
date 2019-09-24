@@ -66,7 +66,6 @@ export default {
       }
     }
   },
-
   getDefaultExpression: value => {
     if (value.extract && value.extract.indexOf('{{') !== -1) {
       return value.extract;
@@ -134,7 +133,7 @@ export default {
     }
 
     /* TODO: With support for different application being adding up, 
-    path for mapping to be updated below */
+      path for mapping to be updated below */
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
