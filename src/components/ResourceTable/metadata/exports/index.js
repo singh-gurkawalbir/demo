@@ -1,6 +1,5 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import Edit from '../../actions/Edit';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
 import {
@@ -23,5 +22,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Edit, Clone, AuditLogs, References, Delete],
+  rowActions: [Clone, AuditLogs, References, Delete],
 };

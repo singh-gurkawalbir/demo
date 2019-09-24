@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  DialogContent,
+  Dialog,
+  MenuItem,
+  IconButton,
+  Select,
+  FormControl,
+  Button,
+  DialogTitle,
+  Divider,
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import Select from '@material-ui/core/Select';
-import { MenuItem } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
 import actions from '../../actions';
 
 const styles = theme => ({

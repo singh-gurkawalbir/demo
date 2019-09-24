@@ -40,6 +40,7 @@ export default [
       { label: 'Agents', path: '/agents', Icon: AgentsIcon },
       { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
       { label: 'Templates', path: '/templates', Icon: ConnectionsIcon },
+      { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
     ],
   },
   { label: 'Marketplace', path: '/marketplace', Icon: MarketplaceIcon },

@@ -1,5 +1,4 @@
 import Delete from '../../actions/Delete';
-import Edit from '../../actions/Edit';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
@@ -22,5 +21,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Edit, AuditLogs, References, Delete],
+  rowActions: [AuditLogs, References, Delete],
 };

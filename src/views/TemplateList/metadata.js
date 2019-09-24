@@ -1,6 +1,5 @@
 import Link from '@material-ui/core/Link';
 import Delete from '../../components/ResourceTable/actions/Delete';
-import Edit from '../../components/ResourceTable/actions/Edit';
 import UploadZipFile from '../../components/ResourceTable/actions/Templates/UploadZipFile';
 import Download from '../../components/ResourceTable/actions/Templates/Download';
 import TogglePublish from '../../components/ResourceTable/actions/Templates/TogglePublish';
@@ -47,5 +46,5 @@ export default {
       value: r => (r.published ? 'Yes' : 'No'),
     },
   ],
-  rowActions: [Edit, UploadZipFile, Download, TogglePublish, Delete],
+  rowActions: [UploadZipFile, Download, TogglePublish, Delete],
 };

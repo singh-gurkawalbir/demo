@@ -1,6 +1,5 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import Edit from '../../actions/Edit';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
 import AgentToken from '../../../AgentToken';
 import {
@@ -46,5 +45,5 @@ export default {
       value: r => getAgentDownloadInstaller(r),
     },
   ],
-  rowActions: [Edit, References, Delete],
+  rowActions: [References, Delete],
 };

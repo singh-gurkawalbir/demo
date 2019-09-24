@@ -1,13 +1,15 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  Dialog,
+  DialogContent,
+  IconButton,
+  Button,
+  DialogTitle,
+  Divider,
+} from '@material-ui/core/Dialog';
 import CloseIcon from '@material-ui/icons/Close';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import actions from '../../actions';
 

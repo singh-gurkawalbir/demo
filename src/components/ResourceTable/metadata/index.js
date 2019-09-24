@@ -4,7 +4,7 @@ import exports from './exports';
 import imports from './imports';
 import scripts from './scripts';
 import stacks from './stacks';
-import registerConnections from './registerConnections';
+import connectors from './connectors';
 import defaultResource from './default';
 
 const metadata = {
@@ -14,7 +14,7 @@ const metadata = {
   imports,
   scripts,
   stacks,
-  registerConnections,
+  connectors,
 };
 
 export default function(resourceType) {

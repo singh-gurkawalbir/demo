@@ -1,5 +1,4 @@
 import Delete from '../../actions/Delete';
-import Edit from '../../actions/Edit';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import StackShares from '../../actions/StackShares';
@@ -43,5 +42,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Edit, StackShares, AuditLogs, References, Delete],
+  rowActions: [StackShares, AuditLogs, References, Delete],
 };

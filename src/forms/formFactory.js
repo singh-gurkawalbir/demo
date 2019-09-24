@@ -137,6 +137,7 @@ const getResourceFormAssets = ({
     case 'scripts':
     case 'stacks':
     case 'templates':
+    case 'connectors':
       meta = formMeta[resourceType];
       ({ fieldMap, layout } = meta);
 

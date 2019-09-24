@@ -109,9 +109,7 @@ export default (state = {}, action) => {
       resourceIndex = state[resourceType].findIndex(r => r._id === id);
 
       if (resourceIndex > -1) {
-        return produce(state, d => {
-          const draft = d;
-
+        return produce(state, draft => {
           draft[resourceType][resourceIndex] = {
             ...draft[resourceType][resourceIndex],
             ...resourceFieldUpdates,
@@ -126,9 +124,7 @@ export default (state = {}, action) => {
       resourceIndex = state.sshares.findIndex(user => user._id === id);
 
       if (resourceIndex > -1) {
-        return produce(state, d => {
-          const draft = d;
-
+        return produce(state, draft => {
           draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
             .disabled;
         });
