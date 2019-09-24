@@ -14,7 +14,6 @@ import CeligoIconButton from '../../components/IconButton';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateTemplateZip from '../../components/GenerateTemplateZip';
 import metadata from './metadata';
-import { templates } from '../../reducers/data/marketPlace';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -65,9 +64,7 @@ export default function TemplateList(props) {
           <KeywordSearch filterKey="templates" defaultFilter={defaultFilter} />
           <CeligoIconButton
             component={Link}
-            to={`${
-              location.pathname
-            }/add/${templates}/new-${shortid.generate()}`}
+            to={`${location.pathname}/add/templates/new-${shortid.generate()}`}
             variant="text"
             color="primary">
             <AddIcon /> New Template
