@@ -1,15 +1,12 @@
-import { useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
-import { sanitizePreConstructedPatch } from '../../../forms/utils';
+// import { sanitizePreConstructedPatch } from '../../../forms/utils';
 import LookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
-import MappingIcon from '../../../components/icons/MapDataIcon';
 
 /*
 This component can be used to manage Import lookups
@@ -20,9 +17,8 @@ resourceId="1234"
 */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId } = props;
+  const { id, resourceId, onClose } = props;
   const dispatch = useDispatch();
-  const [isModalVisible, setModalVisibility] = useState(false);
   /*
      Using dummy data for functionality demonstration. generate fields and
      extrct fields to be extracted later when flow builder is ready
@@ -30,10 +26,6 @@ export default function StandaloneImportMapping(props) {
      */
   const generateFields = ['myName', 'myId'];
   const extractFields = ['name', 'id'];
-  const toggleModalVisibility = () => {
-    setModalVisibility(!isModalVisible);
-  };
-
   const resourceData = useSelector(state => {
     const data = selectors.resource(state, 'imports', resourceId);
 
@@ -44,32 +36,34 @@ export default function StandaloneImportMapping(props) {
     resourceData,
     resourceType.type
   );
+  // check for case when there is no lookups and we saving without lookups
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
   );
-  const handleClose = (closeModal, mappings, lookups) => {
+  const handleClose = (closeModal, mappings, lookupsTmp) => {
     if (mappings) {
       const patchSet = [
         {
-          op: 'replace',
+          op: 'update',
           path: MappingUtil.getMappingPath(resourceType.type),
           value: mappings,
         },
       ];
 
-      if (lookups) {
+      if (lookupsTmp.length) {
         patchSet.push({
-          op: 'replace',
+          op: 'update',
           path: LookupUtil.getLookupPath(resourceType.type),
-          value: lookups,
+          value: lookupsTmp,
         });
       }
 
-      const sanitizedPatchSet = sanitizePreConstructedPatch(
-        patchSet,
-        resourceData
-      );
+      // const sanitizedPatchSet = sanitizePreConstructedPatch({
+      //   patchSet,
+      //   resource: resourceData,
+      // });
+      const sanitizedPatchSet = patchSet;
 
       dispatch(
         actions.resource.patchStaged(resourceId, sanitizedPatchSet, 'value')
@@ -77,34 +71,23 @@ export default function StandaloneImportMapping(props) {
       dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
     }
 
-    if (closeModal) toggleModalVisibility();
+    if (closeModal) onClose();
   };
 
   return (
-    <Fragment>
-      {isModalVisible && (
-        <LoadResources resources="imports">
-          <ImportMapping
-            title="Define Import Mapping"
-            id={id}
-            application={resourceType.type}
-            lookups={lookups || []}
-            isStandaloneMapping
-            resourceId={resourceId}
-            mappings={mappings || {}}
-            generateFields={generateFields || []}
-            extractFields={extractFields || []}
-            onClose={handleClose}
-          />
-        </LoadResources>
-      )}
-      <IconButton
-        key="showMapping"
-        aria-label="showMapping"
-        color="inherit"
-        onClick={toggleModalVisibility}>
-        <MappingIcon />
-      </IconButton>
-    </Fragment>
+    <LoadResources resources="imports">
+      <ImportMapping
+        title="Define Import Mapping"
+        id={id}
+        application={resourceType.type}
+        lookups={lookups || []}
+        isStandaloneMapping
+        resourceId={resourceId}
+        mappings={mappings || {}}
+        generateFields={generateFields || []}
+        extractFields={extractFields || []}
+        onClose={handleClose}
+      />
+    </LoadResources>
   );
 }

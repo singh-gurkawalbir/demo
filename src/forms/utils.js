@@ -180,27 +180,6 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
   return newSet;
 };
 
-// searches for all missing pathSets and replace the operation with add
-export const sanitizePreConstructedPatch = ({ patchSet, resource }) => {
-  const missingPathSets = getMissingPatchSet(
-    patchSet.map(p => p.path),
-    resource
-  );
-  const sanitizedPatchSet = patchSet.map(patch => {
-    let patchTmp;
-
-    // 'add' operation to be performed if path is not present in resourse object
-
-    if (!missingPathSets.find({ path: patch.path })) {
-      patchTmp.op = 'add';
-    }
-
-    return patchTmp;
-  });
-
-  return sanitizedPatchSet;
-};
-
 export default {
   getFieldById,
   defaultPatchSetConverter,

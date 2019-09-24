@@ -28,7 +28,7 @@ export default {
   getLookupPath: application => {
     switch (application) {
       case adaptorTypeMap.RESTImport:
-        return '/rest/lookup';
+        return '/rest/lookups';
       case adaptorTypeMap.NetSuiteDistributedImport:
         // TODO
         return '';
