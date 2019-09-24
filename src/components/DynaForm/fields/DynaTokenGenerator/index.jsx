@@ -23,10 +23,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function GenerateTokenButton(props) {
-  const { handleRequestToken, disabled, label, resourceId } = props;
+  const { handleRequestToken, disabled, label, id, resourceId } = props;
 
   return (
     <DynaSubmit
+      data-test={id}
       disabled={disabled}
       isValid
       onClick={handleRequestToken(resourceId)}>
@@ -40,7 +41,6 @@ function TokenGenerator(props) {
     onFieldChange,
     connectionToken,
     handleClearToken,
-    id,
     resourceId,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
@@ -76,11 +76,7 @@ function TokenGenerator(props) {
         />
       </div>
       <div>
-        <GenerateTokenButton
-          {...props}
-          className={classes.children}
-          data-test={id}
-        />
+        <GenerateTokenButton {...props} className={classes.children} />
       </div>
     </div>
   );

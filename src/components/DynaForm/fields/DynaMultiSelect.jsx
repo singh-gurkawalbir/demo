@@ -76,14 +76,11 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <FormControl
-      data-test={id}
-      key={id}
-      disabled={disabled}
-      className={classes.formControl}>
+    <FormControl key={id} disabled={disabled} className={classes.formControl}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Select
         multiple
+        data-test={id}
         value={processedValue}
         onChange={evt => {
           onFieldChange(id, evt.target.value);
