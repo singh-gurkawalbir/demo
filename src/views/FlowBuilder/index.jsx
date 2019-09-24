@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -155,7 +155,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     paddingRight: theme.spacing(3),
   },
-  trash: {
+  fabContainer: {
     position: 'absolute',
     right: theme.spacing(3),
     transition: theme.transitions.create(['bottom', 'width', 'height'], {
@@ -182,7 +182,7 @@ function FlowBuilder(props) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const { merged: flow = {} } = useSelector(state =>
+  const { merged: flow = {}, patch } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
@@ -199,6 +199,9 @@ function FlowBuilder(props) {
     },
     [dispatch, flowId]
   );
+  const undoFlowPatch = useCallback(() => {
+    dispatch(actions.resource.undoStaged(flowId, 'value'));
+  }, [dispatch, flowId]);
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
@@ -230,7 +233,7 @@ function FlowBuilder(props) {
   );
 
   // eslint-disable-next-line
-  console.log(flow);
+  console.log(flow, patch);
 
   return (
     <Fragment>
@@ -288,15 +291,20 @@ function FlowBuilder(props) {
             </div>
           </div>
           {size < 3 && (
-            <TrashCan
-              onDrop={handleDelete}
-              className={classes.trash}
+            <div
+              className={classes.fabContainer}
               style={{
                 bottom: size
                   ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                   : 64 + theme.spacing(3),
-              }}
-            />
+              }}>
+              {patch.length > 0 && (
+                <Button variant="outlined" onClick={undoFlowPatch}>
+                  Undo {patch.length} change(s)
+                </Button>
+              )}
+              <TrashCan onDrop={handleDelete} />
+            </div>
           )}
 
           {/* CANVAS END */}
