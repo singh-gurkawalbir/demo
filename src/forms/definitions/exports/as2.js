@@ -9,18 +9,24 @@ export default {
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
     },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common', 'exportData', 'file.fileDefinition.resourcePath'],
+    fields: [
+      'common',
+      'exportData',
+      'file.fileDefinition.resourcePath',
+      'rawData',
+    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,
