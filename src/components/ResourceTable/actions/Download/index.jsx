@@ -5,7 +5,7 @@ import Icon from '../../../icons/DownloadIcon';
 
 export default {
   label: 'Download',
-  component: function DownLoadResources({ resource }) {
+  component: function DownloadResources({ resource }) {
     const dispatch = useDispatch();
     const handleDownloadZipFileClick = () => {
       dispatch(actions.resource.downloadZipFile(resource._id, 'flows'));

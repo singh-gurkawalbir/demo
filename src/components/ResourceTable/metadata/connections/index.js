@@ -1,7 +1,7 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
-import DownLoadDebugLogs from '../../actions/Connections/DownLoadDebugLogs';
+import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
@@ -50,7 +50,7 @@ export default {
     Delete,
     References,
     ConfigureDebugger,
-    DownLoadDebugLogs,
+    DownloadDebugLogs,
     AuditLogs,
     RefreshMetadata,
   ],
