@@ -7,7 +7,7 @@ import {
   Button,
   DialogTitle,
   Divider,
-} from '@material-ui/core/Dialog';
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
