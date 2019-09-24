@@ -60,6 +60,7 @@ export default {
       type: 'text',
       label: 'Client Secret',
       required: true,
+      defaultValue: '',
       inputType: 'password',
       helpText:
         'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',

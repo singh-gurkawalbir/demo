@@ -40,6 +40,7 @@ export default {
       type: 'text',
       label: 'Profile Key',
       required: true,
+      defaultValue: '',
       inputType: 'password',
       helpText: 'API password (Profile Key) assigned by Merchant e-Solutions.',
       description:
@@ -51,6 +52,7 @@ export default {
       label: 'Card Number',
       required: true,
       inputType: 'password',
+      defaultValue: '',
       helpText: 'Payment card number.',
       description:
         'Note: for security reasons this field must always be re-entered.',
