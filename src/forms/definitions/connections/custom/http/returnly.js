@@ -1,16 +1,17 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'returnly',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.returnly.com/`,
-    '/rest/pingRelativeURI': '/returns.json',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.returnly.com/`,
+    '/http/ping/relativeURI': '/returns.json',
+    '/http/ping/method': 'GET',
+    '/http/headers': [
       {
         name: 'X-Api-Token',
-        value: '{{{connection.rest.encrypted.apiKey}}}',
+        value: '{{{connection.http.encrypted.apiKey}}}',
       },
       {
         name: 'Content-Type',
@@ -20,9 +21,10 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.encrypted.apiKey': {
-      id: 'rest.encrypted.apiKey',
-      label: 'API Key:',
+    'http.encrypted.apiKey': {
+      id: 'http.encrypted.apiKey',
+      label: 'API Key',
+      defaultValue: '',
       required: true,
       type: 'text',
       inputType: 'password',
@@ -31,13 +33,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.encrypted.apiKey'],
+    fields: ['name', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -26,7 +26,7 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.securityKey': {
       id: 'http.encrypted.securityKey',
-      label: 'Security Key:',
+      label: 'Security Key',
       type: 'text',
       inputType: 'password',
       required: true,
@@ -36,7 +36,7 @@ export default {
     },
     'http.encrypted.appKey': {
       id: 'http.encrypted.appKey',
-      label: 'Application Key:',
+      label: 'Application Key',
       type: 'text',
       inputType: 'password',
       required: true,

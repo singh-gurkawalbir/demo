@@ -1,20 +1,22 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'tophatter',
-    '/rest/authType': 'token',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/pingRelativeURI': '/products.json',
-    '/rest/baseURI': `https://tophatter.com/merchant_api/v1`,
-    '/rest/tokenLocation': 'url',
-    '/rest/tokenParam': 'access_token',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'urlencoded',
+    '/http/ping/relativeURI': '/products.json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://tophatter.com/merchant_api/v1`,
+    '/http/auth/token/location': 'url',
+    '/http/auth/token/paramName': 'access_token',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.bearerToken': {
-      fieldId: 'rest.bearerToken',
-      label: 'Access Token:',
+    'http.auth.token.token': {
+      fieldId: 'http.auth.token.token',
+      label: 'Access Token',
+      defaultValue: '',
       required: true,
       inputType: 'password',
       helpText:
@@ -22,13 +24,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.bearerToken'],
+    fields: ['name', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };
