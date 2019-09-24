@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { NavLink, Link as RouterLink } from 'react-router-dom';
 import {
   Link,
   Card,
@@ -9,7 +10,6 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core';
-import { Link as RouterLink } from 'react-router-dom';
 import { getApplicationConnectors } from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -66,12 +66,6 @@ export default function ConnectorTemplateList(props) {
     setShowMessage(true);
   };
 
-  const redirectToTemplatePreview = id => {
-    props.history.push(`/marketplace/templates/${id}/preview`);
-  };
-
-  const handleTemplateInstallClick = id => () => redirectToTemplatePreview(id);
-
   return (
     <Fragment>
       <CeligoPageBar title={`${applicationName} Integrations`} />
@@ -112,11 +106,13 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions>
-              <Button
-                onClick={handleTemplateInstallClick(template._id)}
-                variant="contained">
-                Install
-              </Button>
+              <NavLink
+                key={template._id}
+                to={getRoutePath(
+                  `/marketplace/templates/${template._id}/preview`
+                )}>
+                <Button variant="contained">Install</Button>
+              </NavLink>
             </CardActions>
           </Card>
         ))}

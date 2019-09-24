@@ -39,9 +39,16 @@ const useStyles = makeStyles(theme => ({
   installButton: {
     paddingTop: '20px',
   },
+  description: {
+    paddingBottom: '20px',
+  },
+  componentsTable: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+  },
 }));
 
 export default function TemplatePreview(props) {
+  console.log('rendered template preview');
   const classes = useStyles(props);
   const { templateId } = props.match.params;
   const [requested, setRequested] = useState(false);
@@ -126,11 +133,22 @@ export default function TemplatePreview(props) {
             <div className="container">
               <Grid container>
                 <Grid item xs={9}>
-                  <Typography variant="body1">{description}</Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body1" className={classes.description}>
+                    {description}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.componentsTable}>
                     The following components will be created in your account.
                   </Typography>
-                  <CeligoTable data={objects} columns={columns} />
+                  {objects && objects.length && (
+                    <CeligoTable data={objects} columns={columns} />
+                  )}
+                  {(!objects || !objects.length) && (
+                    <Typography variant="h4">
+                      Loading Preview Components
+                    </Typography>
+                  )}
                   <div align="right" className={classes.installButton}>
                     <Button
                       variant="contained"

@@ -576,6 +576,9 @@ export const getApp = (type, assistant) => {
 };
 
 export const getApplicationConnectors = () =>
-  connectors.filter(conn => !!conn.assistant);
+  connectors.filter(
+    conn =>
+      !['blob', 'http', 'rdbms', 'rest', 'webhook', 'wrapper'].includes(conn.id)
+  );
 
 export default connectors;

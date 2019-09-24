@@ -70,6 +70,10 @@ export default class AppRouting extends Component {
           component={IntegrationSettings}
         />
         <Route
+          path="/pg/marketplace/templates/:templateId/preview"
+          component={TemplatePreview}
+        />
+        <Route
           path="/pg/marketplace/:application"
           component={ConnectorTemplateList}
         />
@@ -94,10 +98,6 @@ export default class AppRouting extends Component {
             '/pg/connectors/:integrationId/uninstall',
           ]}
           component={IntegrationAppUninstallation}
-        />
-        <Route
-          path="/marketplace/templates/:templateId/preview"
-          component={TemplatePreview}
         />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
