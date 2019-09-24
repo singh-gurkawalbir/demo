@@ -25,7 +25,6 @@ import zuora from './zuora';
 import wrike from './wrike';
 import eventbrite from './eventbrite';
 import yammer from './yammer';
-import doubleclick from './doubleclick';
 import xcart from './xcart';
 import freshbooks from './freshbooks';
 import lightspeed from './lightspeed';
@@ -59,7 +58,6 @@ import threedcart from './threedcart';
 export default {
   '3dcart': threedcart,
   snapfulfil,
-
   anaplan,
   googledrive,
   namely,
@@ -79,7 +77,6 @@ export default {
   wrike,
   eventbrite,
   yammer,
-  doubleclick,
   atera,
   xcart,
   freshbooks,
