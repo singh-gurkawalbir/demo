@@ -76,7 +76,11 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.formControl}>
+    <FormControl
+      data-test={id}
+      key={id}
+      disabled={disabled}
+      className={classes.formControl}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Select
         multiple

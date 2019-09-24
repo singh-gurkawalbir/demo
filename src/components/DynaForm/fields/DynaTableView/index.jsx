@@ -8,7 +8,7 @@ import LoadResources from '../../../../components/LoadResources';
 import * as selectors from '../../../../reducers';
 
 export default function DynaTable(props) {
-  const { connectionId, optionsMap, map, _integrationId } = props;
+  const { connectionId, optionsMap, map, _integrationId, id } = props;
   let tableType;
   let connection;
 
@@ -33,7 +33,7 @@ export default function DynaTable(props) {
   }
 
   return (
-    <LoadResources required resources="connections">
+    <LoadResources data-test={id} required resources="connections">
       {tableType === 'connectorStaticMap' && (
         <DynaConnectoroNColumnMap {...props} />
       )}

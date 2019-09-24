@@ -40,6 +40,7 @@ function TokenGenerator(props) {
     onFieldChange,
     connectionToken,
     handleClearToken,
+    id,
     resourceId,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
@@ -75,7 +76,11 @@ function TokenGenerator(props) {
         />
       </div>
       <div>
-        <GenerateTokenButton {...props} className={classes.children} />
+        <GenerateTokenButton
+          {...props}
+          className={classes.children}
+          data-test={id}
+        />
       </div>
     </div>
   );
