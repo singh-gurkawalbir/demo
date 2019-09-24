@@ -1,26 +1,25 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
-import Clone from '../../actions/Clone';
-import {
-  getResourceLink,
-  formatLastModified,
-  getConnectorName,
-} from '../../../CeligoTable/util';
+import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('exports', r),
+      value: r => getResourceLink('scripts', r),
       orderBy: 'name',
     },
-    { heading: 'Connector', value: r => getConnectorName(r) },
+    {
+      heading: 'Description',
+      value: r => r.description,
+      orderBy: 'description',
+    },
     {
       heading: 'Updated on',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Clone, AuditLogs, References, Delete],
+  rowActions: [AuditLogs, References, Delete],
 };

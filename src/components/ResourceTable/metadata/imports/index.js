@@ -12,7 +12,7 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('exports', r),
+      value: r => getResourceLink('imports', r),
       orderBy: 'name',
     },
     { heading: 'Connector', value: r => getConnectorName(r) },
