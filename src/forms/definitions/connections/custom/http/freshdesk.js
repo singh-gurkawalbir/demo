@@ -20,7 +20,7 @@ export default {
         "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

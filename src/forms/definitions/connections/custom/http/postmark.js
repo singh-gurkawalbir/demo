@@ -1,25 +1,27 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'postmark',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.postmarkapp.com/`,
-    '/rest/pingRelativeURI': '/servers?count=1&offset=0',
-    '/rest/headers': [
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://api.postmarkapp.com/`,
+    '/http/ping/relativeURI': '/servers?count=1&offset=0',
+    '/http/headers': [
       { name: 'Content-Type', value: 'application/json' },
       {
         name: 'X-Postmark-Account-Token',
-        value: '{{{connection.rest.encrypted.accountToken}}}',
+        value: '{{{connection.http.encrypted.accountToken}}}',
       },
     ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.encrypted.serverToken': {
-      id: 'rest.encrypted.serverToken',
-      label: 'Server Token:',
+    'http.encrypted.serverToken': {
+      id: 'http.encrypted.serverToken',
+      label: 'Server Token',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
@@ -28,9 +30,10 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    'rest.encrypted.accountToken': {
-      id: 'rest.encrypted.accountToken',
-      label: 'Account Token:',
+    'http.encrypted.accountToken': {
+      id: 'http.encrypted.accountToken',
+      label: 'Account Token',
+      defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
@@ -39,17 +42,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
-      'rest.encrypted.serverToken',
-      'rest.encrypted.accountToken',
+      'http.encrypted.serverToken',
+      'http.encrypted.accountToken',
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

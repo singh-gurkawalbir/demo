@@ -1,21 +1,21 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zohobooks',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/baseURI': 'https://books.zoho.com/api/v3',
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
-    '/rest/oauthTokenURI': 'https://accounts.zoho.com/oauth/v2/token',
-    '/rest/scopeDelimiter': ',',
-    '/rest/headers': [{ name: 'Accept', value: 'application/json' }],
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'urlencoded',
+    '/http/baseURI': 'https://books.zoho.com/api/v3',
+    '/http/auth/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
+    '/http/auth/oauth/tokenURI': 'https://accounts.zoho.com/oauth/v2/token',
+    '/http/auth/oauth/scopeDelimiter': ',',
+    '/http/headers': [{ name: 'Accept', value: 'application/json' }],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.scope': {
-      fieldId: 'rest.scope',
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'ZohoBooks.contacts.CREATE',
         'ZohoBooks.contacts.UPDATE',
@@ -79,13 +79,13 @@ export default {
         'ZohoBooks.settings.DELETE',
       ],
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.scope'],
+    fields: ['name', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

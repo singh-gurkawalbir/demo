@@ -21,7 +21,7 @@ export default {
       helpText:
         "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
       endAdornment: '.chargebee.com/api',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
