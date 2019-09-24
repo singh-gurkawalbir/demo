@@ -29,7 +29,7 @@ const styledChildren = (children, classes) => {
   });
 };
 
-function IconButton(props) {
+export default function IconTextButton(props) {
   const classes = useStyles();
   const { children, className, ...rest } = props;
 
@@ -39,5 +39,3 @@ function IconButton(props) {
     </Button>
   );
 }
-
-export default IconButton;
