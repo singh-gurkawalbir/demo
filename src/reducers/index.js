@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
+import _ from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -1363,4 +1364,93 @@ export function assistantData(state, { adaptorType, assistant }) {
     adaptorType,
     assistant,
   });
+}
+
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = [];
+  const importIds = [];
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!flow) {
+    return connectionIds;
+  }
+
+  if (flow._exportId) {
+    exportIds.push(flow._exportId);
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._exportId) {
+        exportIds.push(pp._exportId);
+      }
+
+      if (pp._importId) {
+        importIds.push(pp._importId);
+      }
+    });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    flow.pageGenerators.forEach(pg => {
+      if (pg._exportId) {
+        exportIds.push(pg._exportId);
+      }
+
+      if (pg._importId) {
+        importIds.push(pg._importId);
+      }
+    });
+  }
+
+  const AttachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const AttachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  AttachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  AttachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+  const AttachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  AttachedConnections.forEach(conn => {
+    if (conn && conn._borrowConcurrencyFromConnectionId) {
+      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
+    }
+  });
+
+  return _.uniq(connectionIds.concat(borrowConnectionIds));
+}
+
+export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
+  let connectionIdsToRegister = [];
+
+  if (!selectedFlows) {
+    return connectionIdsToRegister;
+  }
+
+  selectedFlows.forEach(flow => {
+    connectionIdsToRegister = connectionIdsToRegister.concat(
+      getAllConnectionIdsUsedInTheFlow(state, flow)
+    );
+  });
+
+  return connectionIdsToRegister;
 }

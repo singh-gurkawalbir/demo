@@ -5,82 +5,6 @@ const MINUTES = 1;
 const HOURS = 2;
 const DATE = 3;
 const WEEKDAY = 5;
-
-export const getAllConnectionIdsUsedInTheFlow = ({
-  connections,
-  exports,
-  imports,
-  flow,
-}) => {
-  const exportIds = [];
-  const importIds = [];
-  const connectionIds = [];
-  const borrowConnectionIds = [];
-
-  if (!flow) {
-    return connectionIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-
-      if (pg._importId) {
-        importIds.push(pg._importId);
-      }
-    });
-  }
-
-  const AttachedExports =
-    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
-  const AttachedImports =
-    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
-
-  AttachedExports.forEach(exp => {
-    if (exp && exp._connectionId) {
-      connectionIds.push(exp._connectionId);
-    }
-  });
-  AttachedImports.forEach(imp => {
-    if (imp && imp._connectionId) {
-      connectionIds.push(imp._connectionId);
-    }
-  });
-  const AttachedConnections =
-    connections &&
-    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
-
-  AttachedConnections.forEach(conn => {
-    if (conn && conn._borrowConcurrencyFromConnectionId) {
-      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
-    }
-  });
-
-  return _.uniq(connectionIds.concat(borrowConnectionIds));
-};
-
 const getHoursValue = startTime => moment(startTime, 'LT').hours();
 const getHours = (startTime, endTime, frequency) => {
   const values = [];
@@ -345,4 +269,4 @@ export const getCronExpression = (data, scheduleStartMinute) => {
   return toReturn.join(' ');
 };
 
-export default { getAllConnectionIdsUsedInTheFlow, getCronExpression };
+export default { getCronExpression };

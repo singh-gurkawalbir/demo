@@ -16,7 +16,6 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import metadata from './metadata';
-import { getAllConnectionIdsUsedInTheFlow } from '../../utils/util';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -42,22 +41,15 @@ export default function AttachStandAloneFlows({
     setSelected(flows);
   };
 
-  const exports = useSelector(
-    state => selectors.resourceList(state, { type: 'exports' }).resources
-  );
-  const imports = useSelector(
-    state => selectors.resourceList(state, { type: 'imports' }).resources
-  );
-  const connections = useSelector(
-    state => selectors.resourceList(state, { type: 'connections' }).resources
-  );
   const dispatch = useDispatch();
+  const connectionIdsToRegister = useSelector(state => selectedFlowIds =>
+    selectors.getAllConnectionIdsUsedInSelectedFlows(state, selectedFlowIds)
+  );
   const handleAttachFlowsClick = () => {
     const flowIds = Object.keys(selected).filter(key => selected[key] === true);
     const selectedFlows =
       standAloneFlows &&
       standAloneFlows.filter(f => flowIds.indexOf(f._id) > -1);
-    let connectionIdsToRegister = [];
 
     if (!selectedFlows) return;
     selectedFlows.forEach(flow => {
@@ -71,17 +63,13 @@ export default function AttachStandAloneFlows({
 
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-      connectionIdsToRegister = connectionIdsToRegister.concat(
-        getAllConnectionIdsUsedInTheFlow({
-          flow,
-          exports,
-          imports,
-          connections,
-        })
-      );
     });
+
     dispatch(
-      actions.connection.requestRegister(connectionIdsToRegister, integrationId)
+      actions.connection.requestRegister(
+        connectionIdsToRegister(selectedFlows),
+        integrationId
+      )
     );
     onClose();
   };

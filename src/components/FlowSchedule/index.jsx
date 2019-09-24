@@ -13,7 +13,7 @@ import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import dateTimezones from '../../utils/dateTimezones';
-import { getCronExpression } from '../../utils/util';
+import { getCronExpression } from '../../utils/schedule';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
