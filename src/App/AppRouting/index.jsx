@@ -9,6 +9,7 @@ import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
 import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
 import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
 import TemplatePreview from '../../views/Templates/Preview';
+import TemplateInstall from '../../views/Templates/Install';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -50,6 +51,38 @@ const ConnectorTemplateList = loadable(() =>
     /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
   )
 );
+const templateRoutes = [
+  {
+    path: '/pg/marketplace/templates/:templateId/preview',
+    component: TemplatePreview,
+  },
+  {
+    path: '/pg/marketplace/templates/:templateId/setup',
+    component: TemplateInstall,
+  },
+];
+const integrationAppRoutes = [
+  // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+  {
+    path: '/pg/connectors/:integrationId/setup',
+    component: IntegrationAppInstallation,
+  },
+  {
+    path: '/pg/connectors/:integrationId/settings',
+    component: IntegrationAppSettings,
+  },
+  {
+    path: '/pg/connectors/:integrationId/install/addNewStore',
+    component: IntegrationAppAddNewStore,
+  },
+  {
+    path: [
+      '/pg/connectors/:integrationId/uninstall/:storeId',
+      '/pg/connectors/:integrationId/uninstall',
+    ],
+    component: IntegrationAppUninstallation,
+  },
+];
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -69,35 +102,15 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
-        <Route
-          path="/pg/marketplace/templates/:templateId/preview"
-          component={TemplatePreview}
-        />
+        {templateRoutes.map(props => (
+          <Route {...props} key={props.path} />
+        ))}
+        {integrationAppRoutes.map(props => (
+          <Route {...props} key={props.path} />
+        ))}
         <Route
           path="/pg/marketplace/:application"
           component={ConnectorTemplateList}
-        />
-        <Route
-          path="/pg/connectors/:integrationId/setup"
-          component={IntegrationAppInstallation}
-        />
-        <Route
-          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-          path="/pg/connectors/:integrationId/settings"
-          component={IntegrationAppSettings}
-        />
-        <Route
-          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-          path="/pg/connectors/:integrationId/install/addNewStore"
-          component={IntegrationAppAddNewStore}
-        />
-        <Route
-          path={[
-            // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-            '/pg/connectors/:integrationId/uninstall/:storeId',
-            '/pg/connectors/:integrationId/uninstall',
-          ]}
-          component={IntegrationAppUninstallation}
         />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />

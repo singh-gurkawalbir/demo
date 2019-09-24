@@ -5,7 +5,7 @@ import { NETSUITE_BUNDLE_URL, SALESFORCE_DA_PACKAGE_URL } from './constants';
 
 export default {
   getInstallSteps: previewData => {
-    const connectionMap = [];
+    const connectionMap = {};
     const installSteps = [];
     let index = -1;
     let netsuiteConnFound = false;
@@ -45,10 +45,7 @@ export default {
     }
 
     connections.forEach(conn => {
-      connectionMap.push({
-        _connectionId: conn._id,
-        type: conn.type,
-      });
+      connectionMap[conn._id] = conn;
 
       if (
         (conn.type === 'netsuite' && netsuiteConnFound) ||
@@ -94,9 +91,7 @@ export default {
       }
 
       if (exp.type === 'distributed') {
-        const conn = connectionMap.find(
-          c => c._connectionId === exp._connectionId
-        );
+        const conn = connections.find(c => c._id === exp._connectionId);
 
         if (conn.type === 'netsuite') {
           netsuiteBundleNeeded = true;
@@ -107,9 +102,7 @@ export default {
     });
     importDocs.forEach(imp => {
       if (imp.distributed) {
-        const conn = connectionMap.find(
-          c => c._connectionId === imp._connectionId
-        );
+        const conn = connections.find(c => c._id === imp._connectionId);
 
         if (conn.type === 'netsuite') {
           netsuiteBundleNeeded = true;

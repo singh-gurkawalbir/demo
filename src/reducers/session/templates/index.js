@@ -14,7 +14,7 @@ export default function reducer(state = {}, action) {
 
         draft[templateId].preview = components;
         break;
-      case actionTypes.TEMPLATE.RECEIVED_STEPS:
+      case actionTypes.TEMPLATE.STEPS_RECEIVED:
         if (!draft[templateId]) {
           draft[templateId] = {};
         }
@@ -28,5 +28,13 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export function previewTemplate(state, templateId) {
   return ((state || {})[templateId] || {}).preview || {};
+}
+
+export function templateInstallSteps(state, templateId) {
+  return ((state || {})[templateId] || {}).installSteps || [];
+}
+
+export function connectionMap(state, templateId) {
+  return ((state || {})[templateId] || {}).connectionMap || {};
 }
 // #endregion

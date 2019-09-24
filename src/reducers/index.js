@@ -116,6 +116,25 @@ export function template(state, templateId) {
   return fromData.template(state && state.data, templateId);
 }
 
+export function templateInstallSteps(state, templateId) {
+  const templateInstallSteps = fromSession.templateInstallSteps(
+    state && state.session,
+    templateId
+  );
+
+  return produce(templateInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
+export function templateConnectionMap(state, templateId) {
+  return fromSession.connectionMap(state && state.session, templateId);
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromSession.connectorMetadata(
     state && state.session,
@@ -415,6 +434,30 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
+}
+
+export function matchingConnectionList(state, connection = {}) {
+  const preferences = userPreferences(state);
+  const { resources = [] } = resourceList(state, {
+    type: 'connections',
+    sandbox: preferences.environment === 'sandbox',
+  });
+
+  return resources.filter(c => {
+    if (connection.assistant) {
+      return c.assistant === connection.assistant && !c._connectorId;
+    }
+
+    if (['netsuite'].indexOf(connection.type) > -1) {
+      return (
+        c.type === 'netsuite' &&
+        !c._connectorId &&
+        (c.netsuite.account && c.netsuite.environment)
+      );
+    }
+
+    return c.type === connection.type && !c._connectorId;
+  });
 }
 
 export function marketplaceConnectors(state, application, sandbox) {

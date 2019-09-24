@@ -8,7 +8,7 @@ import actions from '../../actions';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import CeligoTable from '../../components/CeligoTable';
 import { confirmDialog } from '../../components/ConfirmDialog';
-import { templateUtil } from '../../utils/template';
+import templateUtil from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '20px',
   },
   componentsTable: {
+    paddingTop: '20px',
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
   },
 }));
 
 export default function TemplatePreview(props) {
-  console.log('rendered template preview');
   const classes = useStyles(props);
   const { templateId } = props.match.params;
   const [requested, setRequested] = useState(false);
@@ -75,7 +75,7 @@ export default function TemplatePreview(props) {
       setRequested(true);
     }
   }, [components, dispatch, requested, templateId]);
-  const { objects } = components;
+  const { objects = [] } = components;
   const installTemplate = () => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
@@ -88,7 +88,7 @@ export default function TemplatePreview(props) {
           templateId
         )
       );
-      props.history.push(`/marketplace/templates/${templateId}/setup`);
+      props.history.push(`/pg/marketplace/templates/${templateId}/setup`);
     } else {
       dispatch(actions.template.createComponents(templateId));
     }
@@ -141,10 +141,16 @@ export default function TemplatePreview(props) {
                     className={classes.componentsTable}>
                     The following components will be created in your account.
                   </Typography>
-                  {objects && objects.length && (
-                    <CeligoTable data={objects} columns={columns} />
+                  {objects.length && (
+                    <CeligoTable
+                      data={objects.map((obj, index) => ({
+                        ...obj,
+                        _id: index,
+                      }))}
+                      columns={columns}
+                    />
                   )}
-                  {(!objects || !objects.length) && (
+                  {!objects.length && (
                     <Typography variant="h4">
                       Loading Preview Components
                     </Typography>

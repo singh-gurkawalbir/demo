@@ -11,6 +11,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ResourceForm from '../../components/ResourceFormFactory';
 import CloseIcon from '../icons/CloseIcon';
+import AddOrSelect from './AddOrSelect';
 
 const useStyles = makeStyles(() => ({
   iconButton: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function ConnectionModal(props) {
-  const { _connectionId, onSubmitComplete, onClose } = props;
+  const { _connectionId, onSubmitComplete, onClose, addOrSelect } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const connection = useSelector(state =>
@@ -52,13 +53,16 @@ export default function ConnectionModal(props) {
         )}
       </DialogTitle>
       <DialogContent style={{ width: '60vw' }}>
-        <ResourceForm
-          editMode={false}
-          resourceType="connections"
-          resourceId={_connectionId}
-          onSubmitComplete={onSubmitComplete}
-          connectionType={connection.type}
-        />
+        {!addOrSelect && (
+          <ResourceForm
+            editMode={false}
+            resourceType="connections"
+            resourceId={_connectionId}
+            onSubmitComplete={onSubmitComplete}
+            connectionType={connection.type}
+          />
+        )}
+        {addOrSelect && <AddOrSelect {...props} />}
       </DialogContent>
     </Dialog>
   );

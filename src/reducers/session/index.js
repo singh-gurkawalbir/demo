@@ -128,6 +128,17 @@ export function previewTemplate(state, templateId) {
   return fromTemplates.previewTemplate(state && state.templates, templateId);
 }
 
+export function templateInstallSteps(state, templateId) {
+  return fromTemplates.templateInstallSteps(
+    state && state.templates,
+    templateId
+  );
+}
+
+export function connectionMap(state, templateId) {
+  return fromTemplates.connectionMap(state && state.templates, templateId);
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromConnectors.connectorMetadata(
     state && state.connectors,
