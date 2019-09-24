@@ -1,10 +1,25 @@
 import React from 'react';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-// import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+} from '@material-ui/core';
+import clsx from 'clsx';
+
+const useStyles = makeStyles({
+  rowFlexWrapper: {
+    flexDirection: 'row',
+  },
+  flexItems: {
+    flex: 1,
+  },
+  fullWidth: {
+    width: '100%',
+  },
+});
 
 export default function DynaRadio(props) {
   const {
@@ -14,9 +29,14 @@ export default function DynaRadio(props) {
     defaultValue,
     required,
     value,
+    // showOptionsHorizontally is used to control options to render horizontally
+    showOptionsHorizontally,
+    // set fullWidth to true for component to occupy fill width
+    fullWidth,
     label,
     onFieldChange,
   } = props;
+  const classes = useStyles();
   const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -28,6 +48,9 @@ export default function DynaRadio(props) {
                 value={item}
                 control={<Radio color="primary" />}
                 label={item}
+                className={clsx({
+                  [classes.flexItems]: showOptionsHorizontally,
+                })}
               />
             );
           }
@@ -38,6 +61,9 @@ export default function DynaRadio(props) {
               value={item.value}
               control={<Radio color="primary" />}
               label={item.label || item.value}
+              className={clsx({
+                [classes.flexItems]: showOptionsHorizontally,
+              })}
             />
           );
         })
@@ -46,10 +72,16 @@ export default function DynaRadio(props) {
   );
 
   return (
-    <FormControl component="fieldset" required={required}>
+    <FormControl
+      component="fieldset"
+      required={required}
+      className={fullWidth ? classes.fullWidth : ''}>
       <FormLabel component="legend">{label}</FormLabel>
       <RadioGroup
         aria-label={label}
+        className={clsx({
+          [classes.rowFlexWrapper]: showOptionsHorizontally,
+        })}
         name={name}
         defaultValue={defaultValue}
         value={value}

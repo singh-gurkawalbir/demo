@@ -20,7 +20,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.api-us1.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -43,7 +43,7 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key:',
+      label: 'API Key',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
       required: true,

@@ -491,5 +491,5 @@ export function assistantData(state, { adaptorType, assistant }) {
     return undefined;
   }
 
-  return state.assistants[adaptorType][assistant];
+  return { ...state.assistants[adaptorType][assistant] };
 }

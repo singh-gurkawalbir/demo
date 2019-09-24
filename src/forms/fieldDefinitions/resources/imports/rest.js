@@ -59,6 +59,10 @@ export default {
       },
     ],
   },
+  mapping: {
+    type: 'mapping',
+    label: 'Manage Import Mapping',
+  },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
