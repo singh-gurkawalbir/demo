@@ -61,7 +61,7 @@ export default function StandaloneImportMapping(props) {
       if (lookups) {
         patchSet.push({
           op: 'replace',
-          path: MappingUtil.getLookupPath(resourceType.type),
+          path: LookupUtil.getLookupPath(resourceType.type),
           value: lookups,
         });
       }

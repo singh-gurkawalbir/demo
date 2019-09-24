@@ -25,4 +25,23 @@ export default {
       default:
     }
   },
+  getLookupPath: application => {
+    switch (application) {
+      case adaptorTypeMap.RESTImport:
+        return '/rest/lookup';
+      case adaptorTypeMap.NetSuiteDistributedImport:
+        // TODO
+        return '';
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.RDBMSImport:
+      case adaptorTypeMap.SalesforceImport:
+      default:
+    }
+  },
 };
