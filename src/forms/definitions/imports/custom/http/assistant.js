@@ -1,5 +1,5 @@
 import { omitBy, reduce } from 'lodash';
-import { convertToExport } from '../../../../../utils/assistant';
+import { convertToImport } from '../../../../../utils/assistant';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -11,14 +11,7 @@ export default function assistantDefinition(
     ...fieldMeta({ resource, assistantData }),
     optionsHandler(fieldId, fields) {
       return reduce(
-        [
-          'assistant',
-          'adaptorType',
-          'version',
-          'resource',
-          'operation',
-          'exportType',
-        ],
+        ['assistant', 'adaptorType', 'version', 'resource', 'operation'],
         (values, fId) => ({
           ...values,
           [fId]: (
@@ -39,9 +32,11 @@ export default function assistantDefinition(
         'version',
         'resource',
         'operation',
-        'exportType',
-        'queryParams',
-        'bodyParams',
+        'ignoreExisting',
+        'ignoreMissing',
+        // 'lookupUrl',
+        'lookupType',
+        'lookupQueryParams',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
@@ -56,13 +51,12 @@ export default function assistantDefinition(
           ] = formValues[key];
         }
       });
-
-      const exportDoc = convertToExport({
+      const importDoc = convertToImport({
         assistantConfig: assistantMetadata,
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
-      return { ...otherFormValues, ...exportDoc };
+      return { ...otherFormValues, ...importDoc };
     },
   };
 }

@@ -36,8 +36,11 @@ import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaRawData from './DynaRawData';
 import DynaSampleData from './DynaSampleData';
 import DynaXmlParse from './DynaEditors/DynaXmlParse';
+import DynaImportMapping from './DynaImportMapping';
+import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 
 export default {
+  mapping: DynaImportMapping,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
@@ -78,4 +81,5 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
+  fieldexpressionselect: DynaFieldExpressionSelect,
 };
