@@ -265,6 +265,10 @@ export function isSessionExpired(state) {
 export function showSessionStatus(state, date) {
   return fromAuth.showSessionStatus(state && state.auth, date);
 }
+
+export function sessionValidTimestamp(state) {
+  return state && state.auth && state.auth.authTimestamp;
+}
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals

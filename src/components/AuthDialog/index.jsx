@@ -1,5 +1,5 @@
 import { Typography, Button } from '@material-ui/core';
-import { React, useEffect, useState, Fragment } from 'react';
+import { React, useEffect, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -47,27 +47,35 @@ const WarningSessionContent = () => {
 };
 
 export default function AlertDialog() {
-  const [date, setDate] = useState(null);
-  const showSessionStatus = useSelector(state =>
-    selectors.showSessionStatus(state, date)
+  const sessionValidTimestamp = useSelector(state =>
+    selectors.sessionValidTimestamp(state)
   );
-  const isAuthenticated = useSelector(state =>
-    selectors.isAuthenticated(state)
+  const dispatch = useDispatch();
+  const showSessionStatus = useSelector(state =>
+    selectors.showSessionStatus(state)
   );
 
   useEffect(() => {
-    let timer;
+    let warningSessionTimer;
+    let expiredSessionTimer;
 
-    if (isAuthenticated) {
-      timer = setInterval(() => {
-        setDate(Date.now());
-      }, 5000);
+    if (sessionValidTimestamp) {
+      warningSessionTimer = setTimeout(() => {
+        dispatch(actions.auth.warning());
+      }, Number(process.env.SESSION_EXPIRATION_INTERVAL) - Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION));
+
+      expiredSessionTimer = setTimeout(() => {
+        dispatch(
+          actions.auth.failure('Session expired due to extended inactivity')
+        );
+      }, Number(process.env.SESSION_EXPIRATION_INTERVAL));
     }
 
     return () => {
-      clearInterval(timer);
+      clearTimeout(warningSessionTimer);
+      clearTimeout(expiredSessionTimer);
     };
-  }, [isAuthenticated]);
+  }, [dispatch, sessionValidTimestamp]);
 
   return (
     <div>
