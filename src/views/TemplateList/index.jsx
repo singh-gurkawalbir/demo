@@ -54,7 +54,7 @@ export default function TemplateList(props) {
           integrations={resources}
         />
       )}
-      <CeligoPageBar title="Templates" infoText="info text for templates">
+      <CeligoPageBar title="Templates">
         <div className={classes.actions}>
           <CeligoIconButton
             onClick={() => setShowGenerateZipDialog(true)}
