@@ -58,6 +58,7 @@ export default function DynaImportMapping(props) {
         />
       )}
       <Button
+        data-test={id}
         variant="outlined"
         color="secondary"
         onClick={toggleModalVisibility}>

@@ -36,6 +36,9 @@ const ResourceList = loadable(() =>
 const Marketplace = loadable(() =>
   import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
 );
+const TemplateList = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -103,6 +106,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/marketplace" component={Marketplace} />
+        <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>

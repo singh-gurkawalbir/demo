@@ -25,7 +25,7 @@ export default {
       id: 'http.bamboohrSubdomain',
       type: 'text',
       startAdornment: 'https://api.bamboohr.com/api/gateway.php/',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your company name here which you configured while signing up for a new BambooHR account.',
       validWhen: {
@@ -45,7 +45,7 @@ export default {
     },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key:',
+      label: 'API Key',
       type: 'text',
       inputType: 'password',
       helpText:

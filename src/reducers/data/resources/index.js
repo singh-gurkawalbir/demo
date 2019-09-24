@@ -92,7 +92,6 @@ export default (state = {}, action) => {
   }
 
   let resourceIndex;
-  let newState;
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION:
@@ -111,18 +110,10 @@ export default (state = {}, action) => {
       resourceIndex = state.sshares.findIndex(user => user._id === id);
 
       if (resourceIndex > -1) {
-        newState = [
-          ...state.sshares.slice(0, resourceIndex),
-          {
-            ...state.sshares[resourceIndex],
-            disabled: !state.sshares[resourceIndex].disabled,
-          },
-          ...state.sshares.slice(resourceIndex + 1),
-        ];
-
-        newState = { ...state, sshares: newState };
-
-        return newState;
+        return produce(state, draft => {
+          draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
+            .disabled;
+        });
       }
 
       return state;

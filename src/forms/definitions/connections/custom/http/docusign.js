@@ -19,7 +19,7 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       options: [
         {
           items: [

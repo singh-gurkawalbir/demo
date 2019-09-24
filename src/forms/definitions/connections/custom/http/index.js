@@ -5,7 +5,6 @@ import cartrover from './cartrover';
 import practicepanther from './practicepanther';
 import outreach from './outreach';
 import amazonmws from './amazonmws';
-import autopilot from './autopilot';
 import ebayXml from './ebayXml';
 import openair from './openair';
 import quickbooks from './quickbooks';
@@ -21,68 +20,52 @@ import solidcommerce from './solidcommerce';
 import propack from './propack';
 import magento from './magento';
 import clio from './clio';
-import onelogin from './onelogin';
 import recharge from './recharge';
 import drift from './drift';
-import strata from './strata';
-import avalara from './avalara';
-import campaignmonitor from './campaignmonitor';
-import certify from './certify';
-import chargebee from './chargebee';
-import hubspot from './hubspot';
-import bigcommerce from './bigcommerce';
-import chargify from './chargify';
-import coupa from './coupa';
-import desk from './desk';
-import docusign from './docusign';
-import easypost from './easypost';
-import ebay from './ebay';
-import freshdesk from './freshdesk';
-import liquidplanner from './liquidplanner';
-import integratorio from './integratorio';
-import jet from './jet';
-import jira from './jira';
-import mailchimp from './mailchimp';
-import microsoftbusinesscentral from './microsoftbusinesscentral';
-import microsoftonenote from './microsoftonenote';
-import microsoftoffice365 from './microsoftoffice365';
-import microsoftoutlookcalendar from './microsoftoutlookcalendar';
-import microsoftoutlookcontacts from './microsoftoutlookcontacts';
-import microsoftoutlookmail from './microsoftoutlookmail';
-import microsoftdynamics365 from './microsoftdynamics365';
-import sageone from './sageone';
-import slack from './slack';
-import shippo from './shippo';
-import skubana from './skubana';
-import servicenow from './servicenow';
+import stripe from './stripe';
+import zendesk from './zendesk';
+import postmark from './postmark';
+import steelbrick from './steelbrick';
+import squareup from './squareup';
+import twilio from './twilio';
+import tsheets from './tsheets';
+import tophatter from './tophatter';
+import zohocrm from './zohocrm';
+import zohomail from './zohomail';
+import zohobooks from './zohobooks';
+import zohodesk from './zohodesk';
+import klaviyo from './klaviyo';
+import wish from './wish';
+import returnly from './returnly';
+import expensify from './expensify';
+import myobessentials from './myobessentials';
+import parseur from './parseur';
+import oandaexchangerates from './oandaexchangerates';
+import oandav20fxtrade from './oandav20fxtrade';
+import sharepoint from './sharepoint';
 
 export default {
-  servicenow,
-  autopilot,
-  skubana,
-  shippo,
-  slack,
-  sageone,
-  microsoftdynamics365,
-  microsoftoutlookmail,
-  microsoftoutlookcontacts,
-  microsoftoutlookcalendar,
-  microsoftoffice365,
-  microsoftbusinesscentral,
-  microsoftonenote,
-  mailchimp,
-  jira,
-  jet,
-  integratorio,
-  liquidplanner,
-  freshdesk,
-  ebay,
-  coupa,
-  chargify,
-  desk,
-  docusign,
-  bigcommerce,
-  easypost,
+  sharepoint,
+  oandav20fxtrade,
+  oandaexchangerates,
+  parseur,
+  returnly,
+  myobessentials,
+  expensify,
+  wish,
+  klaviyo,
+  zohodesk,
+  zohobooks,
+  zohomail,
+  tophatter,
+  zohocrm,
+  twilio,
+  tsheets,
+  steelbrick,
+  squareup,
+  postmark,
+  zendesk,
+  stripe,
   activecampaign,
   drift,
   'authorize.net': authorizeNet,
@@ -98,20 +81,13 @@ export default {
   trinet,
   pacejet,
   bamboohr,
-  chargebee,
   intercom,
   okta,
-  hubspot,
   myobaccountright,
   easyship,
   azureactivedirectory,
   solidcommerce,
   propack,
   clio,
-  onelogin,
-  campaignmonitor,
   recharge,
-  certify,
-  strata,
-  avalara,
 };

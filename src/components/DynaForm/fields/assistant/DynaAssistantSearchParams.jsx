@@ -83,6 +83,7 @@ export default function DynaAssistantSearchParams(props) {
         />
       )}
       <Button
+        data-test={id}
         variant="contained"
         color="primary"
         onClick={() => setShowSearchParamsModal(true)}>

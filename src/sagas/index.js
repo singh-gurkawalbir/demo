@@ -22,6 +22,8 @@ import {
 import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
+import { templateSagas } from './template';
+import { uploadFileSagas } from './uploadFileDialog';
 import { stackSagas } from './stack';
 import { marketplaceSagas } from './marketPlace';
 
@@ -94,6 +96,8 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
+    ...templateSagas,
+    ...uploadFileSagas,
     ...stackSagas,
     ...marketplaceSagas,
   ]);

@@ -1,5 +1,7 @@
+import { Fragment } from 'react';
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 // TODO: @Azhar, this status circle seems to be used more than just in
 // the homepage card. Can you move it under /components, pls?
 import StatusCircle from '../HomePageCard/Header/Status/StatusCircle';
@@ -8,11 +10,17 @@ import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
 
 export const getResourceLink = (resourceType, resource) => (
-  <Link
-    to={getRoutePath(`/${resourceType}/edit/${resourceType}/${resource._id}`)}>
-    {resource.name}
-  </Link>
+  <Fragment>
+    <Link
+      to={getRoutePath(
+        `/${resourceType}/edit/${resourceType}/${resource._id}`
+      )}>
+      {resource.name || resource._id}
+    </Link>
+    <Typography>{resource.shared ? 'Shared' : ''}</Typography>
+  </Fragment>
 );
+
 export const getConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
   let app;

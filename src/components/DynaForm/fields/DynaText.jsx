@@ -53,6 +53,7 @@ export default function DynaText(props) {
       <TextField
         autoComplete="off"
         key={id}
+        data-test={id}
         name={name}
         label={label}
         InputProps={{

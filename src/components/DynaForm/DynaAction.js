@@ -42,6 +42,7 @@ function DynaAction(props) {
 
   return (
     <Button
+      data-test={id}
       variant="contained"
       color="primary"
       className={className}

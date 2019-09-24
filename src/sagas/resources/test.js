@@ -267,12 +267,20 @@ availableResources.forEach(type => {
   describe(`deleteResource("${type}", id) saga`, () => {
     const id = 123;
 
-    test('should succeed on successful api call', () => {
+    test('should succeed to delete for empty references', () => {
       // assign
-
+      const resourceReferences = {};
       const saga = deleteResource(actions.resource.delete(type, id));
       const path = `/${type}/${id}`;
-      const callEffect = saga.next().value;
+
+      expect(saga.next().value).toEqual(
+        call(requestReferences, {
+          resourceType: type,
+          id,
+        })
+      );
+
+      const callEffect = saga.next(resourceReferences).value;
 
       expect(callEffect).toEqual(
         call(apiCallWithRetry, {
@@ -292,13 +300,39 @@ availableResources.forEach(type => {
 
       expect(final.done).toBe(true);
     });
+    test('should fail to delete for non-empty references', () => {
+      // assign
+
+      const resourceReferences = { exports: [{ _id: '1' }, { _id: '2' }] };
+      const saga = deleteResource(actions.resource.delete(type, id));
+
+      expect(saga.next().value).toEqual(
+        call(requestReferences, {
+          resourceType: type,
+          id,
+        })
+      );
+      const final = saga.next(resourceReferences);
+
+      expect(final.value).toEqual(undefined);
+
+      expect(final.done).toBe(true);
+    });
 
     test('should return undefined if api call fails', () => {
       // assign
+      const resourceReferences = {};
       const saga = deleteResource(actions.resource.delete(type, id));
       const path = `/${type}/${id}`;
       // act
-      const callEffect = saga.next().value;
+
+      expect(saga.next().value).toEqual(
+        call(requestReferences, {
+          resourceType: type,
+          id,
+        })
+      );
+      const callEffect = saga.next(resourceReferences).value;
 
       expect(callEffect).toEqual(
         call(apiCallWithRetry, {
