@@ -33,7 +33,7 @@ export default function DynaTable(props) {
   }
 
   return (
-    <LoadResources data-test={id} required resources="connections">
+    <LoadResources required resources="connections">
       {tableType === 'connectorStaticMap' && (
         <DynaConnectoroNColumnMap {...props} />
       )}
