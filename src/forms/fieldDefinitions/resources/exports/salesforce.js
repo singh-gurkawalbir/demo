@@ -3,6 +3,12 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    visibleWhen: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+    ],
   },
   'salesforce.executionType': {
     type: 'radiogroup',
@@ -63,7 +69,7 @@ export default {
       },
     ],
   },
-  'salesforce.distributed.relatedLists.referencedFieldss': {
+  'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',

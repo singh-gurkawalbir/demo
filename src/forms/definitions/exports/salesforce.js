@@ -2,17 +2,18 @@ export default {
   preSubmit: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
-    } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
-    }
-
     if (retValues['/salesforce/executionType'] === 'scheduled') {
       retValues['/salesforce/type'] = 'soql';
       retValues['/salesforce/api'] = 'rest';
+
+      if (retValues['/type'] === 'all') {
+        retValues['/type'] = undefined;
+      } else if (retValues['/type'] === 'test') {
+        retValues['/test/limit'] = 1;
+      }
     } else if (retValues['/salesforce/executionType'] === 'realtime') {
-      retValues['/type'] = 'distributed';
+      retValues['/salesforce/soql/query'] = undefined;
+      // retValues['/type'] = 'distributed';
     }
 
     return {
