@@ -4,12 +4,8 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
 import IntegrationSettings from '../../views/IntegrationSettings';
-import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
-import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
-import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
-import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
-import TemplatePreview from '../../views/Templates/Preview';
-import TemplateInstall from '../../views/Templates/Install';
+import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
+import MarketplaceRouter from '../../views/MarketPlace/Router';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -35,9 +31,6 @@ const FlowBuilder = loadable(() =>
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
-const Marketplace = loadable(() =>
-  import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
-);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -46,43 +39,6 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
-const ConnectorTemplateList = loadable(() =>
-  import(
-    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
-  )
-);
-const templateRoutes = [
-  {
-    path: '/pg/marketplace/templates/:templateId/preview',
-    component: TemplatePreview,
-  },
-  {
-    path: '/pg/marketplace/templates/:templateId/setup',
-    component: TemplateInstall,
-  },
-];
-const integrationAppRoutes = [
-  // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-  {
-    path: '/pg/connectors/:integrationId/setup',
-    component: IntegrationAppInstallation,
-  },
-  {
-    path: '/pg/connectors/:integrationId/settings',
-    component: IntegrationAppSettings,
-  },
-  {
-    path: '/pg/connectors/:integrationId/install/addNewStore',
-    component: IntegrationAppAddNewStore,
-  },
-  {
-    path: [
-      '/pg/connectors/:integrationId/uninstall/:storeId',
-      '/pg/connectors/:integrationId/uninstall',
-    ],
-    component: IntegrationAppUninstallation,
-  },
-];
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -102,16 +58,8 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
-        {templateRoutes.map(props => (
-          <Route {...props} key={props.path} />
-        ))}
-        {integrationAppRoutes.map(props => (
-          <Route {...props} key={props.path} />
-        ))}
-        <Route
-          path="/pg/marketplace/:application"
-          component={ConnectorTemplateList}
-        />
+        <Route path="/pg/connectors" component={IntegrationAppsRouter} />
+        <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
@@ -120,7 +68,6 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
-        <Route path="/pg/marketplace" component={Marketplace} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>
