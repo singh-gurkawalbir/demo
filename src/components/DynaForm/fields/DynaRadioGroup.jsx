@@ -78,6 +78,7 @@ export default function DynaRadio(props) {
       className={fullWidth ? classes.fullWidth : ''}>
       <FormLabel component="legend">{label}</FormLabel>
       <RadioGroup
+        data-test={id}
         aria-label={label}
         className={clsx({
           [classes.rowFlexWrapper]: showOptionsHorizontally,

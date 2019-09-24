@@ -80,6 +80,7 @@ export default function DynaMultiSelect(props) {
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Select
         multiple
+        data-test={id}
         value={processedValue}
         onChange={evt => {
           onFieldChange(id, evt.target.value);

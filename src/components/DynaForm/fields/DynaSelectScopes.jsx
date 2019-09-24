@@ -76,6 +76,7 @@ export default function DynaSelectScopesDialog(props) {
         />
       )}
       <Button
+        data-test={id}
         variant="contained"
         color="primary"
         onClick={() => setShowScopesModal(true)}>
