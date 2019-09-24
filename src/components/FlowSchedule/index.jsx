@@ -12,7 +12,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
-import { TIMEZONES } from '../../utils/constants';
+import dateTimezones from '../../utils/dateTimezones';
 import { getCronExpression } from '../../utils/util';
 
 const useStyles = makeStyles(theme => ({
@@ -349,7 +349,13 @@ const startTimeData = Array.apply(null, { length: 24 }).map(
           (preferences && preferences.timezone),
         options: [
           {
-            items: TIMEZONES,
+            items:
+              (dateTimezones &&
+                dateTimezones.map(date => ({
+                  label: date.value,
+                  value: date.name,
+                }))) ||
+              [],
           },
         ],
       },
