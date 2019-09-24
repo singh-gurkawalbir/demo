@@ -68,7 +68,7 @@ class Flows extends Component {
                     <NavLink
                       activeClassName={classes.activeLink}
                       className={classes.link}
-                      to={`flows/${flow._id}/edit`}>
+                      to={`/pg/flowBuilder/${flow._id}/`}>
                       {flow.name}
                     </NavLink>
                   </TableCell>

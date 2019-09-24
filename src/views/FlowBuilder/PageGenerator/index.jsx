@@ -1,9 +1,11 @@
 import { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import itemTypes from '../itemTypes';
+import * as selectors from '../../../reducers';
 
 const pgBoxSize = 150;
 const useStyles = makeStyles(theme => ({
@@ -38,11 +40,14 @@ const useStyles = makeStyles(theme => ({
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
+const PageGenerator = ({ index, isLast, ...pg }) => {
   const classes = useStyles();
   const ref = useRef(null);
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(state, 'exports', pg._exportId)
+  );
   const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_GENERATOR, _id, index },
+    item: { type: itemTypes.PAGE_GENERATOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
@@ -52,9 +57,9 @@ const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   drag(ref);
 
   return (
-    <div id={_id} className={classes.pgContainer}>
+    <div className={classes.pgContainer}>
       <div ref={ref} className={classes.pgBox} style={{ opacity }}>
-        <Typography variant="h2">{name}</Typography>
+        <Typography variant="h2">{resource.name || resource.id}</Typography>
       </div>
       <div
         className={clsx(classes.line, {

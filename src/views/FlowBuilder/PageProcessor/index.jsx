@@ -1,8 +1,11 @@
 import { useRef, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
+import * as selectors from '../../../reducers';
+// import actions from '../../../actions';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
 import ToolsIcon from '../../../components/icons/ToolsIcon';
@@ -38,7 +41,12 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
+const PageProcessor = ({ index, onMove, isLast, ...pp }) => {
+  const resourceType = pp.type === 'export' ? 'exports' : 'imports';
+  const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
   const ref = useRef(null);
   const classes = useStyles();
   const [, drop] = useDrop({
@@ -90,7 +98,7 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
     },
   });
   const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_PROCESSOR, _id, index },
+    item: { type: itemTypes.PAGE_PROCESSOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
@@ -106,7 +114,7 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <div ref={ref} className={classes.ppBox} style={{ opacity }}>
-          <Typography variant="h2">{name}</Typography>
+          <Typography variant="h2">{resource.name || resource.id}</Typography>
         </div>
         {!isLast && (
           <div>
