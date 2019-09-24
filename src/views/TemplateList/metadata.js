@@ -1,10 +1,13 @@
 import Link from '@material-ui/core/Link';
-import Delete from '../../actions/Delete';
-import Edit from '../../actions/Edit';
-import UploadZipFile from '../../actions/Templates/UploadZipFile';
-import Download from '../../actions/Templates/Download';
-import TogglePublish from '../../actions/Templates/TogglePublish';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import Delete from '../../components/ResourceTable/actions/Delete';
+import Edit from '../../components/ResourceTable/actions/Edit';
+import UploadZipFile from '../../components/ResourceTable/actions/Templates/UploadZipFile';
+import Download from '../../components/ResourceTable/actions/Templates/Download';
+import TogglePublish from '../../components/ResourceTable/actions/Templates/TogglePublish';
+import {
+  getResourceLink,
+  formatLastModified,
+} from '../../components/CeligoTable/util';
 
 export default {
   columns: [

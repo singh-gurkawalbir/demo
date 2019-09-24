@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import shortid from 'shortid';
@@ -10,7 +10,6 @@ import infoText from './infoText';
 import CeligoIconButton from '../../components/IconButton';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import GenerateTemplateZip from '../../components/GenerateTemplateZip';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
@@ -40,37 +39,14 @@ function ResourceList(props) {
     })
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
-  const isTemplatesPage = resourceType === 'templates';
-  const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
-  const handleGenerateZipDialogClose = () => {
-    setShowGenerateZipDialog(false);
-  };
-
-  const resourceList = useSelector(state =>
-    selectors.resourceList(state, { type: 'integrations' })
-  );
 
   return (
     <Fragment>
-      {showGenerateZipDialog && (
-        <GenerateTemplateZip
-          onClose={handleGenerateZipDialogClose}
-          integrations={resourceList.resources}
-        />
-      )}
       <ResourceDrawer {...props} />
-
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
-          {isTemplatesPage && (
-            <CeligoIconButton
-              onClick={() => setShowGenerateZipDialog(true)}
-              variant="text">
-              Generate Template Zip
-            </CeligoIconButton>
-          )}
           <KeywordSearch
             filterKey={resourceType}
             defaultFilter={defaultFilter}
@@ -87,11 +63,7 @@ function ResourceList(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources
-          required
-          resources={
-            isTemplatesPage ? [resourceType, 'integrations'] : resourceType
-          }>
+        <LoadResources required resources={resourceType}>
           <ResourceTable
             resourceType={resourceType}
             resources={list.resources}
