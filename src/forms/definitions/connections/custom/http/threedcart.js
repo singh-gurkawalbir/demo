@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': '3dcart',
@@ -22,14 +22,14 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.threedcartSecureUrl': {
       id: 'http.threedcartSecureUrl',
       type: 'text',
       label: 'Secure URL',
       required: true,
-      helpText: `3dcart merchant's Secure URL.`,
+      helpText: "3dcart merchant's Secure URL.",
       defaultValue: r =>
         r &&
         r.http &&
@@ -37,27 +37,33 @@ export default {
         r.http.headers.find(header => header.name === 'SecureUrl') &&
         r.http.headers.find(header => header.name === 'SecureUrl').value,
     },
-    {
+    'http.encrypted.PrivateKey': {
       id: 'http.encrypted.PrivateKey',
       type: 'text',
       label: 'Private Key',
       defaultValue: '',
       required: true,
-      helpText: `Your application's private key.`,
+      helpText: "Your application's private key.",
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
-      helpText: `The 3dcart merchant's token.`,
+      helpText: "The 3dcart merchant's token.",
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.threedcartSecureUrl',
+      'http.encrypted.PrivateKey',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

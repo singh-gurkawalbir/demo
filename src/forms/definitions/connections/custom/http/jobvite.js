@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'jobvite',
@@ -12,9 +12,9 @@ export default {
       '/api/v2/candidate?api={{connection.http.unencrypted.api}}&sc={{connection.http.encrypted.secret}}',
     '/http/ping/method': 'GET',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment',
@@ -40,36 +40,45 @@ export default {
         return 'production';
       },
     },
-    {
+    'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
       label: 'Company Id',
       required: true,
       helpText: 'The company ID of your Jobvite account.',
     },
-    {
+    'http.unencrypted.api': {
       id: 'http.unencrypted.api',
       type: 'text',
       label: 'API key',
       required: true,
       helpText: 'The API Key of your Jobvite account.',
     },
-    {
+    'http.encrypted.secret': {
       id: 'http.encrypted.secret',
       type: 'text',
       label: 'Secret',
       required: true,
       inputType: 'password',
-      helpText: 'The Secret Key of your Jobvite account.',
+      defaultValue: '',
+      helpText:
+        'The Secret Key of your Jobvite account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe. This can be obtained from the Settings section and user secret subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'environment',
+      'http.unencrypted.companyId',
+      'http.unencrypted.api',
+      'http.encrypted.secret',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

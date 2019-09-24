@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     let headers = [];
 
     if (formValues['/http/sandbox'] === 'true') {
@@ -34,7 +34,7 @@ export default {
       '/http/auth/token/refreshHeaders': [
         {
           name: 'authorization',
-          value: `basic ${window.btoa(
+          value: `Basic ${window.btoa(
             `${formValues['/http/unencrypted/apiKey']}:${
               formValues['/http/encrypted/apiSecret']
             }`
@@ -43,8 +43,8 @@ export default {
       ],
     };
   },
-  fields: [
-    {
+  fieldMap: {
+    'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
       label: 'Account Type',
@@ -69,15 +69,14 @@ export default {
         return 'false';
       },
     },
-    {
+    'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
       label: 'API Key',
       helpText: 'Please enter API Key of your Pitney Bowes Account.',
     },
-
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -87,31 +86,31 @@ export default {
       helpText:
         'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.apiKey',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.apiSecret',
-          is: [''],
-        },
+        { field: 'http.unencrypted.apiKey', is: [''] },
+        { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Pitney Bowes account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'http.sandbox',
+      'http.unencrypted.apiKey',
+      'http.encrypted.apiSecret',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

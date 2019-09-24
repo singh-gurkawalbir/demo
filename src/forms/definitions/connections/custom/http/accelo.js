@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'accelo',
@@ -16,9 +16,9 @@ export default {
     }.api.accelo.com/oauth2/v0/token`,
     '/http/auth/oauth/scopeDelimiter': ',',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.acceloSubdomain': {
       id: 'http.acceloSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -44,16 +44,17 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: ['read(all)', 'write(all)'],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.acceloSubdomain', 'http.auth.oauth.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

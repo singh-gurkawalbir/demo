@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'snapfulfil',
@@ -9,9 +9,9 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://${formValues['/http/subdomain']}.snapfulfil.net/`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.subdomain': {
       type: 'text',
       id: 'http.subdomain',
       helpText:
@@ -37,20 +37,26 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: `Please enter your snapfulfil account's username`,
+      helpText: "Please enter your snapfulfil account's username",
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: `Please enter your snapfulfil account's password`,
+      helpText: "Please enter your snapfulfil account's password",
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.subdomain',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

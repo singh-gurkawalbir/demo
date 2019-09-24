@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'newegg',
@@ -28,9 +28,9 @@ export default {
       { name: 'Accept', value: 'application/json' },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    accountType: {
       id: 'accountType',
       type: 'select',
       label: 'Account Type',
@@ -42,8 +42,7 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Select "Newegg Business" if your account is created on https://www.neweggbusiness.com. \n Select "Newegg" if your account is created on https://www.newegg.com.',
+      helpText: `Select 'Newegg Business' if your account is created on https://www.neweggbusiness.com.Select 'Newegg' if your account is created on https://www.newegg.com.`,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -56,7 +55,7 @@ export default {
         return 'newegg';
       },
     },
-    {
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       type: 'text',
       label: 'API Key',
@@ -68,10 +67,10 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       type: 'text',
-      label: 'API Key',
+      label: 'API Secret',
       required: true,
       inputType: 'password',
       defaultValue: '',
@@ -80,7 +79,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
       label: 'Seller Id',
@@ -88,12 +87,19 @@ export default {
       helpText:
         'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'accountType',
+      'http.encrypted.apiKey',
+      'http.encrypted.apiSecret',
+      'http.unencrypted.sellerId',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

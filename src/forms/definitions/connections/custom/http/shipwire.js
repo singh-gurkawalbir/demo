@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'shipwire',
@@ -11,9 +11,9 @@ export default {
       formValues['/environment'] === 'sandbox' ? '.beta' : ''
     }.shipwire.com/api`,
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
       label: 'Environment',
@@ -40,20 +40,26 @@ export default {
         return 'production';
       },
     },
-    {
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'The username of your Shipwire account.',
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'The password of your Shipwire account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'environment',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'anaplan',
@@ -9,23 +9,23 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': 'https://api.anaplan.com/',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'The username of your Anaplan account.',
     },
-    {
+    'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'The password of your Anaplan account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.basic.username', 'http.auth.basic.password'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
