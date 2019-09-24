@@ -8,7 +8,7 @@ import LoadResources from '../../../../components/LoadResources';
 import * as selectors from '../../../../reducers';
 
 export default function DynaTable(props) {
-  const { connectionId, optionsMap, map, _integrationId, id } = props;
+  const { connectionId, optionsMap, map, _integrationId } = props;
   let tableType;
   let connection;
 
