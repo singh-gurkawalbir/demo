@@ -43,6 +43,7 @@ function ResourceList(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>

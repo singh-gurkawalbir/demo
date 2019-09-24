@@ -11,7 +11,6 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CeligoIconButton from '../../components/IconButton';
-import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateTemplateZip from '../../components/GenerateTemplateZip';
 import metadata from './metadata';
@@ -38,7 +37,6 @@ export default function TemplateList(props) {
       ...filter,
     })
   );
-  const resourceName = MODEL_PLURAL_TO_LABEL.templates;
   const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
   const handleGenerateZipDialogClose = () => {
     setShowGenerateZipDialog(false);
@@ -72,7 +70,7 @@ export default function TemplateList(props) {
             }/add/${templates}/new-${shortid.generate()}`}
             variant="text"
             color="primary">
-            <AddIcon /> New {resourceName}
+            <AddIcon /> New Template
           </CeligoIconButton>
         </div>
       </CeligoPageBar>
