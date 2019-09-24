@@ -1,9 +1,9 @@
 import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { uniq } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
-import { getApplicationConnectors } from '../../constants/applications';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
@@ -37,14 +37,12 @@ export default function MarketplaceList() {
     selectors.marketplaceConnectors(state, undefined, sandbox)
   );
   const templates = useSelector(state => selectors.marketplaceTemplates(state));
-  let applicationConnectors = getApplicationConnectors();
   let applications = [];
 
   connectors.forEach(c => (applications = applications.concat(c.applications)));
   templates.forEach(t => (applications = applications.concat(t.applications)));
-  applicationConnectors = applicationConnectors.filter(connector =>
-    applications.includes(connector.id)
-  );
+  applications = uniq(applications.filter(Boolean));
+
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
     dispatch(actions.marketplace.requestTemplates());
@@ -53,16 +51,10 @@ export default function MarketplaceList() {
   return (
     <Fragment>
       <div className={classes.root}>
-        {applicationConnectors.map(connector => (
-          <NavLink
-            key={connector.id}
-            to={getRoutePath(`/marketplace/${connector.id}`)}>
+        {applications.map(id => (
+          <NavLink key={id} to={getRoutePath(`/marketplace/${id}`)}>
             <Card className={classes.card}>
-              <ApplicationImg
-                assistant={connector.id}
-                size="large"
-                imgType="large"
-              />
+              <ApplicationImg assistant={id} size="large" imgType="large" />
             </Card>
           </NavLink>
         ))}

@@ -56,9 +56,16 @@ export default function IntegrationSettings(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
+  const integration = useSelector(state => {
+    if (integrationId === STANDALONE_INTEGRATION.id) {
+      return {
+        _id: STANDALONE_INTEGRATION.id,
+        name: STANDALONE_INTEGRATION.name,
+      };
+    }
+
+    return selectors.resource(state, 'integrations', integrationId);
+  });
 
   useEffect(() => {
     if (!integration) {

@@ -189,6 +189,10 @@ export function marketplaceTemplates(state, application) {
   return fromMarketplace.templates(state.marketplace, application);
 }
 
+export function template(state, templateId) {
+  return fromMarketplace.template(state && state.marketplace, templateId);
+}
+
 export function flowJobsPagingDetails(state) {
   return fromJobs.flowJobsPagingDetails(state.jobs);
 }

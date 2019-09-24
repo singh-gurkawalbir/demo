@@ -8,6 +8,7 @@ import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
 import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
 import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
 import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
+import TemplatePreview from '../../views/Templates/Preview';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -93,6 +94,10 @@ export default class AppRouting extends Component {
             '/pg/connectors/:integrationId/uninstall',
           ]}
           component={IntegrationAppUninstallation}
+        />
+        <Route
+          path="/marketplace/templates/:templateId/preview"
+          component={TemplatePreview}
         />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />

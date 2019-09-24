@@ -108,6 +108,14 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function previewTemplate(state, templateId) {
+  return fromSession.previewTemplate(state && state.session, templateId);
+}
+
+export function template(state, templateId) {
+  return fromData.template(state && state.data, templateId);
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromSession.connectorMetadata(
     state && state.session,

@@ -444,6 +444,19 @@ const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const template = {
+  request: templateId => action(actionTypes.TEMPLATE.PREVIEW, { templateId }),
+  installStepsReceived: (installSteps, connectionMap, templateId) =>
+    action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
+      installSteps,
+      connectionMap,
+      templateId,
+    }),
+  failedPreview: templateId =>
+    action(actionTypes.TEMPLATE.FAILURE, { templateId }),
+  receivedPreview: (components, templateId) =>
+    action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
+};
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
   changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
@@ -745,4 +758,5 @@ export default {
   stack,
   connection,
   marketplace,
+  template,
 };

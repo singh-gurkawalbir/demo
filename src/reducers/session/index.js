@@ -10,6 +10,7 @@ import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
+import templates, * as fromTemplates from './templates';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -25,6 +26,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   integrationApps,
+  templates,
 });
 
 // #region PUBLIC SELECTORS
@@ -120,6 +122,10 @@ export function resourceFormState(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
+}
+
+export function previewTemplate(state, templateId) {
+  return fromTemplates.previewTemplate(state && state.templates, templateId);
 }
 
 export function connectorMetadata(state, fieldName, id, _integrationId) {

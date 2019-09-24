@@ -66,6 +66,12 @@ export default function ConnectorTemplateList(props) {
     setShowMessage(true);
   };
 
+  const redirectToTemplatePreview = id => {
+    props.history.push(`/marketplace/templates/${id}/preview`);
+  };
+
+  const handleTemplateInstallClick = id => () => redirectToTemplatePreview(id);
+
   return (
     <Fragment>
       <CeligoPageBar title={`${applicationName} Integrations`} />
@@ -106,7 +112,11 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions>
-              <Button variant="contained">Install</Button>
+              <Button
+                onClick={handleTemplateInstallClick(template._id)}
+                variant="contained">
+                Install
+              </Button>
             </CardActions>
           </Card>
         ))}
