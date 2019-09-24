@@ -6,4 +6,5 @@ export default {
       orderBy: 'name',
     },
   ],
+  rowActions: () => [],
 };

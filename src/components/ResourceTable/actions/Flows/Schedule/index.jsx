@@ -6,18 +6,18 @@ import FlowSchedule from '../../../../FlowSchedule';
 export default {
   label: 'Schedule',
   component: function Schedule({ resource }) {
-    const [isScheduleShown, showSchedule] = useState(false);
+    const [showSchedule, setShowSchedule] = useState(false);
     const onScheduleClick = () => {
-      showSchedule(!isScheduleShown);
+      setShowSchedule(!showSchedule);
     };
 
     const handleClose = () => {
-      showSchedule(false);
+      setShowSchedule(false);
     };
 
     return (
       <Fragment>
-        {isScheduleShown && (
+        {showSchedule && (
           <FlowSchedule
             resource={resource}
             title="Flow Schedule"

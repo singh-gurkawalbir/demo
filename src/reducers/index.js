@@ -1454,3 +1454,23 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
 
   return connectionIdsToRegister;
 }
+
+export function getAllPageProcessorImports(state, pageProcessors) {
+  let ppImports = [];
+  const pageProcessorIds = [];
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!pageProcessors) {
+    return imports;
+  }
+
+  pageProcessors.forEach(pageProcessor => {
+    if (pageProcessor && pageProcessor._importId) {
+      pageProcessorIds.push(pageProcessor._importId);
+    }
+  });
+  ppImports =
+    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
+
+  return ppImports;
+}
