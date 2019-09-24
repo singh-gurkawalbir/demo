@@ -1,21 +1,21 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'sharepoint',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://${formValues['/rest/subDomain']}.sharepoint.com`,
-    '/rest/authURI':
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://${formValues['/http/subDomain']}.sharepoint.com`,
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.subDomain': {
-      id: 'rest.subDomain',
+    'http.subDomain': {
+      id: 'http.subDomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.sharepoint.com',
@@ -29,7 +29,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -40,13 +40,13 @@ export default {
         return subdomain;
       },
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.subDomain'],
+    fields: ['name', 'http.subDomain'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

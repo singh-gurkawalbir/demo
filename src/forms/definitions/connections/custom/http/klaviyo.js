@@ -1,20 +1,22 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'klaviyo',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'urlencoded',
-    '/rest/baseURI': `https://a.klaviyo.com/api/`,
-    '/rest/pingRelativeURI':
-      '/v1/lists?api_key={{{connection.rest.encrypted.apiKey}}}',
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'urlencoded',
+    '/http/baseURI': `https://a.klaviyo.com/api/`,
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI':
+      '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.encrypted.apiKey': {
-      id: 'rest.encrypted.apiKey',
+    'http.encrypted.apiKey': {
+      id: 'http.encrypted.apiKey',
       type: 'text',
-      label: 'API Key:',
+      label: 'API Key',
+      defaultValue: '',
       required: true,
       inputType: 'password',
       helpText:
@@ -22,13 +24,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.encrypted.apiKey'],
+    fields: ['name', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

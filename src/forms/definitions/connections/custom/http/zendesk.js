@@ -1,12 +1,13 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zendesk',
-    '/rest/authType': 'basic',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': '/api/v2/users.json',
-    '/rest/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
+    '/http/auth/type': 'basic',
+    '/http/mediaType': 'json',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/api/v2/users.json',
+    '/http/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -15,7 +16,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {
@@ -25,7 +26,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -36,20 +37,20 @@ export default {
         return subdomain;
       },
     },
-    'rest.basicAuth.username': { fieldId: 'rest.basicAuth.username' },
-    'rest.basicAuth.password': { fieldId: 'rest.basicAuth.password' },
-    restAdvanced: { formId: 'restAdvanced' },
+    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
+    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
       'zendesk.subdomain',
-      'rest.basicAuth.username',
-      'rest.basicAuth.password',
+      'http.auth.basic.username',
+      'http.auth.basic.password',
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };
