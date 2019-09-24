@@ -15,7 +15,7 @@ export default {
       formValues['/http/baseURI']
     }/oauth2/token`,
     '/http/auth/token/refreshBody':
-      '{"grant_type":"password","client_id":"{{{connection.http.unencrypted.clientID}}}","client_secret":"","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.unencrypted.password}}}","platform":"base"}',
+      '{"grant_type":"password","client_id":"{{{connection.http.unencrypted.clientID}}}","client_secret":"","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.encrypted.password}}}","platform":"base"}',
     '/http/auth/token/refreshMethod': 'POST',
   }),
   fieldMap: {
@@ -109,7 +109,7 @@ export default {
       label: 'Client Secret',
       placeholder: 'Optional if Client Secret is empty',
       helpText:
-        'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
+        'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -120,7 +120,7 @@ export default {
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Tableau account.',
     },

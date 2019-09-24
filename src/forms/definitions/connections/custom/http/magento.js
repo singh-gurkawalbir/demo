@@ -44,7 +44,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       description:
-        'Note: for security reasons this field must always be re-entered.',
+        'Note: for security reasons this field must always be re-entered.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
       required: true,
     },
     'http.auth.token.token': {
@@ -57,7 +57,7 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
         { field: 'http.baseURI', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Magento account.',
     },

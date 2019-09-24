@@ -33,7 +33,8 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       label: 'API Endpoint',
-      helpText: 'Please enter Region for URI.',
+      helpText:
+        'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -53,7 +54,7 @@ export default {
       type: 'text',
       label: 'Store Code',
       helpText:
-        'Please enter your private key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
+        'Please enter the Store Code. Under store settings, we will get the store code.',
       required: true,
     },
     xMivaAPIToken: {
@@ -61,7 +62,7 @@ export default {
       type: 'text',
       label: 'API Token',
       helpText:
-        'Please enter your public key here. Your public key identifies you to our system. This is similar to a username. You will include your public key every time you send request to Paycor. This is not secret information.',
+        'Please enter the API token of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

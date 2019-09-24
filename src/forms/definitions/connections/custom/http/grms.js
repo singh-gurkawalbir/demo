@@ -43,7 +43,7 @@ export default {
       label: 'API Secret',
       inputType: 'password',
       helpText:
-        'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.',
+        'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -54,7 +54,7 @@ export default {
         { field: 'http.unencrypted.apiKey', is: [''] },
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The Access Token of your GRMS account',
     },

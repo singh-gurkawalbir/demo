@@ -45,7 +45,8 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
-      helpText: 'Please enter password of your Dun & Bradstreet account.',
+      helpText:
+        'Please enter password of your Dun & Bradstreet account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -56,7 +57,7 @@ export default {
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Dun & Bradstreet account.',
     },
