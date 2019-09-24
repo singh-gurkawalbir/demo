@@ -42,7 +42,7 @@ export default {
   },
   'file.output': {
     type: 'select',
-    label: 'File output',
+    label: 'Output Mode',
     options: [
       {
         items: [
@@ -113,26 +113,26 @@ export default {
   },
   'file.json.resourcePath': {
     type: 'text',
-    label: 'File json resource Path',
+    label: 'Resource Path',
   },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
-    label: 'File xlsx has Header Row',
+    label: 'File Has Header:',
   },
   'file.xlsx.keyColumns': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'File xlsx key Columns',
+    label: 'Key Columns',
   },
   'file.xml.resourcePath': {
     type: 'text',
-    label: 'File xml resource Path',
+    label: 'Resource Path',
   },
   'file.fileDefinition.resourcePath': {
     type: 'text',
-    label: 'File file Definition resource Path',
+    label: 'Resource Path',
   },
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',

@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,13 +9,12 @@ import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
 import CeligoIconButton from '../../components/IconButton';
 import * as selectors from '../../reducers';
-import actions from '../../actions';
-import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import GenerateTemplateZip from '../../components/GenerateTemplateZip';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
+import KeywordSearch from '../../components/KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,24 +28,17 @@ const useStyles = makeStyles(theme => ({
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
+  const defaultFilter = { take: 3 };
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const filter = useSelector(state =>
-    selectors.filter(state, resourceType)
-  ) || { take: 3 };
+  const filter =
+    useSelector(state => selectors.filter(state, resourceType)) ||
+    defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      take: 3,
       ...filter,
     })
   );
-  const handleKeywordChange = e => {
-    dispatch(
-      actions.patchFilter(resourceType, { take: 3, keyword: e.target.value })
-    );
-  };
-
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
   const isTemplatesPage = resourceType === 'templates';
   const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
@@ -72,7 +64,6 @@ function ResourceList(props) {
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
-          <SearchInput variant="light" onChange={handleKeywordChange} />
           {isTemplatesPage && (
             <CeligoIconButton
               onClick={() => setShowGenerateZipDialog(true)}
@@ -80,6 +71,10 @@ function ResourceList(props) {
               Generate Template Zip
             </CeligoIconButton>
           )}
+          <KeywordSearch
+            filterKey={resourceType}
+            defaultFilter={defaultFilter}
+          />
           <CeligoIconButton
             component={Link}
             to={`${

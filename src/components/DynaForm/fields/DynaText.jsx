@@ -20,6 +20,7 @@ export default function DynaText(props) {
     rowsMax,
     startAdornment,
     endAdornment,
+    readOnly,
     inputType,
     options,
   } = props;
@@ -61,6 +62,7 @@ export default function DynaText(props) {
           endAdornment: endAdornment ? (
             <InputAdornment position="end">{endAdornment}</InputAdornment>
           ) : null,
+          readOnly: !!readOnly,
         }}
         type={inputType}
         placeholder={placeholder}

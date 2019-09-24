@@ -109,8 +109,8 @@ export function* netsuiteUserRoles({ connectionId, values }) {
 
 export function* requestToken({ resourceId, values }) {
   const resourceType = 'connections';
-  const connectionResource = yield select(
-    selectors.resource,
+  const { merged: connectionResource } = yield select(
+    selectors.resourceData,
     resourceType,
     resourceId
   );
@@ -171,6 +171,24 @@ export function* requestToken({ resourceId, values }) {
   }
 
   try {
+    if (resp && resp.token && typeof resp.token !== 'object') {
+      try {
+        resp.token = JSON.parse(resp.token);
+      } catch (e) {
+        const errorsJSON = JSON.parse(e.message);
+        const { errors } = errorsJSON;
+
+        yield put(
+          actions.resource.connections.requestTokenFailed(
+            resourceId,
+            errors[0].message
+          )
+        );
+
+        return;
+      }
+    }
+
     const fieldsToBeSetWithValues = responseParser(resp.token);
 
     yield put(
@@ -179,6 +197,16 @@ export function* requestToken({ resourceId, values }) {
         fieldsToBeSetWithValues
       )
     );
+
+    if (assistant === 'grms') {
+      if (resp && !resp.token.Success)
+        yield put(
+          actions.resource.connections.requestTokenFailed(
+            resourceId,
+            resp && resp.token.ResponseMessages
+          )
+        );
+    }
   } catch (e) {
     yield put(
       actions.resource.connections.requestTokenFailed(
