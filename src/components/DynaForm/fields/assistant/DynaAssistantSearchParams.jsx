@@ -13,7 +13,7 @@ import {
 
 const SearchParamsModal = props => {
   const { paramMeta, onClose, id, onFieldChange, value } = props;
-  const { fields, fieldSets, fieldDetailsMap } = convertToReactFormFields({
+  const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
   });
@@ -37,8 +37,8 @@ const SearchParamsModal = props => {
       <Fragment>
         <DynaForm
           fieldMeta={{
-            fields,
-            fieldSets,
+            fieldMap,
+            layout,
           }}>
           <div>
             <Button
@@ -57,9 +57,17 @@ const SearchParamsModal = props => {
 };
 
 export default function DynaAssistantSearchParams(props) {
-  const { label, value, onFieldChange, id, paramMeta = {}, required } = props;
+  let { label } = props;
+  const { value, onFieldChange, id, paramMeta = {}, required } = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
   const isValid = !required ? true : !isEmpty(value);
+
+  if (!label) {
+    label =
+      paramMeta.paramLocation === PARAMETER_LOCATION.BODY
+        ? 'Configure Body Parameters'
+        : 'Configure Search Parameters';
+  }
 
   return (
     <Fragment>
@@ -78,10 +86,7 @@ export default function DynaAssistantSearchParams(props) {
         variant="contained"
         color="primary"
         onClick={() => setShowSearchParamsModal(true)}>
-        {label || paramMeta.paramLocation === PARAMETER_LOCATION.BODY
-          ? 'Configure Body Parameters'
-          : 'Configure Search Parameters'}{' '}
-        {required && !isValid ? '*' : ''}
+        {label} {required && !isValid ? '*' : ''}
       </Button>
 
       {!isValid && (

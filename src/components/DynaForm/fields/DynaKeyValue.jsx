@@ -3,6 +3,7 @@ import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -69,19 +70,23 @@ export default function DynaKeyValue(props) {
       <FormLabel className={classes.label}>{label}</FormLabel>
       {tableData.map(r => (
         <div className={classes.rowContainer} key={r.row}>
-          <Input
-            autoFocus
-            defaultValue={r[keyName]}
-            placeholder={keyName}
-            className={classes.input}
-            onChange={handleKeyUpdate(r.row)}
-          />
-          <Input
-            defaultValue={r[valueName]}
-            placeholder={valueName}
-            className={classes.input}
-            onChange={handleValueUpdate(r.row)}
-          />
+          <FormControl>
+            <Input
+              autoFocus
+              defaultValue={r[keyName]}
+              placeholder={keyName}
+              className={classes.input}
+              onChange={handleKeyUpdate(r.row)}
+            />
+          </FormControl>
+          <FormControl>
+            <Input
+              defaultValue={r[valueName]}
+              placeholder={valueName}
+              className={classes.input}
+              onChange={handleValueUpdate(r.row)}
+            />
+          </FormControl>
         </div>
       ))}
       <div key="new" className={classes.rowContainer}>

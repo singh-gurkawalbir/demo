@@ -70,8 +70,8 @@ export default function Lookup(props) {
   };
 
   const fieldMeta = {
-    fields: [
-      {
+    fieldMap: {
+      mode: {
         id: 'mode',
         name: 'mode',
         type: 'radiogroup',
@@ -86,7 +86,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      relativeURI: {
         id: 'relativeURI',
         name: 'relativeURI',
         type: 'text',
@@ -100,7 +100,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      method: {
         id: 'method',
         name: 'method',
         type: 'select',
@@ -129,7 +129,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      body: {
         id: 'body',
         name: 'body',
         type: 'httprequestbody',
@@ -146,7 +146,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      extract: {
         id: 'extract',
         name: 'extract',
         type: 'text',
@@ -161,7 +161,7 @@ export default function Lookup(props) {
         ],
       },
 
-      {
+      mapList: {
         id: 'mapList',
         name: 'mapList',
         type: 'staticMap',
@@ -178,7 +178,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      name: {
         id: 'name',
         name: 'name',
         type: 'text',
@@ -186,7 +186,7 @@ export default function Lookup(props) {
         defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
       },
-      {
+      failRecord: {
         id: 'failRecord',
         name: 'failRecord',
         type: 'radiogroup',
@@ -215,7 +215,7 @@ export default function Lookup(props) {
           },
         ],
       },
-      {
+      default: {
         id: 'default',
         name: 'default',
         type: 'text',
@@ -229,7 +229,20 @@ export default function Lookup(props) {
           },
         ],
       },
-    ],
+    },
+    layout: {
+      fields: [
+        'mode',
+        'relativeURI',
+        'method',
+        'body',
+        'extract',
+        'mapList',
+        'name',
+        'failRecord',
+        'default',
+      ],
+    },
   };
 
   return (

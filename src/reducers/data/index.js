@@ -7,6 +7,7 @@ import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
+import marketplace, * as fromMarketplace from './marketPlace';
 
 export default combineReducers({
   resources,
@@ -15,6 +16,7 @@ export default combineReducers({
   accessTokens,
   jobs,
   suiteScript,
+  marketplace,
 });
 
 // #region resource selectors
@@ -30,6 +32,20 @@ export function resourceDetailsMap(state, options) {
   return fromResources.resourceDetailsMap(state && state.resources, options);
 }
 
+// #region integration resource selectors
+export function integrationInstallSteps(state, id) {
+  return fromResources.integrationInstallSteps(state && state.resources, id);
+}
+
+export function integrationAppSettings(state, id) {
+  return fromResources.integrationAppSettings(state && state.resources, id);
+}
+
+export function defaultStoreId(state, id) {
+  return fromResources.defaultStoreId(state && state.resources, id);
+}
+
+// #endregion
 export function processors(state) {
   return fromResources.processors(state && state.resources);
 }
@@ -158,6 +174,19 @@ export function suiteScriptTiles(state, connectionId) {
 
 export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
+}
+
+export function marketplaceConnectors(state, application, sandbox, licenses) {
+  return fromMarketplace.connectors(
+    state.marketplace,
+    application,
+    sandbox,
+    licenses
+  );
+}
+
+export function marketplaceTemplates(state, application) {
+  return fromMarketplace.templates(state.marketplace, application);
 }
 
 export function flowJobsPagingDetails(state) {

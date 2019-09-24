@@ -18,10 +18,9 @@ import easyship from './easyship';
 import azureactivedirectory from './azureactivedirectory';
 import solidcommerce from './solidcommerce';
 import propack from './propack';
+import magento from './magento';
 import clio from './clio';
-import onelogin from './onelogin';
 import recharge from './recharge';
-import autopilot from './autopilot';
 import drift from './drift';
 import tableau from './tableau';
 import acton from './acton';
@@ -46,8 +45,50 @@ import microsoftoffice365 from './microsoftoffice365';
 import faire from './faire';
 import ware2go from './ware2go';
 import namely from './namely';
+import stripe from './stripe';
+import zendesk from './zendesk';
+import postmark from './postmark';
+import steelbrick from './steelbrick';
+import squareup from './squareup';
+import twilio from './twilio';
+import tsheets from './tsheets';
+import tophatter from './tophatter';
+import zohocrm from './zohocrm';
+import zohomail from './zohomail';
+import zohobooks from './zohobooks';
+import zohodesk from './zohodesk';
+import klaviyo from './klaviyo';
+import wish from './wish';
+import returnly from './returnly';
+import expensify from './expensify';
+import myobessentials from './myobessentials';
+import parseur from './parseur';
+import oandaexchangerates from './oandaexchangerates';
+import oandav20fxtrade from './oandav20fxtrade';
+import sharepoint from './sharepoint';
 
 export default {
+  sharepoint,
+  oandav20fxtrade,
+  oandaexchangerates,
+  parseur,
+  returnly,
+  myobessentials,
+  expensify,
+  wish,
+  klaviyo,
+  zohodesk,
+  zohobooks,
+  zohomail,
+  tophatter,
+  zohocrm,
+  twilio,
+  tsheets,
+  steelbrick,
+  squareup,
+  postmark,
+  zendesk,
+  stripe,
   activecampaign,
   drift,
   'authorize.net': authorizeNet,
@@ -59,6 +100,7 @@ export default {
   'ebay-xml': ebayXml,
   openair,
   quickbooks,
+  magento,
   trinet,
   pacejet,
   bamboohr,
@@ -70,9 +112,7 @@ export default {
   solidcommerce,
   propack,
   clio,
-  onelogin,
   recharge,
-  autopilot,
   tableau,
   acton,
   aptrinsic,

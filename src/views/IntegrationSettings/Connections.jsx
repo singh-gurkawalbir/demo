@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../ResourceList/ResourceTable';
+import ResourceTable from '../../components/ResourceTable';
 import RegisterConnections from '../../components/RegisterConnections';
 
 const useStyles = makeStyles(() => ({

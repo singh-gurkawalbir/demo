@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export default {
   preSave: formValues => ({
     ...formValues,
@@ -12,10 +10,10 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/http/auth/oauth/scope': _.merge(
-      ['openid', 'offline_access'],
-      formValues['/http/auth/oauth/scope']
-    ),
+    '/http/auth/oauth/scope': [
+      ...['openid', 'offline_access'],
+      ...formValues['/http/auth/oauth/scope'],
+    ],
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fieldMap: {

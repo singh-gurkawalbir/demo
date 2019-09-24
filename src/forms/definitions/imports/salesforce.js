@@ -1,54 +1,69 @@
 export default {
-  fields: [
-    { formId: 'common' },
-    {
+  fieldMap: {
+    common: { formId: 'common' },
+    apiType: {
       id: 'apiType',
       type: 'labeltitle',
       label: 'Where would you like to import the data?',
     },
-    { fieldId: 'salesforce.api' },
-    {
+    'salesforce.api': { fieldId: 'salesforce.api' },
+    importData: {
       id: 'importData',
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    { fieldId: 'salesforce.sObjectType' },
-    { fieldId: 'salesforce.operation' },
-    { fieldId: 'salesforce.compositeOperation' },
-    { fieldId: 'salesforce.idLookup.extract' },
-    { fieldId: 'salesforce.idLookup.whereClause' },
-    {
+    'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
+    'salesforce.operation': { fieldId: 'salesforce.operation' },
+    'salesforce.compositeOperation': {
+      fieldId: 'salesforce.compositeOperation',
+    },
+    'salesforce.idLookup.extract': { fieldId: 'salesforce.idLookup.extract' },
+    'salesforce.idLookup.whereClause': {
+      fieldId: 'salesforce.idLookup.whereClause',
+    },
+    ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [
-        {
-          field: 'salesforce.operation',
-          is: ['insert'],
-        },
-      ],
+      visibleWhen: [{ field: 'salesforce.operation', is: ['insert'] }],
     },
-    {
+    ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhen: [
-        {
-          field: 'salesforce.operation',
-          is: ['update'],
-        },
-      ],
+      visibleWhen: [{ field: 'salesforce.operation', is: ['update'] }],
     },
-    { fieldId: 'salesforce.upsertpicklistvalues.fullName' },
-    { fieldId: 'salesforce.upsert.externalIdField' },
-    { formId: 'dataMappings' },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced',
-      collapsed: true,
-      fields: [{ formId: 'advancedSettings' }],
+    'salesforce.upsertpicklistvalues.fullName': {
+      fieldId: 'salesforce.upsertpicklistvalues.fullName',
     },
-    {
-      header: 'Hooks (Optional, Developers Only)',
-      collapsed: false,
-      fields: [{ formId: 'hooks' }],
+    'salesforce.upsert.externalIdField': {
+      fieldId: 'salesforce.upsert.externalIdField',
     },
-  ],
+    dataMappings: { formId: 'dataMappings' },
+    advancedSettings: { formId: 'advancedSettings' },
+    hooks: { formId: 'hooks' },
+  },
+  layout: {
+    fields: [
+      'common',
+      'apiType',
+      'salesforce.api',
+      'importData',
+      'salesforce.sObjectType',
+      'salesforce.operation',
+      'salesforce.compositeOperation',
+      'salesforce.idLookup.extract',
+      'salesforce.idLookup.whereClause',
+      'ignoreExisting',
+      'ignoreMissing',
+      'salesforce.upsertpicklistvalues.fullName',
+      'salesforce.upsert.externalIdField',
+      'dataMappings',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      {
+        collapsed: false,
+        label: 'Hooks (Optional, Developers Only)',
+        fields: ['hooks'],
+      },
+    ],
+  },
 };
