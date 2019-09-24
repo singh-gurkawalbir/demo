@@ -20,6 +20,7 @@ export default {
       fieldId: 'http.auth.basic.password',
       helpText: 'The token of your Twilio account.',
       label: 'Auth Token',
+      defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

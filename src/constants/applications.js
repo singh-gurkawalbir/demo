@@ -506,7 +506,7 @@ const connectors = [
   { id: 'squareup', name: 'Square', type: 'http', assistant: 'squareup' },
   {
     id: 'steelbrick',
-    name: 'steelbrick',
+    name: 'Steelbrick',
     type: 'http',
     assistant: 'steelbrick',
   },

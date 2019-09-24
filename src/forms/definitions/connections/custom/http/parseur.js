@@ -22,7 +22,8 @@ export default {
       id: 'http.encrypted.apiKey',
       type: 'text',
       inputType: 'password',
-      label: 'API Token Key:',
+      defaultValue: '',
+      label: 'API Token Key',
       helpText:
         'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       description:

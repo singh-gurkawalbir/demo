@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/v1/charges',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.stripe.com/`,
+    '/http/baseURI': 'https://api.stripe.com/',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',

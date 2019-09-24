@@ -31,6 +31,7 @@ export default {
     'http.unencrypted.partnerUserId': {
       id: 'http.unencrypted.partnerUserId',
       type: 'text',
+      defaultValue: '',
       label: 'Partner User ID',
       helpText:
         'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
