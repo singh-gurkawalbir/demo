@@ -31,8 +31,11 @@ import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
+import DynaImportMapping from './DynaImportMapping';
+import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 
 export default {
+  mapping: DynaImportMapping,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
@@ -68,4 +71,5 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
+  fieldexpressionselect: DynaFieldExpressionSelect,
 };

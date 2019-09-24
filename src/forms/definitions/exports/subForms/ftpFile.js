@@ -1,7 +1,7 @@
 export default {
-  fields: [
-    // TODO: should be visible when connection type is ftp
-    { fieldId: 'ftp.fileNameStartsWith' },
-    { fieldId: 'ftp.fileNameEndsWith' },
-  ],
+  fieldMap: {
+    'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
+    'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
+  },
+  layout: { fields: ['ftp.fileNameStartsWith', 'ftp.fileNameEndsWith'] },
 };

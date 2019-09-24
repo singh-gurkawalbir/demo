@@ -12,7 +12,9 @@ import {
   generateValidReactFormFieldId,
   convertToReactFormFields,
   updateFormValues,
+  convertToExport,
   PARAMETER_LOCATION,
+  DEFAULT_PROPS,
 } from './assistant';
 
 describe('getMatchingRoute', () => {
@@ -526,7 +528,12 @@ describe('getResourceDetails', () => {
       },
     ],
     [
-      { id: 'r2', some: 'thing', doesNotSupportPaging: true },
+      {
+        id: 'r2',
+        some: 'thing',
+        doesNotSupportPaging: true,
+        paging: { abc: 'def', ghi: 'jkl' },
+      },
       'v2',
       'r2',
       {
@@ -658,7 +665,7 @@ describe('getResourceDetails', () => {
 describe('getExportOperationDetails', () => {
   const testCases = [
     [
-      { headers: {}, paging: {}, pathParameters: [], queryParameters: [] },
+      { headers: {}, pathParameters: [], queryParameters: [] },
       undefined,
       undefined,
       undefined,
@@ -667,7 +674,6 @@ describe('getExportOperationDetails', () => {
     [
       {
         headers: {},
-        paging: {},
         pathParameters: [],
         queryParameters: [],
         id: 'op2',
@@ -730,6 +736,148 @@ describe('getExportOperationDetails', () => {
     ],
     [
       {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+        doesNotSupportPaging: true,
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            { version: 'v1' },
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r1',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+                {
+                  id: 'r2',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      doesNotSupportPaging: true,
+                    },
+                  ],
+                },
+                {
+                  id: 'r3',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r3',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r3',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+        doesNotSupportPaging: true,
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r2',
+                  delta: { some: 'thing' },
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      doesNotSupportPaging: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        headers: {},
+        pathParameters: [],
+        queryParameters: [],
+        id: 'op2',
+        something: 'r2',
+      },
+      'v2',
+      'r2',
+      'op2',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v2',
+              resources: [
+                {
+                  id: 'r2',
+                  delta: { some: 'thing' },
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r2',
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r2',
+                      delta: { some: 'thing' },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
         id: 'op1',
         some: 'r1',
         allowUndefinedResource: true,
@@ -763,6 +911,61 @@ describe('getExportOperationDetails', () => {
                       id: 'op1',
                       some: 'r1',
                       pathParameters: [{ id: 'pp1' }],
+                    },
+                    {
+                      id: 'op2',
+                      something: 'r1',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    [
+      {
+        id: 'op1',
+        some: 'r1',
+        allowUndefinedResource: false,
+        headers: { h1: 'v1', h2: 'v22', h3: 'v3' },
+        paging: { abc: 'def' },
+        queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+        successMediaType: 'something',
+        successPath: 'something',
+        pathParameters: [{ id: 'pp1' }],
+        supportedExportTypes: ['delta', 'test'],
+        delta: { something: 'else' },
+      },
+      'v1',
+      'r1',
+      'op1',
+      {
+        export: {
+          versions: [
+            {
+              version: 'v1',
+              resources: [
+                {
+                  id: 'r1',
+                  allowUndefinedResource: true,
+                  delta: { some: 'thing' },
+                  headers: { h1: 'v1', h2: 'v2' },
+                  paging: { abc: 'def' },
+                  queryParameters: [{ id: 'qp1' }, { id: 'qp2' }],
+                  successMediaType: 'something',
+                  successPath: 'something else',
+                  endpoints: [
+                    {
+                      id: 'op1',
+                      some: 'r1',
+                      pathParameters: [{ id: 'pp1' }],
+                      allowUndefinedResource: false,
+                      delta: { something: 'else' },
+                      supportedExportTypes: ['delta', 'test'],
+                      headers: { h2: 'v22', h3: 'v3' },
+                      successPath: 'something',
                     },
                     {
                       id: 'op2',
@@ -948,8 +1151,9 @@ describe('convertToReactFormFields', () => {
   const testCases = [
     [
       {
-        fields: [],
         fieldDetailsMap: {},
+        fieldMap: {},
+        layout: { fields: [] },
       },
       {
         paramMeta: {
@@ -961,14 +1165,18 @@ describe('convertToReactFormFields', () => {
     ],
     [
       {
-        fields: [
-          {
+        fieldMap: {
+          f1: {
             id: 'f1',
             name: 'f1',
             type: 'text',
             required: true,
+            readOnly: false,
           },
-        ],
+        },
+        layout: {
+          fields: ['f1'],
+        },
         fieldDetailsMap: {
           f1: {
             id: 'f1',
@@ -984,14 +1192,18 @@ describe('convertToReactFormFields', () => {
     ],
     [
       {
-        fields: [
-          {
+        fieldMap: {
+          f1: {
             id: 'f1',
             name: 'f1',
             type: 'text',
             required: false,
+            readOnly: false,
           },
-        ],
+        },
+        layout: {
+          fields: ['f1'],
+        },
         fieldDetailsMap: {
           f1: {
             id: 'f1',
@@ -1005,28 +1217,33 @@ describe('convertToReactFormFields', () => {
     ],
     [
       {
-        fields: [
-          {
+        fieldMap: {
+          f2: {
             id: 'f2',
             name: 'f2',
             type: 'text',
             required: true,
+            readOnly: false,
           },
-        ],
-        fieldSets: [
-          {
-            header: 'Optional',
-            collapsed: true,
-            fields: [
-              {
-                id: 'f1',
-                name: 'f1',
-                type: 'text',
-                required: false,
-              },
-            ],
+          f1: {
+            id: 'f1',
+            name: 'f1',
+            type: 'text',
+            required: false,
+            readOnly: false,
           },
-        ],
+        },
+        layout: {
+          fields: ['f2'],
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Optional',
+              collapsed: true,
+              fields: ['f1'],
+            },
+          ],
+        },
         fieldDetailsMap: {
           f1: {
             id: 'f1',
@@ -1044,8 +1261,16 @@ describe('convertToReactFormFields', () => {
     ],
     [
       {
-        fields: [
-          {
+        fieldMap: {
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            name: 'id_readOnly1',
+            readOnly: true,
+            required: false,
+            label: 'ReadOnly 1',
+            type: 'text',
+          },
+          id_multiselect: {
             id: 'id_multiselect',
             label: 'MultiSelect',
             name: 'id_multiselect',
@@ -1076,83 +1301,109 @@ describe('convertToReactFormFields', () => {
               },
             ],
             required: true,
+            readOnly: false,
             type: 'multiselect',
             defaultValue: ['one', 'two'],
           },
-          {
+          id_text: {
             id: 'id_text',
             label: 'Text',
             name: 'id_text',
             placeholder: 'some placeholder',
             required: true,
+            readOnly: false,
             type: 'text',
           },
-        ],
-        fieldSets: [
-          {
-            collapsed: true,
-            header: 'Optional',
-            fields: [
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            name: 'id_readOnly2',
+            readOnly: true,
+            required: false,
+            label: 'ReadOnly 2',
+            type: 'text',
+          },
+          id_checkbox: {
+            id: 'id_checkbox',
+            label: 'Checkbox',
+            name: 'id_checkbox',
+            required: false,
+            readOnly: false,
+            type: 'checkbox',
+            helpText: 'some help text',
+          },
+          id_select: {
+            id: 'id_select',
+            label: 'Select',
+            name: 'id_select',
+            options: [
               {
-                id: 'id_checkbox',
-                label: 'Checkbox',
-                name: 'id_checkbox',
-                required: false,
-                type: 'checkbox',
-                helpText: 'some help text',
-              },
-              {
-                id: 'id_select',
-                label: 'Select',
-                name: 'id_select',
-                options: [
+                items: [
                   {
-                    items: [
-                      {
-                        label: 'desc',
-                        value: 'desc',
-                      },
-                      {
-                        label: 'asc',
-                        value: 'asc',
-                      },
-                    ],
+                    label: 'desc',
+                    value: 'desc',
+                  },
+                  {
+                    label: 'asc',
+                    value: 'asc',
                   },
                 ],
-                required: false,
-                type: 'select',
-              },
-              {
-                id: 'id_textarea',
-                label: 'Text Area',
-                name: 'id_textarea',
-                required: false,
-                type: 'textarea',
-              },
-              {
-                id: 'id_input',
-                label: 'Input',
-                name: 'id_input',
-                required: false,
-                type: 'text',
-                validWhen: {
-                  matchesRegEx: {
-                    message: 'Must be a number.',
-                    pattern: '^[\\d]+$',
-                  },
-                },
-                defaultValue: 121,
-              },
-              {
-                id: 'id_some/thing',
-                name: 'id_some/thing',
-                required: false,
-                type: 'text',
-                defaultValue: 'something else',
               },
             ],
+            required: false,
+            readOnly: false,
+            type: 'select',
           },
-        ],
+          id_textarea: {
+            id: 'id_textarea',
+            label: 'Text Area',
+            name: 'id_textarea',
+            required: false,
+            readOnly: false,
+            type: 'textarea',
+          },
+          id_input: {
+            id: 'id_input',
+            label: 'Input',
+            name: 'id_input',
+            required: false,
+            readOnly: false,
+            type: 'text',
+            validWhen: {
+              matchesRegEx: {
+                message: 'Must be a number.',
+                pattern: '^[\\d]+$',
+              },
+            },
+            defaultValue: 121,
+          },
+          'id_some/thing': {
+            id: 'id_some/thing',
+            name: 'id_some/thing',
+            required: false,
+            readOnly: false,
+            type: 'text',
+            defaultValue: 'something else',
+          },
+        },
+        layout: {
+          fields: ['id_multiselect', 'id_text'],
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Optional',
+              collapsed: true,
+              fields: [
+                'id_readOnly1',
+                'id_checkbox',
+                'id_select',
+                'id_readOnly2',
+                'id_textarea',
+                'id_input',
+                'id_some/thing',
+              ],
+            },
+          ],
+        },
         fieldDetailsMap: {
           id_checkbox: {
             id: 'id_checkbox',
@@ -1163,6 +1414,14 @@ describe('convertToReactFormFields', () => {
             inputType: 'multiselect',
             type: 'repeat',
             indexed: true,
+          },
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            inputType: 'text',
+          },
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            inputType: 'text',
           },
           id_select: {
             id: 'id_select',
@@ -1345,6 +1604,144 @@ describe('updateFormValues', () => {
     'should return %o when passed  %o ',
     (expected, input) => {
       expect(updateFormValues(input)).toEqual(expected);
+    }
+  );
+});
+
+const assistantData = {
+  export: {
+    versions: [
+      {
+        version: 'v1',
+        resources: [
+          {
+            id: 'r1',
+            endpoints: [
+              {
+                id: 'ep1',
+                url: 'some/thing',
+              },
+              {
+                url: 'some/unique/url',
+              },
+            ],
+          },
+          {
+            id: 'r2',
+            endpoints: [
+              {
+                id: 'ep1',
+                url: 'some/thing',
+              },
+              {
+                id: 'ep2',
+                url: 'some/lists:_id/thing/:_action/some/other/:_action',
+                pathParameters: [
+                  {
+                    id: 'id',
+                    config: {
+                      prefix: "(guid'",
+                      suffix: "')",
+                    },
+                  },
+                  {
+                    id: 'action',
+                  },
+                ],
+                paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+describe('convertToExport', () => {
+  const testCases = [
+    [undefined, {}, undefined],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r1',
+          operation: 'ep1',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/thing',
+          allowUndefinedResource: false,
+        },
+      },
+      {
+        adaptorType: 'rest',
+        assistant: 'someAssistant',
+        resource: 'r1',
+        operation: 'ep1',
+      },
+      assistantData,
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r1',
+          operationUrl: 'some/unique/url',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/unique/url',
+          allowUndefinedResource: false,
+        },
+      },
+      {
+        adaptorType: 'rest',
+        assistant: 'someAssistant',
+        resource: 'r1',
+        operation: 'some/unique/url',
+        assistantData,
+      },
+      assistantData,
+    ],
+    [
+      {
+        '/assistant': 'someAssistant',
+        '/assistantMetadata': {
+          resource: 'r2',
+          operation: 'ep2',
+        },
+        '/rest': {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      {
+        adaptorType: 'rest',
+        assistant: 'someAssistant',
+        resource: 'r2',
+        operation: 'ep2',
+        pathParams: { id: 'ABC', action: 'XYZ' },
+      },
+      assistantData,
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when assistantConfig =  %o and assistantData = %o',
+    (expected, assistantConfig, assistantData) => {
+      expect(convertToExport({ assistantConfig, assistantData })).toEqual(
+        expected
+      );
     }
   );
 });

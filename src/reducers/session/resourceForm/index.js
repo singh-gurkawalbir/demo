@@ -25,7 +25,7 @@ export default function reducer(state = {}, action) {
         // Are there any issues with storing fn pointers here?
         // if the state is not serializable, will we recover properly from
         // refreshing session? Doing this makes the submit resource saga
-        // easier as we dont need to lookup the preSubmit handler...
+        // easier as we dont need to lookup the preSave handler...
         [key]: {
           isNew,
           skipCommit,

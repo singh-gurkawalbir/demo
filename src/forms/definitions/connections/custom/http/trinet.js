@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'trinet',
@@ -14,27 +14,28 @@ export default {
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'apikey',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
-      label: 'Company ID:',
+      label: 'Company ID',
       type: 'text',
       helpText: 'Please reach out to TriNet support team for company Id.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key:',
+      label: 'API Key',
       helpText:
         'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.unencrypted.companyId', 'http.auth.token.token'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

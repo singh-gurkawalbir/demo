@@ -20,6 +20,7 @@ export default function DynaText(props) {
     rowsMax,
     startAdornment,
     endAdornment,
+    readOnly,
     inputType,
     options,
   } = props;
@@ -48,29 +49,33 @@ export default function DynaText(props) {
   };
 
   return (
-    <TextField
-      autoComplete="off"
-      key={id}
-      name={name}
-      label={label}
-      InputProps={{
-        startAdornment: startAdornment ? (
-          <InputAdornment position="start">{startAdornment}</InputAdornment>
-        ) : null,
-        endAdornment: endAdornment ? (
-          <InputAdornment position="end">{endAdornment}</InputAdornment>
-        ) : null,
-      }}
-      type={inputType}
-      placeholder={placeholder}
-      helperText={isValid ? description : errorMessages}
-      disabled={disabled}
-      multiline={multiline}
-      rowsMax={rowsMax}
-      required={required}
-      error={!isValid}
-      value={value}
-      onChange={handleFieldChange}
-    />
+    <div>
+      <TextField
+        autoComplete="off"
+        key={id}
+        name={name}
+        label={label}
+        InputProps={{
+          startAdornment: startAdornment ? (
+            <InputAdornment position="start">{startAdornment}</InputAdornment>
+          ) : null,
+          endAdornment: endAdornment ? (
+            <InputAdornment position="end">{endAdornment}</InputAdornment>
+          ) : null,
+          readOnly: !!readOnly,
+        }}
+        type={inputType}
+        placeholder={placeholder}
+        helperText={isValid ? description : errorMessages}
+        disabled={disabled}
+        multiline={multiline}
+        rowsMax={rowsMax}
+        required={required}
+        error={!isValid}
+        value={value}
+        variant="filled"
+        onChange={handleFieldChange}
+      />
+    </div>
   );
 }

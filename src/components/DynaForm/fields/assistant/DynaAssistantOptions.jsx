@@ -1,20 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
-
-const useStyles = makeStyles({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-  },
-});
+import { selectOptions } from './util';
 
 export default function DynaAssistantOptions(props) {
-  const { label, resourceContext, options } = props;
-  const classes = useStyles();
+  const { label, resourceContext, options, assistantFieldType } = props;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: options.adaptorType,
@@ -22,45 +14,16 @@ export default function DynaAssistantOptions(props) {
     })
   );
   const dispatch = useDispatch();
-  const selectOptionsItems =
+  let selectOptionsItems =
     options && options[0] && options[0].items ? options[0].items : [];
 
-  if (assistantData && assistantData.export) {
-    if (props.assistantFieldType === 'version') {
-      assistantData.export.versions.forEach(v => {
-        selectOptionsItems.push({ label: v.version, value: v.version });
-      });
-    }
-
-    if (assistantData.export.versions) {
-      let selectedVersion = assistantData.export.versions.find(
-        v => v.version === options.version
-      );
-
-      if (!selectedVersion && assistantData.export.versions.length === 1) {
-        [selectedVersion] = assistantData.export.versions;
-      }
-
-      let selectedResource;
-
-      if (selectedVersion) {
-        selectedResource = selectedVersion.resources.find(
-          r => r.id === options.resource
-        );
-      }
-
-      if (props.assistantFieldType === 'resource' && selectedVersion) {
-        selectedVersion.resources.forEach(r => {
-          selectOptionsItems.push({ label: r.name, value: r.id });
-        });
-      }
-
-      if (props.assistantFieldType === 'operation' && selectedResource) {
-        selectedResource.endpoints.forEach(ep => {
-          selectOptionsItems.push({ label: ep.name, value: ep.id || ep.url });
-        });
-      }
-    }
+  if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
+    selectOptionsItems = selectOptions({
+      assistantFieldType,
+      assistantData,
+      options,
+      resourceType: resourceContext.resourceType,
+    });
   }
 
   function onFieldChange(id, value) {
@@ -68,24 +31,34 @@ export default function DynaAssistantOptions(props) {
 
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
-        props.assistantFieldType
+        assistantFieldType
       )
     ) {
       const fieldDependencyMap = {
-        version: ['resource', 'operation', 'exportType'],
-        resource: ['operation', 'exportType'],
-        operation: ['exportType'],
+        exports: {
+          version: ['resource', 'operation', 'exportType'],
+          resource: ['operation', 'exportType'],
+          operation: ['exportType'],
+        },
+        imports: {
+          version: ['resource', 'operation'],
+          resource: ['operation'],
+        },
       };
       const patch = [];
 
       patch.push({
         op: 'replace',
-        path: `/assistantMetadata/${props.assistantFieldType}`,
+        path: `/assistantMetadata/${assistantFieldType}`,
         value,
       });
 
-      if (fieldDependencyMap[props.assistantFieldType]) {
-        fieldDependencyMap[props.assistantFieldType].forEach(prop => {
+      if (
+        fieldDependencyMap[resourceContext.resourceType][assistantFieldType]
+      ) {
+        fieldDependencyMap[resourceContext.resourceType][
+          assistantFieldType
+        ].forEach(prop => {
           patch.push({
             op: 'replace',
             path: `/assistantMetadata/${prop}`,
@@ -108,7 +81,6 @@ export default function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      classes={classes}
       options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
     />

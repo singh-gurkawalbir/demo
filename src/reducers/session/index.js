@@ -9,6 +9,7 @@ import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
+import integrationApps, * as fromIntegrationApps from './integrationApps';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -23,6 +24,7 @@ export default combineReducers({
   stackSystemTokens,
   resource,
   netsuiteUserRole,
+  integrationApps,
 });
 
 // #region PUBLIC SELECTORS
@@ -143,6 +145,28 @@ export function stackSystemToken(state, resourceId) {
   );
 }
 
+export function integrationAppsInstaller(state, id) {
+  return fromIntegrationApps.integrationAppsInstaller(
+    state && state.integrationApps,
+    id
+  );
+}
+
+export function uninstallSteps(state, id, storeId) {
+  return fromIntegrationApps.uninstallSteps(
+    state && state.integrationApps,
+    id,
+    storeId
+  );
+}
+
+export function addNewStoreSteps(state, id) {
+  return fromIntegrationApps.addNewStoreSteps(
+    state && state.integrationApps,
+    id
+  );
+}
+
 export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
@@ -152,7 +176,7 @@ export function resourceReferences(state) {
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
-  return fromMetadata.assistantData(state.metadata, {
+  return fromMetadata.assistantData(state && state.metadata, {
     adaptorType,
     assistant,
   });

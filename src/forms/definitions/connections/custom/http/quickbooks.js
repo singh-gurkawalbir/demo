@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     let baseURI = '';
     let scope = [];
 
@@ -49,12 +49,12 @@ export default {
       '/http/auth/oauth/scope': scope,
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.quickbooksEnvironment': {
       id: 'http.quickbooksEnvironment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       helpText:
         'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
       options: [
@@ -88,12 +88,13 @@ export default {
         return 'paapi';
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.quickbooksEnvironment'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

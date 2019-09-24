@@ -124,7 +124,7 @@ function* getNetsuiteOrSalesforceMeta({
 
 export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
   const { path, opts } = getRequestOptions(
-    actionTypes.METADATA.REQUEST_ASSISTANT,
+    actionTypes.METADATA.ASSISTANT_REQUEST,
     {
       resourceId: assistant,
       adaptorType,
@@ -165,5 +165,5 @@ export default [
     getNetsuiteOrSalesforceMeta
   ),
   takeLatest(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMeta),
-  takeEvery(actionTypes.METADATA.REQUEST_ASSISTANT, requestAssistantMetadata),
+  takeEvery(actionTypes.METADATA.ASSISTANT_REQUEST, requestAssistantMetadata),
 ];
