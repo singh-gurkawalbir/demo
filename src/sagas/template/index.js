@@ -1,6 +1,5 @@
-import { call, takeEvery, put } from 'redux-saga/effects';
+import { call, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
-import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 
 export function* downloadZip({ id }) {
@@ -31,14 +30,8 @@ export function* publish({ resource, resourceType }) {
       },
     });
   } catch (e) {
-    return;
+    return true;
   }
-
-  yield put(
-    actions.resource.update(resourceType, resource._id, {
-      published: !resource.published,
-    })
-  );
 }
 
 export function* generateZip({ integrationId }) {

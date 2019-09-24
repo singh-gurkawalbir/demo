@@ -105,12 +105,6 @@ const resource = {
 
   deleted: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
-  update: (resourceType, id, resourceFieldUpdates) =>
-    action(actionTypes.RESOURCE.UPDATE, {
-      resourceType,
-      id,
-      resourceFieldUpdates,
-    }),
 
   requestReferences: (resourceType, id) =>
     action(actionTypes.RESOURCE.REFERENCES_REQUEST, {

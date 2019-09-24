@@ -1,6 +1,5 @@
 /* global describe, test, expect */
-import { call, put } from 'redux-saga/effects';
-import actions from '../../actions';
+import { call } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../index';
 import { downloadZip, publish, generateZip } from './';
 
@@ -54,15 +53,6 @@ describe('publish sagas', () => {
         },
       })
     );
-    const effect = saga.next().value;
-
-    expect(effect).toEqual(
-      put(
-        actions.resource.update(resourceType, resource._id, {
-          published: !resource.published,
-        })
-      )
-    );
 
     expect(saga.next().done).toEqual(true);
   });
@@ -79,7 +69,7 @@ describe('publish sagas', () => {
         },
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
+    expect(saga.throw(new Error()).value).toEqual(true);
     expect(saga.next().done).toEqual(true);
   });
 });

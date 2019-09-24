@@ -9,6 +9,16 @@ export default {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
       dispatch(actions.template.publish(resource, resourceType));
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/published',
+          value: !resource.published,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(resource._id, patchSet));
+      dispatch(actions.resource.commitStaged(resourceType, resource._id));
     };
 
     return (

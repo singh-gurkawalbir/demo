@@ -66,7 +66,6 @@ export default (state = {}, action) => {
     resource,
     collection,
     resourceType,
-    resourceFieldUpdates,
     connectionIds,
     integrationId,
   } = action;
@@ -105,19 +104,6 @@ export default (state = {}, action) => {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
       };
-    case actionTypes.RESOURCE.UPDATE:
-      resourceIndex = state[resourceType].findIndex(r => r._id === id);
-
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
-          draft[resourceType][resourceIndex] = {
-            ...draft[resourceType][resourceIndex],
-            ...resourceFieldUpdates,
-          };
-        });
-      }
-
-      return state;
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:

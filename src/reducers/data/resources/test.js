@@ -111,46 +111,6 @@ describe('resources reducer', () => {
         expect(state[resourceType]).toEqual(collection);
       });
     });
-    describe(`${resourceType} update resource action`, () => {
-      const collection = [
-        { _id: 'id1', name: 'rob', published: false },
-        { _id: 'id2', name: 'bob', published: false },
-      ];
-      const resourceFieldUpdates = { published: true };
-
-      test('should update an existing resource', () => {
-        let state = reducer(
-          undefined,
-          actions.resource.receivedCollection(resourceType, collection)
-        );
-
-        state = reducer(
-          state,
-          actions.resource.update(
-            resourceType,
-            collection[0]._id,
-            resourceFieldUpdates
-          )
-        );
-        expect(state[resourceType][0]).toEqual({
-          ...collection[0],
-          ...resourceFieldUpdates,
-        });
-        expect(state[resourceType][1]).toEqual(collection[1]);
-      });
-      test('should not update any resource if there is no resource with given id', () => {
-        let state = reducer(
-          undefined,
-          actions.resource.receivedCollection(resourceType, collection)
-        );
-
-        state = reducer(
-          state,
-          actions.resource.update(resourceType, 'id3', resourceFieldUpdates)
-        );
-        expect(state[resourceType]).toEqual(collection);
-      });
-    });
   });
 });
 
