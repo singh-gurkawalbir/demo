@@ -11,18 +11,21 @@ import IconButton from '../../../components/IconButton';
 import DownloadIcon from '../../../components/icons/DownloadIcon';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 
-const pgBoxSize = 150;
+const pgBoxHeight = 120;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
     alignItems: 'center',
+    marginBottom: theme.spacing(3),
   },
   pgBox: {
-    width: pgBoxSize,
-    height: pgBoxSize,
+    display: 'flex',
+    borderRadius: 8,
+    alignItems: 'center',
+    width: pgBoxHeight + 30,
+    height: pgBoxHeight,
     border: 'solid 1px lightblue',
     padding: theme.spacing(1),
-    margin: theme.spacing(3, 0),
     cursor: 'move',
     backgroundColor: theme.palette.background.paper,
   },
@@ -39,14 +42,23 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   connectingLine: {
-    top: -(pgBoxSize + theme.spacing(3 * 2)) / 2,
-    height: pgBoxSize + theme.spacing(3 * 2),
+    top: -(pgBoxHeight + theme.spacing(3 * 2)) / 2,
+    height: pgBoxHeight + theme.spacing(3 * 2),
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
   resourceButton: {
-    top: theme.spacing(-3),
+    top: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
+    alignSelf: 'center',
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  name: {
+    margin: theme.spacing(2, 0, 0, 1),
   },
 }));
 const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
@@ -77,20 +89,24 @@ const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
 
   return (
     <div className={classes.pgContainer}>
-      <div ref={ref} className={classes.pgBox} style={{ opacity }}>
+      <div className={classes.flex}>
         <IconButton
           className={classes.resourceButton}
           variant="outlined"
           onClick={handleResourceClick}>
           <DownloadIcon />
           EXPORT
-        </IconButton>
-        <ApplicationImg
-          size="large"
-          type={resource.adaptorType}
-          assistant={resource.assistant}
-        />
-        <Typography variant="body1">{resource.name || resource.id}</Typography>
+        </IconButton>{' '}
+        <div ref={ref} className={classes.pgBox} style={{ opacity }}>
+          <ApplicationImg
+            size="large"
+            type={resource.adaptorType}
+            assistant={resource.assistant}
+          />
+        </div>
+        <Typography className={classes.name} variant="body1">
+          {resource.name || resource.id}
+        </Typography>
       </div>
       <div
         className={clsx(classes.line, {
