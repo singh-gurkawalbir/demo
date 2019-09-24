@@ -64,7 +64,7 @@ export default (
     format,
     definitionId,
     definition,
-    metadataError,
+    error,
   } = action;
   let newState;
 
@@ -144,7 +144,7 @@ export default (
     case actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED_ERROR: {
       newState = { ...state.supportedFileDefinitions };
       newState.status = 'error';
-      newState.errorMessage = metadataError;
+      newState.errorMessage = error;
 
       return { ...state, ...{ supportedFileDefinitions: newState } };
     }
@@ -152,6 +152,7 @@ export default (
     case actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED_ERROR:
       newState = { ...state.userSupportedFileDefinitions };
       newState.status = 'error';
+      newState.errorMessage = error;
 
       return { ...state, ...{ userSupportedFileDefinitions: newState } };
     default:
