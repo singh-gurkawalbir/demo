@@ -298,7 +298,7 @@ function FlowBuilder(props) {
                   ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                   : 64 + theme.spacing(3),
               }}>
-              {patch.length > 0 && (
+              {patch && patch.length > 0 && (
                 <Button variant="outlined" onClick={undoFlowPatch}>
                   Undo {patch.length} change(s)
                 </Button>

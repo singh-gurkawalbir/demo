@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
@@ -6,6 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import itemTypes from '../itemTypes';
 import * as selectors from '../../../reducers';
+import IconButton from '../../../components/IconButton';
+import DownloadIcon from '../../../components/icons/DownloadIcon';
+import ApplicationImg from '../../../components/icons/ApplicationImg';
 
 const pgBoxSize = 150;
 const useStyles = makeStyles(theme => ({
@@ -20,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     margin: theme.spacing(3, 0),
     cursor: 'move',
+    backgroundColor: theme.palette.background.paper,
   },
   processorActions: {
     display: 'flex',
@@ -39,8 +44,12 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
+  resourceButton: {
+    top: theme.spacing(-3),
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
-const PageGenerator = ({ index, isLast, ...pg }) => {
+const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
   const classes = useStyles();
   const ref = useRef(null);
   const { merged: resource = {} } = useSelector(state =>
@@ -54,12 +63,34 @@ const PageGenerator = ({ index, isLast, ...pg }) => {
   });
   const opacity = isDragging ? 0.5 : 1;
 
+  function handleResourceClick() {
+    const to = `${match.url}/edit/exports/${pg._exportId}`;
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
   drag(ref);
 
   return (
     <div className={classes.pgContainer}>
       <div ref={ref} className={classes.pgBox} style={{ opacity }}>
-        <Typography variant="h2">{resource.name || resource.id}</Typography>
+        <IconButton
+          className={classes.resourceButton}
+          variant="outlined"
+          onClick={handleResourceClick}>
+          <DownloadIcon />
+          EXPORT
+        </IconButton>
+        <ApplicationImg
+          size="large"
+          type={resource.adaptorType}
+          assistant={resource.assistant}
+        />
+        <Typography variant="body1">{resource.name || resource.id}</Typography>
       </div>
       <div
         className={clsx(classes.line, {
@@ -71,4 +102,4 @@ const PageGenerator = ({ index, isLast, ...pg }) => {
   );
 };
 
-export default PageGenerator;
+export default withRouter(PageGenerator);

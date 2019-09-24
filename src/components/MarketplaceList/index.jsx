@@ -58,11 +58,7 @@ export default function MarketplaceList() {
             key={connector.id}
             to={getRoutePath(`/marketplace/${connector.id}`)}>
             <Card className={classes.card}>
-              <ApplicationImg
-                assistant={connector.id}
-                size="large"
-                imgType="large"
-              />
+              <ApplicationImg assistant={connector.id} size="large" />
             </Card>
           </NavLink>
         ))}

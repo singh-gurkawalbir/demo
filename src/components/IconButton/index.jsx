@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 
@@ -30,10 +31,10 @@ const styledChildren = (children, classes) => {
 
 function IconButton(props) {
   const classes = useStyles();
-  const { children, ...rest } = props;
+  const { children, className, ...rest } = props;
 
   return (
-    <Button {...rest} className={classes.root}>
+    <Button {...rest} className={clsx(classes.root, className)}>
       {styledChildren(props.children, classes)}
     </Button>
   );
