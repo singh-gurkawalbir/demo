@@ -29,13 +29,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AttachStandAloneFlows({
+export default function AttachFlows({
   onClose,
   integrationId,
-  standAloneFlows,
+  standaloneFlows,
 }) {
   const classes = useStyles();
-  const flowsToAttch = standAloneFlows;
+  const flowsToAttch = standaloneFlows;
   const [selected, setSelected] = useState({});
   const handleSelectChange = flows => {
     setSelected(flows);
@@ -48,8 +48,8 @@ export default function AttachStandAloneFlows({
   const handleAttachFlowsClick = () => {
     const flowIds = Object.keys(selected).filter(key => selected[key] === true);
     const selectedFlows =
-      standAloneFlows &&
-      standAloneFlows.filter(f => flowIds.indexOf(f._id) > -1);
+      standaloneFlows &&
+      standaloneFlows.filter(f => flowIds.indexOf(f._id) > -1);
 
     if (!selectedFlows) return;
     selectedFlows.forEach(flow => {

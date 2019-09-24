@@ -27,7 +27,7 @@ function Flows(props) {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
-  const standAloneFlows =
+  const standaloneFlows =
     flows &&
     flows.filter(
       f =>
@@ -51,7 +51,7 @@ function Flows(props) {
       {showAttachFlowsDialog && (
         <AttachFlows
           integrationId={integrationId}
-          standAloneFlows={standAloneFlows}
+          standaloneFlows={standaloneFlows}
           onClose={() => setAttachFlowsDialog(false)}
         />
       )}
