@@ -145,6 +145,32 @@ export function* downloadDiagnosticsFile({ jobId }) {
   }
 }
 
+export function* downloadFiles({ jobId }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL,
+    {
+      resourceId: jobId,
+    }
+  );
+  const { path, opts } = requestOptions;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+
+  if (response.signedURL) {
+    yield call(openExternalUrl, { url: response.signedURL });
+  } else if (response.signedURLs) {
+    yield all(response.signedURLs.map(url => call(openExternalUrl, { url })));
+  }
+}
+
 export function* cancelJob({ jobId }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
@@ -474,12 +500,29 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
     })
   );
   const jobErrors = yield select(selectors.jobErrors, jobId);
+  const updatedJobErrors = [];
 
-  opts.body = jobErrors.map(je => {
-    const { _id, createdAtAsString, ...rest } = je;
+  jobErrors.forEach(je => {
+    const { _id, createdAtAsString, retryObject, similarErrors, ...rest } = je;
 
-    return { ...rest };
+    updatedJobErrors.push({ ...rest });
+
+    if (similarErrors && similarErrors.length > 0) {
+      similarErrors.forEach(sje => {
+        const {
+          _id,
+          createdAtAsString,
+          retryObject,
+          similarErrors,
+          ...rest
+        } = sje;
+
+        updatedJobErrors.push({ ...rest });
+      });
+    }
   });
+
+  opts.body = updatedJobErrors;
 
   try {
     yield call(apiCallWithRetry, {
@@ -566,6 +609,7 @@ export const jobSagas = [
     startPollingForInProgressJobs
   ),
   takeEvery(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, downloadDiagnosticsFile),
+  takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),

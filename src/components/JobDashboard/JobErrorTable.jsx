@@ -16,6 +16,7 @@ import { UNDO_TIME } from './util';
 import JsonEditorDialog from '../JsonEditorDialog';
 import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
+import JobErrorDetail from './JobErrorDetail';
 
 const styles = theme => ({
   root: {
@@ -61,6 +62,7 @@ function JobErrorTable({
   classes,
   rowsPerPage = 10,
   jobErrors,
+  errorCount,
   job,
   onCloseClick,
 }) {
@@ -276,7 +278,7 @@ function JobErrorTable({
         Resolved: {job.numResolved} Duration: {job.duration} Completed:{' '}
         {job.endedAtAsString}
       </Typography>
-      {jobErrorsInCurrentPage.length === 0 ? (
+      {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
           <Spinner /> <span>Loading errors...</span>
         </div>
@@ -310,76 +312,67 @@ function JobErrorTable({
             Upload Processed Errors
           </Button>
 
-          <TablePagination
-            classes={{ root: classes.tablePaginationRoot }}
-            rowsPerPageOptions={[rowsPerPage]}
-            component="div"
-            count={jobErrors.length}
-            rowsPerPage={rowsPerPage}
-            page={currentPage}
-            backIconButtonProps={{
-              'aria-label': 'Previous Page',
-            }}
-            nextIconButtonProps={{
-              'aria-label': 'Next Page',
-            }}
-            onChangePage={handleChangePage}
-            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
+          {jobErrorsInCurrentPage.length === 0 ? (
+            <Fragment>
+              <div>
+                Please use the &apos;Download All Errors&apos; button above to
+                view the errors for this job.
+              </div>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <TablePagination
+                classes={{ root: classes.tablePaginationRoot }}
+                rowsPerPageOptions={[rowsPerPage]}
+                component="div"
+                count={jobErrors.length}
+                rowsPerPage={rowsPerPage}
+                page={currentPage}
+                backIconButtonProps={{
+                  'aria-label': 'Previous Page',
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'Next Page',
+                }}
+                onChangePage={handleChangePage}
+                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
 
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    disabled={jobErrors.length === 0}
-                    checked={isSelectAllChecked}
-                    onChange={handleSelectAllChange}
-                    inputProps={{ 'aria-label': 'Select all errors' }}
-                  />
-                </TableCell>
-                <TableCell>Resolved?</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell>Code</TableCell>
-                <TableCell>Message</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Retry Data</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {jobErrorsInCurrentPage.map(jobError => (
-                <TableRow key={jobError._id}>
-                  <TableCell padding="checkbox">
-                    {!jobError.resolved && (
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox">
                       <Checkbox
-                        checked={!!selectedErrors[jobError._id]}
-                        onChange={event =>
-                          handleSelectChange(event, jobError._id)
-                        }
+                        disabled={jobErrors.length === 0}
+                        checked={isSelectAllChecked}
+                        onChange={handleSelectAllChange}
+                        inputProps={{ 'aria-label': 'Select all errors' }}
                       />
-                    )}
-                  </TableCell>
-                  <TableCell>{jobError.resolved ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{jobError.source}</TableCell>
-                  <TableCell>{jobError.code}</TableCell>
-                  <TableCell>{jobError.message}</TableCell>
-                  <TableCell>{jobError.createdAtAsString}</TableCell>
-                  <TableCell>
-                    {jobError.retryObject &&
-                      jobError.retryObject.isDataEditable && (
-                        <Button
-                          variant="text"
-                          onClick={() =>
-                            handleEditRetryDataClick(jobError._retryId)
-                          }>
-                          Edit
-                        </Button>
-                      )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableCell>
+                    <TableCell />
+                    <TableCell>Resolved?</TableCell>
+                    <TableCell>Source</TableCell>
+                    <TableCell>Code</TableCell>
+                    <TableCell>Message</TableCell>
+                    <TableCell>Time</TableCell>
+                    <TableCell>Retry Data</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {jobErrorsInCurrentPage.map(jobError => (
+                    <JobErrorDetail
+                      key={jobError._id}
+                      jobError={jobError}
+                      isParent
+                      selected={!!selectedErrors[jobError._id]}
+                      onSelectChange={handleSelectChange}
+                      onEditRetryDataClick={handleEditRetryDataClick}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </Fragment>
+          )}
         </Fragment>
       )}
     </Fragment>

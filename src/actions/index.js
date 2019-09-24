@@ -617,6 +617,8 @@ const job = {
   noInProgressJobs: () => action(actionTypes.JOB.NO_IN_PROGRESS_JOBS),
   downloadDiagnosticsFile: ({ jobId }) =>
     action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
+  downloadFiles: ({ jobId }) =>
+    action(actionTypes.JOB.DOWNLOAD_FILES, { jobId }),
   clear: () => action(actionTypes.JOB.CLEAR),
 
   cancel: ({ jobId, flowJobId }) =>

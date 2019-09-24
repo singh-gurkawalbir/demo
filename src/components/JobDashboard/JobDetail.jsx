@@ -149,12 +149,12 @@ function JobDetail({
     onSelectChange(currJob, job._id);
   }
 
-  function handleViewErrorsClick() {
+  function handleViewErrorsClick(showResolved = false) {
     if (!job.children || job.children.length === 0) {
       dispatch(actions.job.requestFamily({ jobId: job._id }));
     }
 
-    onViewErrorsClick({ jobId: job._id });
+    onViewErrorsClick({ jobId: job._id, showResolved });
   }
 
   return (
@@ -191,7 +191,9 @@ function JobDetail({
             <Button
               variant="text"
               color="primary"
-              onClick={handleViewErrorsClick}>
+              onClick={() => {
+                handleViewErrorsClick(false);
+              }}>
               {job.numError} View
             </Button>
           ) : (
@@ -209,7 +211,9 @@ function JobDetail({
             <Button
               variant="text"
               color="primary"
-              onClick={handleViewErrorsClick}>
+              onClick={() => {
+                handleViewErrorsClick(true);
+              }}>
               {job.numResolved} View
             </Button>
           ) : (

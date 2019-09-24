@@ -71,12 +71,13 @@ export default function JobDashboard({
     let jobsSelected = 0;
 
     Object.keys(selectedJobs).forEach(jobId => {
-      if (selectedJobs[jobId].selected) {
-        jobsSelected += 1;
-      }
-
-      if (selectedJobs[jobId].selectedChildJobIds) {
+      if (
+        selectedJobs[jobId].selectedChildJobIds &&
+        selectedJobs[jobId].selectedChildJobIds.length > 0
+      ) {
         jobsSelected += selectedJobs[jobId].selectedChildJobIds.length;
+      } else if (selectedJobs[jobId].selected) {
+        jobsSelected += 1;
       }
     });
 

@@ -13,7 +13,7 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 
-export default function AccessTokenActionsMenu({
+export default function JobActionsMenu({
   job,
   onActionClick,
   userPermissionsOnIntegration = {},
@@ -93,6 +93,8 @@ export default function AccessTokenActionsMenu({
 
     if (action === 'downloadDiagnostics') {
       dispatch(actions.job.downloadDiagnosticsFile({ jobId: job._id }));
+    } else if (action === 'downloadFiles') {
+      dispatch(actions.job.downloadFiles({ jobId: job._id }));
     } else if (action === 'runFlow') {
       dispatch(actions.flow.run({ flowId: job._flowId }));
       setActionsToMonitor({

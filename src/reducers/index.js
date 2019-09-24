@@ -1342,14 +1342,30 @@ export function jobErrors(state, jobId) {
   const jErrors = fromData.jobErrors(state.data, jobId);
   const preferences = userPreferences(state);
 
-  return jErrors.map(je => ({
-    ...je,
-    createdAtAsString:
-      je.createdAt &&
-      moment(je.createdAt).format(
-        `${preferences.dateFormat} ${preferences.timeFormat}`
-      ),
-  }));
+  return jErrors.map(je => {
+    let similarErrors = [];
+
+    if (je.similarErrors && je.similarErrors.length > 0) {
+      similarErrors = je.similarErrors.map(sje => ({
+        ...sje,
+        createdAtAsString:
+          sje.createdAt &&
+          moment(sje.createdAt).format(
+            `${preferences.dateFormat} ${preferences.timeFormat}`
+          ),
+      }));
+    }
+
+    return {
+      ...je,
+      createdAtAsString:
+        je.createdAt &&
+        moment(je.createdAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      similarErrors,
+    };
+  });
 }
 
 export function jobErrorRetryObject(state, retryId) {
