@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FieldWrapper } from 'react-forms-processor/dist';
@@ -23,6 +22,7 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  root: { display: 'inline-block' },
 }));
 const wrapper = {
   display: 'flex',
@@ -47,7 +47,7 @@ const FieldActions = props => {
   const { developer } = useSelector(state => selectors.userProfile(state));
 
   return (
-    <Fragment>
+    <div className={classes.root}>
       {editMode && (
         <EditFieldButton
           key={`edit-${field.id}`}
@@ -67,7 +67,7 @@ const FieldActions = props => {
           helpText={helpText}
         />
       )}
-    </Fragment>
+    </div>
   );
 };
 
@@ -94,7 +94,7 @@ function getRenderer(
          Unable to add class in the makestyle because it is throwing and error that this 
          function is not a react function neither hook so added inline. */
 
-      <div style={wrapper}>
+      <div key={fid} style={wrapper}>
         <div style={fieldStyle}>
           <FieldWrapper {...field}>
             <DynaField resourceContext={context} />

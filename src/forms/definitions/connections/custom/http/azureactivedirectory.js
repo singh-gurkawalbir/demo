@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'azureactivedirectory',
@@ -12,10 +12,9 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'User.Export.All',
@@ -29,12 +28,13 @@ export default {
         'UserTimelineActivity.Write.CreatedByApp',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.oauth.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

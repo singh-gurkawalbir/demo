@@ -13,8 +13,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../../views/ResourceList/ResourceTable';
+import CeligoTable from '../../components/CeligoTable';
 import * as selectors from '../../reducers';
+import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -35,7 +36,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
   );
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();
-  const selectedConnections = connections => {
+  const handleSelectChange = connections => {
     setSelected(connections);
   };
 
@@ -61,11 +62,11 @@ export default function RegisterConnections({ onClose, integrationId }) {
       </DialogTitle>
       <DialogContent>
         <LoadResources required resources="connections">
-          <ResourceTable
-            resources={connectionsToReg}
-            selectResourceRef={selectedConnections}
-            metadataType="registerConnections"
-            isSelectableListing
+          <CeligoTable
+            data={connectionsToReg}
+            onSelectChange={handleSelectChange}
+            {...metadata}
+            selectableRows
           />
         </LoadResources>
       </DialogContent>

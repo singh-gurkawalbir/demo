@@ -103,7 +103,6 @@ function DynaSelectResource(props) {
     const { resourceType, filter, excludeFilter, options } = props;
 
     if (!resourceType) return [];
-
     const finalFilter = options && options.filter ? options.filter : filter;
 
     return resources.filter(r => {

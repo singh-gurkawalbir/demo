@@ -19,7 +19,6 @@ export default {
       },
     ],
   }),
-
   fieldMap: {
     name: { fieldId: 'name' },
     'http.bamboohrSubdomain': {

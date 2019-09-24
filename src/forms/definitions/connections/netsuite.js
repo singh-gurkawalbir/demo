@@ -12,9 +12,9 @@ export default {
     if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '')
       return { env, acc };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'netsuite.authType': {
       fieldId: 'netsuite.authType',
       required: true,
       defaultValue: r => {
@@ -39,68 +39,22 @@ export default {
         return aType;
       },
     },
-    {
+    'netsuite.email': {
       fieldId: 'netsuite.email',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
-      requiredWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    {
+    'netsuite.password': {
       fieldId: 'netsuite.password',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
-      requiredWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    {
+    'netsuite.environment': {
       fieldId: 'netsuite.environment',
       netsuiteResourceType: 'environment',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    // {
-    //   id: 'netsuite.environmentToken',
-    //   name: '/netsuite/environment',
-    //   type: 'select',
-    //   helpKey: 'connection.netsuite.environment',
-    //   options: [
-    //     {
-    //       items: [
-    //         { label: 'Production', value: 'production' },
-    //         { label: 'Beta', value: 'beta' },
-    //         { label: 'Sandbox2.0', value: 'sandbox2.0' },
-    //       ],
-    //     },
-    //   ],
-    //   visibleWhen: [
-    //     {
-    //       field: 'netsuite.authType',
-    //       is: ['token'],
-    //     },
-    //   ],
-    // },
-    {
+    'netsuite.account': {
       fieldId: 'netsuite.account',
       netsuiteResourceType: 'account',
       refreshOptionsOnChangesTo: [
@@ -109,14 +63,9 @@ export default {
         'netsuite.environment',
         'netsuite.roleId',
       ],
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    {
+    'netsuite.roleId': {
       fieldId: 'netsuite.roleId',
       netsuiteResourceType: 'role',
       refreshOptionsOnChangesTo: [
@@ -125,80 +74,37 @@ export default {
         'netsuite.environment',
         'netsuite.roleId',
       ],
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    { fieldId: 'netsuite.linkSuiteScriptIntegrator' },
-    /*
-    { fieldId: 'netsuite.account' },
-    { fieldId: 'netsuite.tokenId' },
-    { fieldId: 'netsuite.tokenSecret' },
-
-    { fieldId: 'netsuite.requestLevelCredentials' },
-    { fieldId: 'netsuite.dataCenterURLs' },
-    { fieldId: 'netsuite.accountName' },
-    { fieldId: 'netsuite.roleName' },
-    { fieldId: 'netsuite.concurrencyLevelRESTlet' },
-    { fieldId: 'netsuite.concurrencyLevelWebServices' },
-    { fieldId: 'netsuite.concurrencyLevel' },
-    { fieldId: 'netsuite.wsdlVersion' },
-    { fieldId: 'netsuite.applicationId' },
-    */
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [
-        { fieldId: '_borrowConcurrencyFromConnectionId' },
-        // There isn't any help text for this
-        { fieldId: 'netsuite.concurrencyLevel' },
-      ],
+    'netsuite.linkSuiteScriptIntegrator': {
+      fieldId: 'netsuite.linkSuiteScriptIntegrator',
     },
-  ],
-
-  actions: [
-    {
-      id: 'validate',
-      label: 'Validate',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
     },
-    {
-      id: 'save',
-      label: 'Save',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
-    },
-    {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
-        },
-      ],
-    },
-    {
-      id: 'testandsave',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token'],
-        },
-      ],
-    },
-  ],
+    'netsuite.concurrencyLevel': { fieldId: 'netsuite.concurrencyLevel' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'netsuite.authType',
+      'netsuite.email',
+      'netsuite.password',
+      'netsuite.environment',
+      'netsuite.account',
+      'netsuite.roleId',
+      'netsuite.linkSuiteScriptIntegrator',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: [
+          '_borrowConcurrencyFromConnectionId',
+          'netsuite.concurrencyLevel',
+        ],
+      },
+    ],
+  },
 };

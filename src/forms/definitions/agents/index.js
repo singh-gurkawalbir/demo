@@ -1,6 +1,6 @@
 export default {
-  fields: [
-    {
+  fieldMap: {
+    name: {
       id: 'name',
       name: '/name',
       defaultValue: r => r.name,
@@ -8,7 +8,7 @@ export default {
       label: 'Name',
       required: true,
     },
-    {
+    description: {
       id: 'description',
       name: '/description',
       defaultValue: r => r.description,
@@ -17,5 +17,8 @@ export default {
       maxRows: 5,
       label: 'Description',
     },
-  ],
+  },
+  layout: {
+    fields: ['name', 'description'],
+  },
 };

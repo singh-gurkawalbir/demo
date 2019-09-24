@@ -41,13 +41,19 @@ const connectors = [
     group: 'tech',
   },
   {
+    id: 'webhook',
+    name: 'Webhook',
+    type: 'webhook',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
+  {
     id: 'as2',
     name: 'AS2',
     type: 'as2',
     keywords: 'technology,protocol',
     group: 'tech',
   },
-
   // Database connectors
   {
     id: 'mongodb',
@@ -270,11 +276,10 @@ const connectors = [
   { id: 'harvest', name: 'Harvest', type: 'http', assistant: 'harvest' },
   // { id: 'hoovers', name: 'hoovers', type: 'http', assistant: 'hoovers' },
   { id: 'hubspot', name: 'HubSpot', type: 'http', assistant: 'hubspot' },
-  // { id: 'hybris', name: 'hybris', type: 'http', assistant: 'hybris' },
   { id: 'insightly', name: 'Insightly', type: 'http', assistant: 'insightly' },
   {
     id: 'integratorio',
-    name: 'integrator.io',
+    name: 'Integrator.io',
     type: 'http',
     assistant: 'integratorio',
   },
@@ -330,12 +335,12 @@ const connectors = [
     type: 'http',
     assistant: 'microsoftdynamics365',
   },
-  // {
-  //   id: 'microsoftoffice365',
-  //   name: 'microsoftoffice365',
-  //   type: 'http',
-  //   assistant: 'microsoftoffice365',
-  // },
+  {
+    id: 'microsoftoffice365',
+    name: 'microsoftoffice365',
+    type: 'http',
+    assistant: 'microsoftoffice365',
+  },
   {
     id: 'microsoftonenote',
     name: 'Microsoft OneNote',
@@ -379,7 +384,6 @@ const connectors = [
   { id: 'newrelic', name: 'Newrelic', type: 'http', assistant: 'newrelic' },
   { id: 'nextag', name: 'Nextag', type: 'http', assistant: 'nextag' },
   { id: 'nimble', name: 'Nimble', type: 'http', assistant: 'nimble' },
-
   {
     id: 'oandaexchangerates',
     name: 'OANDA Exchange Rates',
@@ -501,12 +505,12 @@ const connectors = [
     assistant: 'spreecommerce',
   },
   { id: 'squareup', name: 'Square', type: 'http', assistant: 'squareup' },
-  // {
-  //   id: 'steelbrick',
-  //   name: 'steelbrick',
-  //   type: 'http',
-  //   assistant: 'steelbrick',
-  // },
+  {
+    id: 'steelbrick',
+    name: 'Steelbrick',
+    type: 'http',
+    assistant: 'steelbrick',
+  },
   { id: 'strata', name: 'Strata', type: 'http', assistant: 'strata' },
   { id: 'stripe', name: 'Stripe', type: 'http', assistant: 'stripe' },
   { id: 'sugarcrm', name: 'SugarCRM', type: 'http', assistant: 'sugarcrm' },
@@ -571,5 +575,8 @@ export const getApp = (type, assistant) => {
 
   return connectors.find(c => c.id === id) || {};
 };
+
+export const getApplicationConnectors = () =>
+  connectors.filter(conn => !!conn.assistant);
 
 export default connectors;

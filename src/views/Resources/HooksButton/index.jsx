@@ -1,5 +1,5 @@
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,8 +9,11 @@ import actions from '../../../actions';
 import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
 import { SCOPES } from '../../../sagas/resourceForm';
 
-const mapStateToProps = (state, { resourceId, resourceType }) => {
-  const resourceData = selectors.resourceData(state, resourceType, resourceId);
+export default function EditFieldButton(props) {
+  const { resourceType, resourceId, className } = props;
+  const resourceData = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
   const resource = resourceData ? resourceData.merged : undefined;
   const getScriptMeta = hookName => {
     if (!resource || !resource.customForm) return {};
@@ -20,12 +23,8 @@ const mapStateToProps = (state, { resourceId, resourceType }) => {
 
   const formMeta =
     resource && resource.customForm ? resource.customForm.form : {};
-
-  return { formMeta, getScriptMeta };
-};
-
-const mapDispatchToProps = (dispatch, { resourceId }) => ({
-  patchAndCommitScript: (scriptId, code) => {
+  const dispatch = useDispatch();
+  const patchAndCommitScript = (scriptId, code) => {
     const patchSet = [
       {
         op: 'replace',
@@ -36,9 +35,9 @@ const mapDispatchToProps = (dispatch, { resourceId }) => ({
 
     dispatch(actions.resource.patchStaged(scriptId, patchSet, SCOPES.SCRIPT));
     dispatch(actions.resource.commitStaged('scripts', scriptId, SCOPES.SCRIPT));
-  },
+  };
 
-  patchHook: (hookName, value) => {
+  const patchHook = (hookName, value) => {
     const patchSet = [
       {
         op: 'replace',
@@ -48,19 +47,17 @@ const mapDispatchToProps = (dispatch, { resourceId }) => ({
     ];
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, SCOPES.SCRIPT));
-  },
-});
-
-class EditFieldButton extends Component {
-  state = {
-    showEditor: false,
-    hookName: null,
   };
 
-  handleEditorChange = (shouldCommit, editor) => {
+  const [showEditor, setShowEditor] = useState(false);
+  const [hookName, setHookName] = useState(null);
+  const handleEditorToggle = hookName => {
+    setHookName(hookName);
+    setShowEditor(showEditor => !showEditor);
+  };
+
+  const handleEditorChange = (shouldCommit, editor) => {
     const { scriptId, entryFunction, code } = editor;
-    const { hookName } = this.state;
-    const { patchHook, patchAndCommitScript } = this.props;
     const value = { scriptId, entryFunction };
 
     // console.log(hookName, value, editor);
@@ -70,47 +67,38 @@ class EditFieldButton extends Component {
       patchHook(hookName, value);
     }
 
-    this.handleEditorToggle();
+    handleEditorToggle();
   };
 
-  handleEditorToggle = hookName => {
-    const { showEditor } = this.state;
+  const { scriptId, entryFunction } = getScriptMeta(hookName);
+  // TODO: We need to have the Hooks button wrapped with
+  // DynaSubmit so that we can collect the form values and set them as the
+  // "Data" argument for the submit hook. For now, lets just create some
+  // dummy values...
+  const formValues = { field1: 'abc', field2: 123, field3: true };
+  const data = hookName === 'init' ? formMeta : formValues;
 
-    this.setState({ showEditor: !showEditor, hookName });
-  };
-
-  render() {
-    const { showEditor, hookName } = this.state;
-    const { className, getScriptMeta, formMeta } = this.props;
-    const { scriptId, entryFunction } = getScriptMeta(hookName);
-    // TODO: We need to have the Hooks button wrapped with
-    // DynaSubmit so that we can collect the form values and set them as the
-    // "Data" argument for the submit hook. For now, lets just create some
-    // dummy values...
-    const formValues = { field1: 'abc', field2: 123, field3: true };
-    const data = hookName === 'init' ? formMeta : formValues;
-
-    return (
-      <Fragment>
-        <PopupState variant="popover" popupId="edit-hooks-menu">
-          {popupState => (
-            <Fragment>
-              <Button
-                size="small"
-                color="primary"
-                className={className}
-                {...bindTrigger(popupState)}>
-                Hooks
-              </Button>
-              <Menu {...bindMenu(popupState)}>
-                <MenuItem
-                  onClick={() => {
-                    popupState.close();
-                    this.handleEditorToggle('init');
-                  }}>
-                  Init
-                </MenuItem>
-                {/* We do not yet have support for an optionsHandler...
+  return (
+    <Fragment>
+      <PopupState variant="popover" popupId="edit-hooks-menu">
+        {popupState => (
+          <Fragment>
+            <Button
+              size="small"
+              color="primary"
+              className={className}
+              {...bindTrigger(popupState)}>
+              Hooks
+            </Button>
+            <Menu {...bindMenu(popupState)}>
+              <MenuItem
+                onClick={() => {
+                  popupState.close();
+                  handleEditorToggle('init');
+                }}>
+                Init
+              </MenuItem>
+              {/* We do not yet have support for an optionsHandler...
                 <MenuItem
                   onClick={() => {
                     popupState.close();
@@ -118,34 +106,28 @@ class EditFieldButton extends Component {
                   }}>
                   Options Handler
                 </MenuItem> */}
-                <MenuItem
-                  onClick={() => {
-                    popupState.close();
-                    this.handleEditorToggle('submit');
-                  }}>
-                  PreSubmit
-                </MenuItem>
-              </Menu>
-            </Fragment>
-          )}
-        </PopupState>
-
-        {showEditor && (
-          <JavaScriptEditorDialog
-            onClose={this.handleEditorChange}
-            scriptId={scriptId}
-            entryFunction={entryFunction}
-            data={data}
-            title={`Editing ${hookName} hook`}
-            id={hookName}
-          />
+              <MenuItem
+                onClick={() => {
+                  popupState.close();
+                  handleEditorToggle('submit');
+                }}>
+                PreSubmit
+              </MenuItem>
+            </Menu>
+          </Fragment>
         )}
-      </Fragment>
-    );
-  }
-}
+      </PopupState>
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditFieldButton);
+      {showEditor && (
+        <JavaScriptEditorDialog
+          onClose={handleEditorChange}
+          scriptId={scriptId}
+          entryFunction={entryFunction}
+          data={data}
+          title={`Editing ${hookName} hook`}
+          id={hookName}
+        />
+      )}
+    </Fragment>
+  );
+}

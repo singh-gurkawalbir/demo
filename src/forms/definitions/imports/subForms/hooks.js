@@ -1,43 +1,36 @@
 export default {
-  fields: [
-    {
-      fieldId: 'hookType',
-    },
-    {
-      fieldId: 'hooks.preMap.function',
-    },
-    {
-      fieldId: 'hooks.preMap._scriptId',
-    },
-    {
-      fieldId: 'hooks.preMap.configuration',
-    },
-    {
-      fieldId: 'hooks.preMap._stackId',
-    },
-    {
-      fieldId: 'hooks.postMap.function',
-    },
-    {
-      fieldId: 'hooks.postMap._scriptId',
-    },
-    {
-      fieldId: 'hooks.postMap.configuration',
-    },
-    {
-      fieldId: 'hooks.postMap._stackId',
-    },
-    {
-      fieldId: 'hooks.postSubmit.function',
-    },
-    {
-      fieldId: 'hooks.postSubmit._scriptId',
-    },
-    {
+  fieldMap: {
+    hookType: { fieldId: 'hookType' },
+    'hooks.preMap.function': { fieldId: 'hooks.preMap.function' },
+    'hooks.preMap._scriptId': { fieldId: 'hooks.preMap._scriptId' },
+    'hooks.preMap.configuration': { fieldId: 'hooks.preMap.configuration' },
+    'hooks.preMap._stackId': { fieldId: 'hooks.preMap._stackId' },
+    'hooks.postMap.function': { fieldId: 'hooks.postMap.function' },
+    'hooks.postMap._scriptId': { fieldId: 'hooks.postMap._scriptId' },
+    'hooks.postMap.configuration': { fieldId: 'hooks.postMap.configuration' },
+    'hooks.postMap._stackId': { fieldId: 'hooks.postMap._stackId' },
+    'hooks.postSubmit.function': { fieldId: 'hooks.postSubmit.function' },
+    'hooks.postSubmit._scriptId': { fieldId: 'hooks.postSubmit._scriptId' },
+    'hooks.postSubmit.configuration': {
       fieldId: 'hooks.postSubmit.configuration',
     },
-    {
-      fieldId: 'hooks.postSubmit._stackId',
-    },
-  ],
+    'hooks.postSubmit._stackId': { fieldId: 'hooks.postSubmit._stackId' },
+  },
+  layout: {
+    fields: [
+      'hookType',
+      'hooks.preMap.function',
+      'hooks.preMap._scriptId',
+      'hooks.preMap.configuration',
+      'hooks.preMap._stackId',
+      'hooks.postMap.function',
+      'hooks.postMap._scriptId',
+      'hooks.postMap.configuration',
+      'hooks.postMap._stackId',
+      'hooks.postSubmit.function',
+      'hooks.postSubmit._scriptId',
+      'hooks.postSubmit.configuration',
+      'hooks.postSubmit._stackId',
+    ],
+  },
 };

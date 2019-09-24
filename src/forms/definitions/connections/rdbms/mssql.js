@@ -1,12 +1,12 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'rdbms',
     '/rdbms/type': 'mssql',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    type: {
       fieldId: 'type',
       defaultValue: r => {
         let rdbmsSubType;
@@ -20,7 +20,7 @@ export default {
         return rdbmsSubType;
       },
     },
-    {
+    mode: {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode:',
@@ -34,20 +34,34 @@ export default {
         },
       ],
     },
-    {
+    _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
-    { fieldId: 'rdbms.version' },
-    { formId: 'rdbmsFields' },
-    { fieldId: 'rdbms.instanceName' },
-    { fieldId: 'rdbms.port' },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'rdbmsAdvanced' }],
-    },
-  ],
+    'rdbms.version': { fieldId: 'rdbms.version' },
+    rdbmsFields: { formId: 'rdbmsFields' },
+    'rdbms.instanceName': { fieldId: 'rdbms.instanceName' },
+    'rdbms.port': { fieldId: 'rdbms.port' },
+    rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'type',
+      'mode',
+      '_agentId',
+      'rdbms.version',
+      'rdbmsFields',
+      'rdbms.instanceName',
+      'rdbms.port',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['rdbmsAdvanced'],
+      },
+    ],
+  },
 };

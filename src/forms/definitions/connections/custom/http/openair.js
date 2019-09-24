@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'openair',
@@ -29,13 +29,12 @@ export default {
     '/http/rateLimit/failPath': '/response/Auth/@status',
     '/http/rateLimit/failValues': ['556'],
   }),
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    environment: {
       id: 'environment',
       type: 'select',
-      label: 'Environment:',
+      label: 'Environment',
       helpText: 'Please select the environment of your OpenAir account.',
       options: [
         {
@@ -59,24 +58,24 @@ export default {
         return '';
       },
     },
-    {
+    'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company Id:',
+      label: 'Company Id',
       helpText: 'Please enter Company ID of your account.',
       required: true,
     },
-    {
+    'http.unencrypted.userId': {
       id: 'http.unencrypted.userId',
       type: 'text',
-      label: 'User Id:',
+      label: 'User Id',
       helpText: 'Please enter User ID of your account.',
       required: true,
     },
-    {
+    'http.encrypted.password': {
       id: 'http.encrypted.password',
       type: 'text',
-      label: 'Password:',
+      label: 'Password',
       helpText:
         'Please enter Password of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
       required: true,
@@ -84,27 +83,36 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.unencrypted.namespace': {
       id: 'http.unencrypted.namespace',
       type: 'text',
-      label: 'API Namespace:',
+      label: 'API Namespace',
       helpText: 'Please enter the API Namespace of your account.',
       required: true,
     },
-    {
+    'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       type: 'text',
-      label: 'API key:',
+      label: 'API key',
       helpText:
         'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'environment',
+      'http.unencrypted.companyId',
+      'http.unencrypted.userId',
+      'http.encrypted.password',
+      'http.unencrypted.namespace',
+      'http.unencrypted.apiKey',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

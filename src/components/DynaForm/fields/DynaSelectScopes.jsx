@@ -1,156 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import shortid from 'shortid';
-import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import {
-  Select,
-  FormControl,
-  MenuItem,
-  Input,
-  InputLabel,
-  IconButton,
-  FormHelperText,
-} from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import AddIcon from '../../icons/AddIcon';
-import LoadResources from '../../../components/LoadResources';
+import { useState, Fragment } from 'react';
+import Button from '@material-ui/core/Button';
+import ModalDialog from '../../ModalDialog';
+import TransferList from '../../TransferList';
 
-const useStyles = makeStyles({
-  root: {
-    flexDirection: 'row !important',
-    display: 'flex',
-  },
-  select: {
-    display: 'flex',
-    width: '100%',
-  },
-  iconButton: {
-    height: 'fit-content',
-    alignSelf: 'flex-end',
-  },
-});
-const newId = () => `new-${shortid.generate()}`;
-
-function DynaSelectResource(props) {
+const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
+  defaultScopes.filter(scope => !selectedScopes.includes(scope));
+const TransferListModal = props => {
   const {
-    description,
-    disabled,
+    availableScopes: defaultAvailableScopes,
+    selectedScopes: defaultSelectedScopes,
+    handleClose,
     id,
-    name,
-    value = '',
-    label,
-    placeholder,
     onFieldChange,
-    resourceType,
-    allowNew,
-    location,
   } = props;
-  const classes = useStyles();
-  const [newResourceId, setNewResourceId] = useState(newId());
-  const { resources = [] } = useSelector(state =>
-    selectors.resourceList(state, { type: resourceType })
+  const [availableScopes, setAvailableScopes] = useState(
+    defaultAvailableScopes
   );
-  const createdId = useSelector(state =>
-    selectors.createdResourceId(state, newResourceId)
-  );
-
-  useEffect(() => {
-    // console.log('select resource createdId:', createdId);
-    if (createdId) {
-      onFieldChange(id, createdId);
-      // in case someone clicks + again to add another resource...
-      setNewResourceId(newId());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdId]);
-  const filteredResources = () => {
-    const { resourceType, filter, excludeFilter, options } = props;
-
-    if (!resourceType) return [];
-    const finalFilter = options && options.filter ? options.filter : filter;
-
-    return resources.filter(r => {
-      if (finalFilter) {
-        const keys = Object.keys(finalFilter);
-
-        for (let i = 0; i < keys.length; i += 1) {
-          const key = keys[i];
-
-          if (typeof finalFilter[key] === 'object') {
-            const result = Object.keys(finalFilter[key]).reduce(
-              (acc, curr) =>
-                acc && finalFilter[key][curr] === (r[key] && r[key][curr]),
-              true
-            );
-
-            if (!result) return false;
-          } else if (r[key] !== finalFilter[key]) return false;
-        }
-      }
-
-      if (excludeFilter) {
-        const keys = Object.keys(excludeFilter);
-
-        for (let i = 0; i < keys.length; i += 1) {
-          const key = keys[i];
-
-          if (r[key] === excludeFilter[key]) return false;
-        }
-      }
-
-      return true;
-    });
+  const [selectedScopes, setSelectedScopes] = useState(defaultSelectedScopes);
+  const transferListProps = {
+    left: availableScopes,
+    setLeft: setAvailableScopes,
+    right: selectedScopes,
+    setRight: setSelectedScopes,
   };
 
-  let resourceItems = filteredResources().map(conn => {
-    const label = conn.name;
-    const value = conn._id;
-
-    return (
-      <MenuItem key={value} value={value}>
-        {label}
-      </MenuItem>
-    );
-  });
-  const tempPlaceHolder = placeholder || 'Please Select';
-  const defaultItem = (
-    <MenuItem key={tempPlaceHolder} value="">
-      {tempPlaceHolder}
-    </MenuItem>
+  return (
+    <ModalDialog show handleClose={handleClose}>
+      <Fragment>
+        <span>Scopes Editor</span>
+      </Fragment>
+      <TransferList {...transferListProps} />
+      <Fragment>
+        <Button
+          variant="contained"
+          onClick={() => onFieldChange(id, selectedScopes.join())}>
+          Save
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            onFieldChange(id, selectedScopes.join());
+            handleClose();
+          }}>
+          Save And Close
+        </Button>
+      </Fragment>
+    </ModalDialog>
   );
+};
 
-  resourceItems = [defaultItem, ...resourceItems];
+export default function DynaSelectScopesDialog(props) {
+  const { label, scopes, value, onFieldChange, id } = props;
+  const [showScopesModal, setShowScopesModal] = useState(false);
+  let selectedScopes;
+
+  // TODO:Confirm with ashok the behavior of the received select scopes
+  // And check the delimiter behavior....it seems to be specific with each assistant
+  if (value && Array.isArray(value))
+    selectedScopes = (value && value[0] && value[0].split(',')) || [];
+  else selectedScopes = (value && value.split(',')) || [];
+  const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
 
   return (
-    <div className={classes.root}>
-      <FormControl key={id} disabled={disabled} className={classes.select}>
-        <InputLabel shrink={!!value} htmlFor={id}>
-          {label}
-        </InputLabel>
-        <LoadResources required resources={resourceType}>
-          <Select
-            value={value}
-            onChange={evt => {
-              onFieldChange(id, evt.target.value);
-            }}
-            input={<Input name={name} id={id} />}>
-            {resourceItems}
-          </Select>
-        </LoadResources>
-        {description && <FormHelperText>{description}</FormHelperText>}
-      </FormControl>
-      {allowNew && (
-        <IconButton
-          className={classes.iconButton}
-          component={Link}
-          to={`${location.pathname}/add/${resourceType}/${newResourceId}`}
-          size="small">
-          <AddIcon />
-        </IconButton>
+    <Fragment>
+      {showScopesModal && (
+        <TransferListModal
+          id={id}
+          availableScopes={defaultAvailableScopes}
+          selectedScopes={selectedScopes}
+          onFieldChange={onFieldChange}
+          handleClose={() => {
+            setShowScopesModal(false);
+          }}
+        />
       )}
-    </div>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setShowScopesModal(true)}>
+        {label}
+      </Button>
+    </Fragment>
   );
 }
-
-export default withRouter(DynaSelectResource);

@@ -6,6 +6,8 @@ export default {
   'rest.method': {
     type: 'select',
     label: 'HTTP Method',
+    required: true,
+    defaultValue: r => (r && r.rest && r.rest.method) || '',
     options: [
       {
         items: [
@@ -78,6 +80,7 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
+    required: true,
     label: 'Link Header Relation',
     visibleWhen: [
       {
@@ -89,6 +92,7 @@ export default {
   'rest.nextPageRelativeURI': {
     type: 'text',
     label: 'Next Page Relative URI',
+    required: true,
     defaultValue: r => r && r.rest && r.rest.pageArgument,
     visibleWhen: [
       {
@@ -143,6 +147,7 @@ export default {
   'rest.skipArgument': {
     type: 'text',
     label: 'Skip Argument',
+    required: true,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -152,6 +157,7 @@ export default {
   },
   'rest.relativeURI': {
     type: 'text',
+    required: true,
     label: 'Relative URI',
   },
   'rest.successPath': {
