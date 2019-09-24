@@ -33,7 +33,6 @@ import slack from './slack';
 import certify from './certify';
 import chargify from './chargify';
 import docusign from './docusign';
-import dropbox from './dropbox';
 import ebay from './ebay';
 import google from './google';
 import jet from './jet';
@@ -92,7 +91,6 @@ import zohomail from './zohomail';
 import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 import nimble from './nimble';
-import bronto from './bronto';
 import procurify from './procurify';
 import strata from './strata';
 import postmark from './postmark';
@@ -109,14 +107,11 @@ import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
 import tophatter from './tophatter';
 import spreecommerce from './spreecommerce';
-import sugarcrm from './sugarcrm';
 import marketo from './marketo';
-import grms from './grms';
 import retailops from './retailops';
 import sharepoint from './sharepoint';
 import parseur from './parseur';
 import skubana from './skubana';
-import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 
 export default {
@@ -134,7 +129,6 @@ export default {
   certify,
   chargify,
   docusign,
-  dropbox,
   ebay,
   google,
   jet,
@@ -212,7 +206,6 @@ export default {
   myobessentials,
   exacterp,
   nimble,
-  bronto,
   greenhouse,
   mailgun,
   procurify,
@@ -232,12 +225,9 @@ export default {
   oandav20fxtrade,
   tophatter,
   spreecommerce,
-  sugarcrm,
   marketo,
-  grms,
   retailops,
   sharepoint,
   parseur,
   skubana,
-  dunandbradstreet,
 };

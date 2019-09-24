@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'sugarcrm',
@@ -18,9 +18,9 @@ export default {
       '{"grant_type":"password","client_id":"{{{connection.http.unencrypted.clientID}}}","client_secret":"","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.unencrypted.password}}}","platform":"base"}',
     '/http/auth/token/refreshMethod': 'POST',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    sugarcrmSubdomain: {
       id: 'sugarcrmSubdomain',
       type: 'text',
       startAdornment: 'https://',
@@ -46,7 +46,7 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.unencrypted.grantType': {
       id: 'http.unencrypted.grantType',
       required: true,
       type: 'select',
@@ -62,21 +62,22 @@ export default {
       helpText:
         'Please select type of request. Available grant types are "password" and "refresh_token".',
     },
-    {
+    'http.unencrypted.version': {
       id: 'http.unencrypted.version',
       required: true,
       type: 'text',
       label: 'Version',
       helpText: 'Please enter endpoint version of your SugarCRM account.',
     },
-    {
+    'http.unencrypted.clientID': {
       id: 'http.unencrypted.clientID',
       required: true,
       type: 'text',
       label: 'Client ID',
-      helpText: `The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id 's can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.`,
+      helpText:
+        'The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id \'s can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.',
     },
-    {
+    'http.unencrypted.platform': {
       id: 'http.unencrypted.platform',
       required: true,
       type: 'text',
@@ -84,13 +85,13 @@ export default {
       helpText:
         'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
     },
-    {
+    'http.unencrypted.username': {
       fieldId: 'http.unencrypted.username',
       type: 'text',
       label: 'Username',
       required: true,
     },
-    {
+    'http.encrypted.password': {
       fieldId: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
@@ -100,7 +101,7 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
-    {
+    'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
       inputType: 'password',
@@ -110,31 +111,37 @@ export default {
       helpText:
         'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.username',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.password',
-          is: [''],
-        },
+        { field: 'http.unencrypted.username', is: [''] },
+        { field: 'http.encrypted.password', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The access token of your Tableau account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'sugarcrmSubdomain',
+      'http.unencrypted.grantType',
+      'http.unencrypted.version',
+      'http.unencrypted.clientID',
+      'http.unencrypted.platform',
+      'http.unencrypted.username',
+      'http.encrypted.password',
+      'http.encrypted.clientSecret',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

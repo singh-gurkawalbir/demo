@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const pingBody = {
       Store_Code: '{{{connection.http.unencrypted.Store_Code}}}',
       Function: 'AvailabilityGroupList_Load_Query',
@@ -26,14 +26,13 @@ export default {
       // '/xMivaAPIToken': undefined,
     };
   },
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.apiEndpoint': {
       id: 'http.apiEndpoint',
       type: 'text',
       startAdornment: 'https://',
-      label: 'API Endpoint:',
+      label: 'API Endpoint',
       helpText: 'Please enter Region for URI.',
       validWhen: {
         matchesRegEx: {
@@ -49,28 +48,34 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.unencrypted.Store_Code': {
       id: 'http.unencrypted.Store_Code',
       type: 'text',
-      label: 'Store Code:',
+      label: 'Store Code',
       helpText:
         'Please enter your private key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
       required: true,
     },
-    {
+    xMivaAPIToken: {
       id: 'xMivaAPIToken',
       type: 'text',
-      label: 'API Token:',
+      label: 'API Token',
       helpText:
         'Please enter your public key here. Your public key identifies you to our system. This is similar to a username. You will include your public key every time you send request to Paycor. This is not secret information.',
       required: true,
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.apiEndpoint',
+      'http.unencrypted.Store_Code',
+      'xMivaAPIToken',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

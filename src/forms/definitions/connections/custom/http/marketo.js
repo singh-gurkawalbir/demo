@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'marketo',
@@ -19,14 +19,14 @@ export default {
     '/http/auth/token/refreshMediaType': 'json',
     '/http/auth/token/refreshTokenPath': 'access_token',
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.marketoSubdomain': {
       id: 'http.marketoSubdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '/rest',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
       validWhen: {
@@ -47,18 +47,18 @@ export default {
         return subdomain;
       },
     },
-    {
+    'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       type: 'text',
-      label: 'Client Id:',
+      label: 'Client Id',
       required: true,
       helpText:
         'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
     },
-    {
+    'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
-      label: 'Client Secret:',
+      label: 'Client Secret',
       required: true,
       inputType: 'password',
       helpText:
@@ -66,12 +66,18 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.marketoSubdomain',
+      'http.unencrypted.clientId',
+      'http.encrypted.clientSecret',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

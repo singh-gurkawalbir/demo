@@ -1,7 +1,7 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'dropbox',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
@@ -11,12 +11,15 @@ export default {
     '/http/auth/oauth/tokenURI': `https://api.dropboxapi.com/1/oauth2/token`,
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
-  fields: [{ fieldId: 'name' }],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'restAdvanced' }],
-    },
-  ],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

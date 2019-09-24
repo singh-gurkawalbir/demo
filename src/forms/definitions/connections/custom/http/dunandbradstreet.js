@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'dunandbradstreet',
@@ -29,17 +29,16 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.username': {
       id: 'http.unencrypted.username',
       required: true,
       type: 'text',
       label: 'Username',
       helpText: 'Please enter username of your Dun & Bradstreet account.',
     },
-
-    {
+    'http.encrypted.password': {
       id: 'http.encrypted.password',
       required: true,
       type: 'text',
@@ -48,31 +47,31 @@ export default {
       inputType: 'password',
       helpText: 'Please enter password of your Dun & Bradstreet account.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.username',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.password',
-          is: [''],
-        },
+        { field: 'http.unencrypted.username', is: [''] },
+        { field: 'http.encrypted.password', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The access token of your Dun & Bradstreet account.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.username',
+      'http.encrypted.password',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

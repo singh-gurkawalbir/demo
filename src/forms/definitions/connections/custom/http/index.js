@@ -23,15 +23,32 @@ import onelogin from './onelogin';
 import recharge from './recharge';
 import autopilot from './autopilot';
 import drift from './drift';
-import zoom from './zoom';
 import paycor from './paycor';
 import miva from './miva';
 import vend from './vend';
 import marketo from './marketo';
+import bronto from './bronto';
+import dunandbradstreet from './dunandbradstreet';
+import etsy from './etsy';
+import grms from './grms';
+import powerbi from './powerbi';
 import messagemedia from './messagemedia';
 import merchantesolutions from './merchantesolutions';
+import splunk from './splunk';
+import zimbra from './zimbra';
+import dropbox from './dropbox';
+import sugarcrm from './sugarcrm';
 
 export default {
+  bronto,
+  dunandbradstreet,
+  etsy,
+  grms,
+  powerbi,
+  splunk,
+  sugarcrm,
+  zimbra,
+  dropbox,
   marketo,
   merchantesolutions,
   messagemedia,
@@ -40,7 +57,6 @@ export default {
   paycor,
   activecampaign,
   drift,
-  zoom,
   'authorize.net': authorizeNet,
   recurly,
   cartrover,

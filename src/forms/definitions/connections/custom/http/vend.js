@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'vend',
@@ -12,15 +12,14 @@ export default {
     }.vendhq.com/api/1.0/token`,
     '/http/auth/oauth/accessTokenPath': 'access_token',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.subdomain': {
       id: 'http.subdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.vendhq.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
       validWhen: {
@@ -41,12 +40,13 @@ export default {
         return subdomain;
       },
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.subdomain'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

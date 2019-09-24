@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => {
+  preSave: formValues => {
     const pingData = {
       profile_id: formValues['/http/unencrypted/profileId'],
       profile_key: formValues['/http/encrypted/profileKey'],
@@ -26,41 +26,47 @@ export default {
       ],
     };
   },
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.profileId': {
       id: 'http.unencrypted.profileId',
       type: 'text',
-      label: 'Profile ID:',
+      label: 'Profile ID',
       required: true,
       helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
-    {
+    'http.encrypted.profileKey': {
       id: 'http.encrypted.profileKey',
       type: 'text',
-      label: 'Profile Key:',
+      label: 'Profile Key',
       required: true,
       inputType: 'password',
       helpText: 'API password (Profile Key) assigned by Merchant e-Solutions.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.cardNumber': {
       id: 'http.encrypted.cardNumber',
       type: 'text',
-      label: 'Card Number:',
+      label: 'Card Number',
       required: true,
       inputType: 'password',
       helpText: 'Payment card number.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.profileId',
+      'http.encrypted.profileKey',
+      'http.encrypted.cardNumber',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

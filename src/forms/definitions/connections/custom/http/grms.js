@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'grms',
@@ -25,9 +25,9 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
@@ -35,7 +35,7 @@ export default {
       helpText:
         'GRMS assigned API key to a partner account. API key is given out by GRMS customer support team.',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
@@ -45,31 +45,31 @@ export default {
       helpText:
         'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.',
     },
-    {
+    'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
-        {
-          field: 'http.unencrypted.apiKey',
-          is: [''],
-        },
-        {
-          field: 'http.encrypted.apiSecret',
-          is: [''],
-        },
+        { field: 'http.unencrypted.apiKey', is: [''] },
+        { field: 'http.encrypted.apiSecret', is: [''] },
       ],
       label: 'Token Generator',
       defaultValue: '',
       helpText: 'The Access Token of your GRMS account',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.apiKey',
+      'http.encrypted.apiSecret',
+      'http.auth.token.token',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

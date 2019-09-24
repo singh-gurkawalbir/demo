@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'zoom',
@@ -9,36 +9,35 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': 'https://api.zoom.us',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key:',
+      label: 'API Key',
       inputType: 'password',
       helpText: 'The API Key of your zoom account.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    {
+    'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
-      label: 'API Secret:',
+      label: 'API Secret',
       inputType: 'password',
       helpText: 'The API Secret of your zoom account.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.encrypted.apiKey', 'http.encrypted.apiSecret'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };
