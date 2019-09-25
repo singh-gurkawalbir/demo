@@ -274,13 +274,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
   return toReturn.join(' ');
 };
 
-export const getMetadata = ({ updatedFlow, integration, preferences }) => {
+export const getMetadata = ({ flow, integration, preferences }) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
-        .add(updatedFlow.scheduleStartMinute || 0, 'm')
+        .add(flow.scheduleStartMinute || 0, 'm')
         .format('LT'),
     Number
   );
@@ -291,8 +291,8 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
     startTimeOptions.push({ label: opt, value: opt });
   });
 
-  if (updatedFlow && updatedFlow.endTimeOptions) {
-    updatedFlow.endTimeOptions.forEach(opt => {
+  if (flow && flow.endTimeOptions) {
+    flow.endTimeOptions.forEach(opt => {
       endTimeOptions.push({ label: opt, value: opt });
     });
   }
@@ -305,7 +305,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         type: 'select',
         label: 'Time Zone',
         defaultValue:
-          (updatedFlow && updatedFlow.timeZone) ||
+          (flow && flow.timeZone) ||
           (integration && integration.timeZone) ||
           (preferences && preferences.timezone),
         options: [
@@ -327,7 +327,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         label: '',
         showOptionsHorizontally: true,
         fullWidth: true,
-        defaultValue: updatedFlow.activeTab,
+        defaultValue: flow.activeTab,
         options: [
           {
             items: [
@@ -342,7 +342,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'frequency',
         type: 'select',
         label: 'Frequency:',
-        defaultValue: updatedFlow.frequency,
+        defaultValue: flow.frequency,
         options: [
           {
             items: [
@@ -371,7 +371,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'startTime',
         type: 'select',
         label: 'Start Time:',
-        defaultValue: updatedFlow && updatedFlow.startTime,
+        defaultValue: flow && flow.startTime,
         options: [
           {
             items: startTimeOptions,
@@ -395,7 +395,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'endTime',
         type: 'select',
         label: 'End Time:',
-        defaultValue: updatedFlow && updatedFlow.endTime,
+        defaultValue: flow && flow.endTime,
         options: [
           {
             items: endTimeOptions,
@@ -417,15 +417,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'daysToRunOn',
         type: 'multiselect',
         label: 'Days To Run On:',
-        defaultValue: updatedFlow.daysToRunOn || [
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          '0',
-        ],
+        defaultValue: flow.daysToRunOn || ['1', '2', '3', '4', '5', '6', '0'],
         options: [
           {
             items: [
@@ -455,7 +447,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'dayToRunOn',
         type: 'select',
         label: 'Day To Run On:',
-        defaultValue: updatedFlow.dayToRunOn,
+        defaultValue: flow.dayToRunOn,
         options: [
           {
             items: [
@@ -485,7 +477,7 @@ export const getMetadata = ({ updatedFlow, integration, preferences }) => {
         name: 'schedule',
         type: 'text',
         label: 'Schedule:',
-        defaultValue: updatedFlow.schedule,
+        defaultValue: flow.schedule,
         visibleWhenAll: [
           {
             field: 'activeTab',
