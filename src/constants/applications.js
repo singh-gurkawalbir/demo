@@ -99,7 +99,7 @@ const connectors = [
   // { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
-  // { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
+  { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'http', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'http', assistant: 'asana' },
@@ -210,6 +210,12 @@ const connectors = [
     name: 'Facebook ads',
     type: 'http',
     assistant: 'facebookads',
+  },
+  {
+    id: 'faire',
+    name: 'Faire',
+    type: 'http',
+    assistant: 'faire',
   },
   {
     id: 'fieldaware',
@@ -365,6 +371,7 @@ const connectors = [
     type: 'http',
     assistant: 'microsoftoutlookmail',
   },
+  { id: 'miva', name: 'Miva', type: 'http', assistant: 'miva' },
   {
     id: 'myobaccountright',
     name: 'MYOB Accountright',

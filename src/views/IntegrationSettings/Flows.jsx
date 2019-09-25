@@ -1,21 +1,39 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { withStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
+import { Fragment, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
+import ResourceTable from '../../components/ResourceTable';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
+import AttachFlowsDialog from '../../components/AttachFlows';
+import getRoutePath from '../../utils/routePaths';
 
-const mapStateToProps = (state, { match }) => {
+const useStyles = makeStyles(() => ({
+  registerButton: {
+    float: 'right',
+  },
+}));
+
+export default function Flows(props) {
+  const { match } = props;
+  const classes = useStyles();
   const { integrationId } = match.params;
-  let flows = selectors.resourceList(state, { type: 'flows' }).resources;
-  const preferences = selectors.userProfilePreferencesProps(state);
+  const [showDialog, setShowDialog] = useState(false);
+  let flows = useSelector(
+    state => selectors.resourceList(state, { type: 'flows' }).resources
+  );
+  const preferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
+  const standaloneFlows =
+    flows &&
+    flows.filter(
+      f =>
+        (f._integrationId === STANDALONE_INTEGRATION.id || !f._integrationId) &&
+        !!f.sandbox === (preferences.environment === 'sandbox')
+    );
 
   flows =
     flows &&
@@ -28,63 +46,38 @@ const mapStateToProps = (state, { match }) => {
         !!f.sandbox === (preferences.environment === 'sandbox')
     );
 
-  return {
-    flows,
-  };
-};
+  return (
+    <Fragment>
+      {showDialog && (
+        <AttachFlowsDialog
+          integrationId={integrationId}
+          standaloneFlows={standaloneFlows}
+          onClose={() => setShowDialog(false)}
+        />
+      )}
+      <LoadResources required resources="flows, connections, exports, imports">
+        <Button
+          className={classes.registerButton}
+          component={Link}
+          to={getRoutePath(`/integrations/${integrationId}/data-loader`)}>
+          Load Data
+        </Button>
+        {integrationId && integrationId !== 'none' && (
+          <Button
+            className={classes.registerButton}
+            onClick={() => setShowDialog(true)}>
+            Attach Flows
+          </Button>
+        )}
+        <Button
+          className={classes.registerButton}
+          component={Link}
+          to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
+          Create Flow
+        </Button>
 
-@withStyles(theme => ({
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
-}))
-class Flows extends Component {
-  render() {
-    const { classes, flows } = this.props;
-
-    return (
-      <LoadResources required resources="flows">
-        <Typography className={classes.title} variant="h4">
-          Integration Flows
-        </Typography>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Flow Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Field Mappings</TableCell>
-              <TableCell>Schedule</TableCell>
-              <TableCell>Run</TableCell>
-              <TableCell>Off/On</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {flows &&
-              flows.map(flow => (
-                <TableRow key={flow._id}>
-                  <TableCell>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to={`/pg/flowBuilder/${flow._id}`}>
-                      {flow.name}
-                    </NavLink>
-                  </TableCell>
-                  <TableCell>{flow.description}</TableCell>
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <ResourceTable resourceType="flows" resources={flows} />
       </LoadResources>
-    );
-  }
+    </Fragment>
+  );
 }
-
-export default connect(mapStateToProps)(Flows);

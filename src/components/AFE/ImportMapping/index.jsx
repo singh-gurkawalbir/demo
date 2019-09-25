@@ -10,20 +10,14 @@ import {
   Grid,
   DialogActions,
 } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import actions from '../../../actions';
 import MappingUtil from '../../../utils/mapping';
 
 const CloseIcon = require('../../../components/icons/CloseIcon').default;
 
-const svgFontSizes = size => ({
-  fontSize: size,
-  marginRight: 10,
-});
 const useStyles = makeStyles(theme => ({
   modalContent: {
     height: '100vh',
@@ -65,6 +59,8 @@ export const reducer = (state, action) => {
         draft.splice(index, 1);
         break;
       case 'UPDATE_FIELD':
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+
         if (state[index]) {
           const objCopy = { ...state[index] };
           let inputValue = value;
@@ -94,7 +90,6 @@ export const reducer = (state, action) => {
             objCopy[field] = inputValue;
           }
 
-          setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
           draft[index] = objCopy;
 
           return;
@@ -128,17 +123,16 @@ export default function ImportMapping(props) {
     title,
     onClose,
     mappings = {},
-    lookups,
+    lookups = [],
     application,
     isStandaloneMapping,
-    generateFields,
-    extractFields,
-    resourceId,
+    generateFields = [],
+    extractFields = [],
+    children,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
-  const [lookupState, setLookup] = useState(lookups || []);
+  const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, dispatchLocalAction] = useReducer(
     reducer,
@@ -233,29 +227,7 @@ export default function ImportMapping(props) {
     if (validateMapping(mappings)) {
       // case where its standalone mapping. Save directly to server.
       if (isStandaloneMapping) {
-        const patchSet = [
-          {
-            op: 'replace',
-            path: MappingUtil.getMappingPath(application),
-            value: mappings,
-          },
-        ];
-
-        if (lookupState) {
-          patchSet.push({
-            op: 'replace',
-            path: MappingUtil.getLookupPath(application),
-            value: lookupState,
-          });
-        }
-
-        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-
-        // Save and Close
-        if (closeModal) {
-          onClose(false);
-        }
+        onClose(closeModal, mappings, lookupState);
       } else {
         // case where mapping is used in context with Form. Saving mappings and lookup to form
         onClose(true, mappings, lookupState);
@@ -336,6 +308,7 @@ export default function ImportMapping(props) {
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
+      {children}
       <DialogTitle>{title}</DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
@@ -405,7 +378,7 @@ export default function ImportMapping(props) {
                           handleDelete(mapping.index);
                         }}
                         className={classes.margin}>
-                        <CloseIcon style={svgFontSizes(24)} />
+                        <CloseIcon />
                       </IconButton>
                     </Grid>
                   </Grid>

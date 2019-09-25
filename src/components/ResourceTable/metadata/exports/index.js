@@ -22,5 +22,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Clone, AuditLogs, References, Delete],
+  rowActions: () => [Clone, AuditLogs, References, Delete],
 };

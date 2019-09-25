@@ -4,7 +4,7 @@ import UploadIcon from '../../../../../components/icons/ArrowUpIcon';
 import UploadFileDialog from '../../../../../components/UploadFileDialog';
 
 export default {
-  label: 'Upload Zip File',
+  label: 'Upload ZIP File',
   component: function UploadZipFile({ resourceType, resource }) {
     const [showUpoadFileDialog, setShowUploadFileDialog] = useState(false);
     const handleUploadZipFileClick = () => {

@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import { call } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../index';
-import { downloadZip, publish, generateZip } from './';
+import { downloadZip, generateZip } from './';
 
 describe('downloadZip sagas', () => {
   const id = '123';
@@ -31,45 +31,6 @@ describe('downloadZip sagas', () => {
       })
     );
     expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
-  });
-});
-
-describe('publish sagas', () => {
-  const resource = { _id: '123', published: true };
-  const resourceType = 'templates';
-  const path = `/${resourceType}/${resource._id}`;
-
-  test('should succeed on successful api call', () => {
-    const saga = publish({ resource, resourceType });
-    const callEffect = saga.next().value;
-
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        opts: {
-          method: 'PUT',
-          body: { ...resource, published: !resource.published },
-        },
-      })
-    );
-
-    expect(saga.next().done).toEqual(true);
-  });
-  test('should return undefined if api call fails', () => {
-    const saga = publish({ resource, resourceType });
-    const callEffect = saga.next().value;
-
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        opts: {
-          method: 'PUT',
-          body: { ...resource, published: !resource.published },
-        },
-      })
-    );
-    expect(saga.throw(new Error()).value).toEqual(true);
     expect(saga.next().done).toEqual(true);
   });
 });

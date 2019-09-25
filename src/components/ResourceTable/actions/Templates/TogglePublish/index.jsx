@@ -8,7 +8,6 @@ export default {
   component: function TogglePublish({ resourceType, resource }) {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
-      dispatch(actions.template.publish(resource, resourceType));
       const patchSet = [
         {
           op: 'replace',

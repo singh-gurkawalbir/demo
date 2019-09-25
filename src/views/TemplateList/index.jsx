@@ -37,22 +37,12 @@ export default function TemplateList(props) {
     })
   );
   const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
-  const handleGenerateZipDialogClose = () => {
-    setShowGenerateZipDialog(false);
-  };
-
-  const { resources } = useSelector(state =>
-    selectors.resourceList(state, { type: 'integrations' })
-  );
 
   return (
     <Fragment>
       <ResourceDrawer {...props} />
       {showGenerateZipDialog && (
-        <GenerateTemplateZip
-          onClose={handleGenerateZipDialogClose}
-          integrations={resources}
-        />
+        <GenerateTemplateZip onClose={() => setShowGenerateZipDialog(false)} />
       )}
       <CeligoPageBar title="Templates">
         <div className={classes.actions}>

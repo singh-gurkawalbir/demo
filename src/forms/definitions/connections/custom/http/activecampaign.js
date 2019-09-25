@@ -10,6 +10,7 @@ export default {
     '/http/baseURI': `https://${
       formValues['/http/activecampaignSubdomain']
     }.api-us1.com`,
+    '/http/ping/method': 'GET',
     '/http/auth/token/location': 'url',
     '/http/auth/token/paramName': 'api_key',
   }),

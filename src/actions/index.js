@@ -82,6 +82,8 @@ const marketplace = {
     }),
 };
 const resource = {
+  downloadFile: (id, resourceType) =>
+    action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
   request: (resourceType, id, message) =>
@@ -456,8 +458,6 @@ const agent = {
 };
 const template = {
   downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
-  publish: (resource, resourceType) =>
-    action(actionTypes.TEMPLATE.PUBLISH, { resource, resourceType }),
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
