@@ -3,6 +3,7 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    omitWhenHidden: true,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
@@ -26,6 +27,7 @@ export default {
     type: 'editor',
     mode: 'sql',
     label: 'SOQL Query',
+    omitWhenHidden: true,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
@@ -40,6 +42,7 @@ export default {
     valueName: 'value',
     valueType: 'array',
     label: 'Referenced Fields',
+    omitWhenHidden: true,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
@@ -51,6 +54,7 @@ export default {
     type: 'text',
     label: 'Required Trigger',
     multiline: true,
+    omitWhenHidden: true,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
@@ -62,6 +66,7 @@ export default {
     type: 'text',
     label: 'Field Specific Qualification Criteria',
     multiline: true,
+    omitWhenHidden: true,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
