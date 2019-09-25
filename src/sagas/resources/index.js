@@ -142,10 +142,33 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 
+export function* requestReferences({ resourceType, id }) {
+  const path = `/${resourceType}/${id}/dependencies`;
+
+  try {
+    const resourceReferences = yield call(apiCallWithRetry, { path });
+
+    yield put(actions.resource.receivedReferences(resourceReferences));
+
+    return resourceReferences;
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* deleteResource({ resourceType, id }) {
   const path = `/${resourceType}/${id}`;
 
   try {
+    const resourceReferences = yield call(requestReferences, {
+      resourceType,
+      id,
+    });
+
+    if (resourceReferences && Object.keys(resourceReferences).length > 0) {
+      return;
+    }
+
     yield call(apiCallWithRetry, {
       path,
       opts: {
@@ -181,18 +204,6 @@ export function* getResourceCollection({ resourceType }) {
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-    return undefined;
-  }
-}
-
-export function* requestReferences({ resourceType, id }) {
-  const path = `/${resourceType}/${id}/dependencies`;
-
-  try {
-    const resourceReferences = yield call(apiCallWithRetry, { path });
-
-    yield put(actions.resource.receivedReferences(resourceReferences));
-  } catch (error) {
     return undefined;
   }
 }

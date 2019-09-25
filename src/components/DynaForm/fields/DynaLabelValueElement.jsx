@@ -8,11 +8,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaLabelValueElement(props) {
-  const { label, value } = props;
+  const { label, value, id } = props;
   const classes = useStyles(props);
 
   return (
-    <Typography variant="body1" className={classes.text}>
+    <Typography data-test={id} variant="body1" className={classes.text}>
       {label} {value}
     </Typography>
   );

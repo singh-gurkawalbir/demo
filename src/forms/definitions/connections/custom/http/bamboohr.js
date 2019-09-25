@@ -36,9 +36,9 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
-        const subdomain = baseUri.substr(
-          'https://api.bamboohr.com/api/gateway.php/'.length
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring('https://api.bamboohr.com/api/gateway.php/'.length);
 
         return subdomain;
       },

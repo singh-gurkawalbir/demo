@@ -79,7 +79,11 @@ export default function DynaCsvParse(props) {
           onClose={handleClose}
         />
       )}
-      <Button variant="contained" onClick={handleEditorClick}>
+      <Button
+        data-test={id}
+        variant="contained"
+        color="secondary"
+        onClick={handleEditorClick}>
         {label}
       </Button>
     </Fragment>

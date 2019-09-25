@@ -1,33 +1,33 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'powerbi',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api.powerbi.com`,
-    '/rest/authURI':
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `https://api.powerbi.com`,
+    '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
-    '/rest/oauthTokenURI':
+    '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.unencrypted.adminUser': {
-      id: 'rest.unencrypted.adminUser',
+    'http.unencrypted.adminUser': {
+      id: 'http.unencrypted.adminUser',
       label: 'Admin User:',
       type: 'checkbox',
       helpText:
         'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.unencrypted.adminUser'],
+    fields: ['name', 'http.unencrypted.adminUser'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };

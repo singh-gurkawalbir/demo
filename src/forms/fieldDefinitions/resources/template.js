@@ -25,7 +25,6 @@ export default {
   contactEmail: {
     defaultValue: r => r.contactEmail,
     type: 'text',
-    valueDelimiter: ',',
     label: 'Contact Emails',
   },
   installerFunction: {

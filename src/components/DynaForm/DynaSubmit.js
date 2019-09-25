@@ -9,12 +9,14 @@ class FormButton extends Component {
       isValid,
       onClick,
       children,
+      id,
       className,
       value = {},
     } = this.props;
 
     return (
       <Button
+        data-test={id}
         variant="contained"
         color="secondary"
         className={className}

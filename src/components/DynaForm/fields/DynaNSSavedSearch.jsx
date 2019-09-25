@@ -69,6 +69,7 @@ export default function DynaNSSavedSearch(props) {
           name="searchType"
           defaultValue="public"
           value={searchType}
+          data-test={id}
           onChange={handleChange}>
           <FormControlLabel value="public" control={<Radio />} label="Public" />
           <FormControlLabel
