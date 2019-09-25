@@ -23,7 +23,7 @@ import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
-import { uploadFileSagas } from './uploadFileDialog';
+import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import { marketplaceSagas } from './marketPlace';
 
