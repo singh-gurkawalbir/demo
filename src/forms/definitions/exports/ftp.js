@@ -4,6 +4,8 @@ export default {
       fieldMeta.fieldMap['file.filedefinition.rules'];
 
     if (!fileDefinitionRulesField.userDefinitionId) {
+      // In Export creation mode, delete generic visibleWhenAll rules
+      // Add custom visible when rules
       delete fileDefinitionRulesField.visibleWhenAll;
       fileDefinitionRulesField.visibleWhen = [
         {
@@ -81,7 +83,7 @@ export default {
       ],
     },
     {
-      // will be button that saves file defs and then submit resource
+      // Button that saves file defs and then submit resource
       id: 'savedefinition',
       visibleWhen: [
         {
