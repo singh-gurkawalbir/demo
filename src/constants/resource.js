@@ -14,6 +14,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   integration: 'integrations',
   script: 'scripts',
   stack: 'stacks',
+  template: 'templates',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
@@ -31,4 +32,5 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   integration: 'Integration',
   script: 'Script',
   stack: 'Stack',
+  template: 'Template',
 });

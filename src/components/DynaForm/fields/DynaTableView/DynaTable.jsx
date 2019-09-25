@@ -221,7 +221,7 @@ export default function DynaTable(props) {
   return (
     <div className={classes.container}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
-      <Grid container className={classes.root} spacing={2}>
+      <Grid data-test={id} container className={classes.root} spacing={2}>
         {!hideHeaders && (
           <Grid item xs={12}>
             <Grid container spacing={2}>

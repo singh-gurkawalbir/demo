@@ -46,6 +46,7 @@ export default function DynaAutoSuggest(props) {
   return (
     <FormControl disabled={disabled} className={classes.root}>
       <Select
+        data-test={id}
         inputValue={inputValue}
         noOptionsMessage={() => null}
         placeholder={placeholder || ''}

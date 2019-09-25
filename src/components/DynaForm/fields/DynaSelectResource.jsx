@@ -113,14 +113,20 @@ function DynaSelectResource(props) {
           const key = keys[i];
 
           if (typeof finalFilter[key] === 'object') {
-            const result = Object.keys(finalFilter[key]).reduce(
-              (acc, curr) =>
-                acc && finalFilter[key][curr] === (r[key] && r[key][curr]),
+            const finalRes = Object.keys(finalFilter[key]).reduce(
+              (acc, curr) => {
+                const ret =
+                  acc && r[key] && r[key][curr] === finalFilter[key][curr];
+
+                return ret;
+              },
               true
             );
 
-            if (!result) return false;
-          } else if (r[key] !== finalFilter[key]) return false;
+            if (!finalRes) return false;
+          }
+
+          if (r[key] !== finalFilter[key]) return false;
         }
       }
 
@@ -165,6 +171,7 @@ function DynaSelectResource(props) {
         </InputLabel>
         <LoadResources required resources={resourceType}>
           <Select
+            data-test={id}
             value={value}
             variant="filled"
             IconComponent={ArrowDownIcon}
