@@ -1,21 +1,20 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'github',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': 'https://api.github.com',
-    '/rest/authURI': 'http://github.com/login/oauth/authorize',
-    '/rest/oauthTokenURI': 'https://github.com/login/oauth/access_token',
-    '/rest/scopeDelimiter': ' ',
-    '/rest/headers': [{ name: 'User-Agent', value: 'Awesome-Octocat-App' }],
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://api.github.com',
+    '/http/auth/oauth/authURI': 'http://github.com/login/oauth/authorize',
+    '/http/auth/oauth/tokenURI': 'https://github.com/login/oauth/access_token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/headers': [{ name: 'User-Agent', value: 'Awesome-Octocat-App' }],
   }),
-
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.scope': {
-      fieldId: 'rest.scope',
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'user',
         'user:email',
@@ -42,13 +41,13 @@ export default {
         'admin:gpg_key',
       ],
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.scope'],
+    fields: ['name', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };
