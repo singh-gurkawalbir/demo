@@ -1,14 +1,14 @@
 import { Route } from 'react-router';
-import DashboardRouter from './';
+import Marketplace from './';
 import List from '../../components/MarketplaceList/ConnectorTemplateList';
 import TemplateInstall from '../../views/Templates/Install';
 import TemplatePreview from '../../views/Templates/Preview';
 
-export default function MarketplaceRouter() {
+export default function MarketplaceRouter({ match }) {
   return (
     <div>
-      <Route path="/pg/marketplace/:application" component={List} />
-      <Route path="/" component={DashboardRouter} />
+      <Route path={`${match.url}/:application`} component={List} />
+      <Route exact path={`${match.url}`} component={Marketplace} />
       <Route
         path="/pg/marketplace/templates/:templateId/setup"
         component={TemplateInstall}
