@@ -10,11 +10,11 @@ import {
   DialogActions,
   makeStyles,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '../icons/CloseIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../../components/ResourceTable';
+import LoadResources from '../LoadResources';
+import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -89,8 +89,8 @@ export default function AttachFlows({
         <LoadResources
           required
           resources="flows, connections, exports, imports">
-          <ResourceTable
-            resources={flowsToAttch}
+          <CeligoTable
+            data={flowsToAttch}
             onSelectChange={handleSelectChange}
             {...metadata}
             selectableRows

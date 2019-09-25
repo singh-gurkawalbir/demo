@@ -6,11 +6,11 @@ import {
   DialogContent,
   makeStyles,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { useSelector } from 'react-redux';
+import CloseIcon from '../icons/CloseIcon';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../../components/ResourceTable';
+import CeligoTable from '../../components/CeligoTable';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +51,7 @@ export default function MappingDialog({ onClose, resource }) {
         <LoadResources
           required
           resources="flows, connections, exports, imports">
-          <ResourceTable resources={imports} {...metadata} />
+          <CeligoTable data={imports} {...metadata} />
         </LoadResources>
       </DialogContent>
     </Dialog>

@@ -19,7 +19,7 @@ export default {
       <Fragment>
         {showSchedule && (
           <FlowSchedule
-            resource={resource}
+            flow={resource}
             title="Flow Schedule"
             onClose={handleClose}
           />

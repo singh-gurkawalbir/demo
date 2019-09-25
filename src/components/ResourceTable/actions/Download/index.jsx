@@ -7,12 +7,12 @@ export default {
   label: 'Download',
   component: function DownloadResources({ resource }) {
     const dispatch = useDispatch();
-    const handleDownloadZipFileClick = () => {
-      dispatch(actions.resource.downloadZipFile(resource._id, 'flows'));
+    const handleDownloadFileClick = () => {
+      dispatch(actions.resource.downloadFile(resource._id, 'flows'));
     };
 
     return (
-      <IconButton size="small" onClick={handleDownloadZipFileClick}>
+      <IconButton size="small" onClick={handleDownloadFileClick}>
         <Icon />
       </IconButton>
     );

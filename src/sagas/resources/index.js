@@ -98,7 +98,7 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   }
 }
 
-export function* downloadZipFile({ resourceType, id }) {
+export function* downloadFile({ resourceType, id }) {
   const { path, opts } = getRequestOptions(
     actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE,
     {
@@ -248,7 +248,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
-  takeEvery(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, downloadZipFile),
+  takeEvery(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   ...metadataSagas,
 ];
