@@ -1,28 +1,17 @@
 import { useRef } from 'react';
+import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import itemTypes from '../itemTypes';
+import AppBlock from '../AppBlock';
 
-const pgBoxSize = 150;
+const pgBoxHeight = 100;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  pgBox: {
-    width: pgBoxSize,
-    height: pgBoxSize,
-    border: 'solid 1px lightblue',
-    padding: theme.spacing(1),
-    margin: theme.spacing(3, 0),
-    cursor: 'move',
-  },
-  processorActions: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    padding: theme.spacing(0, 1),
+    // marginBottom: theme.spacing(3),
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
@@ -32,17 +21,17 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   connectingLine: {
-    top: -(pgBoxSize + theme.spacing(3 * 2)) / 2,
-    height: pgBoxSize + theme.spacing(3 * 2),
+    top: -(pgBoxHeight + theme.spacing(5 * 2)) / 2,
+    height: pgBoxHeight + theme.spacing(5 * 2),
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
+const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
   const classes = useStyles();
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_GENERATOR, _id, index },
+    item: { type: itemTypes.PAGE_GENERATOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
@@ -52,10 +41,15 @@ const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   drag(ref);
 
   return (
-    <div id={_id} className={classes.pgContainer}>
-      <div ref={ref} className={classes.pgBox} style={{ opacity }}>
-        <Typography variant="h2">{name}</Typography>
-      </div>
+    <div className={classes.pgContainer}>
+      <AppBlock
+        match={match}
+        history={history}
+        ref={ref}
+        resourceType="exports"
+        resourceId={pg._exportId}
+        opacity={opacity}
+      />
       <div
         className={clsx(classes.line, {
           [classes.firstLine]: index === 0,
@@ -66,4 +60,4 @@ const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   );
 };
 
-export default PageGenerator;
+export default withRouter(PageGenerator);
