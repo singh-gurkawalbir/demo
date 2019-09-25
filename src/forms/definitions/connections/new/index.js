@@ -1,7 +1,7 @@
 import applications from '../../../../constants/applications';
 
 export default {
-  preSubmit: ({ application, ...rest }) => {
+  preSave: ({ application, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -15,8 +15,8 @@ export default {
 
     return newValues;
   },
-  fields: [
-    {
+  fieldMap: {
+    application: {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
@@ -24,7 +24,7 @@ export default {
       defaultValue: '',
       required: true,
     },
-    {
+    name: {
       id: 'name',
       name: '/name',
       type: 'text',
@@ -40,7 +40,10 @@ export default {
         },
       ],
     },
-  ],
+  },
+  layout: {
+    fields: ['application', 'name'],
+  },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};

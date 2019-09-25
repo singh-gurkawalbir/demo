@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'pacejet',
@@ -19,20 +19,19 @@ export default {
       },
     ],
   }),
-  fields: [
-    { fieldId: 'name' },
-
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.unencrypted.pacejetLocation': {
       id: 'http.unencrypted.pacejetLocation',
       type: 'text',
-      label: 'Pacejet Location:',
+      label: 'Pacejet Location',
       helpText: 'Please reach out to Pacejet support team for location header.',
       required: true,
     },
-    {
+    'http.encrypted.pacejetLicenseKey': {
       id: 'http.encrypted.pacejetLicenseKey',
       type: 'text',
-      label: 'Pacejet License Key:',
+      label: 'Pacejet License Key',
       helpText:
         'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
       required: true,
@@ -40,12 +39,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'http.unencrypted.pacejetLocation',
+      'http.encrypted.pacejetLicenseKey',
+    ],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

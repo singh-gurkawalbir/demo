@@ -15,6 +15,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   integrations: 'Integration',
   scripts: 'Script',
   stacks: 'Stack',
+  templates: 'Template',
 });
 
 /**
@@ -68,7 +69,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
 
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
-  NetSuiteImport: 'netsuite',
+  NetSuiteDistributedImport: 'netsuiteDistributed',
   XMLImport: 'xml',
   XMLExport: 'xml',
   FTPExport: 'ftp',
@@ -87,6 +88,7 @@ export const adaptorTypeMap = {
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
   RDBMSImport: 'rdbms',
+  SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
 };
 

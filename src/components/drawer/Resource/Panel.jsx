@@ -4,7 +4,10 @@ import { Route } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import {
+  MODEL_PLURAL_TO_LABEL,
+  getResourceSubType,
+} from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 
@@ -12,13 +15,13 @@ const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
     border: 'solid 1px',
-    borderColor: 'rgb(0,0,0,0.3)',
+    borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
     width: props => (props.match.isExact ? 450 : 150),
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
-    padding: theme.spacing(2, 2, 0, 2),
+    padding: theme.spacing(2, 0, 0, 0),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
   form: {
@@ -26,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     width: props => (props.match.isExact ? undefined : 400),
     maxHeight: 'unset',
     marginTop: theme.spacing(1),
+  },
+  title: {
+    padding: theme.spacing(0, 0, 0, 3),
   },
 }));
 
@@ -35,6 +41,19 @@ export default function Panel(props) {
   const isNew = operation === 'add';
   const classes = useStyles(props);
   const dispatch = useDispatch();
+  const connectionType = useSelector(state => {
+    const valueChanges = selectors.resourceData(
+      state,
+      resourceType,
+      id,
+      'value'
+    );
+    const { assistant, type } = getResourceSubType(valueChanges.merged);
+
+    if (assistant) return assistant;
+
+    return type;
+  });
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
@@ -82,7 +101,7 @@ export default function Panel(props) {
   return (
     <Fragment>
       <div className={classes.root}>
-        <Typography variant="h5">
+        <Typography variant="h5" className={classes.title}>
           {isNew ? `Create` : 'Edit'} {resourceLabel}
         </Typography>
         <LoadResources required resources={resourceType}>
@@ -93,6 +112,7 @@ export default function Panel(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            connectionType={connectionType}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}

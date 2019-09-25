@@ -3,7 +3,7 @@ export default {
   // it should only do that when the user selects another protocol type
   // as well
   // The optionsHandler handler runs for every field
-  preSubmit: formValues => {
+  preSave: formValues => {
     const newValues = formValues;
 
     if (newValues['/ftp/entryParser'] === '') {
@@ -41,121 +41,86 @@ export default {
 
     return null;
   },
-  fields: [
-    { fieldId: 'name' },
-    { fieldId: 'type', disabled: true },
-    {
-      fieldId: 'ftp.hostURI',
-      required: true,
-    },
-    { fieldId: 'ftp.type', required: true },
-    {
-      fieldId: 'ftp.username',
-      required: true,
-    },
-    {
-      fieldId: 'ftp.password',
-    },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    type: { fieldId: 'type', disabled: true },
+    'ftp.hostURI': { fieldId: 'ftp.hostURI', required: true },
+    'ftp.type': { fieldId: 'ftp.type', required: true },
+    'ftp.username': { fieldId: 'ftp.username', required: true },
+    'ftp.password': { fieldId: 'ftp.password' },
+    'ftp.authKey': {
       fieldId: 'ftp.authKey',
-      visibleWhen: [
-        {
-          field: 'ftp.type',
-          is: ['sftp'],
-        },
-      ],
+      visibleWhen: [{ field: 'ftp.type', is: ['sftp'] }],
     },
-    {
+    'ftp.useImplicitFtps': {
       fieldId: 'ftp.useImplicitFtps',
-
-      visibleWhen: [
-        {
-          field: 'ftp.type',
-          is: ['ftps'],
-        },
-      ],
+      visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [
-        {
-          fieldId: 'ftp.port',
-          refreshOptionsOnChangesTo: ['ftp.type', 'ftp.useImplicitFtps'],
-          validWhen: {
-            matchesRegEx: {
-              pattern: '^[\\d]+$',
-              message: 'Must be a number.',
-            },
-          },
-        },
-        {
-          fieldId: 'ftp.usePassiveMode',
-
-          visibleWhen: [
-            {
-              field: 'ftp.type',
-              is: ['ftp', 'ftps'],
-            },
-          ],
-        },
-        {
-          fieldId: 'ftp.userDirectoryIsRoot',
-        },
-        {
-          fieldId: 'ftp.entryParser',
-          required: false,
-        },
-        {
-          fieldId: 'ftp.requireSocketReUse',
-
-          visibleWhen: [
-            {
-              field: 'ftp.type',
-              is: ['ftps'],
-            },
-          ],
-        },
-        {
-          fieldId: 'ftp.usePgp',
-        },
-        {
-          fieldId: 'ftp.pgpEncryptKey',
-          required: true,
-          omitWhenHidden: true,
-          visibleWhen: [
-            {
-              field: 'ftp.usePgp',
-              is: [true],
-            },
-          ],
-        },
-        {
-          fieldId: 'ftp.pgpDecryptKey',
-
-          required: true,
-          omitWhenHidden: true,
-          visibleWhen: [
-            {
-              field: 'ftp.usePgp',
-              is: [true],
-            },
-          ],
-        },
-        {
-          fieldId: 'ftp.pgpPassphrase',
-          required: true,
-          omitWhenHidden: true,
-          visibleWhen: [
-            {
-              field: 'ftp.usePgp',
-              is: [true],
-            },
-          ],
-        },
-      ],
+    'ftp.port': {
+      fieldId: 'ftp.port',
+      refreshOptionsOnChangesTo: ['ftp.type', 'ftp.useImplicitFtps'],
+      validWhen: {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Must be a number.' },
+      },
     },
-  ],
+    'ftp.usePassiveMode': {
+      fieldId: 'ftp.usePassiveMode',
+      visibleWhen: [{ field: 'ftp.type', is: ['ftp', 'ftps'] }],
+    },
+    'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
+    'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
+    'ftp.requireSocketReUse': {
+      fieldId: 'ftp.requireSocketReUse',
+      visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],
+    },
+    'ftp.usePgp': { fieldId: 'ftp.usePgp' },
+    'ftp.pgpEncryptKey': {
+      fieldId: 'ftp.pgpEncryptKey',
+      required: true,
+      omitWhenHidden: true,
+      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
+    },
+    'ftp.pgpDecryptKey': {
+      fieldId: 'ftp.pgpDecryptKey',
+      required: true,
+      omitWhenHidden: true,
+      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
+    },
+    'ftp.pgpPassphrase': {
+      fieldId: 'ftp.pgpPassphrase',
+      required: true,
+      omitWhenHidden: true,
+      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
+    },
+  },
+  layout: {
+    fields: [
+      'name',
+      'type',
+      'ftp.hostURI',
+      'ftp.type',
+      'ftp.username',
+      'ftp.password',
+      'ftp.authKey',
+      'ftp.useImplicitFtps',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: [
+          'ftp.port',
+          'ftp.usePassiveMode',
+          'ftp.userDirectoryIsRoot',
+          'ftp.entryParser',
+          'ftp.requireSocketReUse',
+          'ftp.usePgp',
+          'ftp.pgpEncryptKey',
+          'ftp.pgpDecryptKey',
+          'ftp.pgpPassphrase',
+        ],
+      },
+    ],
+  },
 };

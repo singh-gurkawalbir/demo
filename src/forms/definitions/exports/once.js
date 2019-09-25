@@ -1,1 +1,4 @@
-export default { fields: [{ fieldId: 'once.booleanField' }], fieldSets: [] };
+export default {
+  fieldMap: { 'once.booleanField': { fieldId: 'once.booleanField' } },
+  layout: { fields: ['once.booleanField'] },
+};

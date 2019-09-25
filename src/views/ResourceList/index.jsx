@@ -1,20 +1,19 @@
 import { Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Paper } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
 import CeligoIconButton from '../../components/IconButton';
 import * as selectors from '../../reducers';
-import actions from '../../actions';
-import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from './ResourceTable';
+import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
+import ShowMoreDrawer from '../../components/drawer/ShowMore';
+import KeywordSearch from '../../components/KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -23,65 +22,36 @@ const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
-
-  pagingBar: {
-    position: 'fixed',
-    padding: theme.spacing(2),
-    paddingLeft: theme.drawerWidth,
-    // position: 'absolute',
-    right: 0,
-    bottom: 0,
-    left: 0,
-    textAlign: 'center',
-    zIndex: theme.zIndex.appBar,
-  },
 }));
 
-function PageContent(props) {
+function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
+  const defaultFilter = { take: 3 };
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const filter = useSelector(state =>
-    selectors.filter(state, resourceType)
-  ) || { take: 3 };
+  const filter =
+    useSelector(state => selectors.filter(state, resourceType)) ||
+    defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      take: 3,
       ...filter,
     })
   );
-  const handleMore = () => {
-    dispatch(
-      actions.patchFilter(resourceType, { take: (filter.take || 3) + 2 })
-    );
-  };
-
-  const handleKeywordChange = e => {
-    dispatch(
-      actions.patchFilter(resourceType, { take: 3, keyword: e.target.value })
-    );
-  };
-
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
 
   return (
     <Fragment>
-      <Route
-        path={`${match.url}/:operation/:resourceType/:id`}
-        // Note that we disable the eslint warning since Route
-        // uses "children" as a prop and this is the intended
-        // use (per their docs)
-        // eslint-disable-next-line react/no-children-prop
-        children={props => <ResourceDrawer {...props} />}
-      />
+      <ResourceDrawer {...props} />
 
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
         <div className={classes.actions}>
-          <SearchInput variant="light" onChange={handleKeywordChange} />
+          <KeywordSearch
+            filterKey={resourceType}
+            defaultFilter={defaultFilter}
+          />
           <CeligoIconButton
             component={Link}
             to={`${
@@ -101,20 +71,13 @@ function PageContent(props) {
           />
         </LoadResources>
       </div>
-      {list.filtered > list.count && (
-        <Paper elevation={10} className={classes.pagingBar}>
-          <Button
-            onClick={handleMore}
-            variant="text"
-            size="medium"
-            color="primary"
-            className={classes.button}>
-            Show more results ({list.filtered - list.count} left)
-          </Button>
-        </Paper>
-      )}
+      <ShowMoreDrawer
+        filterKey={resourceType}
+        count={list.count}
+        maxCount={list.filtered}
+      />
     </Fragment>
   );
 }
 
-export default withRouter(PageContent);
+export default withRouter(ResourceList);

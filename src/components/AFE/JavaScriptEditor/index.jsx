@@ -29,6 +29,8 @@ export default function JavaScriptEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
+  // TODO : props.data is causing a recursive call ..its because of a selector merging patches and creating
+  // new instances ?
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
@@ -38,7 +40,8 @@ export default function JavaScriptEditor(props) {
         autoEvaluate: true,
       })
     );
-  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, editorId, scriptId, entryFunction]);
 
   useEffect(() => {
     handleInit();

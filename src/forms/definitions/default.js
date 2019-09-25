@@ -1,3 +1,9 @@
 export default {
-  fields: [{ fieldId: 'name' }, { fieldId: 'description' }],
+  fieldMap: {
+    name: { fieldId: 'name' },
+    description: { fieldId: 'description' },
+  },
+  layout: {
+    fields: ['name', 'description'],
+  },
 };

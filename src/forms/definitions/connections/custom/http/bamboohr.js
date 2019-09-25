@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'bamboohr',
@@ -19,14 +19,13 @@ export default {
       },
     ],
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.bamboohrSubdomain': {
       id: 'http.bamboohrSubdomain',
       type: 'text',
       startAdornment: 'https://api.bamboohr.com/api/gateway.php/',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         'Please enter your company name here which you configured while signing up for a new BambooHR account.',
       validWhen: {
@@ -37,16 +36,16 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
-        const subdomain = baseUri.substr(
-          'https://api.bamboohr.com/api/gateway.php/'.length
-        );
+        const subdomain =
+          baseUri &&
+          baseUri.substring('https://api.bamboohr.com/api/gateway.php/'.length);
 
         return subdomain;
       },
     },
-    {
+    'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key:',
+      label: 'API Key',
       type: 'text',
       inputType: 'password',
       helpText:
@@ -54,12 +53,13 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.bamboohrSubdomain', 'http.encrypted.apiKey'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

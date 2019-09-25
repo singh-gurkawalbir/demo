@@ -8,12 +8,25 @@ import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
   editorButton: {
     float: 'right',
+    marginLeft: 5,
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    height: 50,
+    width: 50,
+    borderRadius: 2,
+    '&:hover': {
+      background: theme.palette.background.paper,
+      '& > span': {
+        color: theme.palette.primary.main,
+      },
+    },
   },
 }));
 
@@ -90,7 +103,10 @@ export default function DynaRelativeUri(props) {
           onClose={handleClose}
         />
       )}
-      <IconButton onClick={handleEditorClick} className={classes.editorButton}>
+      <IconButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.editorButton}>
         <OpenInNewIcon />
       </IconButton>
       <TextField
@@ -104,6 +120,7 @@ export default function DynaRelativeUri(props) {
         required={required}
         error={!isValid}
         value={value}
+        variant="filled"
         onChange={handleFieldChange}
       />
     </Fragment>

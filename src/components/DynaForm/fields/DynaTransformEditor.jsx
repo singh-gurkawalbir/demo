@@ -41,7 +41,8 @@ export default function DynaTransformEditor(props) {
       <Button
         variant="contained"
         // color="secondary"
-        onClick={handleEditorClick}>
+        onClick={handleEditorClick}
+        data-test={id}>
         {label}
       </Button>
     </Fragment>

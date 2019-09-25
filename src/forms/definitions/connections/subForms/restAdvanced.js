@@ -1,6 +1,11 @@
 export default {
-  fields: [
-    { fieldId: '_borrowConcurrencyFromConnectionId' },
-    { fieldId: 'http.concurrencyLevel' },
-  ],
+  fieldMap: {
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
+    },
+    'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
+  },
+  layout: {
+    fields: ['_borrowConcurrencyFromConnectionId', 'http.concurrencyLevel'],
+  },
 };

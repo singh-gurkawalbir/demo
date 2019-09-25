@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import {
@@ -15,8 +15,9 @@ import {
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import LoadResources from '../../../components/LoadResources';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -24,12 +25,47 @@ const useStyles = makeStyles({
   select: {
     display: 'flex',
     width: '100%',
+    flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 50,
+    borderRadius: 2,
+    '& > Label': {
+      zIndex: 1,
+
+      '&.MuiInputLabel-shrink': {
+        paddingTop: 10,
+      },
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+      zIndex: 2,
+    },
+    '& svg': {
+      right: 8,
+    },
   },
   iconButton: {
     height: 'fit-content',
     alignSelf: 'flex-end',
+    border: '1px solid',
+    background: theme.palette.background.paper,
+    marginLeft: 5,
+    borderColor: fade(theme.palette.common.black, 0.1),
+    borderRadius: 0,
   },
-});
+}));
 const newId = () => `new-${shortid.generate()}`;
 
 function DynaSelectResource(props) {
@@ -56,8 +92,6 @@ function DynaSelectResource(props) {
   );
 
   useEffect(() => {
-    // console.log('select resource createdId:', createdId);
-
     if (createdId) {
       onFieldChange(id, createdId);
       // in case someone clicks + again to add another resource...
@@ -69,7 +103,6 @@ function DynaSelectResource(props) {
     const { resourceType, filter, excludeFilter, options } = props;
 
     if (!resourceType) return [];
-
     const finalFilter = options && options.filter ? options.filter : filter;
 
     return resources.filter(r => {
@@ -132,7 +165,10 @@ function DynaSelectResource(props) {
         </InputLabel>
         <LoadResources required resources={resourceType}>
           <Select
+            data-test={id}
             value={value}
+            variant="filled"
+            IconComponent={ArrowDownIcon}
             onChange={evt => {
               onFieldChange(id, evt.target.value);
             }}

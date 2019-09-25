@@ -1,5 +1,23 @@
 import jsonPatch from 'fast-json-patch';
 
+export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
+  if (!meta) return null;
+
+  const { fieldMap } = meta;
+
+  if (!fieldMap) return null;
+  const foundFieldRefKey = Object.keys(fieldMap)
+    .filter(key => findFieldFunction(fieldMap[key]))
+    .map(key => ({
+      fieldReference: key,
+      field: fieldMap[key],
+    }));
+
+  if (foundFieldRefKey && foundFieldRefKey[0]) return foundFieldRefKey[0];
+
+  return null;
+};
+
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -8,80 +26,70 @@ export const defaultPatchSetConverter = values =>
   }));
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
+const fieldSearchQueryObj = (meta, id, queryRes, offset) => {
+  if (!meta || !meta.layout || !meta.fieldMap) return null;
 
-export const getFieldPosition = ({ meta, id }) => {
-  const pos = {};
-  let index;
+  const { layout, fieldMap } = meta;
+  const { fields, containers } = layout;
 
-  if (meta.fields) {
-    index = meta.fields.findIndex(f => byId(f, id));
+  if (fields && fields.length > 0) {
+    const foundFieldIndex = fields.findIndex(f => byId(fieldMap[f], id));
 
-    if (index >= 0) {
-      pos.index = index;
+    if (foundFieldIndex !== -1) {
+      let res = queryRes;
 
-      return pos;
+      res += `/fields/${foundFieldIndex + offset}`;
+
+      return res;
     }
   }
 
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    meta.fieldSets.some((set, i) => {
-      index = set.fields.findIndex(f => byId(f, id));
+  return (
+    containers &&
+    containers
+      .map((container, index) =>
+        fieldSearchQueryObj(
+          {
+            fieldMap,
+            layout: container,
+          },
+          id,
+          `${queryRes}/containers/${index}`,
+          offset
+        )
+      )
+      .reduce((acc, curr) => {
+        let res = acc;
 
-      // break out of 'some' iterations as soon as any callback finds a field.
-      if (index >= 0) {
-        pos.index = index;
-        pos.fieldSetIndex = i;
+        if (!res) res = curr;
 
-        return true;
-      }
-
-      return false;
-    });
-  }
-
-  return pos;
+        return res;
+      }, null)
+  );
 };
 
+export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
+  const baseCustomFormPath = '/customForm/form/layout';
+  const res = fieldSearchQueryObj(meta, id, baseCustomFormPath, offset);
+
+  if (!res || res === baseCustomFormPath) return null;
+
+  return res;
+};
+
+export const getFieldWithReferenceById = ({ meta, id }) =>
+  searchMetaForFieldByFindFunc(meta, f => byId(f, id));
+
 export const getFieldById = ({ meta, id }) => {
-  let field;
+  const res = searchMetaForFieldByFindFunc(meta, f => byId(f, id));
 
-  if (meta.fields) {
-    field = meta.fields.find(f => byId(f, id));
-
-    if (field) return field;
-  }
-
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    meta.fieldSets.some(set => {
-      field = set.fields.find(f => byId(f, id));
-
-      // break out of 'some' iterations as soon as any callback finds a field.
-      return !!field;
-    });
-  }
-
-  return field;
+  return res && res.field;
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {
-  let field;
+  const res = searchMetaForFieldByFindFunc(fieldMeta, f => f.name === name);
 
-  if (fieldMeta.fields) {
-    field = fieldMeta.fields.find(f => f.name === name);
-
-    if (field) return field;
-  }
-
-  if (fieldMeta.fieldSets && fieldMeta.fieldSets.length > 0) {
-    fieldMeta.fieldSets.some(set => {
-      field = set.fields.find(f => f.name === name);
-
-      // break out of 'some' iterations as soon as any callback finds a field.
-      return !!field;
-    });
-  }
-
-  return field;
+  return res && res.field;
 };
 
 export const getMissingPatchSet = (paths, resource) => {
@@ -172,39 +180,7 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   return newSet;
 };
 
-export const replaceField = ({ meta, field }) => {
-  if (meta.fields) {
-    for (let i = 0; i < meta.fields.length; i += 1) {
-      if (meta.fields[i].id === field.id) {
-        // we WANT to modify the meta since the calling function should
-        // already be dealing with a copy.
-        meta.fields[i] = field; // eslint-disable-line
-
-        // break as soon as replacement occurs.
-        return meta;
-      }
-    }
-  }
-
-  if (meta.fieldSets && meta.fieldSets.length > 0) {
-    for (let i = 0; i < meta.fieldSets.length; i += 1) {
-      const set = meta.fieldSets[i];
-
-      for (let j = 0; j < set.fields.length; j += 1) {
-        if (set.fields[j].id === field.id) {
-          set.fields[j] = field;
-
-          return meta;
-        }
-      }
-    }
-  }
-
-  return meta;
-};
-
 export default {
   getFieldById,
-  replaceField,
   defaultPatchSetConverter,
 };

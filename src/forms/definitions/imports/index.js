@@ -8,6 +8,10 @@ import s3 from './s3';
 import wrapper from './wrapper';
 import as2 from './as2';
 import rdbms from './rdbms';
+import custom from './custom';
+import netsuite from './netsuite';
+import netsuiteDistributed from './netsuiteDistributed';
+import salesforce from './salesforce';
 import newImport from './new';
 
 export default {
@@ -18,8 +22,12 @@ export default {
   rest,
   mongodb,
   s3,
+  new: newImport,
   wrapper,
   as2,
   rdbms,
-  new: newImport,
+  custom,
+  netsuite,
+  netsuiteDistributed,
+  salesforce,
 };

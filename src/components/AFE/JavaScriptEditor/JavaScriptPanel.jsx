@@ -59,7 +59,7 @@ export default function JavaScriptPanel(props) {
     // TODO: What if for the requested script is non existent...
     // do we have a timeout for the spinner
     if (scriptContent) {
-      patchEditor()({ code: scriptContent });
+      patchEditor('code', scriptContent);
     } else if (scriptId) {
       requestScript();
       // Shouldnt we update to the selected scriptId
