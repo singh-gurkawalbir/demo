@@ -5,7 +5,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import XmlParseEditorDialog from '../../../AFE/XmlParseEditor/Dialog';
 
-export default function DynaCsvParse(props) {
+export default function DynaXmlParse(props) {
   const { id, onFieldChange, value, label, resourceId, resourceType } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
