@@ -65,6 +65,8 @@ export const reducer = (state, action) => {
         draft.splice(index, 1);
         break;
       case 'UPDATE_FIELD':
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+
         if (state[index]) {
           const objCopy = { ...state[index] };
           let inputValue = value;
@@ -94,7 +96,6 @@ export const reducer = (state, action) => {
             objCopy[field] = inputValue;
           }
 
-          setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
           draft[index] = objCopy;
 
           return;

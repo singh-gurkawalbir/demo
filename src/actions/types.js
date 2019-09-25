@@ -170,7 +170,6 @@ const AGENT = {
 };
 const TEMPLATE = {
   ZIP_DOWNLOAD: 'ZIP_DOWNLOAD',
-  PUBLISH: 'PUBLISH',
   ZIP_GENERATE: 'ZIP_GENERATE',
 };
 const FILE = {
