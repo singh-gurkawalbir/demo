@@ -15,7 +15,6 @@ import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
-import dropbox from './dropbox';
 import google from './google';
 import jobvite from './jobvite';
 import smartsheet from './smartsheet';
@@ -26,7 +25,6 @@ import zuora from './zuora';
 import wrike from './wrike';
 import eventbrite from './eventbrite';
 import yammer from './yammer';
-import doubleclick from './doubleclick';
 import xcart from './xcart';
 import freshbooks from './freshbooks';
 import lightspeed from './lightspeed';
@@ -49,26 +47,22 @@ import signnow from './signnow';
 import exacterp from './exacterp';
 import nimble from './nimble';
 import procurify from './procurify';
-import zimbra from './zimbra';
 import aptrinsic from './aptrinsic';
 import cardknox from './cardknox';
 import quip from './quip';
 import concur from './concur';
 import spreecommerce from './spreecommerce';
 import retailops from './retailops';
-import merchantesolutions from './merchantesolutions';
 import threedcart from './threedcart';
 
 export default {
   '3dcart': threedcart,
   snapfulfil,
-
   anaplan,
   googledrive,
   namely,
   newegg,
   asana,
-  dropbox,
   google,
   jobvite,
   smartsheet,
@@ -83,7 +77,6 @@ export default {
   wrike,
   eventbrite,
   yammer,
-  doubleclick,
   atera,
   xcart,
   freshbooks,
@@ -118,7 +111,5 @@ export default {
   quip,
   concur,
   spreecommerce,
-  zimbra,
   retailops,
-  merchantesolutions,
 };

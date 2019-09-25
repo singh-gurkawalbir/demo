@@ -44,7 +44,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       description:
-        'Note: for security reasons this field must always be re-entered.',
+        'Note: for security reasons this field must always be re-entered.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
       required: true,
     },
     'http.auth.token.token': {
@@ -57,7 +57,7 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
         { field: 'http.baseURI', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Magento account.',
     },

@@ -1,5 +1,7 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
+import AuditLogs from '../../actions/AuditLogs';
+import Clone from '../../actions/Clone';
 import {
   getResourceLink,
   formatLastModified,
@@ -20,5 +22,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Delete, References],
+  rowActions: [Clone, AuditLogs, References, Delete],
 };

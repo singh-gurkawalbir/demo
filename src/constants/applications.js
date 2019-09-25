@@ -371,6 +371,7 @@ const connectors = [
     type: 'http',
     assistant: 'microsoftoutlookmail',
   },
+  { id: 'miva', name: 'Miva', type: 'http', assistant: 'miva' },
   {
     id: 'myobaccountright',
     name: 'MYOB Accountright',

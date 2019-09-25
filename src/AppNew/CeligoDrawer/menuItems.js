@@ -13,6 +13,7 @@ import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
+import StacksIcon from '../../components/icons/StacksIcon';
 import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import TrashIcon from '../../components/icons/TrashIcon';
@@ -37,6 +38,9 @@ export default [
       { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },
       { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
       { label: 'Agents', path: '/agents', Icon: AgentsIcon },
+      { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
+      { label: 'Templates', path: '/templates', Icon: ConnectionsIcon },
+      { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
     ],
   },
   { label: 'Marketplace', path: '/marketplace', Icon: MarketplaceIcon },

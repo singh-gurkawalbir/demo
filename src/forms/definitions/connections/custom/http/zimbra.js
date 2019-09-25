@@ -1,48 +1,49 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'zimbra',
-    '/rest/authType': 'custom',
-    '/rest/mediaType': 'json',
-    '/rest/pingRelativeURI': `/${
-      formValues['/rest/unencrypted/userAccount']
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': `/${
+      formValues['/http/unencrypted/userAccount']
     }/inbox?fmt=json`,
-    '/rest/baseURI': `${formValues['/rest/baseURI']}/home`,
-    '/rest/headers': [
+    '/http/ping/method': 'GET',
+    '/http/baseURI': `${formValues['/http/baseURI']}/home`,
+    '/http/headers': [
       { name: 'Accept', value: 'application/json' },
       { name: 'Content-Type', value: 'application/json' },
     ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.baseURI': {
-      fieldId: 'rest.baseURI',
+    'http.baseURI': {
+      fieldId: 'http.baseURI',
       endAdornment: '/home',
-      label: 'Base URI:',
+      label: 'Base URI',
       defaultValue: r => {
-        const baseUri = r && r.rest && r.rest.baseURI;
+        const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/home'));
 
         return subdomain;
       },
     },
-    'rest.unencrypted.userAccount': {
-      id: 'rest.unencrypted.userAccount',
+    'http.unencrypted.userAccount': {
+      id: 'http.unencrypted.userAccount',
       type: 'text',
-      label: 'User Account:',
+      label: 'User Account',
       helpText:
         'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
       required: true,
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.baseURI', 'rest.unencrypted.userAccount'],
+    fields: ['name', 'http.baseURI', 'http.unencrypted.userAccount'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };
