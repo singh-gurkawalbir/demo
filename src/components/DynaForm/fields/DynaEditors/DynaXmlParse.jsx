@@ -16,14 +16,14 @@ export default function DynaXmlParse(props) {
   /*
    * Fetches Raw data - XML file to be parsed based on the rules
    */
-  const { xmlData } = useSelector(state => {
+  const xmlData = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
       'raw'
     );
 
-    return { xmlData: rawData && rawData.data && rawData.data.body };
+    return rawData && rawData.data && rawData.data.body;
   });
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
