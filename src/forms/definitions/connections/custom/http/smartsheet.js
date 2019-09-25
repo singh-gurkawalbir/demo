@@ -1,0 +1,46 @@
+export default {
+  preSave: formValues => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'smartsheet',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://api.smartsheet.com',
+    '/http/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://app.smartsheet.com/b/authorize',
+    '/http/auth/oauth/tokenURI': 'https://api.smartsheet.com/2.0/token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
+  }),
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
+      scopes: [
+        'ADMIN_SHEETS',
+        'ADMIN_SIGHTS',
+        'ADMIN_USERS',
+        'ADMIN_WEBHOOKS',
+        'ADMIN_WORKSPACES',
+        'CREATE_SHEETS',
+        'CREATE_SIGHTS',
+        'DELETE_SHEETS',
+        'DELETE_SIGHTS',
+        'READ_CONTACTS',
+        'READ_SHEETS',
+        'READ_SIGHTS',
+        'READ_USERS',
+        'SHARE_SHEETS',
+        'SHARE_SIGHTS',
+        'WRITE_SHEETS',
+      ],
+    },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.oauth.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
+};

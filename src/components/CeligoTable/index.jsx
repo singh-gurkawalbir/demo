@@ -175,10 +175,12 @@ export default function CeligoTable({
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map(({ label, component: Action }) => ({
-                    label,
-                    component: <Action {...actionProps} resource={r} />,
-                  }))}
+                  actions={rowActions(r).map(
+                    ({ label, component: Action }) => ({
+                      label,
+                      component: <Action {...actionProps} resource={r} />,
+                    })
+                  )}
                 />
               </TableCell>
             )}
