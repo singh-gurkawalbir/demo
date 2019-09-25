@@ -6,13 +6,11 @@ export default {
     '/http/auth/type': 'basic',
     '/http/baseURI': 'https://api.cartrover.com/',
     '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '1/3/workspaces',
+    '/http/ping/relativeURI': '/v1/merchant/inventory',
     '/http/ping/method': 'GET',
     '/http/ping/successPath': 'success_code',
     '/http/ping/successValues': ['true'],
-    '/http/ping/errorPath': ['true'],
   }),
-
   fieldMap: {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {

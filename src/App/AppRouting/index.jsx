@@ -31,6 +31,9 @@ const FlowBuilder = loadable(() =>
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
 );
+const TemplateList = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList')
+);
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
@@ -68,6 +71,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>

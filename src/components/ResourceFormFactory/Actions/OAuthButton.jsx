@@ -18,6 +18,14 @@ function OAuthButton(props) {
   const handleSaveAndAuthorizeConnection = values =>
     dispatch(actions.resource.connections.saveAndAuthorize(resourceId, values));
 
+  window.connectionAuthorized = (_connectionId, success) => {
+    if (success) {
+      dispatch(actions.resource.connections.authorized(_connectionId, true));
+    } else {
+      dispatch(actions.resource.connections.authorized(_connectionId, false));
+    }
+  };
+
   return (
     <DynaAction
       {...rest}

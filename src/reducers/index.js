@@ -117,18 +117,7 @@ export function template(state, templateId) {
 }
 
 export function templateInstallSteps(state, templateId) {
-  const templateInstallSteps = fromSession.templateInstallSteps(
-    state && state.session,
-    templateId
-  );
-
-  return produce(templateInstallSteps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
-
-    if (unCompletedStep) {
-      unCompletedStep.isCurrentStep = true;
-    }
-  });
+  return fromSession.templateInstallSteps(state && state.session, templateId);
 }
 
 export function templateConnectionMap(state, templateId) {

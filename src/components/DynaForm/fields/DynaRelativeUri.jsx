@@ -103,7 +103,10 @@ export default function DynaRelativeUri(props) {
           onClose={handleClose}
         />
       )}
-      <IconButton onClick={handleEditorClick} className={classes.editorButton}>
+      <IconButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.editorButton}>
         <OpenInNewIcon />
       </IconButton>
       <TextField

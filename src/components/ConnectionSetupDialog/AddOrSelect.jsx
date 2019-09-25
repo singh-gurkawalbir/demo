@@ -13,8 +13,15 @@ export default function AddOrSelect(props) {
     selectors.matchingConnectionList(state, connection)
   );
   const options = connectionsList.map(c => ({ label: c.name, value: c._id }));
+  const newId = useSelector(state =>
+    selectors.createdResourceId(state, _connectionId)
+  );
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
+  };
+
+  const handleSubmitComplete = () => {
+    onSubmitComplete(newId);
   };
 
   const fieldMeta = {
@@ -40,6 +47,8 @@ export default function AddOrSelect(props) {
     if (!formVal.connection) {
       return false;
     }
+
+    onSubmitComplete(formVal.connection);
   };
 
   return (
@@ -67,7 +76,7 @@ export default function AddOrSelect(props) {
           editMode={false}
           resourceType="connections"
           resourceId={_connectionId}
-          onSubmitComplete={onSubmitComplete}
+          onSubmitComplete={handleSubmitComplete}
           connectionType={connectionType}
         />
       )}

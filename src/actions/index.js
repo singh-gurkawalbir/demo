@@ -11,6 +11,7 @@ export const availableResources = [
   'integrations',
   'tiles',
   'flows',
+  'templates',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -466,6 +467,20 @@ const agent = {
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
+const template = {
+  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
+  generateZip: integrationId =>
+    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
+};
+const file = {
+  upload: (resourceType, resourceId, fileType, file) =>
+    action(actionTypes.FILE.UPLOAD, {
+      resourceType,
+      resourceId,
+      fileType,
+      file,
+    }),
+};
 const stack = {
   displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
   generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
@@ -754,6 +769,8 @@ export default {
   job,
   flow,
   agent,
+  template,
+  file,
   assistantMetadata,
   stack,
   connection,

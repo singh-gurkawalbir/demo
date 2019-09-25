@@ -15,6 +15,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const styles = theme => ({
   referenceLink: {
@@ -25,10 +26,13 @@ const styles = theme => ({
   spinner: {
     margin: 'auto',
   },
+  message: {
+    paddingLeft: theme.spacing(3),
+  },
 });
 
 function ResourceReferences(props) {
-  const { classes, onClose, type, id } = props;
+  const { classes, onClose, type, id, title } = props;
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
@@ -46,8 +50,14 @@ function ResourceReferences(props) {
         (resourceReferences.length !== 0 ? (
           <Fragment>
             <DialogTitle id="resource-references">
-              {`${MODEL_PLURAL_TO_LABEL[type]} References:`}
+              {title
+                ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[type]} as`
+                : `${MODEL_PLURAL_TO_LABEL[type]} References:`}
             </DialogTitle>
+            <Typography className={classes.message}>
+              {title &&
+                `This ${MODEL_PLURAL_TO_LABEL[type]} is referenced by the resources below. Only resources that have no references can be deleted.`}
+            </Typography>
             <List>
               {resourceReferences.map(refObject => (
                 <ListItem key={refObject.resourceType}>
@@ -57,7 +67,7 @@ function ResourceReferences(props) {
                       <ListItem key={reference.id}>
                         <Link
                           to={getRoutePath(
-                            `${refObject.resourceType}/edit/${reference.id}`
+                            `${refObject.resourceType}/edit/${refObject.resourceType}/${reference.id}`
                           )}
                           onClick={onClose}
                           className={classes.referenceLink}>

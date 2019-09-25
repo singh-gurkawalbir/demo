@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   IconButton,
   Dialog,
@@ -7,8 +5,6 @@ import {
   DialogContent,
   DialogTitle,
 } from '@material-ui/core';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
 import ResourceForm from '../../components/ResourceFormFactory';
 import CloseIcon from '../icons/CloseIcon';
 import AddOrSelect from './AddOrSelect';
@@ -22,22 +18,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function ConnectionModal(props) {
-  const { _connectionId, onSubmitComplete, onClose, addOrSelect } = props;
+  const {
+    _connectionId,
+    onSubmitComplete,
+    onClose,
+    addOrSelect,
+    connectionType,
+  } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', _connectionId)
-  );
-
-  useEffect(() => {
-    if (!connection) {
-      dispatch(actions.resource.requestCollection('connections'));
-    }
-  }, [connection, dispatch]);
-
-  if (!connection) {
-    return null;
-  }
 
   return (
     <Dialog open maxWidth={false}>
@@ -59,7 +47,7 @@ export default function ConnectionModal(props) {
             resourceType="connections"
             resourceId={_connectionId}
             onSubmitComplete={onSubmitComplete}
-            connectionType={connection.type}
+            connectionType={connectionType}
           />
         )}
         {addOrSelect && <AddOrSelect {...props} />}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -8,6 +8,8 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
+import shortid from 'shortid';
+import produce from 'immer';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -15,7 +17,9 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import StackSetupDialog from '../../components/StackSetupDialog';
 import InstallationStep from '../../components/InstallStep';
+import jsonUtil from '../../utils/json';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,19 +45,54 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function reducer(state, action = {}) {
+  const { type, step = {} } = action;
+
+  return produce(state, draft => {
+    const currentStep = draft.find(
+      s =>
+        (step._connectionId && s._connectionId === step._connectionId) ||
+        (step.installURL && s.installURL === step.installURL) ||
+        (step.stackId && s.stackId === step.stackId)
+    );
+
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case 'stepCompleted':
+        currentStep.isCurrentStep = false;
+        currentStep.completed = true;
+        break;
+    }
+
+    const uncompletedStep = draft.find(s => !s.completed);
+
+    uncompletedStep.isCurrentStep = true;
+  });
+}
+
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { templateId } = props.match.params;
-  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
+  const [connection, setSelectedConnectionId] = useState(null);
+  const [stackId, setStackId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const template = useSelector(state => selectors.template(state, templateId));
   const connectionMap = useSelector(state =>
     selectors.templateConnectionMap(state, templateId)
   );
-  const installSteps = useSelector(state =>
+  const steps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
   );
+  const [cMap, setCMap] = useState({});
+  const [installSteps, dispatchLocalAction] = useReducer(reducer, steps);
+
+  if (
+    installSteps.find(s => !s.completed) &&
+    !installSteps.find(s => s.isCurrentStep)
+  ) {
+    dispatchLocalAction({ type: 'init' });
+  }
 
   useEffect(() => {
     if (
@@ -75,7 +114,7 @@ export default function ConnectorInstallation(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction } = step;
+    const { _connectionId, installURL, installerFunction, stackId } = step;
 
     // handle connection step click
     if (_connectionId) {
@@ -83,11 +122,23 @@ export default function ConnectorInstallation(props) {
         return false;
       }
 
-      setSelectedConnectionId(_connectionId);
+      const newId = `new-${shortid.generate()}`;
+      const connObj = connectionMap[_connectionId];
+
+      dispatch(actions.resourceForm.init('connections', newId, true, true));
+      dispatch(
+        actions.resourceForm.submit('connections', newId, {
+          ...jsonUtil.objectForPatchSet(connObj),
+          application: connObj.type,
+        })
+      );
+      dispatch(actions.resourceForm.clear('connections', newId));
+      setSelectedConnectionId({ newId, doc: connObj });
+
       // handle Installation step click
     } else if (installURL) {
       if (!step.isTriggered) {
-        dispatch(
+        dispatchLocalAction(
           actions.integrationApp.installer.updateStep(
             templateId,
             installerFunction,
@@ -100,14 +151,14 @@ export default function ConnectorInstallation(props) {
           return false;
         }
 
-        dispatch(
+        dispatchLocalAction(
           actions.integrationApp.installer.updateStep(
             templateId,
             installerFunction,
             'verify'
           )
         );
-        dispatch(
+        dispatchLocalAction(
           actions.integrationApp.installer.installStep(
             templateId,
             installerFunction
@@ -116,19 +167,7 @@ export default function ConnectorInstallation(props) {
       }
       // handle Action step click
     } else if (!step.isTriggered) {
-      dispatch(
-        actions.integrationApp.installer.updateStep(
-          templateId,
-          installerFunction,
-          'inProgress'
-        )
-      );
-      dispatch(
-        actions.integrationApp.installer.installStep(
-          templateId,
-          installerFunction
-        )
-      );
+      setStackId(true);
     }
   };
 
@@ -137,23 +176,18 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg`);
   };
 
-  const handleSubmitComplete = () => {
-    const step = installSteps.find(s => s.isCurrentStep);
-
-    dispatch(
-      actions.integrationApp.installer.updateStep(
-        templateId,
-        (step || {}).installerFunction,
-        'inProgress'
-      )
-    );
-    dispatch(
-      actions.integrationApp.installer.installStep(
-        templateId,
-        (step || {}).installerFunction
-      )
-    );
+  const handleSubmitComplete = connectionId => {
+    dispatchLocalAction({
+      type: 'stepCompleted',
+      step: { _connectionId: connection.doc._id },
+    });
+    setCMap({ ...cMap, [connection.doc._id]: connectionId });
     setSelectedConnectionId(false);
+  };
+
+  const handleStackSetupDone = stackId => {
+    dispatchLocalAction({ type: 'stepCompleted', step: { stackId } });
+    setStackId(false);
   };
 
   const handleClose = () => {
@@ -162,13 +196,20 @@ export default function ConnectorInstallation(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {selectedConnectionId && (
+      {connection && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
-          connection={connectionMap[selectedConnectionId]}
+          _connectionId={connection.newId}
+          connection={connection.doc}
+          connectionType={connection.doc.type}
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
           addOrSelect
+        />
+      )}
+      {stackId && (
+        <StackSetupDialog
+          onClose={handleClose}
+          onSubmitComplete={handleStackSetupDone}
         />
       )}
       <div className={classes.root}>
