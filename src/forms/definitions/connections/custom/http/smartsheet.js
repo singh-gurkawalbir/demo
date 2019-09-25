@@ -1,20 +1,20 @@
 export default {
   preSave: formValues => ({
     ...formValues,
-    '/type': 'rest',
+    '/type': 'http',
     '/assistant': 'smartsheet',
-    '/rest/authType': 'oauth',
-    '/rest/mediaType': 'json',
-    '/rest/baseURI': 'https://api.smartsheet.com',
-    '/rest/tokenLocation': 'header',
-    '/rest/authURI': 'https://app.smartsheet.com/b/authorize',
-    '/rest/oauthTokenURI': 'https://api.smartsheet.com/2.0/token',
-    '/rest/scopeDelimiter': ' ',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/baseURI': 'https://api.smartsheet.com',
+    '/http/token/location': 'header',
+    '/http/auth/oauth/authURI': 'https://app.smartsheet.com/b/authorize',
+    '/http/auth/oauth/tokenURI': 'https://api.smartsheet.com/2.0/token',
+    '/http/auth/oauth/scopeDelimiter': ' ',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.scope': {
-      fieldId: 'rest.scope',
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
       scopes: [
         'ADMIN_SHEETS',
         'ADMIN_SIGHTS',
@@ -34,13 +34,13 @@ export default {
         'WRITE_SHEETS',
       ],
     },
-    restAdvanced: { formId: 'restAdvanced' },
+    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'rest.scope'],
+    fields: ['name', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
 };
