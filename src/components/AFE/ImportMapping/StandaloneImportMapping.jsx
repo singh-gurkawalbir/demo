@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
-// import { sanitizePreConstructedPatch } from '../../../forms/utils';
 import LookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -41,43 +40,51 @@ export default function StandaloneImportMapping(props) {
     resourceData,
     resourceType.type
   );
-  const handleClose = (closeModal, mappingsTmp, lookupsTmp) => {
-    const patchSet = [];
-    const mappingConfig = MappingUtil.getMappingConfig(resourceType.type);
+  const handleClose = (closeModal, _mappings, _lookups) => {
+    // perform save operation only when mapping object is passed as parameter to the function.
+    if (_mappings) {
+      const patchSet = [];
+      const mappingPath = MappingUtil.getMappingPath(resourceType.type);
 
-    if (!mappings) {
-      patchSet.push({
-        op: 'add',
-        path: mappingConfig.path,
-        value: mappingConfig.defaultValue,
-      });
+      // if mapping doesnt exist in resouce object , perform add patch else replace patch
+      if (!mappings) {
+        patchSet.push({
+          op: 'add',
+          path: mappingPath,
+          value: { fields: _mappings },
+        });
+      } else {
+        patchSet.push({
+          op: 'replace',
+          path: mappingPath,
+          value: { fields: _mappings },
+        });
+      }
+
+      // update _lookup only if its being passed as param to function
+      if (_lookups) {
+        const lookupPath = LookupUtil.getLookupPath(resourceType.type);
+
+        // if lookups doesnt exist in resource object and new lookups are being added
+        if (!lookups && _lookups && _lookups.length) {
+          patchSet.push({
+            op: 'add',
+            path: lookupPath,
+            value: _lookups,
+          });
+        } else if (lookups) {
+          // if lookups already exist in resource object
+          patchSet.push({
+            op: 'replace',
+            path: lookupPath,
+            value: _lookups,
+          });
+        }
+      }
+
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
     }
-
-    patchSet.push({
-      op: 'replace',
-      path: `${mappingConfig.path}/fields`,
-      value: mappingsTmp,
-    });
-    const lookupPath = LookupUtil.getLookupPath(resourceType.type);
-
-    // if lookups doesnt exist in resource object and new lookups are being added
-    if (!lookups && lookupsTmp && lookupsTmp.length) {
-      patchSet.push({
-        op: 'add',
-        path: lookupPath,
-        value: lookupsTmp,
-      });
-    } else if (lookups) {
-      // if lookups already exist in resource object
-      patchSet.push({
-        op: 'replace',
-        path: lookupPath,
-        value: lookupsTmp,
-      });
-    }
-
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
 
     if (closeModal) onClose();
   };

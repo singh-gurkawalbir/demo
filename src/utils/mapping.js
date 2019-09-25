@@ -71,18 +71,14 @@ export default {
       return value.extract;
     }
   },
-  getMappingConfig: application => {
+  getMappingPath: application => {
     switch (application) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        // TODO
-        return '';
+        return '/netsuite_da/mapping';
       default:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.FTPImport:
-        return {
-          path: '/mapping',
-          defaultValue: { fields: [] },
-        };
+        return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:

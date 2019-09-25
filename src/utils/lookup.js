@@ -31,8 +31,7 @@ export default {
       case adaptorTypeMap.RESTImport:
         return '/rest/lookups';
       case adaptorTypeMap.NetSuiteDistributedImport:
-        // TODO
-        return '';
+        return '/netsuite_da/lookups';
       case adaptorTypeMap.FTPImport:
         return '/file/lookups';
 
