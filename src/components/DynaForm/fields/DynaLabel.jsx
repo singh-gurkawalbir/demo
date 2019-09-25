@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DynaLabel(props) {
-  const { label, helpKey, helpText } = props;
+  const { label, helpKey, helpText, id } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const handlePopoverOpen = event => {
@@ -46,6 +46,7 @@ function DynaLabel(props) {
         </Typography>
       </ArrowPopper>
       <Typography
+        data-test={id}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         className={classes.textField}>

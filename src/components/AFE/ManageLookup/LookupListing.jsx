@@ -15,8 +15,8 @@ export default function LookupListing(props) {
   };
 
   const lookuplistingFieldMeta = {
-    fields: [
-      {
+    fieldMap: {
+      lookup_list: {
         id: 'lookup_list',
         type: 'keywithaction',
         keyName: 'name',
@@ -26,7 +26,10 @@ export default function LookupListing(props) {
         onEditClick: handleEdit,
         onDeleteClick: handleDelete,
       },
-    ],
+    },
+    layout: {
+      fields: ['lookup_list'],
+    },
   };
 
   return (

@@ -30,7 +30,7 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
-      label: 'Account Type:',
+      label: 'Account Type',
       helpText: 'Select either Production or Sandbox.',
       options: [
         {
@@ -57,7 +57,7 @@ export default {
     'http.unencrypted.apiSiteId': {
       id: 'http.unencrypted.apiSiteId',
       type: 'text',
-      label: 'API Site ID:',
+      label: 'API Site ID',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
         '0',

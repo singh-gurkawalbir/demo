@@ -23,10 +23,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function GenerateTokenButton(props) {
-  const { handleRequestToken, disabled, label, resourceId } = props;
+  const { handleRequestToken, disabled, label, id, resourceId } = props;
 
   return (
     <DynaSubmit
+      data-test={id}
       disabled={disabled}
       isValid
       onClick={handleRequestToken(resourceId)}>

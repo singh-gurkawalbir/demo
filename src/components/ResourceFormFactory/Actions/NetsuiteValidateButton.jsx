@@ -105,6 +105,7 @@ const NetsuiteValidateButton = props => {
 
   return (
     <Button
+      data-test={id}
       variant="contained"
       color="secondary"
       className={classes.actionButton}

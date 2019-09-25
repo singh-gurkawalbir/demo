@@ -165,6 +165,7 @@ function DynaSelectResource(props) {
         </InputLabel>
         <LoadResources required resources={resourceType}>
           <Select
+            data-test={id}
             value={value}
             variant="filled"
             IconComponent={ArrowDownIcon}

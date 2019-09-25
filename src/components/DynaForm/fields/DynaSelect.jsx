@@ -104,6 +104,7 @@ export default function DynaSelect(props) {
           {label}
         </InputLabel>
         <Select
+          data-test={id}
           value={finalTextValue}
           IconComponent={ArrowDownIcon}
           disableUnderline

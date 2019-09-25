@@ -47,11 +47,24 @@ export default {
         { field: 'file.output', is: ['records'] },
       ],
     },
+    rowsPerRecord: {
+      id: 'rowsPerRecord',
+      type: 'checkbox',
+      label: 'Multiple Rows Per Record',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xlsx'],
+        },
+        { field: 'file.output', is: ['records'] },
+      ],
+    },
     'file.xlsx.keyColumns': {
       fieldId: 'file.xlsx.keyColumns',
       visibleWhenAll: [
         { field: 'file.type', is: ['xlsx'] },
         { field: 'file.output', is: ['records'] },
+        { field: 'rowsPerRecord', is: [true] },
       ],
     },
     'file.xml.resourcePath': {
@@ -64,14 +77,20 @@ export default {
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
       visibleWhenAll: [
-        { field: 'file.type', is: ['edi', 'fixedWidth'] },
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
         { field: 'file.output', is: ['records'] },
       ],
     },
     'file.fileDefinition._fileDefinitionId': {
       fieldId: 'file.fileDefinition._fileDefinitionId',
       visibleWhenAll: [
-        { field: 'file.type', is: ['edi', 'fixedWidth'] },
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
         { field: 'file.output', is: ['records'] },
       ],
     },
