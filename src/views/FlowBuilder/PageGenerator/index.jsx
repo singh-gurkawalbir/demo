@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useDrag } from 'react-dnd';
+import { useDrag } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';

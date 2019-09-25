@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { DndProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import { Fragment } from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { DndProvider } from 'react-dnd-cjs';
+import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FontStager from '../components/FontStager';
@@ -14,6 +15,8 @@ import AuthDialog from '../components/AuthDialog';
 import AppErroredModal from '../App/AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
+import SignIn from '../views/SignIn';
+import WithAuth from './AppRoutingWithAuth';
 
 // any css returned by this makeStyles function can not use the theme
 // we can only use the theme in components that are children of
@@ -30,6 +33,24 @@ console.log('*** THEME ***', theme);
 
 // const oldTheme = themeProviderOld('light');
 // console.log('old theme', oldTheme);
+
+const NonSigninComponents = () => (
+  <Fragment>
+    <CeligoAppBar />
+    <AppErroredModal />
+    <AuthDialog />
+
+    <CeligoDrawer />
+    <PageContent />
+  </Fragment>
+);
+
+export const AllRoutes = () => (
+  <Switch>
+    <Route path="/pg/signin" component={SignIn} />
+    <Route component={NonSigninComponents} />
+  </Switch>
+);
 
 export default function AppNew() {
   const classes = useStyles();
@@ -48,12 +69,9 @@ export default function AppNew() {
         <BrowserRouter>
           <div className={classes.root}>
             {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
-            <CeligoAppBar />
-            <AppErroredModal />
-            <AuthDialog />
-
-            <CeligoDrawer />
-            <PageContent />
+            <WithAuth>
+              <AllRoutes />
+            </WithAuth>
           </div>
         </BrowserRouter>
       </DndProvider>

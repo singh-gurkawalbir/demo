@@ -4,7 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import SignIn from '../../views/SignIn';
+import SignInForm from '../../views/SignIn/SigninForm';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 
@@ -16,7 +16,7 @@ const ExpiredSessionContent = () => (
       <Typography>Please login again</Typography>
     </DialogTitle>
     <DialogContent>
-      <SignIn dialogOpen />
+      <SignInForm dialogOpen />
     </DialogContent>
   </Fragment>
 );
