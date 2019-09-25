@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
@@ -48,6 +49,12 @@ const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
         resourceType="exports"
         resourceId={pg._exportId}
         opacity={opacity}
+      />
+      <div
+        className={clsx(classes.line, {
+          [classes.firstLine]: index === 0,
+          [classes.connectingLine]: index > 0,
+        })}
       />
     </div>
   );
