@@ -7,16 +7,16 @@ import TemplatePreview from '../../views/Templates/Preview';
 export default function MarketplaceRouter({ match }) {
   return (
     <div>
-      <Route path={`${match.url}/:application`} component={List} />
-      <Route exact path={`${match.url}`} component={Marketplace} />
-      <Route
-        path="/pg/marketplace/templates/:templateId/setup"
-        component={TemplateInstall}
-      />
       <Route
         path="/pg/marketplace/templates/:templateId/preview"
         component={TemplatePreview}
       />
+      <Route
+        path="/pg/marketplace/templates/:templateId/setup"
+        component={TemplateInstall}
+      />
+      <Route path={`${match.url}/:application`} component={List} />
+      <Route exact path={`${match.url}`} component={Marketplace} />
     </div>
   );
 }
