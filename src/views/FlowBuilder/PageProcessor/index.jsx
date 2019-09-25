@@ -1,14 +1,14 @@
 import { useRef, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import clsx from 'clsx';
-import * as selectors from '../../../reducers';
 // import actions from '../../../actions';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
 import ToolsIcon from '../../../components/icons/ToolsIcon';
+import AppBlock from '../AppBlock';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -41,12 +41,17 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageProcessor = ({ index, onMove, isLast, ...pp }) => {
+const PageProcessor = ({
+  match,
+  location,
+  history,
+  index,
+  onMove,
+  isLast,
+  ...pp
+}) => {
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
-  );
   const ref = useRef(null);
   const classes = useStyles();
   const [, drop] = useDrop({
@@ -113,9 +118,14 @@ const PageProcessor = ({ index, onMove, isLast, ...pp }) => {
         {index === 0 && (
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
-        <div ref={ref} className={classes.ppBox} style={{ opacity }}>
-          <Typography variant="h2">{resource.name || resource.id}</Typography>
-        </div>
+        <AppBlock
+          match={match}
+          history={history}
+          ref={ref}
+          opacity={opacity}
+          resourceType={resourceType}
+          resourceId={resourceId}
+        />
         {!isLast && (
           <div>
             <div className={classes.processorActions}>
@@ -135,4 +145,4 @@ const PageProcessor = ({ index, onMove, isLast, ...pp }) => {
   );
 };
 
-export default PageProcessor;
+export default withRouter(PageProcessor);
