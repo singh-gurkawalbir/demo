@@ -66,7 +66,7 @@ export default {
         { field: 'http.unencrypted.userName', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Token',
+      label: 'Generate Token',
       defaultValue: '',
       helpText: 'The access token of your Tableau account.',
     },

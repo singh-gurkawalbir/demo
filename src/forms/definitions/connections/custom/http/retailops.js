@@ -29,7 +29,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       helpText:
-        'To create an API key, In RetailOps, go to Administration > User Manager. Select your user account. In the bottom-right of the User Details pane, press the [Add API Key] button. Your API key will appear in a separate window. Copy the API key from there. Please note: For security purposes, when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+        'Please enter API Key of your RetailOps Account.Path to get API Key(Administration > User Manager>Select your user account>User Details pane(bottom-right),when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
