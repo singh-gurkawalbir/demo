@@ -71,10 +71,13 @@ export default {
       return value.extract;
     }
   },
-  getMappingPath: application => {
+  getMappingConfig: application => {
     switch (application) {
       case adaptorTypeMap.RESTImport:
-        return '/mapping/fields';
+        return {
+          path: '/mapping',
+          defaultValue: { fields: [] },
+        };
       case adaptorTypeMap.NetSuiteDistributedImport:
         // TODO
         return '';

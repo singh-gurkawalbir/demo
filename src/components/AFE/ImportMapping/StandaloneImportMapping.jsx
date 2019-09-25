@@ -41,35 +41,43 @@ export default function StandaloneImportMapping(props) {
     resourceData,
     resourceType.type
   );
-  const handleClose = (closeModal, mappings, lookupsTmp) => {
-    if (mappings) {
-      const patchSet = [
-        {
-          op: 'update',
-          path: MappingUtil.getMappingPath(resourceType.type),
-          value: mappings,
-        },
-      ];
+  const handleClose = (closeModal, mappingsTmp, lookupsTmp) => {
+    const patchSet = [];
+    const mappingConfig = MappingUtil.getMappingConfig(resourceType.type);
 
-      if (lookupsTmp.length) {
-        patchSet.push({
-          op: 'update',
-          path: LookupUtil.getLookupPath(resourceType.type),
-          value: lookupsTmp,
-        });
-      }
-
-      // const sanitizedPatchSet = sanitizePreConstructedPatch({
-      //   patchSet,
-      //   resource: resourceData,
-      // });
-      const sanitizedPatchSet = patchSet;
-
-      dispatch(
-        actions.resource.patchStaged(resourceId, sanitizedPatchSet, 'value')
-      );
-      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
+    if (!mappings) {
+      patchSet.push({
+        op: 'add',
+        path: mappingConfig.path,
+        value: mappingConfig.defaultValue,
+      });
     }
+
+    patchSet.push({
+      op: 'replace',
+      path: `${mappingConfig.path}/fields`,
+      value: mappingsTmp,
+    });
+    const lookupPath = LookupUtil.getLookupPath(resourceType.type);
+
+    // if lookups doesnt exist in resource object and new lookups are being added
+    if (!lookups && lookupsTmp && lookupsTmp.length) {
+      patchSet.push({
+        op: 'add',
+        path: lookupPath,
+        value: lookupsTmp,
+      });
+    } else if (lookups) {
+      // if lookups already exist in resource object
+      patchSet.push({
+        op: 'replace',
+        path: lookupPath,
+        value: lookupsTmp,
+      });
+    }
+
+    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
 
     if (closeModal) onClose();
   };
