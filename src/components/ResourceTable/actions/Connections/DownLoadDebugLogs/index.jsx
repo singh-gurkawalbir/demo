@@ -1,12 +1,12 @@
 import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
-import Icon from '../../../../icons/CloseIcon';
+import Icon from '../../../../icons/DownloadIcon';
 import openExternalUrl from '../../../../../utils/window';
 
 export default {
   label: 'Download debug logs',
-  component: function DownLoadDebugLogs({ resource }) {
+  component: function DownloadDebugLogs({ resource }) {
     let url = `/api/connections/${resource._id}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
