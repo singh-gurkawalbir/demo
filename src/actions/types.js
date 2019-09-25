@@ -377,5 +377,4 @@ export default {
   FILE,
   CONNECTION,
   MARKETPLACE,
-  TEMPLATE,
 };

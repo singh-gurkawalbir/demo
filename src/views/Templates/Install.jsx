@@ -114,7 +114,7 @@ export default function ConnectorInstallation(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction, stackId } = step;
+    const { _connectionId, installURL, installerFunction } = step;
 
     // handle connection step click
     if (_connectionId) {

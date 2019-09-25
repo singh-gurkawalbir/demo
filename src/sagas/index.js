@@ -6,7 +6,6 @@ import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
 import connectorSagas from './connectors';
-import templateSagas from './templates';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { accessTokenSagas } from './accessTokens';

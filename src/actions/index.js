@@ -446,6 +446,9 @@ const ashare = {
     resource.receivedCollection('ashares', ashares),
 };
 const template = {
+  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
+  generateZip: integrationId =>
+    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
   request: templateId => action(actionTypes.TEMPLATE.PREVIEW, { templateId }),
   installStepsReceived: (installSteps, connectionMap, templateId) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
@@ -466,11 +469,6 @@ const agent = {
   maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
-};
-const template = {
-  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
-  generateZip: integrationId =>
-    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
 const file = {
   upload: (resourceType, resourceId, fileType, file) =>
@@ -775,5 +773,4 @@ export default {
   stack,
   connection,
   marketplace,
-  template,
 };
