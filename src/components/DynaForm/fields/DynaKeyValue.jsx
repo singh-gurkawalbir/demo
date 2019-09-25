@@ -66,7 +66,7 @@ export default function DynaKeyValue(props) {
   const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
 
   return (
-    <div className={classes.container}>
+    <div data-test={id} className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
       {tableData.map(r => (
         <div className={classes.rowContainer} key={r.row}>

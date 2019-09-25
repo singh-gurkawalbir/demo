@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../icons/AuditLogIcon';
+import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 
 export default {
@@ -18,7 +18,7 @@ export default {
           />
         )}
         <IconButton size="small" onClick={() => setShow(true)}>
-          <Icon />
+          <AuditLogIcon />
         </IconButton>
       </Fragment>
     );

@@ -71,7 +71,7 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
         { field: 'http.oneloginRegion', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       helpText: 'The access token of your OneLogin account.',
     },
     'http.auth.token.refreshToken': {

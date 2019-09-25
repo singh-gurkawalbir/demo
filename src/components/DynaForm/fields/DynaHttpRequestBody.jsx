@@ -65,7 +65,11 @@ export default function DynaHttpRequestBody(props) {
           action={lookupField}
         />
       )}
-      <Button variant="outlined" color="secondary" onClick={handleEditorClick}>
+      <Button
+        data-test={id}
+        variant="outlined"
+        color="secondary"
+        onClick={handleEditorClick}>
         {label}
       </Button>
     </Fragment>

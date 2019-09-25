@@ -129,6 +129,7 @@ function RefreshGenericResource(props) {
         </InputLabel>
         {multiselect ? (
           <Select
+            data-test={id}
             multiple
             value={value || defaultValue}
             onChange={evt => {
@@ -147,6 +148,7 @@ function RefreshGenericResource(props) {
           </Select>
         ) : (
           <Select
+            data-test={id}
             displayEmpty
             value={value || defaultValue}
             onChange={evt => {

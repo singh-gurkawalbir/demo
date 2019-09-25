@@ -22,6 +22,7 @@ export default {
   rest,
   mongodb,
   s3,
+  new: newImport,
   wrapper,
   as2,
   rdbms,
@@ -29,5 +30,4 @@ export default {
   netsuite,
   netsuiteDistributed,
   salesforce,
-  new: newImport,
 };

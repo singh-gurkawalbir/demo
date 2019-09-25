@@ -1,6 +1,6 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import AgentDownloadInstaller from '../../../AgentList/AgentDownloadInstaller';
+import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
 import AgentToken from '../../../AgentToken';
 import {
   getResourceLink,
@@ -19,6 +19,11 @@ export default {
       heading: 'Name',
       value: r => getResourceLink('agents', r),
       orderBy: 'name',
+    },
+    {
+      heading: 'Description',
+      value: r => r.description,
+      orderBy: 'description',
     },
     {
       heading: 'Status',

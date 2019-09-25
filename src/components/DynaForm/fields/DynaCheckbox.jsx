@@ -21,6 +21,7 @@ export default function DynaCheckbox(props) {
           color="primary"
           disabled={disabled}
           // isInvalid={!isValid}
+          data-test={id}
           value={typeof value === 'string' ? value : value.toString()}
           checked={inverse ? !value : !!value}
           onChange={evt =>

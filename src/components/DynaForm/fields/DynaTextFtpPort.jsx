@@ -68,6 +68,7 @@ export default function DynaTextFtpPort(props) {
       key={id}
       type={valueType}
       name={name}
+      data-test={id}
       label={label}
       placeholder={placeholder}
       helperText={isValid ? description : errorMessages}

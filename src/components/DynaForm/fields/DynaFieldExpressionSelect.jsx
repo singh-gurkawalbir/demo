@@ -40,6 +40,7 @@ export default function DynaFieldExpressionSelect(props) {
 
   return (
     <Select
+      data-test={id}
       id={id}
       label={label}
       placeholder={placeholder}

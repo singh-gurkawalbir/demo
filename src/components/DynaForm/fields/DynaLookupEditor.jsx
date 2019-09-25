@@ -23,7 +23,11 @@ export default function DynaLookupEditor(props) {
           onUpdate={handleUpdate}
         />
       )}
-      <Button variant="outlined" color="secondary" onClick={handleEditorClick}>
+      <Button
+        data-test={id}
+        variant="outlined"
+        color="secondary"
+        onClick={handleEditorClick}>
         {label}
       </Button>
     </Fragment>
