@@ -27,7 +27,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose, flow } = props;
+  const { title, onClose } = props;
+  let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -91,10 +92,11 @@ export default function FlowSchedule(props) {
   };
 
   const classes = useStyles();
-  const updatedFlow = setValues(flow);
 
-  if (updatedFlow && !updatedFlow.frequency) {
-    updatedFlow.frequency = '';
+  flow = setValues(flow);
+
+  if (flow && !flow.frequency) {
+    flow.frequency = '';
   }
 
   return (
@@ -109,7 +111,7 @@ export default function FlowSchedule(props) {
       <DialogContent className={classes.modalContent}>
         <DynaForm
           fieldMeta={getMetadata({
-            updatedFlow,
+            flow,
             integration,
             preferences,
           })}>
