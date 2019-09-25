@@ -73,17 +73,17 @@ export default {
   },
   getMappingConfig: application => {
     switch (application) {
-      case adaptorTypeMap.RESTImport:
-        return {
-          path: '/mapping',
-          defaultValue: { fields: [] },
-        };
       case adaptorTypeMap.NetSuiteDistributedImport:
         // TODO
         return '';
       default:
-      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.FTPImport:
+        return {
+          path: '/mapping',
+          defaultValue: { fields: [] },
+        };
+      case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.S3Import:
@@ -99,8 +99,9 @@ export default {
         return 'REST API Field';
       case adaptorTypeMap.NetSuiteDistributedImport:
         return 'NetSuite Field';
-      case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.FTPImport:
+        return 'FTP Field';
+      case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.S3Import:
@@ -122,9 +123,9 @@ export default {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
       case adaptorTypeMap.RESTImport:
+      case adaptorTypeMap.FTPImport:
         return resourceObj.mapping;
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.S3Import:
