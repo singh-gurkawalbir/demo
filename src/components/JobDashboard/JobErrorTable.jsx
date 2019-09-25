@@ -111,7 +111,7 @@ function JobErrorTable({
   }
 
   function handleDownloadAllErrorsClick() {
-    dispatch(actions.job.downloadErrorFile({ jobId: job._id }));
+    dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'errors' }));
   }
 
   function handleRetryClick() {

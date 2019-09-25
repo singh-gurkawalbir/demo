@@ -1280,6 +1280,18 @@ export function flowJobs(state) {
             : resourceMap.imports[cJob._importId].name,
         };
 
+        if (cJob.retries && cJob.retries.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          cJob.retries = cJob.retries.map(r => ({
+            ...r,
+            endedAtAsString:
+              r.endedAt &&
+              moment(r.endedAt).format(
+                `${preferences.dateFormat} ${preferences.timeFormat}`
+              ),
+          }));
+        }
+
         return { ...cJob, ...additionalChildProps };
       });
     }

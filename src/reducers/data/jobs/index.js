@@ -675,6 +675,14 @@ export function flowJobs(state) {
             }
           }
 
+          if (cJob.retries && cJob.retries.length > 0) {
+            // eslint-disable-next-line no-param-reassign
+            cJob.retries = cJob.retries.map(r => ({
+              ...r,
+              duration: getJobDuration(r),
+            }));
+          }
+
           return { ...cJob, ...additionalChildProps };
         });
       }

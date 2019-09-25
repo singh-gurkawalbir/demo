@@ -50,6 +50,7 @@ function JobDetail({
   onSelectChange,
   userPermissionsOnIntegration,
   onViewErrorsClick,
+  integrationName,
 }) {
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
@@ -227,6 +228,7 @@ function JobDetail({
           <JobActionsMenu
             job={job}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
+            integrationName={integrationName}
           />
         </TableCell>
         {expanded && !job.children && (
@@ -246,6 +248,7 @@ function JobDetail({
             selectedJobs={selectedJobs}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             onViewErrorsClick={onViewErrorsClick}
+            integrationName={integrationName}
           />
         ))}
     </Fragment>

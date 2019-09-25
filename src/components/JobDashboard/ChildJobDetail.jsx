@@ -14,6 +14,7 @@ export default function ChildJobDetail({
   selectedJobs,
   userPermissionsOnIntegration,
   onViewErrorsClick,
+  integrationName,
 }) {
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
@@ -105,6 +106,7 @@ export default function ChildJobDetail({
         <JobActionsMenu
           job={job}
           userPermissionsOnIntegration={userPermissionsOnIntegration}
+          integrationName={integrationName}
         />
       </TableCell>
     </TableRow>

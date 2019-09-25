@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
+import RefreshIcon from '@material-ui/icons/RefreshOutlined';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
@@ -12,6 +14,7 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
+import getRoutePath from '../../utils/routePaths';
 
 export default function JobDashboard({
   integrationId,
@@ -26,9 +29,15 @@ export default function JobDashboard({
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const integrationSettingsURL = getRoutePath(
+    `/${
+      integration && integration._connectorId ? 'connectors' : 'integrations'
+    }/${integrationId}/settings/flows`
+  );
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
+  const [refreshJobs, setRefreshJobs] = useState(false);
   const [filters, setFilters] = useState({});
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
@@ -42,7 +51,7 @@ export default function JobDashboard({
       dispatch(actions.job.clear());
       setCurrentPage(0);
     },
-    [dispatch, filters]
+    [dispatch, filters, refreshJobs]
   );
 
   /** Whenever page changes, we need to update the same in state and request for inprogress jobs (in current page) status */
@@ -61,7 +70,7 @@ export default function JobDashboard({
         actions.job.requestCollection({ integrationId, flowId, filters })
       );
     }
-  }, [dispatch, integrationId, flowId, filters, jobs.length]);
+  }, [dispatch, integrationId, flowId, filters, jobs.length, refreshJobs]);
 
   useEffect(() => {
     setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
@@ -355,14 +364,26 @@ export default function JobDashboard({
     );
   }
 
+  function handleRefershJobsClick() {
+    setRefreshJobs(!refreshJobs);
+  }
+
   return (
-    <LoadResources required resources="flows,exports,imports">
+    <LoadResources required resources="integrations,flows,exports,imports">
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
         commStatusHandler={commStatusHandler}
       />
       {!flowId && integration && <Typography>{integration.name}</Typography>}
+      <div>
+        <Button onClick={handleRefershJobsClick}>
+          <RefreshIcon /> Refresh
+        </Button>
+        <Button href={integrationSettingsURL}>
+          <SettingsIcon /> Settings
+        </Button>
+      </div>
       <Filters
         integrationId={integrationId}
         flowId={flowId}

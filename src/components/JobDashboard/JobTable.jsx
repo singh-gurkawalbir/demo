@@ -150,6 +150,7 @@ function JobTable({
               selectedJobs={selectedJobs}
               userPermissionsOnIntegration={userPermissionsOnIntegration}
               onViewErrorsClick={handleViewErrorsClick}
+              integrationName={integrationName}
             />
           ))}
         </TableBody>
