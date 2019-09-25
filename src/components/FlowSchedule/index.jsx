@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose, flow: resource } = props;
+  const { title, onClose, flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -35,7 +35,7 @@ export default function FlowSchedule(props) {
     selectors.userProfilePreferencesProps(
       state,
       'integration',
-      resource._integrationId
+      flow._integrationId
     )
   );
   let scheduleStartMinute = 0;
@@ -46,8 +46,8 @@ export default function FlowSchedule(props) {
     );
 
     if (
-      !resource.createdAt ||
-      changeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
+      !flow.createdAt ||
+      changeStartMinuteForFlowsCreatedAfter.diff(moment(flow.createdAt)) < 0
     ) {
       scheduleStartMinute = 10;
     }
@@ -84,17 +84,17 @@ export default function FlowSchedule(props) {
       },
     ];
 
-    dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', resource._id, 'value'));
+    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
 
     onClose();
   };
 
   const classes = useStyles();
-  const initialisedResource = setValues(resource);
+  const updatedFlow = setValues(flow);
 
-  if (initialisedResource && !initialisedResource.frequency) {
-    initialisedResource.initialisedResource = '';
+  if (updatedFlow && !updatedFlow.frequency) {
+    updatedFlow.frequency = '';
   }
 
   return (
@@ -109,7 +109,7 @@ export default function FlowSchedule(props) {
       <DialogContent className={classes.modalContent}>
         <DynaForm
           fieldMeta={getMetadata({
-            initialisedResource,
+            updatedFlow,
             integration,
             preferences,
           })}>

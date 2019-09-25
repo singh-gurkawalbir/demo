@@ -99,13 +99,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 }
 
 export function* downloadFile({ resourceType, id }) {
-  const { path, opts } = getRequestOptions(
-    actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE,
-    {
-      resourceId: id,
-      resourceType,
-    }
-  );
+  const { path, opts } = getRequestOptions(actionTypes.RESOURCE.DOWNLOAD_FILE, {
+    resourceId: id,
+    resourceType,
+  });
   let response;
 
   try {
@@ -259,7 +256,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
-  takeEvery(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, downloadFile),
+  takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   ...metadataSagas,
 ];

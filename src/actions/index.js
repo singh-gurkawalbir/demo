@@ -83,7 +83,7 @@ const marketplace = {
 };
 const resource = {
   downloadFile: (id, resourceType) =>
-    action(actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE, { resourceType, id }),
+    action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
 
   request: (resourceType, id, message) =>

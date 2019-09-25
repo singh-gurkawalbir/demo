@@ -7,7 +7,7 @@ import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
-import AttachFlows from '../../components/AttachFlows';
+import AttachFlowsDialog from '../../components/AttachFlows';
 import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(() => ({
@@ -16,11 +16,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Flows(props) {
+export default function Flows(props) {
   const { match } = props;
   const classes = useStyles();
   const { integrationId } = match.params;
-  const [showAttachFlowsDialog, setAttachFlowsDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   let flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
@@ -48,11 +48,11 @@ function Flows(props) {
 
   return (
     <Fragment>
-      {showAttachFlowsDialog && (
-        <AttachFlows
+      {showDialog && (
+        <AttachFlowsDialog
           integrationId={integrationId}
           standaloneFlows={standaloneFlows}
-          onClose={() => setAttachFlowsDialog(false)}
+          onClose={() => setShowDialog(false)}
         />
       )}
       <LoadResources required resources="flows, connections, exports, imports">
@@ -65,7 +65,7 @@ function Flows(props) {
         {integrationId && integrationId !== 'none' && (
           <Button
             className={classes.registerButton}
-            onClick={() => setAttachFlowsDialog(true)}>
+            onClick={() => setShowDialog(true)}>
             Attach Flows
           </Button>
         )}
@@ -81,5 +81,3 @@ function Flows(props) {
     </Fragment>
   );
 }
-
-export default Flows;

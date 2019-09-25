@@ -193,10 +193,10 @@ export default function getRequestOptions(
         path: `/flows/${resourceId}/run`,
         opts: { method: 'POST' },
       };
-    case actionTypes.RESOURCE.DOWNLOAD_ZIP_FILE:
+    case actionTypes.RESOURCE.DOWNLOAD_FILE:
       if (resourceType === 'flows') {
         return {
-          path: `/flows/${resourceId}/template`,
+          path: `/${resourceType}/${resourceId}/template`,
         };
       }
 

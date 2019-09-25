@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import _ from 'lodash';
+import { uniq } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -1411,32 +1411,32 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
     });
   }
 
-  const AttachedExports =
+  const attachedExports =
     exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
-  const AttachedImports =
+  const attachedImports =
     imports && imports.filter(i => importIds.indexOf(i._id) > -1);
 
-  AttachedExports.forEach(exp => {
+  attachedExports.forEach(exp => {
     if (exp && exp._connectionId) {
       connectionIds.push(exp._connectionId);
     }
   });
-  AttachedImports.forEach(imp => {
+  attachedImports.forEach(imp => {
     if (imp && imp._connectionId) {
       connectionIds.push(imp._connectionId);
     }
   });
-  const AttachedConnections =
+  const attachedConnections =
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  AttachedConnections.forEach(conn => {
+  attachedConnections.forEach(conn => {
     if (conn && conn._borrowConcurrencyFromConnectionId) {
       borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
     }
   });
 
-  return _.uniq(connectionIds.concat(borrowConnectionIds));
+  return uniq(connectionIds.concat(borrowConnectionIds));
 }
 
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
