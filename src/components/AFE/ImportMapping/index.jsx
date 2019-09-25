@@ -10,7 +10,6 @@ import {
   Grid,
   DialogActions,
 } from '@material-ui/core';
-import Close from '@material-ui/icons/Close';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
@@ -38,11 +37,6 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
     padding: '0px',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
   },
 }));
 
@@ -128,14 +122,15 @@ export default function ImportMapping(props) {
     title,
     onClose,
     mappings = {},
-    lookups,
+    lookups = [],
     application,
     isStandaloneMapping,
-    generateFields,
-    extractFields,
+    generateFields = [],
+    extractFields = [],
+    children,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
-  const [lookupState, setLookup] = useState(lookups || []);
+  const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, dispatchLocalAction] = useReducer(
@@ -312,14 +307,7 @@ export default function ImportMapping(props) {
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-      {isStandaloneMapping && (
-        <IconButton
-          aria-label="Close"
-          className={classes.closeButton}
-          onClick={() => onClose(true)}>
-          <Close />
-        </IconButton>
-      )}
+      {children}
       <DialogTitle>{title}</DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>

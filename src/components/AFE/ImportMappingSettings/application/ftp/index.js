@@ -4,11 +4,11 @@ import RestMetaData from '../rest';
  */
 export default {
   getMetaData: (options = {}) => {
-    const restMetadata = RestMetaData.getMetaData(options);
+    const restMetaData = RestMetaData.getMetaData(options);
     // get ftpFieldMap by removing immutable field
-    const { immutable, ...ftpFieldMap } = restMetadata.fieldMap;
+    const { immutable, ...ftpFieldMap } = restMetaData.fieldMap;
     // remove immutable from layout fields
-    const ftpLayoutFields = restMetadata.layout.fields.filter(
+    const ftpLayoutFields = restMetaData.layout.fields.filter(
       field => field !== 'immutable'
     );
     const ftpMetaData = {
@@ -16,7 +16,7 @@ export default {
       layout: {
         fields: ftpLayoutFields,
       },
-      optionsHandler: restMetadata.optionsHandler,
+      optionsHandler: restMetaData.optionsHandler,
     };
 
     return ftpMetaData;

@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles, IconButton } from '@material-ui/core';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
 import LookupUtil from '../../../utils/lookup';
@@ -7,17 +8,29 @@ import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
 
-/*
-This component can be used to manage Import lookups
-<StandaloneImportMapping
-id="1"
-resourceId="1234"
-/>
-*/
+const CloseIcon = require('../../../components/icons/CloseIcon').default;
+
+/**
+ *
+ *(This component can be used to manage Import lookups)
+ * @export
+ * @param {string} id (unique Id)
+ * @param {string} resourceId (Import Resource Id)
+ * @param {function} onClose (callback for closing the mapping dialog)
+ */
+
+const useStyles = makeStyles(theme => ({
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+  },
+}));
 
 export default function StandaloneImportMapping(props) {
   const { id, resourceId, onClose } = props;
   const dispatch = useDispatch();
+  const classes = useStyles();
   /*
      Using dummy data for functionality demonstration. generate fields and
      extrct fields to be extracted later when flow builder is ready
@@ -25,11 +38,9 @@ export default function StandaloneImportMapping(props) {
      */
   const generateFields = ['myName', 'myId'];
   const extractFields = ['name', 'id'];
-  const resourceData = useSelector(state => {
-    const data = selectors.resource(state, 'imports', resourceId);
-
-    return data;
-  });
+  const resourceData = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
   const mappings = MappingUtil.getMappingFromResource(
     resourceData,
@@ -47,39 +58,21 @@ export default function StandaloneImportMapping(props) {
       const mappingPath = MappingUtil.getMappingPath(resourceType.type);
 
       // if mapping doesnt exist in resouce object , perform add patch else replace patch
-      if (!mappings) {
-        patchSet.push({
-          op: 'add',
-          path: mappingPath,
-          value: { fields: _mappings },
-        });
-      } else {
-        patchSet.push({
-          op: 'replace',
-          path: mappingPath,
-          value: { fields: _mappings },
-        });
-      }
+      patchSet.push({
+        op: mappings ? 'replace' : 'add',
+        path: mappingPath,
+        value: { fields: _mappings },
+      });
 
       // update _lookup only if its being passed as param to function
       if (_lookups) {
         const lookupPath = LookupUtil.getLookupPath(resourceType.type);
 
-        // if lookups doesnt exist in resource object and new lookups are being added
-        if (!lookups && _lookups && _lookups.length) {
-          patchSet.push({
-            op: 'add',
-            path: lookupPath,
-            value: _lookups,
-          });
-        } else if (lookups) {
-          // if lookups already exist in resource object
-          patchSet.push({
-            op: 'replace',
-            path: lookupPath,
-            value: _lookups,
-          });
-        }
+        patchSet.push({
+          op: lookups ? 'replace' : 'add',
+          path: lookupPath,
+          value: _lookups,
+        });
       }
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
@@ -95,14 +88,20 @@ export default function StandaloneImportMapping(props) {
         title="Define Import Mapping"
         id={id}
         application={resourceType.type}
-        lookups={lookups || []}
+        lookups={lookups}
         isStandaloneMapping
         resourceId={resourceId}
-        mappings={mappings || {}}
-        generateFields={generateFields || []}
-        extractFields={extractFields || []}
-        onClose={handleClose}
-      />
+        mappings={mappings}
+        generateFields={generateFields}
+        extractFields={extractFields}
+        onClose={handleClose}>
+        <IconButton
+          aria-label="Close"
+          className={classes.closeButton}
+          onClick={() => onClose()}>
+          <CloseIcon />
+        </IconButton>
+      </ImportMapping>
     </LoadResources>
   );
 }
