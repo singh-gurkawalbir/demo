@@ -4,11 +4,9 @@ import {
   AppBar,
   Breadcrumbs,
   Link,
-  Badge,
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
@@ -18,7 +16,7 @@ import SlideOnScroll from '../../components/SlideOnScroll';
 import ProfileMenuButton from '../ProfileMenuButton';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import NotificationsIcon from '../../components/icons/NotificationsIcon';
+import Notifications from './Notifications';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -125,14 +123,15 @@ export default function CeligoAppBar() {
                 />
               </li>
               <li>
-                <IconButton
+                <Notifications />
+                {/* <IconButton
                   size="small"
                   aria-label="show 17 new notifications"
                   color="inherit">
                   <Badge badgeContent={17} color="primary">
                     <NotificationsIcon />
                   </Badge>
-                </IconButton>
+                </IconButton> */}
               </li>
               <li>
                 <ProfileMenuButton />
