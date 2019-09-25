@@ -43,7 +43,8 @@ export default {
       label: 'Private Key',
       defaultValue: '',
       required: true,
-      helpText: "Your application's private key.",
+      helpText:
+        "Your application's private key.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Private Key safe. This can be obtained from the Settings section and Private Key subsection.",
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

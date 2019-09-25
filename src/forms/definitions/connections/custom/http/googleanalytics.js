@@ -1,5 +1,5 @@
 export default {
-  preSubmit: formValues => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'google',
@@ -10,10 +10,9 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
   }),
-
-  fields: [
-    { fieldId: 'name' },
-    {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'https://www.googleapis.com/auth/analytics',
@@ -24,12 +23,13 @@ export default {
         'https://www.googleapis.com/auth/analytics.readonly',
       ],
     },
-  ],
-  fieldSets: [
-    {
-      header: 'Advanced Settings',
-      collapsed: true,
-      fields: [{ formId: 'httpAdvanced' }],
-    },
-  ],
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    fields: ['name', 'http.auth.oauth.scope'],
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+    ],
+  },
 };

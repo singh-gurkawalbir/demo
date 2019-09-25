@@ -63,7 +63,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       helpText:
-        'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.',
+        'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
