@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   DialogContent,
   Dialog,
@@ -12,10 +12,11 @@ import {
   Divider,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import * as selectors from '../../reducers';
 import actions from '../../actions';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   title: {
     marginLeft: theme.spacing(4),
     padding: theme.spacing(2),
@@ -35,20 +36,22 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
     marginRight: 'auto',
   },
-});
+}));
 
-function GenerateTemplateZip(props) {
-  const { integrations, onClose, classes, invalid = 'invalid' } = props;
+export default function GenerateTemplateZip(props) {
+  const { onClose, invalid = 'invalid' } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const [selectedOption, setSelectedOption] = useState(invalid);
-  const handleGenerateZipClick = e => {
-    e.preventDefault();
-
-    if (selectedOption === invalid) {
+  const { resources: integrations } = useSelector(state =>
+    selectors.resourceList(state, { type: 'integrations' })
+  );
+  const [selectedIntegrationId, setSelectedIntegrationId] = useState(invalid);
+  const handleGenerateZipClick = () => {
+    if (selectedIntegrationId === invalid) {
       return false;
     }
 
-    dispatch(actions.template.generateZip(selectedOption));
+    dispatch(actions.template.generateZip(selectedIntegrationId));
     onClose();
   };
 
@@ -69,8 +72,8 @@ function GenerateTemplateZip(props) {
           <Select
             id="integration"
             className={classes.selectIntegration}
-            value={selectedOption}
-            onChange={e => setSelectedOption(e.target.value)}
+            value={selectedIntegrationId}
+            onChange={e => setSelectedIntegrationId(e.target.value)}
             margin="dense">
             <MenuItem key={invalid} value={invalid}>
               Select Integration
@@ -96,5 +99,3 @@ function GenerateTemplateZip(props) {
     </Dialog>
   );
 }
-
-export default withStyles(styles)(GenerateTemplateZip);
