@@ -15,6 +15,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const styles = theme => ({
   referenceLink: {
@@ -49,7 +50,9 @@ function ResourceReferences(props) {
         (resourceReferences.length !== 0 ? (
           <Fragment>
             <DialogTitle id="resource-references">
-              {title || `${MODEL_PLURAL_TO_LABEL[type]} References:`}
+              {title
+                ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[type]} as`
+                : `${MODEL_PLURAL_TO_LABEL[type]} References:`}
             </DialogTitle>
             <Typography className={classes.message}>
               {title &&

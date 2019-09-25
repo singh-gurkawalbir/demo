@@ -18,22 +18,6 @@ export function* downloadZip({ id }) {
   window.open(response.signedURL, 'target=_blank', response.options, false);
 }
 
-export function* publish({ resource, resourceType }) {
-  const path = `/${resourceType}/${resource._id}`;
-
-  try {
-    yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'PUT',
-        body: { ...resource, published: !resource.published },
-      },
-    });
-  } catch (e) {
-    return true;
-  }
-}
-
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
   let response;
@@ -52,6 +36,5 @@ export function* generateZip({ integrationId }) {
 
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_DOWNLOAD, downloadZip),
-  takeEvery(actionTypes.TEMPLATE.PUBLISH, publish),
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
 ];

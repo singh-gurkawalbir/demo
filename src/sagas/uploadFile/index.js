@@ -9,7 +9,7 @@ export function* uploadFile({ resourceType, resourceId, fileType, file }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Getting signedURL for file upload',
+      message: 'Getting signed URL for file upload',
     });
 
     fetch(response.signedURL, {

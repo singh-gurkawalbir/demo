@@ -18,7 +18,7 @@ describe('uploadFile sagas', () => {
     expect(callEffect).toEqual(
       call(apiCallWithRetry, {
         path,
-        message: 'Getting signedURL for file upload',
+        message: 'Getting signed URL for file upload',
       })
     );
     expect(saga.next(response).done).toBe(true);
@@ -30,7 +30,7 @@ describe('uploadFile sagas', () => {
     expect(callEffect).toEqual(
       call(apiCallWithRetry, {
         path,
-        message: 'Getting signedURL for file upload',
+        message: 'Getting signed URL for file upload',
       })
     );
     expect(saga.throw(new Error()).value).toEqual(true);
