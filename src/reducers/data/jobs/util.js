@@ -114,14 +114,6 @@ export function parseJobFamily(job) {
     ...rest,
   };
 
-  if (job._id === '5d8091ba344e1239750550eb') {
-    updatedJob.files = [
-      ...updatedJob.files,
-      { id: 'abcd', name: 'ABcd' },
-      { id: 'xyz', name: 'XYZ' },
-    ];
-  }
-
   if (children && children.length > 0) {
     updatedJob.children = children
       .filter(childJob => childJob !== null)
