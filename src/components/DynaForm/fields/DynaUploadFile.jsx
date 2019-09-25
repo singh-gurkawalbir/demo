@@ -32,6 +32,7 @@ export default function DynaUploadFile(props) {
       InputLabelProps={{ shrink: true }}
       key={id}
       name={name}
+      data-test={id}
       label={label}
       type="file"
       placeholder={placeholder}

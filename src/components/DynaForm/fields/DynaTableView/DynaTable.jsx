@@ -12,7 +12,7 @@ import DynaSelect from '../DynaSelect';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   tableBody: {
@@ -42,9 +42,7 @@ function reducer(state, action) {
     onRowChange,
   } = action;
 
-  return produce(state, d => {
-    let draft = d;
-
+  return produce(state, draft => {
     // eslint-disable-next-line default-case
     switch (type) {
       case 'remove':
@@ -57,6 +55,7 @@ function reducer(state, action) {
       case 'updateField':
         if (state[index]) {
           if (onRowChange) {
+            // eslint-disable-next-line no-param-reassign
             draft = onRowChange(state, index, field, value);
           } else {
             draft[index][field] = value;
@@ -222,7 +221,7 @@ export default function DynaTable(props) {
   return (
     <div className={classes.container}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
-      <Grid container className={classes.root} spacing={2}>
+      <Grid data-test={id} container className={classes.root} spacing={2}>
         {!hideHeaders && (
           <Grid item xs={12}>
             <Grid container spacing={2}>

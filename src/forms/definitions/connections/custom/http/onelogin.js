@@ -26,7 +26,7 @@ export default {
       type: 'text',
       startAdornment: 'https://api.',
       endAdornment: '.onelogin.com/api',
-      label: 'Region:',
+      label: 'Region',
       helpText: 'Please enter Region for URI.',
       validWhen: {
         matchesRegEx: {
@@ -47,7 +47,7 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key:',
+      label: 'API Key',
       helpText: 'Please enter API Key of your OneLogin Account.',
     },
     'http.encrypted.apiSecret': {
@@ -55,13 +55,13 @@ export default {
       required: true,
       defaultValue: '',
       type: 'text',
-      label: 'API Secret:',
+      label: 'API Secret',
       inputType: 'password',
       helpText:
         'Please enter API Secret of your OneLogin Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
     'http.auth.token.token': {
-      id: 'http.auth.token.token',
+      fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
       defaultValue: '',
@@ -71,7 +71,7 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
         { field: 'http.oneloginRegion', is: [''] },
       ],
-      label: 'Token Generator',
+      label: 'Generate Token',
       helpText: 'The access token of your OneLogin account.',
     },
     'http.auth.token.refreshToken': {

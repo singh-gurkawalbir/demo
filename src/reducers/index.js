@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
+import produce from 'immer';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -408,6 +409,21 @@ export function resourceList(state, options) {
   return fromData.resourceList(state.data, options);
 }
 
+export function marketplaceConnectors(state, application, sandbox) {
+  const licenses = fromUser.licenses(state && state.user);
+
+  return fromData.marketplaceConnectors(
+    state.data,
+    application,
+    sandbox,
+    licenses
+  );
+}
+
+export function marketplaceTemplates(state, application) {
+  return fromData.marketplaceTemplates(state.data, application);
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
@@ -443,6 +459,80 @@ export function processors(state) {
 
 export function isAgentOnline(state, agentId) {
   return fromData.isAgentOnline(state.data, agentId);
+}
+
+export function integrationAppSettings(state, id, storeId) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const uninstallSteps = fromSession.uninstallSteps(
+    state.resource,
+    id,
+    storeId
+  );
+
+  return { ...integrationResource, ...uninstallSteps };
+}
+
+export function defaultStoreId(state, id) {
+  return fromData.defaultStoreId(state && state.data, id);
+}
+
+export function integrationInstallSteps(state, integrationId) {
+  if (!state) return null;
+  const integrationInstallSteps = fromData.integrationInstallSteps(
+    state.data,
+    integrationId
+  );
+  const installStatus = fromSession.integrationAppsInstaller(
+    state.session,
+    integrationId
+  );
+
+  return integrationInstallSteps.map(step => {
+    if (step.isCurrentStep) {
+      return { ...step, ...installStatus };
+    }
+
+    return step;
+  });
+}
+
+export function integrationUninstallSteps(state, integrationId) {
+  const uninstallSteps = fromSession.uninstallSteps(
+    state && state.session,
+    integrationId
+  );
+
+  if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
+    return [];
+  }
+
+  return produce(uninstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
+export function addNewStoreSteps(state, integrationId) {
+  const addNewStoreSteps = fromSession.addNewStoreSteps(
+    state && state.session,
+    integrationId
+  );
+
+  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
+    return [];
+  }
+
+  return produce(addNewStoreSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
 }
 
 // #endregion
@@ -814,7 +904,12 @@ export function tiles(state) {
   return tiles.map(t => {
     integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (t.offlineConnections && t.offlineConnections.length > 0) {
       status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;

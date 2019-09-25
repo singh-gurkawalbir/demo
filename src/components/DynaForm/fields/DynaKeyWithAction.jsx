@@ -33,6 +33,7 @@ export default function DynaKeyWithAction(props) {
     description,
     errorMessages,
     isValid,
+    id,
   } = props;
   const classes = useStyles();
   const [values, setValues] = useState([]);
@@ -46,7 +47,7 @@ export default function DynaKeyWithAction(props) {
   const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
 
   return (
-    <div className={classes.container}>
+    <div data-test={id} className={classes.container}>
       {tableData.map(r => (
         <div className={classes.rowContainer} key={r.row}>
           <Typography className={classes.label}>{r[keyName]}</Typography>

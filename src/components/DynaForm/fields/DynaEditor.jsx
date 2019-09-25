@@ -118,7 +118,10 @@ export default function DynaEditor(props) {
 
   return (
     <Fragment>
-      <IconButton onClick={handleEditorClick} className={classes.editorButton}>
+      <IconButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.editorButton}>
         <OpenInNewIcon />
       </IconButton>
       <div className={classes.container}>
