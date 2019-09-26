@@ -457,7 +457,6 @@ const agent = {
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const template = {
-  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };

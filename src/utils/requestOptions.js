@@ -200,6 +200,12 @@ export default function getRequestOptions(
         };
       }
 
+      if (resourceType === 'templates') {
+        return {
+          path: `/templates/${resourceId}/download/signedURL`,
+        };
+      }
+
       break;
     case actionTypes.METADATA.ASSISTANT_REQUEST:
       return {

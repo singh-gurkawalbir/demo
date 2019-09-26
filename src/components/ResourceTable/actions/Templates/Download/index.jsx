@@ -8,7 +8,7 @@ export default {
   component: function Download({ resource }) {
     const dispatch = useDispatch();
     const handleDownloadClick = () => {
-      dispatch(actions.template.downloadZip(resource._id));
+      dispatch(actions.resource.downloadFile(resource._id, 'templates'));
     };
 
     return (
