@@ -19,25 +19,25 @@ export default {
     { heading: 'Description', value: r => r && r.description },
     {
       heading: 'Field Mappings',
-      value: function action(r) {
+      value: function MappingAction(r) {
         return <FieldMappings.component resource={r} />;
       },
     },
     {
       heading: 'Schedule',
-      value: function action(r) {
+      value: function MappingAction(r) {
         return <Schedule.component resource={r} />;
       },
     },
     {
       heading: 'Run',
-      value: function action(r) {
+      value: function MappingAction(r) {
         return <Run.component resource={r} />;
       },
     },
     {
       heading: 'Off/On',
-      value: function action(r) {
+      value: function MappingAction(r) {
         return <OnOff.component resource={r} />;
       },
     },
