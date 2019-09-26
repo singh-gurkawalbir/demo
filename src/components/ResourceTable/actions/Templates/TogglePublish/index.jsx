@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import PublishIcon from '../../../../../components/icons/ExportsIcon';
 // TODO Azhar
-import UnpublishIcon from '../../../../../components/icons/ImportsIcon';
+import UnpublishIcon from '../../../../../components/icons/ExportsIcon';
+import PublishIcon from '../../../../../components/icons/ImportsIcon';
 import actions from '../../../../../actions';
 
 export default {
