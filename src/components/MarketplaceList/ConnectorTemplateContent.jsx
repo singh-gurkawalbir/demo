@@ -57,7 +57,6 @@ export default function ConnectorTemplateContent(props) {
             : resource.applications[0]
         }
         size="large"
-        imgType="large"
       />
       <Typography className={classes.name} variant="h3">
         {resource.name}
