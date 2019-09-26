@@ -36,7 +36,6 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
-      defaultValue: r => (r && r.type ? r.type : 'all'),
       options: [
         {
           items: [
@@ -51,23 +50,34 @@ export default {
     },
     'delta.dateField': {
       fieldId: 'delta.dateField',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
     'salesforce.distributed.requiredTrigger': {
-      id: 'salesforce.distributed.requiredTrigger',
-      type: 'text',
-      label: 'Required Trigger',
-      multiline: true,
-      visibleWhen: [{ field: 'salesforce.executionType', is: ['realtime'] }],
+      fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
       fieldId: 'salesforce.distributed.referencedFields',
