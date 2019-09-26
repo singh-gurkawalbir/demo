@@ -1,6 +1,7 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+// eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';

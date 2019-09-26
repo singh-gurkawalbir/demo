@@ -26,11 +26,11 @@ const styles = theme => ({
 });
 
 function not(a, b) {
-  return a.filter(value => b.indexOf(value) === -1);
+  return a.filter(value => !b.includes(value));
 }
 
 function intersection(a, b) {
-  return a.filter(value => b.indexOf(value) !== -1);
+  return a.filter(value => b.includes(value));
 }
 
 function TransferList(props) {
@@ -52,24 +52,24 @@ function TransferList(props) {
   };
 
   const handleAllRight = () => {
-    setRight(right.concat(left));
+    setRight([...right, ...left]);
     setLeft([]);
   };
 
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
+    setRight([...right, ...leftChecked]);
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
   };
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
+    setLeft([...left, ...rightChecked]);
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
   };
 
   const handleAllLeft = () => {
-    setLeft(left.concat(right));
+    setLeft([...left, ...right]);
     setRight([]);
   };
 

@@ -31,6 +31,7 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  warning: () => action(actionTypes.AUTH_WARNING),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
@@ -42,6 +43,7 @@ const auth = {
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
+  sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
   request: (path, method, message, hidden) =>
@@ -539,9 +541,11 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
-const reloadApp = () => action(actionTypes.APP_RELOAD);
-const appErrored = () => action(actionTypes.APP_ERRORED);
-const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
+const app = {
+  reload: () => action(actionTypes.APP_RELOAD),
+  errored: () => action(actionTypes.APP_ERRORED),
+  clearError: () => action(actionTypes.APP_CLEAR_ERROR),
+};
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -740,13 +744,11 @@ const assistantMetadata = {
 // #endregion
 
 export default {
-  clearAppError,
-  appErrored,
+  app,
   toggleDrawer,
   metadata,
   connectors,
   cancelTask,
-  reloadApp,
   integrationApp,
   clearComms,
   clearCommByKey,

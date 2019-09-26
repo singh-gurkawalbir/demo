@@ -86,6 +86,20 @@ export const getFieldById = ({ meta, id }) => {
   return res && res.field;
 };
 
+export const isExpansionPanelErrored = (meta, fieldStates) => {
+  const invalidFields = fieldStates.filter(
+    field => !field.isValid || field.isDiscretelyInvalid
+  );
+
+  return invalidFields
+    .map(field => {
+      const { id } = field;
+
+      return !!getFieldById({ meta, id });
+    })
+    .reduce((res, curr) => res || curr, false);
+};
+
 export const getFieldByName = ({ fieldMeta, name }) => {
   const res = searchMetaForFieldByFindFunc(fieldMeta, f => f.name === name);
 
@@ -142,7 +156,7 @@ export const getMissingPatchSet = (paths, resource) => {
   return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
-export const sanitizePatchSet = ({ patchSet, fieldMeta = [], resource }) => {
+export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce((s, patch) => {
     if (patch.op === 'replace') {

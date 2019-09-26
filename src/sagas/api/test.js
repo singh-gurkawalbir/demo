@@ -318,6 +318,7 @@ describe('request interceptors...testing the various stages of an api request on
       const apiCompleteEffect = put(actions.api.complete(path, method));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
+      expect(saga.next().value).toEqual(put(actions.auth.sessionTimestamp()));
 
       expect(saga.next().value).toEqual({ data: undefined, status: 204 });
     });
@@ -338,6 +339,7 @@ describe('request interceptors...testing the various stages of an api request on
       const apiCompleteEffect = put(actions.api.complete(path, method));
 
       expect(saga.next().value).toEqual(apiCompleteEffect);
+      expect(saga.next().value).toEqual(put(actions.auth.sessionTimestamp()));
 
       expect(saga.next().value).toEqual({ data: jsonRespBody, status: 200 });
     });

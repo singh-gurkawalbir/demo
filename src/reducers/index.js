@@ -7,7 +7,7 @@ import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import auth from './authentication';
+import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
@@ -264,6 +264,14 @@ export function shouldShowAppRouting(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function showSessionStatus(state, date) {
+  return fromAuth.showSessionStatus(state && state.auth, date);
+}
+
+export function sessionValidTimestamp(state) {
+  return state && state.auth && state.auth.authTimestamp;
 }
 // #endregion AUTHENTICATION SELECTORS
 

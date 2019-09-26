@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
-import AppRouting from '../../App/AppRoutingWithAuth';
+import AppRouting from '../AppRouting';
 
 const useStyles = makeStyles(theme => ({
   content: {
