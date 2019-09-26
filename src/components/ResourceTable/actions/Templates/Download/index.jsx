@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import DownloadIcon from '../../../../../components/icons/ArrowDownIcon';
+import Icon from '../../../../../components/icons/DownloadIcon';
 import actions from '../../../../../actions';
 
 export default {
@@ -13,7 +13,7 @@ export default {
 
     return (
       <IconButton size="small" onClick={handleDownloadClick}>
-        <DownloadIcon />
+        <Icon />
       </IconButton>
     );
   },
