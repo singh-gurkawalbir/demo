@@ -56,7 +56,7 @@ export default {
     },
     'http.unencrypted.apiSiteId': {
       id: 'http.unencrypted.apiSiteId',
-      type: 'text',
+      type: 'select',
       label: 'API Site ID',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
@@ -92,7 +92,6 @@ export default {
       helpText:
         'After you have specified the API Site ID, click Save & Authorize that opens up the eBay window where you can enter email/username and password to establish the connection with eBay.',
       required: true,
-      inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered',
     },

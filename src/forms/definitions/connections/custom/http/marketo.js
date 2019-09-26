@@ -18,6 +18,8 @@ export default {
     '/http/auth/token/refreshMethod': 'GET',
     '/http/auth/token/refreshMediaType': 'json',
     '/http/auth/token/refreshTokenPath': 'access_token',
+    '/http/auth/failPath': 'errors[0].code',
+    '/http/auth/failValues': ['601', '602'],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

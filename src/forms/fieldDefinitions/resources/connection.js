@@ -319,10 +319,22 @@ export default {
     label: 'Certificate:',
   },
   'rdbms.version': {
-    type: 'text',
+    type: 'select',
     label: 'SQL Server Version:',
     required: true,
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
+    options: [
+      {
+        items: [
+          { label: 'SQL Server 2008 R2', value: 'SQL Server 2008 R2' },
+          { label: 'SQL Server 2012', value: 'SQL Server 2012' },
+          { label: 'SQL Server 2014', value: 'SQL Server 2014' },
+          { label: 'SQL Server 2016', value: 'SQL Server 2016' },
+          { label: 'SQL Server 2017', value: 'SQL Server 2017' },
+          { label: 'Azure', value: 'Azure' },
+        ],
+      },
+    ],
   },
 
   'rdbms.concurrencyLevel': {
