@@ -285,7 +285,6 @@ class Edit extends Component {
             editMode={editMode}
             resourceType={resourceType}
             resourceId={id}
-            connectionType={type}
           />
 
           {conflict && (
