@@ -47,7 +47,7 @@ import woocommerce from './woocommerce';
 import acton from './acton';
 import accelo from './accelo';
 // Added comment for won't do and blocked connections
-// import acumatica from './acumatica';
+import acumatica from './acumatica';
 import tsheets from './tsheets';
 import etsy from './etsy';
 // import googledrive from './googledrive';
@@ -114,7 +114,7 @@ import microsoftonenote from './microsoftonenote';
 import wish from './wish';
 import pdffiller from './pdffiller';
 import zohomail from './zohomail';
-// import zoom from './zoom';
+import zoom from './zoom';
 import myobessentials from './myobessentials';
 import exacterp from './exacterp';
 // import nimble from './nimble';
@@ -281,8 +281,8 @@ export default {
   pdffiller,
   // signnow,
   acton,
-  // acumatica,
-  // zoom,
+  acumatica,
+  zoom,
   exacterp,
   // nimble,
   bronto,

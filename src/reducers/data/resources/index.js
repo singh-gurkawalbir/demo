@@ -68,6 +68,7 @@ export default (state = {}, action) => {
     resourceType,
     connectionIds,
     integrationId,
+    deregisteredId,
   } = action;
 
   // Some resources are managed by custom reducers.
@@ -113,6 +114,23 @@ export default (state = {}, action) => {
         return produce(state, draft => {
           draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
             .disabled;
+        });
+      }
+
+      return state;
+
+    case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
+      resourceIndex = state.integrations.findIndex(
+        r => r._id === integrationId
+      );
+
+      if (resourceIndex > -1) {
+        return produce(state, draft => {
+          draft.integrations[
+            resourceIndex
+          ]._registeredConnectionIds = draft.integrations[
+            resourceIndex
+          ]._registeredConnectionIds.filter(ele => ele !== deregisteredId);
         });
       }
 

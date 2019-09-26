@@ -100,6 +100,7 @@ export default {
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
     'ebay',
+    'vend',
     'google',
     'salesforce',
     'ebay-xml',

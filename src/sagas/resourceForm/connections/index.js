@@ -163,7 +163,7 @@ export function* requestToken({ resourceId, values }) {
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        errors[0].message
+        errors && errors[0] && errors[0].message ? errors[0].message : errors
       )
     );
 
@@ -275,7 +275,7 @@ export function* pingConnection({ resourceId, values }) {
         actions.api.failure(
           pingConnectionParams.path,
           pingConnectionParams.opts.method,
-          errors[0].message
+          errors && errors[0] && errors[0].message ? errors[0].message : errors
         )
       );
     }

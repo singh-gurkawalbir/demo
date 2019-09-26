@@ -31,6 +31,7 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  warning: () => action(actionTypes.AUTH_WARNING),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
@@ -42,6 +43,7 @@ const auth = {
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
+  sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
   request: (path, method, message, hidden) =>
@@ -62,6 +64,16 @@ const connection = {
   completeRegister: (connectionIds, integrationId) =>
     action(actionTypes.CONNECTION.REGISTER_COMPLETE, {
       connectionIds,
+      integrationId,
+    }),
+  requestDeregister: (connectionId, integrationId) =>
+    action(actionTypes.CONNECTION.DEREGISTER_REQUEST, {
+      connectionId,
+      integrationId,
+    }),
+  completeDeregister: (deregisteredId, integrationId) =>
+    action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
+      deregisteredId,
       integrationId,
     }),
 };
@@ -457,7 +469,6 @@ const agent = {
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const template = {
-  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
@@ -530,9 +541,11 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
-const reloadApp = () => action(actionTypes.APP_RELOAD);
-const appErrored = () => action(actionTypes.APP_ERRORED);
-const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
+const app = {
+  reload: () => action(actionTypes.APP_RELOAD),
+  errored: () => action(actionTypes.APP_ERRORED),
+  clearError: () => action(actionTypes.APP_CLEAR_ERROR),
+};
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -628,12 +641,11 @@ const job = {
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
-
   requestInProgressJobStatus: () =>
     action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
   noInProgressJobs: () => action(actionTypes.JOB.NO_IN_PROGRESS_JOBS),
-  downloadDiagnosticsFile: ({ jobId }) =>
-    action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
+  downloadFiles: ({ jobId, fileType, fileIds }) =>
+    action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
 
   cancel: ({ jobId, flowJobId }) =>
@@ -700,8 +712,6 @@ const job = {
       flowJobId,
       selectedRetryIds,
     }),
-  downloadErrorFile: ({ jobId }) =>
-    action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
   requestRetryData: ({ retryId }) =>
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
   receivedRetryData: ({ retryData, retryId }) =>
@@ -734,13 +744,11 @@ const assistantMetadata = {
 // #endregion
 
 export default {
-  clearAppError,
-  appErrored,
+  app,
   toggleDrawer,
   metadata,
   connectors,
   cancelTask,
-  reloadApp,
   integrationApp,
   clearComms,
   clearCommByKey,

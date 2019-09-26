@@ -9,6 +9,7 @@ import {
   all,
   fork,
 } from 'redux-saga/effects';
+import qs from 'qs';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -121,15 +122,30 @@ export function* getJobCollection({ integrationId, flowId, filters = {} }) {
   yield cancel(watcher);
 }
 
-export function* downloadDiagnosticsFile({ jobId }) {
-  const requestOptions = getRequestOptions(
-    actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL,
-    {
-      resourceId: jobId,
-    }
-  );
-  const { path, opts } = requestOptions;
+export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
+  let action;
+
+  switch (fileType) {
+    case 'diagnostics':
+      action = actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL;
+      break;
+    case 'errors':
+      action = actionTypes.JOB.REQUEST_ERROR_FILE_URL;
+      break;
+    default:
+      action = actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL;
+  }
+
+  const requestOptions = getRequestOptions(action, {
+    resourceId: jobId,
+  });
+  let { path } = requestOptions;
+  const { opts } = requestOptions;
   let response;
+
+  if (!fileType && fileIds.length > 0) {
+    path += `?${qs.stringify({ fileId: fileIds }, { indices: false })}`;
+  }
 
   try {
     response = yield call(apiCallWithRetry, {
@@ -140,8 +156,16 @@ export function* downloadDiagnosticsFile({ jobId }) {
     return true;
   }
 
+  let signedURLs = [];
+
   if (response.signedURL) {
-    yield call(openExternalUrl, { url: response.signedURL });
+    signedURLs = [response.signedURL];
+  } else if (response.signedURLs) {
+    ({ signedURLs } = response);
+  }
+
+  if (signedURLs.length > 0) {
+    yield all(signedURLs.map(url => call(openExternalUrl, { url })));
   }
 }
 
@@ -436,30 +460,6 @@ export function* getJobErrors({ jobId }) {
   yield cancel(watcher);
 }
 
-export function* downloaErrorFile({ jobId }) {
-  const requestOptions = getRequestOptions(
-    actionTypes.JOB.REQUEST_ERROR_FILE_URL,
-    {
-      resourceId: jobId,
-    }
-  );
-  const { path, opts } = requestOptions;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      opts,
-    });
-  } catch (e) {
-    return true;
-  }
-
-  if (response && response.signedURL) {
-    yield call(openExternalUrl, { url: response.signedURL });
-  }
-}
-
 export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
   const { path, opts } = getRequestOptions(
     actionTypes.JOB.ERROR.RESOLVE_SELECTED,
@@ -474,12 +474,29 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
     })
   );
   const jobErrors = yield select(selectors.jobErrors, jobId);
+  const updatedJobErrors = [];
 
-  opts.body = jobErrors.map(je => {
-    const { _id, createdAtAsString, ...rest } = je;
+  jobErrors.forEach(je => {
+    const { _id, createdAtAsString, retryObject, similarErrors, ...rest } = je;
 
-    return { ...rest };
+    updatedJobErrors.push({ ...rest });
+
+    if (similarErrors && similarErrors.length > 0) {
+      similarErrors.forEach(sje => {
+        const {
+          _id,
+          createdAtAsString,
+          retryObject,
+          similarErrors,
+          ...rest
+        } = sje;
+
+        updatedJobErrors.push({ ...rest });
+      });
+    }
   });
+
+  opts.body = updatedJobErrors;
 
   try {
     yield call(apiCallWithRetry, {
@@ -565,7 +582,7 @@ export const jobSagas = [
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
     startPollingForInProgressJobs
   ),
-  takeEvery(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, downloadDiagnosticsFile),
+  takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
@@ -573,7 +590,6 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.RETRY_FLOW_JOB, retryFlowJob),
   takeEvery(actionTypes.JOB.RETRY_ALL, retryAll),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
-  takeEvery(actionTypes.JOB.DOWNLOAD_ERROR_FILE, downloaErrorFile),
   takeEvery(actionTypes.JOB.ERROR.RESOLVE_SELECTED, resolveSelectedErrors),
   takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),

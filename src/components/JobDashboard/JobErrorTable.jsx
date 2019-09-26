@@ -2,20 +2,20 @@ import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
-import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import EditIcon from '../icons/EditIcon';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import JsonEditorDialog from '../JsonEditorDialog';
 import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
+import CeligoTable from '../../components/CeligoTable';
+import JobErrorMessage from './JobErrorMessage';
 
 const styles = theme => ({
   root: {
@@ -61,6 +61,7 @@ function JobErrorTable({
   classes,
   rowsPerPage = 10,
   jobErrors,
+  errorCount,
   job,
   onCloseClick,
 }) {
@@ -72,48 +73,36 @@ function JobErrorTable({
     (currentPage + 1) * rowsPerPage
   );
   const [selectedErrors, setSelectedErrors] = useState({});
-  const selectableErrorsInCurrentPage = jobErrorsInCurrentPage.filter(
-    je => !je.resolved
-  );
-  const isSelectAllChecked =
-    selectableErrorsInCurrentPage.length > 0 &&
-    selectableErrorsInCurrentPage.reduce(
-      (isSelected, je) => isSelected && (selectedErrors[je._id] || false),
-      true
-    );
-  const numSelectedJobs = Object.keys(selectedErrors).filter(
-    jobErrorId => selectedErrors[jobErrorId]
+  const numSelectedErrors = Object.keys(selectedErrors).filter(
+    jobErrorId => !!selectedErrors[jobErrorId]
   ).length;
   const [editDataOfRetryId, setEditDataOfRetryId] = useState();
+  const [expanded, setExpanded] = useState({});
+  const jobErrorsData = [];
+
+  jobErrorsInCurrentPage.forEach(j => {
+    jobErrorsData.push({
+      ...j,
+      metadata: { isParent: true, expanded: !!expanded[j._id] },
+    });
+
+    if (expanded[j._id]) {
+      j.similarErrors.forEach(se => {
+        jobErrorsData.push(se);
+      });
+    }
+  });
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
   }
 
-  function handleSelectAllChange(event) {
-    const { checked } = event.target;
-    const errors = { ...selectedErrors };
-
-    selectableErrorsInCurrentPage.forEach(je => {
-      errors[je._id] = checked;
-    });
-    setSelectedErrors(errors);
-  }
-
-  function handleSelectChange(event, jobErrorId) {
-    const { checked } = event.target;
-    const errors = { ...selectedErrors };
-
-    errors[jobErrorId] = checked;
-    setSelectedErrors(errors);
-  }
-
   function handleDownloadAllErrorsClick() {
-    dispatch(actions.job.downloadErrorFile({ jobId: job._id }));
+    dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'errors' }));
   }
 
   function handleRetryClick() {
-    if (numSelectedJobs === 0) {
+    if (numSelectedErrors === 0) {
       const jobsToRetry = [{ _flowJobId: job._flowJobId, _id: job._id }];
 
       dispatch(
@@ -173,7 +162,7 @@ function JobErrorTable({
   }
 
   function handleResolveClick() {
-    if (numSelectedJobs === 0) {
+    if (numSelectedErrors === 0) {
       const jobsToResolve = [{ _flowJobId: job._flowJobId, _id: job._id }];
 
       dispatch(
@@ -255,6 +244,14 @@ function JobErrorTable({
     setEditDataOfRetryId();
   }
 
+  const handleExpandCollapseClick = errorId => {
+    setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
+  };
+
+  const handleJobErrorSelectChange = selected => {
+    setSelectedErrors(selected);
+  };
+
   return (
     <Fragment>
       {editDataOfRetryId &&
@@ -276,7 +273,7 @@ function JobErrorTable({
         Resolved: {job.numResolved} Duration: {job.duration} Completed:{' '}
         {job.endedAtAsString}
       </Typography>
-      {jobErrorsInCurrentPage.length === 0 ? (
+      {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
           <Spinner /> <span>Loading errors...</span>
         </div>
@@ -287,8 +284,8 @@ function JobErrorTable({
             color="primary"
             onClick={handleRetryClick}
             disabled={job.numError === 0}>
-            {numSelectedJobs > 0
-              ? `Retry ${numSelectedJobs} Errors`
+            {numSelectedErrors > 0
+              ? `Retry ${numSelectedErrors} Errors`
               : 'Retry All'}
           </Button>
           <Button
@@ -296,8 +293,8 @@ function JobErrorTable({
             color="primary"
             onClick={handleResolveClick}
             disabled={job.numError === 0}>
-            {numSelectedJobs > 0
-              ? `Mark Resolved ${numSelectedJobs} Errors`
+            {numSelectedErrors > 0
+              ? `Mark Resolved ${numSelectedErrors} Errors`
               : 'Mark Resolved'}
           </Button>
           <Button
@@ -310,76 +307,111 @@ function JobErrorTable({
             Upload Processed Errors
           </Button>
 
-          <TablePagination
-            classes={{ root: classes.tablePaginationRoot }}
-            rowsPerPageOptions={[rowsPerPage]}
-            component="div"
-            count={jobErrors.length}
-            rowsPerPage={rowsPerPage}
-            page={currentPage}
-            backIconButtonProps={{
-              'aria-label': 'Previous Page',
-            }}
-            nextIconButtonProps={{
-              'aria-label': 'Next Page',
-            }}
-            onChangePage={handleChangePage}
-            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
+          {jobErrorsInCurrentPage.length === 0 ? (
+            <Fragment>
+              <div>
+                Please use the &apos;Download All Errors&apos; button above to
+                view the errors for this job.
+              </div>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <TablePagination
+                classes={{ root: classes.tablePaginationRoot }}
+                rowsPerPageOptions={[rowsPerPage]}
+                component="div"
+                count={jobErrors.length}
+                rowsPerPage={rowsPerPage}
+                page={currentPage}
+                backIconButtonProps={{
+                  'aria-label': 'Previous Page',
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'Next Page',
+                }}
+                onChangePage={handleChangePage}
+                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
 
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    disabled={jobErrors.length === 0}
-                    checked={isSelectAllChecked}
-                    onChange={handleSelectAllChange}
-                    inputProps={{ 'aria-label': 'Select all errors' }}
-                  />
-                </TableCell>
-                <TableCell>Resolved?</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell>Code</TableCell>
-                <TableCell>Message</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Retry Data</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {jobErrorsInCurrentPage.map(jobError => (
-                <TableRow key={jobError._id}>
-                  <TableCell padding="checkbox">
-                    {!jobError.resolved && (
-                      <Checkbox
-                        checked={!!selectedErrors[jobError._id]}
-                        onChange={event =>
-                          handleSelectChange(event, jobError._id)
-                        }
+              <CeligoTable
+                data={jobErrorsData}
+                selectableRows
+                isSelectableRow={r =>
+                  r.metadata && r.metadata.isParent && !r.resolved
+                }
+                onSelectChange={handleJobErrorSelectChange}
+                columns={[
+                  {
+                    heading: '',
+                    value: r =>
+                      r.similarErrors &&
+                      r.similarErrors.length > 0 && (
+                        <IconButton
+                          onClick={() => {
+                            handleExpandCollapseClick(r._id);
+                          }}>
+                          {r.metadata && r.metadata.expanded ? (
+                            <ExpandMore />
+                          ) : (
+                            <ChevronRight />
+                          )}
+                        </IconButton>
+                      ),
+                  },
+                  {
+                    heading: 'Resolved?',
+                    value: r => (r.resolved ? 'Yes' : 'No'),
+                  },
+                  {
+                    heading: 'Source',
+                    value: r => r.source,
+                  },
+                  {
+                    heading: 'Code',
+                    value: r => r.code,
+                  },
+                  {
+                    heading: 'Message',
+                    // eslint-disable-next-line react/display-name
+                    value: r => (
+                      <JobErrorMessage
+                        message={r.message}
+                        exportDataURI={r.exportDataURI}
+                        importDataURI={r.importDataURI}
                       />
-                    )}
-                  </TableCell>
-                  <TableCell>{jobError.resolved ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{jobError.source}</TableCell>
-                  <TableCell>{jobError.code}</TableCell>
-                  <TableCell>{jobError.message}</TableCell>
-                  <TableCell>{jobError.createdAtAsString}</TableCell>
-                  <TableCell>
-                    {jobError.retryObject &&
-                      jobError.retryObject.isDataEditable && (
-                        <Button
-                          variant="text"
-                          onClick={() =>
-                            handleEditRetryDataClick(jobError._retryId)
-                          }>
-                          Edit
-                        </Button>
-                      )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    ),
+                  },
+                  {
+                    heading: 'Time',
+                    value: r => r.createdAtAsString,
+                  },
+                ]}
+                rowActions={r => [
+                  {
+                    label: 'Edit Retry Data',
+                    component: function EditRetryData() {
+                      return (
+                        <Fragment>
+                          {r.metadata &&
+                            r.metadata.isParent &&
+                            r.retryObject &&
+                            r.retryObject.isDataEditable && (
+                              <IconButton
+                                size="small"
+                                onClick={() => {
+                                  handleEditRetryDataClick(r._retryId);
+                                }}>
+                                <EditIcon />
+                              </IconButton>
+                            )}
+                        </Fragment>
+                      );
+                    },
+                  },
+                ]}
+              />
+            </Fragment>
+          )}
         </Fragment>
       )}
     </Fragment>

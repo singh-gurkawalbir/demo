@@ -7,7 +7,7 @@ import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import auth from './authentication';
+import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
@@ -264,6 +264,14 @@ export function shouldShowAppRouting(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function showSessionStatus(state, date) {
+  return fromAuth.showSessionStatus(state && state.auth, date);
+}
+
+export function sessionValidTimestamp(state) {
+  return state && state.auth && state.auth.authTimestamp;
 }
 // #endregion AUTHENTICATION SELECTORS
 
@@ -1283,6 +1291,18 @@ export function flowJobs(state) {
             : resourceMap.imports[cJob._importId].name,
         };
 
+        if (cJob.retries && cJob.retries.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          cJob.retries = cJob.retries.map(r => ({
+            ...r,
+            endedAtAsString:
+              r.endedAt &&
+              moment(r.endedAt).format(
+                `${preferences.dateFormat} ${preferences.timeFormat}`
+              ),
+          }));
+        }
+
         return { ...cJob, ...additionalChildProps };
       });
     }
@@ -1345,14 +1365,30 @@ export function jobErrors(state, jobId) {
   const jErrors = fromData.jobErrors(state.data, jobId);
   const preferences = userPreferences(state);
 
-  return jErrors.map(je => ({
-    ...je,
-    createdAtAsString:
-      je.createdAt &&
-      moment(je.createdAt).format(
-        `${preferences.dateFormat} ${preferences.timeFormat}`
-      ),
-  }));
+  return jErrors.map(je => {
+    let similarErrors = [];
+
+    if (je.similarErrors && je.similarErrors.length > 0) {
+      similarErrors = je.similarErrors.map(sje => ({
+        ...sje,
+        createdAtAsString:
+          sje.createdAt &&
+          moment(sje.createdAt).format(
+            `${preferences.dateFormat} ${preferences.timeFormat}`
+          ),
+      }));
+    }
+
+    return {
+      ...je,
+      createdAtAsString:
+        je.createdAt &&
+        moment(je.createdAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      similarErrors,
+    };
+  });
 }
 
 export function jobErrorRetryObject(state, retryId) {

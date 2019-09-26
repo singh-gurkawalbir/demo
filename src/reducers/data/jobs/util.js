@@ -115,10 +115,12 @@ export function parseJobFamily(job) {
   };
 
   if (children && children.length > 0) {
-    updatedJob.children = children.map(childJob => ({
-      ...DEFAULT_JOB_PROPS,
-      ...childJob,
-    }));
+    updatedJob.children = children
+      .filter(childJob => childJob !== null)
+      .map(childJob => ({
+        ...DEFAULT_JOB_PROPS,
+        ...childJob,
+      }));
   }
 
   return updatedJob;

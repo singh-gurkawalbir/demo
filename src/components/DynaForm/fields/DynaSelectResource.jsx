@@ -113,20 +113,14 @@ function DynaSelectResource(props) {
           const key = keys[i];
 
           if (typeof finalFilter[key] === 'object') {
-            const finalRes = Object.keys(finalFilter[key]).reduce(
-              (acc, curr) => {
-                const ret =
-                  acc && r[key] && r[key][curr] === finalFilter[key][curr];
-
-                return ret;
-              },
+            const result = Object.keys(finalFilter[key]).reduce(
+              (acc, curr) =>
+                acc && finalFilter[key][curr] === (r[key] && r[key][curr]),
               true
             );
 
-            if (!finalRes) return false;
-          }
-
-          if (r[key] !== finalFilter[key]) return false;
+            if (!result) return false;
+          } else if (r[key] !== finalFilter[key]) return false;
         }
       }
 

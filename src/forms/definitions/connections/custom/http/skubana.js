@@ -28,7 +28,7 @@ export default {
         {
           items: [
             { label: 'Production', value: 'production' },
-            { label: 'sandbox', value: 'Sandbox' },
+            { label: 'Sandbox', value: 'sandbox' },
           ],
         },
       ],

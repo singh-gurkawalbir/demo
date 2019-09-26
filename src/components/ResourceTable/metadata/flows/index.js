@@ -8,6 +8,7 @@ import Run from '../../actions/Flows/Run';
 import OnOff from '../../actions/Flows/OnOff';
 import ViewReferences from '../../actions/References';
 import Delete from '../../actions/Delete';
+import MappingDialog from '../../../MappingDialog/Mapping';
 
 export default {
   columns: [
@@ -22,7 +23,11 @@ export default {
     {
       heading: 'Field Mappings',
       value: function MappingAction(r) {
-        return <FieldMappings.component resource={r} />;
+        if (r && r.pageProcessors) {
+          return <FieldMappings.component resource={r} />;
+        } else if (r && r._importId) {
+          return <MappingDialog resourceId={r._importId} />;
+        }
       },
     },
     {
@@ -39,7 +44,7 @@ export default {
     },
     {
       heading: 'Off/On',
-      value: function action(r) {
+      value: function OffOnAction(r) {
         return <OnOff.component resource={r} />;
       },
     },

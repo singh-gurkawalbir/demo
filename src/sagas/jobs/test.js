@@ -22,7 +22,7 @@ import {
   startPollingForInProgressJobs,
   requestJobCollection,
   getJobCollection,
-  downloadDiagnosticsFile,
+  downloadFiles,
   cancelJob,
   resolveCommit,
   resolveAllCommit,
@@ -37,7 +37,6 @@ import {
   requestJobErrorCollection,
   requestRetryObjectAndJobErrorCollection,
   getJobErrors,
-  downloaErrorFile,
   resolveSelectedErrors,
   retrySelectedRetries,
   requestRetryData,
@@ -316,10 +315,10 @@ describe('job sagas', () => {
     });
   });
 
-  describe('downloadDiagnosticsFile saga', () => {
-    test('should succeed on successful api call', () => {
+  describe('downloadFiles saga', () => {
+    test('download diagnostics file - should succeed on successful api call', () => {
       const jobId = 'something';
-      const saga = downloadDiagnosticsFile({ jobId });
+      const saga = downloadFiles({ jobId, fileType: 'diagnostics' });
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL,
         { resourceId: jobId }
@@ -334,14 +333,82 @@ describe('job sagas', () => {
       const response = { signedURL: 'some url' };
 
       expect(saga.next(response).value).toEqual(
-        call(openExternalUrl, { url: response.signedURL })
+        all([response.signedURL].map(url => call(openExternalUrl, { url })))
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('download errors file - should succeed on successful api call', () => {
+      const jobId = 'something';
+      const saga = downloadFiles({ jobId, fileType: 'errors' });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.REQUEST_ERROR_FILE_URL,
+        { resourceId: jobId }
+      );
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+      );
+      const response = { signedURL: 'some url' };
+
+      expect(saga.next(response).value).toEqual(
+        all([response.signedURL].map(url => call(openExternalUrl, { url })))
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('download all files of a job - should succeed on successful api call', () => {
+      const jobId = 'something';
+      const saga = downloadFiles({ jobId });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL,
+        { resourceId: jobId }
+      );
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+      );
+      const response = {
+        signedURLs: ['some url', 'some other url', 'something else'],
+      };
+
+      expect(saga.next(response).value).toEqual(
+        all(response.signedURLs.map(url => call(openExternalUrl, { url })))
+      );
+      expect(saga.next().done).toEqual(true);
+    });
+
+    test('download selected files of a job - should succeed on successful api call', () => {
+      const jobId = 'something';
+      const saga = downloadFiles({ jobId, fileIds: ['f1', 'f2'] });
+      const { path, opts } = getRequestOptions(
+        actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL,
+        { resourceId: jobId }
+      );
+
+      expect(saga.next().value).toEqual(
+        call(apiCallWithRetry, {
+          path: `${path}?fileId=f1&fileId=f2`,
+          opts,
+        })
+      );
+      const response = { signedURLs: ['some url', 'some other url'] };
+
+      expect(saga.next(response).value).toEqual(
+        all(response.signedURLs.map(url => call(openExternalUrl, { url })))
       );
       expect(saga.next().done).toEqual(true);
     });
 
     test('should handle api error properly', () => {
       const jobId = 'something';
-      const saga = downloadDiagnosticsFile({ jobId });
+      const saga = downloadFiles({ jobId, fileType: 'diagnostics' });
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.REQUEST_DIAGNOSTICS_FILE_URL,
         { resourceId: jobId }
@@ -1397,48 +1464,6 @@ describe('job sagas', () => {
         take(actionTypes.JOB.ERROR.CLEAR)
       );
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
-    });
-  });
-
-  describe('downloaErrorFile saga', () => {
-    test('should succeed on successful api call', () => {
-      const jobId = 'something';
-      const saga = downloaErrorFile({ jobId });
-      const { path, opts } = getRequestOptions(
-        actionTypes.JOB.REQUEST_ERROR_FILE_URL,
-        { resourceId: jobId }
-      );
-
-      expect(saga.next().value).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts,
-        })
-      );
-      const response = { signedURL: 'some url' };
-
-      expect(saga.next(response).value).toEqual(
-        call(openExternalUrl, { url: response.signedURL })
-      );
-      expect(saga.next().done).toEqual(true);
-    });
-
-    test('should handle api error properly', () => {
-      const jobId = 'something';
-      const saga = downloaErrorFile({ jobId });
-      const { path, opts } = getRequestOptions(
-        actionTypes.JOB.REQUEST_ERROR_FILE_URL,
-        { resourceId: jobId }
-      );
-
-      expect(saga.next().value).toEqual(
-        call(apiCallWithRetry, {
-          path,
-          opts,
-        })
-      );
-      expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
   });

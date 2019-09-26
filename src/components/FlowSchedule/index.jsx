@@ -33,11 +33,7 @@ export default function FlowSchedule(props) {
     selectors.userProfilePreferencesProps(state)
   );
   const integration = useSelector(state =>
-    selectors.userProfilePreferencesProps(
-      state,
-      'integration',
-      flow._integrationId
-    )
+    selectors.resource(state, 'integrations', flow._integrationId)
   );
   let scheduleStartMinute = 0;
 
