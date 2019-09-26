@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
+import SignIn from '../../views/SignIn';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -50,6 +51,7 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
+        <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/flowbuilder" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
         <Route path={['/pg/edit', '/pg/add']} component={null} />

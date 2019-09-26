@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
 import TextToggle from '../../components/TextToggle';
@@ -19,6 +20,16 @@ import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
 
 const useStyles = makeStyles(theme => ({
+  celigoLogo: {
+    height: 36,
+    width: 120,
+    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
+  },
+  unauthenticatedAppBar: {
+    background: theme.palette.background.paper2,
+    height: 36,
+  },
+
   appBar: {
     background: theme.palette.background.paper2,
     marginLeft: theme.drawerWidth,
@@ -76,55 +87,64 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoAppBar() {
+export default function CeligoAppBar(props) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const authenticated = useSelector(state => selectors.isAuthenticated(state));
+  const { location } = props;
 
   return (
     <SlideOnScroll threshold={500}>
       <ElevateOnScroll threshold={250}>
-        <AppBar
-          color="inherit"
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: drawerOpened,
-          })}>
-          <Toolbar className="topBar" variant="dense">
-            <Breadcrumbs
-              maxItems={3}
-              separator={<ArrowRightIcon fontSize="small" />}
-              aria-label="breadcrumb"
-              className={classes.breadCrumb}>
-              <Link color="inherit" href="/pg">
-                Home
-              </Link>
-              <Link color="inherit" href="/pg">
-                Profile
-              </Link>
-              <Link color="inherit" href="/pg">
-                Subscription
-              </Link>
-              <Typography variant="body2" className={classes.addons}>
-                Add-ons
-              </Typography>
-            </Breadcrumbs>
-            <ul className={classes.topBarActions}>
-              <li>
-                <GlobalSearch />
-              </li>
-              <li>
-                <TextToggle
-                  defaultValue={1}
-                  exclusive
-                  options={[
-                    { value: 1, label: 'Production' },
-                    { value: 2, label: 'Sandbox' },
-                  ]}
-                />
-              </li>
-              <li>
-                <Notifications />
-                {/* <IconButton
+        {!authenticated ? (
+          <AppBar className={classes.unauthenticatedAppBar}>
+            {location && location.pathname === '/pg/signin' && (
+              <span className={classNames(classes.celigoLogo)} />
+            )}
+          </AppBar>
+        ) : (
+          <AppBar
+            color="inherit"
+            position="fixed"
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: drawerOpened,
+            })}>
+            <Toolbar className="topBar" variant="dense">
+              <Breadcrumbs
+                maxItems={3}
+                separator={<ArrowRightIcon fontSize="small" />}
+                aria-label="breadcrumb"
+                className={classes.breadCrumb}>
+                <Link color="inherit" href="/pg">
+                  Home
+                </Link>
+                <Link color="inherit" href="/pg">
+                  Profile
+                </Link>
+                <Link color="inherit" href="/pg">
+                  Subscription
+                </Link>
+                <Typography variant="body2" className={classes.addons}>
+                  Add-ons
+                </Typography>
+              </Breadcrumbs>
+              <ul className={classes.topBarActions}>
+                <li>
+                  <GlobalSearch />
+                </li>
+                <li>
+                  <TextToggle
+                    defaultValue={1}
+                    exclusive
+                    options={[
+                      { value: 1, label: 'Production' },
+                      { value: 2, label: 'Sandbox' },
+                    ]}
+                  />
+                </li>
+                <li>
+                  <Notifications />
+                  {/* <IconButton
                   size="small"
                   aria-label="show 17 new notifications"
                   color="inherit">
@@ -132,13 +152,14 @@ export default function CeligoAppBar() {
                     <NotificationsIcon />
                   </Badge>
                 </IconButton> */}
-              </li>
-              <li>
-                <ProfileMenuButton />
-              </li>
-            </ul>
-          </Toolbar>
-        </AppBar>
+                </li>
+                <li>
+                  <ProfileMenuButton />
+                </li>
+              </ul>
+            </Toolbar>
+          </AppBar>
+        )}
       </ElevateOnScroll>
     </SlideOnScroll>
   );

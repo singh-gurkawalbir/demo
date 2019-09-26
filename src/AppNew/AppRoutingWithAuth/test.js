@@ -10,8 +10,9 @@ import { render, cleanup } from '@testing-library/react';
 import { AppRoutingWithAuth } from './index';
 import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
-import { AllRoutes } from '..';
 import themeProvider from '../themeProvider';
+import AppRouting from '../AppRouting';
+
 // fireEvent
 // Ok, so here's what your tests might look like
 
@@ -72,7 +73,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   const someRoute = '/some-route';
   const WithAuth = props => (
     <AppRoutingWithAuth {...props}>
-      <AllRoutes />
+      <AppRouting />
     </AppRoutingWithAuth>
   );
   const wrappedHistory = withRouter(WithAuth);
