@@ -18,6 +18,7 @@ import ProfileMenuButton from '../ProfileMenuButton';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
+import LicenseAction from './LicenseAction';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -144,14 +145,9 @@ export default function CeligoAppBar(props) {
                 </li>
                 <li>
                   <Notifications />
-                  {/* <IconButton
-                  size="small"
-                  aria-label="show 17 new notifications"
-                  color="inherit">
-                  <Badge badgeContent={17} color="primary">
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton> */}
+                </li>
+                <li>
+                  <LicenseAction />
                 </li>
                 <li>
                   <ProfileMenuButton />
