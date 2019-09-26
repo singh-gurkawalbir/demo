@@ -5,14 +5,14 @@ import Icon from '../../../icons/DownloadIcon';
 
 export default {
   label: 'Download',
-  component: function DownloadResources({ resource }) {
+  component: function DownloadResources({ resourceType, resource }) {
     const dispatch = useDispatch();
 
     return (
       <IconButton
         size="small"
         onClick={() => {
-          dispatch(actions.resource.downloadFile(resource._id, 'flows'));
+          dispatch(actions.resource.downloadFile(resource._id, resourceType));
         }}>
         <Icon />
       </IconButton>

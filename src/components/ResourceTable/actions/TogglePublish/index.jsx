@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 // TODO Azhar
-import UnpublishIcon from '../../../../../components/icons/ExportsIcon';
-import PublishIcon from '../../../../../components/icons/ImportsIcon';
-import actions from '../../../../../actions';
+import UnpublishIcon from '../../../../components/icons/ExportsIcon';
+import PublishIcon from '../../../../components/icons/ImportsIcon';
+import actions from '../../../../actions';
 
 export default {
   label: 'Toggle Publish',
