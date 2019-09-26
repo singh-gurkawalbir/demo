@@ -1,6 +1,8 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import HookIcon from '../../../../../components/icons/HookIcon';
+import PublishIcon from '../../../../../components/icons/ExportsIcon';
+// TODO Azhar
+import UnpublishIcon from '../../../../../components/icons/ImportsIcon';
 import actions from '../../../../../actions';
 
 export default {
@@ -22,7 +24,7 @@ export default {
 
     return (
       <IconButton size="small" onClick={handleTogglePublishClick}>
-        {resource.published ? <HookIcon /> : <HookIcon />}
+        {resource.published ? <UnpublishIcon /> : <PublishIcon />}
       </IconButton>
     );
   },
