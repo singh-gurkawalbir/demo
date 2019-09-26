@@ -43,7 +43,7 @@ module.exports.sections = [
           'src/components/ErrorPanel/index.jsx',
           'src/components/Help/index.jsx',
           'src/components/HelpContent/index.jsx',
-          'src/components/IconButton/index.jsx',
+          'src/components/IconTextButton/index.jsx',
           'src/components/NotificationToaster/index.jsx',
           'src/components/Dynaform/fields/DynaSelectApplication/index.jsx',
           'src/components/Spinner/index.jsx',

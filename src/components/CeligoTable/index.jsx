@@ -175,7 +175,13 @@ export default function CeligoTable({
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map(({ label, component: Action }) => ({
+                  // rowActions may or may not be a fn. Sometimes
+                  // the actions are static, other times they are
+                  // determinant on the resource they apply to.
+                  actions={(typeof rowActions === 'function'
+                    ? rowActions(r)
+                    : rowActions
+                  ).map(({ label, component: Action }) => ({
                     label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
