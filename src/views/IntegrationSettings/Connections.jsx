@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import ResourceTable from '../../components/ResourceTable';
+import CeligoTable from '../../components/CeligoTable';
 import RegisterConnections from '../../components/RegisterConnections';
+import metadata from '../../components/ResourceTable/metadata/connections';
 
 const useStyles = makeStyles(() => ({
   registerButton: {
@@ -49,9 +50,11 @@ export default function Connections(props) {
           </Button>
         )}
 
-        <ResourceTable
+        <CeligoTable
           resourceType="connections"
-          resources={list && list.resources}
+          data={list && list.resources}
+          {...metadata}
+          actionProps={{ integrationId }}
         />
       </LoadResources>
     </Fragment>

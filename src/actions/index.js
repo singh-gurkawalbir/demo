@@ -64,6 +64,16 @@ const connection = {
       connectionIds,
       integrationId,
     }),
+  requestDeregister: (connectionId, integrationId) =>
+    action(actionTypes.CONNECTION.DEREGISTER_REQUEST, {
+      connectionId,
+      integrationId,
+    }),
+  completeDeregister: (deregisteredId, integrationId) =>
+    action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
+      deregisteredId,
+      integrationId,
+    }),
 };
 const marketplace = {
   requestConnectors: () =>

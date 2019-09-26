@@ -10,7 +10,7 @@ export default {
     {
       heading: 'Import Mappings',
       value: function MappingAction(r) {
-        return <Mapping.component resourceId={r && r._id} />;
+        return <Mapping resourceId={r && r._id} />;
       },
     },
   ],
