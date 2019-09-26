@@ -39,7 +39,7 @@ export default {
     },
     {
       heading: 'Off/On',
-      value: function action(r) {
+      value: function OffOnAction(r) {
         return <OnOff.component resource={r} />;
       },
     },

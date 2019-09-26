@@ -1,4 +1,4 @@
-import StandaloneImportMapping from '../AFE/ImportMapping/StandaloneImportMapping';
+import Mapping from './Mapping';
 
 export default {
   columns: [
@@ -9,8 +9,8 @@ export default {
     },
     {
       heading: 'Import Mappings',
-      value: function action(r) {
-        return <StandaloneImportMapping resourceId={r && r._id} />;
+      value: function MappingAction(r) {
+        return <Mapping.component resourceId={r && r._id} />;
       },
     },
   ],
