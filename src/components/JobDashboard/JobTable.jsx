@@ -90,8 +90,8 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({ jobId, parentJobId }) {
-    setShowErrorDialogFor({ jobId, parentJobId });
+  function handleViewErrorsClick({ jobId, parentJobId, showResolved = false }) {
+    setShowErrorDialogFor({ jobId, parentJobId, showResolved });
   }
 
   function handleJobErrorDialogCloseClick() {
@@ -150,6 +150,7 @@ function JobTable({
               selectedJobs={selectedJobs}
               userPermissionsOnIntegration={userPermissionsOnIntegration}
               onViewErrorsClick={handleViewErrorsClick}
+              integrationName={integrationName}
             />
           ))}
         </TableBody>
@@ -158,6 +159,7 @@ function JobTable({
         <JobErrorDialog
           jobId={showErrorDialogFor.jobId}
           parentJobId={showErrorDialogFor.parentJobId}
+          showResolved={showErrorDialogFor.showResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
           integrationName={integrationName}
         />

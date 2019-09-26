@@ -44,14 +44,19 @@ const styles = theme => ({
 
 function JobErrorDialog({
   classes,
-  // jobType,
   jobId,
   parentJobId,
+  showResolved,
+  numError,
+  numResolved,
   onCloseClick,
   integrationName,
 }) {
   const dispatch = useDispatch();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
+  const [errorCount, setErrorCount] = useState(
+    parentJobId ? undefined : numError + numResolved
+  );
   const flowJob = useSelector(state =>
     selectors.flowJob(state, { jobId: parentJobId || jobId })
   );
@@ -73,17 +78,20 @@ function JobErrorDialog({
   }, [flowJob]);
 
   useEffect(() => {
-    if (childJobId) {
+    if (childJobId && errorCount < 1000) {
       dispatch(
         actions.job.requestErrors({
           jobId: childJobId,
         })
       );
     } else if (flowJobChildrenLoaded) {
-      const jobsWithErrors = flowJob.children.filter(j => j.numError > 0);
+      const jobWithErrors = flowJob.children.find(j =>
+        showResolved ? j.numResolved > 0 : j.numError > 0
+      );
 
-      if (jobsWithErrors.length > 0) {
-        setChildJobId(jobsWithErrors[0]._id);
+      if (jobWithErrors) {
+        setErrorCount(jobWithErrors.numError + jobWithErrors.numResolved);
+        setChildJobId(jobWithErrors._id);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,6 +129,7 @@ function JobErrorDialog({
         ) : (
           <JobErrorTable
             jobErrors={jobErrors}
+            errorCount={errorCount}
             job={job}
             onCloseClick={onCloseClick}
           />
