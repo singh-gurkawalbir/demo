@@ -1,23 +1,32 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import IconTextButton from '../../../components/IconTextButton';
-import DownloadIcon from '../../../components/icons/DownloadIcon';
-import CalendarIcon from '../../../components/icons/CalendarIcon';
+import ExportIcon from '../../../components/icons/ExportsIcon';
+import ImportIcon from '../../../components/icons/ImportsIcon';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import * as selectors from '../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 
-const boxHeight = 100;
-const boxWidth = 150;
+const iconMap = {
+  exports: ExportIcon,
+  imports: ImportIcon,
+};
+const blockHeight = 100;
+const blockWidth = 150;
 const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
   box: {
     display: 'flex',
     borderRadius: 16,
     alignItems: 'center',
-    width: boxWidth,
-    height: boxHeight,
+    width: blockWidth,
+    height: blockHeight,
     border: 'solid 1px lightblue',
     padding: theme.spacing(1),
     cursor: 'move',
@@ -33,11 +42,6 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.palette.background.paper,
     alignSelf: 'center',
   },
-  flex: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-  },
   name: {
     margin: theme.spacing(0, 0, 1, 0),
   },
@@ -49,6 +53,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AppBlock({
+  children,
   forwardedRef,
   history,
   match,
@@ -72,34 +77,34 @@ function AppBlock({
   }
 
   return (
-    <div className={classes.flex}>
-      <IconTextButton
-        className={classes.resourceButton}
-        variant="contained"
-        color="primary"
-        onClick={handleResourceClick}>
-        <DownloadIcon />
-        {MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase()}
-      </IconTextButton>
-      <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
-        <ApplicationImg
-          size="large"
-          type={resource.adaptorType}
-          assistant={resource.assistant}
-        />
+    <div style={{ display: 'flex' }}>
+      <div className={classes.root}>
+        <IconTextButton
+          className={classes.resourceButton}
+          variant="contained"
+          color="primary"
+          onClick={handleResourceClick}>
+          {iconMap[resourceType]()}
+          {MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase()}
+        </IconTextButton>
+        <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
+          <ApplicationImg
+            size="large"
+            type={resource.adaptorType}
+            assistant={resource.assistant}
+          />
+        </div>
+        {children[1] /* <BottomActions> */}
+        <Typography className={classes.name} variant="body1">
+          {resource.name || resource.id}
+        </Typography>
       </div>
-      <div className={classes.bottomActionContainer}>
-        <IconButton>
-          <CalendarIcon />
-        </IconButton>
-      </div>
-      <Typography className={classes.name} variant="body1">
-        {resource.name || resource.id}
-      </Typography>
+      {children[0] /* <RightActions> */}
     </div>
   );
 }
 
+// TODO: whats the best pattern to address below violation?
 // eslint-disable-next-line react/display-name
 export default React.forwardRef((props, ref) => (
   <AppBlock {...props} forwardedRef={ref} />

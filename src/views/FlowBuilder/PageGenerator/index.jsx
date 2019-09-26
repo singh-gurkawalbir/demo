@@ -3,10 +3,22 @@ import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import { IconButton } from '@material-ui/core';
 import itemTypes from '../itemTypes';
+import CalendarIcon from '../../../components/icons/CalendarIcon';
+import TransformIcon from '../../../components/icons/DataTransformationIcon';
+import FilterIcon from '../../../components/icons/FilterIcon';
+import HookIcon from '../../../components/icons/HookIcon';
 import AppBlock from '../AppBlock';
+import RightActions from '../AppBlock/RightActions';
+import BottomActions from '../AppBlock/BottomActions';
 
-const pgBoxHeight = 100;
+/* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
+   We the block consts across several components and thus is a maintenance issue to 
+   manage as we enhance the FB layout. */
+const blockHeight = 100;
+const lineHeightOffset = 96;
+const lineWidth = 1;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
@@ -15,14 +27,15 @@ const useStyles = makeStyles(theme => ({
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
-    width: 50,
+    width: lineWidth,
+    marginTop: -theme.spacing(4),
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    top: -(pgBoxHeight + theme.spacing(5 * 2)) / 2,
-    height: pgBoxHeight + theme.spacing(5 * 2),
+    marginTop: -240,
+    height: blockHeight + lineHeightOffset,
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
@@ -45,14 +58,31 @@ const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
       <AppBlock
         match={match}
         history={history}
-        ref={ref}
+        ref={ref} /* ref is for drag and drop binding */
         resourceType="exports"
         resourceId={pg._exportId}
-        opacity={opacity}
-      />
+        opacity={opacity}>
+        <RightActions>
+          <IconButton>
+            <TransformIcon />
+          </IconButton>
+          <IconButton>
+            <FilterIcon />
+          </IconButton>
+          <IconButton>
+            <HookIcon />
+          </IconButton>
+        </RightActions>
+        <BottomActions>
+          <IconButton>
+            <CalendarIcon />
+          </IconButton>
+        </BottomActions>
+      </AppBlock>
       <div
-        className={clsx(classes.line, {
-          [classes.firstLine]: index === 0,
+        /* -- connecting line */
+        className={clsx({
+          [classes.line]: index > 0,
           [classes.connectingLine]: index > 0,
         })}
       />
