@@ -1,7 +1,7 @@
 export default {
   preSave: formValues => {
     const pingBody = {
-      Store_Code: '{{{connection.http.unencrypted.storeCode}}}',
+      Store_Code: '{{{connection.http.unencrypted.Store_Code}}}',
       Function: 'AvailabilityGroupList_Load_Query',
     };
 
@@ -49,8 +49,8 @@ export default {
         return subdomain;
       },
     },
-    'http.unencrypted.storeCode': {
-      id: 'http.unencrypted.storeCode',
+    'http.unencrypted.Store_Code': {
+      id: 'http.unencrypted.Store_Code',
       type: 'text',
       label: 'Store Code',
       helpText:
@@ -71,7 +71,7 @@ export default {
     fields: [
       'name',
       'http.apiEndpoint',
-      'http.unencrypted.storeCode',
+      'http.unencrypted.Store_Code',
       'xMivaAPIToken',
     ],
     type: 'collapse',

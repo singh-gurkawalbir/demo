@@ -24,7 +24,22 @@ export default {
     'netsuite.netsuiteExportlabel': { fieldId: 'netsuite.netsuiteExportlabel' },
     'netsuite.restlet.recordType': { fieldId: 'netsuite.restlet.recordType' },
     'netsuite.restlet.searchId': { fieldId: 'netsuite.restlet.searchId' },
-    type: { fieldId: 'type' },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      defaultValue: r => (r && r.type ? r.type : 'all'),
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+          ],
+        },
+      ],
+    },
     'delta.dateField': {
       fieldId: 'delta.dateField',
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
