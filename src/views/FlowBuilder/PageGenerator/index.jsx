@@ -1,48 +1,50 @@
 import { useRef } from 'react';
+import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import itemTypes from '../itemTypes';
+import CalendarIcon from '../../../components/icons/CalendarIcon';
+import TransformIcon from '../../../components/icons/DataTransformationIcon';
+import FilterIcon from '../../../components/icons/FilterIcon';
+import HookIcon from '../../../components/icons/HookIcon';
+import AppBlock from '../AppBlock';
+import RightActions from '../AppBlock/RightActions';
+import BottomActions from '../AppBlock/BottomActions';
 
-const pgBoxSize = 150;
+/* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
+   We the block consts across several components and thus is a maintenance issue to 
+   manage as we enhance the FB layout. */
+const blockHeight = 100;
+const lineHeightOffset = 96;
+const lineWidth = 1;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  pgBox: {
-    width: pgBoxSize,
-    height: pgBoxSize,
-    border: 'solid 1px lightblue',
-    padding: theme.spacing(1),
-    margin: theme.spacing(3, 0),
-    cursor: 'move',
-  },
-  processorActions: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    padding: theme.spacing(0, 1),
+    // marginBottom: theme.spacing(3),
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
-    width: 50,
+    width: lineWidth,
+    marginTop: -theme.spacing(4),
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    top: -(pgBoxSize + theme.spacing(3 * 2)) / 2,
-    height: pgBoxSize + theme.spacing(3 * 2),
+    marginTop: -240,
+    height: blockHeight + lineHeightOffset,
     position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
+const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
   const classes = useStyles();
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_GENERATOR, _id, index },
+    item: { type: itemTypes.PAGE_GENERATOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
@@ -52,13 +54,35 @@ const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   drag(ref);
 
   return (
-    <div id={_id} className={classes.pgContainer}>
-      <div ref={ref} className={classes.pgBox} style={{ opacity }}>
-        <Typography variant="h2">{name}</Typography>
-      </div>
+    <div className={classes.pgContainer}>
+      <AppBlock
+        match={match}
+        history={history}
+        ref={ref} /* ref is for drag and drop binding */
+        resourceType="exports"
+        resourceId={pg._exportId}
+        opacity={opacity}>
+        <RightActions>
+          <IconButton>
+            <TransformIcon />
+          </IconButton>
+          <IconButton>
+            <FilterIcon />
+          </IconButton>
+          <IconButton>
+            <HookIcon />
+          </IconButton>
+        </RightActions>
+        <BottomActions>
+          <IconButton>
+            <CalendarIcon />
+          </IconButton>
+        </BottomActions>
+      </AppBlock>
       <div
-        className={clsx(classes.line, {
-          [classes.firstLine]: index === 0,
+        /* -- connecting line */
+        className={clsx({
+          [classes.line]: index > 0,
           [classes.connectingLine]: index > 0,
         })}
       />
@@ -66,4 +90,4 @@ const PageGenerator = ({ _id, name, index /* , isLast */ }) => {
   );
 };
 
-export default PageGenerator;
+export default withRouter(PageGenerator);

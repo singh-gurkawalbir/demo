@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { confirmDialog } from '../../../ConfirmDialog';
-import Icon from '../../../icons/CloseIcon';
+import Icon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';

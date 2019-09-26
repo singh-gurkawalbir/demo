@@ -3,7 +3,14 @@ import { JOB_TYPES } from './constants';
 
 export default function getRequestOptions(
   action,
-  { resourceId, integrationId, osType, filters = {}, adaptorType } = {}
+  {
+    resourceId,
+    resourceType,
+    integrationId,
+    osType,
+    filters = {},
+    adaptorType,
+  } = {}
 ) {
   switch (action) {
     case actionTypes.USER_CREATE:
@@ -191,6 +198,14 @@ export default function getRequestOptions(
         path: `/flows/${resourceId}/run`,
         opts: { method: 'POST' },
       };
+    case actionTypes.RESOURCE.DOWNLOAD_FILE:
+      if (resourceType === 'flows') {
+        return {
+          path: `/${resourceType}/${resourceId}/template`,
+        };
+      }
+
+      break;
     case actionTypes.METADATA.ASSISTANT_REQUEST:
       return {
         path:
