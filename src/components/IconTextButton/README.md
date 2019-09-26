@@ -4,20 +4,20 @@ const AddIcon = require('../icons/AddIcon').default;
 const CloseIcon = require('../icons/CloseIcon').default;
 
 <SpacedContainer>
-  <IconButton variant="contained">
+  <IconTextButton variant="contained">
     <AddIcon /> Click Me
-  </IconButton>
+  </IconTextButton>
 
-  <IconButton color="primary" variant="contained">
+  <IconTextButton color="primary" variant="contained">
     <AddIcon /> Click Me Again <CloseIcon />
-  </IconButton>
+  </IconTextButton>
 
-  <IconButton color="primary" variant="contained">
+  <IconTextButton color="primary" variant="contained">
     Click Me <CloseIcon />
-  </IconButton>
+  </IconTextButton>
 
-  <IconButton color="secondary" variant="outlined">
+  <IconTextButton color="secondary" variant="outlined">
     <AddIcon /> Click Me <CloseIcon />
-  </IconButton>
+  </IconTextButton>
 </SpacedContainer>
 ```

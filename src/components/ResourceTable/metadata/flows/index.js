@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import DetachFlow from '../../actions/Flows/Detach';
 import ViewAuditLog from '../../actions/AuditLogs';
 import DownloadFlow from '../../actions/Download';
@@ -7,13 +8,14 @@ import Run from '../../actions/Flows/Run';
 import OnOff from '../../actions/Flows/OnOff';
 import ViewReferences from '../../actions/References';
 import Delete from '../../actions/Delete';
-import { getResourceLink } from '../../../CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Flow Name',
-      value: r => getResourceLink('flows', r),
+      value: function FlowBuilderLink(r) {
+        return <Link to={`/pg/flowBuilder/${r._id}`}>{r.name || r._id}</Link>;
+      },
       orderBy: 'name',
     },
     { heading: 'Description', value: r => r && r.description },
@@ -25,19 +27,19 @@ export default {
     },
     {
       heading: 'Schedule',
-      value: function MappingAction(r) {
+      value: function ScheduleAction(r) {
         return <Schedule.component resource={r} />;
       },
     },
     {
       heading: 'Run',
-      value: function MappingAction(r) {
+      value: function RunAction(r) {
         return <Run.component resource={r} />;
       },
     },
     {
       heading: 'Off/On',
-      value: function MappingAction(r) {
+      value: function OffOnAction(r) {
         return <OnOff.component resource={r} />;
       },
     },
