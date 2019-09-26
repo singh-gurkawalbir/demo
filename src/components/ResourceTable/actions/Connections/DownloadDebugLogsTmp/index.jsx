@@ -6,7 +6,7 @@ import openExternalUrl from '../../../../../utils/window';
 
 export default {
   label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource }) {
+  component: function DownloadDebugLogsTmp({ resource }) {
     let url = `/api/connections/${resource._id}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)

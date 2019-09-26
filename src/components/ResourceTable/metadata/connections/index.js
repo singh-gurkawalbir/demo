@@ -1,7 +1,7 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
-import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
+import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogsTmp';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
