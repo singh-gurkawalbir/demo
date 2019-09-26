@@ -179,7 +179,7 @@ export default function CeligoTable({
                   // the actions are static, other times they are
                   // determinant on the resource they apply to.
                   actions={(typeof rowActions === 'function'
-                    ? rowActions(r)
+                    ? rowActions(r, actionProps)
                     : rowActions
                   ).map(({ label, component: Action }) => ({
                     label,

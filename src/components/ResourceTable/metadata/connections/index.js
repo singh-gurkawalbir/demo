@@ -10,6 +10,7 @@ import {
   formatLastModified,
   getConnectorName,
 } from '../../../CeligoTable/util';
+import Deregister from '../../actions/Connections/Deregister';
 
 export default {
   columns: [
@@ -46,12 +47,25 @@ export default {
       },
     },
   ],
-  rowActions: () => [
-    Delete,
-    References,
-    ConfigureDebugger,
-    DownloadDebugLogs,
-    AuditLogs,
-    RefreshMetadata,
-  ],
+  rowActions: (r, actionProps) => {
+    if (actionProps.integrationId) {
+      return [
+        Deregister,
+        References,
+        ConfigureDebugger,
+        DownloadDebugLogs,
+        AuditLogs,
+        RefreshMetadata,
+      ];
+    }
+
+    return [
+      Delete,
+      References,
+      ConfigureDebugger,
+      DownloadDebugLogs,
+      AuditLogs,
+      RefreshMetadata,
+    ];
+  },
 };
