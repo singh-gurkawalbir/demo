@@ -10,9 +10,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -20,8 +17,6 @@ import JsonEditorDialog from '../JsonEditorDialog';
 import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
 import JobErrorDetail from './JobErrorDetail';
-import CeligoTable from '../../components/CeligoTable';
-import JobErrorMessage from './JobErrorMessage';
 
 const styles = theme => ({
   root: {
@@ -92,24 +87,6 @@ function JobErrorTable({
     jobErrorId => selectedErrors[jobErrorId]
   ).length;
   const [editDataOfRetryId, setEditDataOfRetryId] = useState();
-  const [expanded, setExpanded] = useState({});
-  const CeligoTableData = [];
-
-  console.log(`expanded ${JSON.stringify(expanded)}`);
-
-  jobErrorsInCurrentPage.forEach(j => {
-    CeligoTableData.push({
-      ...j,
-      metadata: { isParent: true, expanded: !!expanded[j._id] },
-    });
-
-    if (expanded[j._id]) {
-      j.similarErrors.forEach(se => {
-        CeligoTableData.push(se);
-      });
-    }
-  });
-  console.log(`CeligoTableData ${CeligoTableData.length}`);
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
@@ -280,11 +257,6 @@ function JobErrorTable({
     setEditDataOfRetryId();
   }
 
-  function handleExpandCollapseClick(errorId) {
-    console.log(`in handleExpandCollapseClick ${errorId}`);
-    setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
-  }
-
   return (
     <Fragment>
       {editDataOfRetryId &&
@@ -364,60 +336,6 @@ function JobErrorTable({
                 }}
                 onChangePage={handleChangePage}
                 // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              />
-
-              <CeligoTable
-                data={CeligoTableData}
-                selectableRows
-                columns={[
-                  {
-                    heading: '',
-                    value: r =>
-                      r.similarErrors &&
-                      r.similarErrors.length > 0 && (
-                        <IconButton
-                          onClick={() => {
-                            handleExpandCollapseClick(r._id);
-                          }}>
-                          {r.metadata && r.metadata.expanded ? (
-                            <ExpandMore />
-                          ) : (
-                            <ChevronRight />
-                          )}
-                        </IconButton>
-                      ),
-                  },
-                  {
-                    heading: 'Resolved?',
-                    value: r => (r.resolved ? 'Yes' : 'No'),
-                  },
-                  {
-                    heading: 'Source',
-                    value: r => r.source,
-                  },
-                  {
-                    heading: 'Code',
-                    value: r => r.code,
-                  },
-                  {
-                    heading: 'Message',
-                    value: r => (
-                      <JobErrorMessage
-                        message={r.message}
-                        exportDataURI={r.exportDataURI}
-                        importDataURI={r.importDataURI}
-                      />
-                    ),
-                  },
-                  {
-                    heading: 'Time',
-                    value: r => r.createdAtAsString,
-                  },
-                  {
-                    heading: 'Retry Data',
-                    value: r => r.abc,
-                  },
-                ]}
               />
 
               <Table className={classes.table}>
