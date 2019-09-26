@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { IconButton } from '@material-ui/core';
-import Icon from '../icons/MapDataIcon';
+import MappingIcon from '../icons/MapDataIcon';
 import StandaloneImportMapping from '../AFE/ImportMapping/StandaloneImportMapping';
 
 export default {
@@ -20,12 +20,11 @@ export default {
         {showDialog && (
           <StandaloneImportMapping
             resourceId={resourceId}
-            title="Field Mappings"
             onClose={handleClose}
           />
         )}
         <IconButton size="small" onClick={onFieldMappingClick}>
-          <Icon />
+          <MappingIcon />
         </IconButton>
       </Fragment>
     );
