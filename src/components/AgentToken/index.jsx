@@ -3,8 +3,8 @@ import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
-import ViewIcon from '../icons/InfoIcon';
-import GenerateIcon from '../icons/TransferIcon';
+import ShowContentIcon from '../icons/ShowContentIcon';
+import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 
@@ -55,14 +55,14 @@ export default function AgentToken({ agentId }) {
       )}
       {!accessToken && (
         <IconButton title="View Token" onClick={displayAgentToken} size="small">
-          <ViewIcon />
+          <ShowContentIcon />
         </IconButton>
       )}
       <IconButton
         title="Re-generate Token"
         onClick={changeAgentToken}
         size="small">
-        <GenerateIcon />
+        <RefreshIcon />
       </IconButton>
     </div>
   );
