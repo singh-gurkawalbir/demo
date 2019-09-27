@@ -362,62 +362,59 @@ const metadata = {
   },
 };
 const fileDefinitions = {
-  supported: {
-    request: () => action(actionTypes.FILE_DEFINITIONS.SUPPORTED.REQUEST),
+  preBuilt: {
+    request: () => action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST),
     received: fileDefinitions =>
-      action(actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED, {
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED, {
         fileDefinitions,
       }),
     receivedError: error =>
-      action(actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED_ERROR, {
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR, {
         error,
       }),
   },
-  userSupported: {
-    request: () => action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST),
+  userDefined: {
+    request: () => action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST),
     received: fileDefinitions =>
-      action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED, {
+      action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED, {
         fileDefinitions,
       }),
     receivedError: error =>
-      action(actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED_ERROR, {
+      action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED_ERROR, {
         error,
       }),
   },
   definition: {
-    supported: {
+    preBuilt: {
       request: (format, definitionId) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.UPDATE, {
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.UPDATE, {
           format,
           definitionId,
         }),
       received: (definition, format, definitionId) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.RECEIVED, {
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED, {
           definition,
           format,
           definitionId,
         }),
     },
-    userSupported: {
+    userDefined: {
       request: (definitionRules, formValues) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.REQUEST, {
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.REQUEST, {
           definitionRules,
           formValues,
         }),
       update: (definitionId, definitionRules, formValues) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE, {
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.UPDATE, {
           definitionId,
           definitionRules,
           formValues,
         }),
       received: (definition, definitionId) =>
-        action(
-          actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.RECEIVED,
-          {
-            definition,
-            definitionId,
-          }
-        ),
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.RECEIVED, {
+          definition,
+          definitionId,
+        }),
     },
   },
 };

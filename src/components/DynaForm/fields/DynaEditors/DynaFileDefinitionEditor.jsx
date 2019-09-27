@@ -41,7 +41,7 @@ function DynaFileDefinitionEditor(props) {
     // We make a fetch call to load all userSupportedFileDefinitions
 
     if (!userSupportedFileDefinitions.length && !status) {
-      dispatch(actions.fileDefinitions.userSupported.request());
+      dispatch(actions.fileDefinitions.userDefined.request());
     }
   }, [dispatch, status, userDefinitionId, userSupportedFileDefinitions.length]);
 

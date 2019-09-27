@@ -16,13 +16,13 @@ function* getFileDefinitions() {
       },
     });
 
-    yield put(actions.fileDefinitions.supported.received(fileDefinitions));
+    yield put(actions.fileDefinitions.preBuilt.received(fileDefinitions));
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 
-      yield put(actions.fileDefinitions.supported.receivedError(parsedError));
+      yield put(actions.fileDefinitions.preBuilt.receivedError(parsedError));
     }
   }
 }
@@ -39,15 +39,13 @@ function* getUserFileDefinitions() {
       },
     });
 
-    yield put(actions.fileDefinitions.userSupported.received(fileDefinitions));
+    yield put(actions.fileDefinitions.userDefined.received(fileDefinitions));
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 
-      yield put(
-        actions.fileDefinitions.userSupported.receivedError(parsedError)
-      );
+      yield put(actions.fileDefinitions.userDefined.receivedError(parsedError));
     }
   }
 }
@@ -62,7 +60,7 @@ function* getDefinition({ definitionId, format }) {
     });
 
     yield put(
-      actions.fileDefinitions.definition.supported.received(
+      actions.fileDefinitions.definition.preBuilt.received(
         definition,
         format,
         definitionId
@@ -74,7 +72,7 @@ function* getDefinition({ definitionId, format }) {
       const parsedError = JSON.parse(e.message);
 
       yield put(
-        actions.fileDefinitions.definition.supported.receivedError(parsedError)
+        actions.fileDefinitions.definition.preBuilt.receivedError(parsedError)
       );
     }
   }
@@ -102,7 +100,7 @@ function* saveUserFileDefinition({
     });
 
     yield put(
-      actions.fileDefinitions.definition.userSupported.received(
+      actions.fileDefinitions.definition.userDefined.received(
         definition,
         definitionId
       )
@@ -118,7 +116,7 @@ function* saveUserFileDefinition({
       const parsedError = JSON.parse(e.message);
 
       yield put(
-        actions.fileDefinitions.definition.userSupported.receivedError(
+        actions.fileDefinitions.definition.userDefined.receivedError(
           parsedError
         )
       );
@@ -135,21 +133,21 @@ function* saveUserFileDefinition({
 
 export default [
   takeLatest(
-    actionTypes.FILE_DEFINITIONS.SUPPORTED.REQUEST,
+    actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST,
     getFileDefinitions
   ),
   takeLatest(
-    actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST,
+    actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST,
     getUserFileDefinitions
   ),
   takeLatest(
-    actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.UPDATE,
+    actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.UPDATE,
     getDefinition
   ),
   takeLatest(
     [
-      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.REQUEST,
-      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.UPDATE,
+      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.REQUEST,
+      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.UPDATE,
     ],
     saveUserFileDefinition
   ),

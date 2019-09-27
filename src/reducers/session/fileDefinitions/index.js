@@ -53,8 +53,8 @@ function addDefinition(definitions, definitionId, definition) {
 
 export default (
   state = {
-    supportedFileDefinitions: {},
-    userSupportedFileDefinitions: {},
+    preBuiltFileDefinitions: {},
+    userDefinedFileDefinitions: {},
   },
   action
 ) => {
@@ -69,49 +69,49 @@ export default (
   let newState;
 
   switch (type) {
-    case actionTypes.FILE_DEFINITIONS.SUPPORTED.REQUEST: {
-      newState = { ...state.supportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST: {
+      newState = { ...state.preBuiltFileDefinitions };
       newState.status = 'requested';
 
-      return { ...state, ...{ supportedFileDefinitions: newState } };
+      return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.REQUEST:
-      newState = { ...state.userSupportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST:
+      newState = { ...state.userDefinedFileDefinitions };
       newState.status = 'requested';
 
-      return { ...state, ...{ userSupportedFileDefinitions: newState } };
+      return { ...state, ...{ userDefinedFileDefinitions: newState } };
 
-    case actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED: {
-      newState = { ...state.supportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED: {
+      newState = { ...state.preBuiltFileDefinitions };
       newState.status = 'received';
       newState.data = generateFileDefinitionOptions(fileDefinitions || {});
 
-      return { ...state, ...{ supportedFileDefinitions: newState } };
+      return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED:
-      newState = { ...state.userSupportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED:
+      newState = { ...state.userDefinedFileDefinitions };
       newState.status = 'received';
       newState.data = fileDefinitions || [];
 
-      return { ...state, ...{ userSupportedFileDefinitions: newState } };
+      return { ...state, ...{ userDefinedFileDefinitions: newState } };
 
-    case actionTypes.FILE_DEFINITIONS.DEFINITION.SUPPORTED.RECEIVED: {
-      newState = { ...state.supportedFileDefinitions };
-      newState.data = { ...state.supportedFileDefinitions.data };
-      newState.data[format] = [...state.supportedFileDefinitions.data[format]];
+    case actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED: {
+      newState = { ...state.preBuiltFileDefinitions };
+      newState.data = { ...state.preBuiltFileDefinitions.data };
+      newState.data[format] = [...state.preBuiltFileDefinitions.data[format]];
       newState.data[format] = addDefinition(
         newState.data[format],
         definitionId,
         definition
       );
 
-      return { ...state, ...{ supportedFileDefinitions: newState } };
+      return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.DEFINITION.USER_SUPPORTED.RECEIVED: {
-      newState = { ...state.userSupportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.RECEIVED: {
+      newState = { ...state.userDefinedFileDefinitions };
 
       if (definitionId) {
         const definitionIndexToUpdate = newState.data.findIndex(
@@ -119,42 +119,39 @@ export default (
         );
 
         newState.data = [
-          ...state.userSupportedFileDefinitions.data.slice(
+          ...state.userDefinedFileDefinitions.data.slice(
             0,
             definitionIndexToUpdate
           ),
           definition,
-          ...state.userSupportedFileDefinitions.data.slice(
+          ...state.userDefinedFileDefinitions.data.slice(
             definitionIndexToUpdate + 1
           ),
         ];
       } else {
-        newState.data = [
-          ...state.userSupportedFileDefinitions.data,
-          definition,
-        ];
+        newState.data = [...state.userDefinedFileDefinitions.data, definition];
       }
 
       newState.status = 'received';
 
-      return { ...state, ...{ userSupportedFileDefinitions: newState } };
+      return { ...state, ...{ userDefinedFileDefinitions: newState } };
     }
 
     // Error handlers for all the requested actions
-    case actionTypes.FILE_DEFINITIONS.SUPPORTED.RECEIVED_ERROR: {
-      newState = { ...state.supportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR: {
+      newState = { ...state.preBuiltFileDefinitions };
       newState.status = 'error';
       newState.errorMessage = error;
 
-      return { ...state, ...{ supportedFileDefinitions: newState } };
+      return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.USER_SUPPORTED.RECEIVED_ERROR:
-      newState = { ...state.userSupportedFileDefinitions };
+    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED_ERROR:
+      newState = { ...state.userDefinedFileDefinitions };
       newState.status = 'error';
       newState.errorMessage = error;
 
-      return { ...state, ...{ userSupportedFileDefinitions: newState } };
+      return { ...state, ...{ userDefinedFileDefinitions: newState } };
     default:
       return { ...state };
   }
@@ -163,35 +160,35 @@ export default (
 export const getSupportedFileDefinitions = (state, format) => ({
   data:
     (state &&
-      state.supportedFileDefinitions &&
-      state.supportedFileDefinitions.data &&
-      state.supportedFileDefinitions.data[format]) ||
+      state.preBuiltFileDefinitions &&
+      state.preBuiltFileDefinitions.data &&
+      state.preBuiltFileDefinitions.data[format]) ||
     [],
   status:
     state &&
-    state.supportedFileDefinitions &&
-    state.supportedFileDefinitions.status,
+    state.preBuiltFileDefinitions &&
+    state.preBuiltFileDefinitions.status,
 });
 
 export const getUserSupportedFileDefinitions = state => ({
   data:
     (state &&
-      state.userSupportedFileDefinitions &&
-      state.userSupportedFileDefinitions.data) ||
+      state.userDefinedFileDefinitions &&
+      state.userDefinedFileDefinitions.data) ||
     [],
   status:
     state &&
-    state.userSupportedFileDefinitions &&
-    state.userSupportedFileDefinitions.status,
+    state.userDefinedFileDefinitions &&
+    state.userDefinedFileDefinitions.status,
 });
 
 const getDefinitionTemplate = (state, format, definitionId, resourceType) => {
   if (!format || !definitionId || !resourceType) return undefined;
   const definitions =
     state &&
-    state.supportedFileDefinitions &&
-    state.supportedFileDefinitions.data &&
-    state.supportedFileDefinitions.data[format];
+    state.preBuiltFileDefinitions &&
+    state.preBuiltFileDefinitions.data &&
+    state.preBuiltFileDefinitions.data[format];
   const definition = (definitions || []).find(
     def => def.value === definitionId
   );
@@ -201,11 +198,10 @@ const getDefinitionTemplate = (state, format, definitionId, resourceType) => {
   return resourceType === 'exports' ? parse : generate;
 };
 
-const getUserSupportedDefinition = (state, definitionId) => {
-  if (!definitionId || !state.userSupportedFileDefinitions.data)
-    return undefined;
+const getUserDefinedDefinition = (state, definitionId) => {
+  if (!definitionId || !state.userDefinedFileDefinitions.data) return undefined;
 
-  return state.userSupportedFileDefinitions.data.find(
+  return state.userDefinedFileDefinitions.data.find(
     def => def._id === definitionId
   );
 };
@@ -214,7 +210,7 @@ export const getFileDefinition = (state, definitionId, options) => {
   const { format, resourceType, type } = options;
 
   if (type === 'user') {
-    return getUserSupportedDefinition(state, definitionId);
+    return getUserDefinedDefinition(state, definitionId);
   }
 
   return getDefinitionTemplate(state, format, definitionId, resourceType);

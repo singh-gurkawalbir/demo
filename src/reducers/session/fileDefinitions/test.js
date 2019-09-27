@@ -8,30 +8,30 @@ describe('File Definitions', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: {},
-      userSupportedFileDefinitions: {},
+      preBuiltFileDefinitions: {},
+      userDefinedFileDefinitions: {},
     });
   });
   test('should update status as requested on request action', () => {
     const state = reducer(
       undefined,
-      actions.fileDefinitions.supported.request()
+      actions.fileDefinitions.preBuilt.request()
     );
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: { status: 'requested' },
-      userSupportedFileDefinitions: {},
+      preBuiltFileDefinitions: { status: 'requested' },
+      userDefinedFileDefinitions: {},
     });
   });
   test('should update data as empty when received nothing on received action', () => {
     const state = reducer(
       undefined,
-      actions.fileDefinitions.supported.received()
+      actions.fileDefinitions.preBuilt.received()
     );
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: { status: 'received', data: {} },
-      userSupportedFileDefinitions: {},
+      preBuiltFileDefinitions: { status: 'received', data: {} },
+      userDefinedFileDefinitions: {},
     });
   });
   test('should update data on received action', () => {
@@ -65,11 +65,11 @@ describe('File Definitions', () => {
     };
     const state = reducer(
       undefined,
-      actions.fileDefinitions.supported.received(sampleFileDefinitions)
+      actions.fileDefinitions.preBuilt.received(sampleFileDefinitions)
     );
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: {
+      preBuiltFileDefinitions: {
         status: 'received',
         data: {
           edi: [
@@ -104,7 +104,7 @@ describe('File Definitions', () => {
           ],
         },
       },
-      userSupportedFileDefinitions: {},
+      userDefinedFileDefinitions: {},
     });
   });
   test('should update template with the received definition on received action', () => {
@@ -120,11 +120,11 @@ describe('File Definitions', () => {
     };
     const fileDefinitionsReceivedState = reducer(
       undefined,
-      actions.fileDefinitions.supported.received(sampleFileDefinitions)
+      actions.fileDefinitions.preBuilt.received(sampleFileDefinitions)
     );
     const state = reducer(
       fileDefinitionsReceivedState,
-      actions.fileDefinitions.definition.supported.received(
+      actions.fileDefinitions.definition.preBuilt.received(
         { generate: {}, parse: {} },
         'edi',
         'amazonedi850'
@@ -132,7 +132,7 @@ describe('File Definitions', () => {
     );
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: {
+      preBuiltFileDefinitions: {
         data: {
           edi: [
             {
@@ -146,48 +146,48 @@ describe('File Definitions', () => {
         },
         status: 'received',
       },
-      userSupportedFileDefinitions: {},
+      userDefinedFileDefinitions: {},
     });
   });
   test('should update status as error on receivedError action', () => {
     const requestedState = reducer(
       undefined,
-      reducer(undefined, actions.fileDefinitions.supported.request())
+      reducer(undefined, actions.fileDefinitions.preBuilt.request())
     );
     const state = reducer(
       requestedState,
-      actions.fileDefinitions.supported.receivedError('Error Occured')
+      actions.fileDefinitions.preBuilt.receivedError('Error Occured')
     );
 
     expect(state).toMatchObject({
-      supportedFileDefinitions: {
+      preBuiltFileDefinitions: {
         status: 'error',
         errorMessage: 'Error Occured',
       },
-      userSupportedFileDefinitions: {},
+      userDefinedFileDefinitions: {},
     });
   });
   describe('User Supported', () => {
     test('should update status as requested on user supported request action', () => {
       const state = reducer(
         undefined,
-        actions.fileDefinitions.userSupported.request()
+        actions.fileDefinitions.userDefined.request()
       );
 
       expect(state).toMatchObject({
-        supportedFileDefinitions: {},
-        userSupportedFileDefinitions: { status: 'requested' },
+        preBuiltFileDefinitions: {},
+        userDefinedFileDefinitions: { status: 'requested' },
       });
     });
     test('should update data as empty when received nothing on user supported received  action', () => {
       const state = reducer(
         undefined,
-        actions.fileDefinitions.userSupported.received()
+        actions.fileDefinitions.userDefined.received()
       );
 
       expect(state).toMatchObject({
-        supportedFileDefinitions: {},
-        userSupportedFileDefinitions: { status: 'received', data: [] },
+        preBuiltFileDefinitions: {},
+        userDefinedFileDefinitions: { status: 'received', data: [] },
       });
     });
     test('should update data on user supported received action', () => {
@@ -209,12 +209,12 @@ describe('File Definitions', () => {
       ];
       const state = reducer(
         undefined,
-        actions.fileDefinitions.userSupported.received(sampleUserFileDefinition)
+        actions.fileDefinitions.userDefined.received(sampleUserFileDefinition)
       );
 
       expect(state).toMatchObject({
-        supportedFileDefinitions: {},
-        userSupportedFileDefinitions: {
+        preBuiltFileDefinitions: {},
+        userDefinedFileDefinitions: {
           data: [
             {
               _id: '5d70a16eb0cc4065d098282b',
@@ -254,11 +254,11 @@ describe('File Definitions', () => {
       ];
       const receivedUserFileDefinitionsState = reducer(
         undefined,
-        actions.fileDefinitions.userSupported.received(sampleUserFileDefinition)
+        actions.fileDefinitions.userDefined.received(sampleUserFileDefinition)
       );
       const state = reducer(
         receivedUserFileDefinitionsState,
-        actions.fileDefinitions.definition.userSupported.received(
+        actions.fileDefinitions.definition.userDefined.received(
           {
             _id: '5d70a16eb0cc4065d098282b',
             lastModified: '2019-09-05T05:47:26.540Z',
@@ -278,8 +278,8 @@ describe('File Definitions', () => {
       );
 
       expect(state).toMatchObject({
-        supportedFileDefinitions: {},
-        userSupportedFileDefinitions: {
+        preBuiltFileDefinitions: {},
+        userDefinedFileDefinitions: {
           data: [
             {
               _id: '5d70a16eb0cc4065d098282b',
@@ -320,11 +320,11 @@ describe('File Definitions', () => {
       ];
       const receivedUserFileDefinitionsState = reducer(
         undefined,
-        actions.fileDefinitions.userSupported.received(sampleUserFileDefinition)
+        actions.fileDefinitions.userDefined.received(sampleUserFileDefinition)
       );
       const state = reducer(
         receivedUserFileDefinitionsState,
-        actions.fileDefinitions.definition.userSupported.received({
+        actions.fileDefinitions.definition.userDefined.received({
           _id: '5d70a16eb0cc4065d098282c',
           lastModified: '2019-09-05T05:47:26.540Z',
           name: '84 Lumber',
@@ -341,8 +341,8 @@ describe('File Definitions', () => {
       );
 
       expect(state).toMatchObject({
-        supportedFileDefinitions: {},
-        userSupportedFileDefinitions: {
+        preBuiltFileDefinitions: {},
+        userDefinedFileDefinitions: {
           data: [
             {
               _id: '5d70a16eb0cc4065d098282b',

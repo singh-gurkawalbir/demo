@@ -31,7 +31,7 @@ const SaveFileDefinitionButton = props => {
         definitionRules.fileDefinition._id
       ) {
         dispatch(
-          actions.fileDefinitions.definition.userSupported.update(
+          actions.fileDefinitions.definition.userDefined.update(
             definitionRules.fileDefinition._id,
             definitionRules.fileDefinition || {},
             { resourceId, resourceType, values }
@@ -39,7 +39,7 @@ const SaveFileDefinitionButton = props => {
         );
       } else {
         dispatch(
-          actions.fileDefinitions.definition.userSupported.request(
+          actions.fileDefinitions.definition.userDefined.request(
             definitionRules.fileDefinition || {},
             { resourceId, resourceType, values }
           )

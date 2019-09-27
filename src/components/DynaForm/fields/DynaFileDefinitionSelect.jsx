@@ -25,7 +25,7 @@ export default function DynaFileDefinitionSelect(props) {
 
     if (!definitionSelected.template) {
       dispatch(
-        actions.fileDefinitions.definition.supported.request(format, value)
+        actions.fileDefinitions.definition.preBuilt.request(format, value)
       );
     }
 
@@ -37,7 +37,7 @@ export default function DynaFileDefinitionSelect(props) {
     // Else status will be 'request', 'received' or 'error'
 
     if (isNewId(resourceId) && !fileDefinitions.length && !status) {
-      dispatch(actions.fileDefinitions.supported.request());
+      dispatch(actions.fileDefinitions.preBuilt.request());
     }
   }, [dispatch, fileDefinitions, resourceId, status]);
 
