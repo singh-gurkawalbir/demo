@@ -35,6 +35,12 @@ const useStyles = makeStyles(theme => ({
     '&:hover > td:last-child > div': {
       display: 'flex',
     },
+    '&:hover > th:before': {
+      backgroundColor: theme.palette.primary.main,
+    },
+    '&:hover > td:before': {
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   actionCell: {
     padding: `0 !important`,

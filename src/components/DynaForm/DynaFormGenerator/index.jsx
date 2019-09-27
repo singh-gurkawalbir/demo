@@ -9,6 +9,7 @@ const useStyles = makeStyles({
   fieldsContainer: {
     display: 'flex',
     flexDirection: 'column',
+    width: '100%',
   },
   container: {
     display: 'flex',

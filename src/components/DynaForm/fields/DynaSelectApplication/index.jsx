@@ -90,6 +90,14 @@ export default function SelectApplication(props) {
         borderColor: theme.palette.primary.main,
       },
     }),
+    menu: () => ({
+      zIndex: 2,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      position: 'absolute',
+      backgroundColor: theme.palette.background.paper,
+      width: '100%',
+    }),
     input: () => ({
       color: theme.palette.secondary.light,
     }),

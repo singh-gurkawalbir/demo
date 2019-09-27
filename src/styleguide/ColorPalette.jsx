@@ -73,6 +73,7 @@ const neutral = {
   celigoNeutral6: colors.celigoNeutral6,
   celigoNeutral7: colors.celigoNeutral7,
   celigoNeutral8: colors.celigoNeutral8,
+  celigoNeutral9: colors.celigoNeutral9,
 };
 const Tiles = ({ colors }) =>
   Object.keys(colors).map(key => (

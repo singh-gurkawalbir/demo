@@ -15,10 +15,11 @@ import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   popperContent: {
-    padding: theme.spacing(1),
+    padding: 12,
     zIndex: theme.zIndex.drawer + 1,
+    width: 292,
+    wordBreak: 'break-word',
   },
-
   avatarButton: {
     margin: theme.spacing(0, 1),
     padding: 0,
@@ -28,12 +29,16 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
   },
   bigAvatar: {
-    marginLeft: theme.spacing(1),
-    width: 60,
-    height: 60,
+    width: 62,
+    height: 62,
   },
-  button: {
-    margin: theme.spacing(1),
+  actions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: theme.spacing(2),
+  },
+  email: {
+    fontSize: 12,
   },
 }));
 
@@ -85,40 +90,38 @@ export default function ProfileMenuButton() {
         onClose={handleClose}>
         <Grid
           container
-          spacing={2}
           direction="row"
-          justify="flex-start"
+          justify="space-between"
           alignItems="flex-start">
           <Grid item>
             <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
           </Grid>
           <Grid item>
-            <Typography variant="h4">{name}</Typography>
-            <Typography variant="h5">{email}</Typography>
+            <Typography variant="body1">{name}</Typography>
+            <Typography className={classes.email} variant="h3">
+              {email}
+            </Typography>
           </Grid>
         </Grid>
-        <Button
-          onClick={handleClose}
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          component={Link}
-          to={getRoutePath(
-            permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-              ? '/myAccount/subscription'
-              : '/myAccount/profiles'
-          )}>
-          {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-            ? 'My Account'
-            : 'My Profile'}
-        </Button>
-        <Button
-          onClick={handleUserLogout}
-          variant="contained"
-          color="primary"
-          className={classes.button}>
-          Sign Out
-        </Button>
+        <div className={classes.actions}>
+          <Button
+            onClick={handleClose}
+            variant="contained"
+            color="secondary"
+            component={Link}
+            to={getRoutePath(
+              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+                ? '/myAccount/subscription'
+                : '/myAccount/profiles'
+            )}>
+            {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+              ? 'My Account'
+              : 'My Profile'}
+          </Button>
+          <Button onClick={handleUserLogout} variant="text" color="primary">
+            Sign Out
+          </Button>
+        </div>
       </ArrowPopper>
     </Fragment>
   );
