@@ -229,7 +229,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe('/pg');
+      expect(history.location.pathname).toBe('/pg/dashboard');
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -261,7 +261,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe('/pg');
+    expect(history.location.pathname).toBe('/pg/dashboard');
   });
 
   const loggedOut = {

@@ -11074,8 +11074,7 @@ react-diff-viewer@1.1.0:
     memoize-one "^4.0.2"
     prop-types "^15.6.2"
 
-"react-dnd-cjs @9.4.0":
-  name react-dnd-cjs
+react-dnd-cjs@9.4.0:
   version "9.4.0"
   resolved "https://registry.yarnpkg.com/react-dnd-cjs/-/react-dnd-cjs-9.4.0.tgz#559b1d4efb7890eddbd419556ebd3efe28df4fbe"
   integrity sha512-1dJHzj0oFnbVBVUoFAG6il/H4T51nhD/BhHjSc7q6dMdE1xx5pF5h+hOObegULMuwZlXW3UzRTL0nNJvgQa9nA==
