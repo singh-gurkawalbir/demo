@@ -11,6 +11,7 @@ import FilterIcon from '../../../components/icons/FilterIcon';
 import MapDataIcon from '../../../components/icons/MapDataIcon';
 import TransformIcon from '../../../components/icons/DataTransformationIcon';
 import AppBlock from '../AppBlock';
+import LeftActions from '../AppBlock/LeftActions';
 import RightActions from '../AppBlock/RightActions';
 import BottomActions from '../AppBlock/BottomActions';
 
@@ -144,11 +145,11 @@ const PageProcessor = ({
             </IconButton>
           </BottomActions>
 
-          <BottomActions>
+          <LeftActions>
             <IconButton>
               <FilterIcon />
             </IconButton>
-          </BottomActions>
+          </LeftActions>
         </AppBlock>
         {!isLast && (
           /* Right connecting line between Page Processors is not needed

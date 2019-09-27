@@ -3,6 +3,11 @@ import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
+import IntegrationSettings from '../../views/IntegrationSettings';
+import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
+import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
+import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
+import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
 
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
@@ -33,9 +38,10 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
-/* webpackChunkName: 'IntegrationSettings' */
-const IntegrationSettings = loadable(() =>
-  import('../../views/IntegrationSettings')
+const ConnectorTemplateList = loadable(() =>
+  import(
+    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
+  )
 );
 
 @hot(module)
@@ -44,6 +50,11 @@ export default class AppRouting extends Component {
     return (
       <Switch>
         <Route
+          path="/pg"
+          exact
+          render={({ history }) => history.replace('/pg/dashboard')}
+        />
+        <Route
           path="/pg/integrations/:integrationId/dashboard"
           component={IntegrationDashboard}
         />
@@ -51,15 +62,41 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
+        <Route
+          path="/pg/marketplace/:application"
+          component={ConnectorTemplateList}
+        />
+        <Route
+          path="/pg/connectors/:integrationId/setup"
+          component={IntegrationAppInstallation}
+        />
+        <Route
+          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+          path="/pg/connectors/:integrationId/settings"
+          component={IntegrationAppSettings}
+        />
+        <Route
+          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+          path="/pg/connectors/:integrationId/install/addNewStore"
+          component={IntegrationAppAddNewStore}
+        />
+        <Route
+          path={[
+            // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
+            '/pg/connectors/:integrationId/uninstall/:storeId',
+            '/pg/connectors/:integrationId/uninstall',
+          ]}
+          component={IntegrationAppUninstallation}
+        />
+        <Route path="/pg/dashboard" exact component={Dashboard} />
         <Route path="/pg/signin" component={SignIn} />
-        <Route path="/pg/flowbuilder" component={FlowBuilder} />
+        <Route path="/pg/flowBuilder/:flowId" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
         <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/:resourceType" component={ResourceList} />
-        <Route path="/pg" exact component={Dashboard} />
 
         <Route component={NotFound} />
       </Switch>
