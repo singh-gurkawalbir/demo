@@ -27,8 +27,6 @@ export default (state = [], action) => {
 
         if (resourceIndex > -1) {
           draft[resourceIndex].token = null;
-        } else {
-          draft.push(accessToken);
         }
 
         break;
