@@ -13,6 +13,7 @@ import actions from '../../actions';
 import SearchInput from '../../components/SearchInput';
 import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
+import infoText from '../ResourceList/infoText';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -45,7 +46,7 @@ export default function AccessTokenList(props) {
     <Fragment>
       <ResourceDrawer {...newProps} />
 
-      <CeligoPageBar title="Access Tokens" infoText="AT info">
+      <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
         <div className={classes.actions}>
           <SearchInput variant="light" onChange={handleKeywordChange} />
           <IconTextButton

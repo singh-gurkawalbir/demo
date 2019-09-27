@@ -1268,7 +1268,6 @@ export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
 ) {
-  // return fromData.accessTokenList(state.data, integrationId);
   const tokensList = fromData.resourceList(state.data, {
     type: 'accesstokens',
     keyword,

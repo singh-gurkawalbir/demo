@@ -52,7 +52,8 @@ export default {
         ],
       },
     ],
-    helpText: 'Access Level help text',
+    helpText:
+      'Select the time after which the token should be automatically purged from the system.',
   },
   fullAccess: {
     type: 'radiogroup',

@@ -1,49 +1,40 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = [], action) => {
   const { type, accessToken } = action;
+
+  // window.state = state;
+  // console.log(`accessToken -- ${JSON.stringify(accessToken)}`);
 
   if (!type) {
     return state;
   }
 
   let resourceIndex;
-  let newState;
 
-  switch (type) {
-    case actionTypes.ACCESSTOKEN_TOKEN_RECEIVED:
-      resourceIndex = state.findIndex(r => r._id === accessToken._id);
+  return produce(state, draft => {
+    resourceIndex = state.findIndex(r => r._id === accessToken._id);
+    // console.log(`resourceIndex -- ${resourceIndex}`);
 
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], ...accessToken },
-          ...state.slice(resourceIndex + 1),
-        ];
+    if (resourceIndex === -1) {
+      return;
+    }
 
-        return newState;
-      }
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case actionTypes.ACCESSTOKEN_TOKEN_RECEIVED:
+        draft[resourceIndex].token = accessToken.token;
 
-      return [...state, { ...accessToken }];
+        break;
+      case actionTypes.ACCESSTOKEN_TOKEN_MASK:
+        draft[resourceIndex].token = null;
 
-    case actionTypes.ACCESSTOKEN_TOKEN_MASK:
-      resourceIndex = state.findIndex(r => r._id === accessToken._id);
-
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], token: null },
-          ...state.slice(resourceIndex + 1),
-        ];
-
-        return newState;
-      }
-
-      return state;
-
-    default:
-      return state;
-  }
+        break;
+      default:
+        return draft;
+    }
+  });
 };
 // #region PUBLIC SELECTORS
 

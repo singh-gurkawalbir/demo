@@ -9,19 +9,18 @@ import CommStatus from '../../../../../components/CommStatus';
 import actionTypes from '../../../../../actions/types';
 import * as selectors from '../../../../../reducers';
 
-export default function Display({ accesstoken }) {
-  // console.log(`at -- ${JSON.stringify(accesstoken)}`);
+export default function Display({ accessToken }) {
   const dispatch = useDispatch();
   const [tokenStatus, setTokenStatus] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { token } = useSelector(state =>
-    selectors.apiAccessToken(state, accesstoken._id)
+    selectors.apiAccessToken(state, accessToken._id)
   );
 
   function handleDisplayClick() {
     setTokenStatus('Getting Token...');
 
-    return dispatch(actions.accessToken.displayToken(accesstoken._id));
+    return dispatch(actions.accessToken.displayToken(accessToken._id));
   }
 
   function isPurged(autoPurgeAt) {
@@ -44,7 +43,7 @@ export default function Display({ accesstoken }) {
         actionsToMonitor={{
           displayToken: {
             action: actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
-            resourceId: accesstoken._id,
+            resourceId: accessToken._id,
           },
         }}
         autoClearOnComplete
@@ -52,14 +51,14 @@ export default function Display({ accesstoken }) {
           commStatusHandler(objStatus);
         }}
       />
-      {!accesstoken.permissions.displayToken && (
-        <Typography>{accesstoken.permissionReasons.displayToken}</Typography>
+      {!accessToken.permissions.displayToken && (
+        <Typography>{accessToken.permissionReasons.displayToken}</Typography>
       )}
-      {isPurged(accesstoken.autoPurgeAt) ? (
+      {isPurged(accessToken.autoPurgeAt) ? (
         <Typography>Purged</Typography>
       ) : (
         <Fragment>
-          {accesstoken.permissions.displayToken && (
+          {accessToken.permissions.displayToken && (
             <Fragment>
               {token && (
                 <Fragment>

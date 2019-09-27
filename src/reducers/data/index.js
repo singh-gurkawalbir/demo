@@ -3,7 +3,6 @@ import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
-// import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
@@ -13,7 +12,6 @@ export default combineReducers({
   resources,
   integrationAShares,
   audit,
-  // accessTokens,
   jobs,
   suiteScript,
   marketplace,
@@ -159,14 +157,6 @@ export function affectedResourcesAndUsersFromAuditLogs(
     users: Object.keys(users).map(id => users[id]),
   };
 }
-
-/* export function accessTokenList(state, integrationId) {
-  return fromAccessTokens.accessTokenList(state.accessTokens, integrationId);
-}
-
-export function accessToken(state, id) {
-  return fromAccessTokens.accessToken(state.accessTokens, id);
-} */
 
 export function suiteScriptTiles(state, connectionId) {
   return fromSuiteScript.tiles(state.suiteScript, connectionId);

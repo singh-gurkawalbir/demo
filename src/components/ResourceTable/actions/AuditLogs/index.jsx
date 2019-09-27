@@ -8,8 +8,6 @@ export default {
   component: function AuditLogs({ resourceType, resource }) {
     const [show, setShow] = useState(false);
 
-    // console.log(`${resourceType} -- ${JSON.stringify(resource)}`);
-
     return (
       <Fragment>
         {show && (

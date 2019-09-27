@@ -7,7 +7,6 @@ import Icon from '../../../../../components/icons/HookIcon';
 export default {
   label: 'Reactivate token',
   component: function AccessTokens({ resourceType, resource }) {
-    // console.log(`${resourceType} -- ${JSON.stringify(resource)}`);
     const dispatch = useDispatch();
 
     function handleReactivateClick() {

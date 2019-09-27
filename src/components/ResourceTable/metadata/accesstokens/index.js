@@ -2,12 +2,12 @@ import moment from 'moment';
 import Delete from '../../actions/Delete';
 import { getResourceLink } from '../../../CeligoTable/util';
 import AuditLogs from '../../actions/AuditLogs';
-import ReActivate from '../../actions/AccessTokens/Reactivate';
+import Reactivate from '../../actions/AccessTokens/Reactivate';
 import Revoke from '../../actions/AccessTokens/Revoke';
-import ReGenerate from '../../actions/AccessTokens/Regenerate';
+import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
 
-const getDisplayToken = accesstoken => <Display accesstoken={accesstoken} />;
+const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 
 export default {
   columns: [
@@ -78,9 +78,9 @@ export default {
   ],
   rowActions: r => {
     if (r.revoked) {
-      return [ReGenerate, ReActivate, AuditLogs, Delete];
+      return [Regenerate, Reactivate, AuditLogs, Delete];
     }
 
-    return [ReGenerate, Revoke, AuditLogs, Delete];
+    return [Regenerate, Revoke, AuditLogs, Delete];
   },
 };
