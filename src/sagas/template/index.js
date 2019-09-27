@@ -1,4 +1,4 @@
-import { call, takeEvery, put } from 'redux-saga/effects';
+import { call, takeEvery, put, takeLatest } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -53,8 +53,46 @@ export function* requestPreview({ templateId }) {
   yield put(actions.template.receivedPreview(components, templateId));
 }
 
+export function* verifyBundleInstall({ step, connection, templateId }) {
+  const path = `/connections/${connection._id}/distributed`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: `Fetching Preview`,
+    });
+  } catch (error) {
+    yield put(
+      actions.template.updateStep(
+        { status: 'failed', installURL: step.installURL },
+        templateId
+      )
+    );
+
+    return undefined;
+  }
+
+  if ((response || {}).success) {
+    yield put(
+      actions.template.updateStep(
+        { status: 'completed', installURL: step.installURL },
+        templateId
+      )
+    );
+  } else {
+    yield put(
+      actions.template.updateStep(
+        { status: 'failed', installURL: step.installURL },
+        templateId
+      )
+    );
+  }
+}
+
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_DOWNLOAD, downloadZip),
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
   takeEvery(actionTypes.TEMPLATE.PREVIEW, requestPreview),
+  takeLatest(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, verifyBundleInstall),
 ];

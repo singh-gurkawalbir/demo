@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -9,7 +9,6 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 import shortid from 'shortid';
-import produce from 'immer';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -45,54 +44,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function reducer(state, action = {}) {
-  const { type, step = {} } = action;
-
-  return produce(state, draft => {
-    const currentStep = draft.find(
-      s =>
-        (step._connectionId && s._connectionId === step._connectionId) ||
-        (step.installURL && s.installURL === step.installURL) ||
-        (step.stackId && s.stackId === step.stackId)
-    );
-
-    // eslint-disable-next-line default-case
-    switch (type) {
-      case 'stepCompleted':
-        currentStep.isCurrentStep = false;
-        currentStep.completed = true;
-        break;
-    }
-
-    const uncompletedStep = draft.find(s => !s.completed);
-
-    uncompletedStep.isCurrentStep = true;
-  });
-}
-
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { templateId } = props.match.params;
   const [connection, setSelectedConnectionId] = useState(null);
-  const [stackId, setStackId] = useState(null);
+  const [stackId, setShowStackDialog] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const template = useSelector(state => selectors.template(state, templateId));
   const connectionMap = useSelector(state =>
     selectors.templateConnectionMap(state, templateId)
   );
-  const steps = useSelector(state =>
+  const installSteps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
   );
-  const [cMap, setCMap] = useState({});
-  const [installSteps, dispatchLocalAction] = useReducer(reducer, steps);
-
-  if (
-    installSteps.find(s => !s.completed) &&
-    !installSteps.find(s => s.isCurrentStep)
-  ) {
-    dispatchLocalAction({ type: 'init' });
-  }
 
   useEffect(() => {
     if (
@@ -105,19 +70,19 @@ export default function ConnectorInstallation(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
-      dispatch(actions.template.createComponents());
+      dispatch(actions.template.createComponents(templateId));
     }
-  }, [dispatch, isSetupComplete, props.history]);
+  }, [dispatch, isSetupComplete, props.history, templateId]);
 
   if (!installSteps) {
-    return <Typography>No Integration Found</Typography>;
+    return <Typography>Invalid Template</Typography>;
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction } = step;
+    const { _connectionId, installURL, installerFunction, type } = step;
 
     // handle connection step click
-    if (_connectionId) {
+    if (type === 'Connection') {
       if (step.isTriggered) {
         return false;
       }
@@ -136,9 +101,9 @@ export default function ConnectorInstallation(props) {
       setSelectedConnectionId({ newId, doc: connObj });
 
       // handle Installation step click
-    } else if (installURL) {
+    } else if (type === 'installPackage') {
       if (!step.isTriggered) {
-        dispatchLocalAction(
+        dispatch(
           actions.integrationApp.installer.updateStep(
             templateId,
             installerFunction,
@@ -151,14 +116,14 @@ export default function ConnectorInstallation(props) {
           return false;
         }
 
-        dispatchLocalAction(
+        dispatch(
           actions.integrationApp.installer.updateStep(
             templateId,
             installerFunction,
             'verify'
           )
         );
-        dispatchLocalAction(
+        dispatch(
           actions.integrationApp.installer.installStep(
             templateId,
             installerFunction
@@ -166,8 +131,8 @@ export default function ConnectorInstallation(props) {
         );
       }
       // handle Action step click
-    } else if (!step.isTriggered) {
-      setStackId(true);
+    } else if (type === 'Stack') {
+      if (!stackId) setShowStackDialog(`new-${shortid.generate()}`);
     }
   };
 
@@ -177,21 +142,40 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleSubmitComplete = connectionId => {
-    dispatchLocalAction({
-      type: 'stepCompleted',
-      step: { _connectionId: connection.doc._id },
-    });
-    setCMap({ ...cMap, [connection.doc._id]: connectionId });
+    dispatch(
+      actions.template.updateStep(
+        {
+          _connectionId: connection.doc._id,
+          newConnectionId: connectionId,
+          status: 'completed',
+          verifyBundleStep: ['netsuite', 'salesforce'].includes(
+            connection.doc.type
+          )
+            ? connection.doc.type
+            : false,
+        },
+        templateId
+      )
+    );
     setSelectedConnectionId(false);
   };
 
   const handleStackSetupDone = stackId => {
-    dispatchLocalAction({ type: 'stepCompleted', step: { stackId } });
-    setStackId(false);
+    dispatch(
+      actions.template.updateStep(
+        { status: 'completed', stackId, type: 'Stack' },
+        templateId
+      )
+    );
+    setShowStackDialog(false);
   };
 
-  const handleClose = () => {
+  const handleConnectionClose = () => {
     setSelectedConnectionId(false);
+  };
+
+  const handleStackClose = () => {
+    setShowStackDialog(false);
   };
 
   return (
@@ -201,14 +185,16 @@ export default function ConnectorInstallation(props) {
           _connectionId={connection.newId}
           connection={connection.doc}
           connectionType={connection.doc.type}
-          onClose={handleClose}
+          onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
           addOrSelect
         />
       )}
       {stackId && (
         <StackSetupDialog
-          onClose={handleClose}
+          onClose={handleStackClose}
+          addOrSelect
+          resourceId={stackId}
           onSubmitComplete={handleStackSetupDone}
         />
       )}
@@ -222,9 +208,7 @@ export default function ConnectorInstallation(props) {
             </Grid>
             <Grid item xs>
               <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
+                <Breadcrumbs separator={<ArrowRightIcon />}>
                   <Typography color="textPrimary">Setup</Typography>
                   <Typography color="textPrimary">{template.name}</Typography>
                 </Breadcrumbs>
@@ -235,6 +219,7 @@ export default function ConnectorInstallation(props) {
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
+                templateId={templateId}
                 connectionMap={connectionMap}
                 handleStepClick={handleStepClick}
                 index={index + 1}

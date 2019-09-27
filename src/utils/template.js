@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import * as _ from 'lodash';
+import { some, reduce } from 'lodash';
 import applications from '../constants/applications';
 import { NETSUITE_BUNDLE_URL, SALESFORCE_DA_PACKAGE_URL } from './constants';
 
@@ -7,16 +7,13 @@ export default {
   getInstallSteps: previewData => {
     const connectionMap = {};
     const installSteps = [];
-    let index = -1;
     let netsuiteConnFound = false;
     let salesforceConnFound = false;
-    let netsuiteBundleNeeded = false;
-    let salesforceBundleNeeded = false;
     const {
       Connection: connections,
       Export: exportDocs,
       Import: importDocs,
-    } = _.reduce(
+    } = reduce(
       previewData.objects,
       (draft, obj) => {
         if (!draft[obj.model]) {
@@ -35,7 +32,6 @@ export default {
         name: 'Configure Stack',
         description: 'Please provide Stack details',
         type: 'Stack',
-        __index: index++,
         completed: false,
         imageURL: '/images/icons/icon/stacks.png',
         options: {
@@ -74,50 +70,42 @@ export default {
         description: `Please configure ${connectionType} connection`,
         type: 'Connection',
         completed: false,
-        __index: index++,
         options: {
-          connectionType: conn.type,
-          assistant: conn.assistant,
-          displayName: conn.name,
+          connectionType,
         },
       });
     });
-    exportDocs.forEach(exp => {
-      if (
-        (exp.netsuite || {}).type === 'restlet' &&
-        exp.netsuite.restlet.recordType
-      ) {
-        netsuiteBundleNeeded = true;
-      }
-
-      if (exp.type === 'distributed') {
+    const netsuiteBundleNeeded =
+      some(exportDocs, exp => {
         const conn = connections.find(c => c._id === exp._connectionId);
 
-        if (conn.type === 'netsuite') {
-          netsuiteBundleNeeded = true;
-        } else if (conn.type === 'salesforce') {
-          salesforceBundleNeeded = true;
-        }
-      }
-    });
-    importDocs.forEach(imp => {
-      if (imp.distributed) {
+        return (
+          ((exp.netsuite || {}).type === 'restlet' &&
+            exp.netsuite.restlet.recordType) ||
+          (exp.type === 'distributed' && conn.type === 'netsuite')
+        );
+      }) ||
+      some(importDocs, imp => {
         const conn = connections.find(c => c._id === imp._connectionId);
 
-        if (conn.type === 'netsuite') {
-          netsuiteBundleNeeded = true;
-        }
-      }
+        return imp.type === 'distributed' && conn.type === 'netsuite';
+      });
+    const salesforceBundleNeeded = some(exportDocs, exp => {
+      const conn = connections.find(c => c._id === exp._connectionId);
+
+      return exp.type === 'distributed' && conn.type === 'salesforce';
     });
 
     if (netsuiteBundleNeeded) {
       installSteps.push({
         installURL: NETSUITE_BUNDLE_URL,
+        imageURL: '/images/company-logos/netsuite.png',
         completed: false,
         description: 'Please install Integrator bundle in NetSuite account',
         name: 'Integrator Bundle',
-        __index: index++,
+        application: 'netsuite',
         type: 'installPackage',
+        options: {},
       });
     }
 
@@ -126,10 +114,11 @@ export default {
         imageURL: '/images/company-logos/salesforce.png',
         installURL: SALESFORCE_DA_PACKAGE_URL,
         completed: false,
+        application: 'salesforce',
         description: 'Please install Integrator bundle in Salesforce account',
         name: 'Integrator Adaptor Package',
-        __index: index++,
         type: 'installPackage',
+        options: {},
       });
     }
 

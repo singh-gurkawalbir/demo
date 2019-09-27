@@ -1,9 +1,9 @@
 export default {
-  getStepText: (step, mode) => {
+  getStepText: (step = {}, mode) => {
     let stepText = '';
     const isUninstall = mode === 'uninstall';
 
-    if (step._connectionId) {
+    if (step._connectionId || step.type === 'Stack') {
       if (step.completed) {
         stepText = 'Configured';
       } else if (step.isTriggered) {

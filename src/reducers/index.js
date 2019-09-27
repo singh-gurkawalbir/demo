@@ -117,7 +117,18 @@ export function template(state, templateId) {
 }
 
 export function templateInstallSteps(state, templateId) {
-  return fromSession.templateInstallSteps(state && state.session, templateId);
+  const templateInstallSteps = fromSession.templateInstallSteps(
+    state && state.session,
+    templateId
+  );
+
+  return produce(templateInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
 }
 
 export function templateConnectionMap(state, templateId) {
@@ -447,6 +458,14 @@ export function matchingConnectionList(state, connection = {}) {
 
     return c.type === connection.type && !c._connectorId;
   });
+}
+
+export function matchingStackList(state) {
+  const { resources = [] } = resourceList(state, {
+    type: 'stacks',
+  });
+
+  return resources.filter(r => !r._connectorId);
 }
 
 export function marketplaceConnectors(state, application, sandbox) {

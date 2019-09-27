@@ -5,9 +5,9 @@ import {
   DialogContent,
   DialogTitle,
 } from '@material-ui/core';
-import shortid from 'shortid';
 import ResourceForm from '../../components/ResourceFormFactory';
 import CloseIcon from '../icons/CloseIcon';
+import AddOrSelect from './AddOrSelect';
 
 const useStyles = makeStyles(() => ({
   iconButton: {
@@ -17,8 +17,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function StackSetupModal(props) {
-  const { onSubmitComplete, onClose } = props;
+export default function StackModal(props) {
+  const { resourceId, onSubmitComplete, onClose, addOrSelect } = props;
   const classes = useStyles();
 
   return (
@@ -35,12 +35,15 @@ export default function StackSetupModal(props) {
         )}
       </DialogTitle>
       <DialogContent style={{ width: '60vw' }}>
-        <ResourceForm
-          editMode={false}
-          resourceType="stacks"
-          resourceId={`new-${shortid.generate()}`}
-          onSubmitComplete={onSubmitComplete}
-        />
+        {!addOrSelect && (
+          <ResourceForm
+            editMode={false}
+            resourceType="stacks"
+            resourceId={resourceId}
+            onSubmitComplete={onSubmitComplete}
+          />
+        )}
+        {addOrSelect && <AddOrSelect {...props} />}
       </DialogContent>
     </Dialog>
   );
