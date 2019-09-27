@@ -1,52 +1,91 @@
-import { React, Component } from 'react';
+import { Typography, Button } from '@material-ui/core';
+import { React, useEffect, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import SignIn from '../../views/SignIn';
-import { isSessionExpired } from '../../reducers';
+import SignInForm from '../../views/SignIn/SigninForm';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 
-const mapStateToProps = state => ({
-  dialogOpen: isSessionExpired(state),
-});
+const ExpiredSessionContent = () => (
+  <Fragment>
+    <DialogTitle>
+      <Typography>Your Session has Expired</Typography>
+      <br />
+      <Typography>Please login again</Typography>
+    </DialogTitle>
+    <DialogContent>
+      <SignInForm dialogOpen />
+    </DialogContent>
+  </Fragment>
+);
+const WarningSessionContent = () => {
+  const dispatch = useDispatch();
 
-class AlertDialog extends Component {
-  // state = {
-  //   open: true,
-  // };
+  return (
+    <Fragment>
+      <DialogTitle>
+        <Typography>Your session is about to expire</Typography>
+        <br />
+        <Typography>
+          Please click the following button to resume working
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Button
+          onClick={() => {
+            dispatch(actions.user.profile.request('Refreshing session'));
+          }}
+          variant="contained"
+          color="primary">
+          Resume working
+        </Button>
+      </DialogContent>
+    </Fragment>
+  );
+};
 
-  // handleClose = () => {
-  //   this.setState({ open: false });
-  // };
+export default function AlertDialog() {
+  const sessionValidTimestamp = useSelector(state =>
+    selectors.sessionValidTimestamp(state)
+  );
+  const dispatch = useDispatch();
+  const showSessionStatus = useSelector(state =>
+    selectors.showSessionStatus(state)
+  );
 
-  render() {
-    const { dialogOpen } = this.props;
+  useEffect(() => {
+    let warningSessionTimer;
+    let expiredSessionTimer;
 
-    return (
-      <div>
-        <Dialog
-          open={dialogOpen}
-          onClose={this.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description">
-          <DialogTitle id="alert-dialog-title">
-            {'Your Session has Expired'}
-            <br />
-            {'Please login again'}
-          </DialogTitle>
-          <DialogContent>
-            <SignIn dialogOpen={dialogOpen} />
-          </DialogContent>
-          {/* <DialogActions>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
-              Dismiss
-            </Button>
-          </DialogActions> */}
-        </Dialog>
-      </div>
-    );
-  }
+    if (sessionValidTimestamp) {
+      warningSessionTimer = setTimeout(() => {
+        dispatch(actions.auth.warning());
+      }, Number(process.env.SESSION_EXPIRATION_INTERVAL) - Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION));
+
+      expiredSessionTimer = setTimeout(() => {
+        dispatch(
+          actions.auth.failure('Session expired due to extended inactivity')
+        );
+      }, Number(process.env.SESSION_EXPIRATION_INTERVAL));
+    }
+
+    return () => {
+      clearTimeout(warningSessionTimer);
+      clearTimeout(expiredSessionTimer);
+    };
+  }, [dispatch, sessionValidTimestamp]);
+
+  return (
+    <div>
+      <Dialog open={!!showSessionStatus}>
+        {showSessionStatus === 'warning' ? (
+          <WarningSessionContent />
+        ) : (
+          showSessionStatus === 'expired' && <ExpiredSessionContent />
+        )}
+      </Dialog>
+    </div>
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, null)(AlertDialog);

@@ -18,7 +18,7 @@ const sagaMiddleware = createSagaMiddleware({
   onError: error => {
     // eslint-disable-next-line no-console
     console.warn('saga middlware crashed on error ', error);
-    store.dispatch(actions.appErrored());
+    store.dispatch(actions.app.errored());
   },
 });
 

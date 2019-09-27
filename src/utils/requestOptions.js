@@ -118,6 +118,11 @@ export default function getRequestOptions(
         path: `/jobs/${resourceId}/diagnostics`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL:
+      return {
+        path: `/jobs/${resourceId}/files/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.JOB.CANCEL:
       return {
         path: `/jobs/${resourceId}/cancel`,
