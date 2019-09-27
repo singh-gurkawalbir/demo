@@ -2,6 +2,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   actionButton: {
@@ -17,37 +18,28 @@ const SaveFileDefinitionButton = props => {
     classes,
   } = props;
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const handleSubmitForm = values => {
     let definitionRules = values['/file/filedefinition/rules'];
 
     try {
       definitionRules = JSON.parse(definitionRules);
 
+      dispatch(
+        actions.fileDefinitions.definition.userDefined.save(definitionRules, {
+          resourceId,
+          resourceType,
+          values,
+        })
+      );
       // Dispatches an action that saves file definitions and fetches corresponding id
       // updates the same in form values and saves the form
-      if (
-        definitionRules &&
-        definitionRules.fileDefinition &&
-        definitionRules.fileDefinition._id
-      ) {
-        dispatch(
-          actions.fileDefinitions.definition.userDefined.update(
-            definitionRules.fileDefinition._id,
-            definitionRules.fileDefinition || {},
-            { resourceId, resourceType, values }
-          )
-        );
-      } else {
-        dispatch(
-          actions.fileDefinitions.definition.userDefined.request(
-            definitionRules.fileDefinition || {},
-            { resourceId, resourceType, values }
-          )
-        );
-      }
     } catch (e) {
       // Handle incase of JSON parsing error
-      // console.log(e)
+      enquesnackbar({
+        message: 'JSON Parse Error',
+        variant: 'error',
+      });
     }
   };
 

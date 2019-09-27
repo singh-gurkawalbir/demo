@@ -55,7 +55,6 @@ function addDefinition(definitions, definitionId, definition) {
 export default (
   state = {
     preBuiltFileDefinitions: {},
-    userDefinedFileDefinitions: {},
   },
   action
 ) => {
@@ -77,12 +76,6 @@ export default (
       return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST:
-      newState = { ...state.userDefinedFileDefinitions };
-      newState.status = 'requested';
-
-      return { ...state, ...{ userDefinedFileDefinitions: newState } };
-
     case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED: {
       newState = { ...state.preBuiltFileDefinitions };
       newState.status = 'received';
@@ -90,13 +83,6 @@ export default (
 
       return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
-
-    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED:
-      newState = { ...state.userDefinedFileDefinitions };
-      newState.status = 'received';
-      newState.data = fileDefinitions || [];
-
-      return { ...state, ...{ userDefinedFileDefinitions: newState } };
 
     case actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED: {
       newState = { ...state.preBuiltFileDefinitions };
@@ -111,33 +97,6 @@ export default (
       return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.RECEIVED: {
-      newState = { ...state.userDefinedFileDefinitions };
-
-      if (definitionId) {
-        const definitionIndexToUpdate = newState.data.findIndex(
-          def => def._id === definitionId
-        );
-
-        newState.data = [
-          ...state.userDefinedFileDefinitions.data.slice(
-            0,
-            definitionIndexToUpdate
-          ),
-          definition,
-          ...state.userDefinedFileDefinitions.data.slice(
-            definitionIndexToUpdate + 1
-          ),
-        ];
-      } else {
-        newState.data = [...state.userDefinedFileDefinitions.data, definition];
-      }
-
-      newState.status = 'received';
-
-      return { ...state, ...{ userDefinedFileDefinitions: newState } };
-    }
-
     // Error handlers for all the requested actions
     case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR: {
       newState = { ...state.preBuiltFileDefinitions };
@@ -147,12 +106,6 @@ export default (
       return { ...state, ...{ preBuiltFileDefinitions: newState } };
     }
 
-    case actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED_ERROR:
-      newState = { ...state.userDefinedFileDefinitions };
-      newState.status = 'error';
-      newState.errorMessage = error;
-
-      return { ...state, ...{ userDefinedFileDefinitions: newState } };
     default:
       return { ...state };
   }
@@ -171,19 +124,9 @@ export const getSupportedFileDefinitions = (state, format) => ({
     state.preBuiltFileDefinitions.status,
 });
 
-export const getUserSupportedFileDefinitions = state => ({
-  data:
-    (state &&
-      state.userDefinedFileDefinitions &&
-      state.userDefinedFileDefinitions.data) ||
-    [],
-  status:
-    state &&
-    state.userDefinedFileDefinitions &&
-    state.userDefinedFileDefinitions.status,
-});
+export const getFileDefinition = (state, definitionId, options) => {
+  const { format, resourceType } = options;
 
-const getDefinitionTemplate = (state, format, definitionId, resourceType) => {
   if (!format || !definitionId || !resourceType) return undefined;
   const definitions =
     state &&
@@ -197,22 +140,4 @@ const getDefinitionTemplate = (state, format, definitionId, resourceType) => {
 
   // Exports use Parse rules and Imports use Generate rules
   return resourceType === 'exports' ? parse : generate;
-};
-
-const getUserDefinedDefinition = (state, definitionId) => {
-  if (!definitionId || !state.userDefinedFileDefinitions.data) return undefined;
-
-  return state.userDefinedFileDefinitions.data.find(
-    def => def._id === definitionId
-  );
-};
-
-export const getFileDefinition = (state, definitionId, options) => {
-  const { format, resourceType, type } = options;
-
-  if (type === 'user') {
-    return getUserDefinedDefinition(state, definitionId);
-  }
-
-  return getDefinitionTemplate(state, format, definitionId, resourceType);
 };

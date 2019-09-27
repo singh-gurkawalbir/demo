@@ -5,7 +5,7 @@ import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-
+import LoadResources from '../../../LoadResources';
 /*
  * This editor is shown in case of :
  *  1. In Export creation , when specific format is selected to fetch parser rules
@@ -31,19 +31,6 @@ function DynaFileDefinitionEditor(props) {
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
-
-  const { data: userSupportedFileDefinitions = [], status } = useSelector(
-    state => selectors.getUserSupportedFileDefinitions(state)
-  );
-
-  useEffect(() => {
-    // !status indicates no request has been made for fetching file defs
-    // We make a fetch call to load all userSupportedFileDefinitions
-
-    if (!userSupportedFileDefinitions.length && !status) {
-      dispatch(actions.fileDefinitions.userDefined.request());
-    }
-  }, [dispatch, status, userDefinitionId, userSupportedFileDefinitions.length]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -89,9 +76,8 @@ function DynaFileDefinitionEditor(props) {
         resourceType,
       });
     } else if (userDefinitionId) {
-      template = selectors.getFileDefinition(state, userDefinitionId, {
-        type: 'user',
-      });
+      // selector to get that resource based on userDefId
+      template = selectors.resource(state, 'filedefinitions', userDefinitionId);
     }
 
     if (!template) return {};
@@ -123,18 +109,20 @@ function DynaFileDefinitionEditor(props) {
 
   return (
     <Fragment>
-      {showEditor && (
-        <FileDefinitionEditorDialog
-          title="File Definition Editor"
-          id={id + resourceId}
-          data={sampleData}
-          rule={value}
-          onClose={handleClose}
-        />
-      )}
-      <Button variant="contained" onClick={handleEditorClick}>
-        {label}
-      </Button>
+      <LoadResources resources="filedefinitions">
+        {showEditor && (
+          <FileDefinitionEditorDialog
+            title="File Definition Editor"
+            id={id + resourceId}
+            data={sampleData}
+            rule={value}
+            onClose={handleClose}
+          />
+        )}
+        <Button variant="contained" onClick={handleEditorClick}>
+          {label}
+        </Button>
+      </LoadResources>
     </Fragment>
   );
 }

@@ -1,8 +1,13 @@
-import { put, takeLatest, call } from 'redux-saga/effects';
+import { put, takeLatest, call, select } from 'redux-saga/effects';
+import shortid from 'shortid';
+import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import { saveResourceWithDefinitionID } from '../resourceForm';
+import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
+import { isNewId } from '../../utils/resource';
+import { commitStagedChanges } from '../resources';
+import * as selectors from '../../reducers';
 
 /*
  * Fetches all Supported File Definitions
@@ -23,29 +28,6 @@ function* getFileDefinitions() {
       const parsedError = JSON.parse(e.message);
 
       yield put(actions.fileDefinitions.preBuilt.receivedError(parsedError));
-    }
-  }
-}
-
-/*
- * Fetches all User Defined File Definitions
- */
-function* getUserFileDefinitions() {
-  try {
-    const fileDefinitions = yield apiCallWithRetry({
-      path: '/filedefinitions',
-      opts: {
-        method: 'GET',
-      },
-    });
-
-    yield put(actions.fileDefinitions.userDefined.received(fileDefinitions));
-  } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
-
-      yield put(actions.fileDefinitions.userDefined.receivedError(parsedError));
     }
   }
 }
@@ -78,57 +60,28 @@ function* getDefinition({ definitionId, format }) {
   }
 }
 
-/*
- * Adds to the list of User Supported file definitions if it is a new Definition
- * Else, updates definition based on definitionId passed
- */
-function* saveUserFileDefinition({
-  definitionId,
-  definitionRules,
-  formValues,
-}) {
-  const path = `/filedefinitions${definitionId ? `/${definitionId}` : ''}`;
-  const method = definitionId ? 'PUT' : 'POST';
+function* saveUserFileDefinition({ definitionRules, formValues }) {
+  const { fileDefinition } = definitionRules;
+  let definitionId =
+    (fileDefinition && fileDefinition._id) || `new-${shortid.generate()}`;
+  const patchSet = jsonPatch.compare({}, definitionRules.fileDefinition);
 
-  try {
-    const definition = yield apiCallWithRetry({
-      path,
-      opts: {
-        method,
-        body: definitionRules,
-      },
-    });
+  yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));
+  yield call(commitStagedChanges, {
+    resourceType: 'filedefinitions',
+    id: definitionId,
+    scope: SCOPES.VALUE,
+  });
 
-    yield put(
-      actions.fileDefinitions.definition.userDefined.received(
-        definition,
-        definitionId
-      )
-    );
-    // Once definition is saved, save the resource with the id
-    yield call(saveResourceWithDefinitionID, {
-      formValues,
-      definitionId: definition._id,
-    });
-  } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
-
-      yield put(
-        actions.fileDefinitions.definition.userDefined.receivedError(
-          parsedError
-        )
-      );
-    }
-
-    // Skip saving file definition id and save resource on error
-    const { resourceId, resourceType, values } = formValues;
-
-    yield put(
-      actions.resourceForm.submitWithRawData(resourceType, resourceId, values)
-    );
+  if (isNewId(definitionId)) {
+    definitionId = yield select(selectors.createdResourceId, definitionId);
   }
+
+  // // Once definition is saved, save the resource with the id
+  yield call(saveResourceWithDefinitionID, {
+    formValues,
+    definitionId,
+  });
 }
 
 export default [
@@ -137,18 +90,11 @@ export default [
     getFileDefinitions
   ),
   takeLatest(
-    actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST,
-    getUserFileDefinitions
-  ),
-  takeLatest(
     actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.UPDATE,
     getDefinition
   ),
   takeLatest(
-    [
-      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.REQUEST,
-      actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.UPDATE,
-    ],
+    actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE,
     saveUserFileDefinition
   ),
 ];

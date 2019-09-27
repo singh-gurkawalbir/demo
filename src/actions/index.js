@@ -385,17 +385,6 @@ const fileDefinitions = {
         error,
       }),
   },
-  userDefined: {
-    request: () => action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.REQUEST),
-    received: fileDefinitions =>
-      action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED, {
-        fileDefinitions,
-      }),
-    receivedError: error =>
-      action(actionTypes.FILE_DEFINITIONS.USER_DEFINED.RECEIVED_ERROR, {
-        error,
-      }),
-  },
   definition: {
     preBuilt: {
       request: (format, definitionId) =>
@@ -411,21 +400,10 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      request: (definitionRules, formValues) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.REQUEST, {
+      save: (definitionRules, formValues) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
-        }),
-      update: (definitionId, definitionRules, formValues) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.UPDATE, {
-          definitionId,
-          definitionRules,
-          formValues,
-        }),
-      received: (definition, definitionId) =>
-        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.RECEIVED, {
-          definition,
-          definitionId,
         }),
     },
   },

@@ -234,6 +234,7 @@ export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
 
+  delete newValues['/file/filedefinition/rules'];
   newValues['/file/type'] = 'filedefinition';
   newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
   yield put(
