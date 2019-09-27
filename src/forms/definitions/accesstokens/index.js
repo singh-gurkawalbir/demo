@@ -1,0 +1,49 @@
+export default {
+  fieldMap: {
+    name: { fieldId: 'name' },
+    description: { fieldId: 'description' },
+    autoPurgeAt: { fieldId: 'autoPurgeAt' },
+    fullAccess: { fieldId: 'fullAccess' },
+    _connectionIds: { fieldId: '_connectionIds' },
+    _exportIds: { fieldId: '_exportIds' },
+    _importIds: { fieldId: '_importIds' },
+  },
+  layout: {
+    fields: [
+      'name',
+      'description',
+      'autoPurgeAt',
+      'fullAccess',
+      '_connectionIds',
+      '_exportIds',
+      '_importIds',
+    ],
+  },
+
+  preSave: formValues => {
+    const accessTokenData = { ...formValues };
+
+    if (accessTokenData['/autoPurgeAt'] === 'never') {
+      delete accessTokenData['/autoPurgeAt'];
+    } else if (accessTokenData['/autoPurgeAt']) {
+      const currDate = new Date();
+      const timeInMilliSeconds = currDate.getTime();
+
+      accessTokenData['/autoPurgeAt'] = new Date(
+        timeInMilliSeconds + parseInt(accessTokenData['/autoPurgeAt'], 10)
+      ).toISOString();
+    } /* else if (accessTokenData.id) {
+      const existingData = accessTokens.find(at => at._id === id);
+
+      if (existingData.autoPurgeAt) {
+        accessTokenData.autoPurgeAt = existingData.autoPurgeAt;
+      }
+    } */
+
+    if (!accessTokenData['/autoPurgeAt']) {
+      delete accessTokenData['/autoPurgeAt'];
+    }
+
+    return accessTokenData;
+  },
+};

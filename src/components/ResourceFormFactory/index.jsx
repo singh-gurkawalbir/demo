@@ -58,6 +58,8 @@ function ActionsFactory(props) {
   const { resourceType, isNew, connectionType, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
 
+  // console.log(`af == ${JSON.stringify(props)}`);
+
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }

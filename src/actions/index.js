@@ -609,19 +609,19 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
   maskToken: accessToken =>
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  create: accessToken =>
+  /* create: accessToken =>
     action(actionTypes.ACCESSTOKEN_CREATE, { accessToken }),
   created: accessToken =>
     action(actionTypes.ACCESSTOKEN_CREATED, { accessToken }),
   update: accessToken =>
     action(actionTypes.ACCESSTOKEN_UPDATE, { accessToken }),
   updated: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }),
+    action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }), */
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
-  deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
+  /* deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
   deleted: id =>
-    action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
+    action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }), */
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>

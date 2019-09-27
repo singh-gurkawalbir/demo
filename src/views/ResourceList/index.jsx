@@ -11,7 +11,7 @@ import IconTextButton from '../../components/IconTextButton';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
-import ResourceDrawer from '../../components/drawer/Resource';
+// import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 
@@ -42,8 +42,6 @@ function ResourceList(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
-
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
