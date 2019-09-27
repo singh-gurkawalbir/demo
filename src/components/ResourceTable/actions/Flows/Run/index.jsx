@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/CloseIcon';
+import RunIcon from '../../../../icons/RunIcon';
 
 export default {
   label: 'Run Flow',
@@ -13,7 +13,7 @@ export default {
 
     return (
       <IconButton size="small" onClick={handleRunFlowClick}>
-        <Icon />
+        <RunIcon />
       </IconButton>
     );
   },

@@ -3,9 +3,8 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
   root: {
-    padding: '3px 5px',
+    padding: '3px 10px',
     textAlign: 'center',
-    minWidth: '120px',
     maxWidth: '240px',
   },
   content: {

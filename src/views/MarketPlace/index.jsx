@@ -5,7 +5,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 export default function Marketplace() {
   return (
     <Fragment>
-      <CeligoPageBar title="Marketplace" />
+      <CeligoPageBar title="App store" />
       <MarketplaceList />
     </Fragment>
   );

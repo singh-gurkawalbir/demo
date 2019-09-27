@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import {
@@ -57,13 +57,19 @@ const useStyles = makeStyles(theme => ({
     },
   },
   iconButton: {
-    height: 'fit-content',
     alignSelf: 'flex-end',
     border: '1px solid',
     background: theme.palette.background.paper,
     marginLeft: 5,
-    borderColor: fade(theme.palette.common.black, 0.1),
+    borderColor: theme.palette.secondary.lightest,
     borderRadius: 0,
+    width: 50,
+    height: 50,
+    color: theme.palette.text.hint,
+    '&:hover': {
+      background: theme.palette.background.paper,
+      color: theme.palette.primary.main,
+    },
   },
 }));
 const newId = () => `new-${shortid.generate()}`;
