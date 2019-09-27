@@ -17,20 +17,7 @@ import Spinner from '../Spinner';
 import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 
-const styles = theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
-  table: {
-    minWidth: 700,
-  },
+const styles = () => ({
   tablePaginationRoot: { float: 'left' },
   spinner: {
     left: '0px',

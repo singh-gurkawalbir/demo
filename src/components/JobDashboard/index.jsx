@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography, Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEqual } from 'lodash';
+import { Link } from 'react-router-dom';
+import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -375,15 +377,26 @@ export default function JobDashboard({
         autoClearOnComplete
         commStatusHandler={commStatusHandler}
       />
-      {!flowId && integration && <Typography>{integration.name}</Typography>}
-      <div>
-        <Button onClick={handleRefershJobsClick}>
-          <RefreshIcon /> Refresh
-        </Button>
-        <Button href={integrationSettingsURL}>
-          <SettingsIcon /> Settings
-        </Button>
-      </div>
+      {!flowId && integration && (
+        <Fragment>
+          <Typography>{integration.name}</Typography>
+          <div>
+            <IconTextButton
+              variant="text"
+              color="primary"
+              onClick={handleRefershJobsClick}>
+              <RefreshIcon /> Refresh
+            </IconTextButton>
+            <IconTextButton
+              component={Link}
+              to={integrationSettingsURL}
+              variant="text"
+              color="primary">
+              <SettingsIcon /> Settings
+            </IconTextButton>
+          </div>
+        </Fragment>
+      )}
       <Filters
         integrationId={integrationId}
         flowId={flowId}

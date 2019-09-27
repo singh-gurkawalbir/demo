@@ -1275,17 +1275,18 @@ export function flowJobs(state) {
   const jobs = fromData.flowJobs(state.data);
   const preferences = userPreferences(state);
   const resourceMap = resourceDetailsMap(state);
+  const getEndedAtAsString = job =>
+    job.endedAt &&
+    moment(job.endedAt).format(
+      `${preferences.dateFormat} ${preferences.timeFormat}`
+    );
 
   return jobs.map(job => {
     if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          endedAtAsString:
-            cJob.endedAt &&
-            moment(cJob.endedAt).format(
-              `${preferences.dateFormat} ${preferences.timeFormat}`
-            ),
+          endedAtAsString: getEndedAtAsString(cJob),
           name: cJob._exportId
             ? resourceMap.exports[cJob._exportId].name
             : resourceMap.imports[cJob._importId].name,
@@ -1295,11 +1296,7 @@ export function flowJobs(state) {
           // eslint-disable-next-line no-param-reassign
           cJob.retries = cJob.retries.map(r => ({
             ...r,
-            endedAtAsString:
-              r.endedAt &&
-              moment(r.endedAt).format(
-                `${preferences.dateFormat} ${preferences.timeFormat}`
-              ),
+            endedAtAsString: getEndedAtAsString(r),
           }));
         }
 
@@ -1308,11 +1305,7 @@ export function flowJobs(state) {
     }
 
     const additionalProps = {
-      endedAtAsString:
-        job.endedAt &&
-        moment(job.endedAt).format(
-          `${preferences.dateFormat} ${preferences.timeFormat}`
-        ),
+      endedAtAsString: getEndedAtAsString(job),
       name:
         resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
     };
