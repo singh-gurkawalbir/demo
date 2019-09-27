@@ -5,7 +5,8 @@ function generateFileDefinitionOptions({ definitions }) {
   const categorizedDefinitionMap = {};
   const definitionOptions = definitions.map(({ name, _id, ...rest }) => ({
     ...rest,
-    ...{ label: name, value: _id },
+    label: name,
+    value: _id,
   }));
 
   definitionOptions.forEach(definition => {
