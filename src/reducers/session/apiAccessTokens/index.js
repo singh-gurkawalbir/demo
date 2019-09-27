@@ -4,9 +4,6 @@ import actionTypes from '../../../actions/types';
 export default (state = [], action) => {
   const { type, accessToken } = action;
 
-  // window.state = state;
-  // console.log(`accessToken -- ${JSON.stringify(accessToken)}`);
-
   if (!type) {
     return state;
   }
@@ -14,21 +11,25 @@ export default (state = [], action) => {
   let resourceIndex;
 
   return produce(state, draft => {
-    resourceIndex = state.findIndex(r => r._id === accessToken._id);
-    // console.log(`resourceIndex -- ${resourceIndex}`);
-
-    if (resourceIndex === -1) {
-      return;
-    }
-
-    // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.ACCESSTOKEN_TOKEN_RECEIVED:
-        draft[resourceIndex].token = accessToken.token;
+        resourceIndex = state.findIndex(r => r._id === accessToken._id);
+
+        if (resourceIndex > -1) {
+          draft[resourceIndex].token = accessToken.token;
+        } else {
+          draft.push(accessToken);
+        }
 
         break;
       case actionTypes.ACCESSTOKEN_TOKEN_MASK:
-        draft[resourceIndex].token = null;
+        resourceIndex = state.findIndex(r => r._id === accessToken._id);
+
+        if (resourceIndex > -1) {
+          draft[resourceIndex].token = null;
+        } else {
+          draft.push(accessToken);
+        }
 
         break;
       default:
