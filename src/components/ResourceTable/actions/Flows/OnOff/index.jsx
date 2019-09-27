@@ -1,7 +1,6 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/CloseIcon';
+import SwitchOnOff from '../../../../SwitchToggle';
 import { confirmDialog } from '../../../../ConfirmDialog';
 
 export default {
@@ -47,10 +46,6 @@ export default {
       });
     };
 
-    return (
-      <IconButton size="small" onClick={enableOrDisableFlow}>
-        <Icon />
-      </IconButton>
-    );
+    return <SwitchOnOff on onClick={enableOrDisableFlow} />;
   },
 };

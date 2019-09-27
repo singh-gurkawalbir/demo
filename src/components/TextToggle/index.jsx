@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
     padding: 2,
-    backgroundColor: fade(theme.palette.secondary.lightest, 0.5),
+    backgroundColor: theme.palette.secondary.lightest,
     '& button': {
       marginLeft: 0,
       height: 20,

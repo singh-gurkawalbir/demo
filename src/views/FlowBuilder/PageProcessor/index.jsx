@@ -9,7 +9,7 @@ import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
 import FilterIcon from '../../../components/icons/FilterIcon';
 import MapDataIcon from '../../../components/icons/MapDataIcon';
-import TransformIcon from '../../../components/icons/DataTransformationIcon';
+import TransformIcon from '../../../components/icons/TransformIcon';
 import AppBlock from '../AppBlock';
 import LeftActions from '../AppBlock/LeftActions';
 import RightActions from '../AppBlock/RightActions';

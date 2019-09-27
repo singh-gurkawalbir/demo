@@ -22,7 +22,7 @@ export default theme => ({
     linkHover: theme.palette.text.linkHover,
     linkActive: theme.palette.text.linkActive,
     border: theme.palette.divider,
-    sidebarBackground: theme.palette.secondary.lightest,
+    sidebarBackground: theme.palette.background.paper2,
     codeBackground: theme.palette.primary.light,
   },
   sidebarWidth: theme.drawerWidth,
