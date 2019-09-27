@@ -32,12 +32,10 @@ const SaveFileDefinitionButton = props => {
           values,
         })
       );
-      // Dispatches an action that saves file definitions and fetches corresponding id
-      // updates the same in form values and saves the form
     } catch (e) {
       // Handle incase of JSON parsing error
       enquesnackbar({
-        message: 'JSON Parse Error',
+        message: e,
         variant: 'error',
       });
     }

@@ -9,7 +9,6 @@ describe('File Definitions', () => {
 
     expect(state).toMatchObject({
       preBuiltFileDefinitions: {},
-      userDefinedFileDefinitions: {},
     });
   });
   test('should update status as requested on request action', () => {
@@ -20,7 +19,6 @@ describe('File Definitions', () => {
 
     expect(state).toMatchObject({
       preBuiltFileDefinitions: { status: 'requested' },
-      userDefinedFileDefinitions: {},
     });
   });
   test('should update data as empty when received nothing on received action', () => {
@@ -31,7 +29,6 @@ describe('File Definitions', () => {
 
     expect(state).toMatchObject({
       preBuiltFileDefinitions: { status: 'received', data: {} },
-      userDefinedFileDefinitions: {},
     });
   });
   test('should update data on received action', () => {
@@ -104,7 +101,6 @@ describe('File Definitions', () => {
           ],
         },
       },
-      userDefinedFileDefinitions: {},
     });
   });
   test('should update template with the received definition on received action', () => {
@@ -146,7 +142,6 @@ describe('File Definitions', () => {
         },
         status: 'received',
       },
-      userDefinedFileDefinitions: {},
     });
   });
   test('should update status as error on receivedError action', () => {
@@ -164,7 +159,6 @@ describe('File Definitions', () => {
         status: 'error',
         errorMessage: 'Error Occured',
       },
-      userDefinedFileDefinitions: {},
     });
   });
 });
