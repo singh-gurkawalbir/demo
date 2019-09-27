@@ -24,18 +24,18 @@ function DynaRawData(props) {
   );
   /*
    * Fetches raw data by making a preview call
-   * @param fetchFromDB : Boolean
+   * @param runOffline : Boolean
    * Determines to fetch rawdata either from saved ( incase of edit ) or from actual end point
    */
   const fetchRawData = useCallback(
-    fetchFromDB => {
+    runOffline => {
       dispatch(
         actions.sampleData.request(
           resourceId,
           resourceType,
           formContext.value,
           undefined,
-          fetchFromDB
+          runOffline
         )
       );
     },

@@ -25,7 +25,7 @@ function getRulesFromResourceFormValues(formValues = {}) {
   return transformRules && transformRules.length ? transformRules : [];
 }
 
-function* getPreviewData({ resourceId, resourceType, values, fetchFromDB }) {
+function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
@@ -45,7 +45,7 @@ function* getPreviewData({ resourceId, resourceType, values, fetchFromDB }) {
   const newBody = patchResult.newDocument;
   let body = { ...newBody };
 
-  if (fetchFromDB) {
+  if (runOffline && body.rawData) {
     body = {
       ...body,
       verbose: true,
@@ -172,7 +172,7 @@ function* requestSampleData({
   resourceType,
   values,
   stage,
-  fetchFromDB,
+  runOffline,
 }) {
   // Call preview/processor based on stage
   // If stage is specified make a processor call else preview
@@ -188,7 +188,7 @@ function* requestSampleData({
       resourceId,
       resourceType,
       values,
-      fetchFromDB,
+      runOffline,
     });
   }
 }

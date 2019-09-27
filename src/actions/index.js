@@ -577,13 +577,13 @@ const user = {
   },
 };
 const sampleData = {
-  request: (resourceId, resourceType, values, stage, fetchFromDB) =>
+  request: (resourceId, resourceType, values, stage, runOffline) =>
     action(actionTypes.SAMPLEDATA.REQUEST, {
       resourceId,
       resourceType,
       values,
       stage,
-      fetchFromDB,
+      runOffline,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),

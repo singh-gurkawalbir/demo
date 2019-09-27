@@ -1,23 +1,19 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const SaveFileDefinitionButton = props => {
-  const {
-    submitButtonLabel = 'Submit',
-    resourceType,
-    resourceId,
-    classes,
-  } = props;
+  const { submitButtonLabel = 'Submit', resourceType, resourceId } = props;
   const dispatch = useDispatch();
+  const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleSubmitForm = values => {
     let definitionRules = values['/file/filedefinition/rules'];
@@ -51,4 +47,4 @@ const SaveFileDefinitionButton = props => {
   );
 };
 
-export default withStyles(styles)(SaveFileDefinitionButton);
+export default SaveFileDefinitionButton;
