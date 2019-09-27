@@ -22,35 +22,44 @@ export function getFileReaderOptions(type) {
  * @returns {object} CSV Data
  */
 export function getCsvFromXlsx(data) {
+  let workBook;
   let result;
-  let arr;
-  let base64;
-  let wb;
 
   try {
-    arr = String.fromCharCode.apply(null, new Uint8Array(data));
-    wb = XLSX.read(window.btoa(arr), { type: 'base64' });
+    const typedArray = String.fromCharCode.apply(null, new Uint8Array(data));
+
+    workBook = XLSX.read(window.btoa(typedArray), { type: 'base64' });
   } catch (ex) {
     try {
-      base64 = window.btoa(
+      const base64 = window.btoa(
         new Uint8Array(data).reduce(
           (locData, byte) => locData + String.fromCharCode(byte),
           ''
         )
       );
-      wb = XLSX.read(base64, { type: 'base64' });
+
+      workBook = XLSX.read(base64, { type: 'base64' });
     } catch (ex) {
-      return result;
+      return {
+        success: false,
+        error: 'Upload Error',
+      };
     }
   }
 
-  wb.SheetNames.forEach(sheetName => {
+  workBook.SheetNames.forEach(sheetName => {
     try {
-      result = XLSX.utils.sheet_to_csv(wb.Sheets[sheetName]);
+      result = XLSX.utils.sheet_to_csv(workBook.Sheets[sheetName]);
     } catch (e) {
-      // console.log('caught error while converting sheet to csv');
+      return {
+        success: false,
+        error: 'Upload Error',
+      };
     }
   });
 
-  return result;
+  return {
+    success: true,
+    result,
+  };
 }

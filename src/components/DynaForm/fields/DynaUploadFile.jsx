@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import { getFileReaderOptions, getCsvFromXlsx } from '../../../utils/file';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 function DynaUploadFile(props) {
   const {
@@ -21,6 +22,7 @@ function DynaUploadFile(props) {
     formContext,
   } = props;
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   /*
    * File types supported for upload are CSV, XML, XLSX and JSON
    */
@@ -30,7 +32,16 @@ function DynaUploadFile(props) {
 
     // For xlsx file , content gets converted to 'csv' before parsing
     if (options === 'xlsx') {
-      fileContent = getCsvFromXlsx(fileContent);
+      const { success, result, error } = getCsvFromXlsx(fileContent);
+
+      if (!success) {
+        return enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+      }
+
+      fileContent = result;
     }
 
     // For JSON file, content should be parsed from String to JSON
