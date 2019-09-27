@@ -9,6 +9,9 @@ import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
 import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
 import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
 
+const RecycleBin = loadable(() =>
+  import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
+);
 const Dashboard = loadable(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
 );
@@ -29,6 +32,12 @@ const FlowBuilder = loadable(() =>
 );
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
+);
+const Marketplace = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
+);
+const TemplateList = loadable(() =>
+  import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList')
 );
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
@@ -88,16 +97,17 @@ export default class AppRouting extends Component {
           ]}
           component={IntegrationAppUninstallation}
         />
-        <Route path="/pg/dashboard" exact component={Dashboard} />
+        <Route path="/pg/dashboard" component={Dashboard} />
+        <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
         <Route path="/pg/flowBuilder/:flowId" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
-        <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/marketplace" component={Marketplace} />
+        <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/:resourceType" component={ResourceList} />
-
         <Route component={NotFound} />
       </Switch>
     );
