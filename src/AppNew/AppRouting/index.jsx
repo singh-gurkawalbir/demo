@@ -90,7 +90,7 @@ export default class AppRouting extends Component {
         />
         <Route path="/pg/dashboard" exact component={Dashboard} />
         <Route path="/pg/signin" component={SignIn} />
-        <Route path="/pg/flowbuilder" component={FlowBuilder} />
+        <Route path="/pg/flowBuilder/:flowId" component={FlowBuilder} />
         <Route path="/pg/resources" component={Resources} />
         <Route path={['/pg/edit', '/pg/add']} component={null} />
         <Route path="/pg/editors" component={Editors} />
