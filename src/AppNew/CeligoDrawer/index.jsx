@@ -181,7 +181,7 @@ export default function CeligoDrawer() {
         }),
       }}
       open={drawerOpened}>
-      <div className={classes.menuContainer}>
+      <div className={classes.menuContainer} onDoubleClick={handleDrawerToggle}>
         <div>
           <div className={classes.logoContainer}>
             {drawerOpened ? (

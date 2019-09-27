@@ -26,6 +26,19 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   pageBarOffset: { height: theme.pageBarHeight },
+  // TODO: Azhar, is there a cleaner way than for me to set the style of
+  // the child div? Maybe the paper container should set the maxWidth?
+  infoPopper: {
+    // maxWidth: 320, // <- this only sets the container, but the child is constrained
+    // by the value override below...
+    '& > div': {
+      maxWidth: 350,
+      textAlign: 'left',
+      ' & > p': {
+        textTransform: 'none',
+      },
+    },
+  },
 }));
 
 export default function CeligoPageBar({ children, title, infoText, subtitle }) {
@@ -67,10 +80,11 @@ export default function CeligoPageBar({ children, title, infoText, subtitle }) {
                       </IconButton>
                       <ArrowPopper
                         id="pageInfo"
+                        className={classes.infoPopper}
                         zIndex={theme.zIndex.appBar + 1}
                         open={!!anchorEl}
                         anchorEl={anchorEl}
-                        placement="right"
+                        placement="right-start"
                         onClose={handleInfoClose}>
                         <TooltipContent>{infoText}</TooltipContent>
                       </ArrowPopper>
