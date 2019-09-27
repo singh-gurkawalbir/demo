@@ -2,13 +2,15 @@ import { Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
+import shortid from 'shortid';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
-import CeligoPageBar from '../../components/CeligoPageBar';
+import { Typography, Button, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import CeligoPageBar from '../../components/CeligoPageBar';
 import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
+import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './BottomDrawer';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
@@ -176,7 +178,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const { match } = props;
+  const { match, history } = props;
   const { flowId } = match.params;
   const classes = useStyles();
   const theme = useTheme();
@@ -232,6 +234,17 @@ function FlowBuilder(props) {
     [pageGenerators, pageProcessors, patchFlow]
   );
 
+  function handleAddSource() {
+    const newId = shortid.generate();
+    const to = `${match.url}/add/exports/new-${newId}`;
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
   // eslint-disable-next-line
   console.log(flow, patch);
 
@@ -260,6 +273,9 @@ function FlowBuilder(props) {
             <div className={classes.generatorRoot}>
               <Typography className={classes.title} variant="h6">
                 SOURCE APPLICATIONS
+                <IconButton onClick={handleAddSource}>
+                  <AddIcon />
+                </IconButton>
               </Typography>
 
               <div className={classes.generatorContainer}>
@@ -276,6 +292,9 @@ function FlowBuilder(props) {
             <div className={classes.processorRoot}>
               <Typography className={classes.title} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
+                <IconButton>
+                  <AddIcon />
+                </IconButton>
               </Typography>
               <div className={classes.processorContainer}>
                 {pageProcessors.map((pp, i) => (

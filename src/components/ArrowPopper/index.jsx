@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -118,28 +118,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ArrowPopper(props) {
-  const {
-    id,
-    open,
-    anchorEl,
-    placement = 'bottom-end',
-    children,
-    onClose = () => {}, // default to noop.
-    className,
-  } = props;
+export default function ArrowPopper({
+  children,
+  onClose = () => {}, // default to noop.
+  className,
+  ...rest
+}) {
   const [arrowEl, setArrowEl] = useState(null);
-  const classes = useStyles(props);
+  const classes = useStyles(rest);
 
   return (
     <Popper
-      id={id}
-      anchorEl={anchorEl}
-      placement={placement}
-      // disablePortal={false}
-      open={open}
-      className={classes.popper}
+      {...rest}
       onClose={onClose}
+      className={classes.popper}
       modifiers={{
         flip: {
           enabled: true,
@@ -155,7 +147,7 @@ export default function ArrowPopper(props) {
       }}>
       <span className={classes.arrow} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose}>
-        <Paper className={classNames(classes.paper, className)} elevation={1}>
+        <Paper className={clsx(classes.paper, className)} elevation={1}>
           {children}
         </Paper>
       </ClickAwayListener>
