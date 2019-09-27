@@ -31,6 +31,16 @@ export default function reducer(state = {}, action) {
 
         draft[templateId].preview = components;
         break;
+      case actionTypes.TEMPLATE.CLEAR_TEMPLATE:
+        delete draft[templateId];
+        break;
+      case actionTypes.TEMPLATE.CREATED_COMPONENTS:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+
+        draft[templateId].createdComponents = components;
+        break;
       case actionTypes.TEMPLATE.STEPS_RECEIVED:
         if (!draft[templateId]) {
           draft[templateId] = {};
@@ -88,6 +98,10 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
+export function template(state, templateId) {
+  return (state || {})[templateId] || {};
+}
+
 export function previewTemplate(state, templateId) {
   return ((state || {})[templateId] || {}).preview || {};
 }

@@ -75,7 +75,7 @@ export default function InstallationStep(props) {
     ) {
       dispatch(
         actions.template.updateStep(
-          { ...step, status: 'triggered' },
+          { ...step, status: 'verifying' },
           templateId
         )
       );

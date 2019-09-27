@@ -79,7 +79,7 @@ export default function ConnectorInstallation(props) {
   }
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction, type } = step;
+    const { _connectionId, installURL, type } = step;
 
     // handle connection step click
     if (type === 'Connection') {
@@ -104,10 +104,9 @@ export default function ConnectorInstallation(props) {
     } else if (type === 'installPackage') {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApp.installer.updateStep(
-            templateId,
-            installerFunction,
-            'inProgress'
+          actions.template.updateStep(
+            { ...step, status: 'inProgress' },
+            templateId
           )
         );
         openExternalUrl({ url: installURL });
@@ -117,17 +116,13 @@ export default function ConnectorInstallation(props) {
         }
 
         dispatch(
-          actions.integrationApp.installer.updateStep(
-            templateId,
-            installerFunction,
-            'verify'
+          actions.template.updateStep(
+            { ...step, status: 'verifying' },
+            templateId
           )
         );
         dispatch(
-          actions.integrationApp.installer.installStep(
-            templateId,
-            installerFunction
-          )
+          actions.template.verifyBundleInstall(step, connection, templateId)
         );
       }
       // handle Action step click

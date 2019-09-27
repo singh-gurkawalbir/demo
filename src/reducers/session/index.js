@@ -128,6 +128,10 @@ export function previewTemplate(state, templateId) {
   return fromTemplates.previewTemplate(state && state.templates, templateId);
 }
 
+export function template(state, templateId) {
+  return fromTemplates.template(state && state.templates, templateId);
+}
+
 export function templateInstallSteps(state, templateId) {
   return fromTemplates.templateInstallSteps(
     state && state.templates,

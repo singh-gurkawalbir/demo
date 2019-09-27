@@ -117,6 +117,10 @@ export function template(state, templateId) {
   return fromData.template(state && state.data, templateId);
 }
 
+export function templateSetup(state, templateId) {
+  return fromSession.template(state && state.session, templateId);
+}
+
 export function templateInstallSteps(state, templateId) {
   const templateInstallSteps = fromSession.templateInstallSteps(
     state && state.session,

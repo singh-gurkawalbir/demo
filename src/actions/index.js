@@ -471,12 +471,18 @@ const template = {
     }),
   failedPreview: templateId =>
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),
+  failedInstall: templateId =>
+    action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
+  createdIntegration: (components, templateId) =>
+    action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
   receivedPreview: (components, templateId) =>
     action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
   updateStep: (step, templateId) =>
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
   createComponents: templateId =>
     action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  clearTemplate: templateId =>
+    action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
   verifyBundleInstall: (step, connection, templateId) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,

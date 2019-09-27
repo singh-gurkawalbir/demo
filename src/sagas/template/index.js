@@ -1,7 +1,8 @@
-import { call, takeEvery, put, takeLatest } from 'redux-saga/effects';
+import { call, takeEvery, put, select } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import * as selectors from '../../reducers';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -35,6 +36,42 @@ export function* requestPreview({ templateId }) {
   }
 
   yield put(actions.template.receivedPreview(components, templateId));
+}
+
+export function* createComponents({ templateId }) {
+  const { cMap: connectionMap, stackId: _stackId } = yield select(
+    selectors.templateSetup,
+    {
+      templateId,
+    }
+  );
+  const template = yield select(selectors.template, { templateId });
+  const userPreferences = yield select(selectors.userPreferences);
+  const sandbox = userPreferences.environment === 'sandbox';
+  const path = `/integrations/template/${templateId}`;
+  let components;
+
+  try {
+    components = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'POST',
+        body: {
+          connectionMap,
+          _stackId,
+          sandbox,
+          name: `Copy ${(template || {}).name}`,
+        },
+      },
+      message: `Fetching Preview`,
+    });
+  } catch (error) {
+    yield put(actions.template.failedInstall(templateId));
+
+    return undefined;
+  }
+
+  yield put(actions.template.createdIntegration(components, templateId));
 }
 
 export function* verifyBundleInstall({ step, connection, templateId }) {
@@ -77,5 +114,6 @@ export function* verifyBundleInstall({ step, connection, templateId }) {
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
   takeEvery(actionTypes.TEMPLATE.PREVIEW, requestPreview),
-  takeLatest(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, verifyBundleInstall),
+  takeEvery(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, verifyBundleInstall),
+  takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
 ];
