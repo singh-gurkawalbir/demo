@@ -33,7 +33,7 @@ export default {
         description: 'Please provide Stack details',
         type: 'Stack',
         completed: false,
-        imageURL: '/images/icons/icon/stacks.png',
+        imageURL: 'images/icons/icon/stacks.png',
         options: {
           stackProvided: previewData.stackProvided,
         },
@@ -99,7 +99,7 @@ export default {
     if (netsuiteBundleNeeded) {
       installSteps.push({
         installURL: NETSUITE_BUNDLE_URL,
-        imageURL: '/images/company-logos/netsuite.png',
+        imageURL: 'images/company-logos/netsuite.png',
         completed: false,
         description: 'Please install Integrator bundle in NetSuite account',
         name: 'Integrator Bundle',
@@ -111,7 +111,7 @@ export default {
 
     if (salesforceBundleNeeded) {
       installSteps.push({
-        imageURL: '/images/company-logos/salesforce.png',
+        imageURL: 'images/company-logos/salesforce.png',
         installURL: SALESFORCE_DA_PACKAGE_URL,
         completed: false,
         application: 'salesforce',
