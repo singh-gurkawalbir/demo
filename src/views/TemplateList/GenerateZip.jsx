@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GenerateTemplateZip(props) {
+export default function GenerateZip(props) {
   const { onClose, invalid = 'invalid' } = props;
   const classes = useStyles();
   const dispatch = useDispatch();

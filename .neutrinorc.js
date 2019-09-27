@@ -167,18 +167,20 @@ module.exports = {
     [
       '@neutrinojs/env',
       [
-        'API_ENDPOINT',
-        'API_EMAIL',
-        'API_PASSWORD',
-        'AUTO_LOGIN',
-        'NETWORK_THRESHOLD',
-        'CDN_BASE_URI',
-        'ADD_NETWORK_LATENCY',
-        'HELPER_FUNCTIONS_INTERVAL_UPDATE',
-        'USE_NEW_APP',
-        'AGENT_STATUS_INTERVAL',
-        'MASK_SENSITIVE_INFO_DELAY',
-      ],
+        "API_ENDPOINT",
+        "API_EMAIL",
+        "API_PASSWORD",
+        "AUTO_LOGIN",
+        "NETWORK_THRESHOLD",
+        "CDN_BASE_URI",
+        "ADD_NETWORK_LATENCY",
+        "HELPER_FUNCTIONS_INTERVAL_UPDATE",
+        "USE_NEW_APP",
+        "AGENT_STATUS_INTERVAL",
+        "MASK_SENSITIVE_INFO_DELAY",
+        "SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION",
+        "SESSION_EXPIRATION_INTERVAL"
+      ]
     ],
     neutrino => {
       const proxyOpts = getProxyOpts();

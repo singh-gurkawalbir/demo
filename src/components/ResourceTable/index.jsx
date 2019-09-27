@@ -4,6 +4,7 @@ import CeligoTable from '../CeligoTable';
 export default function ResourceTable({
   resourceType,
   resources = [],
+  actionProps,
   ...rest
 }) {
   return (
@@ -12,7 +13,7 @@ export default function ResourceTable({
       filterKey={resourceType}
       {...metadata(resourceType)}
       {...rest}
-      actionProps={{ resourceType }}
+      actionProps={{ ...actionProps, resourceType }}
     />
   );
 }

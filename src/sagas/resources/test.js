@@ -7,6 +7,7 @@ import {
   getResourceCollection,
   deleteResource,
   requestReferences,
+  requestDeregister,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -392,5 +393,59 @@ availableResources.forEach(type => {
 
       expect(final.done).toBe(true);
     });
+  });
+});
+describe(`Deregister connection Saga`, () => {
+  const integrationId = 143;
+  const connectionId = 123;
+
+  test('should succeed on successful api call', () => {
+    const saga = requestDeregister(
+      actions.connection.requestDeregister(connectionId, integrationId)
+    );
+    const path = `/integrations/${integrationId}/connections/${connectionId}/register`;
+    const callEffect = saga.next().value;
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'DELETE',
+        },
+        message: `Deregistering Connection`,
+      })
+    );
+
+    const effect = saga.next().value;
+
+    expect(effect).toEqual(
+      put(actions.connection.completeDeregister(connectionId, integrationId))
+    );
+
+    const final = saga.next();
+
+    expect(final.done).toBe(true);
+  });
+
+  test('should return undefined if api call fails', () => {
+    const saga = requestDeregister(
+      actions.connection.requestDeregister(connectionId, integrationId)
+    );
+    const path = `/integrations/${integrationId}/connections/${connectionId}/register`;
+    const callEffect = saga.next().value;
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'DELETE',
+        },
+        message: `Deregistering Connection`,
+      })
+    );
+
+    const final = saga.throw(new Error('some API exception'));
+
+    expect(final.done).toBe(true);
   });
 });

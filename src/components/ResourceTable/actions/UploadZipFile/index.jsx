@@ -1,8 +1,8 @@
 import { Fragment, useState } from 'react';
 import { IconButton } from '@material-ui/core';
 // TODO Azhar
-import UploadIcon from '../../../../../components/icons/ArrowUpIcon';
-import UploadFileDialog from '../../../../../components/UploadFileDialog';
+import UploadIcon from '../../../../components/icons/ArrowUpIcon';
+import UploadFileDialog from '../../../../components/UploadFileDialog';
 
 export default {
   label: 'Upload ZIP File',

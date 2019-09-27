@@ -23,7 +23,7 @@ function AppErroredModal({ history }) {
         variant="contained"
         color="primary"
         onClick={() => {
-          dispatch(actions.clearAppError());
+          dispatch(actions.app.clearError());
           history.replace('/pg');
           window.location.reload();
         }}>

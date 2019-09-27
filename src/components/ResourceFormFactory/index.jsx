@@ -8,6 +8,7 @@ import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
 import stringUtil from '../../utils/string';
+import { getResourceSubType } from '../../utils/resource';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
@@ -53,10 +54,18 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.resourceForm.clear(resourceType, resourceId));
   },
 });
+const getConnectionType = resource => {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (assistant) return assistant;
+
+  return type;
+};
 
 function ActionsFactory(props) {
-  const { resourceType, isNew, connectionType, variant = 'edit' } = props;
+  const { resource, resourceType, isNew, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
+  const connectionType = getConnectionType(resource);
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
@@ -103,7 +112,6 @@ export const ResourceFormFactory = props => {
   const {
     resourceType,
     formState,
-    connectionType,
     handleInitForm,
     handleClearResourceForm,
     onSubmitComplete,
@@ -167,7 +175,6 @@ export const ResourceFormFactory = props => {
       onCancel={() => setCount(count => count + 1)}
       {...props}
       {...formState}
-      connectionType={connectionType}
       optionsHandler={optionsHandler}
       key={count}
     />

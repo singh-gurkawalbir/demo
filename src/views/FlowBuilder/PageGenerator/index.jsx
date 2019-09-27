@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import { useDrag } from 'react-dnd';
+import { useDrag } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';

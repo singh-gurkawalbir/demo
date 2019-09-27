@@ -12,16 +12,21 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
+import JobRetriesDialog from './JobRetriesDialog';
+import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 
-export default function AccessTokenActionsMenu({
+export default function JobActionsMenu({
   job,
   onActionClick,
   userPermissionsOnIntegration = {},
+  integrationName,
 }) {
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
+  const [showRetriesDialog, setShowRetriesDialog] = useState(false);
+  const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
   const isJobInProgress = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
     job.uiStatus
   );
@@ -61,7 +66,10 @@ export default function AccessTokenActionsMenu({
       }
 
       if (job.files && job.files.length > 0) {
-        menuOptions.push({ label: 'Download Files', action: 'downloadFiles' });
+        menuOptions.push({
+          label: `${job.files.length > 1 ? 'Download Files' : 'Download File'}`,
+          action: 'downloadFiles',
+        });
       }
 
       menuOptions.push({
@@ -92,7 +100,15 @@ export default function AccessTokenActionsMenu({
     handleMenuClose();
 
     if (action === 'downloadDiagnostics') {
-      dispatch(actions.job.downloadDiagnosticsFile({ jobId: job._id }));
+      dispatch(
+        actions.job.downloadFiles({ jobId: job._id, fileType: 'diagnostics' })
+      );
+    } else if (action === 'downloadFiles') {
+      if (job.files.length === 1) {
+        dispatch(actions.job.downloadFiles({ jobId: job._id }));
+      } else if (job.files.length > 1) {
+        setShowFilesDownloadDialog(true);
+      }
     } else if (action === 'runFlow') {
       dispatch(actions.flow.run({ flowId: job._flowId }));
       setActionsToMonitor({
@@ -235,13 +251,37 @@ export default function AccessTokenActionsMenu({
           }
         },
       });
+    } else if (action === 'viewRetries') {
+      setShowRetriesDialog(true);
     } else {
       onActionClick(action);
     }
   }
 
+  function handleJobRetriesDialogCloseClick() {
+    setShowRetriesDialog(false);
+  }
+
+  function handleJobFilesDownloadDialogCloseClick() {
+    setShowFilesDownloadDialog(false);
+  }
+
   return (
     <Fragment>
+      {showRetriesDialog && (
+        <JobRetriesDialog
+          job={job}
+          onCloseClick={handleJobRetriesDialogCloseClick}
+          integrationName={integrationName}
+        />
+      )}
+      {showFilesDownloadDialog && (
+        <JobFilesDownloadDialog
+          job={job}
+          onCloseClick={handleJobFilesDownloadDialogCloseClick}
+          integrationName={integrationName}
+        />
+      )}
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete

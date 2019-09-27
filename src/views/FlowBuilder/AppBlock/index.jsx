@@ -78,6 +78,8 @@ function AppBlock({
 
   return (
     <div style={{ display: 'flex' }}>
+      {children[2] /* <LeftActions> */}
+
       <div className={classes.root}>
         <IconTextButton
           className={classes.resourceButton}
@@ -99,6 +101,7 @@ function AppBlock({
           {resource.name || resource.id}
         </Typography>
       </div>
+
       {children[0] /* <RightActions> */}
     </div>
   );

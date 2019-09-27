@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useDrop } from 'react-dnd';
+import { useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, Tooltip } from '@material-ui/core';

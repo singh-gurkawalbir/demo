@@ -249,6 +249,26 @@ export function* requestRegister({ connectionIds, integrationId }) {
   }
 }
 
+export function* requestDeregister({ connectionId, integrationId }) {
+  const path = `/integrations/${integrationId}/connections/${connectionId}/register`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'DELETE',
+      },
+      message: `Deregistering Connection`,
+    });
+
+    yield put(
+      actions.connection.completeDeregister(connectionId, integrationId)
+    );
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
@@ -258,5 +278,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
+  takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   ...metadataSagas,
 ];

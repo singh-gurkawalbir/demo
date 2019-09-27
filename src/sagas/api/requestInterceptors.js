@@ -75,6 +75,7 @@ export function* onSuccessSaga(response, action) {
   if (response.data === '') {
     response.data = undefined;
     yield put(actions.api.complete(path, method));
+    yield put(actions.auth.sessionTimestamp());
 
     return response;
   }
@@ -93,6 +94,7 @@ export function* onSuccessSaga(response, action) {
   }
 
   yield put(actions.api.complete(path, method));
+  yield put(actions.auth.sessionTimestamp());
 
   return response;
 }

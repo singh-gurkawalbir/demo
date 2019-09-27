@@ -1,4 +1,5 @@
 import shortid from 'shortid';
+import { groupBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -34,8 +35,22 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
   };
 }
 
+function parseJobErrors(collection = []) {
+  const errors = collection.map(je => ({
+    _id: shortid.generate(),
+    ...je,
+  }));
+  const errorsGroupedByRetryId = groupBy(errors, je => je._retryId || je._id);
+
+  return Object.keys(errorsGroupedByRetryId).map(retryId => {
+    const [first, ...rest] = errorsGroupedByRetryId[retryId];
+
+    return { ...first, similarErrors: rest };
+  });
+}
+
 export default (state = DEFAULT_STATE, action) => {
-  const { type, collection, job } = action;
+  const { type, collection = [], job } = action;
 
   if (!type) {
     return state;
@@ -507,12 +522,7 @@ export default (state = DEFAULT_STATE, action) => {
       };
     }
   } else if (type === actionTypes.JOB.ERROR.RECEIVED_COLLECTION) {
-    const errors = collection.map(je => ({
-      _id: shortid.generate(),
-      ...je,
-    }));
-
-    return { ...state, errors };
+    return { ...state, errors: parseJobErrors(collection) };
   } else if (type === actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION) {
     const retryObjects = {};
 
@@ -533,6 +543,17 @@ export default (state = DEFAULT_STATE, action) => {
       ...state,
       errors: errors.map(je => {
         if (selectedErrorIds.includes(je._id)) {
+          if (je.similarErrors && je.similarErrors.length > 0) {
+            return {
+              ...je,
+              resolved: true,
+              similarErrors: je.similarErrors.map(sje => ({
+                ...sje,
+                resolved: true,
+              })),
+            };
+          }
+
           return { ...je, resolved: true };
         }
 
@@ -652,6 +673,14 @@ export function flowJobs(state) {
                 additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
               }
             }
+          }
+
+          if (cJob.retries && cJob.retries.length > 0) {
+            // eslint-disable-next-line no-param-reassign
+            cJob.retries = cJob.retries.map(r => ({
+              ...r,
+              duration: getJobDuration(r),
+            }));
           }
 
           return { ...cJob, ...additionalChildProps };
