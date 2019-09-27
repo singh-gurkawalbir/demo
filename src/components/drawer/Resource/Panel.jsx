@@ -4,10 +4,7 @@ import { Route } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import {
-  MODEL_PLURAL_TO_LABEL,
-  getResourceSubType,
-} from '../../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 
@@ -41,19 +38,6 @@ export default function Panel(props) {
   const isNew = operation === 'add';
   const classes = useStyles(props);
   const dispatch = useDispatch();
-  const connectionType = useSelector(state => {
-    const valueChanges = selectors.resourceData(
-      state,
-      resourceType,
-      id,
-      'value'
-    );
-    const { assistant, type } = getResourceSubType(valueChanges.merged);
-
-    if (assistant) return assistant;
-
-    return type;
-  });
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
@@ -112,7 +96,6 @@ export default function Panel(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
-            connectionType={connectionType}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}

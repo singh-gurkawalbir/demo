@@ -16,6 +16,7 @@ import Users from './Users';
 import AuditLog from './AuditLog';
 import AccessTokens from './AccessTokens';
 import Connections from './Connections';
+import General from './General';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -179,6 +180,12 @@ export default function IntegrationSettings(props) {
                   `/integrations/:integrationId/settings/tokens`
                 )}
                 component={AccessTokens}
+              />
+              <Route
+                path={getRoutePath(
+                  `/integrations/:integrationId/settings/general`
+                )}
+                component={General}
               />
             </Switch>
           </div>

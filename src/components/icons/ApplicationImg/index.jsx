@@ -29,15 +29,15 @@ const iconMap = (type = '') => {
 };
 
 function ApplicationImg(props) {
-  const { size = 'small', imgType = 'small', assistant, type, classes } = props;
+  const { size = 'small', assistant, type, classes } = props;
   let path;
 
   if (assistant) {
-    path = `${process.env.CDN_BASE_URI}images/marketplace/${imgType}/${assistant}.png`;
+    path = `${process.env.CDN_BASE_URI}marketplace/${size}/${assistant}.png`;
   } else {
     path = `${
       process.env.CDN_BASE_URI
-    }images/flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+    }flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
   }
 
   return <img className={classes[size]} alt={assistant} src={path} />;

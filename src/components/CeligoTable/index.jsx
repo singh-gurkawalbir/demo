@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -57,6 +57,7 @@ export default function CeligoTable({
   data = [],
   onSelectChange,
   selectableRows,
+  isSelectableRow,
   filterKey,
   actionProps = {},
 }) {
@@ -72,6 +73,32 @@ export default function CeligoTable({
 
   const [selectedResources, setSelectedResources] = useState({});
   const [isAllSelected, setIsAllSelected] = useState(false);
+
+  useEffect(() => {
+    const hasSelectableResources =
+      !isSelectableRow ||
+      data.reduce(
+        (isSelected, resource) => isSelected || !!isSelectableRow(resource),
+        false
+      );
+    let isAllSelectableResourcesSelected = hasSelectableResources;
+
+    if (hasSelectableResources) {
+      isAllSelectableResourcesSelected = data.reduce((isSelected, resource) => {
+        if (isSelectableRow) {
+          if (isSelectableRow(resource)) {
+            return isSelected && !!selectedResources[resource._id];
+          }
+
+          return true;
+        }
+
+        return isSelected && !!selectedResources[resource._id];
+      }, hasSelectableResources);
+    }
+
+    setIsAllSelected(isAllSelectableResourcesSelected);
+  }, [isSelectableRow, data, selectedResources]);
   const handleSelectChange = (event, resourceId) => {
     const { checked } = event.target;
     const selected = produce(selectedResources, draft => {
@@ -91,7 +118,13 @@ export default function CeligoTable({
     const selected = produce(selectedResources, draft => {
       const selectedCopy = draft;
 
-      data.forEach(r => (selectedCopy[r._id] = checked));
+      data.forEach(r => {
+        if (isSelectableRow) {
+          selectedCopy[r._id] = isSelectableRow(r) ? checked : false;
+        } else {
+          selectedCopy[r._id] = checked;
+        }
+      });
     });
 
     setSelectedResources(selected);
@@ -151,10 +184,12 @@ export default function CeligoTable({
           <TableRow hover key={r._id} className={classes.row}>
             {selectableRows && (
               <TableCell>
-                <Checkbox
-                  onChange={event => handleSelectChange(event, r._id)}
-                  checked={!!selectedResources[r._id]}
-                />
+                {(isSelectableRow ? !!isSelectableRow(r) : true) && (
+                  <Checkbox
+                    onChange={event => handleSelectChange(event, r._id)}
+                    checked={!!selectedResources[r._id]}
+                  />
+                )}
               </TableCell>
             )}
             {columns.map((col, index) =>
@@ -175,7 +210,13 @@ export default function CeligoTable({
             {rowActions && (
               <TableCell className={classes.actionCell}>
                 <ActionMenu
-                  actions={rowActions.map(({ label, component: Action }) => ({
+                  // rowActions may or may not be a fn. Sometimes
+                  // the actions are static, other times they are
+                  // determinant on the resource they apply to.
+                  actions={(typeof rowActions === 'function'
+                    ? rowActions(r, actionProps)
+                    : rowActions
+                  ).map(({ label, component: Action }) => ({
                     label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}

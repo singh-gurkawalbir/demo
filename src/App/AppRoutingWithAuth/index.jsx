@@ -17,7 +17,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.auth.initSession());
   },
   clearAppError: () => {
-    dispatch(actions.clearAppError());
+    dispatch(actions.app.clearError());
   },
 });
 

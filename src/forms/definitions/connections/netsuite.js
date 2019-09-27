@@ -107,4 +107,44 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'validate',
+      label: 'Validate',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'testandsave',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+  ],
 };

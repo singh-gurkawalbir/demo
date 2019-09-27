@@ -7,7 +7,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import infoText from './infoText';
-import CeligoIconButton from '../../components/IconButton';
+import IconTextButton from '../../components/IconTextButton';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
-  const defaultFilter = { take: 3 };
+  const defaultFilter = { take: 5 };
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType)) ||
@@ -35,7 +35,7 @@ function ResourceList(props) {
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      ...filter,
+      ...{ ...defaultFilter, ...filter },
     })
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
@@ -52,7 +52,7 @@ function ResourceList(props) {
             filterKey={resourceType}
             defaultFilter={defaultFilter}
           />
-          <CeligoIconButton
+          <IconTextButton
             component={Link}
             to={`${
               location.pathname
@@ -60,7 +60,7 @@ function ResourceList(props) {
             variant="text"
             color="primary">
             <AddIcon /> New {resourceName}
-          </CeligoIconButton>
+          </IconTextButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>

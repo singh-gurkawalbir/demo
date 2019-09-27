@@ -1,7 +1,8 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
-import DownLoadDebugLogs from '../../actions/Connections/DownLoadDebugLogs';
+// eslint-disable-next-line import/no-unresolved
+import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
@@ -10,6 +11,7 @@ import {
   formatLastModified,
   getConnectorName,
 } from '../../../CeligoTable/util';
+import Deregister from '../../actions/Connections/Deregister';
 
 export default {
   columns: [
@@ -46,12 +48,25 @@ export default {
       },
     },
   ],
-  rowActions: [
-    Delete,
-    References,
-    ConfigureDebugger,
-    DownLoadDebugLogs,
-    AuditLogs,
-    RefreshMetadata,
-  ],
+  rowActions: (r, actionProps) => {
+    if (actionProps.integrationId) {
+      return [
+        Deregister,
+        References,
+        ConfigureDebugger,
+        DownloadDebugLogs,
+        AuditLogs,
+        RefreshMetadata,
+      ];
+    }
+
+    return [
+      Delete,
+      References,
+      ConfigureDebugger,
+      DownloadDebugLogs,
+      AuditLogs,
+      RefreshMetadata,
+    ];
+  },
 };

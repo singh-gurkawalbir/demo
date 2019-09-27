@@ -1,19 +1,23 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 
-const mapStateToProps = (state, { resources }) => {
-  const requiredStatus = (typeof resources === 'string'
-    ? resources.split(',')
-    : resources
-  ).reduce((acc, resourceType) => {
-    acc.push(selectors.resourceStatus(state, resourceType.trim()));
+export default function LoadResources({ children, resources, required }) {
+  const dispatch = useDispatch();
+  const resourceStatus = useSelector(state => {
+    const requiredStatus = (typeof resources === 'string'
+      ? resources.split(',')
+      : resources
+    ).reduce((acc, resourceType) => {
+      acc.push(selectors.resourceStatus(state, resourceType.trim()));
 
-    return acc;
-  }, []);
-  const isAllDataReady = requiredStatus.reduce((acc, resourceStatus) => {
+      return acc;
+    }, []);
+
+    return requiredStatus;
+  });
+  const isAllDataReady = resourceStatus.reduce((acc, resourceStatus) => {
     if (!resourceStatus.isReady) {
       return false;
     }
@@ -21,47 +25,20 @@ const mapStateToProps = (state, { resources }) => {
     return acc;
   }, true);
 
-  return {
-    isAllDataReady,
-    requiredStatus,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  requestResource: type => {
-    // console.log(`request resource "${resource}"`);
-    dispatch(actions.resource.requestCollection(type));
-  },
-});
-
-@withStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
-}))
-class LoadResources extends Component {
-  async componentDidMount() {
-    const { isAllDataReady, requiredStatus, requestResource } = this.props;
-
+  useEffect(() => {
     if (!isAllDataReady) {
-      requiredStatus.forEach(resource => {
+      resourceStatus.forEach(resource => {
         if (!resource.hasData) {
-          requestResource(resource.resourceType);
+          dispatch(actions.resource.requestCollection(resource.resourceType));
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, isAllDataReady]);
+
+  if (isAllDataReady || !required) {
+    return children;
   }
 
-  render() {
-    const { isAllDataReady, children, required } = this.props;
-
-    if (isAllDataReady || !required) {
-      return children;
-    }
-
-    return null;
-  }
+  return null;
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(LoadResources);

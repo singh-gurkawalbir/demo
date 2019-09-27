@@ -2,11 +2,12 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
+import { uniq } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import auth from './authentication';
+import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
@@ -214,6 +215,7 @@ export function userProfilePreferencesProps(state) {
     dateFormat,
     timezone,
     timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
   } = { ...profile, ...preferences };
 
   return {
@@ -227,6 +229,7 @@ export function userProfilePreferencesProps(state) {
     dateFormat,
     timezone,
     timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
   };
 }
 
@@ -288,6 +291,14 @@ export function shouldShowAppRouting(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function showSessionStatus(state, date) {
+  return fromAuth.showSessionStatus(state && state.auth, date);
+}
+
+export function sessionValidTimestamp(state) {
+  return state && state.auth && state.auth.authTimestamp;
 }
 // #endregion AUTHENTICATION SELECTORS
 
@@ -1323,32 +1334,37 @@ export function flowJobs(state) {
   const jobs = fromData.flowJobs(state.data);
   const preferences = userPreferences(state);
   const resourceMap = resourceDetailsMap(state);
+  const getEndedAtAsString = job =>
+    job.endedAt &&
+    moment(job.endedAt).format(
+      `${preferences.dateFormat} ${preferences.timeFormat}`
+    );
 
   return jobs.map(job => {
     if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          endedAtAsString:
-            cJob.endedAt &&
-            moment(cJob.endedAt).format(
-              `${preferences.dateFormat} ${preferences.timeFormat}`
-            ),
+          endedAtAsString: getEndedAtAsString(cJob),
           name: cJob._exportId
             ? resourceMap.exports[cJob._exportId].name
             : resourceMap.imports[cJob._importId].name,
         };
+
+        if (cJob.retries && cJob.retries.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          cJob.retries = cJob.retries.map(r => ({
+            ...r,
+            endedAtAsString: getEndedAtAsString(r),
+          }));
+        }
 
         return { ...cJob, ...additionalChildProps };
       });
     }
 
     const additionalProps = {
-      endedAtAsString:
-        job.endedAt &&
-        moment(job.endedAt).format(
-          `${preferences.dateFormat} ${preferences.timeFormat}`
-        ),
+      endedAtAsString: getEndedAtAsString(job),
       name:
         resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
     };
@@ -1401,14 +1417,30 @@ export function jobErrors(state, jobId) {
   const jErrors = fromData.jobErrors(state.data, jobId);
   const preferences = userPreferences(state);
 
-  return jErrors.map(je => ({
-    ...je,
-    createdAtAsString:
-      je.createdAt &&
-      moment(je.createdAt).format(
-        `${preferences.dateFormat} ${preferences.timeFormat}`
-      ),
-  }));
+  return jErrors.map(je => {
+    let similarErrors = [];
+
+    if (je.similarErrors && je.similarErrors.length > 0) {
+      similarErrors = je.similarErrors.map(sje => ({
+        ...sje,
+        createdAtAsString:
+          sje.createdAt &&
+          moment(sje.createdAt).format(
+            `${preferences.dateFormat} ${preferences.timeFormat}`
+          ),
+      }));
+    }
+
+    return {
+      ...je,
+      createdAtAsString:
+        je.createdAt &&
+        moment(je.createdAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      similarErrors,
+    };
+  });
 }
 
 export function jobErrorRetryObject(state, retryId) {
@@ -1420,4 +1452,113 @@ export function assistantData(state, { adaptorType, assistant }) {
     adaptorType,
     assistant,
   });
+}
+
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = [];
+  const importIds = [];
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!flow) {
+    return connectionIds;
+  }
+
+  if (flow._exportId) {
+    exportIds.push(flow._exportId);
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._exportId) {
+        exportIds.push(pp._exportId);
+      }
+
+      if (pp._importId) {
+        importIds.push(pp._importId);
+      }
+    });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    flow.pageGenerators.forEach(pg => {
+      if (pg._exportId) {
+        exportIds.push(pg._exportId);
+      }
+
+      if (pg._importId) {
+        importIds.push(pg._importId);
+      }
+    });
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  attachedConnections.forEach(conn => {
+    if (conn && conn._borrowConcurrencyFromConnectionId) {
+      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
+    }
+  });
+
+  return uniq(connectionIds.concat(borrowConnectionIds));
+}
+
+export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
+  let connectionIdsToRegister = [];
+
+  if (!selectedFlows) {
+    return connectionIdsToRegister;
+  }
+
+  selectedFlows.forEach(flow => {
+    connectionIdsToRegister = connectionIdsToRegister.concat(
+      getAllConnectionIdsUsedInTheFlow(state, flow)
+    );
+  });
+
+  return connectionIdsToRegister;
+}
+
+export function getAllPageProcessorImports(state, pageProcessors) {
+  let ppImports = [];
+  const pageProcessorIds = [];
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!pageProcessors) {
+    return imports;
+  }
+
+  pageProcessors.forEach(pageProcessor => {
+    if (pageProcessor && pageProcessor._importId) {
+      pageProcessorIds.push(pageProcessor._importId);
+    }
+  });
+  ppImports =
+    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
+
+  return ppImports;
 }

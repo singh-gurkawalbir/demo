@@ -1,44 +1,49 @@
 import { useRef, Fragment } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { withRouter } from 'react-router-dom';
+import { useDrag, useDrop } from 'react-dnd-cjs';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import clsx from 'clsx';
+// import actions from '../../../actions';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
-import ToolsIcon from '../../../components/icons/ToolsIcon';
+import FilterIcon from '../../../components/icons/FilterIcon';
+import MapDataIcon from '../../../components/icons/MapDataIcon';
+import TransformIcon from '../../../components/icons/DataTransformationIcon';
+import AppBlock from '../AppBlock';
+import LeftActions from '../AppBlock/LeftActions';
+import RightActions from '../AppBlock/RightActions';
+import BottomActions from '../AppBlock/BottomActions';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
   },
-  ppBox: {
-    width: 150,
-    height: 150,
-    border: 'solid 1px lightblue',
-    borderRadius: 24,
-    padding: theme.spacing(1),
-    margin: theme.spacing(3, 0),
-    cursor: 'move',
-  },
-  processorActions: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    padding: theme.spacing(0, 1),
-  },
   lineRight: {
-    top: -theme.spacing(3),
-    // none yet
+    minWidth: 50,
   },
   lineLeft: {
     minWidth: 50,
   },
   dottedLine: {
+    alignSelf: 'start',
+    marginTop: 80,
     position: 'relative',
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
+const PageProcessor = ({
+  match,
+  location,
+  history,
+  index,
+  onMove,
+  isLast,
+  ...pp
+}) => {
+  const resourceType = pp.type === 'export' ? 'exports' : 'imports';
+  const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
   const ref = useRef(null);
   const classes = useStyles();
   const [, drop] = useDrop({
@@ -90,7 +95,7 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
     },
   });
   const [{ isDragging }, drag] = useDrag({
-    item: { type: itemTypes.PAGE_PROCESSOR, _id, index },
+    item: { type: itemTypes.PAGE_PROCESSOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
@@ -103,28 +108,57 @@ const PageProcessor = ({ _id, name, index, onMove, isLast }) => {
     <Fragment>
       <div className={classes.ppContainer}>
         {index === 0 && (
+          /* Initial left line connecting Source Apps */
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
-        <div ref={ref} className={classes.ppBox} style={{ opacity }}>
-          <Typography variant="h2">{name}</Typography>
-        </div>
-        {!isLast && (
-          <div>
-            <div className={classes.processorActions}>
-              <IconButton>
-                <ToolsIcon />
-              </IconButton>
+        <AppBlock
+          match={match}
+          history={history}
+          ref={ref}
+          opacity={opacity}
+          resourceType={resourceType}
+          resourceId={resourceId}>
+          <RightActions>
+            {!isLast && (
+              <Fragment>
+                <IconButton>
+                  <MapDataIcon />
+                </IconButton>
+                <IconButton>
+                  <FilterIcon />
+                </IconButton>
+              </Fragment>
+            )}
+          </RightActions>
 
-              <IconButton>
-                <HookIcon />
-              </IconButton>
-            </div>
-            <div className={clsx(classes.dottedLine, classes.lineRight)} />
-          </div>
+          <BottomActions>
+            <IconButton>
+              <MapDataIcon />
+            </IconButton>
+
+            <IconButton>
+              <TransformIcon />
+            </IconButton>
+
+            <IconButton>
+              <HookIcon />
+            </IconButton>
+          </BottomActions>
+
+          <LeftActions>
+            <IconButton>
+              <FilterIcon />
+            </IconButton>
+          </LeftActions>
+        </AppBlock>
+        {!isLast && (
+          /* Right connecting line between Page Processors is not needed
+             for the last App (nothing to connect) */
+          <div className={clsx(classes.dottedLine, classes.lineRight)} />
         )}
       </div>
     </Fragment>
   );
 };
 
-export default PageProcessor;
+export default withRouter(PageProcessor);

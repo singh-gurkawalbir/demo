@@ -15,5 +15,5 @@ export default resourceType => ({
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Delete, References],
+  rowActions: () => [Delete, References],
 });
