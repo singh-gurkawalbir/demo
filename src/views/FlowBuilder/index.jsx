@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
@@ -17,6 +17,7 @@ import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
 
+// #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
   var FlowSchema = new Schema({
   _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
@@ -124,6 +125,7 @@ import itemTypes from './itemTypes';
   }
   })
 */
+// #endregion
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -132,7 +134,7 @@ const useStyles = makeStyles(theme => ({
   canvasContainer: {
     // border: 'solid 1px black',
     overflow: 'hidden',
-    width: `calc(100vw - 57px)`,
+    width: `calc(100vw - ${theme.drawerWidthMinimized}px)`,
     transition: theme.transitions.create(['width', 'height'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -178,17 +180,29 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
+  const newId = () => `new-${shortid.generate()}`;
   const { match, history } = props;
   const { flowId } = match.params;
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [size, setSize] = useState(0);
+  const [newGeneratorId, setNewGeneratorId] = useState(newId());
+  const [newProcessorId, setNewProcessorId] = useState(newId());
+  //
+  // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const { merged: flow = {}, patch } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
-  const [size, setSize] = useState(0);
+  const createdGeneratorId = useSelector(state =>
+    selectors.createdResourceId(state, newGeneratorId)
+  );
+  const createdProcessorId = useSelector(state =>
+    selectors.createdResourceId(state, newProcessorId)
+  );
+  // #endregion
   const patchFlow = useCallback(
     (path, value, commit = false) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -203,6 +217,9 @@ function FlowBuilder(props) {
   );
   const undoFlowPatch = useCallback(() => {
     dispatch(actions.resource.undoStaged(flowId, 'value'));
+  }, [dispatch, flowId]);
+  const commitFlowPatch = useCallback(() => {
+    dispatch(actions.resource.commitStaged(flowId, 'value'));
   }, [dispatch, flowId]);
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
@@ -234,19 +251,56 @@ function FlowBuilder(props) {
     [pageGenerators, pageProcessors, patchFlow]
   );
 
-  function handleAddSource() {
-    const newId = shortid.generate();
-    const to = `${match.url}/add/exports/new-${newId}`;
+  // #region Add Generator on creation effect
+  useEffect(() => {
+    if (createdGeneratorId) {
+      patchFlow('/pageGenerators', [
+        ...pageGenerators,
+        { _exportId: createdGeneratorId },
+      ]);
+      // in case someone clicks + again to add another resource...
+      setNewGeneratorId(newId());
+    }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdGeneratorId, patchFlow]);
+  // #endregion
+
+  // #region Add Processor on creation effect
+  useEffect(() => {
+    if (createdProcessorId) {
+      patchFlow('/pageProcessors', [
+        ...pageProcessors,
+        // do we need to include dummy responseMapping?
+        // lets see if the API call succeeds...
+        { type: 'import', _importId: createdProcessorId },
+      ]);
+
+      setNewProcessorId(newId());
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdProcessorId, patchFlow]);
+  // #endregion
+
+  const pushOrReplaceHistory = to => {
     if (match.isExact) {
       history.push(to);
     } else {
       history.replace(to);
     }
+  };
+
+  function handleAddGenerator() {
+    pushOrReplaceHistory(`${match.url}/add/exports/${newGeneratorId}`);
+  }
+
+  function handleAddProcessor() {
+    pushOrReplaceHistory(`${match.url}/add/imports/${newProcessorId}`);
   }
 
   // eslint-disable-next-line
-  console.log(flow, patch);
+  // console.log(flow, patch);
 
   return (
     <Fragment>
@@ -273,7 +327,7 @@ function FlowBuilder(props) {
             <div className={classes.generatorRoot}>
               <Typography className={classes.title} variant="h6">
                 SOURCE APPLICATIONS
-                <IconButton onClick={handleAddSource}>
+                <IconButton onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -292,7 +346,7 @@ function FlowBuilder(props) {
             <div className={classes.processorRoot}>
               <Typography className={classes.title} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
-                <IconButton>
+                <IconButton onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -318,9 +372,18 @@ function FlowBuilder(props) {
                   : 64 + theme.spacing(3),
               }}>
               {patch && patch.length > 0 && (
-                <Button variant="outlined" onClick={undoFlowPatch}>
-                  Undo {patch.length} change(s)
-                </Button>
+                <Fragment>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={commitFlowPatch}>
+                    Commit
+                  </Button>
+                  &nbsp;
+                  <Button variant="outlined" onClick={undoFlowPatch}>
+                    Undo {patch.length} change(s)
+                  </Button>
+                </Fragment>
               )}
               <TrashCan onDrop={handleDelete} />
             </div>
