@@ -12,7 +12,7 @@ export default function DynaFileDefinitionSelect(props) {
   // Get File definitions based on the file type format
   // Formats: edix12, fixed or edifact
   const { data: fileDefinitions = [], status } = useSelector(state =>
-    selectors.getSupportedFileDefinitions(state, format)
+    selectors.getPreBuiltFileDefinitions(state, format)
   );
 
   /*

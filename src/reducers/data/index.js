@@ -8,6 +8,7 @@ import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
 import marketplace, * as fromMarketplace from './marketPlace';
+import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
 
 export default combineReducers({
   resources,
@@ -17,6 +18,7 @@ export default combineReducers({
   jobs,
   suiteScript,
   marketplace,
+  fileDefinitions,
 });
 
 // #region resource selectors
@@ -216,3 +218,16 @@ export function jobErrors(state, jobId) {
 export function jobErrorRetryObject(state, retryId) {
   return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
+
+export const getPreBuiltFileDefinitions = (state, format) =>
+  fromFileDefinitions.getPreBuiltFileDefinitions(
+    state && state.fileDefinitions,
+    format
+  );
+
+export const getFileDefinition = (state, definitionId, options) =>
+  fromFileDefinitions.getFileDefinition(
+    state && state.fileDefinitions,
+    definitionId,
+    options
+  );

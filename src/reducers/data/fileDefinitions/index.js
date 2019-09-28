@@ -111,7 +111,7 @@ export default (
   }
 };
 
-export const getSupportedFileDefinitions = (state, format) => ({
+export const getPreBuiltFileDefinitions = (state, format) => ({
   data:
     (state &&
       state.preBuiltFileDefinitions &&

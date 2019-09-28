@@ -1168,14 +1168,12 @@ export function optionsMapFromMetadata(
   );
 }
 
-export const getSupportedFileDefinitions = (state, format) =>
-  fromSession.getSupportedFileDefinitions(state && state.session, format);
-
-export const getUserSupportedFileDefinitions = state =>
-  fromSession.getUserSupportedFileDefinitions(state && state.session);
+export const getPreBuiltFileDefinitions = (state, format) =>
+  fromData.getPreBuiltFileDefinitions(state && state.data, format);
 
 export const getFileDefinition = (state, definitionId, options) =>
-  fromSession.getFileDefinition(state && state.session, definitionId, options);
+  fromData.getFileDefinition(state && state.data, definitionId, options);
+
 export function commMetadataPathGen(
   applicationType,
   connectionId,
