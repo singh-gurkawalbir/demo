@@ -5,6 +5,7 @@ const appBarHeight = 36;
 const theme = {
   spacing: 8,
   drawerWidth: 256,
+  drawerWidthMinimized: 60,
   appBarHeight,
   pageBarHeight: 88,
 

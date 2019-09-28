@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     // none needed so far.
   },
   drawerPaper: {
-    marginLeft: 57,
+    marginLeft: theme.drawerWidthMinimized,
     padding: theme.spacing(1),
     transition: theme.transitions.create(['height', 'margin'], {
       easing: theme.transitions.easing.sharp,
