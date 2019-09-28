@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 function generateFileDefinitionOptions({ definitions }) {
@@ -66,49 +67,40 @@ export default (
     definition,
     error,
   } = action;
-  let newState;
 
-  switch (type) {
-    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST: {
-      newState = { ...state.preBuiltFileDefinitions };
-      newState.status = 'requested';
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST: {
+        draft.preBuiltFileDefinitions.status = 'requested';
+        break;
+      }
 
-      return { ...state, ...{ preBuiltFileDefinitions: newState } };
+      case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED: {
+        draft.preBuiltFileDefinitions.status = 'received';
+        draft.preBuiltFileDefinitions.data = generateFileDefinitionOptions(
+          fileDefinitions || {}
+        );
+        break;
+      }
+
+      case actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED: {
+        draft.preBuiltFileDefinitions.data[format] = addDefinition(
+          draft.preBuiltFileDefinitions.data[format],
+          definitionId,
+          definition
+        );
+        break;
+      }
+
+      case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR: {
+        draft.preBuiltFileDefinitions.status = 'error';
+        draft.preBuiltFileDefinitions.errorMessage = error;
+        break;
+      }
+
+      default:
     }
-
-    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED: {
-      newState = { ...state.preBuiltFileDefinitions };
-      newState.status = 'received';
-      newState.data = generateFileDefinitionOptions(fileDefinitions || {});
-
-      return { ...state, ...{ preBuiltFileDefinitions: newState } };
-    }
-
-    case actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED: {
-      newState = { ...state.preBuiltFileDefinitions };
-      newState.data = { ...state.preBuiltFileDefinitions.data };
-      newState.data[format] = [...state.preBuiltFileDefinitions.data[format]];
-      newState.data[format] = addDefinition(
-        newState.data[format],
-        definitionId,
-        definition
-      );
-
-      return { ...state, ...{ preBuiltFileDefinitions: newState } };
-    }
-
-    // Error handlers for all the requested actions
-    case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR: {
-      newState = { ...state.preBuiltFileDefinitions };
-      newState.status = 'error';
-      newState.errorMessage = error;
-
-      return { ...state, ...{ preBuiltFileDefinitions: newState } };
-    }
-
-    default:
-      return { ...state };
-  }
+  });
 };
 
 export const getPreBuiltFileDefinitions = (state, format) => ({

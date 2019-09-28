@@ -1,7 +1,8 @@
 /*
- * This state holds the entire stages of Resource(Export/Import )'s Data flow
+ * This state holds the entire stages of Export's Data flow
  * Involves the data in each and every stage
  */
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
@@ -30,78 +31,41 @@ function extractStages(sampleData) {
 export default function(state = {}, action) {
   const { type, resourceId, previewData, processedData, stage, error } = action;
 
-  if (!type || !resourceId) return state;
+  return produce(state, draft => {
+    if (!type || !resourceId) return draft;
 
-  switch (type) {
-    case actionTypes.SAMPLEDATA.REQUEST: {
-      return {
-        ...state,
-        [resourceId]: {
-          ...state[resourceId],
-          status: 'requested',
-        },
-      };
-    }
-
-    case actionTypes.SAMPLEDATA.RECEIVED: {
-      const newState = { ...state };
-
-      newState[resourceId] = { ...state[resourceId] };
-      newState[resourceId].status = 'received';
-      newState[resourceId].data = extractStages(previewData);
-
-      return {
-        ...state,
-        [resourceId]: newState[resourceId],
-      };
-    }
-
-    case actionTypes.SAMPLEDATA.UPDATE: {
-      const newState = { ...state };
-
-      newState[resourceId] = { ...state[resourceId] };
-      newState[resourceId].status = 'updated';
-      newState[resourceId].data = {
-        ...state[resourceId].data,
-      };
-      // For all the parsers , data is an array
-      // Only incase of structuredFileParser it is an object
-      newState[resourceId].data = {
-        ...newState[resourceId].data,
-        [stage]:
+    switch (type) {
+      case actionTypes.SAMPLEDATA.REQUEST:
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'requested';
+        break;
+      case actionTypes.SAMPLEDATA.RECEIVED:
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'received';
+        draft[resourceId].data = extractStages(previewData);
+        break;
+      case actionTypes.SAMPLEDATA.UPDATE:
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'updated';
+        draft[resourceId].data = draft[resourceId].data || {};
+        // For all the parsers , data is an array
+        // Only incase of structuredFileParser it is an object
+        draft[resourceId].data[stage] =
           processedData.data &&
           (Array.isArray(processedData.data)
             ? processedData.data[0]
-            : processedData.data),
-      };
-
-      return {
-        ...state,
-        [resourceId]: newState[resourceId],
-      };
+            : processedData.data);
+        break;
+      case actionTypes.SAMPLEDATA.RECEIVED_ERROR:
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'error';
+        draft[resourceId].error = error;
+        // Resets the Erred Stage
+        delete draft[resourceId][stage];
+        break;
+      default:
     }
-
-    case actionTypes.SAMPLEDATA.RECEIVED_ERROR: {
-      const newState = { ...state };
-
-      newState[resourceId] = { ...state[resourceId] };
-      newState[resourceId].status = 'error';
-      newState[resourceId].error = error;
-
-      // Resets the Erred Stage
-      if (stage) {
-        newState[resourceId].data = {
-          ...newState[resourceId].data,
-          [stage]: undefined,
-        };
-      }
-
-      return { ...state, [resourceId]: newState[resourceId] };
-    }
-
-    default:
-      return state;
-  }
+  });
 }
 
 function getRawData(resourceData) {
