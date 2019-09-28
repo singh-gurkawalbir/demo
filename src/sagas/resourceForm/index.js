@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -171,11 +171,29 @@ export function* createFormValuesPatchSet({
   return { patchSet, finalValues };
 }
 
+export function* saveRawData({ values }) {
+  const rawData = values['/rawData'];
+
+  if (!rawData) return values;
+
+  const rawDataKey = yield call(uploadRawData, {
+    file: JSON.stringify(rawData),
+  });
+
+  return { ...values, '/rawData': rawDataKey };
+}
+
 export function* submitFormValues({ resourceType, resourceId, values }) {
+  let formValues = values;
+
+  if (resourceType === 'exports') {
+    formValues = yield call(saveRawData, { values });
+  }
+
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
 
@@ -216,26 +234,6 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   );
 }
 
-export function* submitFormValuesWithRawData({
-  resourceType,
-  resourceId,
-  values,
-}) {
-  let newValues = { ...values };
-  const rawData = values['/rawData'];
-  let rawDataKey;
-
-  if (rawData) {
-    rawDataKey = yield call(uploadRawData, {
-      file: JSON.stringify(rawData),
-    });
-  }
-
-  newValues = { ...newValues, '/rawData': rawDataKey };
-
-  yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
-}
-
 export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
@@ -243,9 +241,7 @@ export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
   delete newValues['/file/filedefinition/rules'];
   newValues['/file/type'] = 'filedefinition';
   newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
-  yield put(
-    actions.resourceForm.submitWithRawData(resourceType, resourceId, newValues)
-  );
+  yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
 }
 
 export function* initFormValues({
@@ -399,9 +395,5 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
-  takeLatest(
-    actionTypes.RESOURCE_FORM.SUBMIT_WITH_RAW_DATA,
-    submitFormValuesWithRawData
-  ),
   ...connectionSagas,
 ];

@@ -40,6 +40,7 @@ export default {
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     file: { formId: 'file' },
+    rawData: { fieldId: 'rawData' },
     transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
@@ -53,6 +54,7 @@ export default {
       'ftp.fileNameStartsWith',
       'ftp.fileNameEndsWith',
       'file',
+      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -74,7 +76,7 @@ export default {
       id: 'cancel',
     },
     {
-      id: 'saverawdata',
+      id: 'save',
       visibleWhen: [
         {
           field: 'file.type',

@@ -648,12 +648,6 @@ const resourceForm = {
       resourceId,
       values,
     }),
-  submitWithRawData: (resourceType, resourceId, values) =>
-    action(actionTypes.RESOURCE_FORM.SUBMIT_WITH_RAW_DATA, {
-      resourceType,
-      resourceId,
-      values,
-    }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
       resourceType,
