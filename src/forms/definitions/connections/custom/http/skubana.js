@@ -6,8 +6,8 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://api.${
-      formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
-    }skubana.com`,
+      formValues['/environment'] === 'sandbox' ? 'sandbox' : ''
+    }.skubana.com`,
     '/http/auth/token/location': 'header',
     '/http/auth/oauth/authURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
