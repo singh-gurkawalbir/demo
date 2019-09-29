@@ -10,8 +10,25 @@ import {
   evaluateProcessor,
   refreshHelperFunctions,
 } from './';
+import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
 import { getResource } from '../resources';
+
+describe('invokeProcessor saga', () => {
+  test('should make api call with passed arguments', () => {
+    const selectResponse = { processor: 'p', body: 'body' };
+    const saga = invokeProcessor(selectResponse);
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'POST',
+      body: selectResponse.body,
+    };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
+    );
+  });
+});
 
 describe('evaluateProcessor saga', () => {
   test('should do nothing if no editor exists with given id', () => {
