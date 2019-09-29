@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Delete from '../../actions/Delete';
 import { getResourceLink } from '../../../CeligoTable/util';
 import AuditLogs from '../../actions/AuditLogs';
@@ -6,6 +5,7 @@ import Reactivate from '../../actions/AccessTokens/Reactivate';
 import Revoke from '../../actions/AccessTokens/Revoke';
 import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
+import { getAutoPurgeAtAsString } from './util';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 
@@ -43,37 +43,9 @@ export default {
     },
     {
       heading: 'Auto Purge',
-      value: r => {
+      value: r =>
         // TODO logic to refresh this periodically
-        let autoPurge = 'Never';
-        const dtAutoPurgeAt = moment(r.autoPurgeAt);
-
-        if (dtAutoPurgeAt.diff(moment(), 'seconds') <= 0) {
-          autoPurge = 'Purged';
-        } else if (r.autoPurgeAt) {
-          const dtAutoPurgeAt = moment(r.autoPurgeAt);
-          const dtEoDToday = moment().endOf('day');
-
-          if (dtAutoPurgeAt.diff(dtEoDToday, 'seconds') <= 0) {
-            autoPurge = 'Today';
-          } else {
-            let days = dtAutoPurgeAt.diff(dtEoDToday, 'days');
-            const hours = dtAutoPurgeAt.diff(dtEoDToday, 'hours', true) % 24;
-
-            if (hours > 0) {
-              days += 1;
-            }
-
-            if (days === 1) {
-              autoPurge = 'Tomorrow';
-            } else {
-              autoPurge = `${days} Days`;
-            }
-          }
-        }
-
-        return autoPurge;
-      },
+        getAutoPurgeAtAsString(r),
     },
   ],
   rowActions: r => {

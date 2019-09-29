@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { IconButton } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
@@ -14,11 +13,9 @@ export default {
     }
 
     return (
-      <Fragment>
-        <IconButton size="small" onClick={() => handleRegenerateClick()}>
-          <Icon />
-        </IconButton>
-      </Fragment>
+      <IconButton size="small" onClick={() => handleRegenerateClick()}>
+        <Icon />
+      </IconButton>
     );
   },
 };

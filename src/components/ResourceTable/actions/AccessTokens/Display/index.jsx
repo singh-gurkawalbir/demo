@@ -33,10 +33,6 @@ export default function Display({ accessToken }) {
     return dtAutoPurgeAt.diff(moment(), 'seconds') <= 0;
   }
 
-  function commStatusHandler() {
-    setTokenStatus(null);
-  }
-
   return (
     <Fragment>
       <CommStatus
@@ -47,9 +43,7 @@ export default function Display({ accessToken }) {
           },
         }}
         autoClearOnComplete
-        commStatusHandler={objStatus => {
-          commStatusHandler(objStatus);
-        }}
+        commStatusHandler={() => setTokenStatus(null)}
       />
       {!accessToken.permissions.displayToken && (
         <Typography>{accessToken.permissionReasons.displayToken}</Typography>
