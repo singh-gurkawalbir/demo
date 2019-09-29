@@ -6,20 +6,20 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    type: {
-      fieldId: 'type',
-      defaultValue: r => {
-        let rdbmsSubType;
+    // type: {
+    //   fieldId: 'type',
+    //   defaultValue: r => {
+    //     let rdbmsSubType;
 
-        if (r && r.type === 'rdbms') {
-          rdbmsSubType = r.rdbms.type;
-        } else {
-          rdbmsSubType = r.type;
-        }
+    //     if (r && r.type === 'rdbms') {
+    //       rdbmsSubType = r.rdbms.type;
+    //     } else {
+    //       rdbmsSubType = r.type;
+    //     }
 
-        return rdbmsSubType;
-      },
-    },
+    //     return rdbmsSubType;
+    //   },
+    // },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -62,7 +62,6 @@ export default {
   layout: {
     fields: [
       'name',
-      'type',
       'mode',
       '_agentId',
       'rdbmsFields',

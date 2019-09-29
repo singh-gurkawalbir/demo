@@ -17,7 +17,8 @@ export default {
       type: 'text',
       label: 'API Key',
       inputType: 'password',
-      helpText: 'The API Key of your zoom account.',
+      helpText:
+        'The API Key of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -27,7 +28,8 @@ export default {
       type: 'text',
       label: 'API Secret',
       inputType: 'password',
-      helpText: 'The API Secret of your zoom account.',
+      helpText:
+        'The API Secret of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
