@@ -1,6 +1,5 @@
 export default {
   fieldMap: {
-    type: { fieldId: 'type' },
     name: { fieldId: 'name' },
     'mongodb.hosts': { fieldId: 'mongodb.hosts' },
     'mongodb.database': { fieldId: 'mongodb.database' },
@@ -10,7 +9,6 @@ export default {
   },
   layout: {
     fields: [
-      'type',
       'name',
       'mongodb.hosts',
       'mongodb.database',
