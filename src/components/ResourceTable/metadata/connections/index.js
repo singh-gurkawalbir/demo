@@ -12,6 +12,7 @@ import {
   getConnectorName,
 } from '../../../CeligoTable/util';
 import Deregister from '../../actions/Connections/Deregister';
+import { showDownloadLogs } from './util';
 
 export default {
   columns: [
@@ -49,24 +50,22 @@ export default {
     },
   ],
   rowActions: (r, actionProps) => {
-    if (actionProps.integrationId) {
-      return [
-        Deregister,
-        References,
-        ConfigureDebugger,
-        DownloadDebugLogs,
-        AuditLogs,
-        RefreshMetadata,
-      ];
+    const actionsToReturn = [ConfigureDebugger, AuditLogs, References];
+
+    if (showDownloadLogs(r)) {
+      actionsToReturn.unshift(DownloadDebugLogs);
     }
 
-    return [
-      Delete,
-      References,
-      ConfigureDebugger,
-      DownloadDebugLogs,
-      AuditLogs,
-      RefreshMetadata,
-    ];
+    if (r.type === 'netsuite' || r.type === 'salesforce') {
+      actionsToReturn.unshift(RefreshMetadata);
+    }
+
+    if (actionProps.integrationId) {
+      actionsToReturn.unshift(Deregister);
+    } else {
+      actionsToReturn.push(Delete);
+    }
+
+    return actionsToReturn;
   },
 };

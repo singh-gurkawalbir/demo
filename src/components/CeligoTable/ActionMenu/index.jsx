@@ -46,7 +46,7 @@ export default function ActionMenu({ actions }) {
       <span>{component}</span>
     </Tooltip>
   );
-  const count = 4; // number of actions to display outside of menu
+  const count = 3; // number of actions to display outside of menu
 
   if (actions.length <= count) {
     return (
@@ -58,7 +58,7 @@ export default function ActionMenu({ actions }) {
 
   return (
     <div ref={actionContainerEl} className={classes.actionContainer}>
-      {actions.slice(0, count - 1).map(a => renderAction(a))}
+      {actions.slice(0, count).map(a => renderAction(a))}
 
       <Tooltip title="More actions">
         <IconButton size="small" aria-describedby={id} onClick={handleClick}>
