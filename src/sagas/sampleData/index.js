@@ -5,6 +5,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { evaluateExternalProcessor } from '../../sagas/editor';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -12,10 +13,10 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
  * so it uses same csv parser
  */
 const PARSERS = {
-  csv: '/processors/csvParser',
-  xlsx: '/processors/csvParser',
-  xml: '/processors/xmlParser',
-  fileDefinition: '/processors/structuredFileParser',
+  csv: 'csvParser',
+  xlsx: 'csvParser',
+  xml: 'xmlParser',
+  fileDefinition: 'structuredFileParser',
 };
 
 function getRulesFromResourceFormValues(formValues = {}) {
@@ -80,14 +81,10 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   }
 }
 
-function* processData({ resourceId, stage, path, body }) {
+function* processData({ resourceId, processorData, stage }) {
   try {
-    const processedData = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'POST',
-        body,
-      },
+    const processedData = yield call(evaluateExternalProcessor, {
+      processorData,
     });
 
     yield put(actions.sampleData.update(resourceId, processedData, stage));
@@ -103,26 +100,26 @@ function* processData({ resourceId, stage, path, body }) {
   }
 }
 
-function* getProcessorData({ resourceId, values, stage }) {
-  const path = `/processors/${stage}`;
-  // Get Pre Processed data from State
-  const { data: preProcessedData } = yield select(
+function* transformData({ resourceId, values, stage }) {
+  const { data } = yield select(
     getResourceSampleDataWithStatus,
     resourceId,
     stage
   );
-  const body = {
-    data: [preProcessedData],
-    rules: { rules: values },
-    options: {},
-  };
+  const processorData = values || {};
 
-  yield call(processData, { resourceId, stage, path, body });
+  processorData.data = data;
+  processorData.processor = stage;
+
+  yield call(processData, { resourceId, processorData, stage });
 }
 
-function* processFileData({ resourceId, resourceType, values }) {
-  if (!values) return undefined;
-  const { file, type, rules, formValues } = values;
+function* processRawData({ resourceId, resourceType, values = {}, stage }) {
+  if (stage === 'transform') {
+    return yield call(transformData, { resourceId, values, stage });
+  }
+
+  const { type, file, formValues } = values;
 
   // Update Raw Data with the file uploaded before parsing
   yield put(
@@ -139,19 +136,11 @@ function* processFileData({ resourceId, resourceType, values }) {
     return;
   }
 
-  // For file types : csv, xlsx and xml files
-  const body = {
-    rules: rules || {},
-    data: file,
-    options: {
-      includeEmptyValues: true,
-    },
-  };
-  const path = PARSERS[type];
+  const processorData = values.editorValues || {};
 
-  // Parse file content using processors
-  yield call(processData, { resourceId, stage: 'parse', path, body });
-
+  processorData.data = file;
+  processorData.processor = processorData.processor || PARSERS[type];
+  yield call(processData, { resourceId, processorData, stage: 'parse' });
   // Call Transform processor if rules exist for this resource
   const transformRules = getRulesFromResourceFormValues(formValues);
 
@@ -174,15 +163,8 @@ function* requestSampleData({
   stage,
   runOffline,
 }) {
-  // Call preview/processor based on stage
-  // If stage is specified make a processor call else preview
-  // Takes a different route for File processors
   if (stage) {
-    if (stage === 'file') {
-      yield call(processFileData, { resourceId, resourceType, values });
-    } else {
-      yield call(getProcessorData, { resourceId, resourceType, values, stage });
-    }
+    yield call(processRawData, { resourceId, resourceType, values, stage });
   } else {
     yield call(getPreviewData, {
       resourceId,

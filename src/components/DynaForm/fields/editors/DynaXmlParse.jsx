@@ -48,30 +48,6 @@ export default function DynaXmlParse(props) {
         includeNodes,
         excludeNodes,
       });
-      // @TODO: Find a best way to create these rules.
-      // Use 'requestBody' in processorLogic for Editor
-      const xmlParseRules = {
-        doc: {
-          parsers: [
-            {
-              rules: {
-                V0_json: false,
-                trimSpaces,
-                stripNewLineChars,
-                textNodeName,
-                attributePrefix,
-                listNodes,
-                includeNodes,
-                excludeNodes,
-              },
-              type: 'xml',
-              version: 1,
-            },
-          ],
-        },
-        resourcePath,
-      };
-
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse xml file
       dispatch(
@@ -81,7 +57,7 @@ export default function DynaXmlParse(props) {
           {
             type: 'xml',
             file: xmlData,
-            rules: xmlParseRules,
+            editorValues,
           },
           'file'
         )

@@ -39,7 +39,7 @@ export default function DynaTransformEditor(props) {
         actions.sampleData.request(
           resourceId,
           resourceType,
-          [rule],
+          editorValues,
           'transform'
         )
       );

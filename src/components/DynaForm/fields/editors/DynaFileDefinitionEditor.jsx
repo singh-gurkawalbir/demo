@@ -45,7 +45,7 @@ function DynaFileDefinitionEditor(props) {
           {
             type: 'fileDefinition',
             file: data,
-            rules: rule && JSON.parse(rule),
+            editorValues,
             formValues: formContext.value,
           },
           'file'
@@ -98,9 +98,33 @@ function DynaFileDefinitionEditor(props) {
   useEffect(() => {
     if (isRuleChanged) {
       onFieldChange(id, rule);
+      // Processes the updated sample data and rules on change of format
+      dispatch(
+        actions.sampleData.request(
+          resourceId,
+          resourceType,
+          {
+            type: 'fileDefinition',
+            file: sampleData,
+            editorValues: { rule, data: sampleData },
+            formValues: formContext.value,
+          },
+          'file'
+        )
+      );
       setIsRuleChanged(false);
     }
-  }, [id, isRuleChanged, onFieldChange, rule]);
+  }, [
+    dispatch,
+    formContext.value,
+    id,
+    isRuleChanged,
+    onFieldChange,
+    resourceId,
+    resourceType,
+    rule,
+    sampleData,
+  ]);
   useEffect(() => {
     if (rule) {
       setIsRuleChanged(true);

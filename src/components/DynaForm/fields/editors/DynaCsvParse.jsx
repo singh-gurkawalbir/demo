@@ -51,13 +51,7 @@ export default function DynaCsvParse(props) {
           {
             type: 'csv',
             file: csvData,
-            rules: {
-              columnDelimiter,
-              hasHeaderRow,
-              keyColumns,
-              rowsToSkip,
-              trimSpaces,
-            },
+            editorValues,
           },
           'file'
         )
