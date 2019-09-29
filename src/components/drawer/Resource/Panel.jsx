@@ -37,6 +37,7 @@ export default function Panel(props) {
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const classes = useStyles(props);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
@@ -49,8 +50,6 @@ export default function Panel(props) {
   const stagedProcessor = useSelector(state =>
     selectors.stagedResource(state, id)
   );
-  // this is only valid when newResourceId has a value...
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const resourceLabel =
     resourceType === 'pageProcessor'
       ? 'Page Processor'
