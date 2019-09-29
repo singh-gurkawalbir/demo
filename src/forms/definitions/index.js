@@ -7,6 +7,7 @@ import agents from './agents';
 import connectors from './connectors';
 import stacks from './stacks';
 import templates from './templates';
+import pageProcessor from './pageProcessor';
 
 export default {
   default: defaultMeta,
@@ -18,4 +19,5 @@ export default {
   connectors,
   templates,
   stacks,
+  pageProcessor,
 };

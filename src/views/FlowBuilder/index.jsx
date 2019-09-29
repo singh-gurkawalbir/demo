@@ -296,7 +296,7 @@ function FlowBuilder(props) {
   }
 
   function handleAddProcessor() {
-    pushOrReplaceHistory(`${match.url}/add/imports/${newProcessorId}`);
+    pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
   // eslint-disable-next-line

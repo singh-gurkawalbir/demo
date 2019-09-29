@@ -300,6 +300,7 @@ export function* initFormValues({
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
+  // console.log('finalFieldMeta', finalFieldMeta);
   yield put(
     actions.resourceForm.initComplete(
       resourceType,

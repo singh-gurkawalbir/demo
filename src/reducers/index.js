@@ -411,20 +411,18 @@ export function hasProfile(state) {
 
 // #region PUBLIC DATA SELECTORS
 export function resource(state, resourceType, id) {
-  if (!state) return null;
-
-  return fromData.resource(state.data, resourceType, id);
+  return fromData.resource(state && state.data, resourceType, id);
 }
 
 export function resourceList(state, options) {
-  return fromData.resourceList(state.data, options);
+  return fromData.resourceList(state && state.data, options);
 }
 
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
 
   return fromData.marketplaceConnectors(
-    state.data,
+    state && state.data,
     application,
     sandbox,
     licenses
