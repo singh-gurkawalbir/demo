@@ -43,7 +43,7 @@ export default [
       { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
       { label: 'Agents', path: '/agents', Icon: AgentsIcon },
       { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
-      { label: 'Templates', path: '/templates', Icon: ConnectionsIcon },
+      { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
       { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
       { label: 'API Tokens', path: '/accesstokens', Icon: AgentsIcon },
     ],

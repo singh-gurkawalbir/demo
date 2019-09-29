@@ -5,6 +5,7 @@ const appBarHeight = 36;
 const theme = {
   spacing: 8,
   drawerWidth: 256,
+  drawerWidthMinimized: 60,
   appBarHeight,
   pageBarHeight: 88,
 
@@ -31,6 +32,7 @@ const theme = {
       disabled: colors.celigoNeutral4,
       primary: colors.celigoNeutral6,
       hint: colors.celigoNeutral5,
+      secondary: colors.celigoNeutral7,
     },
   },
   // global overrides for MUI styles...
@@ -38,6 +40,7 @@ const theme = {
     MuiButton: {
       root: {
         textTransform: 'unset',
+        fontFamily: 'Roboto500',
       },
       contained: {
         borderRadius: '17px',
@@ -109,7 +112,7 @@ const theme = {
         },
       },
       text: {
-        textTransform: 'none',
+        textTransform: 'uppercase',
         fontSize: '13px',
         lineHeight: '15px',
         '&::after': {
@@ -145,11 +148,15 @@ const theme = {
     },
     MuiMenuItem: {
       root: {
-        borderBottom: '1px solid',
+        // BorderBottom should be like this, because color is taking precendence here
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
           '&:before': {
             background: colors.celigoAccent3,
+          },
+          '&:hover': {
+            backgroundColor: colors.celigoNeutral2,
           },
         },
         '&:last-child': {
@@ -174,7 +181,7 @@ const theme = {
     MuiTypography: {
       root: {
         color: colors.celigoNeutral6,
-        fontFamily: 'Roboto400, sans-serif',
+        fontFamily: `Roboto400, sans-serif !important`,
       },
       body1: {
         fontSize: '17px',
@@ -245,18 +252,39 @@ const theme = {
         paddingTop: 5,
       },
     },
-    // .MuiTableRow-root.MuiTableRow-hover:hover
     MuiTableRow: {
       root: {
-        '&$hover:hover': {
-          backgroundColor: colors.celigoWhite,
-          boxShadow: `2px 2px 4px rgba(0,0,0,0.1)`,
+        background: colors.celigoWhite,
+        position: 'relative',
+        '&:hover': {
+          '&:hover': {
+            background: colors.celigoNeutral2,
+            '& td:first-child': {
+              '&:before': {
+                background: colors.celigoAccent2,
+              },
+            },
+            '&:before': {
+              background: colors.celigoAccent2,
+            },
+          },
+          '& > td:first-child': {
+            '&:before': {
+              backgroundColor: colors.celigoAccent2,
+            },
+          },
+        },
+      },
+      head: {
+        '&:hover': {
+          background: `white !important`,
         },
       },
     },
     MuiTableCell: {
       root: {
-        padding: [[8, 40, 8, 16]],
+        position: 'relative',
+        padding: [[15, 40, 15, 16]],
       },
       head: {
         fontFamily: 'Roboto500',
@@ -265,6 +293,18 @@ const theme = {
       },
       body: {
         fontFamily: 'source sans pro',
+        position: 'relative',
+        '&:first-child': {
+          '&:before': {
+            content: '""',
+            width: '6px',
+            height: '100%',
+            position: 'absolute',
+            background: 'transparent',
+            left: '0px',
+            top: '0px',
+          },
+        },
       },
     },
     MuiSelect: {
@@ -289,9 +329,6 @@ const theme = {
           display: 'none',
         },
       },
-      // '&:disabled': {
-      //   backgroundColor: colors.celigoNeutral3,
-      // },
     },
     MuiFormLabel: {
       root: {
@@ -367,6 +404,11 @@ const theme = {
         '&:invalid': {
           borderColor: colors.celigoError,
         },
+      },
+    },
+    MuiSvgIcon: {
+      root: {
+        color: colors.celigoNeutral6,
       },
     },
   },

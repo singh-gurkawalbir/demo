@@ -5,18 +5,18 @@ import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   description: {
-    width: '200px',
-    maxHeight: '100px',
+    maxHeight: '60px',
     overflowY: 'auto',
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   name: {
     marginTop: theme.spacing(2),
   },
   cardHeader: {
     marginBottom: theme.spacing(2),
-    padding: theme.spacing(1),
-    paddingTop: theme.spacing(2),
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: theme.spacing(2, 1, 1, 1),
     background: props =>
       props.type === 'connector'
         ? theme.palette.primary.dark
@@ -26,11 +26,13 @@ const useStyles = makeStyles(theme => ({
   user: {
     display: 'inline',
     float: 'right',
-    color: 'white',
+    color: theme.palette.background.paper,
   },
   title: {
-    display: 'inline',
-    color: 'white',
+    color: theme.palette.background.paper,
+  },
+  content: {
+    padding: theme.spacing(0, 2),
   },
 }));
 
@@ -49,21 +51,24 @@ export default function ConnectorTemplateContent(props) {
               resource.user.email)}
         </Typography>
       </div>
-      <ApplicationImg
-        assistant={
-          resource.applications.length >= 2 &&
-          application === resource.applications[0]
-            ? resource.applications[1]
-            : resource.applications[0]
-        }
-        size="large"
-      />
-      <Typography className={classes.name} variant="h3">
-        {resource.name}
-      </Typography>
-      <Typography className={classes.description}>
-        {resource.description}
-      </Typography>
+      <div className={classes.content}>
+        <ApplicationImg
+          assistant={
+            resource.applications.length >= 2 &&
+            application === resource.applications[0]
+              ? resource.applications[1]
+              : resource.applications[0]
+          }
+          size="large"
+          imgType="large"
+        />
+        <Typography className={classes.name} variant="h3">
+          {resource.name}
+        </Typography>
+        <Typography variant="body2" className={classes.description}>
+          {resource.description}
+        </Typography>
+      </div>
     </Fragment>
   );
 }

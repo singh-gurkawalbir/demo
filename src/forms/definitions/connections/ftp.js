@@ -43,7 +43,6 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    type: { fieldId: 'type', disabled: true },
     'ftp.hostURI': { fieldId: 'ftp.hostURI', required: true },
     'ftp.type': { fieldId: 'ftp.type', required: true },
     'ftp.username': { fieldId: 'ftp.username', required: true },
@@ -96,7 +95,6 @@ export default {
   layout: {
     fields: [
       'name',
-      'type',
       'ftp.hostURI',
       'ftp.type',
       'ftp.username',

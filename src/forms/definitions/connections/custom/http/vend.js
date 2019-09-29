@@ -5,7 +5,7 @@ export default {
     '/assistant': 'vend',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://'${formValues['http/subdomain']}.vendhq.com`,
+    '/http/baseURI': `https://'${formValues['/http/subdomain']}.vendhq.com`,
     '/http/auth/oauth/authURI': 'https://secure.vendhq.com/connect',
     '/http/auth/oauth/tokenURI': `https://'${
       formValues['http/subdomain']

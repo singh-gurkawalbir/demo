@@ -5,11 +5,37 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
-  formControl: {
-    minWidth: 120,
-    maxWidth: 300,
+  root: {
+    display: 'flex !important',
+    flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 50,
+    justifyContent: 'flex-end',
+    borderRadius: 2,
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+    },
   },
   chips: {
     display: 'flex',
@@ -76,12 +102,13 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.formControl}>
+    <FormControl key={id} disabled={disabled} className={classes.root}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Select
         multiple
         data-test={id}
         value={processedValue}
+        IconComponent={ArrowDownIcon}
         onChange={evt => {
           onFieldChange(id, evt.target.value);
         }}

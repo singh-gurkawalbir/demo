@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   breadCrumb: {
     flexGrow: 1,
     '& li': {
-      fontSize: 12,
+      fontSize: 13,
       '& a': {
         '&:hover': {
           textDecoration: 'none',
@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
   },
   addons: {
     textTransform: 'unset',
-    fontSize: 12,
+    fontSize: 13,
   },
 }));
 
