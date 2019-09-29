@@ -67,16 +67,8 @@ export function* evaluateExternalProcessor({ processorData }) {
     return { violations };
   }
 
-  const path = `/processors/${processor}`;
-  const opts = {
-    method: 'POST',
-    body,
-  };
-
   try {
-    const results = yield call(apiCallWithRetry, { path, opts, hidden: true });
-
-    return results;
+    return yield call(invokeProcessor, { processor, body });
   } catch (e) {
     return { error: e };
   }
