@@ -50,9 +50,9 @@ export default {
   ],
   rowActions: r => {
     if (r.revoked) {
-      return [Regenerate, Reactivate, AuditLogs, Delete];
+      return [Reactivate, Regenerate, AuditLogs, Delete];
     }
 
-    return [Regenerate, Revoke, AuditLogs, Delete];
+    return [Revoke, Regenerate, AuditLogs, Delete];
   },
 };
