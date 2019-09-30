@@ -56,7 +56,7 @@ export default {
       id: 'http.unencrypted.applicationKey',
       required: true,
       type: 'text',
-      label: 'Application Key:',
+      label: 'Application Key',
       helpText: 'Please enter application key of your Strata account',
     },
     'http.encrypted.apiSecret': {

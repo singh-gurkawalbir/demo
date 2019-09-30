@@ -47,7 +47,7 @@ export default {
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
-      label: 'Account Type:',
+      label: 'Account Type',
       options: [
         {
           items: [
