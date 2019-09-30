@@ -354,7 +354,7 @@ function FlowBuilder(props) {
                 {pageProcessors.map((pp, i) => (
                   <PageProcessor
                     {...pp}
-                    key={pp.type === 'import' ? pp._importId : pp._exportId}
+                    key={pp._importId || pp._exportId || pp._connectionId}
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                     onMove={handleMove}

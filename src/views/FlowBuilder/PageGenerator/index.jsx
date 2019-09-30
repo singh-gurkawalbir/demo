@@ -59,6 +59,7 @@ const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
         match={match}
         history={history}
         ref={ref} /* ref is for drag and drop binding */
+        blockType="generator"
         resourceType="exports"
         resourceId={pg._exportId}
         opacity={opacity}>

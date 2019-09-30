@@ -116,6 +116,7 @@ const PageProcessor = ({
           history={history}
           ref={ref}
           opacity={opacity}
+          blockType="processor"
           resourceType={resourceType}
           resourceId={resourceId}>
           <RightActions>

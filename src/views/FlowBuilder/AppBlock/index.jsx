@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import IconTextButton from '../../../components/IconTextButton';
 import ExportIcon from '../../../components/icons/ExportsIcon';
+import ListenerIcon from '../../../components/icons/ListnerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import * as selectors from '../../../reducers';
@@ -57,6 +58,7 @@ function AppBlock({
   forwardedRef,
   history,
   match,
+  blockType,
   resourceType,
   resourceId,
   opacity = 1,
@@ -65,6 +67,13 @@ function AppBlock({
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(state, resourceType, resourceId)
   );
+  let BlockIcon = iconMap[resourceType];
+  let blockTitle = MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase();
+
+  if (blockType === 'processor' && resourceType === 'exports') {
+    BlockIcon = ListenerIcon;
+    blockTitle = 'LOOKUP';
+  }
 
   function handleResourceClick() {
     const to = `${match.url}/edit/${resourceType}/${resourceId}`;
@@ -86,8 +95,8 @@ function AppBlock({
           variant="contained"
           color="primary"
           onClick={handleResourceClick}>
-          {iconMap[resourceType]()}
-          {MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase()}
+          <BlockIcon />
+          {blockTitle}
         </IconTextButton>
         <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
           <ApplicationImg
