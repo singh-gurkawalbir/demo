@@ -741,7 +741,6 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
-    required: true,
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -751,7 +750,7 @@ export default {
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Disable Strict SSL:',
+    label: 'Disable Strict SSL',
   },
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
@@ -837,7 +836,7 @@ export default {
   },
   'http.auth.failStatusCode': {
     type: 'text',
-    label: 'Authentication Fail Status Code:',
+    label: 'Authentication Fail Status Code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -852,7 +851,7 @@ export default {
   },
   'http.auth.failPath': {
     type: 'text',
-    label: 'Authentication Fail Path:',
+    label: 'Authentication Fail Path',
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -993,7 +992,7 @@ export default {
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh Relative URI:',
+    label: 'Refresh Relative URI',
     required: true,
   },
   'http.auth.token.refreshBody': {
@@ -1030,7 +1029,7 @@ export default {
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    label: 'Refresh Token:',
+    label: 'Refresh Token',
   },
   'http.rateLimits': {
     type: 'labeltitle',
@@ -1086,15 +1085,15 @@ export default {
   },
   'clientCertificates.cert': {
     type: 'uploadfile',
-    label: 'SSL Certificate:',
+    label: 'SSL Certificate',
   },
   'clientCertificates.key': {
     type: 'uploadfile',
-    label: 'SSL Client Key:',
+    label: 'SSL Client Key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
-    label: 'SSL Passphrase:',
+    label: 'SSL Passphrase',
   },
   // #endregion http
   // #region ftp
@@ -1767,7 +1766,7 @@ export default {
   // #region netsuite
   'netsuite.authType': {
     type: 'select',
-    label: 'Authentication Type:',
+    label: 'Authentication Type',
     options: [
       {
         items: [
@@ -1789,7 +1788,7 @@ export default {
   },
   'netsuite.tokenSecret': {
     type: 'text',
-    label: 'Token Secret:',
+    label: 'Token Secret',
     required: true,
   },
   'netsuite.environment': {
