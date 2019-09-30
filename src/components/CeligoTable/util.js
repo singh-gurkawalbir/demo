@@ -39,7 +39,8 @@ export const getConnectorName = resource => {
 };
 
 export const formatLastModified = lastModified => {
-  const formatter = (value, unit, suffix) => `${value}${unit[0]} ${suffix}`;
+  const formatter = (value, unit, suffix) =>
+    `${value}${unit.substr(0, 3)} ${suffix}`;
 
   return <TimeAgo formatter={formatter} date={lastModified} />;
 };
