@@ -157,3 +157,4 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+export const SECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;

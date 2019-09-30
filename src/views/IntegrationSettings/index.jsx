@@ -54,17 +54,23 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationSettings(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
-  const integration = useSelector(state =>
+  let integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    integration = STANDALONE_INTEGRATION;
+  }
+
+  if (!integration) {
+    return null;
+  }
 
   return (
     <LoadResources required resources="integrations">
       <div className={classes.appFrame}>
         <div className={classes.about}>
-          <Typography variant="h5">
-            {integration ? integration.name : STANDALONE_INTEGRATION.name}
-          </Typography>
+          <Typography variant="h5">{integration.name}</Typography>
         </div>
         <Divider />
         <div className={classes.root}>
@@ -76,7 +82,7 @@ export default function IntegrationSettings(props) {
                 paper: classes.leftElement,
               }}>
               <List>
-                {integrationId !== STANDALONE_INTEGRATION.id && (
+                {integration._id !== STANDALONE_INTEGRATION.id && (
                   <ListItem>
                     <NavLink
                       activeClassName={classes.activeLink}
@@ -119,7 +125,7 @@ export default function IntegrationSettings(props) {
                   </NavLink>
                 </ListItem>
                 <ListItem>
-                  {integrationId !== STANDALONE_INTEGRATION.id && (
+                  {integration._id !== STANDALONE_INTEGRATION.id && (
                     <NavLink
                       activeClassName={classes.activeLink}
                       className={classes.link}
