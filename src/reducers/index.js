@@ -132,6 +132,14 @@ export function stackSystemToken(state, id) {
   return fromSession.stackSystemToken(state && state.session, id);
 }
 
+export function getResourceSampleDataWithStatus(state, resourceId, stage) {
+  return fromSession.getResourceSampleDataWithStatus(
+    state && state.session,
+    resourceId,
+    stage
+  );
+}
+
 export function editor(state, id) {
   if (!state) return {};
 
@@ -1159,6 +1167,12 @@ export function optionsMapFromMetadata(
     optionsMap
   );
 }
+
+export const getPreBuiltFileDefinitions = (state, format) =>
+  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+
+export const getFileDefinition = (state, definitionId, options) =>
+  fromData.getFileDefinition(state && state.data, definitionId, options);
 
 export function commMetadataPathGen(
   applicationType,

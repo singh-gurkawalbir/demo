@@ -12,7 +12,8 @@ export default {
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
     file: { formId: 'file' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
@@ -26,13 +27,14 @@ export default {
       's3.keyStartsWith',
       's3.keyEndsWith',
       'file',
+      'rawData',
     ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,
