@@ -50,20 +50,20 @@ export default {
     },
   ],
   rowActions: (r, actionProps) => {
-    const actionsToReturn = [ConfigureDebugger, AuditLogs, References];
+    let actionsToReturn = [ConfigureDebugger, AuditLogs, References];
 
     if (showDownloadLogs(r)) {
-      actionsToReturn.unshift(DownloadDebugLogs);
+      actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
     }
 
     if (r.type === 'netsuite' || r.type === 'salesforce') {
-      actionsToReturn.unshift(RefreshMetadata);
+      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
     }
 
     if (actionProps.integrationId) {
-      actionsToReturn.unshift(Deregister);
+      actionsToReturn = [Deregister, ...actionsToReturn];
     } else {
-      actionsToReturn.push(Delete);
+      actionsToReturn = [...actionsToReturn, Delete];
     }
 
     return actionsToReturn;
