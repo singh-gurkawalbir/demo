@@ -340,6 +340,7 @@ export default {
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
+    defaultValue: r => r && r.rdbms && r.rdbms.concurrencyLevel,
     options: [
       {
         items: [
@@ -630,17 +631,17 @@ export default {
     type: 'text',
     label: 'Rest ping Failure Path',
   },
-  'rest.pingFailureValuess': {
+  'rest.pingFailureValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
     label: 'Rest ping Failure Values',
-    validWhen: [],
   },
   'rest.concurrencyLevel': {
     type: 'select',
     label: 'Rest concurrency Level',
+    defaultValue: r => r && r.rest && r.rest.concurrencyLevel,
     options: [
       {
         items: [
@@ -701,6 +702,7 @@ export default {
   'http.auth.type': {
     type: 'select',
     label: 'Authentication Type',
+    required: true,
     options: [
       {
         items: [
@@ -714,12 +716,19 @@ export default {
   'http.mediaType': {
     type: 'select',
     label: 'Media Type',
+    required: true,
     options: [
       {
         items: [
-          { label: 'Xml', value: 'xml' },
-          { label: 'Json', value: 'json' },
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: [''],
       },
     ],
   },
@@ -732,14 +741,22 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: [''],
+      },
+    ],
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Http disable Strict SSL',
+    label: 'Disable Strict SSL:',
   },
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
+    defaultValue: r => r && r.http && r.http.concurrencyLevel,
     options: [
       {
         items: [
@@ -786,7 +803,7 @@ export default {
   'http.ping.relativeURI': {
     type: 'text',
     label: 'Ping Relative URI',
-    description: 'Relative to Base URI',
+    required: true,
   },
   'http.ping.method': {
     type: 'select',
@@ -820,24 +837,41 @@ export default {
   },
   'http.auth.failStatusCode': {
     type: 'text',
-    label: 'Http auth fail Status Code',
+    label: 'Authentication Fail Status Code:',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: [''],
+      },
+    ],
   },
   'http.auth.failPath': {
     type: 'text',
-    label: 'Http auth fail Path',
+    label: 'Authentication Fail Path:',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: [''],
+      },
+    ],
   },
-  'http.auth.failValuess': {
+  'http.auth.failValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Http auth fail Values',
-    validWhen: [],
+    label: 'Authentication Fail Values',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: [''],
+      },
+    ],
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -867,7 +901,6 @@ export default {
     valueName: 'value',
     valueType: 'array',
     label: 'Http auth oauth scope',
-    validWhen: [],
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
@@ -905,6 +938,7 @@ export default {
     type: 'text',
     label: 'Token',
     inputType: 'password',
+    defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -924,6 +958,7 @@ export default {
   'http.auth.token.headerName': {
     type: 'text',
     label: 'Header Name',
+    defaultValue: 'Authorization',
   },
   'http.auth.token.scheme': {
     type: 'select',
@@ -958,7 +993,8 @@ export default {
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh Relative URI',
+    label: 'Refresh Relative URI:',
+    required: true,
   },
   'http.auth.token.refreshBody': {
     type: 'text',
@@ -974,9 +1010,9 @@ export default {
     options: [
       {
         items: [
-          { label: 'Json', value: 'json' },
-          { label: 'Urlencoded', value: 'urlencoded' },
-          { label: 'Xml', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'XML', value: 'xml' },
         ],
       },
     ],
@@ -986,11 +1022,15 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Http auth token refresh Headers',
+    label: 'Refresh Token Headers',
   },
   'http.auth.token.refreshToken': {
     type: 'text',
-    label: 'Http auth token refresh Token',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    label: 'Refresh Token:',
   },
   'http.rateLimits': {
     type: 'labeltitle',
@@ -1043,6 +1083,18 @@ export default {
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure Scopes',
+  },
+  'clientCertificates.cert': {
+    type: 'uploadfile',
+    label: 'SSL Certificate:',
+  },
+  'clientCertificates.key': {
+    type: 'uploadfile',
+    label: 'SSL Client Key:',
+  },
+  'http.clientCertificates.passphrase': {
+    type: 'text',
+    label: 'SSL Passphrase:',
   },
   // #endregion http
   // #region ftp
@@ -1184,6 +1236,10 @@ export default {
   's3.secretAccessKey': {
     type: 'text',
     label: 'S3 secret Access Key',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
   },
   's3.pingBucket': {
     type: 'text',
@@ -1711,7 +1767,7 @@ export default {
   // #region netsuite
   'netsuite.authType': {
     type: 'select',
-    label: 'Connection type',
+    label: 'Authentication Type:',
     options: [
       {
         items: [
@@ -1724,18 +1780,22 @@ export default {
   'netsuite.account': {
     type: 'netsuiteuserroles',
     label: 'NetSuite account',
+    required: true,
   },
   'netsuite.tokenId': {
     type: 'text',
     label: 'NetSuite token Id',
+    required: true,
   },
   'netsuite.tokenSecret': {
     type: 'text',
-    label: 'NetSuite token Secret',
+    label: 'Token Secret:',
+    required: true,
   },
   'netsuite.environment': {
     type: 'netsuiteuserroles',
     label: 'NetSuite environment',
+    required: true,
   },
   'netsuite.roleId': {
     type: 'netsuiteuserroles',
@@ -1743,7 +1803,7 @@ export default {
   },
   'netsuite.email': {
     type: 'text',
-    label: 'NetSuite email',
+    label: 'Email',
   },
   'netsuite.password': {
     type: 'text',
@@ -1751,7 +1811,7 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     inputType: 'password',
-    label: 'NetSuite password',
+    label: 'Password',
   },
   'netsuite.requestLevelCredentials': {
     type: 'checkbox',
@@ -1935,7 +1995,6 @@ export default {
     valueName: 'value',
     valueType: 'array',
     label: 'Salesforce scope',
-    validWhen: [],
   },
   'salesforce.info': {
     type: 'text',
@@ -1944,6 +2003,7 @@ export default {
   'salesforce.concurrencyLevel': {
     type: 'text',
     label: 'Concurrency Level',
+    defaultValue: r => r && r.salesforce && r.salesforce.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1984,6 +2044,7 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+    defaultValue: r => r && r.wrapper && r.wrapper.concurrencyLevel,
   },
   // #endregion wrapper
   // #region mongodb
@@ -1993,7 +2054,6 @@ export default {
     valueName: 'value',
     valueType: 'array',
     label: 'Mongodb host',
-    validWhen: [],
   },
   'mongodb.database': {
     type: 'text',

@@ -59,7 +59,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    // type: { fieldId: 'type' },
     name: { fieldId: 'name' },
     'rest.authType': { fieldId: 'rest.authType', required: true },
     'rest.headers': {
