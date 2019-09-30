@@ -59,7 +59,10 @@ export default function IntegrationSettings(props) {
   );
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
-    integration = STANDALONE_INTEGRATION;
+    integration = {
+      _id: STANDALONE_INTEGRATION.id,
+      name: STANDALONE_INTEGRATION.name,
+    };
   }
 
   if (!integration) {

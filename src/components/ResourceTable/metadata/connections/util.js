@@ -1,7 +1,5 @@
 import moment from 'moment';
-import { SECONDS_IN_A_DAY } from '../../../../utils/constants';
 
-// TODO unit test for this
 export const showDownloadLogs = conn => {
   let toReturn = false;
 
@@ -9,7 +7,7 @@ export const showDownloadLogs = conn => {
     if (moment() <= moment(conn.debugDate)) {
       toReturn = true;
     } else {
-      toReturn = moment() - moment(conn.debugDate) <= SECONDS_IN_A_DAY;
+      toReturn = moment().diff(moment(conn.debugDate), 'days') < 1;
     }
   }
 
