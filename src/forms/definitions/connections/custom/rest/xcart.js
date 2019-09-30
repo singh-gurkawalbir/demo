@@ -12,10 +12,10 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'rest.baseURI': { fieldId: 'rest.baseURI', label: 'Base URI:' },
+    'rest.baseURI': { fieldId: 'rest.baseURI', label: 'Base URI' },
     'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
-      label: 'Token:',
+      label: 'Token',
       required: true,
       helpText:
         'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',

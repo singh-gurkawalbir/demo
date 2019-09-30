@@ -20,7 +20,7 @@ export default {
   websiteURL: {
     defaultValue: r => r.websiteURL,
     type: 'text',
-    label: 'Website URL:',
+    label: 'Website URL',
   },
   contactEmail: {
     defaultValue: r => r.contactEmail,

@@ -7,7 +7,6 @@ const resourceTypesToIgnore = [
   ...initializationResources,
   ...accountResources,
   'audit',
-  'accesstokens',
 ];
 
 function replaceOrInsertResource(state, type, resource) {
@@ -95,8 +94,9 @@ export default (state = {}, action) => {
   let resourceIndex;
 
   switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+    case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
       return { ...state, [resourceType]: collection || [] };
+    }
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);

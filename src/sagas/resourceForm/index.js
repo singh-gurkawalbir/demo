@@ -15,6 +15,7 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
+import { uploadRawData } from '../uploadFile';
 
 export const SCOPES = {
   META: 'meta',
@@ -170,11 +171,29 @@ export function* createFormValuesPatchSet({
   return { patchSet, finalValues };
 }
 
+export function* saveRawData({ values }) {
+  const rawData = values['/rawData'];
+
+  if (!rawData) return values;
+
+  const rawDataKey = yield call(uploadRawData, {
+    file: JSON.stringify(rawData),
+  });
+
+  return { ...values, '/rawData': rawDataKey };
+}
+
 export function* submitFormValues({ resourceType, resourceId, values }) {
+  let formValues = values;
+
+  if (resourceType === 'exports') {
+    formValues = yield call(saveRawData, { values });
+  }
+
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
 
@@ -213,6 +232,16 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
   yield put(
     actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
   );
+}
+
+export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
+  const { resourceId, resourceType, values } = formValues;
+  const newValues = { ...values };
+
+  delete newValues['/file/filedefinition/rules'];
+  newValues['/file/type'] = 'filedefinition';
+  newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
+  yield put(actions.resourceForm.submit(resourceType, resourceId, newValues));
 }
 
 export function* initFormValues({

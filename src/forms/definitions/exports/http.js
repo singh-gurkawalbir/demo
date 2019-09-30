@@ -105,7 +105,8 @@ export default {
     },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
     configureAsyncHelper: { fieldId: 'configureAsyncHelper' },
@@ -131,6 +132,7 @@ export default {
       'type',
       'delta.dateFormat',
       'delta.lagOffset',
+      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -157,7 +159,7 @@ export default {
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,

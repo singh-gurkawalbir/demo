@@ -19,7 +19,11 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import TrashIcon from '../../components/icons/TrashIcon';
 
 export default [
-  { label: 'Home', path: '/', Icon: HomeIcon },
+  {
+    label: 'Home',
+    path: '/',
+    Icon: HomeIcon,
+  },
   {
     label: 'Tools',
     Icon: ToolsIcon,
@@ -41,9 +45,14 @@ export default [
       { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
       { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
       { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
+      { label: 'API Tokens', path: '/accesstokens', Icon: AgentsIcon },
     ],
   },
-  { label: 'Marketplace', path: '/marketplace', Icon: MarketplaceIcon },
+  {
+    label: 'Marketplace',
+    path: '/marketplace',
+    Icon: MarketplaceIcon,
+  },
   {
     label: 'Support',
     Icon: SupportIcon,
@@ -56,7 +65,11 @@ export default [
     label: 'Dev Tools',
     Icon: ToolsIcon,
     children: [
-      { label: 'App builder', path: '/resources', Icon: AppBuilderIcon },
+      {
+        label: 'App builder',
+        path: '/resources',
+        Icon: AppBuilderIcon,
+      },
       {
         label: 'Editor playground',
         path: '/editors',
