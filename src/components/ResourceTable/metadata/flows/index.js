@@ -9,6 +9,7 @@ import OnOff from '../../actions/Flows/OnOff';
 import ViewReferences from '../../actions/References';
 import Delete from '../../actions/Delete';
 import MappingDialog from '../../../MappingDialog/Mapping';
+import Clone from '../../actions/Clone';
 
 export default {
   columns: [
@@ -51,6 +52,7 @@ export default {
   ],
   rowActions: () => [
     DetachFlow,
+    Clone,
     ViewAuditLog,
     DownloadFlow,
     ViewReferences,
