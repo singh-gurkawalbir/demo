@@ -23,7 +23,7 @@ export default {
     mode: {
       id: 'mode',
       type: 'radiogroup',
-      label: 'Mode:',
+      label: 'Mode',
       defaultValue: 'cloud',
       options: [
         {

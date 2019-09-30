@@ -33,7 +33,7 @@ export default {
       id: 'authType',
       required: true,
       type: 'select',
-      label: 'Authentication Type:',
+      label: 'Authentication Type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpText: 'Please select Authentication Type',
       options: [
@@ -48,7 +48,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'HAPI Key:',
+      label: 'HAPI Key',
       helpText: 'Please enter API Key of your Hubspot Account.',
       visibleWhen: [{ field: 'authType', is: ['token'] }],
     },

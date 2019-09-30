@@ -20,7 +20,7 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.token': {
       id: 'http.encrypted.token',
-      label: 'API Token:',
+      label: 'API Token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
