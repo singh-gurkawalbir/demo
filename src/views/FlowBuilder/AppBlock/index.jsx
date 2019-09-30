@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import IconTextButton from '../../../components/IconTextButton';
 import ExportIcon from '../../../components/icons/ExportsIcon';
-import ListenerIcon from '../../../components/icons/ListnerIcon';
+import LookupIcon from '../../../components/icons/LookUpIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import * as selectors from '../../../reducers';
@@ -71,7 +71,7 @@ function AppBlock({
   let blockTitle = MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase();
 
   if (blockType === 'processor' && resourceType === 'exports') {
-    BlockIcon = ListenerIcon;
+    BlockIcon = LookupIcon;
     blockTitle = 'LOOKUP';
   }
 
