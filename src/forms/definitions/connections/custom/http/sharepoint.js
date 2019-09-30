@@ -19,7 +19,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.sharepoint.com',
-      label: 'Subdomain:',
+      label: 'Subdomain',
       helpText:
         "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
       validWhen: {

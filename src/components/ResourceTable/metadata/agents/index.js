@@ -45,5 +45,5 @@ export default {
       value: r => getAgentDownloadInstaller(r),
     },
   ],
-  rowActions: () => [Delete, References],
+  rowActions: () => [References, Delete],
 };

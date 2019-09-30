@@ -373,6 +373,41 @@ const metadata = {
       }),
   },
 };
+const fileDefinitions = {
+  preBuilt: {
+    request: () => action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST),
+    received: fileDefinitions =>
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED, {
+        fileDefinitions,
+      }),
+    receivedError: error =>
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR, {
+        error,
+      }),
+  },
+  definition: {
+    preBuilt: {
+      request: (format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.UPDATE, {
+          format,
+          definitionId,
+        }),
+      received: (definition, format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED, {
+          definition,
+          format,
+          definitionId,
+        }),
+    },
+    userDefined: {
+      save: (definitionRules, formValues) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
+          definitionRules,
+          formValues,
+        }),
+    },
+  },
+};
 const integrationApp = {
   installer: {
     installStep: (integrationId, installerFunction) =>
@@ -541,6 +576,22 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
+const sampleData = {
+  request: (resourceId, resourceType, values, stage, runOffline) =>
+    action(actionTypes.SAMPLEDATA.REQUEST, {
+      resourceId,
+      resourceType,
+      values,
+      stage,
+      runOffline,
+    }),
+  received: (resourceId, previewData) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
+  update: (resourceId, processedData, stage) =>
+    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  receivedError: (resourceId, error, stage) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+};
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
@@ -613,19 +664,8 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
   maskToken: accessToken =>
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  create: accessToken =>
-    action(actionTypes.ACCESSTOKEN_CREATE, { accessToken }),
-  created: accessToken =>
-    action(actionTypes.ACCESSTOKEN_CREATED, { accessToken }),
-  update: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATE, { accessToken }),
-  updated: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }),
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
-  deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
-  deleted: id =>
-    action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>
@@ -747,6 +787,7 @@ export default {
   app,
   toggleDrawer,
   metadata,
+  fileDefinitions,
   connectors,
   cancelTask,
   integrationApp,
@@ -770,6 +811,7 @@ export default {
   file,
   assistantMetadata,
   stack,
+  sampleData,
   connection,
   marketplace,
 };

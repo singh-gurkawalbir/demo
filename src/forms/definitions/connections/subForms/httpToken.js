@@ -2,7 +2,7 @@ export default {
   fieldMap: {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Token:',
+      label: 'Token',
       defaultValue: '',
       required: true,
     },
@@ -26,7 +26,7 @@ export default {
     'http.customAuthScheme': {
       id: 'http.customAuthScheme',
       type: 'text',
-      label: 'Custom Auth Scheme:',
+      label: 'Custom Auth Scheme',
       visibleWhenAll: [
         { field: 'http.auth.token.location', is: ['header'] },
         { field: 'http.auth.token.scheme', is: ['Custom'] },
@@ -39,7 +39,7 @@ export default {
     configureTokenRefresh: {
       fieldId: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh:',
+      label: 'Configure Token Refresh',
       visibleWhenAll: [{ field: 'http.auth.token.location', isNot: [''] }],
       defaultValue: r =>
         !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,

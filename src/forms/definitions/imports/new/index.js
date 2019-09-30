@@ -56,6 +56,7 @@ export default {
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhen,
+      allowNew: true,
     },
     name: {
       id: 'name',

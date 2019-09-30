@@ -41,7 +41,7 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Token:',
+      label: 'API Token',
       helpText: 'The password of your JIRA account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

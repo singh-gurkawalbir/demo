@@ -52,6 +52,11 @@ const ConnectorTemplateList = loadable(() =>
     /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
   )
 );
+const AccessTokenList = loadable(() =>
+  import(
+    /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
+  )
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -107,6 +112,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/marketplace" component={Marketplace} />
         <Route path="/pg/templates" component={TemplateList} />
+        <Route path="/pg/accesstokens" component={AccessTokenList} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>
