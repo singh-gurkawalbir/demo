@@ -4,14 +4,31 @@ import { advanceTo, clear } from 'jest-date-mock';
 import { call, put, select, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { apiCallWithRetry } from '../index';
 import {
   autoEvaluateProcessor,
+  invokeProcessor,
   evaluateProcessor,
   refreshHelperFunctions,
 } from './';
+import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
 import { getResource } from '../resources';
+
+describe('invokeProcessor saga', () => {
+  test('should make api call with passed arguments', () => {
+    const selectResponse = { processor: 'p', body: 'body' };
+    const saga = invokeProcessor(selectResponse);
+    const callEffect = saga.next(selectResponse).value;
+    const opts = {
+      method: 'POST',
+      body: selectResponse.body,
+    };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
+    );
+  });
+});
 
 describe('evaluateProcessor saga', () => {
   test('should do nothing if no editor exists with given id', () => {
@@ -54,16 +71,10 @@ describe('evaluateProcessor saga', () => {
 
     const selectResponse = { processor: 'p', body: 'body' };
     const callEffect = saga.next(selectResponse).value;
-    const opts = {
-      method: 'POST',
-      body: 'body',
-    };
 
     // we are hiding this comms message from the network snackbar
     // if there are any errors let the editor show it
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
-    );
+    expect(callEffect).toEqual(call(invokeProcessor, selectResponse));
 
     const apiResult = 'result';
     const putEffect = saga.next(apiResult).value;
@@ -114,14 +125,8 @@ describe('evaluateProcessor saga', () => {
 
       const selectResponse = { processor: 'p', body: 'body' };
       const callEffect = saga.next(selectResponse).value;
-      const opts = {
-        method: 'POST',
-        body: 'body',
-      };
 
-      expect(callEffect).toEqual(
-        call(apiCallWithRetry, { path: '/processors/p', opts, hidden: true })
-      );
+      expect(callEffect).toEqual(call(invokeProcessor, selectResponse));
 
       const putEffect = saga.throw(invalidCase.initOpt).value;
 

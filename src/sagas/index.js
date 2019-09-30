@@ -24,6 +24,8 @@ import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
+import sampleDataSagas from './sampleData';
+import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
 
@@ -98,6 +100,8 @@ export default function* rootSaga() {
     ...templateSagas,
     ...uploadFileSagas,
     ...stackSagas,
+    ...sampleDataSagas,
+    ...fileDefinitionSagas,
     ...marketplaceSagas,
     ...accessTokenSagas,
   ]);

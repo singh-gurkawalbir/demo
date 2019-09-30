@@ -72,7 +72,7 @@ describe('api access tokens reducers', () => {
     });
   });
 });
-describe.only('apiAccessToken selector', () => {
+describe('apiAccessToken selector', () => {
   test('should return ***** if state is undefined', () => {
     expect(selectors.apiAccessToken(undefined, 123)).toEqual('*****');
   });

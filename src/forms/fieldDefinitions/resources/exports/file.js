@@ -117,7 +117,7 @@ export default {
   },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
-    label: 'File Has Header:',
+    label: 'File Has Header',
   },
   'file.xlsx.keyColumns': {
     type: 'text',

@@ -3,7 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import { getAutoPurgeAtAsString } from './util';
 
-describe.only('getAutoPurgeAtAsString util method', () => {
+describe('getAutoPurgeAtAsString util method', () => {
   const testCases = [];
   let autoPurgeAt = moment();
 

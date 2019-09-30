@@ -65,7 +65,9 @@ export default {
     type: 'select',
     label: 'Paging Method',
     defaultValue: r =>
-      r && r.http && r.http.paging.method ? r.http.paging.method : '',
+      r && r.http && r.http.paging && r.http.paging.method
+        ? r.http.paging.method
+        : '',
     options: [
       {
         items: [
@@ -83,7 +85,9 @@ export default {
     type: 'text',
     label: 'Skip',
     defaultValue: r =>
-      r && r.http && r.http.paging.skip ? r.http.paging.skip : '',
+      r && r.http && r.http.paging && r.http.paging.skip
+        ? r.http.paging.skip
+        : '',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -95,7 +99,9 @@ export default {
     type: 'text',
     label: 'Page',
     defaultValue: r =>
-      r && r.http && r.http.paging.page ? r.http.paging.page : '',
+      r && r.http && r.http.paging && r.http.paging.page
+        ? r.http.paging.page
+        : '',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -116,7 +122,9 @@ export default {
     type: 'text',
     label: 'Token',
     defaultValue: r =>
-      r && r.http && r.http.paging.token ? r.http.paging.token : '',
+      r && r.http && r.http.paging && r.http.paging.token
+        ? r.http.paging.token
+        : '',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -128,7 +136,9 @@ export default {
     type: 'text',
     label: 'Path',
     defaultValue: r =>
-      r && r.http && r.http.paging.path ? r.http.paging.path : '',
+      r && r.http && r.http.paging && r.http.paging.path
+        ? r.http.paging.path
+        : '',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -140,7 +150,9 @@ export default {
     type: 'text',
     label: 'Relative URI',
     defaultValue: r =>
-      r && r.http && r.http.paging.relativeURI ? r.http.paging.relativeURI : '',
+      r && r.http && r.http.paging && r.http.paging.relativeURI
+        ? r.http.paging.relativeURI
+        : '',
     visibleWhen: [
       {
         field: 'http.paging.method',
@@ -153,7 +165,7 @@ export default {
     label: 'Token Path After First Request',
 
     defaultValue: r =>
-      r && r.http && r.http.paging.pathAfterFirstRequest
+      r && r.http && r.http.paging && r.http.paging.pathAfterFirstRequest
         ? r.http.paging.pathAfterFirstRequest
         : '',
     visibleWhen: [
@@ -168,7 +180,7 @@ export default {
     label: 'Resource Path',
 
     defaultValue: r =>
-      r && r.http && r.http.paging.resourcePath
+      r && r.http && r.http.paging && r.http.paging.resourcePath
         ? r.http.paging.resourcePath
         : '',
     visibleWhen: [
@@ -220,7 +232,7 @@ export default {
     type: 'text',
     label: 'Link Header Relation',
     defaultValue: r =>
-      r && r.http && r.http.paging.linkHeaderRelation
+      r && r.http && r.http.paging && r.http.paging.linkHeaderRelation
         ? r.http.paging.linkHeaderRelation
         : '',
     visibleWhen: [

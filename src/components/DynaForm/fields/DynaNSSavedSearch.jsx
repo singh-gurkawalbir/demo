@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaText from './DynaText';
 import * as selectors from '../../../reducers';
+import { isNewId } from '../../../utils/resource';
 
 export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
@@ -20,6 +21,7 @@ export default function DynaNSSavedSearch(props) {
     connectionId,
     mode,
     resourceType,
+    resourceId,
     defaultValue,
     onFieldChange,
     id,
@@ -49,13 +51,15 @@ export default function DynaNSSavedSearch(props) {
 
   useEffect(() => {
     // check for isSearchTypeSet to avoid changing search types on refresh
-    if (data && !isSearchTypeSet) {
+    // If editing an export, show public types if searchTypeId matches any in the list
+    // Else show private type
+    if (!isNewId(resourceId) && data && !isSearchTypeSet) {
       const savedSearch = data.find(option => option.value === defaultValue);
 
       setSearchType(savedSearch ? 'public' : 'private');
       setIsSearchTypeSet(true);
     }
-  }, [data, defaultValue, isSearchTypeSet, setSearchType]);
+  }, [data, defaultValue, isSearchTypeSet, resourceId, setSearchType]);
 
   return (
     <div>
@@ -75,12 +79,13 @@ export default function DynaNSSavedSearch(props) {
           />
         </RadioGroup>
       </FormControl>
-
-      {searchType === 'public' ? (
-        <DynaRefreshableSelect {...searchIdOptions} {...props} />
-      ) : (
-        <DynaText {...searchInternalIdOptions} {...props} />
-      )}
+      <FormControl component="fieldset">
+        {searchType === 'public' ? (
+          <DynaRefreshableSelect {...searchIdOptions} {...props} />
+        ) : (
+          <DynaText {...searchInternalIdOptions} {...props} />
+        )}
+      </FormControl>
     </div>
   );
 }

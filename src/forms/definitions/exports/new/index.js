@@ -100,7 +100,7 @@ export default {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
-      label: 'Execution Type',
+      label: 'API Type',
       required: true,
       options: [
         {
