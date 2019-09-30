@@ -8,7 +8,6 @@ import { resourceSagas } from './resources';
 import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
-import { accessTokenSagas } from './accessTokens';
 import { jobSagas } from './jobs';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
@@ -28,6 +27,7 @@ import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
 import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
+import { accessTokenSagas } from './accessToken';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -94,7 +94,6 @@ export default function* rootSaga() {
     ...authenticationSagas,
     ...resourceFormSagas,
     ...integrationAppsSagas,
-    ...accessTokenSagas,
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
@@ -104,5 +103,6 @@ export default function* rootSaga() {
     ...sampleDataSagas,
     ...fileDefinitionSagas,
     ...marketplaceSagas,
+    ...accessTokenSagas,
   ]);
 }

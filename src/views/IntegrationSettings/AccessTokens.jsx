@@ -1,4 +1,4 @@
-import AccessTokenList from '../../components/AccessTokenList';
+import AccessTokenList from '../AccessTokenList';
 
 export default function AccessTokens(props) {
   const { match } = props;

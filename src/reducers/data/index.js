@@ -3,7 +3,6 @@ import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
-import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
@@ -14,7 +13,6 @@ export default combineReducers({
   resources,
   integrationAShares,
   audit,
-  accessTokens,
   jobs,
   suiteScript,
   marketplace,
@@ -162,14 +160,6 @@ export function affectedResourcesAndUsersFromAuditLogs(
   };
 }
 
-export function accessTokenList(state, integrationId) {
-  return fromAccessTokens.accessTokenList(state.accessTokens, integrationId);
-}
-
-export function accessToken(state, id) {
-  return fromAccessTokens.accessToken(state.accessTokens, id);
-}
-
 export function suiteScriptTiles(state, connectionId) {
   return fromSuiteScript.tiles(state.suiteScript, connectionId);
 }
@@ -204,7 +194,11 @@ export function inProgressJobIds(state) {
 }
 
 export function job(state, { type, jobId, parentJobId }) {
-  return fromJobs.job(state.jobs, { type, jobId, parentJobId });
+  return fromJobs.job(state.jobs, {
+    type,
+    jobId,
+    parentJobId,
+  });
 }
 
 export function isBulkRetryInProgress(state) {

@@ -1,22 +1,13 @@
 import moment from 'moment';
 
-export function isPurged(autoPurgeAt) {
-  if (!autoPurgeAt) {
-    return false;
-  }
-
-  const dtAutoPurgeAt = moment(autoPurgeAt);
-
-  return dtAutoPurgeAt.diff(moment(), 'seconds') <= 0;
-}
-
-export function getAutoPurgeAtAsString(autoPurgeAt) {
+export const getAutoPurgeAtAsString = at => {
   let autoPurge = 'Never';
+  const dtAutoPurgeAt = moment(at.autoPurgeAt);
 
-  if (isPurged(autoPurgeAt)) {
+  if (dtAutoPurgeAt.diff(moment(), 'seconds') <= 0) {
     autoPurge = 'Purged';
-  } else if (autoPurgeAt) {
-    const dtAutoPurgeAt = moment(autoPurgeAt);
+  } else if (at.autoPurgeAt) {
+    const dtAutoPurgeAt = moment(at.autoPurgeAt);
     const dtEoDToday = moment().endOf('day');
 
     if (dtAutoPurgeAt.diff(dtEoDToday, 'seconds') <= 0) {
@@ -38,4 +29,6 @@ export function getAutoPurgeAtAsString(autoPurgeAt) {
   }
 
   return autoPurge;
-}
+};
+
+export default { getAutoPurgeAtAsString };

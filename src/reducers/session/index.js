@@ -7,6 +7,7 @@ import connectors, * as fromConnectors from './connectors';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
+import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
@@ -23,6 +24,7 @@ export default combineReducers({
   resourceForm,
   agentAccessTokens,
   stackSystemTokens,
+  apiAccessTokens,
   resource,
   netsuiteUserRole,
   sampleData,
@@ -152,6 +154,13 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
     state && state.sampleData,
     resourceId,
     stage
+  );
+}
+
+export function apiAccessToken(state, resourceId) {
+  return fromApiAccessTokens.apiAccessToken(
+    state && state.apiAccessTokens,
+    resourceId
   );
 }
 
