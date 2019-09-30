@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-// TODO unit tests
 export const getAutoPurgeAtAsString = at => {
   let autoPurge = 'Never';
   const dtAutoPurgeAt = moment(at.autoPurgeAt);
