@@ -6,7 +6,7 @@ export default {
     },
     'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
     'clientCertificates.cert': { fieldId: 'clientCertificates.cert' },
-    'clientCertificates.key': { fieldId: 'clientCertificates.cert' },
+    'clientCertificates.key': { fieldId: 'clientCertificates.key' },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
     },
