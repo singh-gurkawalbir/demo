@@ -116,9 +116,9 @@ export default {
       },
       // text Buttons
       text: {
-        textTransform: 'none',
         fontSize: '13px',
         lineHeight: '15px',
+        textTransform: 'uppercase',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',

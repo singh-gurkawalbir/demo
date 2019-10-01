@@ -157,7 +157,8 @@ export default function DynaHook(props) {
           </FormControl>
           <IconButton
             onClick={handleEditorClick}
-            className={classes.editorButton}>
+            className={classes.editorButton}
+            data-test={id}>
             <EditIcon />
           </IconButton>
         </div>
