@@ -19,6 +19,7 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       label: 'Company ID',
+      required: true,
       type: 'text',
       helpText: 'Please reach out to TriNet support team for company Id.',
     },

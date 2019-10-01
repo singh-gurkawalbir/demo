@@ -1,4 +1,15 @@
 export default {
+  preSave: formValues => {
+    const newValues = formValues;
+
+    if (newValues['/netsuite/authType'] === 'token') {
+      newValues['/netsuite/environment'] =
+        newValues['/netsuite/tokenEnvironment'];
+      newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
+    }
+
+    return newValues;
+  },
   optionsHandler(fieldId, fields) {
     const { value: env } =
       fields.find(field => field.id === 'netsuite.environment') || {};
@@ -54,6 +65,15 @@ export default {
       netsuiteResourceType: 'environment',
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
+    'netsuite.tokenEnvironment': {
+      fieldId: 'netsuite.tokenEnvironment',
+      netsuiteResourceType: 'environment',
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+    },
+    'netsuite._iClientId': {
+      fieldId: 'netsuite._iClientId',
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+    },
     'netsuite.account': {
       fieldId: 'netsuite.account',
       netsuiteResourceType: 'account',
@@ -65,6 +85,17 @@ export default {
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
+    'netsuite.tokenAccount': {
+      fieldId: 'netsuite.tokenAccount',
+      netsuiteResourceType: 'account',
+      refreshOptionsOnChangesTo: [
+        'validate',
+        'netsuite.account',
+        'netsuite.environment',
+        'netsuite.roleId',
+      ],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+    },
     'netsuite.roleId': {
       fieldId: 'netsuite.roleId',
       netsuiteResourceType: 'role',
@@ -75,6 +106,14 @@ export default {
         'netsuite.roleId',
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+    },
+    'netsuite.tokenId': {
+      fieldId: 'netsuite.tokenId',
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+    },
+    'netsuite.tokenSecret': {
+      fieldId: 'netsuite.tokenSecret',
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
     },
     'netsuite.linkSuiteScriptIntegrator': {
       fieldId: 'netsuite.linkSuiteScriptIntegrator',
@@ -91,8 +130,13 @@ export default {
       'netsuite.email',
       'netsuite.password',
       'netsuite.environment',
+      'netsuite.tokenEnvironment',
       'netsuite.account',
+      'netsuite.tokenAccount',
       'netsuite.roleId',
+      'netsuite.tokenId',
+      'netsuite.tokenSecret',
+      'netsuite._iClientId',
       'netsuite.linkSuiteScriptIntegrator',
     ],
     type: 'collapse',

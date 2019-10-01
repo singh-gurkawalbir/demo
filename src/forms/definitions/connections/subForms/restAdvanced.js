@@ -3,9 +3,9 @@ export default {
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
-    'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
+    'rest.concurrencyLevel': { fieldId: 'rest.concurrencyLevel' },
   },
   layout: {
-    fields: ['_borrowConcurrencyFromConnectionId', 'http.concurrencyLevel'],
+    fields: ['_borrowConcurrencyFromConnectionId', 'rest.concurrencyLevel'],
   },
 };
