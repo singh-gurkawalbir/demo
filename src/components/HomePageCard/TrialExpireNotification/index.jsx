@@ -31,31 +31,36 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     position: 'absolute',
     bottom: 22,
-    right: 10,
-    left: 10,
+    left: 22,
   },
   warningIcon: {
     color: theme.palette.warning.main,
-    marginRight: 10,
   },
   closeIcon: {
     float: 'right',
     padding: 0,
   },
+  contentWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(3),
+    paddingLeft: theme.spacing(2),
+  },
 }));
 
-function TrialExpireNotification(props) {
+function TrialExpireNotification({ content }) {
   const classes = useStyles();
-  const { content } = props;
 
   return (
     <div className={classes.wrapper}>
       <IconButton className={classes.closeIcon}>
         <CloseIcon />
       </IconButton>
-      <div className={classes.content}>
+      <div className={classes.contentWrapper}>
         <WarningIcon className={classes.warningIcon} />
-        <Typography variant="body2">{content}</Typography>
+        <div className={classes.content}>
+          <Typography variant="body2">{content}</Typography>
+        </div>
       </div>
       <div className={classes.footer}>
         <ButtonsGroup>
