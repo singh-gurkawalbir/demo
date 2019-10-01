@@ -431,7 +431,12 @@ export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
 
-  if (integrationId && integrationId !== 'none' && integration) {
+  if (
+    integrationId &&
+    integrationId !== 'none' &&
+    integration &&
+    !integration._connectorId
+  ) {
     const registeredConnections =
       integration && integration._registeredConnectionIds;
 
@@ -443,6 +448,11 @@ export function integrationConnectionList(state, integrationId) {
           conn => registeredConnections.indexOf(conn._id) >= 0
         );
     }
+  } else if (integration && integration._connectorId) {
+    connList.resources =
+      connList &&
+      connList.resources &&
+      connList.resources.filter(conn => conn._integrationId === integrationId);
   }
 
   return connList;
@@ -474,6 +484,62 @@ export function integrationAppSettings(state, id, storeId) {
   );
 
   return { ...integrationResource, ...uninstallSteps };
+}
+
+export function connectorFlowSections(state, id) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+
+  return (
+    (integrationResource &&
+      integrationResource._connectorId &&
+      integrationResource.settings.sections[0] &&
+      integrationResource.settings.sections[0].sections) ||
+    {}
+  );
+}
+
+export function connectorFlowBySections(state, id, section) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  let requiredFlows = [];
+
+  if (
+    integrationResource &&
+    integrationResource._connectorId &&
+    integrationResource.settings.sections[0] &&
+    integrationResource.settings.sections[0].sections
+  ) {
+    integrationResource.settings.sections[0].sections.forEach(f => {
+      if (f.title === section) {
+        requiredFlows = f.flows;
+      }
+
+      if (f.title === 'General' && section === 'flows') {
+        requiredFlows = f.flows;
+      }
+    });
+  }
+
+  const preferences = userPreferences(state);
+  let flows = resourceList(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+  }).resources;
+  const flowArray = [];
+
+  requiredFlows.forEach(f => {
+    flowArray.push(f._id);
+  });
+  flows =
+    flows &&
+    flows.filter(
+      f =>
+        flowArray.indexOf(f._id) > -1 &&
+        !!f.sandbox === (preferences.environment === 'sandbox')
+    );
+
+  return flows;
 }
 
 export function defaultStoreId(state, id) {

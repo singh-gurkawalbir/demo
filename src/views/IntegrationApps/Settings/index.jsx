@@ -16,11 +16,12 @@ import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
-import Flows from '../../IntegrationSettings/Flows';
+import Flows from './Flows';
 import Users from '../../IntegrationSettings/Users';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -50,8 +51,13 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
   },
+
   activeLink: {
     fontWeight: 'bold',
+  },
+  subSection: {
+    fontWeight: 'bold',
+    marginLeft: theme.spacing(1),
   },
   flex: {
     flex: 1,
@@ -84,6 +90,9 @@ export default function IntegrationAppSettings(props) {
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
+  );
+  const connectorFlowSections = useSelector(state =>
+    selectors.connectorFlowSections(state, integrationId)
   );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId)
@@ -125,7 +134,9 @@ export default function IntegrationAppSettings(props) {
   };
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources
+      required
+      resources="integrations, exports, imports, flows, connections">
       <div className={classes.appFrame}>
         <div className={classes.about}>
           <Typography variant="h5">{integration.name}</Typography>
@@ -184,6 +195,17 @@ export default function IntegrationAppSettings(props) {
                     Integration Flows
                   </NavLink>
                 </ListItem>
+                {connectorFlowSections &&
+                  connectorFlowSections.map(f => (
+                    <ListItem key={`${f.title}`}>
+                      <NavLink
+                        activeClassName={classes.subSection}
+                        className={classes.link}
+                        to={`${f.title}`}>
+                        {f.title}
+                      </NavLink>
+                    </ListItem>
+                  ))}
                 {showAPITokens && (
                   <ListItem>
                     <NavLink
@@ -233,10 +255,17 @@ export default function IntegrationAppSettings(props) {
           </div>
           <div className={classes.rightElement}>
             <Switch>
-              <Route path={`${props.match.url}/flows`} component={Flows} />
               <Route
-                path={`${props.match.url}/connections`}
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/connections`
+                )}
                 component={Connections}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/:section`
+                )}
+                component={Flows}
               />
               <Route path={`${props.match.url}/users`} component={Users} />
               <Route path={`${props.match.url}/audit`} component={AuditLog} />
