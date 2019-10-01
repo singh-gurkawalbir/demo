@@ -300,7 +300,7 @@ function FlowBuilder(props) {
   }
 
   // eslint-disable-next-line
-  console.log(flow, patch);
+  // console.log(flow, patch);
 
   return (
     <Fragment>
@@ -336,6 +336,7 @@ function FlowBuilder(props) {
                 {pageGenerators.map((pg, i) => (
                   <PageGenerator
                     {...pg}
+                    flowId={flowId}
                     key={pg._exportId}
                     index={i}
                     isLast={pageProcessors.length === i + 1}
@@ -354,6 +355,7 @@ function FlowBuilder(props) {
                 {pageProcessors.map((pp, i) => (
                   <PageProcessor
                     {...pp}
+                    flowId={flowId}
                     key={pp._importId || pp._exportId || pp._connectionId}
                     index={i}
                     isLast={pageProcessors.length === i + 1}

@@ -4,7 +4,9 @@ import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
-import { groupApplications } from '../../../../constants/applications';
+import applications, {
+  groupApplications,
+} from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
@@ -194,6 +196,15 @@ export default function SelectApplication(props) {
     );
   };
 
+  const defaultValue = value
+    ? {
+        value,
+        label: applications.find(a => a.id === value).name,
+      }
+    : '';
+
+  // console.log(defaultValue);
+
   return (
     <FormControl key={id} disabled={disabled} className={classes.formControl}>
       <Select
@@ -202,7 +213,7 @@ export default function SelectApplication(props) {
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option }}
-        defaultValue={value}
+        defaultValue={defaultValue}
         options={options}
         onChange={handleChange}
         styles={customStyles}

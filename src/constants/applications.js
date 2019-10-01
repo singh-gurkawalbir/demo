@@ -41,13 +41,6 @@ const connectors = [
     group: 'tech',
   },
   {
-    id: 'webhook',
-    name: 'Webhook',
-    type: 'webhook',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
-  {
     id: 'as2',
     name: 'AS2',
     type: 'as2',

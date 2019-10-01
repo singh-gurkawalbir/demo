@@ -19,10 +19,6 @@ const appTypeToAdaptorType = {
 export default {
   preSave: ({ application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
-    // TODO: Raghu, the below logic should move to a proper fn that uses a map.
-    // This will only work for a select few adaptorTypes as others probably
-    // dont follow the uppercase rule. we have a /utils/resource file that
-    // should hold the map fn.
     const newValues = {
       ...rest,
       '/adaptorType': `${appTypeToAdaptorType[app.type]}Export`,
@@ -37,6 +33,8 @@ export default {
         executionType === 'scheduled' ? apiType : executionType;
     }
 
+    // console.log(app, newValues);
+
     return newValues;
   },
   fieldMap: {
@@ -45,7 +43,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       placeholder: 'Select application',
-      defaultValue: '',
+      defaultValue: r => r && r.application,
       required: true,
     },
     connection: {
@@ -54,10 +52,12 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: '',
+      defaultValue: r => r && r._connectionId,
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhen: [
+        { id: 'hasApp', field: 'application', isNot: ['', 'webhook'] },
+      ],
       allowNew: true,
     },
     name: {

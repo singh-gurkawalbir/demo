@@ -143,7 +143,7 @@ const PageProcessor = ({
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}>
           <RightActions>
-            {!isLast && (
+            {!isLast && !pending && (
               <Fragment>
                 <IconButton>
                   <MapDataIcon />
@@ -156,23 +156,31 @@ const PageProcessor = ({
           </RightActions>
 
           <BottomActions>
-            <IconButton>
-              <MapDataIcon />
-            </IconButton>
+            {!pending && (
+              <Fragment>
+                <IconButton>
+                  <MapDataIcon />
+                </IconButton>
 
-            <IconButton>
-              <TransformIcon />
-            </IconButton>
+                <IconButton>
+                  <TransformIcon />
+                </IconButton>
 
-            <IconButton>
-              <HookIcon />
-            </IconButton>
+                <IconButton>
+                  <HookIcon />
+                </IconButton>
+              </Fragment>
+            )}
           </BottomActions>
 
           <LeftActions>
-            <IconButton>
-              <FilterIcon />
-            </IconButton>
+            {!pending && (
+              <Fragment>
+                <IconButton>
+                  <FilterIcon />
+                </IconButton>
+              </Fragment>
+            )}
           </LeftActions>
         </AppBlock>
         {!isLast && (
