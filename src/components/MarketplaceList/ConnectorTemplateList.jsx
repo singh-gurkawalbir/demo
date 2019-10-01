@@ -17,24 +17,33 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { CONTACT_SALES_MESSAGE } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
+import ArrowRightIcon from '../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'block',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+    display: 'grid',
+    gridTemplateColumns: `repeat(auto-fill, minmax(318px, 1fr));`,
+    gridRowGap: theme.spacing(3),
+    gridColumnGap: theme.spacing(2),
+    padding: theme.spacing(3),
   },
   card: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(1),
-    width: '300px',
-    height: '350px',
-    float: 'left',
+    height: '318px',
+    width: '318px',
+    borderRadius: 0,
+    border: '1px solid',
+    position: 'relative',
+    borderColor: theme.palette.secondary.lightest,
+    margin: '0 auto',
   },
   description: {
     width: '200px',
     maxHeight: '100px',
     overflowY: 'auto',
+  },
+  cardAction: {
+    position: 'absolute',
+    bottom: 10,
   },
 }));
 
@@ -71,26 +80,28 @@ export default function ConnectorTemplateList(props) {
       <CeligoPageBar title={`${applicationName} Integrations`} />
       <div className={classes.root}>
         {connectors.map(connector => (
-          <Card key={connector._id} className={classes.card}>
+          <Card key={connector._id} className={classes.card} elevation={0}>
             <ConnectorTemplateContent
               resource={connector}
               title="SmartConnector"
               application={application}
               type="connector"
             />
-            <CardActions>
+            <CardActions className={classes.cardAction}>
               {connector.canInstall ? (
                 <Button
                   to={getRoutePath('/integrations')}
                   component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
-                  variant="contained">
-                  Install
+                  variant="text"
+                  color="primary">
+                  Install <ArrowRightIcon />
                 </Button>
               ) : (
                 <Button
                   onClick={() => handleContactSalesClick(connector)}
-                  variant="contained">
+                  variant="text"
+                  color="primary">
                   Contact Sales
                 </Button>
               )}
@@ -98,20 +109,22 @@ export default function ConnectorTemplateList(props) {
           </Card>
         ))}
         {templates.map(template => (
-          <Card key={template._id} className={classes.card}>
+          <Card key={template._id} className={classes.card} elevation={0}>
             <ConnectorTemplateContent
               resource={template}
               title="Template"
               application={application}
               type="template"
             />
-            <CardActions>
+            <CardActions className={classes.cardAction}>
               <NavLink
                 key={template._id}
                 to={getRoutePath(
                   `/marketplace/templates/${template._id}/preview`
                 )}>
-                <Button variant="contained">Install</Button>
+                <Button variant="text" color="primary">
+                  Install <ArrowRightIcon />
+                </Button>
               </NavLink>
             </CardActions>
           </Card>

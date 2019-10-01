@@ -341,7 +341,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'frequency',
         name: 'frequency',
         type: 'select',
-        label: 'Frequency:',
+        label: 'Frequency',
         defaultValue: flow.frequency,
         options: [
           {
@@ -370,7 +370,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'startTime',
         name: 'startTime',
         type: 'select',
-        label: 'Start Time:',
+        label: 'Start Time',
         defaultValue: flow && flow.startTime,
         options: [
           {
@@ -394,7 +394,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'endTime',
         name: 'endTime',
         type: 'select',
-        label: 'End Time:',
+        label: 'End Time',
         defaultValue: flow && flow.endTime,
         options: [
           {
@@ -416,7 +416,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'daysToRunOn',
         name: 'daysToRunOn',
         type: 'multiselect',
-        label: 'Days To Run On:',
+        label: 'Days To Run On',
         defaultValue: flow.daysToRunOn || ['1', '2', '3', '4', '5', '6', '0'],
         options: [
           {
@@ -446,7 +446,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'dayToRunOn',
         name: 'dayToRunOn',
         type: 'select',
-        label: 'Day To Run On:',
+        label: 'Day To Run On',
         defaultValue: flow.dayToRunOn,
         options: [
           {
@@ -476,7 +476,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         id: 'schedule',
         name: 'schedule',
         type: 'text',
-        label: 'Schedule:',
+        label: 'Schedule',
         defaultValue: flow.schedule,
         visibleWhenAll: [
           {

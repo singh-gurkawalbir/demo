@@ -2,7 +2,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   small: {
-    maxWidth: theme.spacing(4),
     maxHeight: theme.spacing(4),
   },
   large: {

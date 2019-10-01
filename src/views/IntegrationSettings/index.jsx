@@ -1,13 +1,11 @@
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../reducers';
-import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
@@ -56,23 +54,16 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationSettings(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
-  const dispatch = useDispatch();
-  const integration = useSelector(state => {
-    if (integrationId === STANDALONE_INTEGRATION.id) {
-      return {
-        _id: STANDALONE_INTEGRATION.id,
-        name: STANDALONE_INTEGRATION.name,
-      };
-    }
+  let integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
+  );
 
-    return selectors.resource(state, 'integrations', integrationId);
-  });
-
-  useEffect(() => {
-    if (!integration) {
-      dispatch(actions.resource.request('integrations', integrationId));
-    }
-  });
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    integration = {
+      _id: STANDALONE_INTEGRATION.id,
+      name: STANDALONE_INTEGRATION.name,
+    };
+  }
 
   if (!integration) {
     return null;

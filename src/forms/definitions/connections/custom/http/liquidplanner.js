@@ -25,7 +25,7 @@ export default {
       id: 'authType',
       required: true,
       type: 'select',
-      label: 'Authentication Type:',
+      label: 'Authentication Type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpText: 'Please select Authentication Type',
       options: [
@@ -53,7 +53,7 @@ export default {
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'API Token:',
+      label: 'API Token',
       helpText:
         'The API Token of your LiquidPlanner account when using the Token authentication.',
       visibleWhen: [{ field: 'authType', is: ['token'] }],

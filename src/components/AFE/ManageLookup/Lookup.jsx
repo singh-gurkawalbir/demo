@@ -90,7 +90,7 @@ export default function Lookup(props) {
         id: 'relativeURI',
         name: 'relativeURI',
         type: 'text',
-        label: 'Relative URI:',
+        label: 'Relative URI',
         placeholder: 'Relative URI',
         defaultValue: lookup.relativeURI,
         visibleWhen: [
@@ -104,12 +104,12 @@ export default function Lookup(props) {
         id: 'method',
         name: 'method',
         type: 'select',
-        label: 'HTTP Method:',
+        label: 'HTTP Method',
         placeholder: 'Required',
         defaultValue: lookup.method,
         options: [
           {
-            heading: 'Select Http Method:',
+            heading: 'Select Http Method',
             items: [
               {
                 label: 'GET',
@@ -150,7 +150,7 @@ export default function Lookup(props) {
         id: 'extract',
         name: 'extract',
         type: 'text',
-        label: 'Resource Identifier Path:',
+        label: 'Resource Identifier Path',
         placeholder: 'Resource Identifier Path',
         defaultValue: lookup.extract,
         visibleWhen: [
@@ -182,7 +182,7 @@ export default function Lookup(props) {
         id: 'name',
         name: 'name',
         type: 'text',
-        label: 'Name:',
+        label: 'Name',
         defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
       },
@@ -190,7 +190,7 @@ export default function Lookup(props) {
         id: 'failRecord',
         name: 'failRecord',
         type: 'radiogroup',
-        label: 'Action to take if unique match not found:',
+        label: 'Action to take if unique match not found',
         defaultValue: getFailedRecordDefault(),
         options: [
           {
@@ -219,7 +219,7 @@ export default function Lookup(props) {
         id: 'default',
         name: 'default',
         type: 'text',
-        label: 'Enter Default Value:',
+        label: 'Enter Default Value',
         defaultValue: lookup.default,
         placeholder: 'Enter Default Value',
         visibleWhen: [

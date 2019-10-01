@@ -63,25 +63,51 @@ export default {
     return newValues;
   },
   fieldMap: {
-    type: { fieldId: 'type' },
     name: { fieldId: 'name' },
-    'http.auth.type': { fieldId: 'http.auth.type', required: true },
+    mode: {
+      id: 'mode',
+      type: 'radiogroup',
+      label: 'Mode',
+      defaultValue: 'cloud',
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-Premise', value: 'onpremise' },
+          ],
+        },
+      ],
+    },
+    _agentId: {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
+    'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
       visibleWhenAll: [{ field: 'http.auth.type', isNot: [''] }],
     },
-    'http.baseURI': { fieldId: 'http.baseURI', required: true },
-    'http.mediaType': { fieldId: 'http.mediaType', required: true },
+    'http.auth.failStatusCode': { fieldId: 'http.auth.failStatusCode' },
+    'http.auth.failPath': { fieldId: 'http.auth.failPath' },
+    'http.auth.failValues': { fieldId: 'http.auth.failValues' },
+    'http.baseURI': { fieldId: 'http.baseURI' },
+    'http.mediaType': { fieldId: 'http.mediaType' },
     'http.encrypted': {
       fieldId: 'http.encrypted',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'custom'] }],
-      defaultValue: '{"field": "value"}',
+      defaultValue: r =>
+        (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
+        '{"field": "value"}',
     },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'custom'] }],
       defaultValue: r =>
-        r && r.http && r.http.unencrypted && JSON.stringify(r.http.unencrypted),
+        (r &&
+          r.http &&
+          r.http.unencrypted &&
+          JSON.stringify(r.http.unencrypted)) ||
+        '{"field": "value"}',
     },
     httpBasic: {
       formId: 'httpBasic',
@@ -111,10 +137,14 @@ export default {
   },
   layout: {
     fields: [
-      'type',
       'name',
+      'mode',
+      '_agentId',
       'http.auth.type',
       'http.headers',
+      'http.auth.failStatusCode',
+      'http.auth.failPath',
+      'http.auth.failValues',
       'http.baseURI',
       'http.mediaType',
       'http.encrypted',

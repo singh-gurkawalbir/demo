@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-// import EditIcon from 'mdi-react/EditIcon';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';

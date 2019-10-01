@@ -39,6 +39,9 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    itemIconRoot: {
+      width: 300,
+    },
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -48,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     width: theme.spacing(5) + 1,
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7) + 1,
+      width: theme.spacing(7) + 4,
     },
   },
   toolbar: theme.mixins.toolbar,
@@ -59,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
-    gridTemplateRows: '64px auto 140px',
+    gridTemplateRows: '75px auto 140px',
     '& > div:first-child': {
       alignSelf: 'center',
     },
@@ -70,6 +73,10 @@ const useStyles = makeStyles(theme => ({
   },
   menuItem: {
     marginTop: theme.spacing(1),
+    textAlign: 'center',
+    '& svg': {
+      color: theme.palette.text.hint,
+    },
   },
   list: {
     backgroundColor: fade(theme.palette.secondary.light, 0.25),
@@ -82,18 +89,32 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listItem: {
+    '& svg > *': {
+      color: theme.palette.text.hint,
+    },
     '&:hover': {
-      borderColor: theme.palette.primary.main,
-      borderLeft: 'solid 3px',
-      color: theme.palette.common.white,
-      paddingLeft: theme.spacing(2) - 3,
+      color: theme.palette.background.paper,
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+      '& svg > *': {
+        color: theme.palette.background.paper,
+      },
     },
     '&:not(:last-child)': {
       borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
     },
+    '&:before': {
+      content: '""',
+      width: '6px',
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
   },
   itemIconRoot: {
-    color: 'inherit',
+    minWidth: '45px',
   },
   menuList: {
     overflowY: 'auto',
@@ -103,6 +124,10 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     fill: theme.palette.primary.dark,
     color: theme.palette.primary.dark,
+    '& svg': {
+      fill: theme.palette.primary.dark,
+      color: theme.palette.primary.dark,
+    },
   },
   logo: {
     width: 90,
@@ -112,6 +137,17 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
     fontFamily: 'unset',
     color: 'inherit',
+  },
+  drawerToggle: {
+    border: '1px solid',
+    borderColor: theme.palette.text.secondary,
+    borderRadius: 4,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    '& svg': {
+      position: 'relative',
+      top: '-12px',
+    },
   },
 }));
 
@@ -145,7 +181,7 @@ export default function CeligoDrawer() {
         }),
       }}
       open={drawerOpened}>
-      <div className={classes.menuContainer}>
+      <div className={classes.menuContainer} onDoubleClick={handleDrawerToggle}>
         <div>
           <div className={classes.logoContainer}>
             {drawerOpened ? (
@@ -182,7 +218,11 @@ export default function CeligoDrawer() {
                     primary={label}
                   />
                   {children &&
-                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+                    (expand === label ? (
+                      <ArrowUpIcon />
+                    ) : (
+                      <ArrowDownIcon className="test" />
+                    ))}
                 </ListItem>
                 {children && (
                   <Collapse in={expand === label} unmountOnExit timeout="auto">
@@ -216,7 +256,10 @@ export default function CeligoDrawer() {
         <div>
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
-            <IconButton color="inherit" onClick={handleDrawerToggle}>
+            <IconButton
+              color="inherit"
+              onClick={handleDrawerToggle}
+              className={classes.drawerToggle}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

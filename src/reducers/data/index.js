@@ -3,20 +3,20 @@ import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
 import audit, * as fromAudit from './audit';
-import accessTokens, * as fromAccessTokens from './accessTokens';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
 import marketplace, * as fromMarketplace from './marketPlace';
+import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
 
 export default combineReducers({
   resources,
   integrationAShares,
   audit,
-  accessTokens,
   jobs,
   suiteScript,
   marketplace,
+  fileDefinitions,
 });
 
 // #region resource selectors
@@ -160,14 +160,6 @@ export function affectedResourcesAndUsersFromAuditLogs(
   };
 }
 
-export function accessTokenList(state, integrationId) {
-  return fromAccessTokens.accessTokenList(state.accessTokens, integrationId);
-}
-
-export function accessToken(state, id) {
-  return fromAccessTokens.accessToken(state.accessTokens, id);
-}
-
 export function suiteScriptTiles(state, connectionId) {
   return fromSuiteScript.tiles(state.suiteScript, connectionId);
 }
@@ -206,7 +198,11 @@ export function inProgressJobIds(state) {
 }
 
 export function job(state, { type, jobId, parentJobId }) {
-  return fromJobs.job(state.jobs, { type, jobId, parentJobId });
+  return fromJobs.job(state.jobs, {
+    type,
+    jobId,
+    parentJobId,
+  });
 }
 
 export function isBulkRetryInProgress(state) {
@@ -220,3 +216,16 @@ export function jobErrors(state, jobId) {
 export function jobErrorRetryObject(state, retryId) {
   return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
+
+export const getPreBuiltFileDefinitions = (state, format) =>
+  fromFileDefinitions.getPreBuiltFileDefinitions(
+    state && state.fileDefinitions,
+    format
+  );
+
+export const getFileDefinition = (state, definitionId, options) =>
+  fromFileDefinitions.getFileDefinition(
+    state && state.fileDefinitions,
+    definitionId,
+    options
+  );

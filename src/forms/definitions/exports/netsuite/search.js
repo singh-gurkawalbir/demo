@@ -65,7 +65,23 @@ export default {
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhen: [{ field: 'netsuite.webservices.recordType', isNot: [''] }],
     },
-    type: { fieldId: 'type' },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      defaultValue: r => (r && r.type ? r.type : 'all'),
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
@@ -89,7 +105,8 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -102,7 +119,16 @@ export default {
       'delta.dateField',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'transform.expression.rules',
+      'rawData',
+    ],
+
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Would you like to transform the records?',
+        fields: ['transform'],
+      },
     ],
   },
 };

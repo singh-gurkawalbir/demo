@@ -42,6 +42,11 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
+const AccessTokenList = loadable(() =>
+  import(
+    /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
+  )
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -72,6 +77,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
+        <Route path="/pg/accesstokens" component={AccessTokenList} />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>

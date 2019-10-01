@@ -4,7 +4,7 @@ import Icon from '../../../../icons/DebugIcon';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
 
 export default {
-  label: 'Config debugger',
+  label: 'Configure debugger',
   component: function ConfigDebugger({ resource }) {
     const [show, setShow] = useState(false);
 

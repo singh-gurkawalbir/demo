@@ -55,12 +55,13 @@ export default function DynaEditor(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleUpdate = value => {
-    let sanitizedVal = value;
+  const handleUpdate = editorVal => {
+    let sanitizedVal = editorVal;
 
-    if (mode === 'json') {
+    // convert to json if form value is an object
+    if (mode === 'json' && typeof value === 'object') {
       try {
-        sanitizedVal = JSON.parse(value);
+        sanitizedVal = JSON.parse(editorVal);
       } catch (e) {
         return;
       }

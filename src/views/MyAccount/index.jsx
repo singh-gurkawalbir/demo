@@ -66,6 +66,7 @@ const Audit = loadable(() =>
   },
   flex: {
     flex: 1,
+    zIndex: 1,
   },
 }))
 class MyAccount extends Component {

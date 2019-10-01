@@ -41,30 +41,30 @@ export default function ActionMenu({ actions }) {
 
   if (!actions || !actions.length) return null;
 
-  if (actions.length < 4) {
+  const renderAction = ({ label, component }, placement) => (
+    <Tooltip key={label} title={label} placement={placement}>
+      <span>{component}</span>
+    </Tooltip>
+  );
+  const count = 3; // number of actions to display outside of menu
+
+  if (actions.length <= count) {
     return (
       <div className={classes.actionContainer}>
-        {actions.map(({ label, component }) => (
-          <Tooltip key={label} title={label}>
-            <span>{component}</span>
-          </Tooltip>
-        ))}
+        {actions.map(a => renderAction(a))}
       </div>
     );
   }
 
   return (
     <div ref={actionContainerEl} className={classes.actionContainer}>
-      <Tooltip title={actions[0].label}>
-        <span>{actions[0].component}</span>
-      </Tooltip>
-      <Tooltip title={actions[1].label}>
-        <span>{actions[1].component}</span>
-      </Tooltip>
+      {actions.slice(0, count).map(a => renderAction(a))}
 
-      <IconButton size="small" aria-describedby={id} onClick={handleClick}>
-        <EllipsisIcon />
-      </IconButton>
+      <Tooltip title="More actions">
+        <IconButton size="small" aria-describedby={id} onClick={handleClick}>
+          <EllipsisIcon />
+        </IconButton>
+      </Tooltip>
       <Popover
         elevation={1}
         id={id}
@@ -82,11 +82,7 @@ export default function ActionMenu({ actions }) {
           horizontal: 'center',
         }}>
         <div className={classes.ellipsisContainer}>
-          {actions.slice(2).map(({ label, component }) => (
-            <Tooltip key={label} title={label}>
-              <span>{component}</span>
-            </Tooltip>
-          ))}
+          {actions.slice(count).map(a => renderAction(a, 'left'))}
         </div>
       </Popover>
     </div>

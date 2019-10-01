@@ -16,18 +16,26 @@ export default {
   },
   palette: {
     type: 'light',
+
     background: {
       paper: colors.celigoWhite,
+      paper2: colors.celigoNeutral2,
       default: colors.celigoNeutral1,
       main: colors.celigoAccent3,
       sideBar: colors.celigoNeutral1,
       arrowAfter: colors.celigoNeutral3,
     },
     primary: {
+      light: colors.celigoAccent3,
       main: colors.celigoAccent2,
+      dark: colors.celigoAccent1,
     },
     secondary: {
-      main: colors.celigoNeutral6,
+      lightest: colors.celigoNeutral3,
+      light: colors.celigoNeutral6,
+      main: colors.celigoNeutral8,
+      darkest: colors.celigoNeutral9,
+      contrastText: colors.celigoNeutral4,
     },
     text: {
       primary: colors.celigoNeutral6,
@@ -35,6 +43,8 @@ export default {
       linkHover: colors.celigoAccent1,
       linkActive: colors.celigoAccent2,
       title: colors.celigoNeutral7,
+      hint: colors.celigoNeutral5,
+      disabled: colors.celigoNeutral4,
       // secondary: '#rrggbb',
       // disabled: '#rrggbb',
       // hint: '#rrggbb',

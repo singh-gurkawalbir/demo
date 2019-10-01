@@ -395,6 +395,7 @@ availableResources.forEach(type => {
     });
   });
 });
+
 describe(`Deregister connection Saga`, () => {
   const integrationId = 143;
   const connectionId = 123;

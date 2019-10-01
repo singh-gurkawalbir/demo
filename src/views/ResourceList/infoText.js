@@ -38,4 +38,9 @@ export default {
     scripts can be referenced by any number of resources in your 
     integrator.io account and changing a script should always be done 
     with caution. Enjoy! `,
+  accesstokens: `API Tokens are required to access the 
+  integrator.io API, which can be used to perform 
+  CRUD operations on any resource in your account, or to synchronously get data in and out of any application that integrator.io can connect with. API Tokens can be provisioned with full or minimal access. API Tokens can be revoked or reactivated at any time. Tokens can be regenerated (as a security best practice to rotate the secret keys being stored externally).
+
+  IMPORTANT: it may take up to one minute for API token changes to propagate and take effect.`,
 };

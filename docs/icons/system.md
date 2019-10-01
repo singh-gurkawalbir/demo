@@ -14,12 +14,14 @@ const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
 const CloudTransferIcon = require('../../src/components/icons/CloudTransferIcon').default;
+const CeligoMarkIcon = require('../../src/components/icons/CeligoMarkIcon').default;
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
-const DataTransformationIcon = require('../../src/components/icons/DataTransformationIcon').default;
+const TransformIcon = require('../../src/components/icons/TransformIcon').default;
 const DataLoaderIcon = require('../../src/components/icons/DataLoaderIcon').default;
 const DebugIcon = require('../../src/components/icons/DebugIcon').default;
 const DownloadIcon = require('../../src/components/icons/DownloadIcon').default;
 const EditIcon = require('../../src/components/icons/EditIcon').default;
+const EditScriptIcon = require('../../src/components/icons/EditScriptIcon').default;
 const EditorsPlaygroundIcon = require('../../src/components/icons/EditorsPlaygroundIcon').default;
 const ErrorIcon = require('../../src/components/icons/ErrorIcon').default;
 const EllipsisHorizontalIcon = require('../../src/components/icons/EllipsisHorizontalIcon').default;
@@ -28,26 +30,38 @@ const ExitIcon = require('../../src/components/icons/ExitIcon').default;
 const ExportsIcon = require('../../src/components/icons/ExportsIcon').default;
 const FilterIcon = require('../../src/components/icons/FilterIcon').default;
 const FlowBuilderIcon = require('../../src/components/icons/FlowBuilderIcon').default;
+const FlowBuilderAppIcon = require('../../src/components/icons/FlowBuilderAppIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
+const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
 const HookIcon = require('../../src/components/icons/HookIcon').default;
 const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
+const InputFilterIcon = require('../../src/components/icons/InputFilterIcon').default;
 const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon').default;
+const LayoutTriVerticalIcon = require('../../src/components/icons/LayoutTriVerticalIcon').default;
+const LayoutLgLeftSmrightIcon = require('../../src/components/icons/LayoutLgLeftSmrightIcon').default;
+const LayoutLgTopSmBottomIcon = require('../../src/components/icons/LayoutLgTopSmBottomIcon').default;
 const ListnerIcon = require('../../src/components/icons/ListnerIcon').default;
 const LookUpIcon = require('../../src/components/icons/LookUpIcon').default;
+const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
+const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
+const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
+const RunIcon = require('../../src/components/icons/RunIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
+const ShowContentIcon = require('../../src/components/icons/ShowContentIcon').default;
 const SuccessIcon = require('../../src/components/icons/SuccessIcon').default;
 const ScriptsIcon = require('../../src/components/icons/ScriptsIcon').default;
 const SearchIcon = require('../../src/components/icons/SearchIcon').default;
+const ShareStackIcon = require('../../src/components/icons/ShareStackIcon').default;
 const SettingsIcon = require('../../src/components/icons/SettingsIcon').default;
 const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
@@ -55,6 +69,7 @@ const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon'
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
+const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
 const WarningIcon = require('../../src/components/icons/WarningIcon').default;
 
@@ -135,12 +150,16 @@ const icon = {
       <p>Connections</p>
     </div>
     <div style={wrapper}>
+      <CeligoMarkIcon style={icon} />
+      <p>CeligoMark</p>
+    </div>
+    <div style={wrapper}>
       < CloudTransferIcon style={icon} />
       <p> CloudTransfer(FB)</p>
     </div>
     <div style={wrapper}>
-      <DataTransformationIcon style={icon} />
-      <p>DataTransformation</p>
+      <TransformIcon style={icon} />
+      <p>Transform</p>
     </div>
     <div style={wrapper}>
       <DataLoaderIcon style={icon} />
@@ -157,6 +176,10 @@ const icon = {
      <div style={wrapper}>
       <EditIcon style={icon} />
       <p>Edit</p>
+    </div>
+     <div style={wrapper}>
+      <EditScriptIcon style={icon} />
+      <p>EditScript</p>
     </div>
      <div style={wrapper}>
       <EditorsPlaygroundIcon style={icon} />
@@ -190,6 +213,10 @@ const icon = {
       <FlowBuilderIcon style={icon} />
       <p>FlowBuilder</p>
     </div>
+    <div style={wrapper}>
+      <FlowBuilderAppIcon style={icon} />
+      <p>FlowBuilderApp</p>
+    </div>
      <div style={wrapper}>
       <GettingStartedIcon style={icon} />
       <p>GettingStarted</p>
@@ -197,6 +224,10 @@ const icon = {
      <div style={wrapper}>
       <HelpIcon style={icon} />
       <p>Help</p>
+    </div>
+    <div style={wrapper}>
+      <HideContentIcon style={icon} />
+      <p>HideContent</p>
     </div>
      <div style={wrapper}>
       <HomeIcon style={icon} />
@@ -219,12 +250,33 @@ const icon = {
       <p>Imports</p>
     </div>
     <div style={wrapper}>
+      <InputFilterIcon style={icon} />
+      <p>InputFilter</p>
+    </div>
+   
+    <div style={wrapper}>
       <KnowledgeBaseIcon style={icon} />
       <p>KnowledgeBase</p>
     </div>
      <div style={wrapper}>
       <ListnerIcon style={icon} />
       <p>Listner (FB)</p>
+    </div>
+    <div style={wrapper}>
+      <LayoutTriVerticalIcon style={icon} />
+      <p>LayoutTriVertical</p>
+    </div>
+    <div style={wrapper}>
+      <LayoutLgLeftSmrightIcon style={icon} />
+      <p>LayoutLgleftSmright</p>
+    </div>
+    <div style={wrapper}>
+      <LayoutLgTopSmBottomIcon style={icon} />
+      <p> LayoutLgTopSmBottom</p>
+    </div>
+    <div style={wrapper}>
+      <LockIcon style={icon} />
+      <p>Lock</p>
     </div>
     <div style={wrapper}>
       <LookUpIcon style={icon} />
@@ -242,6 +294,10 @@ const icon = {
       <NotificationsIcon style={icon} />
       <p>Notifications</p>
     </div>
+     <div style={wrapper}>
+      <OutputFilterIcon style={icon} />
+      <p>OutputFilter</p>
+    </div>
     <div style={wrapper}>
       <PermissionsManageIcon style={icon} />
       <p>PermissionsManage</p>
@@ -255,8 +311,20 @@ const icon = {
       <p>Resources</p>
     </div>
     <div style={wrapper}>
+      <RefreshIcon style={icon} />
+      <p>Refresh</p>
+    </div>
+     <div style={wrapper}>
+      <RunIcon style={icon} />
+      <p>Run</p>
+    </div>
+    <div style={wrapper}>
       <StacksIcon style={icon} />
       <p>Stacks</p>
+    </div>
+    <div style={wrapper}>
+      <ShowContentIcon style={icon} />
+      <p>ShowContent</p>
     </div>
     <div style={wrapper}>
       <SuccessIcon style={icon} />
@@ -269,6 +337,10 @@ const icon = {
     <div style={wrapper}>
       <SearchIcon style={icon} />
       <p>Search</p>
+    </div>
+    <div style={wrapper}>
+      <ShareStackIcon style={icon} />
+      <p>ShareStack</p>
     </div>
     <div style={wrapper}>
       <SettingsIcon style={icon} />
@@ -297,6 +369,10 @@ const icon = {
     <div style={wrapper}>
       <TrashIcon style={icon} />
       <p>Trash</p>
+    </div>
+    <div style={wrapper}>
+      <UnlockIcon style={icon} />
+      <p>Unlock</p>
     </div>
     <div style={wrapper}>
       <ViewReferencesIcon style={icon} />

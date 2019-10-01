@@ -7,12 +7,12 @@ import PopupState, {
   bindTrigger,
   bindMenu,
 } from 'material-ui-popup-state/index';
-import EditIcon from 'mdi-react/EditIcon';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import JsonEditorDialog from '../../JsonEditorDialog';
 import NewFieldDialog from '../NewFieldDialog';
 import { adaptorTypeMap } from '../../../utils/resource';
+import EditIcon from '../../icons/EditIcon';
 
 const mapStateToProps = (state, { resourceContext = {}, field }) => {
   const { id } = field;
