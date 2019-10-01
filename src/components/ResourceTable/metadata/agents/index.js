@@ -2,11 +2,8 @@ import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
 import AgentToken from '../../../AgentToken';
-import {
-  getResourceLink,
-  onlineStatus,
-  formatLastModified,
-} from '../../../CeligoTable/util';
+import AgentStatus from '../../../AgentStatus';
+import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -27,7 +24,9 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => onlineStatus(r),
+      value(r) {
+        return <AgentStatus agentId={r._id} />;
+      },
     },
     {
       heading: 'Updated on',

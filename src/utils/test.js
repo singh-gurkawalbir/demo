@@ -52,7 +52,7 @@ describe('getExistingResourcePagePath util method', () => {
       test('should return valid path, if id is not passed', () => {
         expect(getExistingResourcePagePath({ type: rt })).toEqual(
           `${uiRoutePathPrefix}/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] ||
-            rt}/undefined/edit`
+            rt}/edit/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] || rt}/undefined`
         );
       });
       test('should return valid path, if id is passed', () => {
@@ -60,7 +60,7 @@ describe('getExistingResourcePagePath util method', () => {
           getExistingResourcePagePath({ type: rt, id: 'something' })
         ).toEqual(
           `${uiRoutePathPrefix}/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] ||
-            rt}/something/edit`
+            rt}/edit/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] || rt}/something`
         );
       });
     });
