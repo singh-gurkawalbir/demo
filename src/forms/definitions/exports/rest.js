@@ -93,6 +93,7 @@ export default {
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
+      required: false,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'rest.once.booleanField': {
