@@ -10,7 +10,6 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-
     defaultValue: r => (r && r.http && r.http.successMediaType) || '',
     options: [
       {
