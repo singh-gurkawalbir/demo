@@ -16,19 +16,26 @@ const useStyles = makeStyles(theme => ({
     padding: 10,
     boxSizing: 'border-box',
     zIndex: 2,
+    height: '158px',
   },
   content: {
     display: 'flex',
     width: '90%',
-    padding: [[0, 10, 15, 10]],
+    padding: [[0, 10, 0, 10]],
     clear: 'both',
+    height: theme.spacing(8),
+    overflowY: 'auto',
   },
   footer: {
     display: 'flex',
     justifyContent: 'flex-start',
+    position: 'absolute',
+    bottom: 22,
+    right: 10,
+    left: 10,
   },
   warningIcon: {
-    color: theme.palette.background.warning,
+    color: theme.palette.warning.main,
     marginRight: 10,
   },
   closeIcon: {
@@ -37,9 +44,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TrialExpireNotification() {
+function TrialExpireNotification(props) {
   const classes = useStyles();
-  const number = 25;
+  const { content } = props;
 
   return (
     <div className={classes.wrapper}>
@@ -48,18 +55,18 @@ function TrialExpireNotification() {
       </IconButton>
       <div className={classes.content}>
         <WarningIcon className={classes.warningIcon} />
-        <Typography variant="body2">
-          Your free trials expires in {number} days
-        </Typography>
+        <Typography variant="body2">{content}</Typography>
       </div>
-      <ButtonsGroup>
-        <Button variant="text" color="primary">
-          UNINSTALL
-        </Button>
-        <Button variant="text" color="primary">
-          Contact Sales
-        </Button>
-      </ButtonsGroup>
+      <div className={classes.footer}>
+        <ButtonsGroup>
+          <Button variant="text" color="primary">
+            UNINSTALL
+          </Button>
+          <Button variant="text" color="primary">
+            Contact Sales
+          </Button>
+        </ButtonsGroup>
+      </div>
       <div />
     </div>
   );
