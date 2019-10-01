@@ -1,8 +1,8 @@
 import Link from '@material-ui/core/Link';
 import Delete from '../../components/ResourceTable/actions/Delete';
-import UploadZipFile from '../../components/ResourceTable/actions/Templates/UploadZipFile';
-import Download from '../../components/ResourceTable/actions/Templates/Download';
-import TogglePublish from '../../components/ResourceTable/actions/Templates/TogglePublish';
+import UploadZipFile from '../../components/ResourceTable/actions/UploadZipFile';
+import Download from '../../components/ResourceTable/actions/Download';
+import TogglePublish from '../../components/ResourceTable/actions/TogglePublish';
 import {
   getResourceLink,
   formatLastModified,

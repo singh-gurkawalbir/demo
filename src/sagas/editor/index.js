@@ -11,6 +11,17 @@ import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource } from '../resources';
+import processorLogic from '../../reducers/session/editors/processorLogic';
+
+export function* invokeProcessor({ processor, body }) {
+  const path = `/processors/${processor}`;
+  const opts = {
+    method: 'POST',
+    body,
+  };
+
+  return yield call(apiCallWithRetry, { path, opts, hidden: true });
+}
 
 export function* evaluateProcessor({ id }) {
   const reqOpts = yield select(selectors.processorRequestOptions, id);
@@ -26,16 +37,11 @@ export function* evaluateProcessor({ id }) {
   }
 
   // console.log(`editorProcessorOptions for ${id}`, processor, body);
-  const path = `/processors/${processor}`;
-  const opts = {
-    method: 'POST',
-    body,
-  };
 
   try {
     // we are hidding this comm activity from the network snackbar
 
-    const results = yield call(apiCallWithRetry, { path, opts, hidden: true });
+    const results = yield call(invokeProcessor, { processor, body });
 
     return yield put(actions.editor.evaluateResponse(id, results));
   } catch (e) {
@@ -45,6 +51,26 @@ export function* evaluateProcessor({ id }) {
 
       return yield put(actions.editor.evaluateFailure(id, errJSON.message));
     }
+  }
+}
+
+export function* evaluateExternalProcessor({ processorData }) {
+  const reqOpts = processorLogic.requestOptions(processorData);
+
+  if (!reqOpts) {
+    return; // nothing to do...
+  }
+
+  const { violations, processor, body } = reqOpts;
+
+  if (violations) {
+    return { violations };
+  }
+
+  try {
+    return yield call(invokeProcessor, { processor, body });
+  } catch (e) {
+    return { error: e };
   }
 }
 

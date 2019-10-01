@@ -68,6 +68,9 @@ const mapDispatchToProps = dispatch => ({
   emailField: {
     flexGrow: 4,
   },
+  editEmailButton: {
+    marginLeft: theme.spacing(1),
+  },
 }))
 class ProfilesComponent extends Component {
   state = {
@@ -129,6 +132,7 @@ class ProfilesComponent extends Component {
           value={this.state.name}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <div className={classes.editRowElement}>
           <TextField
@@ -139,6 +143,7 @@ class ProfilesComponent extends Component {
             value={this.state.email}
             className={classNames(classes.textField, classes.emailField)}
             disabled
+            variant="filled"
           />
           <div>
             <Button
@@ -181,6 +186,7 @@ class ProfilesComponent extends Component {
           value={this.state.company}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <TextField
           id="phone"
@@ -189,6 +195,7 @@ class ProfilesComponent extends Component {
           value={this.state.phone}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <TextField
           id="timezone"
@@ -197,6 +204,7 @@ class ProfilesComponent extends Component {
           value={this.state.timezone}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <TextField
           id="dateFormat"
@@ -205,6 +213,7 @@ class ProfilesComponent extends Component {
           value={this.state.dateFormat}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <TextField
           id="timeFormat"
@@ -213,6 +222,7 @@ class ProfilesComponent extends Component {
           value={this.state.timeFormat}
           className={classes.textField}
           onChange={this.handleOnChangeData}
+          variant="filled"
         />
         <div>
           <FormControlLabel

@@ -121,7 +121,7 @@ export function* auth({ email, password }) {
 
     if (isExpired) {
       // remount the component
-      yield put(actions.reloadApp());
+      yield put(actions.app.reload());
     }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));

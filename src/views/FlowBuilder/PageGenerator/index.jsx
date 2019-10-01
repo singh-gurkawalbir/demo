@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import { useDrag } from 'react-dnd';
+import { useDrag } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import itemTypes from '../itemTypes';
 import CalendarIcon from '../../../components/icons/CalendarIcon';
-import TransformIcon from '../../../components/icons/DataTransformationIcon';
+import TransformIcon from '../../../components/icons/TransformIcon';
 import FilterIcon from '../../../components/icons/FilterIcon';
 import HookIcon from '../../../components/icons/HookIcon';
 import AppBlock from '../AppBlock';

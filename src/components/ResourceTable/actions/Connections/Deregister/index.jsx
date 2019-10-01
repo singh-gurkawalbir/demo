@@ -6,7 +6,7 @@ import { confirmDialog } from '../../../../ConfirmDialog';
 
 export default {
   label: 'Deregister',
-  component: function Derigister({ resource: connection, integrationId }) {
+  component: function Deregister({ resource: connection, integrationId }) {
     const dispatch = useDispatch();
     const handleClick = () => {
       const message = [

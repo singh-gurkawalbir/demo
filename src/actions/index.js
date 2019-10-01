@@ -31,6 +31,7 @@ const auth = {
     action(actionTypes.AUTH_REQUEST, { email, password }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  warning: () => action(actionTypes.AUTH_WARNING),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
@@ -42,6 +43,7 @@ const auth = {
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
+  sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
   request: (path, method, message, hidden) =>
@@ -371,6 +373,41 @@ const metadata = {
       }),
   },
 };
+const fileDefinitions = {
+  preBuilt: {
+    request: () => action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST),
+    received: fileDefinitions =>
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED, {
+        fileDefinitions,
+      }),
+    receivedError: error =>
+      action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR, {
+        error,
+      }),
+  },
+  definition: {
+    preBuilt: {
+      request: (format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.UPDATE, {
+          format,
+          definitionId,
+        }),
+      received: (definition, format, definitionId) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED, {
+          definition,
+          format,
+          definitionId,
+        }),
+    },
+    userDefined: {
+      save: (definitionRules, formValues) =>
+        action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
+          definitionRules,
+          formValues,
+        }),
+    },
+  },
+};
 const integrationApp = {
   installer: {
     installStep: (integrationId, installerFunction) =>
@@ -467,7 +504,6 @@ const agent = {
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const template = {
-  downloadZip: id => action(actionTypes.TEMPLATE.ZIP_DOWNLOAD, { id }),
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
@@ -540,9 +576,27 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
 };
-const reloadApp = () => action(actionTypes.APP_RELOAD);
-const appErrored = () => action(actionTypes.APP_ERRORED);
-const clearAppError = () => action(actionTypes.APP_CLEAR_ERROR);
+const sampleData = {
+  request: (resourceId, resourceType, values, stage, runOffline) =>
+    action(actionTypes.SAMPLEDATA.REQUEST, {
+      resourceId,
+      resourceType,
+      values,
+      stage,
+      runOffline,
+    }),
+  received: (resourceId, previewData) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
+  update: (resourceId, processedData, stage) =>
+    action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  receivedError: (resourceId, error, stage) =>
+    action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+};
+const app = {
+  reload: () => action(actionTypes.APP_RELOAD),
+  errored: () => action(actionTypes.APP_ERRORED),
+  clearError: () => action(actionTypes.APP_CLEAR_ERROR),
+};
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -610,19 +664,8 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
   maskToken: accessToken =>
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  create: accessToken =>
-    action(actionTypes.ACCESSTOKEN_CREATE, { accessToken }),
-  created: accessToken =>
-    action(actionTypes.ACCESSTOKEN_CREATED, { accessToken }),
-  update: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATE, { accessToken }),
-  updated: accessToken =>
-    action(actionTypes.ACCESSTOKEN_UPDATED, { accessToken }),
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
-  deleteAccessToken: id => action(actionTypes.ACCESSTOKEN_DELETE, { id }),
-  deleted: id =>
-    action(actionTypes.ACCESSTOKEN_DELETED, { accessToken: { _id: id } }),
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>
@@ -638,12 +681,11 @@ const job = {
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
-
   requestInProgressJobStatus: () =>
     action(actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
   noInProgressJobs: () => action(actionTypes.JOB.NO_IN_PROGRESS_JOBS),
-  downloadDiagnosticsFile: ({ jobId }) =>
-    action(actionTypes.JOB.DOWNLOAD_DIAGNOSTICS_FILE, { jobId }),
+  downloadFiles: ({ jobId, fileType, fileIds }) =>
+    action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
 
   cancel: ({ jobId, flowJobId }) =>
@@ -710,8 +752,6 @@ const job = {
       flowJobId,
       selectedRetryIds,
     }),
-  downloadErrorFile: ({ jobId }) =>
-    action(actionTypes.JOB.DOWNLOAD_ERROR_FILE, { jobId }),
   requestRetryData: ({ retryId }) =>
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
   receivedRetryData: ({ retryData, retryId }) =>
@@ -744,13 +784,12 @@ const assistantMetadata = {
 // #endregion
 
 export default {
-  clearAppError,
-  appErrored,
+  app,
   toggleDrawer,
   metadata,
+  fileDefinitions,
   connectors,
   cancelTask,
-  reloadApp,
   integrationApp,
   clearComms,
   clearCommByKey,
@@ -772,6 +811,7 @@ export default {
   file,
   assistantMetadata,
   stack,
+  sampleData,
   connection,
   marketplace,
 };

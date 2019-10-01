@@ -9,7 +9,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    type: { fieldId: 'type' },
     name: { fieldId: 'name' },
     as2url: { fieldId: 'as2url' },
     'as2.as2Id': { fieldId: 'as2.as2Id' },
@@ -141,7 +140,7 @@ export default {
     'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
   },
   layout: {
-    fields: ['type', 'name'],
+    fields: ['name'],
     type: 'collapse',
     containers: [
       {

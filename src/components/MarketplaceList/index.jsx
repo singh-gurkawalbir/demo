@@ -2,7 +2,7 @@ import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card } from '@material-ui/core';
+import { Card, Typography } from '@material-ui/core';
 import { getApplicationConnectors } from '../../constants/applications';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -11,18 +11,30 @@ import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'block',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+    display: 'grid',
+    gridTemplateColumns: `repeat(auto-fill, minmax(204px, 1fr));`,
+    gridRowGap: theme.spacing(3),
+    padding: '24px 10px',
   },
   card: {
-    margin: theme.spacing(1),
-    paddingTop: theme.spacing(8),
-    paddingLeft: theme.spacing(4),
-    width: '200px',
-    height: '200px',
+    width: '204px',
+    height: '204px',
     cursor: 'pointer',
-    float: 'left',
+    border: '1px solid',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  tile: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  label: {
+    textTransform: 'capitalize',
+    paddingTop: theme.spacing(1),
   },
 }));
 
@@ -55,11 +67,19 @@ export default function MarketplaceList() {
       <div className={classes.root}>
         {applicationConnectors.map(connector => (
           <NavLink
+            className={classes.tile}
             key={connector.id}
             to={getRoutePath(`/marketplace/${connector.id}`)}>
-            <Card className={classes.card}>
-              <ApplicationImg assistant={connector.id} size="large" />
+            <Card className={classes.card} elevation={0}>
+              <ApplicationImg
+                assistant={connector.id}
+                size="large"
+                imgType="large"
+              />
             </Card>
+            <Typography variant="body2" className={classes.label}>
+              {connector.name}
+            </Typography>
           </NavLink>
         ))}
       </div>

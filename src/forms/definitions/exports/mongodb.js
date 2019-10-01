@@ -51,7 +51,8 @@ export default {
       required: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
@@ -65,13 +66,14 @@ export default {
       'type',
       'delta.dateField',
       'once.booleanField',
+      'rawData',
     ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,

@@ -683,6 +683,7 @@ describe('jobs reducer', () => {
       expectedErrors.push({
         _id: e._id,
         ...errors[i],
+        similarErrors: [],
       });
     });
     expect(state3).toEqual({ ...state2, errors: expectedErrors });
@@ -721,6 +722,7 @@ describe('jobs reducer', () => {
       expectedErrors.push({
         _id: e._id,
         ...errors[i],
+        similarErrors: [],
       });
 
       if (i % 2 === 0) {
@@ -4188,6 +4190,7 @@ describe('jobErrors selector', () => {
     });
     const expectedJobErrors = errors.map(e => ({
       ...e,
+      similarErrors: [],
       retryObject: {
         isDataEditable: false,
         isRetriable: false,
@@ -4283,6 +4286,7 @@ describe('jobErrors selector', () => {
 
       return {
         ...e,
+        similarErrors: [],
         retryObject: {
           ...ro,
           isDataEditable: [

@@ -118,6 +118,11 @@ export default function getRequestOptions(
         path: `/jobs/${resourceId}/diagnostics`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL:
+      return {
+        path: `/jobs/${resourceId}/files/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.JOB.CANCEL:
       return {
         path: `/jobs/${resourceId}/cancel`,
@@ -197,6 +202,12 @@ export default function getRequestOptions(
       if (resourceType === 'flows') {
         return {
           path: `/${resourceType}/${resourceId}/template`,
+        };
+      }
+
+      if (resourceType === 'templates') {
+        return {
+          path: `/templates/${resourceId}/download/signedURL`,
         };
       }
 

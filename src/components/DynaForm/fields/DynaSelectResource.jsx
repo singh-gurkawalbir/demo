@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import {
@@ -57,13 +57,19 @@ const useStyles = makeStyles(theme => ({
     },
   },
   iconButton: {
-    height: 'fit-content',
     alignSelf: 'flex-end',
     border: '1px solid',
     background: theme.palette.background.paper,
     marginLeft: 5,
-    borderColor: fade(theme.palette.common.black, 0.1),
+    borderColor: theme.palette.secondary.lightest,
     borderRadius: 0,
+    width: 50,
+    height: 50,
+    color: theme.palette.text.hint,
+    '&:hover': {
+      background: theme.palette.background.paper,
+      color: theme.palette.primary.main,
+    },
   },
 }));
 const newId = () => `new-${shortid.generate()}`;
@@ -113,20 +119,14 @@ function DynaSelectResource(props) {
           const key = keys[i];
 
           if (typeof finalFilter[key] === 'object') {
-            const finalRes = Object.keys(finalFilter[key]).reduce(
-              (acc, curr) => {
-                const ret =
-                  acc && r[key] && r[key][curr] === finalFilter[key][curr];
-
-                return ret;
-              },
+            const result = Object.keys(finalFilter[key]).reduce(
+              (acc, curr) =>
+                acc && finalFilter[key][curr] === (r[key] && r[key][curr]),
               true
             );
 
-            if (!finalRes) return false;
-          }
-
-          if (r[key] !== finalFilter[key]) return false;
+            if (!result) return false;
+          } else if (r[key] !== finalFilter[key]) return false;
         }
       }
 

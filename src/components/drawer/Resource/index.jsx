@@ -6,14 +6,13 @@ import Panel from './Panel';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
+    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
     padding: 0,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
   panelContainer: {
     display: 'flex',
-    // TODO: @Azhar: why doesn't this work?
-    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
 }));
 

@@ -7,17 +7,11 @@ import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
-import auth from './authentication';
+import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
-  changePasswordParams,
-  changeEmailParams,
-  pingConnectionParams,
-} from '../sagas/api/apiPaths';
-import { getFieldById } from '../forms/utils';
-import commKeyGen from '../utils/commKeyGenerator';
-import {
+  PASSWORD_MASK,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   TILE_STATUS,
@@ -26,6 +20,13 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
+import {
+  changePasswordParams,
+  changeEmailParams,
+  pingConnectionParams,
+} from '../sagas/api/apiPaths';
+import { getFieldById } from '../forms/utils';
+import commKeyGen from '../utils/commKeyGenerator';
 
 const combinedReducers = combineReducers({
   app,
@@ -130,6 +131,18 @@ export function agentAccessToken(state, id) {
 
 export function stackSystemToken(state, id) {
   return fromSession.stackSystemToken(state && state.session, id);
+}
+
+export function getResourceSampleDataWithStatus(state, resourceId, stage) {
+  return fromSession.getResourceSampleDataWithStatus(
+    state && state.session,
+    resourceId,
+    stage
+  );
+}
+
+export function apiAccessToken(state, id) {
+  return fromSession.apiAccessToken(state && state.session, id);
 }
 
 export function editor(state, id) {
@@ -264,6 +277,14 @@ export function shouldShowAppRouting(state) {
 
 export function isSessionExpired(state) {
   return !!(state && state.auth && state.auth.sessionExpired);
+}
+
+export function showSessionStatus(state, date) {
+  return fromAuth.showSessionStatus(state && state.auth, date);
+}
+
+export function sessionValidTimestamp(state) {
+  return state && state.auth && state.auth.authTimestamp;
 }
 // #endregion AUTHENTICATION SELECTORS
 
@@ -1218,6 +1239,12 @@ export function optionsMapFromMetadata(
   );
 }
 
+export const getPreBuiltFileDefinitions = (state, format) =>
+  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+
+export const getFileDefinition = (state, definitionId, options) =>
+  fromData.getFileDefinition(state && state.data, definitionId, options);
+
 export function commMetadataPathGen(
   applicationType,
   connectionId,
@@ -1317,8 +1344,89 @@ export function commStatusByKey(state, key) {
   return commStatus;
 }
 
-export function accessTokenList(state, integrationId) {
-  return fromData.accessTokenList(state.data, integrationId);
+export function accessTokenList(
+  state,
+  { integrationId, take, keyword, sort, sandbox }
+) {
+  const tokensList = fromData.resourceList(state.data, {
+    type: 'accesstokens',
+    keyword,
+    sort,
+    sandbox,
+  });
+  const filteredTokens = tokensList.resources.filter(t => {
+    if (integrationId) {
+      return t._integrationId === integrationId;
+    }
+
+    return !t._integrationId;
+  });
+  let isEmbeddedToken;
+  const tokens = filteredTokens.map(t => {
+    isEmbeddedToken = !!(t._connectorId && !t.autoPurgeAt);
+
+    const permissions = {
+      displayToken: !isEmbeddedToken,
+      generateToken: !isEmbeddedToken,
+      revoke: !t.revoked,
+      activate: !!t.revoked,
+      edit: !isEmbeddedToken,
+      /* deletion of connector tokens is not allowed by backend */
+      delete: !t._connectorId && !!t.revoked,
+    };
+    const permissionReasons = {
+      displayToken: isEmbeddedToken ? 'Embedded Token' : '',
+      generateToken:
+        'This api token is owned by a SmartConnector and cannot be regenerated.',
+      edit:
+        'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
+      delete: t._connectorId
+        ? 'This api token is owned by a SmartConnector and cannot be edited or deleted here.'
+        : 'To delete this api token you need to revoke it first.',
+    };
+
+    Object.keys(permissions).forEach(p => {
+      if (permissions[p]) {
+        delete permissionReasons[p];
+      }
+    });
+
+    let fullAccess = !!t.fullAccess;
+
+    if (!fullAccess && t._connectorId && t.autoPurgeAt) {
+      if (
+        (!t._connectionIds || !t._connectionIds.length) &&
+        (!t._exportIds || !t._exportIds.length) &&
+        (!t._importIds || !t._importIds.length)
+      ) {
+        fullAccess = true;
+      }
+    }
+
+    return {
+      ...t,
+      token: t.token === PASSWORD_MASK ? '' : t.token,
+      fullAccess,
+      revoked: !!t.revoked,
+      isEmbeddedToken,
+      permissions,
+      permissionReasons,
+    };
+  });
+
+  tokensList.filtered -= tokensList.resources.length - tokens.length;
+  tokensList.resources = tokens;
+  tokensList.total = (tokensList.resources || []).length;
+  tokensList.count = (tokensList.resources || []).length;
+
+  if (typeof take !== 'number' || take < 1) {
+    return tokensList;
+  }
+
+  tokensList.resources = tokensList.resources.slice(0, take);
+  tokensList.count = (tokensList.resources || []).length;
+
+  return tokensList;
 }
 
 export function accessToken(state, id) {
@@ -1333,32 +1441,37 @@ export function flowJobs(state) {
   const jobs = fromData.flowJobs(state.data);
   const preferences = userPreferences(state);
   const resourceMap = resourceDetailsMap(state);
+  const getEndedAtAsString = job =>
+    job.endedAt &&
+    moment(job.endedAt).format(
+      `${preferences.dateFormat} ${preferences.timeFormat}`
+    );
 
   return jobs.map(job => {
     if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          endedAtAsString:
-            cJob.endedAt &&
-            moment(cJob.endedAt).format(
-              `${preferences.dateFormat} ${preferences.timeFormat}`
-            ),
+          endedAtAsString: getEndedAtAsString(cJob),
           name: cJob._exportId
             ? resourceMap.exports[cJob._exportId].name
             : resourceMap.imports[cJob._importId].name,
         };
+
+        if (cJob.retries && cJob.retries.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          cJob.retries = cJob.retries.map(r => ({
+            ...r,
+            endedAtAsString: getEndedAtAsString(r),
+          }));
+        }
 
         return { ...cJob, ...additionalChildProps };
       });
     }
 
     const additionalProps = {
-      endedAtAsString:
-        job.endedAt &&
-        moment(job.endedAt).format(
-          `${preferences.dateFormat} ${preferences.timeFormat}`
-        ),
+      endedAtAsString: getEndedAtAsString(job),
       name:
         resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
     };
@@ -1411,14 +1524,30 @@ export function jobErrors(state, jobId) {
   const jErrors = fromData.jobErrors(state.data, jobId);
   const preferences = userPreferences(state);
 
-  return jErrors.map(je => ({
-    ...je,
-    createdAtAsString:
-      je.createdAt &&
-      moment(je.createdAt).format(
-        `${preferences.dateFormat} ${preferences.timeFormat}`
-      ),
-  }));
+  return jErrors.map(je => {
+    let similarErrors = [];
+
+    if (je.similarErrors && je.similarErrors.length > 0) {
+      similarErrors = je.similarErrors.map(sje => ({
+        ...sje,
+        createdAtAsString:
+          sje.createdAt &&
+          moment(sje.createdAt).format(
+            `${preferences.dateFormat} ${preferences.timeFormat}`
+          ),
+      }));
+    }
+
+    return {
+      ...je,
+      createdAtAsString:
+        je.createdAt &&
+        moment(je.createdAt).format(
+          `${preferences.dateFormat} ${preferences.timeFormat}`
+        ),
+      similarErrors,
+    };
+  });
 }
 
 export function jobErrorRetryObject(state, retryId) {

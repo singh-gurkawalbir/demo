@@ -16,7 +16,7 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.adminUser': {
       id: 'http.unencrypted.adminUser',
-      label: 'Admin User:',
+      label: 'Admin User',
       type: 'checkbox',
       helpText:
         'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',

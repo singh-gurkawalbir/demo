@@ -30,7 +30,7 @@ function ResourceImg(props) {
     <img
       className={classes[size]}
       alt={resourceType}
-      src={`${process.env.CDN_BASE_URI}images/io-icons/icon-${mapTypes(
+      src={`${process.env.CDN_BASE_URI}io-icons/icon-${mapTypes(
         resourceType
       )}.svg`}
     />

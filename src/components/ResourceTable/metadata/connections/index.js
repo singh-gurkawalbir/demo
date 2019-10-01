@@ -1,6 +1,7 @@
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+// eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
@@ -11,6 +12,7 @@ import {
   getConnectorName,
 } from '../../../CeligoTable/util';
 import Deregister from '../../actions/Connections/Deregister';
+import { showDownloadLogs } from './util';
 
 export default {
   columns: [
@@ -48,24 +50,22 @@ export default {
     },
   ],
   rowActions: (r, actionProps) => {
-    if (actionProps.integrationId) {
-      return [
-        Deregister,
-        References,
-        ConfigureDebugger,
-        DownloadDebugLogs,
-        AuditLogs,
-        RefreshMetadata,
-      ];
+    let actionsToReturn = [ConfigureDebugger, AuditLogs, References];
+
+    if (showDownloadLogs(r)) {
+      actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
     }
 
-    return [
-      Delete,
-      References,
-      ConfigureDebugger,
-      DownloadDebugLogs,
-      AuditLogs,
-      RefreshMetadata,
-    ];
+    if (r.type === 'netsuite' || r.type === 'salesforce') {
+      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
+    }
+
+    if (actionProps.integrationId) {
+      actionsToReturn = [Deregister, ...actionsToReturn];
+    } else {
+      actionsToReturn = [...actionsToReturn, Delete];
+    }
+
+    return actionsToReturn;
   },
 };

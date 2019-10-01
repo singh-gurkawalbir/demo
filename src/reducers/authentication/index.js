@@ -40,6 +40,8 @@ export default function(
         newState.sessionExpired = true;
       }
 
+      delete newState.authTimestamp;
+      delete newState.warning;
       newState.initialized = true;
 
       newState.authenticated = false;
@@ -56,6 +58,24 @@ export default function(
       return newState;
     }
 
+    case actionTypes.AUTH_TIMESTAMP: {
+      newState = {
+        ...state,
+        authTimestamp: Date.now(),
+      };
+
+      delete newState.warning;
+
+      return newState;
+    }
+
+    case actionTypes.AUTH_WARNING: {
+      return {
+        ...state,
+        warning: true,
+      };
+    }
+
     case actionTypes.CLEAR_STORE: {
       newState = {
         initialized: false,
@@ -70,4 +90,13 @@ export default function(
       return state;
     }
   }
+}
+
+export function showSessionStatus(state) {
+  const { sessionExpired, warning } = state;
+
+  // authenticated and session Expired are mutually exclusive
+  if (warning) {
+    return 'warning';
+  } else if (sessionExpired) return 'expired';
 }

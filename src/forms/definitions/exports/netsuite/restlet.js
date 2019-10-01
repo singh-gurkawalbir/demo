@@ -24,7 +24,23 @@ export default {
     'netsuite.netsuiteExportlabel': { fieldId: 'netsuite.netsuiteExportlabel' },
     'netsuite.restlet.recordType': { fieldId: 'netsuite.restlet.recordType' },
     'netsuite.restlet.searchId': { fieldId: 'netsuite.restlet.searchId' },
-    type: { fieldId: 'type' },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      defaultValue: r => (r && r.type ? r.type : 'all'),
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
     'delta.dateField': {
       fieldId: 'delta.dateField',
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
@@ -46,7 +62,8 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -59,7 +76,15 @@ export default {
       'delta.lagOffset',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'transform.expression.rules',
+      'rawData',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Would you like to transform the records?',
+        fields: ['transform'],
+      },
     ],
   },
 };

@@ -1,6 +1,5 @@
 export default {
   fieldMap: {
-    type: { fieldId: 'type' },
     name: { fieldId: 'name' },
     'wrapper.unencrypted': { fieldId: 'wrapper.unencrypted' },
     'wrapper.unencrypteds': { fieldId: 'wrapper.unencrypteds' },
@@ -12,7 +11,6 @@ export default {
   },
   layout: {
     fields: [
-      'type',
       'name',
       'wrapper.unencrypted',
       'wrapper.unencrypteds',

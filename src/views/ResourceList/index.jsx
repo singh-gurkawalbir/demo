@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
-  const defaultFilter = { take: 3 };
+  const defaultFilter = { take: 5 };
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType)) ||
@@ -35,7 +35,7 @@ function ResourceList(props) {
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
-      ...filter,
+      ...{ ...defaultFilter, ...filter },
     })
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
@@ -43,7 +43,6 @@ function ResourceList(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>

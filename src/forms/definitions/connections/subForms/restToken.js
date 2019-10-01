@@ -2,7 +2,7 @@ export default {
   fieldMap: {
     'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
-      label: 'Token:',
+      label: 'Token',
       defaultValue: '',
       required: true,
     },
@@ -29,7 +29,7 @@ export default {
     configureTokenRefresh: {
       fieldId: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh:',
+      label: 'Configure Token Refresh',
       visibleWhenAll: [{ field: 'rest.tokenLocation', isNot: [''] }],
       defaultValue: r => !!(r && r.rest && r.rest.refreshTokenURI),
     },

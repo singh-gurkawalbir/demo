@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://api.${
-      formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
+      formValues['/environment'] === 'sandbox.' ? 'sandbox' : ''
     }skubana.com`,
     '/http/auth/token/location': 'header',
     '/http/auth/oauth/authURI': `https://${
@@ -28,7 +28,7 @@ export default {
         {
           items: [
             { label: 'Production', value: 'production' },
-            { label: 'sandbox', value: 'Sandbox' },
+            { label: 'Sandbox', value: 'sandbox' },
           ],
         },
       ],
