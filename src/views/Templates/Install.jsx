@@ -80,6 +80,7 @@ export default function ConnectorInstallation(props) {
         c => c.model === 'Integration'
       );
 
+      dispatch(actions.template.clearTemplate(templateId));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('connections'));
@@ -94,7 +95,7 @@ export default function ConnectorInstallation(props) {
         props.history.push('/');
       }
     }
-  }, [createdComponents, dispatch, props.history]);
+  }, [createdComponents, dispatch, props.history, templateId]);
 
   if (!installSteps) {
     return <Typography>Invalid Template</Typography>;
