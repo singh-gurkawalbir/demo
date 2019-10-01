@@ -1067,6 +1067,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
+    defaultValue: r => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP Headers',
   },
   'http.unencrypted': {
@@ -1767,6 +1768,7 @@ export default {
   'netsuite.authType': {
     type: 'select',
     label: 'Authentication Type',
+    defaultValue: r => r && r.netsuite && r.netsuite.authType,
     options: [
       {
         items: [
@@ -1778,27 +1780,50 @@ export default {
   },
   'netsuite.account': {
     type: 'netsuiteuserroles',
-    label: 'NetSuite account',
-    required: true,
+    label: 'Account',
+  },
+  'netsuite.tokenAccount': {
+    type: 'text',
+    defaultValue: r => r && r.netsuite && r.netsuite.account,
+    label: 'Account',
   },
   'netsuite.tokenId': {
-    type: 'text',
-    label: 'NetSuite token Id',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
     required: true,
+    label: 'Token Id',
   },
   'netsuite.tokenSecret': {
-    type: 'text',
-    label: 'Token Secret',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
     required: true,
+    label: 'Token Secret',
+  },
+  'netsuite.tokenEnvironment': {
+    type: 'select',
+    label: 'Environment',
+    defaultValue: r => r && r.netsuite && r.netsuite.environment,
+    options: [
+      {
+        items: [
+          { value: 'production', label: 'Production' },
+          { value: 'sandbox2.0', label: 'Sandbox2.0' },
+          { value: 'beta', label: 'Beta' },
+        ],
+      },
+    ],
   },
   'netsuite.environment': {
     type: 'netsuiteuserroles',
-    label: 'NetSuite environment',
-    required: true,
+    label: 'Environment',
   },
   'netsuite.roleId': {
     type: 'netsuiteuserroles',
-    label: 'NetSuite role Id',
+    label: 'Role',
   },
   'netsuite.email': {
     type: 'text',
@@ -1850,9 +1875,15 @@ export default {
     label: 'Link SuiteScript Integrator',
     type: 'checkbox',
   },
+  'netsuite._iClientId': {
+    label: 'IClient',
+    type: 'selectresource',
+    resourceType: 'iClients',
+  },
   'netsuite.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
+    defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevel,
     options: [
       {
         items: [
