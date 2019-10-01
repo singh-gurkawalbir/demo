@@ -30,21 +30,6 @@ export default {
     type: 'checkbox',
     label: 'Configure Async Helper',
   },
-  allConnectionsExportType: {
-    type: 'select',
-    helpId: 'export.type',
-    label: 'Type',
-    options: [
-      {
-        items: [
-          { label: 'All', value: 'all' },
-          { label: 'Test', value: 'test' },
-          { label: 'Delta', value: 'delta' },
-          { label: 'Once', value: 'once' },
-        ],
-      },
-    ],
-  },
   type: {
     type: 'select',
     label: 'Type',
@@ -84,10 +69,10 @@ export default {
     type: 'text',
     label: 'Path To Many',
   },
-  sampleData: {
-    type: 'editor',
-    label: 'Sample Data',
-  },
+  // sampleData: {
+  //   type: 'editor',
+  //   label: 'Sample Data',
+  // },
   originSampleData: {
     type: 'text',
     label: 'Origin Sample Data',
@@ -366,7 +351,6 @@ export default {
     type: 'text',
     label: 'Offset',
     defaultValue: r => r && r.delta && r.delta.lagOffset,
-    required: true,
   },
   'delta.endDateField': {
     type: 'text',
@@ -538,11 +522,10 @@ export default {
 
   // #endregion hooks
   // #region transform
-  'transform.expression.rules': {
+  transform: {
     type: 'transformeditor',
     label: 'Transform expression rules',
-    sampleData: r => r.sampleData,
-    rules: r => r && r.transform && r.transform.rules,
+    defaultValue: r => r && r.transform,
   },
   'transform.script._scriptId': {
     type: 'text',
@@ -581,5 +564,13 @@ export default {
   'filter.script.function': {
     type: 'text',
     label: 'Filter script function',
+  },
+  rawData: {
+    type: 'rawdata',
+    label: 'Refresh Sample Data',
+  },
+  sampleData: {
+    type: 'sampledata',
+    label: 'Sample Data',
   },
 };

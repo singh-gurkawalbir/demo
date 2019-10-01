@@ -135,6 +135,10 @@ const getResourceFormAssets = ({
 
     case 'agents':
     case 'scripts':
+    case 'accesstokens':
+      meta = formMeta[resourceType];
+      ({ fieldMap, preSave, init, layout } = meta);
+      break;
     case 'stacks':
     case 'templates':
     case 'connectors':

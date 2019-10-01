@@ -5,6 +5,7 @@ import scripts from './resources/script';
 import stacks from './resources/stack';
 import connectors from './resources/connector';
 import templates from './resources/template';
+import accesstokens from './resources/accesstoken';
 
 export default {
   connections,
@@ -14,4 +15,5 @@ export default {
   scripts,
   templates,
   stacks,
+  accesstokens,
 };

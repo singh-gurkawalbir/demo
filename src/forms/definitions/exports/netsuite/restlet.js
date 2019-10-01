@@ -36,6 +36,7 @@ export default {
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
             { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
           ],
         },
       ],
@@ -61,7 +62,8 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -74,7 +76,15 @@ export default {
       'delta.lagOffset',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'transform.expression.rules',
+      'rawData',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Would you like to transform the records?',
+        fields: ['transform'],
+      },
     ],
   },
 };

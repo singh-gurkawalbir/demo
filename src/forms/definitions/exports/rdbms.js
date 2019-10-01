@@ -41,7 +41,8 @@ export default {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
+    rawData: { fieldId: 'rawData' },
+    transform: { fieldId: 'transform' },
     hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
@@ -52,13 +53,14 @@ export default {
       'rdbms.query',
       'type',
       'rdbms.once.query',
+      'rawData',
     ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
+        fields: ['transform'],
       },
       {
         collapsed: true,

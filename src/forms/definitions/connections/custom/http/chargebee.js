@@ -42,7 +42,7 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API Key:',
+      label: 'API Key',
       helpText: 'The API Key of your Chargebee account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
