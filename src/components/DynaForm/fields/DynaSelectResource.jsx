@@ -150,7 +150,7 @@ function DynaSelectResource(props) {
 
     return (
       <MenuItem key={value} value={value}>
-        {label}
+        {label || value}
       </MenuItem>
     );
   });
