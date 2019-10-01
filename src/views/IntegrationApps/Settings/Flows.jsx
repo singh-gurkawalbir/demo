@@ -8,11 +8,7 @@ import metadata from './metadata';
 export default function Flows(props) {
   const { match } = props;
   const { integrationId, section } = match.params;
-  let flows = useSelector(
-    state => selectors.resourceList(state, { type: 'flows' }).resources
-  );
-
-  flows = useSelector(state =>
+  const { flows } = useSelector(state =>
     selectors.connectorFlowBySections(state, integrationId, section)
   );
 
