@@ -1788,6 +1788,7 @@ export default {
     label: 'Account',
   },
   'netsuite.tokenId': {
+    type: 'text',
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1796,6 +1797,7 @@ export default {
     label: 'Token Id',
   },
   'netsuite.tokenSecret': {
+    type: 'text',
     inputType: 'password',
     defaultValue: '',
     description:
