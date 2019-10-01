@@ -741,7 +741,6 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
-    required: true,
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -1789,11 +1788,19 @@ export default {
     label: 'Account',
   },
   'netsuite.tokenId': {
-    type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
     label: 'Token Id',
   },
   'netsuite.tokenSecret': {
-    type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    required: true,
     label: 'Token Secret',
   },
   'netsuite.tokenEnvironment': {

@@ -77,9 +77,7 @@ function Dashboard(props) {
       <ResourceDrawer {...props} />
 
       <CeligoPageBar title="My integrations" />
-      <LoadResources
-        required
-        resources="published,integrations,connections,iClients">
+      <LoadResources required resources="published,integrations,connections">
         <div className={classes.root}>
           <Grid container spacing={3}>
             {sortedTiles.map(t => (
