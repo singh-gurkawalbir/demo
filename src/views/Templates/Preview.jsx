@@ -141,7 +141,7 @@ export default function TemplatePreview(props) {
                     className={classes.componentsTable}>
                     The following components will be created in your account.
                   </Typography>
-                  {objects.length && (
+                  {!!objects.length && (
                     <CeligoTable
                       data={objects.map((obj, index) => ({
                         ...obj,

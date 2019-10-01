@@ -98,7 +98,6 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
-    ...templateSagas,
     ...uploadFileSagas,
     ...stackSagas,
     ...sampleDataSagas,

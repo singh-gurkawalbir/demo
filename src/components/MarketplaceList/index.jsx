@@ -59,7 +59,6 @@ export default function MarketplaceList() {
     dispatch(actions.marketplace.requestConnectors());
     dispatch(actions.marketplace.requestTemplates());
   }, [dispatch]);
-  console.log('applications', applications);
 
   return (
     <Fragment>

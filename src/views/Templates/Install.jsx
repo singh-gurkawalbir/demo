@@ -52,11 +52,11 @@ export default function ConnectorInstallation(props) {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const template = useSelector(state => selectors.template(state, templateId));
-  const connectionMap = useSelector(state =>
-    selectors.templateConnectionMap(state, templateId)
-  );
   const installSteps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
+  );
+  const { connectionMap, createdComponents } = useSelector(state =>
+    selectors.templateSetup(state, templateId)
   );
 
   useEffect(() => {
@@ -69,10 +69,32 @@ export default function ConnectorInstallation(props) {
 
   useEffect(() => {
     if (isSetupComplete) {
-      // redirect to integration Settings
+      // Send the gathered information to BE to create all components
       dispatch(actions.template.createComponents(templateId));
     }
   }, [dispatch, isSetupComplete, props.history, templateId]);
+  useEffect(() => {
+    if (createdComponents) {
+      // redirect to integration Settings
+      const integration = createdComponents.find(
+        c => c.model === 'Integration'
+      );
+
+      dispatch(actions.resource.requestCollection('integrations'));
+      dispatch(actions.resource.requestCollection('flows'));
+      dispatch(actions.resource.requestCollection('connections'));
+      dispatch(actions.resource.requestCollection('exports'));
+      dispatch(actions.resource.requestCollection('imports'));
+
+      if (integration) {
+        props.history.push(
+          `/pg/integrations/${integration._id}/settings/flows`
+        );
+      } else {
+        props.history.push('/');
+      }
+    }
+  }, [createdComponents, dispatch, props.history]);
 
   if (!installSteps) {
     return <Typography>Invalid Template</Typography>;

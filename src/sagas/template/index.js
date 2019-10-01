@@ -41,9 +41,7 @@ export function* requestPreview({ templateId }) {
 export function* createComponents({ templateId }) {
   const { cMap: connectionMap, stackId: _stackId } = yield select(
     selectors.templateSetup,
-    {
-      templateId,
-    }
+    templateId
   );
   const template = yield select(selectors.template, { templateId });
   const userPreferences = yield select(selectors.userPreferences);
@@ -63,7 +61,7 @@ export function* createComponents({ templateId }) {
           name: `Copy ${(template || {}).name}`,
         },
       },
-      message: `Fetching Preview`,
+      message: `Installing Template...`,
     });
   } catch (error) {
     yield put(actions.template.failedInstall(templateId));

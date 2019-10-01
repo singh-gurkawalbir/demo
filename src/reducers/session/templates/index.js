@@ -68,7 +68,7 @@ export default function reducer(state = {}, action) {
             if (newConnectionId) {
               draft[templateId].cMap = {
                 ...(draft[templateId].cMap || {}),
-                _connectionId: newConnectionId,
+                [_connectionId]: newConnectionId,
               };
             } else if (stackId) {
               draft[templateId].stackId = stackId;
