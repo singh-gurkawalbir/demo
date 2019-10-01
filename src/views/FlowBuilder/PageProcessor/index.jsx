@@ -1,4 +1,5 @@
 import { useRef, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +15,7 @@ import AppBlock from '../AppBlock';
 import LeftActions from '../AppBlock/LeftActions';
 import RightActions from '../AppBlock/RightActions';
 import BottomActions from '../AppBlock/BottomActions';
+import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -42,10 +44,19 @@ const PageProcessor = ({
   isLast,
   ...pp
 }) => {
-  const resourceType = pp.type === 'export' ? 'exports' : 'imports';
-  const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
+  const pending = !!pp._connectionId;
+  const resourceId = pp._connectionId || pp._exportId || pp._importId;
+  let resourceType = pp.type === 'export' ? 'exports' : 'imports';
+
+  if (pp._connectionId) {
+    resourceType = 'connections';
+  }
+
   const ref = useRef(null);
   const classes = useStyles();
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
     hover(item, monitor) {
@@ -102,6 +113,16 @@ const PageProcessor = ({
   });
   const opacity = isDragging ? 0.2 : 1;
 
+  function handleBlockClick() {
+    const to = `${match.url}/edit/${resourceType}/${resourceId}`;
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
   drag(drop(ref));
 
   return (
@@ -112,13 +133,15 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
-          match={match}
-          history={history}
+          name={
+            pending ? 'Pending configuration' : resource.name || resource.id
+          }
+          onBlockClick={handleBlockClick}
+          connectorType={resource.adaptorType || resource.type}
+          assistant={resource.assistant}
           ref={ref}
-          opacity={opacity}
-          blockType="processor"
-          resourceType={resourceType}
-          resourceId={resourceId}>
+          opacity={opacity} /* used for drag n drop */
+          blockType={pp.type === 'export' ? 'lookup' : 'import'}>
           <RightActions>
             {!isLast && (
               <Fragment>

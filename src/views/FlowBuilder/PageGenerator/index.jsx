@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
 import clsx from 'clsx';
@@ -12,6 +13,7 @@ import HookIcon from '../../../components/icons/HookIcon';
 import AppBlock from '../AppBlock';
 import RightActions from '../AppBlock/RightActions';
 import BottomActions from '../AppBlock/BottomActions';
+import * as selectors from '../../../reducers';
 
 /* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
    We the block consts across several components and thus is a maintenance issue to 
@@ -41,7 +43,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
+  const pending = !!pg._connectionId;
+  const resourceType = pending ? 'connections' : 'exports';
+  const resourceId = pg._exportId || pg._connectionId;
   const classes = useStyles();
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     item: { type: itemTypes.PAGE_GENERATOR, index },
@@ -51,17 +59,33 @@ const PageGenerator = ({ location, history, match, index, isLast, ...pg }) => {
   });
   const opacity = isDragging ? 0.5 : 1;
 
+  function handleBlockClick() {
+    const to = `${match.url}/edit/exports/${pg._exportId}`;
+
+    if (pending) {
+      // generate newId
+      // patch it with the connectionId
+      // re-assign "to"
+    }
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
   drag(ref);
 
   return (
     <div className={classes.pgContainer}>
       <AppBlock
-        match={match}
-        history={history}
+        name={pending ? 'Pending configuration' : resource.name || resource.id}
+        onBlockClick={handleBlockClick}
+        connectorType={resource.adaptorType || resource.type}
+        assistant={resource.assistant}
         ref={ref} /* ref is for drag and drop binding */
-        blockType="generator"
-        resourceType="exports"
-        resourceId={pg._exportId}
+        blockType="export"
         opacity={opacity}>
         <RightActions>
           <IconButton>
