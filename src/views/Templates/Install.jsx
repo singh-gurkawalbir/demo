@@ -128,7 +128,7 @@ export default function ConnectorInstallation(props) {
       if (!step.isTriggered) {
         dispatch(
           actions.template.updateStep(
-            { ...step, status: 'inProgress' },
+            { ...step, status: 'triggered' },
             templateId
           )
         );
