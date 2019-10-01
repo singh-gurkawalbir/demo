@@ -40,9 +40,7 @@ export default {
       fieldId: 'configureTokenRefresh',
       type: 'checkbox',
       label: 'Configure Token Refresh',
-      visibleWhenAll: [{ field: 'http.auth.token.location', isNot: [''] }],
-      defaultValue: r =>
-        !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
