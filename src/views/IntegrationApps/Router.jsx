@@ -1,4 +1,4 @@
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 import IntegrationAppAddNewStore from './AddNewStore';
 import IntegrationAppSettings from './Settings';
 import IntegrationAppUninstallation from './Uninstaller';
@@ -6,7 +6,7 @@ import IntegrationAppInstallation from './Installer';
 
 export default function IntegrationAppsRouter({ match }) {
   return (
-    <div>
+    <Switch>
       <Route
         path={`${match.url}/:integrationId/setup`}
         component={IntegrationAppInstallation}
@@ -26,6 +26,6 @@ export default function IntegrationAppsRouter({ match }) {
         ]}
         component={IntegrationAppUninstallation}
       />
-    </div>
+    </Switch>
   );
 }
