@@ -1,17 +1,20 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, connectionId, authorized } = action;
-  const newState = { ...state };
+  const { type, connectionId } = action;
 
-  switch (type) {
-    case actionTypes.CONNECTION.AUTHORIZED:
-      if (!newState[connectionId]) newState[connectionId] = {};
-      newState[connectionId].authorized = authorized;
-
-      break;
-
-    default:
-      return state;
-  }
+  return produce(state, draft => {
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case actionTypes.CONNECTION.AUTHORIZED:
+        if (!draft[connectionId]) draft[connectionId] = {};
+        draft[connectionId].authorized = true;
+        break;
+    }
+  });
 };
+
+export function isAuthorized(state, connectionId) {
+  return !!((state || {})[connectionId] || {}).authorized;
+}

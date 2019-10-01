@@ -177,6 +177,8 @@ const resource = {
         resourceId,
         values,
       }),
+    authorized: connectionId =>
+      action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
     commitAndAuthorize: resourceId =>
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,

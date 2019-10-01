@@ -122,6 +122,10 @@ export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }
 
+export function isAuthorized(state, connectionId) {
+  return fromSession.isAuthorized(state && state.session, connectionId);
+}
+
 export function templateInstallSteps(state, templateId) {
   const templateInstallSteps = fromSession.templateInstallSteps(
     state && state.session,

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ResourceForm from '../../components/ResourceFormFactory';
 import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
@@ -16,12 +16,20 @@ export default function AddOrSelect(props) {
   const newId = useSelector(state =>
     selectors.createdResourceId(state, _connectionId)
   );
+  const isAuthorized = useSelector(state =>
+    selectors.isAuthorized(state, newId)
+  );
+
+  useEffect(() => {
+    onSubmitComplete(newId, isAuthorized);
+  }, [isAuthorized, newId, onSubmitComplete]);
+
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
   };
 
   const handleSubmitComplete = () => {
-    onSubmitComplete(newId);
+    onSubmitComplete(newId, isAuthorized);
   };
 
   const fieldMeta = {

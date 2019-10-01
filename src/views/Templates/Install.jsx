@@ -18,6 +18,8 @@ import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
 import StackSetupDialog from '../../components/StackSetupDialog';
 import InstallationStep from '../../components/InstallStep';
+import resourceConstants from '../../forms/constants/connection';
+import { getResourceSubType } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +45,13 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
+const getConnectionType = resource => {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (assistant) return assistant;
+
+  return type;
+};
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -145,7 +154,11 @@ export default function ConnectorInstallation(props) {
           )
         );
         dispatch(
-          actions.template.verifyBundleInstall(step, connection, templateId)
+          actions.template.verifyBundleInstall(
+            step,
+            { _id: step.options._connectionId },
+            templateId
+          )
         );
       }
       // handle Action step click
@@ -156,10 +169,19 @@ export default function ConnectorInstallation(props) {
 
   const handleBackClick = e => {
     e.preventDefault();
-    props.history.push(`/pg`);
+    props.history.goBack();
   };
 
-  const handleSubmitComplete = connectionId => {
+  const handleSubmitComplete = (connectionId, isAuthorized) => {
+    if (
+      resourceConstants.OAUTH_APPLICATIONS.includes(
+        getConnectionType(connection.doc)
+      ) &&
+      !isAuthorized
+    ) {
+      return;
+    }
+
     dispatch(
       actions.template.updateStep(
         {

@@ -13,6 +13,7 @@ import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
+import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -31,6 +32,7 @@ export default combineReducers({
   sampleData,
   integrationApps,
   templates,
+  oAuthAuthorize,
 });
 
 // #region PUBLIC SELECTORS
@@ -145,6 +147,13 @@ export function templateInstallSteps(state, templateId) {
 
 export function connectionMap(state, templateId) {
   return fromTemplates.connectionMap(state && state.templates, templateId);
+}
+
+export function isAuthorized(state, connectionId) {
+  return fromOAuthAuthorize.isAuthorized(
+    state && state.oAuthAuthorize,
+    connectionId
+  );
 }
 
 export function connectorMetadata(state, fieldName, id, _integrationId) {
