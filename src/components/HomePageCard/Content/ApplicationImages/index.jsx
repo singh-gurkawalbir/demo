@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     maxWidth: 185,
     overflow: 'hidden',
+    marginBottom: theme.spacing(2),
     '& img': {
       maxWidth: '84px',
       maxHeight: '84px',

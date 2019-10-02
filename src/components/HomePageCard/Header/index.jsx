@@ -8,9 +8,6 @@ const useStyles = makeStyles({
     display: 'flex',
     marginBottom: 20,
     justifyContent: 'space-between',
-    '& > div': {
-      flex: '0, 0, 85%',
-    },
   },
 });
 
