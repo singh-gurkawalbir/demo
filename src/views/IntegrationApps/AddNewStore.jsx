@@ -14,7 +14,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 
 const useStyles = makeStyles(theme => ({
@@ -179,7 +179,8 @@ export default function IntegrationAppAddNewStore(props) {
     <LoadResources required resources="connections,integrations">
       {selectedConnectionId && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
+          resourceId={selectedConnectionId}
+          resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />

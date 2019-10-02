@@ -15,8 +15,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
-import StackSetupDialog from '../../components/StackSetupDialog';
+import ResourceSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import resourceConstants from '../../forms/constants/connection';
 import { getResourceSubType } from '../../utils/resource';
@@ -221,9 +220,10 @@ export default function ConnectorInstallation(props) {
   return (
     <LoadResources required resources="connections,integrations">
       {connection && (
-        <ConnectionSetupDialog
-          _connectionId={connection.newId}
-          connection={connection.doc}
+        <ResourceSetupDialog
+          resourceId={connection.newId}
+          resource={connection.doc}
+          resourceType="connections"
           connectionType={connection.doc.type}
           onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
@@ -231,10 +231,11 @@ export default function ConnectorInstallation(props) {
         />
       )}
       {stackId && (
-        <StackSetupDialog
+        <ResourceSetupDialog
           onClose={handleStackClose}
           addOrSelect
           resourceId={stackId}
+          resourceType="stacks"
           onSubmitComplete={handleStackSetupDone}
         />
       )}

@@ -110,7 +110,10 @@ export default function InstallationStep(props) {
         </Grid>
         <Grid item xs={2} className={classes.step}>
           {step.imageURL && (
-            <img alt="" src={process.env.CDN_BASE_URI + step.imageURL} />
+            <img
+              alt=""
+              src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
+            />
           )}
           {step.type === 'Connection' && (
             <ApplicationImg size="large" type={step.options.connectionType} />

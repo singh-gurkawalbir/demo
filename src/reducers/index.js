@@ -500,6 +500,12 @@ export function matchingStackList(state) {
   return resources.filter(r => !r._connectorId);
 }
 
+export function matchingResourceList(state, resource, resourceType) {
+  return resourceType === 'connections'
+    ? matchingConnectionList(state, resource)
+    : matchingStackList(state);
+}
+
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
 
@@ -1090,7 +1096,6 @@ export function resourceStatus(
 
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
-
   const master = resource(state, resourceType, id);
   const { patch, conflict } = fromSession.stagedResource(
     state.session,

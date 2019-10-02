@@ -90,7 +90,7 @@ export default function ConnectorTemplateList(props) {
             <CardActions className={classes.cardAction}>
               {connector.canInstall ? (
                 <Button
-                  to={getRoutePath('/integrations')}
+                  to={getRoutePath('/')}
                   component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
                   variant="text"

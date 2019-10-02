@@ -1,36 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ResourceForm from '../../components/ResourceFormFactory';
 import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
 import DynaForm from '../../components/DynaForm';
 import * as selectors from '../../reducers';
-import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
+import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 
 export default function AddOrSelect(props) {
-  const { resourceId, onSubmitComplete } = props;
+  const {
+    resourceId,
+    onSubmitComplete,
+    connectionType,
+    resource,
+    resourceType = 'connections',
+  } = props;
   const [useNew, setUseNew] = useState(true);
-  const stacksList = useSelector(state => selectors.matchingStackList(state));
-  const options = stacksList.map(c => ({ label: c.name, value: c._id }));
+  const resourceName = resourceType === 'connections' ? 'connection' : 'stack';
+  const resourceLabel = resourceType === 'connections' ? 'Connection' : 'Stack';
+  const resourceList = useSelector(state =>
+    selectors.matchingResourceList(state, resource, resourceType)
+  );
+  const options = resourceList.map(c => ({ label: c.name, value: c._id }));
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
+  const isAuthorized = useSelector(state =>
+    selectors.isAuthorized(state, newId)
+  );
+
+  useEffect(() => {
+    if (isAuthorized) onSubmitComplete(newId, isAuthorized);
+  }, [isAuthorized, newId, onSubmitComplete]);
+
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
   };
 
   const handleSubmitComplete = () => {
-    onSubmitComplete(newId);
+    onSubmitComplete(newId, isAuthorized);
   };
 
   const fieldMeta = {
     fieldMap: {
-      stack: {
-        id: 'stack',
-        name: 'stack',
+      [resourceName]: {
+        id: resourceName,
+        name: resourceName,
         type: 'select',
         required: true,
-        label: 'Stack:',
+        label: resourceLabel,
         options: [
           {
             items: options,
@@ -39,23 +57,22 @@ export default function AddOrSelect(props) {
       },
     },
     layout: {
-      fields: ['stack'],
+      fields: [resourceName],
     },
   };
   const handleSubmit = formVal => {
-    if (!formVal.stack) {
+    if (!formVal[resourceName]) {
       return false;
     }
 
-    onSubmitComplete(formVal.stack);
+    onSubmitComplete(formVal[resourceName]);
   };
 
   return (
-    <LoadResources resources="stacks">
+    <LoadResources resources={resourceType}>
       <RadioGroup
         {...props}
         id="selectType"
-        name="stack"
         label="What would you like to do?"
         showOptionsHorizontally
         defaultValue={useNew ? 'new' : 'existing'}
@@ -64,8 +81,8 @@ export default function AddOrSelect(props) {
         options={[
           {
             items: [
-              { label: 'Setup New Stack', value: 'new' },
-              { label: 'Use Existing Stack', value: 'existing' },
+              { label: `Setup New ${resourceLabel}`, value: 'new' },
+              { label: `Use Existing ${resourceLabel}`, value: 'existing' },
             ],
           },
         ]}
@@ -73,13 +90,16 @@ export default function AddOrSelect(props) {
       {useNew && (
         <ResourceForm
           editMode={false}
-          resourceType="stacks"
+          resourceType={resourceType}
           resourceId={resourceId}
           onSubmitComplete={handleSubmitComplete}
+          connectionType={connectionType}
         />
       )}
       {!useNew && (
-        <DynaForm fieldMeta={fieldMeta}>
+        <DynaForm
+          fieldMeta={fieldMeta}
+          optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
         </DynaForm>
       )}
