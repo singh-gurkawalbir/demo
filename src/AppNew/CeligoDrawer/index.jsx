@@ -49,10 +49,7 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: theme.spacing(5) + 1,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7) + 4,
-    },
+    width: theme.spacing(7) + 4,
   },
   toolbar: theme.mixins.toolbar,
 
@@ -218,11 +215,7 @@ export default function CeligoDrawer() {
                     primary={label}
                   />
                   {children &&
-                    (expand === label ? (
-                      <ArrowUpIcon />
-                    ) : (
-                      <ArrowDownIcon className="test" />
-                    ))}
+                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
                 </ListItem>
                 {children && (
                   <Collapse in={expand === label} unmountOnExit timeout="auto">

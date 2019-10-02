@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: `repeat(auto-fill, minmax(204px, 1fr));`,
     gridRowGap: theme.spacing(3),
     padding: '24px 10px',
+    [theme.breakpoints.up('xl')]: {
+      gridTemplateColumns: `repeat(7, 1fr);`,
+    },
   },
   card: {
     width: '204px',
@@ -71,11 +74,7 @@ export default function MarketplaceList() {
             key={connector.id}
             to={getRoutePath(`/marketplace/${connector.id}`)}>
             <Card className={classes.card} elevation={0}>
-              <ApplicationImg
-                assistant={connector.id}
-                size="large"
-                imgType="large"
-              />
+              <ApplicationImg assistant={connector.id} size="large" />
             </Card>
             <Typography variant="body2" className={classes.label}>
               {connector.name}
