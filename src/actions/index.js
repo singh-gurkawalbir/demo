@@ -520,7 +520,7 @@ const template = {
     action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleInstall: (step, connection, templateId) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,

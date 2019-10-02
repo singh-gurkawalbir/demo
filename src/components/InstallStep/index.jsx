@@ -80,7 +80,11 @@ export default function InstallationStep(props) {
         )
       );
       dispatch(
-        actions.template.verifyBundleInstall(step, connection, templateId)
+        actions.template.verifyBundleOrPackageInstall(
+          step,
+          connection,
+          templateId
+        )
       );
       setVerified(true);
     }

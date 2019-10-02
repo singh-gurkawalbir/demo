@@ -153,7 +153,7 @@ export default function ConnectorInstallation(props) {
           )
         );
         dispatch(
-          actions.template.verifyBundleInstall(
+          actions.template.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
             templateId
@@ -166,8 +166,7 @@ export default function ConnectorInstallation(props) {
     }
   };
 
-  const handleBackClick = e => {
-    e.preventDefault();
+  const handleBackClick = () => {
     props.history.goBack();
   };
 

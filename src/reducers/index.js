@@ -500,7 +500,7 @@ export function matchingStackList(state) {
   return resources.filter(r => !r._connectorId);
 }
 
-export function matchingResourceList(state, resource, resourceType) {
+export function filteredResourceList(state, resource, resourceType) {
   return resourceType === 'connections'
     ? matchingConnectionList(state, resource)
     : matchingStackList(state);

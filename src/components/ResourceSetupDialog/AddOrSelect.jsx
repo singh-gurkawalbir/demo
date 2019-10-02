@@ -19,7 +19,7 @@ export default function AddOrSelect(props) {
   const resourceName = resourceType === 'connections' ? 'connection' : 'stack';
   const resourceLabel = resourceType === 'connections' ? 'Connection' : 'Stack';
   const resourceList = useSelector(state =>
-    selectors.matchingResourceList(state, resource, resourceType)
+    selectors.filteredResourceList(state, resource, resourceType)
   );
   const options = resourceList.map(c => ({ label: c.name, value: c._id }));
   const newId = useSelector(state =>

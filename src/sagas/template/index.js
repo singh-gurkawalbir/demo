@@ -72,14 +72,18 @@ export function* createComponents({ templateId }) {
   yield put(actions.template.createdIntegration(components, templateId));
 }
 
-export function* verifyBundleInstall({ step, connection, templateId }) {
+export function* verifyBundleOrPackageInstall({
+  step,
+  connection,
+  templateId,
+}) {
   const path = `/connections/${connection._id}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: `Fetching Preview`,
+      message: `Verifying Bundle/Package Installation...`,
     });
   } catch (error) {
     yield put(
@@ -112,6 +116,9 @@ export function* verifyBundleInstall({ step, connection, templateId }) {
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
   takeEvery(actionTypes.TEMPLATE.PREVIEW, requestPreview),
-  takeEvery(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, verifyBundleInstall),
+  takeEvery(
+    actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL,
+    verifyBundleOrPackageInstall
+  ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
 ];
