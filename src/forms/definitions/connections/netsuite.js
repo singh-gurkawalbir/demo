@@ -153,6 +153,9 @@ export default {
   },
   actions: [
     {
+      id: 'cancel',
+    },
+    {
       id: 'validate',
       label: 'Validate',
       visibleWhen: [
