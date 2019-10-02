@@ -17,7 +17,6 @@ function DynaUploadFile(props) {
     resourceType,
     placeholder,
     required,
-    value = '',
     label,
     formContext,
   } = props;
@@ -103,7 +102,6 @@ function DynaUploadFile(props) {
       disabled={disabled}
       required={required}
       error={!isValid}
-      value={value}
       onChange={handleFileChosen}
     />
   );
