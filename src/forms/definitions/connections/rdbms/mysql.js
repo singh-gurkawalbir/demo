@@ -41,7 +41,16 @@ export default {
     },
     rdbmsFields: { formId: 'rdbmsFields' },
     'rdbms.port': { fieldId: 'rdbms.port' },
-    'rdbms.useSSL': { id: 'rdbms.useSSL', type: 'checkbox', label: 'Use SSL' },
+    'rdbms.useSSL': {
+      id: 'rdbms.useSSL',
+      type: 'checkbox',
+      label: 'Use SSL',
+      defaultValue: r =>
+        r &&
+        r.rdbms &&
+        r.rdbms.ssl &&
+        (r.rdbms.ssl.ca || r.rdbms.ssl.key || r.rdbms.ssl.cert),
+    },
     'rdbms.ssl.ca': {
       fieldId: 'rdbms.ssl.ca',
       visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
