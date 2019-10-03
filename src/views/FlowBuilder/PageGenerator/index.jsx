@@ -17,6 +17,7 @@ import BottomActions from '../AppBlock/BottomActions';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import applications from '../../../constants/applications';
+import { getResourceSubType } from '../../../utils/resource';
 
 /* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
    We the block consts across several components and thus is a maintenance issue to 
@@ -91,11 +92,13 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
     if (pending) {
       // generate newId
       setNewGeneratorId(newId);
+      const { type, assistant } = getResourceSubType(resource);
+      const application = pg.application || assistant || type;
       const patchSet = [
         {
           op: 'add',
           path: '/application',
-          value: pg.application,
+          value: application,
         },
       ];
 
