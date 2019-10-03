@@ -57,7 +57,9 @@ export default function DynaKeyValue(props) {
       values.push({ [field]: value });
     }
 
-    const removedEmptyValues = values.filter(value => value.key || value.value);
+    const removedEmptyValues = values.filter(
+      value => value[keyName] || value[valueName]
+    );
 
     setValues(removedEmptyValues);
 
