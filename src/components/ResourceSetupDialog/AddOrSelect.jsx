@@ -65,7 +65,7 @@ export default function AddOrSelect(props) {
       return false;
     }
 
-    onSubmitComplete(formVal[resourceName]);
+    onSubmitComplete(formVal[resourceName], true);
   };
 
   return (

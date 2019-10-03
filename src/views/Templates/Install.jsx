@@ -94,6 +94,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('connections'));
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
+      dispatch(actions.resource.requestCollection('stacks'));
 
       if (integration) {
         props.history.push(
