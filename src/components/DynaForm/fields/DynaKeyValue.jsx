@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -39,6 +39,8 @@ export default function DynaKeyValue(props) {
   } = props;
   const classes = useStyles();
   const [values, setValues] = useState([]);
+  const [rowInd, setRowInd] = useState(0);
+  const [isKey, setIsKey] = useState(true);
 
   useEffect(() => {
     if (value) {
@@ -55,10 +57,17 @@ export default function DynaKeyValue(props) {
       values.push({ [field]: value });
     }
 
-    // console.log(`row: ${row || 'new'}.${field} = ${value}`);
+    const removedEmptyValues = values.filter(value => value.key || value.value);
 
-    setValues(values);
-    onFieldChange(id, values);
+    setValues(removedEmptyValues);
+
+    setRowInd(
+      row !== undefined && row < removedEmptyValues.length
+        ? row
+        : removedEmptyValues.length - 1
+    );
+    setIsKey(field === keyName);
+    onFieldChange(id, removedEmptyValues);
   };
 
   const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
@@ -68,27 +77,30 @@ export default function DynaKeyValue(props) {
   return (
     <div data-test={id} className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
-      {tableData.map(r => (
-        <div className={classes.rowContainer} key={r.row}>
-          <FormControl>
-            <Input
-              autoFocus
-              defaultValue={r[keyName]}
-              placeholder={keyName}
-              className={classes.input}
-              onChange={handleKeyUpdate(r.row)}
-            />
-          </FormControl>
-          <FormControl>
-            <Input
-              defaultValue={r[valueName]}
-              placeholder={valueName}
-              className={classes.input}
-              onChange={handleValueUpdate(r.row)}
-            />
-          </FormControl>
-        </div>
-      ))}
+      <Fragment key={`${rowInd}-${isKey}`}>
+        {tableData.map(r => (
+          <div className={classes.rowContainer} key={r.row}>
+            <FormControl>
+              <Input
+                autoFocus={r.row === rowInd && isKey}
+                defaultValue={r[keyName]}
+                placeholder={keyName}
+                className={classes.input}
+                onChange={handleKeyUpdate(r.row)}
+              />
+            </FormControl>
+            <FormControl>
+              <Input
+                autoFocus={r.row === rowInd && !isKey}
+                defaultValue={r[valueName]}
+                placeholder={valueName}
+                className={classes.input}
+                onChange={handleValueUpdate(r.row)}
+              />
+            </FormControl>
+          </div>
+        ))}
+      </Fragment>
       <div key="new" className={classes.rowContainer}>
         <Input
           value=""

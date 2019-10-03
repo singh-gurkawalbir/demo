@@ -33,14 +33,14 @@ const TransferListModal = props => {
       <Fragment>
         <Button
           variant="contained"
-          onClick={() => onFieldChange(id, selectedScopes.join())}>
+          onClick={() => onFieldChange(id, selectedScopes)}>
           Save
         </Button>
         <Button
           variant="contained"
           color="primary"
           onClick={() => {
-            onFieldChange(id, selectedScopes.join());
+            onFieldChange(id, selectedScopes);
             handleClose();
           }}>
           Save And Close
@@ -51,15 +51,8 @@ const TransferListModal = props => {
 };
 
 export default function DynaSelectScopesDialog(props) {
-  const { label, scopes, value, onFieldChange, id } = props;
+  const { label, scopes, value: selectedScopes, onFieldChange, id } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
-  let selectedScopes;
-
-  // TODO:Confirm with ashok the behavior of the received select scopes
-  // And check the delimiter behavior....it seems to be specific with each assistant
-  if (value && Array.isArray(value))
-    selectedScopes = (value && value[0] && value[0].split(',')) || [];
-  else selectedScopes = (value && value.split(',')) || [];
   const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
 
   return (

@@ -42,7 +42,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
       case 'exports':
       case 'imports':
       case 'stacks':
-        path = `/${type}/${id}/edit`;
+        path = `/${type}/edit/${type}/${id}`;
         break;
 
       case 'accesstokens':

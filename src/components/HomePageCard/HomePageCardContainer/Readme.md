@@ -32,7 +32,7 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="success">
+        <Status label="Success">
           <StatusCircle variant="success" />
         </Status>
         <HeaderAction variants={options} />
@@ -67,7 +67,7 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="errors" count="445">
+        <Status label="Errors" count="445">
           <StatusCircle variant="error" />
         </Status>
         <HeaderAction variants={options} />
@@ -96,7 +96,7 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="continue setup">
+        <Status label="Continue setup">
           <StatusCircle variant="warning" />
         </Status>
         <HeaderAction variants={options} />
@@ -120,7 +120,7 @@ const handleOut = () => setState({ anchorEl: null });
         </FooterActions> 
         <Info variant="Integration app" label="celigo" />
       </Footer>
-      <TrialExpireNotification />
+      <TrialExpireNotification content="your free trial expires in 15 days of notification, please contact the sales person or you can uninstall" />
     </HomePageCardContainer>
   </Grid>
 </Grid>
