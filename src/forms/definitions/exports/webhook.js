@@ -1,4 +1,5 @@
 export default {
+  preSave: formValues => ({ ...formValues, '/type': 'webhook' }),
   fieldMap: {
     common: { formId: 'common' },
     security: { fieldId: 'security', type: 'labeltitle', label: 'Security' },
