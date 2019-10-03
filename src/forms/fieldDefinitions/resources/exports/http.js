@@ -225,7 +225,7 @@ export default {
   'http.paging.lastPageValues': {
     type: 'text',
     label: 'Last Page Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
@@ -259,7 +259,7 @@ export default {
   },
   'http.response.successValues': {
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Success Values',
   },
   'http.response.errorPath': {

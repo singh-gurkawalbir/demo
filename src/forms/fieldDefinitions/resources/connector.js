@@ -26,7 +26,7 @@ export default {
   contactEmail: {
     defaultValue: r => r.contactEmail,
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Contact Emails',
     required: true,
   },
