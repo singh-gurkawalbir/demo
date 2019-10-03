@@ -520,20 +520,49 @@ export function connectorFlowSections(state, id) {
   );
 }
 
-export function connectorFlowBySections(state, id, section) {
+export function getRequiredDataOfConnectorSettings(
+  state,
+  id,
+  section,
+  storeId
+) {
   if (!state) return null;
   let fields;
   let sections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   let requiredFlows = [];
+  let hasNSInternalIdLookup = false;
+  let soreIdIndex = 0;
+  const showFlowSettings = !!(
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.showFlowSettings
+  );
+  const showMatchRuleEngine = !!(
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.showMatchRuleEngine
+  );
 
   if (
     integrationResource &&
     integrationResource._connectorId &&
-    integrationResource.settings.sections[0] &&
-    integrationResource.settings.sections[0].sections
+    integrationResource.settings.sections
   ) {
-    integrationResource.settings.sections[0].sections.forEach(f => {
+    integrationResource.settings.sections.forEach((f, index) => {
+      if (f.id === storeId) {
+        soreIdIndex = index;
+      }
+    });
+  }
+
+  if (
+    integrationResource &&
+    integrationResource._connectorId &&
+    integrationResource.settings.sections[soreIdIndex] &&
+    integrationResource.settings.sections[soreIdIndex].sections
+  ) {
+    integrationResource.settings.sections[soreIdIndex].sections.forEach(f => {
       if (f.title === section) {
         requiredFlows = f.flows;
         ({ fields, sections } = f);
@@ -554,6 +583,10 @@ export function connectorFlowBySections(state, id, section) {
   const flowArray = [];
 
   requiredFlows.forEach(f => {
+    if (f.showNSInternalIdLookup) {
+      hasNSInternalIdLookup = true;
+    }
+
     flowArray.push(f._id);
   });
   flows =
@@ -564,7 +597,14 @@ export function connectorFlowBySections(state, id, section) {
         !!f.sandbox === (preferences.environment === 'sandbox')
     );
 
-  return { flows, fields, sections };
+  return {
+    flows,
+    fields,
+    sections,
+    hasNSInternalIdLookup,
+    showFlowSettings,
+    showMatchRuleEngine,
+  };
 }
 
 export function defaultStoreId(state, id) {

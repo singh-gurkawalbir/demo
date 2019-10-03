@@ -62,7 +62,7 @@ const getConnectionType = resource => {
   return type;
 };
 
-function ActionsFactory(props) {
+export function ActionsFactory(props) {
   const { resource, resourceType, isNew, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);

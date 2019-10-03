@@ -22,6 +22,9 @@ export default function Connections(props) {
   const list = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId)
   );
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
+  );
   const permissions = useSelector(state => selectors.userPermissions(state));
   const accountAccessLevel = permissions.accessLevel;
   const integrationAccessLevel =
@@ -42,13 +45,16 @@ export default function Connections(props) {
         />
       )}
       <LoadResources required resources="connections">
-        {integrationId && integrationId !== 'none' && showRegisterButton && (
-          <Button
-            className={classes.registerButton}
-            onClick={() => setShowRegisterConnDialog(true)}>
-            Register Connections
-          </Button>
-        )}
+        {integrationId &&
+          integrationId !== 'none' &&
+          !(integration && integration._connectorId) &&
+          showRegisterButton && (
+            <Button
+              className={classes.registerButton}
+              onClick={() => setShowRegisterConnDialog(true)}>
+              Register Connections
+            </Button>
+          )}
 
         <CeligoTable
           resourceType="connections"

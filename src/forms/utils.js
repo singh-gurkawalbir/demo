@@ -194,6 +194,98 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   return newSet;
 };
 
+const convertFieldsToFieldReferneceObj = (acc, curr) => {
+  if (!curr.fieldId && !curr.id && !curr.formId) {
+    throw new Error('No fieldId , id or formId', curr);
+  }
+
+  if (curr.fieldId) acc[curr.fieldId] = curr;
+  else if (curr.id) acc[curr.id] = curr;
+  else if (curr.formId) acc[curr.formId] = curr;
+  else throw new Error('could not find any of the props');
+
+  // !curr.formId
+  return acc;
+};
+
+const refGeneration = field => {
+  const { fieldId, id, formId } = field;
+
+  if (fieldId) return fieldId;
+  else if (id) return id;
+  else if (formId) return formId;
+  throw new Error('cant generate reference');
+};
+
+const addIdToFieldsAndRenameNameAttribute = fields =>
+  fields.map(field => {
+    // TODO: generate correct name path
+    const { name, options, tooltip } = field;
+    // name is the unique identifier....verify with Ashok
+
+    return {
+      ...field,
+      name: `/${name}`,
+      id: name,
+      helpText: tooltip,
+      options: [
+        {
+          items:
+            (options &&
+              options.map(option => ({
+                label: option && option[1],
+                value: option && option[0],
+              }))) ||
+            [],
+        },
+      ],
+    };
+  });
+
+export const integrationSettingsToDynaFormMetadata = meta => {
+  const finalData = {};
+  const { fields, sections } = meta;
+
+  if (fields) {
+    const addedFieldIdFields = addIdToFieldsAndRenameNameAttribute(fields);
+
+    finalData.fieldMap = addedFieldIdFields.reduce(
+      convertFieldsToFieldReferneceObj,
+      {}
+    );
+    finalData.layout = {};
+    finalData.layout.fields = addedFieldIdFields.map(refGeneration);
+  }
+
+  if (sections) {
+    sections.forEach(section => {
+      addIdToFieldsAndRenameNameAttribute(section.fields).reduce(
+        convertFieldsToFieldReferneceObj,
+        finalData.fieldMap
+      );
+    });
+
+    // check for title
+    finalData.type = 'tab';
+    finalData.layout.containers = sections.map(section => ({
+      collapsed: section.collapsed || true,
+      label: section.title,
+      fields: addIdToFieldsAndRenameNameAttribute(section.fields).map(
+        refGeneration
+      ),
+    }));
+  }
+
+  // Wrap everything in a adavancedSettings container
+  finalData.layout = {
+    type: 'collapse',
+    containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+  };
+  finalData.actions = [{ id: 'save' }];
+
+  return finalData;
+};
+
 export default {
   getFieldById,
   defaultPatchSetConverter,

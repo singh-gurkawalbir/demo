@@ -87,6 +87,7 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationAppSettings(props) {
   const { integrationId } = props.match.params;
   const classes = useStyles();
+  const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
@@ -106,6 +107,20 @@ export default function IntegrationAppSettings(props) {
       dispatch(actions.resource.request('integrations', integrationId));
     }
   });
+  useEffect(() => {
+    if (integration.settings.supportsMultiStore && !redirected) {
+      props.history.push(
+        `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+      );
+      setRedirected(true);
+    }
+  }, [
+    integration.settings.supportsMultiStore,
+    redirected,
+    props.history,
+    integrationId,
+    currentStore,
+  ]);
 
   useEffect(() => {
     if (
@@ -118,6 +133,9 @@ export default function IntegrationAppSettings(props) {
 
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
+    props.history.push(
+      `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+    );
   };
 
   const handleAddNewStoreClick = () => {
@@ -184,7 +202,7 @@ export default function IntegrationAppSettings(props) {
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="general">
+                    to={`/pg/connectors/${integrationId}/settings/general`}>
                     General
                   </NavLink>
                 </ListItem>
@@ -192,7 +210,7 @@ export default function IntegrationAppSettings(props) {
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="flows">
+                    to={`/pg/connectors/${integrationId}/settings/${currentStore}/flows`}>
                     Integration Flows
                   </NavLink>
                 </ListItem>
@@ -202,7 +220,7 @@ export default function IntegrationAppSettings(props) {
                       <NavLink
                         activeClassName={classes.subSection}
                         className={classes.link}
-                        to={`${f.title}`}>
+                        to={`/pg/connectors/${integrationId}/settings/${currentStore}/${f.title}`}>
                         {f.title}
                       </NavLink>
                     </ListItem>
@@ -212,7 +230,7 @@ export default function IntegrationAppSettings(props) {
                     <NavLink
                       activeClassName={classes.activeLink}
                       className={classes.link}
-                      to="tokens">
+                      to={`/pg/connectors/${integrationId}/settings/tokens`}>
                       API Tokens
                     </NavLink>
                   </ListItem>
@@ -221,7 +239,7 @@ export default function IntegrationAppSettings(props) {
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="connections">
+                    to={`/pg/connectors/${integrationId}/settings/connections`}>
                     Connections
                   </NavLink>
                 </ListItem>
@@ -229,7 +247,7 @@ export default function IntegrationAppSettings(props) {
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="users">
+                    to={`/pg/connectors/${integrationId}/settings/users`}>
                     Users
                   </NavLink>
                 </ListItem>
@@ -237,7 +255,7 @@ export default function IntegrationAppSettings(props) {
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="audit">
+                    to={`/pg/connectors/${integrationId}/settings/audit`}>
                     Audit Log
                   </NavLink>
                 </ListItem>
@@ -264,7 +282,7 @@ export default function IntegrationAppSettings(props) {
               />
               <Route
                 path={getRoutePath(
-                  `/connectors/:integrationId/settings/:section`
+                  `/connectors/:integrationId/settings/:storeId/:section`
                 )}
                 component={Flows}
               />
