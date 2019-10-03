@@ -1,4 +1,6 @@
 import { formatLastModified } from '../../components/CeligoTable/util';
+import Restore from '../../components/ResourceTable/actions/RecycleBin/Restore';
+import Purge from '../../components/ResourceTable/actions/RecycleBin/Purge';
 
 export default {
   columns: [
@@ -13,9 +15,13 @@ export default {
       orderBy: 'model',
     },
     {
-      heading: 'Deleted Date',
+      heading: 'Deleted On',
+      value: r => formatLastModified(r.doc && r.doc.lastModified),
+    },
+    {
+      heading: 'Auto Purge',
       value: r => formatLastModified(r.doc && r.doc.lastModified),
     },
   ],
-  // rowActions: [Restore, Purge],
+  rowActions: [Restore, Purge],
 };
