@@ -1,10 +1,11 @@
-import { useRef, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useRef, Fragment, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
+import shortid from 'shortid';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
-import clsx from 'clsx';
 // import actions from '../../../actions';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
@@ -16,6 +17,8 @@ import LeftActions from '../AppBlock/LeftActions';
 import RightActions from '../AppBlock/RightActions';
 import BottomActions from '../AppBlock/BottomActions';
 import * as selectors from '../../../reducers';
+import actions from '../../../actions';
+import { getResourceSubType } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -39,6 +42,7 @@ const PageProcessor = ({
   match,
   location,
   history,
+  flowId,
   index,
   onMove,
   isLast,
@@ -46,17 +50,45 @@ const PageProcessor = ({
 }) => {
   const pending = !!pp._connectionId;
   const resourceId = pp._connectionId || pp._exportId || pp._importId;
-  let resourceType = pp.type === 'export' ? 'exports' : 'imports';
-
-  if (pp._connectionId) {
-    resourceType = 'connections';
-  }
-
+  const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const ref = useRef(null);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [newProcessorId, setNewProcessorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+    selectors.resourceData(
+      state,
+      pending ? 'connections' : resourceType,
+      resourceId
+    )
   );
+  const createdProcessorId = useSelector(state =>
+    selectors.createdResourceId(state, newProcessorId)
+  );
+
+  // #region Add Processor on creation effect
+  useEffect(() => {
+    if (createdProcessorId) {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: `/pageProcessors/${index}`,
+          value: {
+            type: pp.type,
+            [pp.type === 'export'
+              ? '_exportId'
+              : '_importId']: createdProcessorId,
+          },
+        },
+      ];
+
+      // console.log(pp, patchSet);
+      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdProcessorId, dispatch]);
+  // #endregion
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
     hover(item, monitor) {
@@ -114,7 +146,39 @@ const PageProcessor = ({
   const opacity = isDragging ? 0.2 : 1;
 
   function handleBlockClick() {
-    const to = `${match.url}/edit/${resourceType}/${resourceId}`;
+    const newId = `new-${shortid.generate()}`;
+
+    if (pending) {
+      // generate newId
+      setNewProcessorId(newId);
+      const { type, assistant } = getResourceSubType(resource);
+      const application = assistant || type;
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/application',
+          value: application,
+        },
+        {
+          op: 'add',
+          path: '/resourceType',
+          value: resourceType,
+        },
+        {
+          op: 'add',
+          path: '/_connectionId',
+          value: pp._connectionId,
+        },
+      ];
+
+      // console.log('patchSet: ', patchSet);
+
+      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+    }
+
+    const to = pending
+      ? `${match.url}/add/pageProcessor/${newId}`
+      : `${match.url}/edit/${resourceType}/${resourceId}`;
 
     if (match.isExact) {
       history.push(to);

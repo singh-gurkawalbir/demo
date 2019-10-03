@@ -29,7 +29,9 @@ export default {
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
-      '/adaptorType': `${appTypeToAdaptorType[app.type]}${resourceType}`,
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}${
+        resourceType === 'exports' ? 'Export' : 'Import'
+      }`,
     };
 
     if (app.assistant) {
@@ -46,14 +48,14 @@ export default {
       name: 'resourceType',
       type: 'radiogroup',
       label: 'What would you like to do?',
-      defaultValue: 'Import',
+      defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
         {
           items: [
-            { label: 'Import data into destination app', value: 'Import' },
+            { label: 'Import data into destination app', value: 'imports' },
             {
               label: 'Lookup additional data (per record)',
-              value: 'Export',
+              value: 'exports',
             },
           ],
         },
@@ -64,7 +66,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       placeholder: 'Select application',
-      defaultValue: '',
+      defaultValue: r => (r && r.application) || '',
       required: true,
     },
 
@@ -74,7 +76,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: '',
+      defaultValue: r => (r && r._connectionId) || '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhen,

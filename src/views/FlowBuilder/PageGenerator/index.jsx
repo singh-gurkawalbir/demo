@@ -67,7 +67,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
         {
           op: 'replace',
           path: `/pageGenerators/${index}`,
-          value: { _exportId: newGeneratorId },
+          value: { _exportId: createdGeneratorId },
         },
       ];
 

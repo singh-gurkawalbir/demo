@@ -300,7 +300,7 @@ function FlowBuilder(props) {
   }
 
   // eslint-disable-next-line
-  // console.log(flow, patch);
+  console.log(flow, patch);
 
   return (
     <Fragment>
