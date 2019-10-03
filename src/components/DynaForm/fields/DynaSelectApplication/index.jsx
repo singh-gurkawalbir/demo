@@ -181,9 +181,12 @@ export default function SelectApplication(props) {
   };
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.formControl}>
+    <FormControl
+      data-test={id}
+      key={id}
+      disabled={disabled}
+      className={classes.formControl}>
       <Select
-        data-test={id}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect

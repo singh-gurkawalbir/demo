@@ -56,6 +56,7 @@ const ExpansionPannelExpandOnInValidState = props => {
       }
       className={classes.child}>
       <ExpansionPanelSummary
+        data-test={header}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{header}</Typography>
