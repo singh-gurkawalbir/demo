@@ -1,5 +1,6 @@
-import applications from '../../../../constants/applications';
-import webhookProviders from '../../../../constants/webhookProviders';
+import applications, {
+  getWebhookConnectors,
+} from '../../../../constants/applications';
 
 const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
@@ -70,7 +71,7 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'application', is: webhookProviders }],
+      visibleWhen: [{ field: 'application', is: getWebhookConnectors() }],
     },
     connection: {
       id: 'connection',
