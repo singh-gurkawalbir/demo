@@ -47,11 +47,13 @@ const useStyles = makeStyles(theme => ({
 }));
 const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const pending = !pg._exportId;
+  const resourceId = pg._connectionId || pg._exportId;
+  const resourceType = pg._connectionId ? 'connections' : 'exports';
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newGeneratorId, setNewGeneratorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
-    pending ? {} : selectors.resourceData(state, 'exports', pg._exportId)
+    !resourceId ? {} : selectors.resourceData(state, resourceType, resourceId)
   );
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -89,12 +91,19 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
     if (pending) {
       // generate newId
       setNewGeneratorId(newId);
-
-      // patch it with the connectionId
       const patchSet = [
-        { op: 'add', path: '/application', value: pg.application },
+        {
+          op: 'add',
+          path: '/application',
+          value: pg.application,
+        },
       ];
 
+      if (pg.webhookOnly && pg.application !== 'webhook') {
+        patchSet.push({ op: 'add', path: '/type', value: 'webhook' });
+      }
+
+      // patch it with the connectionId
       if (pg._connectionId) {
         patchSet.push({
           op: 'add',
@@ -102,6 +111,8 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
           value: pg._connectionId,
         });
       }
+
+      // console.log('patchSet: ', patchSet);
 
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
@@ -118,7 +129,9 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   }
 
   function getApplication() {
-    if (!pending) {
+    if (!pending || resourceId) {
+      // even if we have a pending PG, as ling as we have a
+      // resource, then the below logic still applies.
       return {
         connectorType: resource.adaptorType,
         assistant: resource.assistant,
@@ -132,7 +145,8 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
     return {
       connectorType: app.type,
       assistant: app.assistant,
-      blockType: pg.webhookOnly ? 'listener' : 'export',
+      blockType:
+        pg.webhookOnly || resource.type === 'webhook' ? 'listener' : 'export',
     };
   }
 

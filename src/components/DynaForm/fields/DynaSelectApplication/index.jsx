@@ -189,8 +189,6 @@ export default function SelectApplication(props) {
       }
     : '';
 
-  // console.log(defaultValue);
-
   return (
     <FormControl key={id} disabled={disabled} className={classes.formControl}>
       <Select

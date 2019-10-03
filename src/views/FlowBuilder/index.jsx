@@ -300,7 +300,7 @@ function FlowBuilder(props) {
   }
 
   // eslint-disable-next-line
-  // console.log(flow, patch);
+  console.log(flow, patch);
 
   return (
     <Fragment>
@@ -337,7 +337,11 @@ function FlowBuilder(props) {
                   <PageGenerator
                     {...pg}
                     flowId={flowId}
-                    key={pg._exportId}
+                    key={
+                      pg._exportId ||
+                      pg._connectionId ||
+                      `${pg.application}${pg.webhookOnly}`
+                    }
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                   />
