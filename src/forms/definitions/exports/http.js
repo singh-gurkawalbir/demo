@@ -40,6 +40,12 @@ export default {
       retValues['/http/paging/resourcePath'] = undefined;
     }
 
+    if (
+      retValues['/http/response/successValues'].length === 1 &&
+      retValues['/http/response/successValues'][0] === ''
+    )
+      delete retValues['/http/response/successValues'];
+
     return {
       ...retValues,
     };
