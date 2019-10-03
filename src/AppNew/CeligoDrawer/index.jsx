@@ -151,6 +151,8 @@ const useStyles = makeStyles(theme => ({
 export default function CeligoDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const userProfile = useSelector(state => selectors.userProfile(state));
+  const permissions = useSelector(state => selectors.userPermissions(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [expand, setExpand] = React.useState(null);
   const handleDrawerToggle = () => {
@@ -197,53 +199,58 @@ export default function CeligoDrawer() {
         </div>
         <div className={classes.menuList}>
           <List className={classes.list}>
-            {menuItems.map(({ label, Icon, path, children }) => (
-              <Fragment key={label}>
-                <ListItem
-                  button
-                  className={classes.listItem}
-                  component={children ? undefined : Link}
-                  to={getRoutePath(path)}
-                  onClick={children ? handleExpandClick(label) : null}>
-                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primaryTypographyProps={{
-                      className: classes.itemText,
-                    }}
-                    primary={label}
-                  />
-                  {children &&
-                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-                </ListItem>
-                {children && (
-                  <Collapse in={expand === label} unmountOnExit timeout="auto">
-                    <List className={classes.list} disablePadding>
-                      {children.map(({ label, Icon, path }) => (
-                        <ListItem
-                          className={classes.listItem}
-                          key={label}
-                          component={Link}
-                          to={getRoutePath(path)}
-                          button>
-                          <ListItemIcon
-                            classes={{ root: classes.itemIconRoot }}>
-                            {<Icon />}
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={label}
-                            primaryTypographyProps={{
-                              className: classes.itemText,
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                )}
-              </Fragment>
-            ))}
+            {menuItems(userProfile, permissions).map(
+              ({ label, Icon, path, children }) => (
+                <Fragment key={label}>
+                  <ListItem
+                    button
+                    className={classes.listItem}
+                    component={children ? undefined : Link}
+                    to={getRoutePath(path)}
+                    onClick={children ? handleExpandClick(label) : null}>
+                    <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                      {<Icon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primaryTypographyProps={{
+                        className: classes.itemText,
+                      }}
+                      primary={label}
+                    />
+                    {children &&
+                      (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+                  </ListItem>
+                  {children && (
+                    <Collapse
+                      in={expand === label}
+                      unmountOnExit
+                      timeout="auto">
+                      <List className={classes.list} disablePadding>
+                        {children.map(({ label, Icon, path }) => (
+                          <ListItem
+                            className={classes.listItem}
+                            key={label}
+                            component={Link}
+                            to={getRoutePath(path)}
+                            button>
+                            <ListItemIcon
+                              classes={{ root: classes.itemIconRoot }}>
+                              {<Icon />}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={label}
+                              primaryTypographyProps={{
+                                className: classes.itemText,
+                              }}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                </Fragment>
+              )
+            )}
           </List>
         </div>
         <div>

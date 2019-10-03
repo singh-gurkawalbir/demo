@@ -14,6 +14,8 @@ import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -42,39 +44,41 @@ function ResourceList(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
-      <CeligoPageBar
-        title={`${resourceName}s`}
-        infoText={infoText[resourceType]}>
-        <div className={classes.actions}>
-          <KeywordSearch
-            filterKey={resourceType}
-            defaultFilter={defaultFilter}
-          />
-          <IconTextButton
-            component={Link}
-            to={`${
-              location.pathname
-            }/add/${resourceType}/new-${shortid.generate()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> New {resourceName}
-          </IconTextButton>
+      <CheckPermissions permission={PERMISSIONS[resourceType].view}>
+        <ResourceDrawer {...props} />
+        <CeligoPageBar
+          title={`${resourceName}s`}
+          infoText={infoText[resourceType]}>
+          <div className={classes.actions}>
+            <KeywordSearch
+              filterKey={resourceType}
+              defaultFilter={defaultFilter}
+            />
+            <IconTextButton
+              component={Link}
+              to={`${
+                location.pathname
+              }/add/${resourceType}/new-${shortid.generate()}`}
+              variant="text"
+              color="primary">
+              <AddIcon /> New {resourceName}
+            </IconTextButton>
+          </div>
+        </CeligoPageBar>
+        <div className={classes.resultContainer}>
+          <LoadResources required resources={resourceType}>
+            <ResourceTable
+              resourceType={resourceType}
+              resources={list.resources}
+            />
+          </LoadResources>
         </div>
-      </CeligoPageBar>
-      <div className={classes.resultContainer}>
-        <LoadResources required resources={resourceType}>
-          <ResourceTable
-            resourceType={resourceType}
-            resources={list.resources}
-          />
-        </LoadResources>
-      </div>
-      <ShowMoreDrawer
-        filterKey={resourceType}
-        count={list.count}
-        maxCount={list.filtered}
-      />
+        <ShowMoreDrawer
+          filterKey={resourceType}
+          count={list.count}
+          maxCount={list.filtered}
+        />
+      </CheckPermissions>
     </Fragment>
   );
 }

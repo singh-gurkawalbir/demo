@@ -350,6 +350,8 @@ export function permissions(
     'templates',
     'transfers',
     'users',
+    'exports',
+    'imports',
   ];
   const permissions = {};
 
@@ -373,6 +375,8 @@ export function permissions(
     'templates',
     'transfers',
     'users',
+    'exports',
+    'imports',
   ];
 
   if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {

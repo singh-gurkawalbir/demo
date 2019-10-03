@@ -103,6 +103,18 @@ export const PERMISSIONS = Object.freeze({
     edit: 'users.edit',
     delete: 'users.delete',
   },
+  exports: {
+    view: 'exports.view',
+    create: 'exports.create',
+    edit: 'exports.edit',
+    delete: 'exports.delete',
+  },
+  imports: {
+    view: 'imports.view',
+    create: 'imports.create',
+    edit: 'imports.edit',
+    delete: 'imports.delete',
+  },
 });
 
 export const PASSWORD_MASK = '******';
