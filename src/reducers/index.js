@@ -1361,6 +1361,52 @@ export function accessTokenList(
   return tokensList;
 }
 
+export function connectorLicenses(state, { connectorId, take }) {
+  const licenses = fromData.resourceList(state.data, {
+    type: 'connectorLicenses',
+  });
+  const filteredLicenses = licenses.resources.filter(
+    r => r._connectorId === connectorId
+  );
+  let licenseList;
+
+  licenseList.resources = filteredLicenses.licenses;
+  licenseList.total = (licenseList.resources || []).length;
+  licenseList.count = (licenseList.resources || []).length;
+
+  if (typeof take !== 'number' || take < 1) {
+    return licenseList;
+  }
+
+  licenseList.resources = licenseList.resources.slice(0, take);
+  licenseList.count = (licenseList.resources || []).length;
+
+  return licenseList;
+}
+
+export function connectorInstallBase(state, { connectorId, take }) {
+  const installBase = fromData.resourceList(state.data, {
+    type: 'connectorInstallBase',
+  });
+  const filteredInstallBase = installBase.resources.filter(
+    r => r._connectorId === connectorId
+  );
+  let installBaseList;
+
+  installBaseList.resources = filteredInstallBase.installBase;
+  installBaseList.total = (installBaseList.resources || []).length;
+  installBaseList.count = (installBaseList.resources || []).length;
+
+  if (typeof take !== 'number' || take < 1) {
+    return installBaseList;
+  }
+
+  installBaseList.resources = installBaseList.resources.slice(0, take);
+  installBaseList.count = (installBaseList.resources || []).length;
+
+  return installBaseList;
+}
+
 export function accessToken(state, id) {
   return fromData.accessToken(state.data, id);
 }

@@ -258,6 +258,13 @@ const connectors = {
       fieldName,
       _integrationId,
     }),
+  installBase: {
+    update: ({ _integrationIds, connectorId }) =>
+      action(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, {
+        _integrationIds,
+        connectorId,
+      }),
+  },
 };
 const metadata = {
   request: ({
