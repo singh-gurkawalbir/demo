@@ -37,3 +37,10 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
 );
+export const recycleBinDependencies = {
+  exports: ['exports', 'connections'],
+  imports: ['imports', 'connections'],
+  connections: ['connections'],
+  flows: ['flows', 'integrations'],
+  integrations: ['integrations'],
+};

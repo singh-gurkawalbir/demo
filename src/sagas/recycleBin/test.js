@@ -1,8 +1,9 @@
 /* global describe, test, expect */
-import { call, put } from 'redux-saga/effects';
+import { call, put, all } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { restore, purge } from './';
+import { recycleBinDependencies } from '../../constants/resource';
 
 describe('restore saga', () => {
   const resourceType = 'exports';
@@ -20,6 +21,13 @@ describe('restore saga', () => {
           body: {},
         },
       })
+    );
+    expect(saga.next().value).toEqual(
+      all(
+        recycleBinDependencies[resourceType].map(resources =>
+          put(actions.resource.requestCollection(resources))
+        )
+      )
     );
     expect(saga.next().value).toEqual(
       put(actions.resource.requestCollection('recycleBinTTL'))

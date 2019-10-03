@@ -1,7 +1,8 @@
-import { call, takeEvery, put } from 'redux-saga/effects';
+import { call, takeEvery, put, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import actions from '../../actions';
+import { recycleBinDependencies } from '../../constants/resource';
 
 export function* restore({ resourceType, resourceId }) {
   const path = `/recycleBinTTL/${resourceType}/${resourceId}/doCascadeRestore`;
@@ -18,6 +19,11 @@ export function* restore({ resourceType, resourceId }) {
     return;
   }
 
+  yield all(
+    recycleBinDependencies[resourceType].map(resources =>
+      put(actions.resource.requestCollection(resources))
+    )
+  );
   yield put(actions.resource.requestCollection('recycleBinTTL'));
 }
 
