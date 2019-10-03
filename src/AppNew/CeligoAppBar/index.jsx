@@ -38,13 +38,13 @@ const useStyles = makeStyles(theme => ({
     height: 36,
     overflow: 'hidden',
     boxSizing: 'border-box',
-    // background: 'black',
-
-    // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    [theme.breakpoints.only('xs')]: {
+      height: 'auto',
+    },
   },
   appBarShift: {
     width: `calc(100% - ${theme.drawerWidth}px)`,

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import NavigateNext from '@material-ui/icons/NavigateNext';
+import ArrowRightIcon from '../../../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,7 +20,9 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'initial',
   },
   icon: {
-    fontSize: 20,
+    '& svg': {
+      fontSize: 22,
+    },
   },
 }));
 
@@ -44,7 +46,7 @@ function Status(props) {
           {label}
         </Typography>
         <span className={classes.icon}>
-          <NavigateNext />
+          <ArrowRightIcon />
         </span>
       </Button>
     </div>

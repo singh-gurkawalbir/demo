@@ -1,4 +1,22 @@
+import { adaptorTypeMap } from '../../../utils/resource';
+
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mapping') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'file.lookups'
+      );
+
+      if (lookupField) {
+        return {
+          lookupId: 'file.lookups',
+          lookups: lookupField && lookupField.value,
+        };
+      }
+    }
+
+    return null;
+  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -19,6 +37,12 @@ export default {
       fieldId: 'hooks.postAggregate._scriptId',
     },
     'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
+    'file.lookups': { fieldId: 'file.lookups', visible: false },
+    mapping: {
+      fieldId: 'mapping',
+      application: adaptorTypeMap.AS2Import,
+      refreshOptionsOnChangesTo: ['file.lookups'],
+    },
   },
   layout: {
     fields: [
@@ -29,6 +53,8 @@ export default {
       'as2.messageIdTemplate',
       'as2.headers',
       'dataMappings',
+      'file.lookups',
+      'mapping',
     ],
     type: 'collapse',
     containers: [
