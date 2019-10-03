@@ -16,7 +16,7 @@ export default function DynaText(props) {
     value = '',
     label,
     multiline,
-    valueDelimiter,
+    delimiter,
     rowsMax,
     startAdornment,
     endAdornment,
@@ -39,13 +39,13 @@ export default function DynaText(props) {
   const handleFieldChange = event => {
     const { value } = event.target;
 
-    if (!valueDelimiter) {
+    if (!delimiter) {
       onFieldChange(id, value);
 
       return;
     }
 
-    onFieldChange(id, value.split(valueDelimiter));
+    onFieldChange(id, value ? value.split(delimiter) : value);
   };
 
   return (
