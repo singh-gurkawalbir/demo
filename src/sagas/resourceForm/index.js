@@ -250,21 +250,14 @@ export function* initFormValues({
   isNew,
   skipCommit,
 }) {
-  let resource;
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
 
-  if (isNew) {
-    resource = { _id: resourceId };
-  } else {
-    ({ merged: resource } = yield select(
-      selectors.resourceData,
-      resourceType,
-      resourceId
-    ));
-
-    // i could have patched that change but i wanted the tmp id to show up
-    if (isNewId(resourceId)) {
-      resource._id = resourceId;
-    }
+  if (isNewId(resourceId)) {
+    resource._id = resourceId;
   }
 
   if (!resource) return; // nothing to do.
@@ -329,6 +322,7 @@ export function* initFormValues({
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
+  // console.log('finalFieldMeta', finalFieldMeta);
   yield put(
     actions.resourceForm.initComplete(
       resourceType,
