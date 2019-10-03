@@ -21,6 +21,7 @@ import Users from '../../IntegrationSettings/Users';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import AccessTokens from './AccessTokens';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -185,16 +186,6 @@ export default function IntegrationAppSettings(props) {
                     Integration Flows
                   </NavLink>
                 </ListItem>
-                {showAPITokens && (
-                  <ListItem>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="tokens">
-                      API Tokens
-                    </NavLink>
-                  </ListItem>
-                )}
                 <ListItem>
                   <NavLink
                     activeClassName={classes.activeLink}
@@ -211,6 +202,16 @@ export default function IntegrationAppSettings(props) {
                     Users
                   </NavLink>
                 </ListItem>
+                {showAPITokens && (
+                  <ListItem>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to="tokens">
+                      API Tokens
+                    </NavLink>
+                  </ListItem>
+                )}
                 <ListItem>
                   <NavLink
                     activeClassName={classes.activeLink}
@@ -240,6 +241,16 @@ export default function IntegrationAppSettings(props) {
                 component={Connections}
               />
               <Route path={`${props.match.url}/users`} component={Users} />
+              <Route
+                path={`${props.match.url}/tokens`}
+                render={props => (
+                  <AccessTokens
+                    {...props}
+                    storeId={currentStore}
+                    integrationId={integrationId}
+                  />
+                )}
+              />
               <Route path={`${props.match.url}/audit`} component={AuditLog} />
               <Route
                 path={`${props.match.url}/uninstall`}

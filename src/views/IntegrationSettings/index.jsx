@@ -12,7 +12,6 @@ import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import Flows from './Flows';
 import Users from './Users';
 import AuditLog from './AuditLog';
-import AccessTokens from './AccessTokens';
 import Connections from './Connections';
 import General from './General';
 
@@ -165,12 +164,6 @@ export default function IntegrationSettings(props) {
                   `/integrations/:integrationId/settings/audit`
                 )}
                 component={AuditLog}
-              />
-              <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/tokens`
-                )}
-                component={AccessTokens}
               />
               <Route
                 path={getRoutePath(

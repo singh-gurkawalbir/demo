@@ -25,8 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AccessTokenList(props) {
-  const { match, location } = props;
-  const { integrationId } = match.params;
+  const { integrationId, location } = props;
   const filter = useSelector(state =>
     selectors.filter(state, 'accesstokens')
   ) || { take: 3 };
