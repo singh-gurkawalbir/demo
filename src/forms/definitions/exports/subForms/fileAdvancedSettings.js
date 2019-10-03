@@ -4,6 +4,7 @@ export default {
       id: 'file.decompressFiles',
       type: 'checkbox',
       label: 'Decompress Files',
+      defaultValue: r => !!(r && r.file && r.file.compressionFormat),
     },
     'file.compressionFormat': {
       fieldId: 'file.compressionFormat',

@@ -336,7 +336,13 @@ export default {
       },
     ],
   },
-
+  'rdbms.options': {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    label: 'Configure Properties',
+  },
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',

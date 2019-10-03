@@ -44,7 +44,7 @@ export default {
   },
   uninstallerFunction: {
     defaultValue: r => r.uninstallerFunction,
-    type: 'select',
+    type: 'text',
     label: 'Uninstaller Function',
     required: true,
   },

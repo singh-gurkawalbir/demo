@@ -40,7 +40,7 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
-    defaultValue: r => (r && r.http && r.http.method) || '',
+    defaultValue: r => r && r.http && r.http.method,
     required: true,
     options: [
       {
@@ -261,6 +261,7 @@ export default {
     type: 'text',
     valueDelimiter: ',',
     label: 'Success Values',
+    omitWhenValueIs: [''],
   },
   'http.response.errorPath': {
     type: 'text',
