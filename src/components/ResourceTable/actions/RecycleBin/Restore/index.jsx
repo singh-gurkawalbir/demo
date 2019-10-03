@@ -1,15 +1,17 @@
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/TrashIcon';
 import actions from '../../../../../actions';
+import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
   label: 'Restore',
   component: function Restore({ resource }) {
     const dispatch = useDispatch();
-    const handleRestoreClick = () => {
+    const handleClick = () => {
       dispatch(
         actions.recycleBin.restore(
           `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
@@ -20,7 +22,13 @@ export default {
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={handleRestoreClick}>
+        <IconButton
+          size="small"
+          onClick={handleClick}
+          component={Link}
+          to={getRoutePath(
+            `/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`
+          )}>
           <Icon />
         </IconButton>
       </Fragment>
