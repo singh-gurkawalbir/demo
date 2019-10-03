@@ -68,7 +68,8 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
-      defaultValue: 'cloud',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [

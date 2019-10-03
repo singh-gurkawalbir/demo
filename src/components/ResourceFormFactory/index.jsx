@@ -43,7 +43,10 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 const mapDispatchToProps = dispatch => ({
   handleInitForm: (resourceType, resourceId, isNew) => {
     const skipCommit =
-      isNew && ['imports', 'exports', 'connections'].includes(resourceType);
+      isNew &&
+      ['imports', 'exports', 'connections', 'pageProcessor'].includes(
+        resourceType
+      );
 
     dispatch(
       actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)

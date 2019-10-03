@@ -6,8 +6,8 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
-    minWidth: 319,
-    minHeight: 319,
+    minWidth: 318,
+    minHeight: 318,
     maxWidth: 319,
     boxSizing: 'border-box',
     border: '1px solid',
@@ -18,8 +18,9 @@ const useStyles = makeStyles(theme => ({
     transitionTimingFunction: theme.transitions.easing.easeIn,
     overflow: 'hidden',
     position: 'relative',
+    display: 'inline-block',
     '&:hover': {
-      margin: [[-5, 0, -5, 0]],
+      transform: `translateY(-5px)`,
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
       borderColor: theme.palette.primary.light,
     },

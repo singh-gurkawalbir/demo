@@ -24,6 +24,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('salesforce')) return 'salesforce';
 
+  if (type.toLowerCase().includes('webhook')) return 'webhook';
+
   return type;
 };
 

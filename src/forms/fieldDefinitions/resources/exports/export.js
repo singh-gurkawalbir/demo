@@ -351,7 +351,6 @@ export default {
     type: 'text',
     label: 'Offset',
     defaultValue: r => r && r.delta && r.delta.lagOffset,
-    required: true,
   },
   'delta.endDateField': {
     type: 'text',

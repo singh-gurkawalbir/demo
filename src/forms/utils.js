@@ -86,16 +86,41 @@ export const getFieldById = ({ meta, id }) => {
   return res && res.field;
 };
 
+export const getFieldByIdFromLayout = (layout, fieldMap, id) => {
+  if (!layout) return null;
+  const { fields, containers } = layout;
+
+  // check fields
+
+  if (fields && fields.find(field => field === id)) {
+    return getFieldById({ meta: { fieldMap }, id });
+  }
+
+  return (
+    containers &&
+    containers
+      .map(container => getFieldByIdFromLayout(container, fieldMap, id))
+      .reduce((acc, curr) => {
+        // get first matching field
+        // eslint-disable-next-line no-param-reassign
+        if (curr && !acc) acc = curr;
+
+        return acc;
+      }, null)
+  );
+};
+
 export const isExpansionPanelErrored = (meta, fieldStates) => {
   const invalidFields = fieldStates.filter(
     field => !field.isValid || field.isDiscretelyInvalid
   );
+  const { layout, fieldMap } = meta;
 
   return invalidFields
     .map(field => {
       const { id } = field;
 
-      return !!getFieldById({ meta, id });
+      return !!getFieldByIdFromLayout(layout, fieldMap, id);
     })
     .reduce((res, curr) => res || curr, false);
 };

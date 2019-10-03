@@ -35,6 +35,17 @@ const theme = {
       secondary: colors.celigoNeutral7,
     },
   },
+  breakpoints: {
+    keys: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1700,
+      xxl: 1920,
+    },
+  },
   // global overrides for MUI styles...
   overrides: {
     MuiButton: {
@@ -181,7 +192,7 @@ const theme = {
     MuiTypography: {
       root: {
         color: colors.celigoNeutral6,
-        fontFamily: `Roboto400, sans-serif !important`,
+        fontFamily: `Roboto400, sans-serif`,
       },
       body1: {
         fontSize: '17px',
@@ -190,8 +201,8 @@ const theme = {
         fontFamily: 'source sans pro',
       },
       body2: {
-        fontSize: '15px',
-        lineHeight: '19px',
+        fontSize: '16px',
+        lineHeight: '20px',
         letterSpacing: 'normal',
         fontFamily: 'source sans pro',
       },
