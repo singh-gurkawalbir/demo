@@ -296,11 +296,11 @@ function FlowBuilder(props) {
   }
 
   function handleAddProcessor() {
-    pushOrReplaceHistory(`${match.url}/add/imports/${newProcessorId}`);
+    pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
   // eslint-disable-next-line
-  // console.log(flow, patch);
+  console.log(flow, patch);
 
   return (
     <Fragment>
@@ -336,7 +336,12 @@ function FlowBuilder(props) {
                 {pageGenerators.map((pg, i) => (
                   <PageGenerator
                     {...pg}
-                    key={pg._exportId}
+                    flowId={flowId}
+                    key={
+                      pg._exportId ||
+                      pg._connectionId ||
+                      `${pg.application}${pg.webhookOnly}`
+                    }
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                   />
@@ -354,7 +359,8 @@ function FlowBuilder(props) {
                 {pageProcessors.map((pp, i) => (
                   <PageProcessor
                     {...pp}
-                    key={pp.type === 'import' ? pp._importId : pp._exportId}
+                    flowId={flowId}
+                    key={pp._importId || pp._exportId || pp._connectionId}
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                     onMove={handleMove}
