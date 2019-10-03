@@ -90,6 +90,7 @@ export const adaptorTypeMap = {
   RDBMSImport: 'rdbms',
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
+  WebhookExport: 'webhook',
 };
 
 const inferResourceType = adaptorType => {

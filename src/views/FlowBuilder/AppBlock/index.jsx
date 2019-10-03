@@ -1,22 +1,26 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import IconTextButton from '../../../components/IconTextButton';
 import ExportIcon from '../../../components/icons/ExportsIcon';
+import LookupIcon from '../../../components/icons/LookUpIcon';
+import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import * as selectors from '../../../reducers';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 
-const iconMap = {
-  exports: ExportIcon,
-  imports: ImportIcon,
+const blockMap = {
+  export: { label: 'EXPORT', Icon: ExportIcon },
+  import: { label: 'IMPORT', Icon: ImportIcon },
+  lookup: { label: 'LOOKUP', Icon: LookupIcon },
+  listener: { label: 'LISTENER', Icon: ListenerIcon },
 };
 const blockHeight = 100;
 const blockWidth = 150;
 const useStyles = makeStyles(theme => ({
   root: {
+    display: 'flex',
+  },
+  innerContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -55,50 +59,39 @@ const useStyles = makeStyles(theme => ({
 function AppBlock({
   children,
   forwardedRef,
-  history,
-  match,
-  resourceType,
-  resourceId,
+  onBlockClick,
+  blockType,
+  connectorType,
+  assistant,
+  name,
   opacity = 1,
 }) {
   const classes = useStyles();
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
-  );
-
-  function handleResourceClick() {
-    const to = `${match.url}/edit/${resourceType}/${resourceId}`;
-
-    if (match.isExact) {
-      history.push(to);
-    } else {
-      history.replace(to);
-    }
-  }
+  const block = blockMap[blockType];
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={classes.root}>
       {children[2] /* <LeftActions> */}
 
-      <div className={classes.root}>
+      <div className={classes.innerContainer}>
         <IconTextButton
           className={classes.resourceButton}
           variant="contained"
           color="primary"
-          onClick={handleResourceClick}>
-          {iconMap[resourceType]()}
-          {MODEL_PLURAL_TO_LABEL[resourceType].toUpperCase()}
+          onClick={onBlockClick}>
+          <block.Icon />
+          {block.label}
         </IconTextButton>
         <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
           <ApplicationImg
             size="large"
-            type={resource.adaptorType}
-            assistant={resource.assistant}
+            type={connectorType}
+            assistant={assistant}
           />
         </div>
         {children[1] /* <BottomActions> */}
         <Typography className={classes.name} variant="body1">
-          {resource.name || resource.id}
+          {name}
         </Typography>
       </div>
 

@@ -142,9 +142,9 @@ const getResourceFormAssets = ({
     case 'stacks':
     case 'templates':
     case 'connectors':
+    case 'pageProcessor':
       meta = formMeta[resourceType];
-      ({ fieldMap, layout } = meta);
-
+      ({ fieldMap, layout, init, preSave, actions } = meta);
       break;
 
     default:
