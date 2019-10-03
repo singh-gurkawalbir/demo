@@ -3,7 +3,9 @@ import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
-import { groupApplications } from '../../../../constants/applications';
+import applications, {
+  groupApplications,
+} from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 
 const groupedApps = groupApplications();
@@ -180,6 +182,13 @@ export default function SelectApplication(props) {
     onFieldChange && onFieldChange(id, e.value);
   };
 
+  const defaultValue = value
+    ? {
+        value,
+        label: applications.find(a => a.id === value).name,
+      }
+    : '';
+
   return (
     <FormControl
       data-test={id}
@@ -191,7 +200,7 @@ export default function SelectApplication(props) {
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option }}
-        defaultValue={value}
+        defaultValue={defaultValue}
         options={options}
         onChange={handleChange}
         styles={customStyles}

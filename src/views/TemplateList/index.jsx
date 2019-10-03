@@ -12,7 +12,7 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
-import GenerateZip from './GenerateZip';
+import GenerateZipDialog from './GenerateZipDialog';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +42,7 @@ export default function TemplateList(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       {showGenerateZipDialog && (
-        <GenerateZip onClose={() => setShowGenerateZipDialog(false)} />
+        <GenerateZipDialog onClose={() => setShowGenerateZipDialog(false)} />
       )}
       <CeligoPageBar title="Templates">
         <div className={classes.actions}>

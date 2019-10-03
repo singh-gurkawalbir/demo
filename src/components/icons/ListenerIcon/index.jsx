@@ -1,6 +1,6 @@
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export default function ListnerIcon(props) {
+export default function ListenerIcon(props) {
   return (
     <SvgIcon {...props}>
       <path
