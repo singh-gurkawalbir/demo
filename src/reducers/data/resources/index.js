@@ -1,4 +1,5 @@
 import produce from 'immer';
+import moment from 'moment';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -354,6 +355,7 @@ export function resourceDetailsMap(state) {
   return allResources;
 }
 
+// TODO Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {
   if (!state) return false;
   const matchingAgent =
@@ -362,7 +364,7 @@ export function isAgentOnline(state, agentId) {
   return !!(
     matchingAgent &&
     matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+    new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
       process.env.AGENT_STATUS_INTERVAL
   );
 }
