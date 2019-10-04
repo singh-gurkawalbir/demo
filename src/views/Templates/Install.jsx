@@ -21,6 +21,7 @@ import resourceConstants from '../../forms/constants/connection';
 import { getResourceSubType } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { SCOPES } from '../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -121,17 +122,17 @@ export default function ConnectorInstallation(props) {
       }
 
       const newId = `new-${shortid.generate()}`;
-      const connObj = connectionMap[_connectionId];
+      const connObj = { ...connectionMap[_connectionId] };
 
-      dispatch(actions.resourceForm.init('connections', newId, true, true));
+      delete connObj._id;
       dispatch(
-        actions.resourceForm.submit('connections', newId, {
-          ...jsonUtil.objectForPatchSet(connObj),
-          application: connObj.type,
-        })
+        actions.resource.patchStaged(
+          newId,
+          jsonUtil.objectToPatchSet(connObj),
+          SCOPES.VALUE
+        )
       );
-      dispatch(actions.resourceForm.clear('connections', newId));
-      setSelectedConnectionId({ newId, doc: connObj });
+      setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
 
       // handle Installation step click
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {

@@ -59,7 +59,7 @@ export default function reducer(state = {}, action) {
           s =>
             (_connectionId && s._connectionId === _connectionId) ||
             (installURL && s.installURL === installURL) ||
-            (stepType === INSTALL_STEP_TYPES.STACKs &&
+            (stepType === INSTALL_STEP_TYPES.STACK &&
               s.type === INSTALL_STEP_TYPES.STACK)
         );
 
