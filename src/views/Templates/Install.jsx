@@ -61,7 +61,9 @@ export default function ConnectorInstallation(props) {
   const [stackId, setShowStackDialog] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
-  const template = useSelector(state => selectors.template(state, templateId));
+  const template = useSelector(state =>
+    selectors.marketplaceTemplate(state, templateId)
+  );
   const installSteps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
   );

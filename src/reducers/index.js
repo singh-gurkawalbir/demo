@@ -114,7 +114,7 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
-export function template(state, templateId) {
+export function marketplaceTemplate(state, templateId) {
   return fromData.template(state && state.data, templateId);
 }
 

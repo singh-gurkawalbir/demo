@@ -53,7 +53,9 @@ export default function TemplatePreview(props) {
   const { templateId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
-  const template = useSelector(state => selectors.template(state, templateId));
+  const template = useSelector(state =>
+    selectors.marketplaceTemplate(state, templateId)
+  );
   const components = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
