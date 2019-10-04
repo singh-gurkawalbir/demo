@@ -1162,6 +1162,7 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use Passive Mode',
+    defaultValue: true,
   },
   'ftp.entryParser': {
     type: 'select',
