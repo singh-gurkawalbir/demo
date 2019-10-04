@@ -1,4 +1,4 @@
-// import Delete from '../../../components/ResourceTable/actions/Delete';
+import Delete from '../../../components/ResourceTable/actions/Connectors/Licenses/Delete';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 
 export default {
@@ -24,5 +24,5 @@ export default {
       value: r => (r.sandbox ? 'Sandbox' : 'Production'),
     },
   ],
-  //   rowActions: [Delete],
+  rowActions: [Delete],
 };

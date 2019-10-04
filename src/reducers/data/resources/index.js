@@ -95,6 +95,48 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+      if (resourceType.indexOf('/installBase') >= 0) {
+        const id = resourceType.substring(
+          resourceType.indexOf('connectors/') + 11,
+          resourceType.indexOf('/installBase')
+        );
+        const newCollection =
+          collection && collection.map(c => ({ ...c, _connectorId: id }));
+
+        return produce(state, draft => {
+          draft.connectorInstallBase =
+            draft.connectorInstallBase &&
+            draft.connectorInstallBase.filter(c => c._connectorId !== id);
+          draft.connectorInstallBase = [
+            ...(draft.connectorInstallBase || []),
+            ...(newCollection || []),
+          ];
+        });
+      }
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        const id = resourceType.substring(
+          resourceType.indexOf('connectors/') + 11,
+          resourceType.indexOf('/licenses')
+        );
+        const newCollection =
+          collection &&
+          collection.map(c => ({
+            ...c,
+            _connectorId: id,
+          }));
+
+        return produce(state, draft => {
+          draft.connectorLicenses =
+            draft.connectorLicenses &&
+            draft.connectorLicenses.filter(c => c._connectorId !== id);
+          draft.connectorLicenses = [
+            ...(draft.connectorLicenses || []),
+            ...(newCollection || []),
+          ];
+        });
+      }
+
       return { ...state, [resourceType]: collection || [] };
     }
 
