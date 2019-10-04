@@ -151,6 +151,7 @@ export default function IntegrationAppSettings(props) {
             </Grid>
             <Grid item xs={10} className={classes.addStore}>
               <Button
+                data-test={`addNewStore ${integration.settings.storeLabel}`}
                 variant="contained"
                 color="primary"
                 onClick={handleAddNewStoreClick}

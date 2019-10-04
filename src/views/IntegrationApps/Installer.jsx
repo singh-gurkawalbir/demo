@@ -204,7 +204,10 @@ export default function ConnectorInstallation(props) {
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
             <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
+              <IconButton
+                data-test="back"
+                onClick={handleBackClick}
+                size="medium">
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>

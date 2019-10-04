@@ -26,7 +26,10 @@ export default {
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={() => handleRevokeClick()}>
+        <IconButton
+          data-test="revokeAccessToken"
+          size="small"
+          onClick={() => handleRevokeClick()}>
           <Icon />
         </IconButton>
       </Fragment>

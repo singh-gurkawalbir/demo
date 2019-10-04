@@ -71,6 +71,7 @@ export default function ConfigureDebugger(props) {
     <Dialog open maxWidth={false}>
       <IconButton
         aria-label="Close"
+        data-test="closeConfigureDebugger"
         className={classes.closeButton}
         onClick={onClose}>
         <CloseIcon />
@@ -109,6 +110,7 @@ export default function ConfigureDebugger(props) {
           )}
           <div>
             <Button
+              data-test="saveDebuggerConfiguration"
               variant="contained"
               color="primary"
               type="submit"

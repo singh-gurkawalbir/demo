@@ -52,6 +52,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
   return (
     <Dialog open maxWidth={false}>
       <IconButton
+        data-test="closeRegisterConnectionsDialog"
         aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}>
@@ -71,7 +72,9 @@ export default function RegisterConnections({ onClose, integrationId }) {
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleRegisterClick}>Register</Button>
+        <Button data-test="registerConnection" onClick={handleRegisterClick}>
+          Register
+        </Button>
       </DialogActions>
     </Dialog>
   );

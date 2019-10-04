@@ -56,7 +56,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleClick}>
+      <IconButton
+        data-test="refreshConnectionMetadata"
+        size="small"
+        onClick={handleClick}>
         <Icon />
       </IconButton>
     );

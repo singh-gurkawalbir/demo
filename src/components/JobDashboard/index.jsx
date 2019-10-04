@@ -382,6 +382,7 @@ export default function JobDashboard({
           <Typography>{integration.name}</Typography>
           <div>
             <IconTextButton
+              data-test="refresh"
               variant="text"
               color="primary"
               onClick={handleRefershJobsClick}>
@@ -389,6 +390,7 @@ export default function JobDashboard({
             </IconTextButton>
             <IconTextButton
               component={Link}
+              data-test="settings"
               to={integrationSettingsURL}
               variant="text"
               color="primary">

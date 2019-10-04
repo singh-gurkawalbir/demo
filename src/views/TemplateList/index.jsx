@@ -42,17 +42,22 @@ export default function TemplateList(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       {showGenerateZipDialog && (
-        <GenerateZipDialog onClose={() => setShowGenerateZipDialog(false)} />
+        <GenerateZipDialog
+          data-test="closeGenerateTemplateZipDialog"
+          onClose={() => setShowGenerateZipDialog(false)}
+        />
       )}
       <CeligoPageBar title="Templates">
         <div className={classes.actions}>
           <IconTextButton
+            data-test="generateTemplateZip"
             onClick={() => setShowGenerateZipDialog(true)}
             variant="text">
             Generate Template Zip
           </IconTextButton>
           <KeywordSearch filterKey="templates" defaultFilter={defaultFilter} />
           <IconTextButton
+            data-test="addNewTemplate"
             component={Link}
             to={`${location.pathname}/add/templates/new-${shortid.generate()}`}
             variant="text"

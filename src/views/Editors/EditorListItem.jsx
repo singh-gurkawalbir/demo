@@ -10,7 +10,7 @@ export default class ProcessorListItem extends Component {
     const { item, onClick } = this.props;
 
     return (
-      <ListItem button onClick={() => onClick(item.name)}>
+      <ListItem data-test={item.name} button onClick={() => onClick(item.name)}>
         <ListItemAvatar>
           <Avatar>
             <ImageIcon />

@@ -32,7 +32,10 @@ function Status(props) {
 
   return (
     <div className={classNames(classes.root)}>
-      <Button variant="text" className={classes.wrapper}>
+      <Button
+        data-test="headerStatus"
+        variant="text"
+        className={classes.wrapper}>
         {children}
         {count && (
           <Typography

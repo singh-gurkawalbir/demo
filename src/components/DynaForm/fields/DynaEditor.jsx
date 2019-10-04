@@ -107,6 +107,7 @@ export default function DynaEditor(props) {
       </DialogContent>
       <DialogActions>
         <Button
+          data-test="showEditor"
           onClick={handleEditorClick}
           variant="contained"
           size="small"

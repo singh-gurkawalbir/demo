@@ -24,7 +24,10 @@ export default {
             onClose={handleClose}
           />
         )}
-        <IconButton size="small" onClick={onScheduleClick}>
+        <IconButton
+          data-test="showFlowSchedule"
+          size="small"
+          onClick={onScheduleClick}>
           <Icon />
         </IconButton>
       </Fragment>

@@ -67,6 +67,7 @@ class ChangePassword extends Component {
           <Fragment>
             {error && <span>{message}</span>}
             <Button
+              data-test="changePassword"
               variant="contained"
               color="primary"
               type="submit"

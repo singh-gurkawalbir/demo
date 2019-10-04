@@ -63,6 +63,7 @@ class ChangeEmail extends Component {
             {error && <span>{message}</span>}
 
             <Button
+              data-test="changeEmail"
               variant="contained"
               color="primary"
               type="submit"

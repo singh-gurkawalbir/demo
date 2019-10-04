@@ -97,6 +97,7 @@ export default function StandaloneImportMapping(props) {
         onClose={handleClose}>
         <IconButton
           aria-label="Close"
+          data-test="closeImportMapping"
           className={classes.closeButton}
           onClick={() => onClose()}>
           <CloseIcon />

@@ -258,8 +258,12 @@ export default function Lookup(props) {
             </Typography>
           </div>
         )}
-        <Button onClick={onCancel}>Cancel</Button>
-        <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+        <Button data-test="cancelLookupForm" onClick={onCancel}>
+          Cancel
+        </Button>
+        <DynaSubmit data-test="saveLookupForm" onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </DynaForm>
     </div>
   );

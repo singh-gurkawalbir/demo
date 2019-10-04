@@ -373,6 +373,7 @@ export default function ImportMapping(props) {
                     </Grid>
                     <Grid item key="edit_button">
                       <IconButton
+                        data-test="editMapping"
                         aria-label="delete"
                         onClick={() => {
                           handleDelete(mapping.index);
@@ -391,6 +392,7 @@ export default function ImportMapping(props) {
       <DialogActions>
         {!isStandaloneMapping && (
           <Button
+            data-test="cancelMapping"
             onClick={() => {
               onClose(false);
             }}
@@ -402,6 +404,7 @@ export default function ImportMapping(props) {
         )}
         {isStandaloneMapping && (
           <Button
+            data-test="saveMapping"
             onClick={() => handleSubmit(false)}
             variant="contained"
             size="small"
@@ -410,6 +413,7 @@ export default function ImportMapping(props) {
           </Button>
         )}
         <Button
+          data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"
           size="small"

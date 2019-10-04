@@ -281,6 +281,7 @@ export default function DynaTable(props) {
                 ))}
                 <Grid item key="delete_button">
                   <IconButton
+                    data-test="deleteTableRow"
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>

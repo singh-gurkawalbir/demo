@@ -55,7 +55,10 @@ function ErrorPanel(props) {
         className={classNames(classes.panel, classes.paper, classes.error)}>
         {typeof error === 'string' ? error : error.message}
         {onClose && (
-          <IconButton onClick={onClose} className={classes.icon}>
+          <IconButton
+            data-test="closeErrorPannel"
+            onClick={onClose}
+            className={classes.icon}>
             <CloseIcon />
           </IconButton>
         )}
