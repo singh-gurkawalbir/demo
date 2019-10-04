@@ -6,6 +6,10 @@ import DynaForm from '../../components/DynaForm';
 import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import {
+  RESOURCE_TYPE_PLURAL_TO_SINGULAR,
+  RESOURCE_TYPE_SINGULAR_TO_LABEL,
+} from '../../constants/resource';
 
 export default function AddOrSelect(props) {
   const {
@@ -16,8 +20,11 @@ export default function AddOrSelect(props) {
     resourceType = 'connections',
   } = props;
   const [useNew, setUseNew] = useState(true);
-  const resourceName = resourceType === 'connections' ? 'connection' : 'stack';
-  const resourceLabel = resourceType === 'connections' ? 'Connection' : 'Stack';
+  const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
+  const resourceLabel =
+    RESOURCE_TYPE_SINGULAR_TO_LABEL[
+      RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]
+    ];
   const resourceList = useSelector(state =>
     selectors.filteredResourceList(state, resource, resourceType)
   );

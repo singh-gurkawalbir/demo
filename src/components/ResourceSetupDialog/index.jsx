@@ -9,6 +9,7 @@ import ResourceForm from '../../components/ResourceFormFactory';
 import LoadResources from '../LoadResources';
 import CloseIcon from '../icons/CloseIcon';
 import AddOrSelect from './AddOrSelect';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const useStyles = makeStyles(() => ({
   iconButton: {
@@ -33,7 +34,7 @@ export default function ResourceModal(props) {
     <LoadResources required resources="connections">
       <Dialog open maxWidth={false}>
         <DialogTitle>
-          Setup {resourceType === 'connections' ? 'Connection' : 'Stack'}
+          Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}
           {onClose && (
             <IconButton
               onClick={onClose}
