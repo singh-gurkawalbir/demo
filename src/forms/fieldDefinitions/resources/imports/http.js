@@ -90,7 +90,7 @@ export default {
   'http.response.successValues': {
     type: 'text',
     label: 'Success Values',
-    valueDelimiter: ',',
+    delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
       {
