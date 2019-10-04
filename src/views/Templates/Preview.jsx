@@ -71,7 +71,7 @@ export default function TemplatePreview(props) {
 
   useEffect(() => {
     if (!components || (isEmpty(components) && !requested)) {
-      dispatch(actions.template.request(templateId));
+      dispatch(actions.template.requestPreview(templateId));
       setRequested(true);
     }
   }, [components, dispatch, requested, templateId]);

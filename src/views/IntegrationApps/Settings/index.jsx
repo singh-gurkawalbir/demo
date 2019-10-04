@@ -106,6 +106,11 @@ export default function IntegrationAppSettings(props) {
     )
       setCurrentStore(defaultStoreId);
   }, [currentStore, defaultStoreId, integration.stores]);
+
+  if (!integration || !integration.settings) {
+    return <Typography>Loading Integration...</Typography>;
+  }
+
   const isMultiStore = !!integration.settings.supportsMutliStore;
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);

@@ -69,7 +69,7 @@ export function* createComponents({ templateId }) {
     return undefined;
   }
 
-  yield put(actions.template.createdIntegration(components, templateId));
+  yield put(actions.template.createdComponents(components, templateId));
 }
 
 export function* verifyBundleOrPackageInstall({
@@ -115,7 +115,7 @@ export function* verifyBundleOrPackageInstall({
 
 export const templateSagas = [
   takeEvery(actionTypes.TEMPLATE.ZIP_GENERATE, generateZip),
-  takeEvery(actionTypes.TEMPLATE.PREVIEW, requestPreview),
+  takeEvery(actionTypes.TEMPLATE.PREVIEW_REQUEST, requestPreview),
   takeEvery(
     actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL,
     verifyBundleOrPackageInstall

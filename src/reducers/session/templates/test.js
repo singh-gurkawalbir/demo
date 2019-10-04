@@ -378,7 +378,7 @@ describe('template reducer test cases', () => {
     test('should find the template with template Id and set components value', () => {
       const state = reducer(
         {},
-        actions.template.createdIntegration(
+        actions.template.createdComponents(
           testCreatedComponents,
           testTemplateId
         )
@@ -397,7 +397,7 @@ describe('template reducer test cases', () => {
     test('should not throw error when createdComponents returned is null', () => {
       const state = reducer(
         {},
-        actions.template.createdIntegration(null, testTemplateId)
+        actions.template.createdComponents(null, testTemplateId)
       );
 
       expect(state).toEqual({
@@ -415,7 +415,7 @@ describe('template reducer test cases', () => {
             preview: testComponents,
           },
         },
-        actions.template.createdIntegration(
+        actions.template.createdComponents(
           testCreatedComponents,
           testTemplateId
         )
@@ -445,7 +445,7 @@ describe('template reducer test cases', () => {
             connectionMap: { c1: 'c1', c2: 'c2' },
           },
         },
-        actions.template.createdIntegration(
+        actions.template.createdComponents(
           testCreatedComponents,
           testTemplateId
         )

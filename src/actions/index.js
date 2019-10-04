@@ -499,7 +499,8 @@ const ashare = {
 const template = {
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
-  request: templateId => action(actionTypes.TEMPLATE.PREVIEW, { templateId }),
+  requestPreview: templateId =>
+    action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
   installStepsReceived: (installSteps, connectionMap, templateId) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
       installSteps,
@@ -510,7 +511,7 @@ const template = {
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),
   failedInstall: templateId =>
     action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
-  createdIntegration: (components, templateId) =>
+  createdComponents: (components, templateId) =>
     action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
   receivedPreview: (components, templateId) =>
     action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
