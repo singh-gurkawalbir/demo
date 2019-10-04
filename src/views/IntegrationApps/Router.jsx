@@ -3,10 +3,12 @@ import IntegrationAppAddNewStore from './AddNewStore';
 import IntegrationAppSettings from './Settings';
 import IntegrationAppUninstallation from './Uninstaller';
 import IntegrationAppInstallation from './Installer';
+import ResourceList from '../ResourceList';
 
 export default function IntegrationAppsRouter({ match }) {
   return (
     <Switch>
+      <Route path="/pg/:resourceType" exact component={ResourceList} />
       <Route
         path={`${match.url}/:integrationId/setup`}
         component={IntegrationAppInstallation}
