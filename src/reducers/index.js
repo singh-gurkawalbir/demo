@@ -509,13 +509,20 @@ export function connectorFlowSections(state, id) {
   if (!state) return null;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
 
-  return (
-    (integrationResource &&
-      integrationResource._connectorId &&
-      integrationResource.settings.sections[0] &&
-      integrationResource.settings.sections[0].sections) ||
-    {}
-  );
+  if (
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.supportsMultiStore
+  ) {
+    return (
+      (integrationResource.settings.sections &&
+        integrationResource.settings.sections[0] &&
+        integrationResource.settings.sections[0].sections) ||
+      []
+    );
+  }
+
+  return integrationResource.settings.sections || [];
 }
 
 export function getRequiredDataOfConnectorSettings(
@@ -528,6 +535,10 @@ export function getRequiredDataOfConnectorSettings(
   let fields;
   let sections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const supportMultiStore =
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.supportsMultiStore;
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
   let soreIdIndex = 0;
@@ -542,31 +553,47 @@ export function getRequiredDataOfConnectorSettings(
     integrationResource.settings.showMatchRuleEngine
   );
 
-  if (
+  if (supportMultiStore) {
+    if (
+      integrationResource &&
+      integrationResource._connectorId &&
+      integrationResource.settings.sections
+    ) {
+      integrationResource.settings.sections.forEach((f, index) => {
+        if (f.id === storeId) {
+          soreIdIndex = index;
+        }
+      });
+    }
+
+    if (
+      integrationResource &&
+      integrationResource._connectorId &&
+      integrationResource.settings.sections[soreIdIndex] &&
+      integrationResource.settings.sections[soreIdIndex].sections
+    ) {
+      integrationResource.settings.sections[soreIdIndex].sections.forEach(
+        (f, index) => {
+          if (
+            f.title.replace(/ /g, '') === section ||
+            (index === 0 && section === 'flows')
+          ) {
+            requiredFlows = f.flows;
+            ({ fields, sections } = f);
+          }
+        }
+      );
+    }
+  } else if (
     integrationResource &&
-    integrationResource._connectorId &&
+    integrationResource.settings &&
     integrationResource.settings.sections
   ) {
     integrationResource.settings.sections.forEach((f, index) => {
-      if (f.id === storeId) {
-        soreIdIndex = index;
-      }
-    });
-  }
-
-  if (
-    integrationResource &&
-    integrationResource._connectorId &&
-    integrationResource.settings.sections[soreIdIndex] &&
-    integrationResource.settings.sections[soreIdIndex].sections
-  ) {
-    integrationResource.settings.sections[soreIdIndex].sections.forEach(f => {
-      if (f.title === section) {
-        requiredFlows = f.flows;
-        ({ fields, sections } = f);
-      }
-
-      if (f.title === 'General' && section === 'flows') {
+      if (
+        f.title.replace(/ /g, '') === section ||
+        (index === 0 && section === 'flows')
+      ) {
         requiredFlows = f.flows;
         ({ fields, sections } = f);
       }

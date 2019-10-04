@@ -224,10 +224,10 @@ const convertFieldsToFieldReferneceObj = (acc, curr) => {
     throw new Error('No fieldId , id or formId', curr);
   }
 
-  if (curr.fieldId) acc[curr.fieldId] = curr;
-  else if (curr.id) acc[curr.id] = curr;
-  else if (curr.formId) acc[curr.formId] = curr;
-  else throw new Error('could not find any of the props');
+  if (acc && curr.fieldId) acc[curr.fieldId] = curr;
+  else if (acc && curr.id) acc[curr.id] = curr;
+  else if (acc && curr.formId) acc[curr.formId] = curr;
+  // else throw new Error('could not find any of the props');
 
   // !curr.formId
   return acc;
@@ -291,6 +291,10 @@ export const integrationSettingsToDynaFormMetadata = meta => {
     });
 
     // check for title
+    if (!finalData.layout) {
+      finalData.layout = {};
+    }
+
     finalData.type = 'tab';
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
