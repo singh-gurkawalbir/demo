@@ -90,6 +90,7 @@ export default function* rootSaga() {
   yield all([
     ...resourceSagas,
     ...connectorSagas,
+    ...templateSagas,
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
@@ -98,7 +99,6 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
-    ...templateSagas,
     ...uploadFileSagas,
     ...stackSagas,
     ...sampleDataSagas,
