@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: '10px 25px',
   },
   formHead: {
-    borderBottom: 'solid 1px #e5e5e5',
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: '29px',
   },
   innerContent: {
