@@ -204,6 +204,7 @@ export default function CeligoDrawer() {
                   className={classes.listItem}
                   component={children ? undefined : Link}
                   to={getRoutePath(path)}
+                  data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {<Icon />}
@@ -223,6 +224,7 @@ export default function CeligoDrawer() {
                       {children.map(({ label, Icon, path }) => (
                         <ListItem
                           className={classes.listItem}
+                          data-test={label}
                           key={label}
                           component={Link}
                           to={getRoutePath(path)}
@@ -250,6 +252,7 @@ export default function CeligoDrawer() {
           <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton
+              data-test="celigoDrawerToggle"
               color="inherit"
               onClick={handleDrawerToggle}
               className={classes.drawerToggle}>

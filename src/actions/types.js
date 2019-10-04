@@ -317,6 +317,10 @@ const JOB = {
 const FLOW = {
   RUN: 'FLOW_RUN',
 };
+const RECYCLEBIN = {
+  RESTORE: 'RESTORE',
+  PURGE: 'PURGE',
+};
 
 export default {
   NETSUITE_USER_ROLES,
@@ -406,4 +410,5 @@ export default {
   FILE,
   CONNECTION,
   MARKETPLACE,
+  RECYCLEBIN,
 };

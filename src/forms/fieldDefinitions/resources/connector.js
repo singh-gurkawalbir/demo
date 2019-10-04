@@ -26,7 +26,7 @@ export default {
   contactEmail: {
     defaultValue: r => r.contactEmail,
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Contact Emails',
     required: true,
   },
@@ -44,7 +44,7 @@ export default {
   },
   uninstallerFunction: {
     defaultValue: r => r.uninstallerFunction,
-    type: 'select',
+    type: 'text',
     label: 'Uninstaller Function',
     required: true,
   },

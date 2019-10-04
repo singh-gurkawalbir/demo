@@ -28,6 +28,7 @@ import sampleDataSagas from './sampleData';
 import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
+import { recycleBinSagas } from './recycleBin';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -104,5 +105,6 @@ export default function* rootSaga() {
     ...fileDefinitionSagas,
     ...marketplaceSagas,
     ...accessTokenSagas,
+    ...recycleBinSagas,
   ]);
 }

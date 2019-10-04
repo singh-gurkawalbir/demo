@@ -27,6 +27,11 @@ export default {
     Connections can also be shared with other integrator.io users 
     to edit and create data flows that run in your integrator.io 
     account.`,
+  recycleBin: `
+    All deleted items will be kept in the Recycle Bin for up to 30 days 
+    before being automatically purged. All Flows in Recycle Bin 
+    are deactivated and will no longer run. You can restore any of the items 
+    listed in Recycle Bin, or purge them manually, via Actions.`,
   scripts: `
     Scripts are written in JavaScript and represent a powerful 
     mechanism for customizing your integrator.io account. You can use 

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -151,16 +151,14 @@ export default function SelectApplication(props) {
     const { type, icon } = props.data;
 
     return (
-      <Fragment>
-        <div className={classes.optionRoot}>
-          <components.Option {...props}>
-            <span className={classes.optionImg}>
-              <ApplicationImg type={type} assistant={icon} />
-            </span>
-            <span className={classes.optionLabel}>{props.label}</span>
-          </components.Option>
-        </div>
-      </Fragment>
+      <div data-test={props.label} className={classes.optionRoot}>
+        <components.Option {...props}>
+          <span className={classes.optionImg}>
+            <ApplicationImg type={type} assistant={icon} />
+          </span>
+          <span className={classes.optionLabel}>{props.label}</span>
+        </components.Option>
+      </div>
     );
   };
 
@@ -190,9 +188,12 @@ export default function SelectApplication(props) {
     : '';
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.formControl}>
+    <FormControl
+      data-test={id}
+      key={id}
+      disabled={disabled}
+      className={classes.formControl}>
       <Select
-        data-test={id}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
