@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { INSTALL_STEP_TYPES } from '../../../utils/constants';
 
 export default function reducer(state = {}, action) {
   const {
@@ -58,7 +59,8 @@ export default function reducer(state = {}, action) {
           s =>
             (_connectionId && s._connectionId === _connectionId) ||
             (installURL && s.installURL === installURL) ||
-            (stepType === 'Stack' && s.type === 'Stack')
+            (stepType === INSTALL_STEP_TYPES.STACKs &&
+              s.type === INSTALL_STEP_TYPES.STACK)
         );
 
         if (currentStep) {
