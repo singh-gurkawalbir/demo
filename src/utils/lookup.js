@@ -14,12 +14,12 @@ export default {
       case adaptorTypeMap.RESTImport:
         return resourceObj.rest && resourceObj.rest.lookups;
       case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.AS2Import:
         return resourceObj.file && resourceObj.file.lookups;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
@@ -33,13 +33,12 @@ export default {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return '/netsuite_da/lookups';
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         return '/file/lookups';
-
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:

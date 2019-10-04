@@ -40,18 +40,6 @@ export default {
       retValues['/http/paging/resourcePath'] = undefined;
     }
 
-    if (
-      retValues['/http/response/successValues'].length === 1 &&
-      retValues['/http/response/successValues'][0] === ''
-    )
-      delete retValues['/http/response/successValues'];
-
-    if (
-      retValues['/http/paging/lastPageValues'].length === 1 &&
-      retValues['/http/paging/lastPageValues'][0] === ''
-    )
-      delete retValues['/http/paging/lastPageValues'];
-
     return {
       ...retValues,
     };
@@ -71,7 +59,10 @@ export default {
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
-    'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.successValues': {
+      fieldId: 'http.response.successValues',
+      omitWhenValueIs: [''],
+    },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     type: {
       id: 'type',

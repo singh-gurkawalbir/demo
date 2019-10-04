@@ -93,6 +93,12 @@ const marketplace = {
       _connectorId,
     }),
 };
+const recycleBin = {
+  restore: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  purge: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
+};
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -814,4 +820,5 @@ export default {
   sampleData,
   connection,
   marketplace,
+  recycleBin,
 };

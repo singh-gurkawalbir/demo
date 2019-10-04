@@ -636,7 +636,7 @@ export default {
   },
   'rest.pingSuccessValues': {
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Ping Success Values',
   },
   'rest.pingFailurePath': {
@@ -840,7 +840,7 @@ export default {
   'http.ping.successValues': {
     type: 'text',
     label: 'Ping Success Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.ping.errorPath': {
     type: 'text',
@@ -1063,7 +1063,7 @@ export default {
   'http.rateLimit.failValues': {
     type: 'text',
     label: 'Fail Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
