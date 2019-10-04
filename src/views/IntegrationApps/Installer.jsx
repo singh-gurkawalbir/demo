@@ -15,7 +15,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import { confirmDialog } from '../../components/ConfirmDialog';
 
@@ -195,7 +195,7 @@ export default function ConnectorInstallation(props) {
     <LoadResources required resources="connections,integrations">
       {selectedConnectionId && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
+          resourceId={selectedConnectionId}
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />

@@ -107,6 +107,7 @@ export default function IntegrationAppSettings(props) {
       setCurrentStore(defaultStoreId);
   }, [currentStore, defaultStoreId, integration.stores]);
 
+  const isMultiStore = !!(integration.settings || {}).supportsMutliStore;
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
   };
@@ -138,29 +139,31 @@ export default function IntegrationAppSettings(props) {
           />
         </div>
         <Divider />
-        <div className={classes.storeContainer}>
-          <Grid container>
-            <Grid item xs={2} className={classes.storeSelect}>
-              <MaterialUiSelect
-                {...currentStore}
-                onFieldChange={handleStoreChange}
-                classes={classes}
-                defaultValue={currentStore}
-                options={[{ items: integration.stores || [] }]}
-              />
+        {isMultiStore && (
+          <div className={classes.storeContainer}>
+            <Grid container>
+              <Grid item xs={2} className={classes.storeSelect}>
+                <MaterialUiSelect
+                  {...currentStore}
+                  onFieldChange={handleStoreChange}
+                  classes={classes}
+                  defaultValue={currentStore}
+                  options={[{ items: integration.stores || [] }]}
+                />
+              </Grid>
+              <Grid item xs={10} className={classes.addStore}>
+                <Button
+                  data-test={`Add ${integration.settings.storeLabel}`}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddNewStoreClick}
+                  className={classes.button}>
+                  Add {integration.settings.storeLabel}
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={10} className={classes.addStore}>
-              <Button
-                data-test={`addNewStore ${integration.settings.storeLabel}`}
-                variant="contained"
-                color="primary"
-                onClick={handleAddNewStoreClick}
-                className={classes.button}>
-                Add {integration.settings.storeLabel}
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
+          </div>
+        )}
         <div className={classes.root}>
           <div className={classes.flex}>
             <Drawer

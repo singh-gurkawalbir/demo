@@ -93,6 +93,12 @@ const marketplace = {
       _connectorId,
     }),
 };
+const recycleBin = {
+  restore: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  purge: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
+};
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -177,6 +183,8 @@ const resource = {
         resourceId,
         values,
       }),
+    authorized: connectionId =>
+      action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
     commitAndAuthorize: resourceId =>
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
@@ -490,9 +498,41 @@ const integrationApp = {
       }),
   },
 };
-const ashares = {
+const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
+};
+const template = {
+  generateZip: integrationId =>
+    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
+  requestPreview: templateId =>
+    action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
+  installStepsReceived: (installSteps, connectionMap, templateId) =>
+    action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
+      installSteps,
+      connectionMap,
+      templateId,
+    }),
+  failedPreview: templateId =>
+    action(actionTypes.TEMPLATE.FAILURE, { templateId }),
+  failedInstall: templateId =>
+    action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
+  createdComponents: (components, templateId) =>
+    action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
+  receivedPreview: (components, templateId) =>
+    action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
+  updateStep: (step, templateId) =>
+    action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
+  createComponents: templateId =>
+    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  clearTemplate: templateId =>
+    action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
+  verifyBundleOrPackageInstall: (step, connection, templateId) =>
+    action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
+      step,
+      connection,
+      templateId,
+    }),
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
@@ -502,10 +542,6 @@ const agent = {
   maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
-};
-const template = {
-  generateZip: integrationId =>
-    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
 const file = {
   upload: (resourceType, resourceId, fileType, file) =>
@@ -800,7 +836,7 @@ export default {
   resource,
   user,
   api,
-  ashares,
+  ashare,
   auth,
   auditLogs,
   accessToken,
@@ -814,4 +850,5 @@ export default {
   sampleData,
   connection,
   marketplace,
+  recycleBin,
 };

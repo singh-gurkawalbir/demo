@@ -1,8 +1,13 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Grid } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
+import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import ApplicationImg from '../icons/ApplicationImg';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -46,7 +51,45 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install' } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId } = props;
+  const dispatch = useDispatch();
+  const [verified, setVerified] = useState(false);
+  const connection = useSelector(state => {
+    if (step && step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
+      return selectors.resource(
+        state,
+        'connections',
+        (step.options || {})._connectionId
+      );
+    }
+
+    return null;
+  });
+
+  useEffect(() => {
+    if (
+      connection &&
+      step &&
+      step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE &&
+      !step.completed &&
+      !verified
+    ) {
+      dispatch(
+        actions.template.updateStep(
+          { ...step, status: 'verifying' },
+          templateId
+        )
+      );
+      dispatch(
+        actions.template.verifyBundleOrPackageInstall(
+          step,
+          connection,
+          templateId
+        )
+      );
+      setVerified(true);
+    }
+  }, [connection, dispatch, step, templateId, verified]);
 
   if (!step) {
     return null;
@@ -71,7 +114,15 @@ export default function InstallationStep(props) {
           <Typography>{step.description}</Typography>
         </Grid>
         <Grid item xs={2} className={classes.step}>
-          <img alt="" src={process.env.CDN_BASE_URI + step.imageURL} />
+          {step.imageURL && (
+            <img
+              alt=""
+              src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
+            />
+          )}
+          {step.type === INSTALL_STEP_TYPES.CONNECTION && (
+            <ApplicationImg size="large" type={step.options.connectionType} />
+          )}
         </Grid>
         <Grid item xs={2} className={classes.step}>
           {!step.completed && (
