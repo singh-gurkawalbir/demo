@@ -27,13 +27,6 @@ const connectors = [
   },
   { id: 'ftp', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
   {
-    id: 'webhook',
-    name: 'Webhook',
-    type: 'webhook',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
-  {
     id: 'wrapper',
     name: 'Wrapper',
     type: 'wrapper',
@@ -105,7 +98,7 @@ const connectors = [
   { id: 'asana', name: 'Asana', type: 'http', assistant: 'asana' },
   { id: 'atera', name: 'Atera', type: 'http', assistant: 'atera' },
   {
-    id: 'authorize',
+    id: 'authorize.net',
     name: 'Authorize.Net',
     type: 'http',
     assistant: 'authorize.net',
@@ -324,7 +317,7 @@ const connectors = [
     assistant: 'merchantesolutions',
   },
   {
-    id: 'MessageMedia',
+    id: 'messagemedia',
     name: 'MessageMedia',
     type: 'http',
     assistant: 'messagemedia',
