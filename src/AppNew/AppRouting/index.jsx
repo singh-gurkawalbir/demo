@@ -74,6 +74,14 @@ export default class AppRouting extends Component {
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
         />
+        <Route
+          path="/pg/connectors/:connectorId/licenses"
+          component={ConnectorLicenses}
+        />
+        <Route
+          path="/pg/connectors/:connectorId/installBase"
+          component={ConnectorInstallBase}
+        />
         <Route path="/pg/connectors" component={IntegrationAppsRouter} />
         <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
@@ -86,14 +94,6 @@ export default class AppRouting extends Component {
         <Route path="/pg/myAccount" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />
-        <Route
-          path="/pg/connectors/:connectorId/licenses"
-          component={ConnectorLicenses}
-        />
-        <Route
-          path="/pg/connectors/:connectorId/installBase"
-          component={ConnectorInstallBase}
-        />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>

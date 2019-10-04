@@ -7,6 +7,7 @@ import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import KeywordSearch from '../../../components/KeywordSearch';
+import infoText from '../../ResourceList/infoText';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -40,7 +41,7 @@ export default function Licenses(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="Licenses">
+      <CeligoPageBar title="Licenses" infoText={infoText.licenses}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey="connectorLicenses"
