@@ -20,6 +20,7 @@ import InstallationStep from '../../components/InstallStep';
 import resourceConstants from '../../forms/constants/connection';
 import { getResourceSubType } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
+import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -114,7 +115,7 @@ export default function ConnectorInstallation(props) {
     const { _connectionId, installURL, type } = step;
 
     // handle connection step click
-    if (type === 'Connection') {
+    if (type === INSTALL_STEP_TYPES.CONNECTION) {
       if (step.isTriggered) {
         return false;
       }
@@ -133,7 +134,7 @@ export default function ConnectorInstallation(props) {
       setSelectedConnectionId({ newId, doc: connObj });
 
       // handle Installation step click
-    } else if (type === 'installPackage') {
+    } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       if (!step.isTriggered) {
         dispatch(
           actions.template.updateStep(
@@ -162,7 +163,7 @@ export default function ConnectorInstallation(props) {
         );
       }
       // handle Action step click
-    } else if (type === 'Stack') {
+    } else if (type === INSTALL_STEP_TYPES.STACK) {
       if (!stackId) setShowStackDialog(`new-${shortid.generate()}`);
     }
   };
@@ -202,7 +203,7 @@ export default function ConnectorInstallation(props) {
   const handleStackSetupDone = stackId => {
     dispatch(
       actions.template.updateStep(
-        { status: 'completed', stackId, type: 'Stack' },
+        { status: 'completed', stackId, type: INSTALL_STEP_TYPES.STACK },
         templateId
       )
     );

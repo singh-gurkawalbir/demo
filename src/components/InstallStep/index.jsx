@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Grid } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
+import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -54,7 +55,7 @@ export default function InstallationStep(props) {
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
-    if (step && step.type === 'installPackage') {
+    if (step && step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       return selectors.resource(
         state,
         'connections',
@@ -69,7 +70,7 @@ export default function InstallationStep(props) {
     if (
       connection &&
       step &&
-      step.type === 'installPackage' &&
+      step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE &&
       !step.completed &&
       !verified
     ) {
@@ -119,7 +120,7 @@ export default function InstallationStep(props) {
               src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
             />
           )}
-          {step.type === 'Connection' && (
+          {step.type === INSTALL_STEP_TYPES.CONNECTION && (
             <ApplicationImg size="large" type={step.options.connectionType} />
           )}
         </Grid>

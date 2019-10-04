@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer from './';
 import actions from '../../../actions';
+import { INSTALL_STEP_TYPES } from '../../../utils/constants';
 
 describe('template reducer test cases', () => {
   const installSteps = [
@@ -13,13 +14,13 @@ describe('template reducer test cases', () => {
       name: 'installStep',
       description: 'something',
       _connectionId: 'connectionId',
-      type: 'Connection',
+      type: INSTALL_STEP_TYPES.CONNECTION,
     },
     {
       name: 'installUrl',
       description: 'something',
       installURL: 'connectionId',
-      type: 'installPackage',
+      type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
     },
   ];
   const connectionMap = {

@@ -12,6 +12,11 @@ export const INTEGRATION_ACCESS_LEVELS = Object.freeze({
   MANAGE: 'manage',
   MONITOR: 'monitor',
 });
+export const INSTALL_STEP_TYPES = Object.freeze({
+  CONNECTION: 'Connection',
+  INSTALL_PACKAGE: 'installPackage',
+  STACK: 'Stack',
+});
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',
   UNINSTALL: 'uninstall',

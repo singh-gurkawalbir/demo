@@ -1,7 +1,11 @@
 /* eslint-disable no-plusplus */
 import { some, reduce } from 'lodash';
 import applications from '../constants/applications';
-import { NETSUITE_BUNDLE_URL, SALESFORCE_DA_PACKAGE_URL } from './constants';
+import {
+  NETSUITE_BUNDLE_URL,
+  SALESFORCE_DA_PACKAGE_URL,
+  INSTALL_STEP_TYPES,
+} from './constants';
 
 export default {
   getInstallSteps: previewData => {
@@ -31,7 +35,7 @@ export default {
       installSteps.push({
         name: 'Configure Stack',
         description: 'Please provide Stack details',
-        type: 'Stack',
+        type: INSTALL_STEP_TYPES.STACK,
         completed: false,
         imageURL: 'images/icons/icon/stacks.png',
         options: {
@@ -68,7 +72,7 @@ export default {
         name: conn.name,
         _connectionId: conn._id,
         description: `Please configure ${connectionType} connection`,
-        type: 'Connection',
+        type: INSTALL_STEP_TYPES.CONNECTION,
         completed: false,
         options: {
           connectionType,
@@ -104,7 +108,7 @@ export default {
         description: 'Please install Integrator bundle in NetSuite account',
         name: 'Integrator Bundle',
         application: 'netsuite',
-        type: 'installPackage',
+        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
         options: {},
       });
     }
@@ -117,7 +121,7 @@ export default {
         application: 'salesforce',
         description: 'Please install Integrator bundle in Salesforce account',
         name: 'Integrator Adaptor Package',
-        type: 'installPackage',
+        type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
         options: {},
       });
     }
