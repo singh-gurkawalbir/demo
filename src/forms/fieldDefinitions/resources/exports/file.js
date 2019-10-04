@@ -26,6 +26,7 @@ export default {
   'file.type': {
     type: 'select',
     label: 'File type',
+    required: true,
     options: [
       {
         items: [
