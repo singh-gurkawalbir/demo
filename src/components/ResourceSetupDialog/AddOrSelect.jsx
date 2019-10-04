@@ -94,7 +94,7 @@ export default function AddOrSelect(props) {
           },
         ]}
       />
-      {useNew && (
+      {useNew ? (
         <ResourceForm
           editMode={false}
           resourceType={resourceType}
@@ -102,8 +102,7 @@ export default function AddOrSelect(props) {
           onSubmitComplete={handleSubmitComplete}
           connectionType={connectionType}
         />
-      )}
-      {!useNew && (
+      ) : (
         <DynaForm
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>

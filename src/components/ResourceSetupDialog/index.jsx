@@ -45,7 +45,9 @@ export default function ResourceModal(props) {
           )}
         </DialogTitle>
         <DialogContent style={{ width: '60vw' }}>
-          {!addOrSelect && (
+          {addOrSelect ? (
+            <AddOrSelect {...props} />
+          ) : (
             <ResourceForm
               editMode={false}
               resourceType={resourceType}
@@ -55,7 +57,6 @@ export default function ResourceModal(props) {
               onCancel={onClose}
             />
           )}
-          {addOrSelect && <AddOrSelect {...props} />}
         </DialogContent>
       </Dialog>
     </LoadResources>
