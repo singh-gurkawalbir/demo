@@ -6,6 +6,8 @@ import * as selectors from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import IconTextButton from '../../../components/IconTextButton';
+import ShowMoreDrawer from '../../../components/drawer/ShowMore';
+import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -61,6 +63,10 @@ export default function InstallBase(props) {
       <ResourceDrawer {...props} />
       <CeligoPageBar title="View / Update Install Base">
         <div className={classes.actions}>
+          <KeywordSearch
+            filterKey="connectorInstallBase"
+            defaultFilter={{ take: 5 }}
+          />
           <IconTextButton onClick={handleUpdateClick} variant="text">
             Update
           </IconTextButton>
@@ -74,6 +80,11 @@ export default function InstallBase(props) {
           selectableRows
         />
       </div>
+      <ShowMoreDrawer
+        filterKey="connectorInstallBase"
+        count={list.count}
+        maxCount={list.filtered}
+      />
     </Fragment>
   );
 }

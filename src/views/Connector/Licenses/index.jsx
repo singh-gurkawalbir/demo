@@ -5,6 +5,8 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import * as selectors from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
+import ShowMoreDrawer from '../../../components/drawer/ShowMore';
+import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -38,10 +40,26 @@ export default function Licenses(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="Licenses" />
+      <CeligoPageBar title="Licenses">
+        <div className={classes.actions}>
+          <KeywordSearch
+            filterKey="connectorLicenses"
+            defaultFilter={{ take: 5 }}
+          />
+        </div>
+      </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <CeligoTable data={list.resources} {...metadata} />
+        <CeligoTable
+          data={list.resources}
+          {...metadata}
+          actionProps={{ resourceType: `connectors/${connectorId}/licenses` }}
+        />
       </div>
+      <ShowMoreDrawer
+        filterKey="connectorLicenses"
+        count={list.count}
+        maxCount={list.filtered}
+      />
     </Fragment>
   );
 }

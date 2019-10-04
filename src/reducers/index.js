@@ -1371,6 +1371,7 @@ export function connectorLicenses(state, { connectorId, take }) {
   const licenseList = {};
 
   licenseList.resources = filteredLicenses || [];
+  licenseList.filtered = (licenseList.resources || []).length;
   licenseList.total = (licenseList.resources || []).length;
   licenseList.count = (licenseList.resources || []).length;
 
@@ -1394,6 +1395,7 @@ export function connectorInstallBase(state, { connectorId, take }) {
   const installBaseList = {};
 
   installBaseList.resources = filteredInstallBase || [];
+  installBaseList.filtered = (installBaseList.resources || []).length;
   installBaseList.total = (installBaseList.resources || []).length;
   installBaseList.count = (installBaseList.resources || []).length;
 
