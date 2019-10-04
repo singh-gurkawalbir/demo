@@ -82,8 +82,8 @@ export default {
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
-        { field: 'application', isNot: [''] },
-        { field: 'application', isNot: ['webhook'] },
+        { field: 'application', isNot: ['', 'webhook'] },
+        { field: 'type', is: ['api'] },
       ],
       allowNew: true,
     },
@@ -95,7 +95,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+      visibleWhen: [{ field: 'application', isNot: [''] }],
     },
     description: {
       id: 'description',
@@ -145,7 +145,6 @@ export default {
       'application',
       'type',
       'connection',
-      // 'webhook.provider',
       'name',
       'description',
       'netsuite.execution.type',

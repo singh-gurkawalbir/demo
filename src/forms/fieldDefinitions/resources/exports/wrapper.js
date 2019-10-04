@@ -1,12 +1,12 @@
 export default {
   'wrapper.function': {
     type: 'text',
-    label: 'Wrapper function',
+    label: 'Function',
     required: true,
   },
   'wrapper.configuration': {
     type: 'text',
-    label: 'Wrapper configuration',
+    label: 'Configuration',
   },
   type: {
     type: 'select',
