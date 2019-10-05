@@ -1,4 +1,5 @@
 import produce from 'immer';
+import moment from 'moment';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -95,12 +96,67 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+      if (resourceType.indexOf('/installBase') >= 0) {
+        const id = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/installBase')
+        );
+        const newCollection =
+          collection && collection.map(c => ({ ...c, _connectorId: id }));
+
+        return produce(state, draft => {
+          draft.connectorInstallBase =
+            draft.connectorInstallBase &&
+            draft.connectorInstallBase.filter(c => c._connectorId !== id);
+          draft.connectorInstallBase = [
+            ...(draft.connectorInstallBase || []),
+            ...(newCollection || []),
+          ];
+        });
+      }
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        const id = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/licenses')
+        );
+        const newCollection =
+          collection &&
+          collection.map(c => ({
+            ...c,
+            _connectorId: id,
+          }));
+
+        return produce(state, draft => {
+          draft.connectorLicenses =
+            draft.connectorLicenses &&
+            draft.connectorLicenses.filter(c => c._connectorId !== id);
+          draft.connectorLicenses = [
+            ...(draft.connectorLicenses || []),
+            ...(newCollection || []),
+          ];
+        });
+      }
+
       return { ...state, [resourceType]: collection || [] };
     }
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
     case actionTypes.RESOURCE.DELETED:
+      if (resourceType.indexOf('/licenses') >= 0) {
+        const connectorId = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/licenses')
+        );
+
+        return produce(state, draft => {
+          draft.connectorLicenses = draft.connectorLicenses.filter(
+            l => l._id !== id || l._connectorId !== connectorId
+          );
+        });
+      }
+
       return {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
@@ -354,6 +410,7 @@ export function resourceDetailsMap(state) {
   return allResources;
 }
 
+// TODO Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {
   if (!state) return false;
   const matchingAgent =
@@ -362,7 +419,7 @@ export function isAgentOnline(state, agentId) {
   return !!(
     matchingAgent &&
     matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+    new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
       process.env.AGENT_STATUS_INTERVAL
   );
 }

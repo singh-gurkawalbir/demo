@@ -1,4 +1,22 @@
+import { adaptorTypeMap } from '../../../utils/resource';
+
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mapping') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'file.lookups'
+      );
+
+      if (lookupField) {
+        return {
+          lookupId: 'file.lookups',
+          lookups: lookupField && lookupField.value,
+        };
+      }
+    }
+
+    return null;
+  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -12,6 +30,12 @@ export default {
     's3.fileKey': { fieldId: 's3.fileKey' },
     file: { formId: 'file' },
     dataMappings: { formId: 'dataMappings' },
+    'file.lookups': { fieldId: 'file.lookups', visible: false },
+    mapping: {
+      fieldId: 'mapping',
+      application: adaptorTypeMap.S3Import,
+      refreshOptionsOnChangesTo: ['file.lookups'],
+    },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
     hooks: { formId: 'hooks' },
@@ -31,6 +55,8 @@ export default {
       's3.fileKey',
       'file',
       'dataMappings',
+      'file.lookups',
+      'mapping',
     ],
     type: 'collapse',
     containers: [

@@ -49,8 +49,7 @@ export default function Uninstall(props) {
     );
   };
 
-  const handleUninstall = e => {
-    e.preventDefault();
+  const handleUninstall = () => {
     confirmDialog({
       title: 'Uninstall',
       message: `Are you sure you want to uninstall`,

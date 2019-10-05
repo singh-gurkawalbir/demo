@@ -94,6 +94,12 @@ describe('installConnector saga', () => {
     expect(saga.next().value).toEqual(
       put(actions.resource.requestCollection('integrations'))
     );
+    expect(saga.next().value).toEqual(
+      put(actions.resource.requestCollection('tiles'))
+    );
+    expect(saga.next().value).toEqual(
+      put(actions.resource.requestCollection('connections'))
+    );
 
     expect(saga.next().done).toEqual(true);
   });

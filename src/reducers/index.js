@@ -110,6 +110,41 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function previewTemplate(state, templateId) {
+  return fromSession.previewTemplate(state && state.session, templateId);
+}
+
+export function marketplaceTemplate(state, templateId) {
+  return fromData.template(state && state.data, templateId);
+}
+
+export function templateSetup(state, templateId) {
+  return fromSession.template(state && state.session, templateId);
+}
+
+export function isAuthorized(state, connectionId) {
+  return fromSession.isAuthorized(state && state.session, connectionId);
+}
+
+export function templateInstallSteps(state, templateId) {
+  const templateInstallSteps = fromSession.templateInstallSteps(
+    state && state.session,
+    templateId
+  );
+
+  return produce(templateInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
+export function templateConnectionMap(state, templateId) {
+  return fromSession.connectionMap(state && state.session, templateId);
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromSession.connectorMetadata(
     state && state.session,
@@ -429,6 +464,44 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(state, options) {
   return fromData.resourceList(state && state.data, options);
+}
+
+export function matchingConnectionList(state, connection = {}) {
+  const preferences = userPreferences(state);
+  const { resources = [] } = resourceList(state, {
+    type: 'connections',
+    sandbox: preferences.environment === 'sandbox',
+  });
+
+  return resources.filter(c => {
+    if (connection.assistant) {
+      return c.assistant === connection.assistant && !c._connectorId;
+    }
+
+    if (['netsuite'].indexOf(connection.type) > -1) {
+      return (
+        c.type === 'netsuite' &&
+        !c._connectorId &&
+        (c.netsuite.account && c.netsuite.environment)
+      );
+    }
+
+    return c.type === connection.type && !c._connectorId;
+  });
+}
+
+export function matchingStackList(state) {
+  const { resources = [] } = resourceList(state, {
+    type: 'stacks',
+  });
+
+  return resources.filter(r => !r._connectorId);
+}
+
+export function filteredResourceList(state, resource, resourceType) {
+  return resourceType === 'connections'
+    ? matchingConnectionList(state, resource)
+    : matchingStackList(state);
 }
 
 export function marketplaceConnectors(state, application, sandbox) {
@@ -1021,7 +1094,6 @@ export function resourceStatus(
 
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
-
   const master = resource(state, resourceType, id);
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
@@ -1359,6 +1431,54 @@ export function accessTokenList(
   tokensList.count = (tokensList.resources || []).length;
 
   return tokensList;
+}
+
+export function connectorLicenses(state, { connectorId, take }) {
+  const licenses = fromData.resourceList(state.data, {
+    type: 'connectorLicenses',
+  });
+  const filteredLicenses = licenses.resources.filter(
+    r => r._connectorId === connectorId
+  );
+  const licenseList = {};
+
+  licenseList.resources = filteredLicenses || [];
+  licenseList.filtered = (licenseList.resources || []).length;
+  licenseList.total = (licenseList.resources || []).length;
+  licenseList.count = (licenseList.resources || []).length;
+
+  if (typeof take !== 'number' || take < 1) {
+    return licenseList;
+  }
+
+  licenseList.resources = licenseList.resources.slice(0, take);
+  licenseList.count = (licenseList.resources || []).length;
+
+  return licenseList;
+}
+
+export function connectorInstallBase(state, { connectorId, take }) {
+  const installBase = fromData.resourceList(state.data, {
+    type: 'connectorInstallBase',
+  });
+  const filteredInstallBase = installBase.resources.filter(
+    r => r._connectorId === connectorId
+  );
+  const installBaseList = {};
+
+  installBaseList.resources = filteredInstallBase || [];
+  installBaseList.filtered = (installBaseList.resources || []).length;
+  installBaseList.total = (installBaseList.resources || []).length;
+  installBaseList.count = (installBaseList.resources || []).length;
+
+  if (typeof take !== 'number' || take < 1) {
+    return installBaseList;
+  }
+
+  installBaseList.resources = installBaseList.resources.slice(0, take);
+  installBaseList.count = (installBaseList.resources || []).length;
+
+  return installBaseList;
 }
 
 export function accessToken(state, id) {

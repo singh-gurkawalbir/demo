@@ -38,11 +38,9 @@ export const getConnectorName = resource => {
   return app.name;
 };
 
-export const formatLastModified = lastModified => {
-  const formatter = (value, unit, suffix) => `${value} ${unit} ${suffix}`;
-
-  return <TimeAgo formatter={formatter} date={lastModified} />;
-};
+export const formatLastModified = lastModified => (
+  <TimeAgo date={lastModified} />
+);
 
 export const onlineStatus = r => (
   <div style={{ display: 'flex', alignItems: 'center' }}>

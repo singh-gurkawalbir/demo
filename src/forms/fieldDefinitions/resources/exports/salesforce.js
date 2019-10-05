@@ -3,6 +3,7 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     omitWhenHidden: true,
     visibleWhen: [
       {
@@ -14,6 +15,10 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     label: 'Execution Type',
+    defaultValue: r =>
+      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query
+        ? 'scheduled'
+        : 'realtime',
     options: [
       {
         items: [
@@ -28,6 +33,8 @@ export default {
     mode: 'sql',
     label: 'SOQL Query',
     omitWhenHidden: true,
+    defaultValue: r =>
+      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
