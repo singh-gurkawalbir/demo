@@ -2,23 +2,26 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'wrapper.unencrypted': { fieldId: 'wrapper.unencrypted' },
-    'wrapper.unencrypteds': { fieldId: 'wrapper.unencrypteds' },
     'wrapper.encrypted': { fieldId: 'wrapper.encrypted' },
-    'wrapper.encrypteds': { fieldId: 'wrapper.encrypteds' },
     'wrapper.pingFunction': { fieldId: 'wrapper.pingFunction' },
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
-    'wrapper.concurrencyLevel': { fieldId: 'wrapper.concurrencyLevel' },
+    wrapperAdvanced: { formId: 'wrapperAdvanced' },
   },
   layout: {
     fields: [
       'name',
       'wrapper.unencrypted',
-      'wrapper.unencrypteds',
       'wrapper.encrypted',
-      'wrapper.encrypteds',
       'wrapper.pingFunction',
       'wrapper._stackId',
-      'wrapper.concurrencyLevel',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['wrapperAdvanced'],
+      },
     ],
   },
 };

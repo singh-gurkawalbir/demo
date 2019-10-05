@@ -379,6 +379,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
   },
   // #endregion rdbms
   // #region rest
@@ -1156,6 +1162,7 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use Passive Mode',
+    defaultValue: true,
   },
   'ftp.entryParser': {
     type: 'select',
@@ -1892,6 +1899,12 @@ export default {
     label: 'Concurrency Level',
     type: 'select',
     defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevel,
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
     options: [
       {
         items: [
@@ -2039,12 +2052,44 @@ export default {
     label: 'Salesforce info',
   },
   'salesforce.concurrencyLevel': {
-    type: 'text',
+    type: 'select',
     label: 'Concurrency Level',
     defaultValue: r => r && r.salesforce && r.salesforce.concurrencyLevel,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+    options: [
+      {
+        items: [
+          { label: '0', value: 0 },
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
       },
     ],
     visibleWhen: [
@@ -2059,55 +2104,98 @@ export default {
   'wrapper.unencrypted': {
     type: 'editor',
     mode: 'json',
-    label: 'Wrapper unencrypted',
+    label: 'Unencrypted',
   },
   'wrapper.encrypted': {
     type: 'editor',
     mode: 'json',
-    label: 'Wrapper encrypted',
+    label: 'Encrypted',
   },
   'wrapper.pingFunction': {
     type: 'text',
-    label: 'Wrapper ping Function',
+    label: 'Ping Function',
   },
   'wrapper._stackId': {
-    type: 'text',
-    label: 'Wrapper _stack Id',
+    label: 'Stack',
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
   },
   'wrapper.concurrencyLevel': {
-    type: 'text',
-    label: 'Wrapper concurrency Level',
+    type: 'select',
+    label: 'Concurrency Level',
+    options: [
+      {
+        items: [
+          { label: '0', value: 0 },
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
       },
     ],
     defaultValue: r => r && r.wrapper && r.wrapper.concurrencyLevel,
   },
   // #endregion wrapper
   // #region mongodb
-  'mongodb.hosts': {
+  'mongodb.host': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Mongodb host',
+    required: true,
+    delimiter: ',',
+    omitWhenValueIs: [''],
+    label: 'Host(s)',
   },
   'mongodb.database': {
     type: 'text',
-    label: 'Mongodb database',
+    required: true,
+    label: 'Database Name',
   },
   'mongodb.username': {
     type: 'text',
-    label: 'Mongodb username',
+    required: true,
+    label: 'Username',
   },
   'mongodb.password': {
     type: 'text',
+    required: true,
     inputType: 'password',
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    label: 'Mongodb password',
+    label: 'Password',
   },
   'mongodb.replicaSet': {
     type: 'text',
