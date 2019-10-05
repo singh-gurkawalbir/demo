@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/actions/Delete';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 
@@ -12,12 +13,16 @@ export default {
       value: r => (r.accepted ? 'Accepted' : 'Pending'),
     },
     {
-      heading: 'Created Date',
+      heading: 'Created on',
       value: r => formatLastModified(r.created),
     },
     {
-      heading: 'Expiration Date',
-      value: r => formatLastModified(r.expires),
+      heading: 'Expires on',
+      value(r) {
+        return (
+          <Typography color="error">{formatLastModified(r.expires)}</Typography>
+        );
+      },
     },
     {
       heading: 'Environment',

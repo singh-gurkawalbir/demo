@@ -98,7 +98,7 @@ export default (state = {}, action) => {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
       if (resourceType.indexOf('/installBase') >= 0) {
         const id = resourceType.substring(
-          resourceType.indexOf('connectors/') + 11,
+          'connectors/'.length,
           resourceType.indexOf('/installBase')
         );
         const newCollection =
@@ -117,7 +117,7 @@ export default (state = {}, action) => {
 
       if (resourceType.indexOf('/licenses') >= 0) {
         const id = resourceType.substring(
-          resourceType.indexOf('connectors/') + 11,
+          'connectors/'.length,
           resourceType.indexOf('/licenses')
         );
         const newCollection =
@@ -146,7 +146,7 @@ export default (state = {}, action) => {
     case actionTypes.RESOURCE.DELETED:
       if (resourceType.indexOf('/licenses') >= 0) {
         const connectorId = resourceType.substring(
-          resourceType.indexOf('connectors/') + 11,
+          'connectors/'.length,
           resourceType.indexOf('/licenses')
         );
 

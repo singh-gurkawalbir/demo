@@ -1,26 +1,28 @@
-import {
-  getResourceLink,
-  formatLastModified,
-} from '../../../components/CeligoTable/util';
+import { Typography } from '@material-ui/core';
+import { formatLastModified } from '../../../components/CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('installBase', r),
+      value: r => r.name,
       orderBy: 'name',
     },
     {
       heading: 'Email',
-      value: r => r.name,
+      value: r => r.email,
     },
     {
       heading: 'Integration ID',
       value: r => r._integrationId,
     },
     {
-      heading: 'Expiration Date',
-      value: r => formatLastModified(r.expires),
+      heading: 'Expires on',
+      value(r) {
+        return (
+          <Typography color="error">{formatLastModified(r.expires)}</Typography>
+        );
+      },
     },
     {
       heading: 'Environment',

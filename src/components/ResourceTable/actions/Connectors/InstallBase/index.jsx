@@ -4,7 +4,7 @@ import Icon from '../../../../icons/HookIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  label: 'InstallBase',
+  label: 'Install Base',
   component: function InstallBase({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/installBase`)}>
