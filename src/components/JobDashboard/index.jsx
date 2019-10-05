@@ -382,7 +382,7 @@ export default function JobDashboard({
           <Typography>{integration.name}</Typography>
           <div>
             <IconTextButton
-              data-test="refresh"
+              data-test="refreshJobs"
               variant="text"
               color="primary"
               onClick={handleRefershJobsClick}>

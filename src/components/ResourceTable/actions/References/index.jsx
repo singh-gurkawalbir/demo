@@ -18,7 +18,7 @@ export default {
           />
         )}
         <IconButton
-          data-test="showReference"
+          data-test="showReferences"
           size="small"
           onClick={() => setShow(true)}>
           <Icon />

@@ -72,7 +72,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button data-test="registerConnection" onClick={handleRegisterClick}>
+        <Button data-test="registerConnections" onClick={handleRegisterClick}>
           Register
         </Button>
       </DialogActions>

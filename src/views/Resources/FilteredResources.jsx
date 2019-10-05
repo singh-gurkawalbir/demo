@@ -77,7 +77,7 @@ class FilteredResources extends Component {
                 render={() => (
                   <Button
                     size="small"
-                    data-test={`addNew${resourceType}`}
+                    data-test={`${resourceType}AddNew`}
                     variant="outlined"
                     color="primary"
                     aria-label="Add"
