@@ -30,7 +30,7 @@ export default {
       fieldId: 'configureTokenRefresh',
       type: 'checkbox',
       label: 'Configure Token Refresh',
-      visibleWhenAll: [{ field: 'rest.tokenLocation', isNot: [''] }],
+      visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
       defaultValue: r => !!(r && r.rest && r.rest.refreshTokenURI),
     },
     refreshTokenHeader: {

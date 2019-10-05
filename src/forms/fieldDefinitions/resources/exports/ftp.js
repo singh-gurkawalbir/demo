@@ -89,7 +89,7 @@ export default {
       },
     ],
   },
-  'ftp.file.type': {
+  'file.type': {
     id: 'file.type',
     type: 'select',
     label: 'File Type',

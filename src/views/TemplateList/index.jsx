@@ -13,6 +13,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateZipDialog from './GenerateZipDialog';
+import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -47,7 +48,7 @@ export default function TemplateList(props) {
           onClose={() => setShowGenerateZipDialog(false)}
         />
       )}
-      <CeligoPageBar title="Templates">
+      <CeligoPageBar title="Templates" infoText={infoText.templates}>
         <div className={classes.actions}>
           <IconTextButton
             data-test="generateTemplateZip"

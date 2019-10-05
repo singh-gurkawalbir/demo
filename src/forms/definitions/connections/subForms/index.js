@@ -7,6 +7,7 @@ import httpAdvanced from './httpAdvanced';
 import restCookie from './restCookie';
 import rdbmsFields from './rdbmsFields';
 import rdbmsAdvanced from './rdbmsAdvanced';
+import wrapperAdvanced from './wrapperAdvanced';
 
 export default {
   httpBasic,
@@ -18,4 +19,5 @@ export default {
   restCookie,
   rdbmsFields,
   rdbmsAdvanced,
+  wrapperAdvanced,
 };

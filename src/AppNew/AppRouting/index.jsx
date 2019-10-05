@@ -47,6 +47,14 @@ const AccessTokenList = loadable(() =>
     /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
   )
 );
+const ConnectorInstallBase = loadable(() =>
+  import(
+    /* webpackChunkName: 'InstallBase' */ '../../views/Connector/InstallBase'
+  )
+);
+const ConnectorLicenses = loadable(() =>
+  import(/* webpackChunkName: 'InstallBase' */ '../../views/Connector/Licenses')
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -65,6 +73,14 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrations/:integrationId/settings"
           component={IntegrationSettings}
+        />
+        <Route
+          path="/pg/connectors/:connectorId/licenses"
+          component={ConnectorLicenses}
+        />
+        <Route
+          path="/pg/connectors/:connectorId/installBase"
+          component={ConnectorInstallBase}
         />
         <Route path="/pg/connectors" component={IntegrationAppsRouter} />
         <Route path="/pg/marketplace" component={MarketplaceRouter} />

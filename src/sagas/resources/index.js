@@ -180,13 +180,15 @@ export function* deleteResource({ resourceType, id }) {
   const path = `/${resourceType}/${id}`;
 
   try {
-    const resourceReferences = yield call(requestReferences, {
-      resourceType,
-      id,
-    });
+    if (resourceType.indexOf('/licenses') === -1) {
+      const resourceReferences = yield call(requestReferences, {
+        resourceType,
+        id,
+      });
 
-    if (resourceReferences && Object.keys(resourceReferences).length > 0) {
-      return;
+      if (resourceReferences && Object.keys(resourceReferences).length > 0) {
+        return;
+      }
     }
 
     yield call(apiCallWithRetry, {
