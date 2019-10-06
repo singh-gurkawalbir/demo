@@ -50,6 +50,7 @@ export default function AccessTokenList(props) {
         <div className={classes.actions}>
           <SearchInput variant="light" onChange={handleKeywordChange} />
           <IconTextButton
+            data-test="newAccessToken"
             component={Link}
             to={`${
               location.pathname

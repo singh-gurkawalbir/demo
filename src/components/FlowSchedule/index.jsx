@@ -98,6 +98,7 @@ export default function FlowSchedule(props) {
   return (
     <Dialog open maxWidth={false}>
       <IconButton
+        data-test="closeFlowSchedule"
         aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}>

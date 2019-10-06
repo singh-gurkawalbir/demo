@@ -52,6 +52,7 @@ function ResourceList(props) {
             defaultFilter={defaultFilter}
           />
           <IconTextButton
+            data-test="addNewResource"
             component={Link}
             to={`${
               location.pathname

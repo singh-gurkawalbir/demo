@@ -72,6 +72,7 @@ export default function ProfileMenuButton() {
   return (
     <Fragment>
       <IconButton
+        data-test="profileMenu"
         size="small"
         className={classes.avatarButton}
         aria-owns={open ? 'profileOptions' : null}
@@ -105,6 +106,7 @@ export default function ProfileMenuButton() {
         </Grid>
         <div className={classes.actions}>
           <Button
+            data-test="myAccountOrMyProfile"
             onClick={handleClose}
             variant="contained"
             color="secondary"
@@ -118,7 +120,11 @@ export default function ProfileMenuButton() {
               ? 'My Account'
               : 'My Profile'}
           </Button>
-          <Button onClick={handleUserLogout} variant="text" color="primary">
+          <Button
+            data-test="signOut"
+            onClick={handleUserLogout}
+            variant="text"
+            color="primary">
             Sign Out
           </Button>
         </div>

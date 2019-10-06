@@ -327,7 +327,10 @@ export default function JobActionsMenu({
           </MenuItem>
         ))}
       </Menu>
-      <IconButton onClick={handleMenuClick} disabled={menuOptions.length === 0}>
+      <IconButton
+        data-test="moreJobActionsMenu"
+        onClick={handleMenuClick}
+        disabled={menuOptions.length === 0}>
         <MoreVertIcon />
       </IconButton>
     </Fragment>

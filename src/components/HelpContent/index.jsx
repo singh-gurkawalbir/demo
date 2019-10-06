@@ -75,10 +75,16 @@ function HelpContent(props) {
           Was this helpful?
         </Typography>
         <div className={classes.actionButtons}>
-          <Button variant="outlined" color="secondary">
+          <Button
+            data-test="yesContentHelpful"
+            variant="outlined"
+            color="secondary">
             Yes
           </Button>
-          <Button variant="outlined" color="secondary">
+          <Button
+            data-test="noContentHelpful"
+            variant="outlined"
+            color="secondary">
             No
           </Button>
         </div>

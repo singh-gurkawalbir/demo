@@ -75,7 +75,11 @@ export default function TextToggle({
       value={value}
       onChange={handleChange}>
       {options.map(item => (
-        <ToggleButton key={item.value} value={item.value} disableRipple>
+        <ToggleButton
+          data-test={item.label}
+          key={item.value}
+          value={item.value}
+          disableRipple>
           <Typography className={classes.item} variant="body2">
             {item.label}
           </Typography>

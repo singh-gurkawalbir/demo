@@ -85,6 +85,7 @@ function TransferList(props) {
                 key={value}
                 role="listitem"
                 button
+                data-test="selectListItem"
                 onClick={handleToggle(value)}>
                 <ListItemIcon>
                   <Checkbox
@@ -113,6 +114,7 @@ function TransferList(props) {
             size="small"
             className={classes.button}
             onClick={handleAllRight}
+            data-test="movaAllRight"
             disabled={left.length === 0}
             aria-label="move all right">
             ≫
@@ -121,6 +123,7 @@ function TransferList(props) {
             variant="outlined"
             size="small"
             className={classes.button}
+            data-test="moveSelectedRight"
             onClick={handleCheckedRight}
             disabled={leftChecked.length === 0}
             aria-label="move selected right">
@@ -129,6 +132,7 @@ function TransferList(props) {
           <Button
             variant="outlined"
             size="small"
+            data-test="moveSelectedLeft"
             className={classes.button}
             onClick={handleCheckedLeft}
             disabled={rightChecked.length === 0}
@@ -138,6 +142,7 @@ function TransferList(props) {
           <Button
             variant="outlined"
             size="small"
+            data-test="moveAllLeft"
             className={classes.button}
             onClick={handleAllLeft}
             disabled={right.length === 0}

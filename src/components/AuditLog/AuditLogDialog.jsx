@@ -36,6 +36,7 @@ export default class AuditLogDialog extends Component {
           <Typography variant="h6">{title}</Typography>
           {onClose ? (
             <IconButton
+              data-test="closeAuditDialog"
               aria-label="Close"
               className={classes.closeButton}
               onClick={onClose}>

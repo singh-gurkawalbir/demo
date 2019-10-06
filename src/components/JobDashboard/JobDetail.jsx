@@ -170,7 +170,9 @@ function JobDetail({
         </TableCell>
         <TableCell>
           {job.uiStatus !== JOB_STATUS.QUEUED && (
-            <IconButton onClick={handleExpandCollapseClick}>
+            <IconButton
+              data-test="toggleJobDetail"
+              onClick={handleExpandCollapseClick}>
               {expanded ? <ExpandMore /> : <ChevronRight />}
             </IconButton>
           )}
@@ -190,6 +192,7 @@ function JobDetail({
           }}>
           {showViewErrorsLink && job.numError > 0 ? (
             <Button
+              data-test="viewJobErrors"
               variant="text"
               color="primary"
               onClick={() => {
@@ -211,6 +214,7 @@ function JobDetail({
           {showViewErrorsLink && job.numResolved > 0 ? (
             <Button
               variant="text"
+              data-test="viewResolvedErroredJobs"
               color="primary"
               onClick={() => {
                 handleViewErrorsClick(true);

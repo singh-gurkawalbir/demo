@@ -20,6 +20,7 @@ function AppErroredModal({ history }) {
         To resume working, please reload.
       </Typography>
       <Button
+        data-test="reload"
         variant="contained"
         color="primary"
         onClick={() => {

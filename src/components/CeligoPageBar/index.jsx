@@ -72,6 +72,7 @@ export default function CeligoPageBar({ children, title, infoText, subtitle }) {
                   {infoText && (
                     <Fragment>
                       <IconButton
+                        data-test="openPageInfo"
                         size="small"
                         onClick={handleInfoOpen}
                         aria-owns={!anchorEl ? null : 'pageInfo'}

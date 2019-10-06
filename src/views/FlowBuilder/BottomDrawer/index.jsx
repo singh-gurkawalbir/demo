@@ -112,10 +112,14 @@ export default function BottomDrawer({ size, setSize }) {
           <Tab label="Run Dashboard" {...a11yProps(1)} />
           <Tab label="Audit Log" {...a11yProps(2)} />
         </Tabs>
-        <IconButton onClick={handleSizeChange(1)}>
+        <IconButton
+          data-test="increaseFlowBuilderBottomDrawer"
+          onClick={handleSizeChange(1)}>
           <ArrowUpIcon />
         </IconButton>
-        <IconButton onClick={handleSizeChange(-1)}>
+        <IconButton
+          data-test="decreaseFlowBuilderBottomDrawer"
+          onClick={handleSizeChange(-1)}>
           <ArrowDownIcon />
         </IconButton>
       </div>

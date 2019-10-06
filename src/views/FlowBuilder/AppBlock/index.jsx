@@ -78,6 +78,7 @@ function AppBlock({
           className={classes.resourceButton}
           variant="contained"
           color="primary"
+          data-test={block.label}
           onClick={onBlockClick}>
           <block.Icon />
           {block.label}

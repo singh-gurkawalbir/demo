@@ -327,7 +327,9 @@ function FlowBuilder(props) {
             <div className={classes.generatorRoot}>
               <Typography className={classes.title} variant="h6">
                 SOURCE APPLICATIONS
-                <IconButton onClick={handleAddGenerator}>
+                <IconButton
+                  data-test="addGenerator"
+                  onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -351,7 +353,9 @@ function FlowBuilder(props) {
             <div className={classes.processorRoot}>
               <Typography className={classes.title} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
-                <IconButton onClick={handleAddProcessor}>
+                <IconButton
+                  data-test="addProcessor"
+                  onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -380,13 +384,17 @@ function FlowBuilder(props) {
               {patch && patch.length > 0 && (
                 <Fragment>
                   <Button
+                    data-test="commitFlowPatches"
                     variant="outlined"
                     color="primary"
                     onClick={commitFlowPatch}>
                     Commit
                   </Button>
                   &nbsp;
-                  <Button variant="outlined" onClick={undoFlowPatch}>
+                  <Button
+                    data-test="undoFlowPatches"
+                    variant="outlined"
+                    onClick={undoFlowPatch}>
                     Undo {patch.length} change(s)
                   </Button>
                 </Fragment>

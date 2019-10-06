@@ -84,6 +84,7 @@ export default function EditFieldButton(props) {
         {popupState => (
           <Fragment>
             <Button
+              data-test="hooks"
               size="small"
               color="primary"
               className={className}
@@ -92,6 +93,7 @@ export default function EditFieldButton(props) {
             </Button>
             <Menu {...bindMenu(popupState)}>
               <MenuItem
+                data-test="init"
                 onClick={() => {
                   popupState.close();
                   handleEditorToggle('init');
@@ -107,6 +109,7 @@ export default function EditFieldButton(props) {
                   Options Handler
                 </MenuItem> */}
               <MenuItem
+                data-test="presubmit"
                 onClick={() => {
                   popupState.close();
                   handleEditorToggle('submit');

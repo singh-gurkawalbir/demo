@@ -41,7 +41,10 @@ export default {
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={handleClick}>
+        <IconButton
+          data-test="deleteResource"
+          size="small"
+          onClick={handleClick}>
           <Icon />
         </IconButton>
         {showRef && resourceReferences && resourceReferences.length > 0 && (

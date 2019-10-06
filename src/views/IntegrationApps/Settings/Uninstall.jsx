@@ -74,6 +74,7 @@ export default function Uninstall(props) {
         certain.
       </Typography>
       <Button
+        data-test="uninstallConnector"
         variant="outlined"
         color="secondary"
         className={classes.button}

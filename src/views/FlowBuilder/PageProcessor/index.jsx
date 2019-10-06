@@ -210,9 +210,9 @@ const PageProcessor = ({
             {!isLast && !pending && (
               <Fragment>
                 <IconButton>
-                  <MapDataIcon />
+                  <MapDataIcon data-test="mapData" />
                 </IconButton>
-                <IconButton>
+                <IconButton data-test="filter">
                   <FilterIcon />
                 </IconButton>
               </Fragment>
@@ -223,15 +223,15 @@ const PageProcessor = ({
             {!pending && (
               <Fragment>
                 <IconButton>
-                  <MapDataIcon />
+                  <MapDataIcon data-test="mapData" />
                 </IconButton>
 
                 <IconButton>
-                  <TransformIcon />
+                  <TransformIcon data-test="transform" />
                 </IconButton>
 
                 <IconButton>
-                  <HookIcon />
+                  <HookIcon data-test="hook" />
                 </IconButton>
               </Fragment>
             )}
@@ -241,7 +241,7 @@ const PageProcessor = ({
             {!pending && (
               <Fragment>
                 <IconButton>
-                  <FilterIcon />
+                  <FilterIcon data-test="filter" />
                 </IconButton>
               </Fragment>
             )}

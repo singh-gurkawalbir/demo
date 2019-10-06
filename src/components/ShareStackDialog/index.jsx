@@ -58,6 +58,7 @@ function StackShareDialog(props) {
   return (
     <Dialog open maxWidth={false}>
       <IconButton
+        data-test="closeStackShareDialog"
         aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}>
@@ -77,6 +78,7 @@ function StackShareDialog(props) {
             margin="normal"
           />
           <Button
+            data-test="inviteUserAccessToStack"
             variant="contained"
             color="primary"
             type="submit"

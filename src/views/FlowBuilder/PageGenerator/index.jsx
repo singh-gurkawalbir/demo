@@ -174,12 +174,12 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
           {!pending && (
             <Fragment>
               <IconButton>
-                <TransformIcon />
+                <TransformIcon data-test="transform" />
               </IconButton>
-              <IconButton>
+              <IconButton data-test="filter">
                 <FilterIcon />
               </IconButton>
-              <IconButton>
+              <IconButton data-test="hooks">
                 <HookIcon />
               </IconButton>
             </Fragment>
@@ -188,7 +188,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
         <BottomActions>
           {!pending && (
             <IconButton>
-              <CalendarIcon />
+              <CalendarIcon data-test="calendar" />
             </IconButton>
           )}
         </BottomActions>

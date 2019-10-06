@@ -17,7 +17,10 @@ export default {
             onClose={() => setShow(false)}
           />
         )}
-        <IconButton size="small" onClick={() => setShow(true)}>
+        <IconButton
+          data-test="showAuditLog"
+          size="small"
+          onClick={() => setShow(true)}>
           <AuditLogIcon />
         </IconButton>
       </Fragment>

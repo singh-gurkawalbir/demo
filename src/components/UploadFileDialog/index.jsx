@@ -46,6 +46,7 @@ export default function UploadFileDialog(props) {
       <IconButton
         aria-label="Close"
         onClick={onClose}
+        data-test="showUploadFileDialogModal"
         className={classes.closeButton}>
         <CloseIcon />
       </IconButton>
@@ -56,12 +57,14 @@ export default function UploadFileDialog(props) {
       <DialogContent>
         <label htmlFor="fileUpload">
           <Button
+            data-test="selectFile"
             variant="contained"
             component="span"
             className={classes.uploadButton}>
             Select {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
           </Button>
           <input
+            data-test="uploadFile"
             id="fileUpload"
             type="file"
             accept={fileType}
