@@ -45,7 +45,10 @@ export default function JobRetriesDialog({
           Success: {job.numSuccess} Ignore: {job.numIgnore} Error:{' '}
           {job.numError}
         </Typography>
-        <IconButton className={classes.closeButton} onClick={onCloseClick}>
+        <IconButton
+          className={classes.closeButton}
+          data-test="closeJobRetriesDialog"
+          onClick={onCloseClick}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

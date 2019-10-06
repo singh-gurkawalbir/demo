@@ -35,7 +35,10 @@ export default {
             }
           />
         )}
-        <IconButton size="small" onClick={() => setShow(true)}>
+        <IconButton
+          data-test="showStackShares"
+          size="small"
+          onClick={() => setShow(true)}>
           <Icon />
         </IconButton>
       </Fragment>

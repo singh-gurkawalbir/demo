@@ -23,7 +23,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleTogglePublishClick}>
+      <IconButton
+        data-test="togglePublish"
+        size="small"
+        onClick={handleTogglePublishClick}>
         {resource.published ? <UnpublishIcon /> : <PublishIcon />}
       </IconButton>
     );

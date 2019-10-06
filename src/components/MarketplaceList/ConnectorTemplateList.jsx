@@ -90,6 +90,7 @@ export default function ConnectorTemplateList(props) {
             <CardActions className={classes.cardAction}>
               {connector.canInstall ? (
                 <Button
+                  data-test="installConnector"
                   to={getRoutePath('/')}
                   component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
@@ -99,6 +100,7 @@ export default function ConnectorTemplateList(props) {
                 </Button>
               ) : (
                 <Button
+                  data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
                   variant="text"
                   color="primary">
@@ -118,6 +120,7 @@ export default function ConnectorTemplateList(props) {
             />
             <CardActions className={classes.cardAction}>
               <NavLink
+                data-test="installTemplate"
                 key={template._id}
                 to={getRoutePath(
                   `/marketplace/templates/${template._id}/preview`

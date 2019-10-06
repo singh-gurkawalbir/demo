@@ -37,6 +37,7 @@ export default function MappingDialog({ onClose, resource }) {
   return (
     <Dialog open maxWidth={false}>
       <IconButton
+        data-test="closeMappingDialog"
         aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}>

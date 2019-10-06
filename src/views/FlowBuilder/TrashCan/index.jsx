@@ -48,6 +48,7 @@ export default function TrashCan({ className, onDrop, ...rest }) {
     <Tooltip title="Delete applications by dragging them here" placement="top">
       <IconButton
         aria-label="delete"
+        data-test="deleteApplication"
         ref={ref}
         {...rest}
         className={clsx(classes.button, className, {

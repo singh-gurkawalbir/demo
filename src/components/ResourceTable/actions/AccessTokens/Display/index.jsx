@@ -65,13 +65,16 @@ export default function Display({ accessToken }) {
                         variant: 'success',
                       })
                     }>
-                    <Button>Click to Copy</Button>
+                    <Button data-test="copyTokenToClipboard">
+                      Click to Copy
+                    </Button>
                   </CopyToClipboard>
                 </Fragment>
               )}
               {!token &&
                 (tokenStatus || (
                   <Button
+                    data-test="displayTokenStatus"
                     onClick={() => {
                       handleDisplayClick('display');
                     }}>

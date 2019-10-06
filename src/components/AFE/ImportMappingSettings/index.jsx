@@ -63,12 +63,15 @@ export default function ImportMappingSettings(props) {
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <Button
+            data-test="cancelMappingSettings"
             onClick={() => {
               onClose(false);
             }}>
             Cancel
           </Button>
-          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+          <DynaSubmit data-test="saveMappingSettings" onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
         </DynaForm>
       </DialogContent>
     </Dialog>

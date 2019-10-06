@@ -12,7 +12,7 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleRunFlowClick}>
+      <IconButton data-test="runFlow" size="small" onClick={handleRunFlowClick}>
         <RunIcon />
       </IconButton>
     );

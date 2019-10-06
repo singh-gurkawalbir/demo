@@ -267,6 +267,7 @@ function JobErrorTable({
       ) : (
         <Fragment>
           <Button
+            data-test="retryErroredJobs"
             variant="contained"
             color="primary"
             onClick={handleRetryClick}
@@ -276,6 +277,7 @@ function JobErrorTable({
               : 'Retry All'}
           </Button>
           <Button
+            data-test="markResolvedJobs"
             variant="contained"
             color="primary"
             onClick={handleResolveClick}
@@ -285,12 +287,16 @@ function JobErrorTable({
               : 'Mark Resolved'}
           </Button>
           <Button
+            data-test="downloadAllErrors"
             variant="contained"
             color="primary"
             onClick={handleDownloadAllErrorsClick}>
             Download All Errors
           </Button>
-          <Button variant="contained" color="primary">
+          <Button
+            data-test="uploadProcessedErrors"
+            variant="contained"
+            color="primary">
             Upload Processed Errors
           </Button>
 
@@ -334,6 +340,7 @@ function JobErrorTable({
                       r.similarErrors &&
                       r.similarErrors.length > 0 && (
                         <IconButton
+                          data-test="expandJobsErrors"
                           onClick={() => {
                             handleExpandCollapseClick(r._id);
                           }}>
@@ -384,6 +391,7 @@ function JobErrorTable({
                             r.retryObject &&
                             r.retryObject.isDataEditable && (
                               <IconButton
+                                data-test="editRetryData"
                                 size="small"
                                 onClick={() => {
                                   handleEditRetryDataClick(r._retryId);

@@ -35,6 +35,7 @@ export default class DiffDialog extends Component {
           <Typography>{`Field: ${auditLog.fieldChange.fieldPath}`}</Typography>
           <IconButton
             aria-label="Close"
+            data-test="closeDiffDialog"
             className={classes.closeButton}
             onClick={onCancelClick}>
             <CloseIcon />

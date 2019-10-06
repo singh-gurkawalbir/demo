@@ -47,18 +47,24 @@ export default function AgentToken({ agentId }) {
       </Typography>
       {accessToken && (
         <IconButton
-          title="Copy ot clipboard"
+          data-test="copyToClipboard"
+          title="Copy to clipboard"
           onClick={copyToClipboard(accessToken)}
           size="small">
           <CopyIcon />
         </IconButton>
       )}
       {!accessToken && (
-        <IconButton title="View Token" onClick={displayAgentToken} size="small">
+        <IconButton
+          data-test="displayAgentToken"
+          title="View Token"
+          onClick={displayAgentToken}
+          size="small">
           <ShowContentIcon />
         </IconButton>
       )}
       <IconButton
+        data-test="regenerateAgentToken"
         title="Re-generate Token"
         onClick={changeAgentToken}
         size="small">

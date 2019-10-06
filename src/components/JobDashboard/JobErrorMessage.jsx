@@ -42,6 +42,7 @@ export default function JobErrorMessage({
       <div>
         {exportRecordLink && (
           <Button
+            data-test="viewExportRecord"
             variant="text"
             onClick={() => {
               handleRecordLinkClick(exportRecordLink);
@@ -52,6 +53,7 @@ export default function JobErrorMessage({
         {exportRecordText}
         {importRecordLink && (
           <Button
+            data-test="viewImportRecord"
             variant="text"
             onClick={() => {
               handleRecordLinkClick(importRecordLink);

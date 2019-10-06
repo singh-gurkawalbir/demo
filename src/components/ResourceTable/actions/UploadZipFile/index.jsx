@@ -27,7 +27,10 @@ export default {
             resourceId={resource._id}
           />
         )}
-        <IconButton size="small" onClick={handleUploadZipFileClick}>
+        <IconButton
+          data-test="toggleUploadZipFileModal"
+          size="small"
+          onClick={handleUploadZipFileClick}>
           <UploadIcon />
         </IconButton>
       </Fragment>

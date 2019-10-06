@@ -56,6 +56,7 @@ export default function DynaKeyWithAction(props) {
               <IconButton
                 key="Edit"
                 aria-label="Edit"
+                data-test="edit"
                 color="inherit"
                 onClick={() => onEditClick(r)}>
                 <EditOutlinedIcon />
@@ -64,6 +65,7 @@ export default function DynaKeyWithAction(props) {
 
             {onDeleteClick && (
               <IconButton
+                data-test="delete"
                 key="Delete"
                 aria-label="Delete"
                 color="inherit"
