@@ -17,7 +17,11 @@ const mapDispatchToProps = dispatch => ({
 const LinearInDertiminate = props => props.show && <LinearProgress />;
 const Dismiss = props =>
   props.show && (
-    <Button variant="contained" color="primary" onClick={props.onClick}>
+    <Button
+      data-test="dismissNetworkSnackbar"
+      variant="contained"
+      color="primary"
+      onClick={props.onClick}>
       Dismiss
     </Button>
   );

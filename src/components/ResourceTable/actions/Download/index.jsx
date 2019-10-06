@@ -10,6 +10,7 @@ export default {
 
     return (
       <IconButton
+        data-test="downloadResourceFile"
         size="small"
         onClick={() => {
           dispatch(actions.resource.downloadFile(resource._id, resourceType));

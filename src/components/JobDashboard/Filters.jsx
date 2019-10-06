@@ -102,6 +102,7 @@ function Filters({
   return (
     <Fragment>
       <Button
+        data-test="retryAllJobs"
         variant="contained"
         color="primary"
         onClick={handleRetryAllJobsClick}
@@ -109,6 +110,7 @@ function Filters({
         Retry All Jobs
       </Button>
       <Button
+        data-test="retrySelectedJobs"
         variant="contained"
         color="primary"
         onClick={handleRetrySelectedJobsClick}
@@ -116,6 +118,7 @@ function Filters({
         Retry Selected {numJobsSelected} Jobs
       </Button>
       <Button
+        data-test="resolveAllJobs"
         variant="contained"
         color="primary"
         onClick={handleResolveAllJobsClick}
@@ -123,6 +126,7 @@ function Filters({
         Resolve All Jobs
       </Button>
       <Button
+        data-test="resolveSelectedJobs"
         variant="contained"
         color="primary"
         onClick={handleResolveSelectedJobsClick}

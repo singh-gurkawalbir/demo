@@ -96,6 +96,7 @@ class ProfileMenu extends Component {
     return (
       <Fragment>
         <IconButton
+          data-test="profileMenu"
           className={classes.avatarButton}
           aria-owns={open ? 'profileOptions' : null}
           aria-haspopup="true"
@@ -143,6 +144,7 @@ class ProfileMenu extends Component {
             </FormControl>
           </div>
           <Button
+            data-test="myAccountOrMyProfile"
             onClick={this.handleClose}
             variant="contained"
             color="primary"
@@ -158,6 +160,7 @@ class ProfileMenu extends Component {
               : 'My Profile'}
           </Button>
           <Button
+            data-test="signOut"
             onClick={handleUserLogout}
             variant="contained"
             color="primary"

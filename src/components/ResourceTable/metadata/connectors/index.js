@@ -1,6 +1,8 @@
 import Link from '@material-ui/core/Link';
 import Delete from '../../actions/Delete';
 import TogglePublish from '../../actions/TogglePublish';
+import InstallBase from '../../actions/Connectors/InstallBase';
+import Licenses from '../../actions/Connectors/Licenses';
 import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
 
 export default {
@@ -40,5 +42,5 @@ export default {
       value: r => (r.published ? 'Yes' : 'No'),
     },
   ],
-  rowActions: [TogglePublish, Delete],
+  rowActions: [InstallBase, Licenses, TogglePublish, Delete],
 };

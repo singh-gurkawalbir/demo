@@ -35,7 +35,9 @@ function ShareStackUserTable(props) {
             <TableCell>Currently Shared With</TableCell>
             <TableCell>
               Status
-              <IconButton onClick={handleRefreshClick}>
+              <IconButton
+                data-test="retrieveStackShares"
+                onClick={handleRefreshClick}>
                 <RefreshIcon />
               </IconButton>
             </TableCell>

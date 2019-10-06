@@ -63,6 +63,7 @@ export default function Flows(props) {
       <LoadResources required resources="flows, connections, exports, imports">
         <div className={classes.actions}>
           <Button
+            data-test="createFlow"
             className={classes.registerButton}
             component={Link}
             variant="contained"
@@ -71,6 +72,7 @@ export default function Flows(props) {
             Create Flow
           </Button>
           <Button
+            data-test="loadData"
             className={classes.registerButton}
             variant="contained"
             color="secondary"
@@ -80,6 +82,7 @@ export default function Flows(props) {
           </Button>
           {integrationId && integrationId !== 'none' && (
             <Button
+              data-test="attachFlows"
               className={classes.registerButton}
               variant="contained"
               color="secondary"

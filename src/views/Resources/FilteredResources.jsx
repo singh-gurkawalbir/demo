@@ -77,6 +77,7 @@ class FilteredResources extends Component {
                 render={() => (
                   <Button
                     size="small"
+                    data-test={`${resourceType}AddNew`}
                     variant="outlined"
                     color="primary"
                     aria-label="Add"
@@ -97,6 +98,7 @@ class FilteredResources extends Component {
               className={classes.listItem}
               button
               key={r._id}
+              data-test={`edit${r._id}`}
               component={Link}
               to={`/pg/resources/${resourceType}/edit/${r._id}`}>
               <ListItemAvatar>
@@ -125,6 +127,7 @@ class FilteredResources extends Component {
 
           {list.filtered > list.count && (
             <Button
+              data-test="showMoreResults"
               onClick={handleMore(list.count + 2)}
               size="small"
               variant="text">

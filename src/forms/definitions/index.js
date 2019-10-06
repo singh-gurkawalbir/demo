@@ -7,6 +7,7 @@ import agents from './agents';
 import connectors from './connectors';
 import stacks from './stacks';
 import templates from './templates';
+import pageProcessor from './pageProcessor';
 import accesstokens from './accesstokens';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   connectors,
   templates,
   stacks,
+  pageProcessor,
   accesstokens,
 };

@@ -40,7 +40,7 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
-    defaultValue: r => (r && r.http && r.http.method) || '',
+    defaultValue: r => r && r.http && r.http.method,
     required: true,
     options: [
       {
@@ -225,7 +225,7 @@ export default {
   'http.paging.lastPageValues': {
     type: 'text',
     label: 'Last Page Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
@@ -259,8 +259,9 @@ export default {
   },
   'http.response.successValues': {
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Success Values',
+    omitWhenValueIs: [''],
   },
   'http.response.errorPath': {
     type: 'text',

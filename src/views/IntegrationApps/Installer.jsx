@@ -15,7 +15,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import { confirmDialog } from '../../components/ConfirmDialog';
 
@@ -195,7 +195,7 @@ export default function ConnectorInstallation(props) {
     <LoadResources required resources="connections,integrations">
       {selectedConnectionId && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
+          resourceId={selectedConnectionId}
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
@@ -204,7 +204,10 @@ export default function ConnectorInstallation(props) {
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
             <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
+              <IconButton
+                data-test="back"
+                onClick={handleBackClick}
+                size="medium">
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>

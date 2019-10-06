@@ -10,10 +10,12 @@ import rest from './rest';
 import s3 from './s3';
 import salesforce from './salesforce';
 import wrapper from './wrapper';
+import webhook from './webhook';
 import custom from './custom';
 
 const allFieldDefinitions = {
   ...as2,
+  ...webhook,
   ...file,
   ...ftp,
   ...http,

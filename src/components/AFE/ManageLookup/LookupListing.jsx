@@ -34,7 +34,9 @@ export default function LookupListing(props) {
 
   return (
     <DynaForm key={key} fieldMeta={lookuplistingFieldMeta}>
-      <Button onClick={onCancel}>Close</Button>
+      <Button data-test="closeLookupListing" onClick={onCancel}>
+        Close
+      </Button>
     </DynaForm>
   );
 }

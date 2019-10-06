@@ -78,6 +78,7 @@ class TitleBar extends Component {
           />
         </div>
         <Button
+          data-test="createNewResource"
           component={Link}
           // className={classes.link}
           to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>

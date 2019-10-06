@@ -44,7 +44,7 @@ const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon'
 const LayoutTriVerticalIcon = require('../../src/components/icons/LayoutTriVerticalIcon').default;
 const LayoutLgLeftSmrightIcon = require('../../src/components/icons/LayoutLgLeftSmrightIcon').default;
 const LayoutLgTopSmBottomIcon = require('../../src/components/icons/LayoutLgTopSmBottomIcon').default;
-const ListnerIcon = require('../../src/components/icons/ListnerIcon').default;
+const ListenerIcon = require('../../src/components/icons/ListenerIcon').default;
 const LookUpIcon = require('../../src/components/icons/LookUpIcon').default;
 const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
@@ -259,7 +259,7 @@ const icon = {
       <p>KnowledgeBase</p>
     </div>
      <div style={wrapper}>
-      <ListnerIcon style={icon} />
+      <ListenerIcon style={icon} />
       <p>Listner (FB)</p>
     </div>
     <div style={wrapper}>

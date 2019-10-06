@@ -117,7 +117,10 @@ function JobErrorDialog({
         <Typography>
           {`${integrationName} > ${flowJob && flowJob.name}`}
         </Typography>
-        <IconButton className={classes.closeButton} onClick={handleCloseClick}>
+        <IconButton
+          data-test="closeJobErrorDialog"
+          className={classes.closeButton}
+          onClick={handleCloseClick}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

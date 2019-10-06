@@ -46,6 +46,7 @@ export default class ConfirmDialog extends React.Component {
         <DialogActions>
           {buttons.map(button => (
             <Button
+              data-test={button.label}
               key={button.label}
               color={button.color || 'primary'}
               onClick={() => this.handleButtonClick(button)}>

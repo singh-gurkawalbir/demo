@@ -147,6 +147,7 @@ class ProfilesComponent extends Component {
           />
           <div>
             <Button
+              data-test="editEmail"
               color="primary"
               variant="contained"
               className={classes.editEmailButton}
@@ -165,6 +166,7 @@ class ProfilesComponent extends Component {
             <InputLabel>
               Edit Password:
               <Button
+                data-test="editPassword"
                 color="primary"
                 variant="contained"
                 style={{ marginLeft: '10px' }}
@@ -244,6 +246,7 @@ class ProfilesComponent extends Component {
         <Divider />
         <br />
         <Button
+          data-test="saveProfile"
           variant="contained"
           color="secondary"
           onClick={this.handleOnSubmit}
