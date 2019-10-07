@@ -12,9 +12,9 @@ const mapStateToProps = state => {
   };
 };
 
-@withStyles(theme => ({
+@withStyles(() => ({
   permissionErrors: {
-    color: theme.palette.error.contrastText,
+    color: 'red', // TODO Azhar theme.palette.error.contrastText,
   },
 }))
 class CheckPermissions extends Component {

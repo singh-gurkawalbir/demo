@@ -355,10 +355,14 @@ export function permissions(
   ];
   const permissions = {};
 
+  console.log('permissions F');
+
   allResourceTypes.forEach(resourceType => {
     permissions[resourceType] = {};
   });
   const userAccessLevel = accessLevel(state, accountId);
+
+  console.log(`permissions F1 ${userAccessLevel}`);
 
   if (!userAccessLevel) {
     return Object.freeze(permissions);
@@ -375,8 +379,6 @@ export function permissions(
     'templates',
     'transfers',
     'users',
-    'exports',
-    'imports',
   ];
 
   if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {

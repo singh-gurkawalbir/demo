@@ -40,6 +40,8 @@ function ResourceList(props) {
       ...{ ...defaultFilter, ...filter },
     })
   );
+
+  console.log(`list ==> ${JSON.stringify(list)}`);
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
 
   return (

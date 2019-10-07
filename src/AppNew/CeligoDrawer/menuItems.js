@@ -19,8 +19,6 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import TrashIcon from '../../components/icons/TrashIcon';
 
 export default function menuItems(userProfile, permissions) {
-  console.log(`userProfile --- ${JSON.stringify(userProfile)}`);
-  console.log(`permissions --- ${JSON.stringify(permissions)}`);
   let items = [
     {
       label: 'Home',
@@ -93,6 +91,11 @@ export default function menuItems(userProfile, permissions) {
       permissions.accessLevel === 'tile')
   ) {
     items = items.filter(i => i.label !== 'Resources');
+    const toolsItems = items.find(i => i.label === 'Tools');
+
+    toolsItems.children = toolsItems.children.filter(
+      i => !(i.label === 'Recycle bin')
+    );
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 

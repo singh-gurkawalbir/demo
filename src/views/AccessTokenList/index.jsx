@@ -14,6 +14,8 @@ import SearchInput from '../../components/SearchInput';
 import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -44,36 +46,38 @@ export default function AccessTokenList(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...newProps} />
+      <CheckPermissions permission={PERMISSIONS.accesstokens.view}>
+        <ResourceDrawer {...newProps} />
 
-      <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
-        <div className={classes.actions}>
-          <SearchInput variant="light" onChange={handleKeywordChange} />
-          <IconTextButton
-            data-test="newAccessToken"
-            component={Link}
-            to={`${
-              location.pathname
-            }/add/accesstokens/new-${shortid.generate()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> New Access Token
-          </IconTextButton>
+        <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
+          <div className={classes.actions}>
+            <SearchInput variant="light" onChange={handleKeywordChange} />
+            <IconTextButton
+              data-test="newAccessToken"
+              component={Link}
+              to={`${
+                location.pathname
+              }/add/accesstokens/new-${shortid.generate()}`}
+              variant="text"
+              color="primary">
+              <AddIcon /> New Access Token
+            </IconTextButton>
+          </div>
+        </CeligoPageBar>
+        <div className={classes.resultContainer}>
+          <LoadResources required resources="accesstokens">
+            <ResourceTable
+              resourceType="accesstokens"
+              resources={list.resources}
+            />
+          </LoadResources>
         </div>
-      </CeligoPageBar>
-      <div className={classes.resultContainer}>
-        <LoadResources required resources="accesstokens">
-          <ResourceTable
-            resourceType="accesstokens"
-            resources={list.resources}
-          />
-        </LoadResources>
-      </div>
-      <ShowMoreDrawer
-        filterKey="accesstokens"
-        count={list.count}
-        maxCount={list.filtered}
-      />
+        <ShowMoreDrawer
+          filterKey="accesstokens"
+          count={list.count}
+          maxCount={list.filtered}
+        />
+      </CheckPermissions>
     </Fragment>
   );
 }
