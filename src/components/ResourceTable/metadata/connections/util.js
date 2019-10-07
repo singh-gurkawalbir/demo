@@ -40,8 +40,6 @@ export const isConnectionEditable = (conn, integrationId) => {
     editable = conn.permissions.integrations[integrationId].connections.create;
   }
 
-  console.log(`${editable} -- ${JSON.stringify(conn)}`);
-
   return editable;
 };
 

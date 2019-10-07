@@ -152,7 +152,9 @@ export default function CeligoDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const userProfile = useSelector(state => selectors.userProfile(state));
-  const permissions = useSelector(state => selectors.userPermissions(state));
+  const userPermissions = useSelector(state =>
+    selectors.userPermissions(state)
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [expand, setExpand] = React.useState(null);
   const handleDrawerToggle = () => {
@@ -199,7 +201,7 @@ export default function CeligoDrawer() {
         </div>
         <div className={classes.menuList}>
           <List className={classes.list}>
-            {menuItems(userProfile, permissions).map(
+            {menuItems(userProfile, userPermissions).map(
               ({ label, Icon, path, children }) => (
                 <Fragment key={label}>
                   <ListItem

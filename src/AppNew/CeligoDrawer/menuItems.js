@@ -18,7 +18,7 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import TrashIcon from '../../components/icons/TrashIcon';
 
-export default function menuItems(userProfile, permissions) {
+export default function menuItems(userProfile, userPermissions) {
   let items = [
     {
       label: 'Home',
@@ -86,9 +86,9 @@ export default function menuItems(userProfile, permissions) {
   ];
 
   if (
-    permissions &&
-    (permissions.accessLevel === 'monitor' ||
-      permissions.accessLevel === 'tile')
+    userPermissions &&
+    (userPermissions.accessLevel === 'monitor' ||
+      userPermissions.accessLevel === 'tile')
   ) {
     items = items.filter(i => i.label !== 'Resources');
     const toolsItems = items.find(i => i.label === 'Tools');
@@ -111,7 +111,7 @@ export default function menuItems(userProfile, permissions) {
       );
     }
 
-    if (permissions && permissions.accessLevel !== 'owner') {
+    if (userPermissions && userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
         i => i.label !== 'API Tokens'
       );
