@@ -144,7 +144,6 @@ describe('resources reducer for special cases', () => {
         actions.resource.receivedCollection(resourceType, updatedCollection)
       );
       const resultantCollection = [
-        { _id: '555', _connectorId: '654' },
         { _id: '666', _connectorId: '123' },
         { _id: '777', _connectorId: '123' },
       ];
@@ -179,7 +178,6 @@ describe('resources reducer for special cases', () => {
         actions.resource.receivedCollection(resourceType, updatedCollection)
       );
       const resultantCollection = [
-        { _id: '555', _connectorId: '654' },
         { _id: '666', _connectorId: '123' },
         { _id: '777', _connectorId: '123' },
       ];

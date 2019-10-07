@@ -118,6 +118,8 @@ const resource = {
       resourceType,
       collection,
     }),
+  clearCollection: resourceType =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
   patch: (resourceType, id, patchSet) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
   delete: (resourceType, id) =>
