@@ -21,6 +21,7 @@ export default function reducer(state = {}, action) {
     type: stepType,
   } = step;
   let currentStep;
+  let bundleStep;
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -77,11 +78,13 @@ export default function reducer(state = {}, action) {
             }
 
             if (verifyBundleStep) {
-              (
-                (draft[templateId].installSteps || []).find(
-                  s => s.application === verifyBundleStep
-                ) || {}
-              ).options._connectionId = newConnectionId;
+              (bundleStep = draft[templateId].installSteps || []).find(
+                s => s.application === verifyBundleStep
+              );
+
+              if (bundleStep && bundleStep.options) {
+                bundleStep.options._connectionId = newConnectionId;
+              }
             }
           } else if (status === 'triggered') {
             currentStep.isTriggered = true;
