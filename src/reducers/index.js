@@ -470,32 +470,41 @@ export function matchingConnectionList(state, connection = {}) {
   const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
-    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      $where() {
+        if (this.sandbox !== (preferences.environment === 'sandbox')) {
+          return false;
+        }
+
+        if (connection.assistant) {
+          return this.assistant === connection.assistant && !this._connectorId;
+        }
+
+        if (['netsuite'].indexOf(connection.type) > -1) {
+          return (
+            this.type === 'netsuite' &&
+            !this._connectorId &&
+            (this.netsuite.account && this.netsuite.environment)
+          );
+        }
+
+        return this.type === connection.type && !this._connectorId;
+      },
+    },
   });
 
-  return resources.filter(c => {
-    if (connection.assistant) {
-      return c.assistant === connection.assistant && !c._connectorId;
-    }
-
-    if (['netsuite'].indexOf(connection.type) > -1) {
-      return (
-        c.type === 'netsuite' &&
-        !c._connectorId &&
-        (c.netsuite.account && c.netsuite.environment)
-      );
-    }
-
-    return c.type === connection.type && !c._connectorId;
-  });
+  return resources;
 }
 
 export function matchingStackList(state) {
   const { resources = [] } = resourceList(state, {
     type: 'stacks',
+    filter: {
+      _connectorId: { $exists: false },
+    },
   });
 
-  return resources.filter(r => !r._connectorId);
+  return resources;
 }
 
 export function filteredResourceList(state, resource, resourceType) {

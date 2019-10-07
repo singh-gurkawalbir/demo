@@ -1,5 +1,6 @@
 import produce from 'immer';
 import moment from 'moment';
+import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -283,7 +284,10 @@ export function defaultStoreId(state, id) {
   return undefined;
 }
 
-export function resourceList(state, { type, take, keyword, sort, sandbox }) {
+export function resourceList(
+  state,
+  { type, take, keyword, sort, sandbox, filter }
+) {
   const result = {
     resources: [],
     type,
@@ -334,7 +338,9 @@ export function resourceList(state, { type, take, keyword, sort, sandbox }) {
       : (a, b) => -desc(a, b, orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
-  const filtered = sorted.filter(matchTest);
+  const filtered = filter
+    ? resources.filter(sift(filter))
+    : sorted.filter(matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;
