@@ -105,7 +105,10 @@ export default class AppRouting extends Component {
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
-        <Route path="/pg/flowBuilder/:flowId" component={FlowBuilder} />
+        <Route
+          path={['/pg/flowBuilder', '/pg/flowBuilder/:flowId']}
+          component={FlowBuilder}
+        />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />

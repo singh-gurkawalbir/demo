@@ -640,7 +640,6 @@ const connectors = [
   'errorception',
   'aha', 
   'pagerduty', 
-  'segment', // commented out.
   'surveymonkey', 
   'mailparser-io', 
   'integrator-extension', 
