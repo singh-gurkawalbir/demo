@@ -23,11 +23,15 @@ const useStyles = makeStyles(theme => ({
 export default function Licenses(props) {
   const { match } = props;
   const { connectorId } = match.params;
+  const defaultFilter = { take: 5 };
   const classes = useStyles();
+  const filter =
+    useSelector(state => selectors.filter(state, 'connectorLicenses')) ||
+    defaultFilter;
   const list = useSelector(state =>
-    selectors.connectorLicenses(state, {
-      connectorId,
-      take: 5,
+    selectors.resourceList(state, {
+      type: 'connectorLicenses',
+      ...{ ...defaultFilter, ...filter },
     })
   );
   const dispatch = useDispatch();
@@ -36,6 +40,9 @@ export default function Licenses(props) {
     dispatch(
       actions.resource.requestCollection(`connectors/${connectorId}/licenses`)
     );
+
+    return () =>
+      dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
 
   return (

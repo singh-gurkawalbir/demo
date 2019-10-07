@@ -24,10 +24,14 @@ export default function InstallBase(props) {
   const { match } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
+  const defaultFilter = { take: 5 };
+  const filter =
+    useSelector(state => selectors.filter(state, 'connectorInstallBase')) ||
+    defaultFilter;
   const list = useSelector(state =>
-    selectors.connectorInstallBase(state, {
-      connectorId,
-      take: 5,
+    selectors.resourceList(state, {
+      type: 'connectorInstallBase',
+      ...{ ...defaultFilter, ...filter },
     })
   );
   const resources = list.resources.map(r => ({ ...r, _id: r._integrationId }));
@@ -56,6 +60,9 @@ export default function InstallBase(props) {
         `connectors/${connectorId}/installBase`
       )
     );
+
+    return () =>
+      dispatch(actions.resource.clearCollection('connectorInstallBase'));
   }, [connectorId, dispatch]);
 
   return (
