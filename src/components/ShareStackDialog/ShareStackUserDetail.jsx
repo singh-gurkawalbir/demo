@@ -70,7 +70,10 @@ export default function ShareStackUserDetail(props) {
         )}
       </TableCell>
       <TableCell>
-        <IconButton aria-label="delete" onClick={handleDeleteUserClick}>
+        <IconButton
+          data-test="deleteStackShareInvite"
+          aria-label="delete"
+          onClick={handleDeleteUserClick}>
           <DeleteIcon />
         </IconButton>
       </TableCell>

@@ -42,6 +42,7 @@ const SearchParamsModal = props => {
           }}>
           <div>
             <Button
+              data-test="cancelSearchParams"
               onClick={onClose}
               size="small"
               variant="contained"

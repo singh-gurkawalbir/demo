@@ -16,10 +16,14 @@ export default {
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)
     );
+    const type =
+      resourceType.indexOf('/licenses') >= 0
+        ? 'license'
+        : MODEL_PLURAL_TO_LABEL[resourceType];
     const handleClick = () => {
       confirmDialog({
         title: 'Confirm',
-        message: `Are you sure you want to delete this ${MODEL_PLURAL_TO_LABEL[resourceType]}?`,
+        message: `Are you sure you want to delete this ${type}?`,
         buttons: [
           {
             label: 'Cancel',
@@ -37,7 +41,10 @@ export default {
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={handleClick}>
+        <IconButton
+          data-test="deleteResource"
+          size="small"
+          onClick={handleClick}>
           <Icon />
         </IconButton>
         {showRef && resourceReferences && resourceReferences.length > 0 && (

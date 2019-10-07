@@ -18,6 +18,7 @@ export default function Mapping({ resourceId }) {
         />
       )}
       <IconButton
+        data-test="toggleMappingDialog"
         size="small"
         onClick={() => {
           setShowDialog(!showDialog);

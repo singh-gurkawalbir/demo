@@ -103,7 +103,7 @@ function ActionsFactory(props) {
       {actionButtons.map(key => {
         const Action = consolidatedActions[key];
 
-        return <Action key={key} {...props} />;
+        return <Action key={key} dataTest={key} {...props} />;
       })}
     </DynaForm>
   );

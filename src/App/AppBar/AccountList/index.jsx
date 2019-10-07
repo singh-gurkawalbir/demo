@@ -209,6 +209,7 @@ class AccountList extends Component {
                 {a.canLeave && (
                   <ListItemSecondaryAction>
                     <Button
+                      data-test="leaveAccount"
                       className={classes.leave}
                       variant="text"
                       onClick={() => {

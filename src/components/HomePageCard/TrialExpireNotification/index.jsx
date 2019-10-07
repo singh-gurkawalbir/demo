@@ -53,7 +53,9 @@ function TrialExpireNotification({ content }) {
 
   return (
     <div className={classes.wrapper}>
-      <IconButton className={classes.closeIcon}>
+      <IconButton
+        data-test="closeTrialNotification"
+        className={classes.closeIcon}>
         <CloseIcon />
       </IconButton>
       <div className={classes.contentWrapper}>
@@ -64,10 +66,10 @@ function TrialExpireNotification({ content }) {
       </div>
       <div className={classes.footer}>
         <ButtonsGroup>
-          <Button variant="text" color="primary">
+          <Button data-test="uninstall" variant="text" color="primary">
             UNINSTALL
           </Button>
-          <Button variant="text" color="primary">
+          <Button data-test="contactSales" variant="text" color="primary">
             Contact Sales
           </Button>
         </ButtonsGroup>

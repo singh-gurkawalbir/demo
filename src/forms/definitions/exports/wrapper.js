@@ -21,9 +21,40 @@ export default {
     },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
-    type: { fieldId: 'type' },
-    'delta.dateField': { fieldId: 'delta.dateField' },
-    'once.booleanField': { fieldId: 'once.booleanField' },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
+    'delta.dateField': {
+      fieldId: 'delta.dateField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['delta'],
+        },
+      ],
+    },
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
     'transform.expression.rules': { fieldId: 'transform.expression.rules' },
     hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },

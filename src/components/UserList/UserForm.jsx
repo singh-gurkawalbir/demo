@@ -154,6 +154,7 @@ class UserForm extends Component {
       <DynaForm fieldMeta={{ fields }}>
         <div className={classes.actions}>
           <Button
+            data-test="cancelUserForm"
             onClick={onCancelClick}
             className={classes.actionButton}
             size="small"
@@ -161,7 +162,10 @@ class UserForm extends Component {
             color="secondary">
             Cancel
           </Button>
-          <DynaSubmit className={classes.actionButton} onClick={onSaveClick}>
+          <DynaSubmit
+            data-test="submitUserForm"
+            className={classes.actionButton}
+            onClick={onSaveClick}>
             Save
           </DynaSubmit>
         </div>

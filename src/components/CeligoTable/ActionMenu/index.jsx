@@ -61,7 +61,11 @@ export default function ActionMenu({ actions }) {
       {actions.slice(0, count).map(a => renderAction(a))}
 
       <Tooltip title="More actions">
-        <IconButton size="small" aria-describedby={id} onClick={handleClick}>
+        <IconButton
+          data-test="openActionsMenu"
+          size="small"
+          aria-describedby={id}
+          onClick={handleClick}>
           <EllipsisIcon />
         </IconButton>
       </Tooltip>

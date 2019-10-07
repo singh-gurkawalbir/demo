@@ -98,6 +98,7 @@ class SignIn extends Component {
       <div className={classes.editableFields}>
         <form onSubmit={this.handleOnSubmit}>
           <TextField
+            data-test="email"
             id="email"
             label="Email"
             type="email"
@@ -109,6 +110,7 @@ class SignIn extends Component {
             disabled={dialogOpen}
           />
           <TextField
+            data-test="password"
             id="password"
             label="Password"
             type="password"
@@ -126,6 +128,7 @@ class SignIn extends Component {
             </div>
           )}
           <Button
+            data-test="submit"
             variant="contained"
             color="primary"
             type="submit"

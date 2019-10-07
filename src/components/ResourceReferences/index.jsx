@@ -95,7 +95,10 @@ function ResourceReferences(props) {
           <Spinner className={classes.spinner} />
         </Fragment>
       )}
-      <Button onClick={onClose} color="primary">
+      <Button
+        data-test="closeResourceReferencesDialog"
+        onClick={onClose}
+        color="primary">
         Close
       </Button>
     </Dialog>

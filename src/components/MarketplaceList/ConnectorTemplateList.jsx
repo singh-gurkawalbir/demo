@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { NavLink, Link as RouterLink } from 'react-router-dom';
 import {
   Link,
   Card,
@@ -9,8 +10,7 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core';
-import { Link as RouterLink } from 'react-router-dom';
-import { getApplicationConnectors } from '../../constants/applications';
+import applications from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
@@ -63,8 +63,7 @@ export default function ConnectorTemplateList(props) {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
-  const applicationConnectors = getApplicationConnectors();
-  const connector = applicationConnectors.find(c => c.id === application);
+  const connector = applications.find(c => c.id === application);
   const applicationName = connector && connector.name;
   const handleConnectorInstallClick = connector => {
     dispatch(actions.marketplace.installConnector(connector._id, sandbox));
@@ -90,7 +89,8 @@ export default function ConnectorTemplateList(props) {
             <CardActions className={classes.cardAction}>
               {connector.canInstall ? (
                 <Button
-                  to={getRoutePath('/integrations')}
+                  data-test="installConnector"
+                  to={getRoutePath('/')}
                   component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
                   variant="text"
@@ -99,6 +99,7 @@ export default function ConnectorTemplateList(props) {
                 </Button>
               ) : (
                 <Button
+                  data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
                   variant="text"
                   color="primary">
@@ -117,9 +118,16 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <Button variant="text" color="primary">
-                Install <ArrowRightIcon />
-              </Button>
+              <NavLink
+                data-test="installTemplate"
+                key={template._id}
+                to={getRoutePath(
+                  `/marketplace/templates/${template._id}/preview`
+                )}>
+                <Button variant="text" color="primary">
+                  Install <ArrowRightIcon />
+                </Button>
+              </NavLink>
             </CardActions>
           </Card>
         ))}

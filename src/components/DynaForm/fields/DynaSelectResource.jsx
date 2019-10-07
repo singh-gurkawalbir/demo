@@ -186,6 +186,7 @@ function DynaSelectResource(props) {
       </FormControl>
       {allowNew && (
         <IconButton
+          data-test="addNewResource"
           className={classes.iconButton}
           component={Link}
           to={`${location.pathname}/add/${resourceType}/${newResourceId}`}

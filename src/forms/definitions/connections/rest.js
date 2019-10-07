@@ -60,6 +60,25 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    mode: {
+      id: 'mode',
+      type: 'radiogroup',
+      label: 'Mode',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-Premise', value: 'onpremise' },
+          ],
+        },
+      ],
+    },
+    _agentId: {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
     'rest.authType': { fieldId: 'rest.authType', required: true },
     'rest.headers': {
       fieldId: 'rest.headers',
@@ -117,6 +136,8 @@ export default {
   layout: {
     fields: [
       'name',
+      'mode',
+      '_agentId',
       'rest.authType',
       'rest.headers',
       'rest.baseURI',

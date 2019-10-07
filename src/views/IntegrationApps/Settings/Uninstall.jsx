@@ -49,8 +49,7 @@ export default function Uninstall(props) {
     );
   };
 
-  const handleUninstall = e => {
-    e.preventDefault();
+  const handleUninstall = () => {
     confirmDialog({
       title: 'Uninstall',
       message: `Are you sure you want to uninstall`,
@@ -75,6 +74,7 @@ export default function Uninstall(props) {
         certain.
       </Typography>
       <Button
+        data-test="uninstallConnector"
         variant="outlined"
         color="secondary"
         className={classes.button}

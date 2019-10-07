@@ -113,6 +113,7 @@ function NotificationToaster(props) {
         }
         action={[
           <IconButton
+            data-test="closeNotificationToaster"
             key="close"
             aria-label="close"
             color="inherit"

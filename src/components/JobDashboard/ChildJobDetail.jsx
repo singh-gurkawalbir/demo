@@ -72,6 +72,7 @@ export default function ChildJobDetail({
         }}>
         {showViewErrorsLink && job.numError > 0 ? (
           <Button
+            data-test="jobNumErrorView"
             variant="text"
             color="primary"
             onClick={handleViewErrorsClick}>
@@ -90,6 +91,7 @@ export default function ChildJobDetail({
         }}>
         {showViewErrorsLink && job.numResolved > 0 ? (
           <Button
+            data-test="jobsNumResolvedView"
             variant="text"
             color="primary"
             onClick={handleViewErrorsClick}>

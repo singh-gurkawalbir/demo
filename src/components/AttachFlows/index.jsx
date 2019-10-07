@@ -78,6 +78,7 @@ export default function AttachFlows({
     <Dialog open maxWidth={false}>
       <IconButton
         aria-label="Close"
+        data-test="closeAttachFlows"
         className={classes.closeButton}
         onClick={onClose}>
         <CloseIcon />
@@ -98,7 +99,9 @@ export default function AttachFlows({
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleAttachFlowsClick}>Attach</Button>
+        <Button data-test="attachFlows" onClick={handleAttachFlowsClick}>
+          Attach
+        </Button>
       </DialogActions>
     </Dialog>
   );

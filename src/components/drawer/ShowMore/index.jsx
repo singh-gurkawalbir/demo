@@ -48,6 +48,7 @@ export default function ShowMoreDrawer(props) {
         [classes.pagingBarShift]: drawerOpened,
       })}>
       <Button
+        data-test="showMoreResults"
         onClick={handleMore}
         variant="text"
         size="medium"

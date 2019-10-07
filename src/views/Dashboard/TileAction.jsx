@@ -60,6 +60,7 @@ function TileAction({ classes, tile }) {
 
   return (
     <Button
+      data-test={label}
       size="small"
       color="primary"
       onMouseOver={handleOnMouseOver}

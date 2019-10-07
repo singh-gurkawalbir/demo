@@ -34,6 +34,7 @@ const WarningSessionContent = () => {
       </DialogTitle>
       <DialogContent>
         <Button
+          data-test="resumeWorking"
           onClick={() => {
             dispatch(actions.user.profile.request('Refreshing session'));
           }}

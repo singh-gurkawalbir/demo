@@ -60,6 +60,7 @@ export default function GenerateZipModal(props) {
       <IconButton
         aria-label="Close"
         onClick={onClose}
+        data-test="closeGenerateZipDialog"
         className={classes.closeButton}>
         <CloseIcon />
       </IconButton>
@@ -87,6 +88,7 @@ export default function GenerateZipModal(props) {
           </Select>
           <br />
           <Button
+            data-test="generateTemplateZip"
             variant="contained"
             color="primary"
             type="submit"
