@@ -16,4 +16,33 @@ export const showDownloadLogs = conn => {
   return toReturn;
 };
 
+export const isConnectionEditable = (conn, integrationId) => {
+  let editable = false;
+
+  if (
+    conn &&
+    conn.permissions &&
+    (conn.permissions.accessLevel === 'owner' ||
+      conn.permissions.accessLevel === 'manage')
+  ) {
+    editable = true;
+  }
+
+  if (
+    integrationId &&
+    conn &&
+    conn.permissions &&
+    conn.permissions.accessLevel === 'tile' &&
+    conn.permissions.integrations &&
+    conn.permissions.integrations[integrationId] &&
+    conn.permissions.integrations[integrationId].connections
+  ) {
+    editable = conn.permissions.integrations[integrationId].connections.create;
+  }
+
+  console.log(`${editable} -- ${JSON.stringify(conn)}`);
+
+  return editable;
+};
+
 export default { showDownloadLogs };

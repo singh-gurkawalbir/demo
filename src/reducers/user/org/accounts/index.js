@@ -355,14 +355,10 @@ export function permissions(
   ];
   const permissions = {};
 
-  console.log('permissions F');
-
   allResourceTypes.forEach(resourceType => {
     permissions[resourceType] = {};
   });
   const userAccessLevel = accessLevel(state, accountId);
-
-  console.log(`permissions F1 ${userAccessLevel}`);
 
   if (!userAccessLevel) {
     return Object.freeze(permissions);

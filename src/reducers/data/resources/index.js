@@ -1,7 +1,6 @@
 import produce from 'immer';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
-import * as selectors from '../../../reducers';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -301,7 +300,6 @@ export function resourceList(state, { type, take, keyword, sort, sandbox }) {
   const resources = state[type];
 
   if (!resources) return result;
-  const permissions = selectors.userPermissions(state);
 
   result.total = resources.length;
   result.count = resources.length;
@@ -347,13 +345,10 @@ export function resourceList(state, { type, take, keyword, sort, sandbox }) {
 
   const slice = filtered.slice(0, take);
 
-  console.log(`permissions ==> ${JSON.stringify(permissions)}`);
-
   return {
     ...result,
     resources: slice,
     count: slice.length,
-    permissions: permissions[type],
   };
 }
 

@@ -205,11 +205,11 @@ export default function CeligoTable({
                   scope="row"
                   key={col.heading}
                   align={col.align || 'left'}>
-                  {col.value(r)}
+                  {col.value(r, actionProps)}
                 </TableCell>
               ) : (
                 <TableCell key={col.heading} align={col.align || 'left'}>
-                  {col.value(r)}
+                  {col.value(r, actionProps)}
                 </TableCell>
               )
             )}
