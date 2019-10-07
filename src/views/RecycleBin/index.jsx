@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RecycleBin(props) {
-  const defaultFilter = { take: 5 };
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||

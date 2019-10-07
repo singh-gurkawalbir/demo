@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -22,12 +22,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallBase(props) {
   const { match } = props;
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const { connectorId } = match.params;
   const classes = useStyles();
   const list = useSelector(state =>
     selectors.connectorInstallBase(state, {
       connectorId,
-      take: 5,
+      ...defaultFilter,
     })
   );
   const resources = list.resources.map(r => ({ ...r, _id: r._integrationId }));
@@ -65,7 +66,7 @@ export default function InstallBase(props) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey="connectorInstallBase"
-            defaultFilter={{ take: 5 }}
+            defaultFilter={defaultFilter}
           />
           <IconTextButton onClick={handleUpdateClick} variant="text">
             Update

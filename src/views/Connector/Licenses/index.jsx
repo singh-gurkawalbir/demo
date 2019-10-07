@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -22,12 +22,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function Licenses(props) {
   const { match } = props;
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const { connectorId } = match.params;
   const classes = useStyles();
   const list = useSelector(state =>
     selectors.connectorLicenses(state, {
       connectorId,
-      take: 5,
+      ...defaultFilter,
     })
   );
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export default function Licenses(props) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey="connectorLicenses"
-            defaultFilter={{ take: 5 }}
+            defaultFilter={defaultFilter}
           />
         </div>
       </CeligoPageBar>
