@@ -165,7 +165,14 @@ function DynaSelectResource(props) {
 
   return (
     <div className={classes.root}>
-      <FormControl key={id} disabled={disabled} className={classes.select}>
+      <FormControl
+        key={id}
+        disabled={
+          disabled ||
+          (allowNew &&
+            location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`))
+        }
+        className={classes.select}>
         <InputLabel shrink={!!value} htmlFor={id}>
           {label}
         </InputLabel>
