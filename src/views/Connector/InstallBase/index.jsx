@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function InstallBase(props) {
-  const { match } = props;
+  const { match, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
   const defaultFilter = { take: 5 };
@@ -33,6 +33,9 @@ export default function InstallBase(props) {
       type: 'connectorInstallBase',
       ...{ ...defaultFilter, ...filter },
     })
+  );
+  const connector = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)
   );
   const resources = list.resources.map(r => ({ ...r, _id: r._integrationId }));
   const [selected, setSelected] = useState({});
@@ -68,7 +71,9 @@ export default function InstallBase(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="View / Update Install Base">
+      <CeligoPageBar
+        history={history}
+        title={`View / Update Install Base: ${connector.name}`}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey="connectorInstallBase"

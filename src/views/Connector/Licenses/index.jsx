@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Licenses(props) {
-  const { match } = props;
+  const { match, history } = props;
   const { connectorId } = match.params;
   const defaultFilter = { take: 5 };
   const classes = useStyles();
@@ -33,6 +33,9 @@ export default function Licenses(props) {
       type: 'connectorLicenses',
       ...{ ...defaultFilter, ...filter },
     })
+  );
+  const connector = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)
   );
   const dispatch = useDispatch();
 
@@ -48,7 +51,10 @@ export default function Licenses(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="Licenses" infoText={infoText.licenses}>
+      <CeligoPageBar
+        history={history}
+        title={`Licenses: ${connector.name}`}
+        infoText={infoText.licenses}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey="connectorLicenses"
