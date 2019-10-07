@@ -111,6 +111,8 @@ function DynaSelectResource(props) {
     value: conn._id,
   }));
 
+  // Disable adding a new resource when the user has selected an existing resource
+
   return (
     <div className={classes.root}>
       <LoadResources required resources={resourceType}>
@@ -130,9 +132,6 @@ function DynaSelectResource(props) {
         )}
       </LoadResources>
 
-      {
-        'Disable adding a new resource when the user has selected an existing resource'
-      }
       {allowNew && (
         <IconButton
           disabled={!!value}
