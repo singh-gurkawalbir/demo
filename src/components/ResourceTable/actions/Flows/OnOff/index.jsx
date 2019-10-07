@@ -46,6 +46,8 @@ export default {
       });
     };
 
-    return <SwitchOnOff on onClick={enableOrDisableFlow} />;
+    return (
+      <SwitchOnOff on={!resource.disabled} onClick={enableOrDisableFlow} />
+    );
   },
 };

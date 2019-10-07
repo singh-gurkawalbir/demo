@@ -532,7 +532,12 @@ export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
 
-  if (integrationId && integrationId !== 'none' && integration) {
+  if (
+    integrationId &&
+    integrationId !== 'none' &&
+    integration &&
+    !integration._connectorId
+  ) {
     const registeredConnections =
       integration && integration._registeredConnectionIds;
 
@@ -544,6 +549,11 @@ export function integrationConnectionList(state, integrationId) {
           conn => registeredConnections.indexOf(conn._id) >= 0
         );
     }
+  } else if (integration && integration._connectorId) {
+    connList.resources =
+      connList &&
+      connList.resources &&
+      connList.resources.filter(conn => conn._integrationId === integrationId);
   }
 
   return connList;
@@ -575,6 +585,133 @@ export function integrationAppSettings(state, id, storeId) {
   );
 
   return { ...integrationResource, ...uninstallSteps };
+}
+
+export function connectorFlowSections(state, id) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+
+  if (
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.supportsMultiStore
+  ) {
+    return (
+      (integrationResource.settings.sections &&
+        integrationResource.settings.sections[0] &&
+        integrationResource.settings.sections[0].sections) ||
+      []
+    );
+  }
+
+  return integrationResource.settings.sections || [];
+}
+
+export function getRequiredDataOfConnectorSettings(
+  state,
+  id,
+  section,
+  storeId
+) {
+  if (!state) return null;
+  let fields;
+  let sections;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const supportMultiStore =
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.supportsMultiStore;
+  let requiredFlows = [];
+  let hasNSInternalIdLookup = false;
+  let soreIdIndex = 0;
+  const showFlowSettings = !!(
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.showFlowSettings
+  );
+  const showMatchRuleEngine = !!(
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.showMatchRuleEngine
+  );
+
+  if (supportMultiStore) {
+    if (
+      integrationResource &&
+      integrationResource._connectorId &&
+      integrationResource.settings.sections
+    ) {
+      integrationResource.settings.sections.forEach((f, index) => {
+        if (f.id === storeId) {
+          soreIdIndex = index;
+        }
+      });
+    }
+
+    if (
+      integrationResource &&
+      integrationResource._connectorId &&
+      integrationResource.settings.sections[soreIdIndex] &&
+      integrationResource.settings.sections[soreIdIndex].sections
+    ) {
+      integrationResource.settings.sections[soreIdIndex].sections.forEach(
+        (f, index) => {
+          if (
+            f.title.replace(/ /g, '') === section ||
+            (index === 0 && section === 'flows')
+          ) {
+            requiredFlows = f.flows;
+            ({ fields, sections } = f);
+          }
+        }
+      );
+    }
+  } else if (
+    integrationResource &&
+    integrationResource.settings &&
+    integrationResource.settings.sections
+  ) {
+    integrationResource.settings.sections.forEach((f, index) => {
+      if (
+        f.title.replace(/ /g, '') === section ||
+        (index === 0 && section === 'flows')
+      ) {
+        requiredFlows = f.flows;
+        ({ fields, sections } = f);
+      }
+    });
+  }
+
+  const preferences = userPreferences(state);
+  let flows = resourceList(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+  }).resources;
+  const flowArray = [];
+
+  requiredFlows.forEach(f => {
+    if (f.showNSInternalIdLookup) {
+      hasNSInternalIdLookup = true;
+    }
+
+    flowArray.push(f._id);
+  });
+  flows =
+    flows &&
+    flows.filter(
+      f =>
+        flowArray.indexOf(f._id) > -1 &&
+        !!f.sandbox === (preferences.environment === 'sandbox')
+    );
+
+  return {
+    flows,
+    fields,
+    sections,
+    hasNSInternalIdLookup,
+    showFlowSettings,
+    showMatchRuleEngine,
+  };
 }
 
 export function defaultStoreId(state, id) {

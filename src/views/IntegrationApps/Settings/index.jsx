@@ -16,16 +16,18 @@ import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
-import Flows from '../../IntegrationSettings/Flows';
+import Flows from './Flows';
 import Users from '../../IntegrationSettings/Users';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,
-    // color: theme.palette.action.active,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   appFrame: {
     padding: theme.spacing(1),
@@ -51,7 +53,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
   },
+
   activeLink: {
+    fontWeight: 'bold',
+  },
+  subSection: {
     fontWeight: 'bold',
   },
   flex: {
@@ -76,15 +82,28 @@ const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
   },
+  listItem: {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    '& > ul': {
+      padding: 0,
+    },
+  },
 }));
 
 export default function IntegrationAppSettings(props) {
   const { integrationId } = props.match.params;
   const classes = useStyles();
+  const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
+  );
+  const supportsMultiStore =
+    integration.settings && integration.settings.supportsMultiStore;
+  const connectorFlowSections = useSelector(state =>
+    selectors.connectorFlowSections(state, integrationId)
   );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId)
@@ -97,6 +116,25 @@ export default function IntegrationAppSettings(props) {
       dispatch(actions.resource.request('integrations', integrationId));
     }
   });
+  useEffect(() => {
+    if (!redirected) {
+      if (supportsMultiStore) {
+        props.history.push(
+          `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+        );
+      } else {
+        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+      }
+
+      setRedirected(true);
+    }
+  }, [
+    currentStore,
+    integrationId,
+    props.history,
+    redirected,
+    supportsMultiStore,
+  ]);
 
   useEffect(() => {
     if (
@@ -107,9 +145,16 @@ export default function IntegrationAppSettings(props) {
       setCurrentStore(defaultStoreId);
   }, [currentStore, defaultStoreId, integration.stores]);
 
-  const isMultiStore = !!(integration.settings || {}).supportsMutliStore;
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
+
+    if (supportsMultiStore) {
+      props.history.push(
+        `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+      );
+    } else {
+      props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+    }
   };
 
   const handleAddNewStoreClick = () => {
@@ -127,7 +172,9 @@ export default function IntegrationAppSettings(props) {
   };
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources
+      required
+      resources="integrations, exports, imports, flows, connections">
       <div className={classes.appFrame}>
         <div className={classes.about}>
           <Typography variant="h5">{integration.name}</Typography>
@@ -139,7 +186,7 @@ export default function IntegrationAppSettings(props) {
           />
         </div>
         <Divider />
-        {isMultiStore && (
+        {supportsMultiStore && (
           <div className={classes.storeContainer}>
             <Grid container>
               <Grid item xs={2} className={classes.storeSelect}>
@@ -173,57 +220,85 @@ export default function IntegrationAppSettings(props) {
                 paper: classes.leftElement,
               }}>
               <List>
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="general">
+                    to={`/pg/connectors/${integrationId}/settings/general`}>
                     General
                   </NavLink>
                 </ListItem>
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="flows">
+                    to={
+                      supportsMultiStore
+                        ? `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+                        : `/pg/connectors/${integrationId}/settings/flows`
+                    }>
                     Integration Flows
                   </NavLink>
+
+                  <ul>
+                    {connectorFlowSections &&
+                      connectorFlowSections.map(f => (
+                        <ListItem key={`${f.title.replace(/ /g, '')}`}>
+                          <NavLink
+                            activeClassName={classes.subSection}
+                            className={classes.link}
+                            to={
+                              supportsMultiStore
+                                ? `/pg/connectors/${integrationId}/settings/${currentStore}/${f.title.replace(
+                                    / /g,
+                                    ''
+                                  )}`
+                                : `/pg/connectors/${integrationId}/settings/${f.title.replace(
+                                    / /g,
+                                    ''
+                                  )}`
+                            }>
+                            {f.title.replace(/ /g, '')}
+                          </NavLink>
+                        </ListItem>
+                      ))}
+                  </ul>
                 </ListItem>
                 {showAPITokens && (
-                  <ListItem>
+                  <ListItem className={classes.listItem}>
                     <NavLink
                       activeClassName={classes.activeLink}
                       className={classes.link}
-                      to="tokens">
+                      to={`/pg/connectors/${integrationId}/settings/tokens`}>
                       API Tokens
                     </NavLink>
                   </ListItem>
                 )}
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="connections">
+                    to={`/pg/connectors/${integrationId}/settings/connections`}>
                     Connections
                   </NavLink>
                 </ListItem>
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="users">
+                    to={`/pg/connectors/${integrationId}/settings/users`}>
                     Users
                   </NavLink>
                 </ListItem>
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   <NavLink
                     activeClassName={classes.activeLink}
                     className={classes.link}
-                    to="audit">
+                    to={`/pg/connectors/${integrationId}/settings/audit`}>
                     Audit Log
                   </NavLink>
                 </ListItem>
-                <ListItem>
+                <ListItem className={classes.listItem}>
                   {integration._connectorId && (
                     <NavLink
                       activeClassName={classes.activeLink}
@@ -238,10 +313,23 @@ export default function IntegrationAppSettings(props) {
           </div>
           <div className={classes.rightElement}>
             <Switch>
-              <Route path={`${props.match.url}/flows`} component={Flows} />
               <Route
-                path={`${props.match.url}/connections`}
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/connections`
+                )}
                 component={Connections}
+              />
+              <Route
+                path={
+                  supportsMultiStore
+                    ? getRoutePath(
+                        `/connectors/:integrationId/settings/:storeId/:section`
+                      )
+                    : getRoutePath(
+                        `/connectors/:integrationId/settings/:section`
+                      )
+                }
+                component={Flows}
               />
               <Route path={`${props.match.url}/users`} component={Users} />
               <Route path={`${props.match.url}/audit`} component={AuditLog} />
