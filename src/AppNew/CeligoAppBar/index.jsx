@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   celigoLogo: {
     height: 36,
     width: 120,
-    background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   unauthenticatedAppBar: {
     background: theme.palette.background.paper2,

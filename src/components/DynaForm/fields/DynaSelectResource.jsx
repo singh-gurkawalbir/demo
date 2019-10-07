@@ -3,58 +3,17 @@ import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import {
-  Select,
-  FormControl,
-  MenuItem,
-  Input,
-  InputLabel,
-  IconButton,
-  FormHelperText,
-} from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import LoadResources from '../../../components/LoadResources';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import DynaSelect from './DynaSelect';
+import DynaMultiSelect from './DynaMultiSelect';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
-  },
-  select: {
-    display: 'flex',
-    width: '100%',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    borderRadius: 2,
-    '& > Label': {
-      zIndex: 1,
-
-      '&.MuiInputLabel-shrink': {
-        paddingTop: 10,
-      },
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-      zIndex: 2,
-    },
-    '& svg': {
-      right: 8,
-    },
   },
   iconButton: {
     alignSelf: 'flex-end',
@@ -76,14 +35,11 @@ const newId = () => `new-${shortid.generate()}`;
 
 function DynaSelectResource(props) {
   const {
-    description,
     disabled,
     id,
-    name,
-    value = '',
-    label,
-    placeholder,
     onFieldChange,
+    multiselect = false,
+    value,
     resourceType,
     allowNew,
     location,
@@ -144,55 +100,42 @@ function DynaSelectResource(props) {
     });
   };
 
-  let resourceItems = filteredResources().map(conn => {
-    const label = conn.name;
-    const value = conn._id;
-
-    return (
-      <MenuItem key={value} value={value}>
-        {label || value}
-      </MenuItem>
-    );
-  });
-  const tempPlaceHolder = placeholder || 'Please Select';
-  const defaultItem = (
-    <MenuItem key={tempPlaceHolder} value="">
-      {tempPlaceHolder}
-    </MenuItem>
-  );
-
-  resourceItems = [defaultItem, ...resourceItems];
+  // When adding a new resource and subsequently editing it disable selecting a new connection
+  const isAddingANewResource =
+    allowNew &&
+    (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
+      location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
+  const disableSelect = disabled || isAddingANewResource;
+  const resourceItems = filteredResources().map(conn => ({
+    label: conn.name,
+    value: conn._id,
+  }));
 
   return (
     <div className={classes.root}>
-      <FormControl
-        key={id}
-        disabled={
-          disabled ||
-          (allowNew &&
-            location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`))
-        }
-        className={classes.select}>
-        <InputLabel shrink={!!value} htmlFor={id}>
-          {label}
-        </InputLabel>
-        <LoadResources required resources={resourceType}>
-          <Select
-            data-test={id}
-            value={value}
-            variant="filled"
-            IconComponent={ArrowDownIcon}
-            onChange={evt => {
-              onFieldChange(id, evt.target.value);
-            }}
-            input={<Input name={name} id={id} />}>
-            {resourceItems}
-          </Select>
-        </LoadResources>
-        {description && <FormHelperText>{description}</FormHelperText>}
-      </FormControl>
+      <LoadResources required resources={resourceType}>
+        {multiselect ? (
+          <DynaMultiSelect
+            {...props}
+            disabled={disableSelect}
+            options={[{ items: resourceItems || [] }]}
+          />
+        ) : (
+          <DynaSelect
+            {...props}
+            disabled={disableSelect}
+            removeHelperText={isAddingANewResource}
+            options={[{ items: resourceItems || [] }]}
+          />
+        )}
+      </LoadResources>
+
+      {
+        'Disable adding a new resource when the user has selected an existing resource'
+      }
       {allowNew && (
         <IconButton
+          disabled={!!value}
           data-test="addNewResource"
           className={classes.iconButton}
           component={Link}

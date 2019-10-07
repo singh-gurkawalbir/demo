@@ -22,7 +22,7 @@ import { Typography } from '@material-ui/core';
       backgroundColor: theme.appBar.iconBackground,
       // opacity: '0.6',
       borderRadius: '50%',
-      backgroundImage: `url(${process.env.CDN_BASE_URI}images/icons/icon/flow.png)`,
+      backgroundImage: `url(${process.env.CDN_BASE_URI}icons/icon/flow.png)`,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
     },
@@ -33,7 +33,7 @@ import { Typography } from '@material-ui/core';
       // opacity: '1',
       backgroundColor: theme.palette.secondary.light,
       // eslint-disable-next-line prettier/prettier
-      backgroundImage: `url(${process.env.CDN_BASE_URI}images/icons/icon/flow-white.png)`,
+      backgroundImage: `url(${process.env.CDN_BASE_URI}icons/icon/flow-white.png)`,
     },
   },
 }))

@@ -78,7 +78,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: r => r && r._connectionId,
+      defaultValue: r => (r && r._connectionId) || '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
