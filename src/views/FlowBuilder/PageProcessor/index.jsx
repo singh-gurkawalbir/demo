@@ -5,7 +5,7 @@ import { useDrag, useDrop } from 'react-dnd-cjs';
 import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 // import actions from '../../../actions';
 import itemTypes from '../itemTypes';
 import HookIcon from '../../../components/icons/HookIcon';
@@ -19,6 +19,7 @@ import BottomActions from '../AppBlock/BottomActions';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { getResourceSubType } from '../../../utils/resource';
+import importMappingAction from '../actions/importMapping';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -54,6 +55,7 @@ const PageProcessor = ({
   const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [activeAction, setActiveAction] = useState(null);
   const [newProcessorId, setNewProcessorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(
@@ -209,9 +211,19 @@ const PageProcessor = ({
           <RightActions>
             {!isLast && !pending && (
               <Fragment>
-                <IconButton>
-                  <MapDataIcon data-test="mapData" />
-                </IconButton>
+                <Tooltip title={importMappingAction.helpText}>
+                  <IconButton
+                    onClick={() => setActiveAction(importMappingAction.name)}
+                    data-test={importMappingAction.name}>
+                    <importMappingAction.Icon />
+                  </IconButton>
+                </Tooltip>
+                <importMappingAction.Component
+                  open={activeAction === importMappingAction.name}
+                  flowId={flowId}
+                  resourceId={resourceId}
+                  onClose={() => setActiveAction(null)}
+                />
                 <IconButton data-test="filter">
                   <FilterIcon />
                 </IconButton>

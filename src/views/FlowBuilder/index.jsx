@@ -167,8 +167,11 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  title: {
+  sourceTitle: {
     textAlign: 'center',
+  },
+  destinationTitle: {
+    marginLeft: 100,
   },
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
@@ -325,7 +328,7 @@ function FlowBuilder(props) {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             <div className={classes.generatorRoot}>
-              <Typography className={classes.title} variant="h6">
+              <Typography className={classes.sourceTitle} variant="h6">
                 SOURCE APPLICATIONS
                 <IconButton
                   data-test="addGenerator"
@@ -351,7 +354,7 @@ function FlowBuilder(props) {
               </div>
             </div>
             <div className={classes.processorRoot}>
-              <Typography className={classes.title} variant="h6">
+              <Typography className={classes.destinationTitle} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
                 <IconButton
                   data-test="addProcessor"

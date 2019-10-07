@@ -88,7 +88,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
         <Route
-          path={['/pg/flowBuilder', '/pg/flowBuilder/:flowId']}
+          path={['/pg/flowBuilder/:flowId', '/pg/flowBuilder']}
           component={FlowBuilder}
         />
         <Route path="/pg/resources" component={Resources} />
