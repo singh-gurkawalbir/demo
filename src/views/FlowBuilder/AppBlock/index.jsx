@@ -14,8 +14,8 @@ const blockMap = {
   lookup: { label: 'LOOKUP', Icon: LookupIcon },
   listener: { label: 'LISTENER', Icon: ListenerIcon },
 };
-const blockHeight = 100;
-const blockWidth = 150;
+const blockHeight = 120;
+const blockWidth = 170;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -26,9 +26,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   box: {
-    display: 'flex',
+    // display: 'flex',
     borderRadius: 16,
-    alignItems: 'center',
+    // alignItems: 'center',
     width: blockWidth,
     height: blockHeight,
     border: 'solid 1px lightblue',
@@ -36,23 +36,13 @@ const useStyles = makeStyles(theme => ({
     cursor: 'move',
     backgroundColor: theme.palette.background.paper,
   },
-  processorActions: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    padding: theme.spacing(0, 1),
-  },
   resourceButton: {
     top: theme.spacing(2),
     // backgroundColor: theme.palette.background.paper,
     alignSelf: 'center',
   },
   name: {
-    margin: theme.spacing(0, 0, 1, 0),
-  },
-  bottomActionContainer: {
-    display: 'flex',
-    alignSelf: 'center',
-    marginTop: theme.spacing(-3),
+    margin: theme.spacing(1, 0, 1, 0),
   },
 }));
 
@@ -70,33 +60,27 @@ function AppBlock({
   const block = blockMap[blockType];
 
   return (
-    <div className={classes.root}>
-      {children[2] /* <LeftActions> */}
-
-      <div className={classes.innerContainer}>
-        <IconTextButton
-          className={classes.resourceButton}
-          variant="contained"
-          color="primary"
-          data-test={block.label}
-          onClick={onBlockClick}>
-          <block.Icon />
-          {block.label}
-        </IconTextButton>
-        <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
-          <ApplicationImg
-            size="large"
-            type={connectorType}
-            assistant={assistant}
-          />
-        </div>
-        {children[1] /* <BottomActions> */}
-        <Typography className={classes.name} variant="body1">
-          {name}
-        </Typography>
+    <div className={classes.innerContainer}>
+      <IconTextButton
+        className={classes.resourceButton}
+        variant="contained"
+        color="primary"
+        data-test={block.label}
+        onClick={onBlockClick}>
+        <block.Icon />
+        {block.label}
+      </IconTextButton>
+      <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
+        {children /* action icon buttons */}
+        <ApplicationImg
+          size="large"
+          type={connectorType}
+          assistant={assistant}
+        />
       </div>
-
-      {children[0] /* <RightActions> */}
+      <Typography className={classes.name} variant="body1">
+        {name}
+      </Typography>
     </div>
   );
 }

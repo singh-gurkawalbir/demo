@@ -1,6 +1,6 @@
 import { Dialog, Typography, DialogTitle } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import MapDataIcon from '../../../components/icons/MapDataIcon';
+import Icon from '../../../../components/icons/FilterIcon';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ImportMappingDialog({ flowId, resourceId, open, onClose }) {
+function ProceedOnFailureDialog({ flowId, resourceId, open, onClose }) {
   const classes = useStyles();
 
   return (
@@ -16,7 +16,7 @@ function ImportMappingDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Import Mapping</DialogTitle>
+      <DialogTitle>Proceed on Failure</DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>
@@ -25,9 +25,11 @@ function ImportMappingDialog({ flowId, resourceId, open, onClose }) {
 
 export default {
   // used to create data-test attribute and component key. Should be unique across FB actions.
-  name: 'importMapping',
-  Icon: MapDataIcon,
+  name: 'proceedOnFailure',
+  left: 204,
+  top: 28,
+  Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: ImportMappingDialog,
+  Component: ProceedOnFailureDialog,
 };
