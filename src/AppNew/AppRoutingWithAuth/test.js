@@ -41,7 +41,7 @@ function reduxRouterWrappedComponent({
   );
 }
 
-describe('AppRoutingWith authentication redirection behavior', () => {
+describe.skip('AppRoutingWith authentication redirection behavior', () => {
   const initSession = jest.fn();
   const clearAppError = jest.fn();
   // Should i bring a reducer and deduce the states form there
@@ -164,7 +164,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         getRoutePath(someRoute)
       );
     });
-    test.skip('should redirect the user to attempted route when the user successfully authenticates ', () => {
+    test('should redirect the user to attempted route when the user successfully authenticates ', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -243,7 +243,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     clearAppError,
   };
 
-  test.skip('should stay in the same route when the user session has expired', () => {
+  test('should stay in the same route when the user session has expired', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {
