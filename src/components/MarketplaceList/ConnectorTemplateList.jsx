@@ -10,7 +10,7 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core';
-import { getApplicationConnectors } from '../../constants/applications';
+import applications from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
@@ -63,8 +63,7 @@ export default function ConnectorTemplateList(props) {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
-  const applicationConnectors = getApplicationConnectors();
-  const connector = applicationConnectors.find(c => c.id === application);
+  const connector = applications.find(c => c.id === application);
   const applicationName = connector && connector.name;
   const handleConnectorInstallClick = connector => {
     dispatch(actions.marketplace.installConnector(connector._id, sandbox));
