@@ -55,6 +55,7 @@ function AppBlock({
   assistant,
   name,
   opacity = 1,
+  ...rest
 }) {
   const classes = useStyles();
   const block = blockMap[blockType];
@@ -70,7 +71,11 @@ function AppBlock({
         <block.Icon />
         {block.label}
       </IconTextButton>
-      <div ref={forwardedRef} className={classes.box} style={{ opacity }}>
+      <div
+        {...rest}
+        ref={forwardedRef}
+        className={classes.box}
+        style={{ opacity }}>
         {children /* action icon buttons */}
         <ApplicationImg
           size="large"

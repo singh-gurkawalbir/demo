@@ -5,18 +5,19 @@ import { useDrag, useDrop } from 'react-dnd-cjs';
 import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Tooltip } from '@material-ui/core';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
 import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
 import importHooksAction from './actions/importHooks';
 import transformationAction from './actions/transformation';
-import responseMappping from './actions/responseMapping';
+import responseMapping from './actions/responseMapping';
 import proceedOnFailureAction from './actions/proceedOnFailure';
+import ActionIconButton from './ActionIconButton';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -37,17 +38,9 @@ const useStyles = makeStyles(theme => ({
   actionContainer: {
     position: 'relative',
   },
-  iconButtonRoot: {
-    border: '1px solid',
-    padding: 4,
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
-  },
-  iconButtonLabel: {
-    '& svg': {
-      width: 20,
-      height: 20,
-    },
+  isNotOverActions: {
+    top: 68,
+    left: 116,
   },
 }));
 const PageProcessor = ({
@@ -66,6 +59,7 @@ const PageProcessor = ({
   const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const [newProcessorId, setNewProcessorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
@@ -104,6 +98,7 @@ const PageProcessor = ({
   // #endregion
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
+
     hover(item, monitor) {
       if (!ref.current) {
         return;
@@ -207,7 +202,7 @@ const PageProcessor = ({
     importMappingAction,
     importHooksAction,
     transformationAction,
-    responseMappping,
+    responseMapping,
     proceedOnFailureAction,
   ];
 
@@ -219,6 +214,10 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
+          onMouseOver={() => setIsOver(true)}
+          onMouseOut={() => setIsOver(false)}
+          onFocus={() => setIsOver(true)}
+          onBlur={() => setIsOver(false)}
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
@@ -231,19 +230,16 @@ const PageProcessor = ({
           <div className={classes.actionContainer}>
             {processorActions.map(a => (
               <Fragment key={a.name}>
-                <Tooltip title={a.helpText}>
-                  <IconButton
-                    size="small"
-                    classes={{
-                      root: classes.iconButtonRoot,
-                      label: classes.iconButtonLabel,
-                    }}
-                    style={{ position: 'absolute', left: a.left, top: a.top }}
-                    onClick={() => setActiveAction(a.name)}
-                    data-test={a.name}>
-                    <a.Icon />
-                  </IconButton>
-                </Tooltip>
+                <ActionIconButton
+                  helpText={a.helpText}
+                  className={clsx({
+                    [classes.isNotOverActions]: !isOver,
+                  })}
+                  style={isOver ? { left: a.left, top: a.top } : undefined}
+                  onClick={() => setActiveAction(a.name)}
+                  data-test={a.name}>
+                  <a.Icon />
+                </ActionIconButton>
                 <a.Component
                   open={activeAction === a.name}
                   flowId={flowId}
@@ -252,6 +248,11 @@ const PageProcessor = ({
                 />
               </Fragment>
             ))}
+            {!isOver && (
+              <ActionIconButton className={classes.isNotOverActions}>
+                <EllipsisIcon />
+              </ActionIconButton>
+            )}
           </div>
         </AppBlock>
         {!isLast && (
