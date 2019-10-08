@@ -8,6 +8,7 @@ import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
+import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoPageBar({ children, title, infoText, subtitle }) {
+export default function CeligoPageBar({
+  history,
+  children,
+  title,
+  infoText,
+  subtitle,
+}) {
   const classes = useStyles();
   const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -68,6 +75,11 @@ export default function CeligoPageBar({ children, title, infoText, subtitle }) {
             <Grid container justify="space-between">
               <Grid item>
                 <Typography variant="h3">
+                  {history && (
+                    <IconButton onClick={() => history.goBack()}>
+                      <ArrowLeftIcon />
+                    </IconButton>
+                  )}
                   {title}
                   {infoText && (
                     <Fragment>
