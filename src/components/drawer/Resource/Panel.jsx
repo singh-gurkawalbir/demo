@@ -118,7 +118,7 @@ export default function Panel(props) {
   function handleSubmitComplete() {
     if (isNew) {
       props.history.replace(getEditUrl(id));
-    }
+    } else if (getEditUrl(id)) props.history.replace('/pg/connections');
   }
 
   const submitButtonLabel =
@@ -141,7 +141,6 @@ export default function Panel(props) {
           <ResourceForm
             className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}
-            key={`${isNew}-${id}`}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
