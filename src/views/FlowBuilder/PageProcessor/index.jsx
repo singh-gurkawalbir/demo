@@ -197,14 +197,19 @@ const PageProcessor = ({
 
   drag(drop(ref));
 
-  const processorActions = [
-    inputFilterAction,
-    importMappingAction,
-    importHooksAction,
-    transformationAction,
-    responseMapping,
-    proceedOnFailureAction,
-  ];
+  const processorActions = pending
+    ? []
+    : [
+        inputFilterAction,
+        importMappingAction,
+        importHooksAction,
+        transformationAction,
+      ];
+
+  if (!isLast && !pending) {
+    processorActions.push(responseMapping);
+    processorActions.push(proceedOnFailureAction);
+  }
 
   return (
     <Fragment>
@@ -248,7 +253,7 @@ const PageProcessor = ({
                 />
               </Fragment>
             ))}
-            {!isOver && (
+            {!isOver && processorActions.length > 0 && (
               <ActionIconButton className={classes.isNotOverActions}>
                 <EllipsisIcon />
               </ActionIconButton>
