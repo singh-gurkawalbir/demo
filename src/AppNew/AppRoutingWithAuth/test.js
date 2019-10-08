@@ -164,7 +164,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         getRoutePath(someRoute)
       );
     });
-    test('should redirect the user to attempted route when the user successfully authenticates ', () => {
+    test.skip('should redirect the user to attempted route when the user successfully authenticates ', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -243,7 +243,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     clearAppError,
   };
 
-  test('should stay in the same route when the user session has expired', () => {
+  test.skip('should stay in the same route when the user session has expired', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {

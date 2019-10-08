@@ -26,7 +26,7 @@ const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
 const FlowBuilder = loadable(() =>
-  import(/* webpackChunkName: 'FlowBuider' */ '../../views/FlowBuilder')
+  import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder')
 );
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
@@ -53,7 +53,7 @@ const ConnectorInstallBase = loadable(() =>
   )
 );
 const ConnectorLicenses = loadable(() =>
-  import(/* webpackChunkName: 'InstallBase' */ '../../views/Connector/Licenses')
+  import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
 
 @hot(module)
