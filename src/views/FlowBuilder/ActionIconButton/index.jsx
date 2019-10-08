@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.main,
       '& svg': {
         color: theme.palette.common.white,
       },

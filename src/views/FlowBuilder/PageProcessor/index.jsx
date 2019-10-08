@@ -17,7 +17,7 @@ import importHooksAction from './actions/importHooks';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import proceedOnFailureAction from './actions/proceedOnFailure';
-import ActionIconButton from './ActionIconButton';
+import ActionIconButton from '../ActionIconButton';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -34,9 +34,6 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'start',
     marginTop: 80,
     borderBottom: `3px dotted ${theme.palette.divider}`,
-  },
-  actionContainer: {
-    position: 'relative',
   },
   isNotOverActions: {
     top: 68,
@@ -232,33 +229,31 @@ const PageProcessor = ({
           ref={ref}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}>
-          <div className={classes.actionContainer}>
-            {processorActions.map(a => (
-              <Fragment key={a.name}>
-                <ActionIconButton
-                  helpText={a.helpText}
-                  className={clsx({
-                    [classes.isNotOverActions]: !isOver,
-                  })}
-                  style={isOver ? { left: a.left, top: a.top } : undefined}
-                  onClick={() => setActiveAction(a.name)}
-                  data-test={a.name}>
-                  <a.Icon />
-                </ActionIconButton>
-                <a.Component
-                  open={activeAction === a.name}
-                  flowId={flowId}
-                  resourceId={resourceId}
-                  onClose={() => setActiveAction(null)}
-                />
-              </Fragment>
-            ))}
-            {!isOver && processorActions.length > 0 && (
-              <ActionIconButton className={classes.isNotOverActions}>
-                <EllipsisIcon />
+          {processorActions.map(a => (
+            <Fragment key={a.name}>
+              <ActionIconButton
+                helpText={a.helpText}
+                className={clsx({
+                  [classes.isNotOverActions]: !isOver,
+                })}
+                style={isOver ? { left: a.left, top: a.top } : undefined}
+                onClick={() => setActiveAction(a.name)}
+                data-test={a.name}>
+                <a.Icon />
               </ActionIconButton>
-            )}
-          </div>
+              <a.Component
+                open={activeAction === a.name}
+                flowId={flowId}
+                resourceId={resourceId}
+                onClose={() => setActiveAction(null)}
+              />
+            </Fragment>
+          ))}
+          {!isOver && processorActions.length > 0 && (
+            <ActionIconButton className={classes.isNotOverActions}>
+              <EllipsisIcon />
+            </ActionIconButton>
+          )}
         </AppBlock>
         {!isLast && (
           /* Right connecting line between Page Processors is not needed

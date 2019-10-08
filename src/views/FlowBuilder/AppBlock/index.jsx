@@ -44,6 +44,9 @@ const useStyles = makeStyles(theme => ({
   name: {
     margin: theme.spacing(1, 0, 1, 0),
   },
+  actionContainer: {
+    position: 'relative',
+  },
 }));
 
 function AppBlock({
@@ -76,7 +79,9 @@ function AppBlock({
         ref={forwardedRef}
         className={classes.box}
         style={{ opacity }}>
-        {children /* action icon buttons */}
+        <div className={classes.actionContainer}>
+          {children /* action icon buttons */}
+        </div>
         <ApplicationImg
           size="large"
           type={connectorType}
