@@ -554,20 +554,29 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'http', assistant: 'zuora' },
 ];
 
-export const groupApplications = () => [
-  {
-    label: 'Databases',
-    connectors: connectors.filter(c => c.group === 'db'),
-  },
-  {
-    label: 'Generic tech connectors',
-    connectors: connectors.filter(c => c.group === 'tech'),
-  },
-  {
-    label: 'Connectors',
-    connectors: connectors.filter(c => !c.group),
-  },
-];
+export const groupApplications = resourceType => {
+  const filteredConnectors = connectors.filter(connector => {
+    if (resourceType && resourceType !== 'exports')
+      return connector.id !== 'webhook';
+
+    return true;
+  });
+
+  return [
+    {
+      label: 'Databases',
+      connectors: filteredConnectors.filter(c => c.group === 'db'),
+    },
+    {
+      label: 'Generic tech connectors',
+      connectors: filteredConnectors.filter(c => c.group === 'tech'),
+    },
+    {
+      label: 'Connectors',
+      connectors: filteredConnectors.filter(c => !c.group),
+    },
+  ];
+};
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;
