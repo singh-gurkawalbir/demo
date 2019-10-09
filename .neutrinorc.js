@@ -184,12 +184,13 @@ module.exports = {
     ],
     neutrino => {
       const proxyOpts = getProxyOpts();
-
+      //needed for our test cases....
       neutrino.config.when (process.env.NODE_ENV === 'test',config=>{
         config.module.rule('compile').use('babel').tap(
           origOptions=>{ 
             const options =deepClone(origOptions);
-            options.plugins.push(join(__dirname, 'node_modules/babel-plugin-dynamic-import-node/lib/index.js'));
+            //if the dependency isn't there then that could be a problem
+            options.plugins.push('babel-plugin-dynamic-import-node');
         
             const babelEnvPreset = options.presets.find(preset => Array.isArray(preset) && preset[0].includes('babel-preset-env'));
             if(babelEnvPreset)
