@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { sections } = require('./docs/sections');
-
+const {deepClone} =require('fast-json-patch');
 require('babel-register')({
   plugins: [
     [
@@ -185,6 +185,20 @@ module.exports = {
     neutrino => {
       const proxyOpts = getProxyOpts();
 
+      neutrino.config.when (process.env.NODE_ENV === 'test',config=>{
+        config.module.rule('compile').use('babel').tap(
+          origOptions=>{ 
+            const options =deepClone(origOptions);
+            options.plugins.push(join(__dirname, 'node_modules/babel-plugin-dynamic-import-node/lib/index.js'));
+        
+            const babelEnvPreset = options.presets.find(preset => Array.isArray(preset) && preset[0].includes('babel-preset-env'));
+            if(babelEnvPreset)
+              delete babelEnvPreset[1].exclude;
+            return options;
+          
+          }
+        )
+      });
       neutrino.config.devServer.proxy({
         '/signin': proxyOpts,
         '/signout': proxyOpts,
