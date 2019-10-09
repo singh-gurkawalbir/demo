@@ -338,9 +338,7 @@ export function resourceList(
       : (a, b) => -desc(a, b, orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
-  const filtered = filter
-    ? resources.filter(sift(filter))
-    : sorted.filter(matchTest);
+  const filtered = sorted.filter(filter ? sift(filter) : matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;
