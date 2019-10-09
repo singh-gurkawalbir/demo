@@ -1433,10 +1433,6 @@ export function accessTokenList(
   return tokensList;
 }
 
-export function accessToken(state, id) {
-  return fromData.accessToken(state.data, id);
-}
-
 export function flowJobsPagingDetails(state) {
   return fromData.flowJobsPagingDetails(state.data);
 }

@@ -6,7 +6,7 @@ import { Typography, withStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import ReactDiffViewer from 'react-diff-viewer';
-import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../utils/constants';
+import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../constants/resource';
 
 @withStyles(theme => ({
   root: {
