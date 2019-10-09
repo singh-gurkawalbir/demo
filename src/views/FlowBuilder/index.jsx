@@ -20,7 +20,7 @@ import itemTypes from './itemTypes';
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
   var FlowSchema = new Schema({
-  _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
+ _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
   schedule: {type: String, cLocked: false, template: true, patch: true},
   timezone: {type: String, cLocked: false, template: true, patch: true},
   name: { type: String, template: true, maxSize: 300, patch: true },
@@ -100,8 +100,8 @@ import itemTypes from './itemTypes';
     }],
     template: true
   },
-  _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
-  _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
+  // old schema, not needed. _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
+  // old schema, not needed. _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
   _integrationId: {type: Schema.Types.ObjectId, ref: 'Integration'},
   _connectorId: {type: Schema.Types.ObjectId, ref: 'Connector'},
   disabled: {type: Boolean, patch: true},
@@ -213,7 +213,7 @@ function FlowBuilder(props) {
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
 
       if (commit) {
-        dispatch(actions.resource.commitStaged(flowId, 'value'));
+        dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
       }
     },
     [dispatch, flowId]
