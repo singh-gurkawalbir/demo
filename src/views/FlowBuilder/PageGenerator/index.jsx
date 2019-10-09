@@ -5,26 +5,25 @@ import { useDrag } from 'react-dnd-cjs';
 import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
 import itemTypes from '../itemTypes';
-import CalendarIcon from '../../../components/icons/CalendarIcon';
-import TransformIcon from '../../../components/icons/TransformIcon';
-import FilterIcon from '../../../components/icons/FilterIcon';
-import HookIcon from '../../../components/icons/HookIcon';
+import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
 import AppBlock from '../AppBlock';
-import RightActions from '../AppBlock/RightActions';
-import BottomActions from '../AppBlock/BottomActions';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import applications from '../../../constants/applications';
 import { getResourceSubType } from '../../../utils/resource';
+import exportHooksAction from './actions/exportHooks';
+import transformationAction from './actions/transformation';
+import scheduleAction from './actions/schedule';
+import exportFilterAction from './actions/exportFilter';
+import ActionIconButton from '../ActionIconButton';
 
 /* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
    We the block consts across several components and thus is a maintenance issue to 
    manage as we enhance the FB layout. */
-const blockHeight = 100;
-const lineHeightOffset = 104;
-const lineWidth = 1;
+const blockHeight = 120;
+const lineHeightOffset = 64;
+const lineWidth = 130;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
@@ -34,16 +33,19 @@ const useStyles = makeStyles(theme => ({
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
     width: lineWidth,
-    marginTop: -theme.spacing(4),
+    marginTop: -theme.spacing(3) - 1,
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    marginTop: -248,
+    marginTop: -208,
     height: blockHeight + lineHeightOffset,
-    position: 'relative',
     borderRight: `3px dotted ${theme.palette.divider}`,
+  },
+  isNotOverActions: {
+    top: 68,
+    left: 116,
   },
 }));
 const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
@@ -52,6 +54,8 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const resourceType = pg._connectionId ? 'connections' : 'exports';
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isOver, setIsOver] = useState(false);
+  const [activeAction, setActiveAction] = useState(null);
   const [newGeneratorId, setNewGeneratorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     !resourceId ? {} : selectors.resourceData(state, resourceType, resourceId)
@@ -160,9 +164,21 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
 
   drag(ref);
 
+  const generatorActions = pending
+    ? []
+    : [transformationAction, exportHooksAction, exportFilterAction];
+
+  if (blockType === 'export' && !pending) {
+    generatorActions.push(scheduleAction);
+  }
+
   return (
     <div className={classes.pgContainer}>
       <AppBlock
+        onMouseOver={() => setIsOver(true)}
+        onMouseOut={() => setIsOver(false)}
+        onFocus={() => setIsOver(true)}
+        onBlur={() => setIsOver(false)}
         name={blockName}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
@@ -170,33 +186,36 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
         ref={ref} /* ref is for drag and drop binding */
         blockType={blockType}
         opacity={opacity}>
-        <RightActions>
-          {!pending && (
-            <Fragment>
-              <IconButton>
-                <TransformIcon data-test="transform" />
-              </IconButton>
-              <IconButton data-test="filter">
-                <FilterIcon />
-              </IconButton>
-              <IconButton data-test="hooks">
-                <HookIcon />
-              </IconButton>
-            </Fragment>
-          )}
-        </RightActions>
-        <BottomActions>
-          {!pending && (
-            <IconButton>
-              <CalendarIcon data-test="calendar" />
-            </IconButton>
-          )}
-        </BottomActions>
+        {generatorActions.map(a => (
+          <Fragment key={a.name}>
+            <ActionIconButton
+              helpText={a.helpText}
+              className={clsx({
+                [classes.isNotOverActions]: !isOver,
+              })}
+              style={isOver ? { left: a.left, top: a.top } : undefined}
+              onClick={() => setActiveAction(a.name)}
+              data-test={a.name}>
+              <a.Icon />
+            </ActionIconButton>
+            <a.Component
+              open={activeAction === a.name}
+              flowId={flowId}
+              resourceId={resourceId}
+              onClose={() => setActiveAction(null)}
+            />
+          </Fragment>
+        ))}
+        {!isOver && generatorActions.length > 0 && (
+          <ActionIconButton className={classes.isNotOverActions}>
+            <EllipsisIcon />
+          </ActionIconButton>
+        )}
       </AppBlock>
       <div
         /* -- connecting line */
         className={clsx({
-          [classes.line]: index > 0,
+          [classes.line]: !pending,
           [classes.connectingLine]: index > 0 && !pending,
         })}
       />

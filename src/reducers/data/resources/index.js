@@ -105,13 +105,7 @@ export default (state = {}, action) => {
           collection && collection.map(c => ({ ...c, _connectorId: id }));
 
         return produce(state, draft => {
-          draft.connectorInstallBase =
-            draft.connectorInstallBase &&
-            draft.connectorInstallBase.filter(c => c._connectorId !== id);
-          draft.connectorInstallBase = [
-            ...(draft.connectorInstallBase || []),
-            ...(newCollection || []),
-          ];
+          draft.connectorInstallBase = newCollection || [];
         });
       }
 
@@ -128,13 +122,7 @@ export default (state = {}, action) => {
           }));
 
         return produce(state, draft => {
-          draft.connectorLicenses =
-            draft.connectorLicenses &&
-            draft.connectorLicenses.filter(c => c._connectorId !== id);
-          draft.connectorLicenses = [
-            ...(draft.connectorLicenses || []),
-            ...(newCollection || []),
-          ];
+          draft.connectorLicenses = newCollection || [];
         });
       }
 
@@ -206,6 +194,10 @@ export default (state = {}, action) => {
       }
 
       return state;
+    case actionTypes.RESOURCE.CLEAR_COLLECTION:
+      return produce(state, draft => {
+        draft[resourceType] = [];
+      });
     default:
       return state;
   }
