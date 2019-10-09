@@ -5,20 +5,19 @@ import { useDrag, useDrop } from 'react-dnd-cjs';
 import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
-// import actions from '../../../actions';
 import itemTypes from '../itemTypes';
-import HookIcon from '../../../components/icons/HookIcon';
-import FilterIcon from '../../../components/icons/FilterIcon';
-import MapDataIcon from '../../../components/icons/MapDataIcon';
-import TransformIcon from '../../../components/icons/TransformIcon';
 import AppBlock from '../AppBlock';
-import LeftActions from '../AppBlock/LeftActions';
-import RightActions from '../AppBlock/RightActions';
-import BottomActions from '../AppBlock/BottomActions';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
 import { getResourceSubType } from '../../../utils/resource';
+import importMappingAction from './actions/importMapping';
+import inputFilterAction from './actions/inputFilter';
+import importHooksAction from './actions/importHooks';
+import transformationAction from './actions/transformation';
+import responseMapping from './actions/responseMapping';
+import proceedOnFailureAction from './actions/proceedOnFailure';
+import ActionIconButton from '../ActionIconButton';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -26,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 50,
+    minWidth: 150,
   },
   lineLeft: {
     minWidth: 50,
@@ -34,8 +33,11 @@ const useStyles = makeStyles(theme => ({
   dottedLine: {
     alignSelf: 'start',
     marginTop: 80,
-    position: 'relative',
     borderBottom: `3px dotted ${theme.palette.divider}`,
+  },
+  isNotOverActions: {
+    top: 68,
+    left: 116,
   },
 }));
 const PageProcessor = ({
@@ -54,6 +56,8 @@ const PageProcessor = ({
   const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isOver, setIsOver] = useState(false);
+  const [activeAction, setActiveAction] = useState(null);
   const [newProcessorId, setNewProcessorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(
@@ -91,6 +95,7 @@ const PageProcessor = ({
   // #endregion
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
+
     hover(item, monitor) {
       if (!ref.current) {
         return;
@@ -189,6 +194,20 @@ const PageProcessor = ({
 
   drag(drop(ref));
 
+  const processorActions = pending
+    ? []
+    : [
+        inputFilterAction,
+        importMappingAction,
+        importHooksAction,
+        transformationAction,
+      ];
+
+  if (!isLast && !pending) {
+    processorActions.push(responseMapping);
+    processorActions.push(proceedOnFailureAction);
+  }
+
   return (
     <Fragment>
       <div className={classes.ppContainer}>
@@ -197,6 +216,10 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
+          onMouseOver={() => setIsOver(true)}
+          onMouseOut={() => setIsOver(false)}
+          onFocus={() => setIsOver(true)}
+          onBlur={() => setIsOver(false)}
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
@@ -206,46 +229,31 @@ const PageProcessor = ({
           ref={ref}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}>
-          <RightActions>
-            {!isLast && !pending && (
-              <Fragment>
-                <IconButton>
-                  <MapDataIcon data-test="mapData" />
-                </IconButton>
-                <IconButton data-test="filter">
-                  <FilterIcon />
-                </IconButton>
-              </Fragment>
-            )}
-          </RightActions>
-
-          <BottomActions>
-            {!pending && (
-              <Fragment>
-                <IconButton>
-                  <MapDataIcon data-test="mapData" />
-                </IconButton>
-
-                <IconButton>
-                  <TransformIcon data-test="transform" />
-                </IconButton>
-
-                <IconButton>
-                  <HookIcon data-test="hook" />
-                </IconButton>
-              </Fragment>
-            )}
-          </BottomActions>
-
-          <LeftActions>
-            {!pending && (
-              <Fragment>
-                <IconButton>
-                  <FilterIcon data-test="filter" />
-                </IconButton>
-              </Fragment>
-            )}
-          </LeftActions>
+          {processorActions.map(a => (
+            <Fragment key={a.name}>
+              <ActionIconButton
+                helpText={a.helpText}
+                className={clsx({
+                  [classes.isNotOverActions]: !isOver,
+                })}
+                style={isOver ? { left: a.left, top: a.top } : undefined}
+                onClick={() => setActiveAction(a.name)}
+                data-test={a.name}>
+                <a.Icon />
+              </ActionIconButton>
+              <a.Component
+                open={activeAction === a.name}
+                flowId={flowId}
+                resourceId={resourceId}
+                onClose={() => setActiveAction(null)}
+              />
+            </Fragment>
+          ))}
+          {!isOver && processorActions.length > 0 && (
+            <ActionIconButton className={classes.isNotOverActions}>
+              <EllipsisIcon />
+            </ActionIconButton>
+          )}
         </AppBlock>
         {!isLast && (
           /* Right connecting line between Page Processors is not needed
