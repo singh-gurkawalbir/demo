@@ -34,7 +34,7 @@ export default function TemplateList(props) {
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceList(state, {
+    selectors.resourceListWithPermissions(state, {
       type: 'templates',
       ...filter,
     })
@@ -43,7 +43,10 @@ export default function TemplateList(props) {
 
   return (
     <Fragment>
-      <CheckPermissions permission={PERMISSIONS.templates.view}>
+      <CheckPermissions
+        permission={
+          PERMISSIONS && PERMISSIONS.templates && PERMISSIONS.templates.view
+        }>
         <ResourceDrawer {...props} />
         {showGenerateZipDialog && (
           <GenerateZipDialog

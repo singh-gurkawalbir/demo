@@ -29,7 +29,7 @@ export default function RecycleBin(props) {
     useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||
     defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceList(state, {
+    selectors.resourceListWithPermissions(state, {
       type: 'recycleBinTTL',
       ...{ ...defaultFilter, ...filter },
     })
@@ -37,7 +37,10 @@ export default function RecycleBin(props) {
 
   return (
     <Fragment>
-      <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
+      <CheckPermissions
+        permission={
+          PERMISSIONS && PERMISSIONS.recyclebin && PERMISSIONS.recyclebin.view
+        }>
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle Bin" infoText={infoText.recycleBin}>
           <div className={classes.actions}>

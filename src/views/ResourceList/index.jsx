@@ -35,7 +35,7 @@ function ResourceList(props) {
     useSelector(state => selectors.filter(state, resourceType)) ||
     defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceList(state, {
+    selectors.resourceListWithPermissions(state, {
       type: resourceType,
       ...{ ...defaultFilter, ...filter },
     })
@@ -44,7 +44,12 @@ function ResourceList(props) {
 
   return (
     <Fragment>
-      <CheckPermissions permission={PERMISSIONS[resourceType].view}>
+      <CheckPermissions
+        permission={
+          PERMISSIONS &&
+          PERMISSIONS[resourceType] &&
+          PERMISSIONS[resourceType].view
+        }>
         <ResourceDrawer {...props} />
         <CeligoPageBar
           title={`${resourceName}s`}

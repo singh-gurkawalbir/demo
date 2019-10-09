@@ -46,7 +46,12 @@ export default function AccessTokenList(props) {
 
   return (
     <Fragment>
-      <CheckPermissions permission={PERMISSIONS.accesstokens.view}>
+      <CheckPermissions
+        permission={
+          PERMISSIONS &&
+          PERMISSIONS.accesstokens &&
+          PERMISSIONS.accesstokens.view
+        }>
         <ResourceDrawer {...newProps} />
 
         <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
