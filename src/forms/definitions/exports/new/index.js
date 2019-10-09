@@ -87,6 +87,7 @@ export default {
         { field: 'type', is: ['api'] },
       ],
       allowNew: true,
+      allowEdit: true,
     },
     name: {
       id: 'name',

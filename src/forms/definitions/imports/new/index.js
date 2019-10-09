@@ -57,6 +57,7 @@ export default {
       refreshOptionsOnChangesTo: ['application'],
       visibleWhen,
       allowNew: true,
+      allowEdit: true,
     },
     name: {
       id: 'name',

@@ -6,6 +6,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
+import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../../components/LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
@@ -42,6 +43,7 @@ function DynaSelectResource(props) {
     value,
     resourceType,
     allowNew,
+    allowEdit,
     location,
   } = props;
   const classes = useStyles();
@@ -141,6 +143,18 @@ function DynaSelectResource(props) {
           to={`${location.pathname}/add/${resourceType}/${newResourceId}`}
           size="small">
           <AddIcon />
+        </IconButton>
+      )}
+
+      {allowEdit && (
+        <IconButton
+          disabled={!value}
+          data-test="addNewResource"
+          className={classes.iconButton}
+          component={Link}
+          to={`${location.pathname}/edit/${resourceType}/${value}`}
+          size="small">
+          <EditIcon />
         </IconButton>
       )}
     </div>

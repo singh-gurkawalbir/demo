@@ -100,6 +100,14 @@ export default function Panel(props) {
     return url;
   }
 
+  function removeLastCodePannel() {
+    // console.log(location);
+    const segments = location.pathname.split('/');
+    const url = segments.splice(0, segments.length - 3).join('/');
+
+    return url;
+  }
+
   useEffect(() => {
     // once a new resource (id.startsWith('new-')), has been committed,
     // we need to redirect to the resource using the correct id from
@@ -118,7 +126,13 @@ export default function Panel(props) {
   function handleSubmitComplete() {
     if (isNew) {
       props.history.replace(getEditUrl(id));
-    } else if (getEditUrl(id)) props.history.replace('/pg/connections');
+    } else if (location.pathname === getEditUrl(id)) {
+      if (location.pathname.includes('/add')) {
+        return props.history.replace(removeLastCodePannel());
+      }
+
+      props.history.replace(`/pg/${resourceType}`);
+    }
   }
 
   const submitButtonLabel =
