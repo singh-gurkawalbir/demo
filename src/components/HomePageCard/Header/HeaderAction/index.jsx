@@ -4,8 +4,14 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/styles';
 import EllipsisIconVertical from '../../../icons/EllipsisVerticalIcon';
+import NotificationsIcon from '../../../icons/NotificationsIcon';
 
 const useStyles = makeStyles(theme => ({
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   menu: {
     width: 180,
     '& MuiMenu-paper': {
@@ -31,11 +37,21 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
   action: {
-    padding: 6,
-    marginTop: 5,
     '&:hover': {
       background: theme.palette.background.paper2,
     },
+  },
+  notificationWrapper: {
+    position: 'relative',
+  },
+  notificationIcon: {
+    position: 'absolute',
+    top: '0px',
+    right: '3px',
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: theme.palette.error.main,
   },
 }));
 
@@ -55,8 +71,13 @@ function HeaderAction(props) {
   }
 
   return (
-    <div>
+    <div className={classes.wrapper}>
+      <div className={classes.notificationWrapper}>
+        <span className={classes.notificationIcon} />
+        <NotificationsIcon />
+      </div>
       <IconButton
+        data-test="openHeaderActionMenu"
         aria-label="more"
         aria-controls="long-menu"
         aria-haspopup="true"

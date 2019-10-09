@@ -167,8 +167,11 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  title: {
+  sourceTitle: {
     textAlign: 'center',
+  },
+  destinationTitle: {
+    marginLeft: 100,
   },
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
@@ -296,11 +299,11 @@ function FlowBuilder(props) {
   }
 
   function handleAddProcessor() {
-    pushOrReplaceHistory(`${match.url}/add/imports/${newProcessorId}`);
+    pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
   // eslint-disable-next-line
-  // console.log(flow, patch);
+  // console.log(flow);
 
   return (
     <Fragment>
@@ -325,9 +328,11 @@ function FlowBuilder(props) {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             <div className={classes.generatorRoot}>
-              <Typography className={classes.title} variant="h6">
+              <Typography className={classes.sourceTitle} variant="h6">
                 SOURCE APPLICATIONS
-                <IconButton onClick={handleAddGenerator}>
+                <IconButton
+                  data-test="addGenerator"
+                  onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -336,7 +341,12 @@ function FlowBuilder(props) {
                 {pageGenerators.map((pg, i) => (
                   <PageGenerator
                     {...pg}
-                    key={pg._exportId}
+                    flowId={flowId}
+                    key={
+                      pg._exportId ||
+                      pg._connectionId ||
+                      `${pg.application}${pg.webhookOnly}`
+                    }
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                   />
@@ -344,9 +354,11 @@ function FlowBuilder(props) {
               </div>
             </div>
             <div className={classes.processorRoot}>
-              <Typography className={classes.title} variant="h6">
+              <Typography className={classes.destinationTitle} variant="h6">
                 DESTINATION &amp; LOOKUP APPLICATIONS
-                <IconButton onClick={handleAddProcessor}>
+                <IconButton
+                  data-test="addProcessor"
+                  onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
               </Typography>
@@ -354,7 +366,8 @@ function FlowBuilder(props) {
                 {pageProcessors.map((pp, i) => (
                   <PageProcessor
                     {...pp}
-                    key={pp.type === 'import' ? pp._importId : pp._exportId}
+                    flowId={flowId}
+                    key={pp._importId || pp._exportId || pp._connectionId}
                     index={i}
                     isLast={pageProcessors.length === i + 1}
                     onMove={handleMove}
@@ -374,13 +387,17 @@ function FlowBuilder(props) {
               {patch && patch.length > 0 && (
                 <Fragment>
                   <Button
+                    data-test="commitFlowPatches"
                     variant="outlined"
                     color="primary"
                     onClick={commitFlowPatch}>
                     Commit
                   </Button>
                   &nbsp;
-                  <Button variant="outlined" onClick={undoFlowPatch}>
+                  <Button
+                    data-test="undoFlowPatches"
+                    variant="outlined"
+                    onClick={undoFlowPatch}>
                     Undo {patch.length} change(s)
                   </Button>
                 </Fragment>

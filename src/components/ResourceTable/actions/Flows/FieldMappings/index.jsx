@@ -24,7 +24,10 @@ export default {
             onClose={handleClose}
           />
         )}
-        <IconButton size="small" onClick={onFieldMappingClick}>
+        <IconButton
+          data-test="showFieldMappingDialog"
+          size="small"
+          onClick={onFieldMappingClick}>
           <Icon />
         </IconButton>
       </Fragment>

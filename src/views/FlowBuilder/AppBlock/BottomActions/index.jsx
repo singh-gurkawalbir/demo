@@ -1,10 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     alignSelf: 'center',
-    marginTop: theme.spacing(-1),
+    // marginTop: theme.spacing(-1),
   },
 }));
 

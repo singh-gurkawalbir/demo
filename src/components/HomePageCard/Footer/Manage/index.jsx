@@ -1,11 +1,14 @@
 import { makeStyles } from '@material-ui/styles';
-import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     marginRight: 10,
     padding: 7,
+    borderRadius: '50%',
+    display: 'inline-flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     '&:hover': {
       background: theme.palette.background.default,
     },
@@ -17,9 +20,9 @@ function Manage(props) {
   const { children } = props;
 
   return (
-    <IconButton aria-label="manage" className={classes.wrapper} {...props}>
+    <div aria-label="manage" className={classes.wrapper} {...props}>
       {children}
-    </IconButton>
+    </div>
   );
 }
 

@@ -1,19 +1,23 @@
-import { useRef, Fragment } from 'react';
+import { useRef, Fragment, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import shortid from 'shortid';
 import clsx from 'clsx';
-// import actions from '../../../actions';
+import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
-import HookIcon from '../../../components/icons/HookIcon';
-import FilterIcon from '../../../components/icons/FilterIcon';
-import MapDataIcon from '../../../components/icons/MapDataIcon';
-import TransformIcon from '../../../components/icons/TransformIcon';
 import AppBlock from '../AppBlock';
-import LeftActions from '../AppBlock/LeftActions';
-import RightActions from '../AppBlock/RightActions';
-import BottomActions from '../AppBlock/BottomActions';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
+import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
+import { getResourceSubType } from '../../../utils/resource';
+import importMappingAction from './actions/importMapping';
+import inputFilterAction from './actions/inputFilter';
+import importHooksAction from './actions/importHooks';
+import transformationAction from './actions/transformation';
+import responseMapping from './actions/responseMapping';
+import proceedOnFailureAction from './actions/proceedOnFailure';
+import ActionIconButton from '../ActionIconButton';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -21,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 50,
+    minWidth: 150,
   },
   lineLeft: {
     minWidth: 50,
@@ -29,25 +33,69 @@ const useStyles = makeStyles(theme => ({
   dottedLine: {
     alignSelf: 'start',
     marginTop: 80,
-    position: 'relative',
     borderBottom: `3px dotted ${theme.palette.divider}`,
+  },
+  isNotOverActions: {
+    top: 68,
+    left: 116,
   },
 }));
 const PageProcessor = ({
   match,
   location,
   history,
+  flowId,
   index,
   onMove,
   isLast,
   ...pp
 }) => {
+  const pending = !!pp._connectionId;
+  const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
-  const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
   const ref = useRef(null);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [isOver, setIsOver] = useState(false);
+  const [activeAction, setActiveAction] = useState(null);
+  const [newProcessorId, setNewProcessorId] = useState(null);
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(
+      state,
+      pending ? 'connections' : resourceType,
+      resourceId
+    )
+  );
+  const createdProcessorId = useSelector(state =>
+    selectors.createdResourceId(state, newProcessorId)
+  );
+
+  // #region Add Processor on creation effect
+  useEffect(() => {
+    if (createdProcessorId) {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: `/pageProcessors/${index}`,
+          value: {
+            type: pp.type,
+            [pp.type === 'export'
+              ? '_exportId'
+              : '_importId']: createdProcessorId,
+          },
+        },
+      ];
+
+      // console.log(pp, patchSet);
+      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdProcessorId, dispatch]);
+  // #endregion
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
+
     hover(item, monitor) {
       if (!ref.current) {
         return;
@@ -102,7 +150,63 @@ const PageProcessor = ({
   });
   const opacity = isDragging ? 0.2 : 1;
 
+  function handleBlockClick() {
+    const newId = `new-${shortid.generate()}`;
+
+    if (pending) {
+      // generate newId
+      setNewProcessorId(newId);
+      const { type, assistant } = getResourceSubType(resource);
+      const application = assistant || type;
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/application',
+          value: application,
+        },
+        {
+          op: 'add',
+          path: '/resourceType',
+          value: resourceType,
+        },
+        {
+          op: 'add',
+          path: '/_connectionId',
+          value: pp._connectionId,
+        },
+      ];
+
+      // console.log('patchSet: ', patchSet);
+
+      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+    }
+
+    const to = pending
+      ? `${match.url}/add/pageProcessor/${newId}`
+      : `${match.url}/edit/${resourceType}/${resourceId}`;
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
   drag(drop(ref));
+
+  const processorActions = pending
+    ? []
+    : [
+        inputFilterAction,
+        importMappingAction,
+        importHooksAction,
+        transformationAction,
+      ];
+
+  if (!isLast && !pending) {
+    processorActions.push(responseMapping);
+    processorActions.push(proceedOnFailureAction);
+  }
 
   return (
     <Fragment>
@@ -112,44 +216,44 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
-          match={match}
-          history={history}
+          onMouseOver={() => setIsOver(true)}
+          onMouseOut={() => setIsOver(false)}
+          onFocus={() => setIsOver(true)}
+          onBlur={() => setIsOver(false)}
+          name={
+            pending ? 'Pending configuration' : resource.name || resource.id
+          }
+          onBlockClick={handleBlockClick}
+          connectorType={resource.adaptorType || resource.type}
+          assistant={resource.assistant}
           ref={ref}
-          opacity={opacity}
-          resourceType={resourceType}
-          resourceId={resourceId}>
-          <RightActions>
-            {!isLast && (
-              <Fragment>
-                <IconButton>
-                  <MapDataIcon />
-                </IconButton>
-                <IconButton>
-                  <FilterIcon />
-                </IconButton>
-              </Fragment>
-            )}
-          </RightActions>
-
-          <BottomActions>
-            <IconButton>
-              <MapDataIcon />
-            </IconButton>
-
-            <IconButton>
-              <TransformIcon />
-            </IconButton>
-
-            <IconButton>
-              <HookIcon />
-            </IconButton>
-          </BottomActions>
-
-          <LeftActions>
-            <IconButton>
-              <FilterIcon />
-            </IconButton>
-          </LeftActions>
+          opacity={opacity} /* used for drag n drop */
+          blockType={pp.type === 'export' ? 'lookup' : 'import'}>
+          {processorActions.map(a => (
+            <Fragment key={a.name}>
+              <ActionIconButton
+                helpText={a.helpText}
+                className={clsx({
+                  [classes.isNotOverActions]: !isOver,
+                })}
+                style={isOver ? { left: a.left, top: a.top } : undefined}
+                onClick={() => setActiveAction(a.name)}
+                data-test={a.name}>
+                <a.Icon />
+              </ActionIconButton>
+              <a.Component
+                open={activeAction === a.name}
+                flowId={flowId}
+                resourceId={resourceId}
+                onClose={() => setActiveAction(null)}
+              />
+            </Fragment>
+          ))}
+          {!isOver && processorActions.length > 0 && (
+            <ActionIconButton className={classes.isNotOverActions}>
+              <EllipsisIcon />
+            </ActionIconButton>
+          )}
         </AppBlock>
         {!isLast && (
           /* Right connecting line between Page Processors is not needed

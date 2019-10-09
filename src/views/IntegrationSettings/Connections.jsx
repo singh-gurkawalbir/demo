@@ -44,6 +44,7 @@ export default function Connections(props) {
       <LoadResources required resources="connections">
         {integrationId && integrationId !== 'none' && showRegisterButton && (
           <Button
+            data-test="showRegisterConnectionDialog"
             className={classes.registerButton}
             onClick={() => setShowRegisterConnDialog(true)}>
             Register Connections

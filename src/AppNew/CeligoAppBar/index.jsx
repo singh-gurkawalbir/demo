@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   celigoLogo: {
     height: 36,
     width: 120,
-    background: `url(${process.env.CDN_BASE_URI}flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   unauthenticatedAppBar: {
     background: theme.palette.background.paper2,
@@ -38,13 +38,13 @@ const useStyles = makeStyles(theme => ({
     height: 36,
     overflow: 'hidden',
     boxSizing: 'border-box',
-    // background: 'black',
-
-    // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    [theme.breakpoints.only('xs')]: {
+      height: 'auto',
+    },
   },
   appBarShift: {
     width: `calc(100% - ${theme.drawerWidth}px)`,

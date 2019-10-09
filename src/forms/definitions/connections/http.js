@@ -68,7 +68,8 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
-      defaultValue: 'cloud',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [
@@ -134,6 +135,11 @@ export default {
     'http.ping.successValues': { fieldId: 'http.ping.successValues' },
     'http.ping.errorPath': { fieldId: 'http.ping.errorPath' },
     httpAdvanced: { formId: 'httpAdvanced' },
+    'clientCertificates.cert': { fieldId: 'clientCertificates.cert' },
+    'clientCertificates.key': { fieldId: 'clientCertificates.key' },
+    'http.clientCertificates.passphrase': {
+      fieldId: 'http.clientCertificates.passphrase',
+    },
   },
   layout: {
     fields: [
@@ -177,7 +183,16 @@ export default {
           'http.ping.errorPath',
         ],
       },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: [
+          'httpAdvanced',
+          'clientCertificates.key',
+          'clientCertificates.cert',
+          'http.clientCertificates.passphrase',
+        ],
+      },
     ],
   },
 };

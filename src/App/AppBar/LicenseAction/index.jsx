@@ -70,6 +70,7 @@ class LicenseAction extends Component {
           },
           action: key => (
             <IconButton
+              data-test="closeLicenseSnackbar"
               key="close"
               aria-label="Close"
               color="inherit"
@@ -141,6 +142,7 @@ class LicenseAction extends Component {
                 }}
               />
               <Button
+                data-test={buttonProps.label}
                 className={buttonProps.className}
                 variant="contained"
                 color="secondary"

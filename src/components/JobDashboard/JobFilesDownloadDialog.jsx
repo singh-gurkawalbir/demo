@@ -79,7 +79,10 @@ export default function JobFilesDownloadDialog({
     <Dialog open maxWidth={false}>
       <DialogTitle className={classes.title}>
         <Typography>{`${integrationName} > ${job && job.name}`}</Typography>
-        <IconButton className={classes.closeButton} onClick={onCloseClick}>
+        <IconButton
+          className={classes.closeButton}
+          data-test="closeJobFilesDownloadDialog"
+          onClick={onCloseClick}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -93,6 +96,7 @@ export default function JobFilesDownloadDialog({
       </DialogContent>
       <DialogActions>
         <Button
+          data-test="downloadJobFiles"
           disabled={downloadButtonState.disabled}
           onClick={handleDownloadClick}>
           {downloadButtonState.label}

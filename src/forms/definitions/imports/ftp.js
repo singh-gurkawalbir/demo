@@ -1,4 +1,22 @@
+import { adaptorTypeMap } from '../../../utils/resource';
+
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mapping') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'file.lookups'
+      );
+
+      if (lookupField) {
+        return {
+          lookupId: 'file.lookups',
+          lookups: lookupField && lookupField.value,
+        };
+      }
+    }
+
+    return null;
+  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -11,6 +29,12 @@ export default {
     'ftp.fileName': { fieldId: 'ftp.fileName' },
     file: { formId: 'file' },
     dataMappings: { formId: 'dataMappings' },
+    'file.lookups': { fieldId: 'file.lookups', visible: false },
+    mapping: {
+      fieldId: 'mapping',
+      application: adaptorTypeMap.FTPImport,
+      refreshOptionsOnChangesTo: ['file.lookups'],
+    },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
@@ -31,6 +55,8 @@ export default {
       'ftp.fileName',
       'file',
       'dataMappings',
+      'file.lookups',
+      'mapping',
     ],
     type: 'collapse',
     containers: [

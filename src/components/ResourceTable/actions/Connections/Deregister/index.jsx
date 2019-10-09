@@ -38,7 +38,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleClick}>
+      <IconButton
+        data-test="closeDeregisterModal"
+        size="small"
+        onClick={handleClick}>
         <CloseIcon />
       </IconButton>
     );

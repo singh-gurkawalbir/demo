@@ -70,6 +70,8 @@ export default {
           extractFields,
         });
         break;
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,

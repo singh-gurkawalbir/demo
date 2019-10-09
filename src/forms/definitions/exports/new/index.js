@@ -1,4 +1,6 @@
-import applications from '../../../../constants/applications';
+import applications, {
+  getWebhookConnectors,
+} from '../../../../constants/applications';
 
 const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
@@ -17,25 +19,30 @@ const appTypeToAdaptorType = {
 };
 
 export default {
-  preSave: ({ application, executionType, apiType, ...rest }) => {
+  preSave: ({ type, application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
-    // TODO: Raghu, the below logic should move to a proper fn that uses a map.
-    // This will only work for a select few adaptorTypes as others probably
-    // dont follow the uppercase rule. we have a /utils/resource file that
-    // should hold the map fn.
     const newValues = {
       ...rest,
-      '/adaptorType': `${appTypeToAdaptorType[app.type]}Export`,
     };
 
-    if (app.assistant) {
-      newValues['/assistant'] = app.assistant;
+    if (type === 'webhook') {
+      newValues['/type'] = 'webhook';
+      newValues['/adaptorType'] = 'WebhookExport';
+      newValues['/webhook/provider'] = application;
+    } else {
+      newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
+
+      if (app.assistant) {
+        newValues['/assistant'] = app.assistant;
+      }
     }
 
     if (app.type === 'netsuite') {
       newValues['/netsuite/type'] =
         executionType === 'scheduled' ? apiType : executionType;
     }
+
+    // console.log(app, newValues);
 
     return newValues;
   },
@@ -45,8 +52,26 @@ export default {
       name: 'application',
       type: 'selectapplication',
       placeholder: 'Select application',
-      defaultValue: '',
+      defaultValue: r => (r && r.application) || '',
       required: true,
+    },
+    type: {
+      id: 'type',
+      name: 'type',
+      type: 'radiogroup',
+      label: 'This application supports two options for exporting data',
+      defaultValue: r => (r && r.type) || 'api',
+      required: true,
+      showOptionsHorizontally: true,
+      options: [
+        {
+          items: [
+            { label: 'API', value: 'api' },
+            { label: 'Webhook', value: 'webhook' },
+          ],
+        },
+      ],
+      visibleWhen: [{ field: 'application', is: getWebhookConnectors() }],
     },
     connection: {
       id: 'connection',
@@ -54,10 +79,13 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: '',
+      defaultValue: r => r && r._connectionId,
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhenAll: [
+        { field: 'application', isNot: ['', 'webhook'] },
+        { field: 'type', is: ['api'] },
+      ],
       allowNew: true,
     },
     name: {
@@ -68,7 +96,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhen: [{ field: 'application', isNot: [''] }],
     },
     description: {
       id: 'description',
@@ -78,7 +106,7 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhen: [{ field: 'application', isNot: [''] }],
     },
     'netsuite.execution.type': {
       id: 'netsuite.execution.type',
@@ -116,6 +144,7 @@ export default {
   layout: {
     fields: [
       'application',
+      'type',
       'connection',
       'name',
       'description',

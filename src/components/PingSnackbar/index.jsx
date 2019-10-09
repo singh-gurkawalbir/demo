@@ -67,6 +67,7 @@ function ClosableSnackbar(props) {
       action={
         variant !== 'info' && [
           <IconButton
+            data-test="closePingSnackbar"
             key="close"
             aria-label="Close"
             color="inherit"
@@ -96,6 +97,7 @@ const CancellableSpinner = props => (
   <div>
     <div>
       <Button
+        data-test="cancelTestCall"
         size="small"
         variant="contained"
         color="secondary"

@@ -10,9 +10,14 @@ import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import AttachFlowsDialog from '../../components/AttachFlows';
 import getRoutePath from '../../utils/routePaths';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   registerButton: {
-    float: 'right',
+    marginRight: theme.spacing(1),
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -56,26 +61,36 @@ export default function Flows(props) {
         />
       )}
       <LoadResources required resources="flows, connections, exports, imports">
-        <Button
-          className={classes.registerButton}
-          component={Link}
-          to={getRoutePath(`/integrations/${integrationId}/data-loader`)}>
-          Load Data
-        </Button>
-        {integrationId && integrationId !== 'none' && (
+        <div className={classes.actions}>
           <Button
+            data-test="createFlow"
             className={classes.registerButton}
-            onClick={() => setShowDialog(true)}>
-            Attach Flows
+            component={Link}
+            variant="contained"
+            color="secondary"
+            to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
+            Create Flow
           </Button>
-        )}
-        <Button
-          className={classes.registerButton}
-          component={Link}
-          to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
-          Create Flow
-        </Button>
-
+          <Button
+            data-test="loadData"
+            className={classes.registerButton}
+            variant="contained"
+            color="secondary"
+            component={Link}
+            to={getRoutePath(`/integrations/${integrationId}/data-loader`)}>
+            Load Data
+          </Button>
+          {integrationId && integrationId !== 'none' && (
+            <Button
+              data-test="attachFlows"
+              className={classes.registerButton}
+              variant="contained"
+              color="secondary"
+              onClick={() => setShowDialog(true)}>
+              Attach Flows
+            </Button>
+          )}
+        </div>
         <ResourceTable resourceType="flows" resources={flows} />
       </LoadResources>
     </Fragment>

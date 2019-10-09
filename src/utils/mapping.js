@@ -77,14 +77,14 @@ export default {
         return '/netsuite_da/mapping';
       default:
       case adaptorTypeMap.RESTImport:
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
     }
@@ -97,12 +97,14 @@ export default {
         return 'NetSuite Field';
       case adaptorTypeMap.FTPImport:
         return 'FTP Field';
+      case adaptorTypeMap.AS2Import:
+        return 'AS2 Field';
+      case adaptorTypeMap.S3Import:
+        return 'Import Field (Amazon S3)';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
       default:
@@ -119,14 +121,14 @@ export default {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
       case adaptorTypeMap.RESTImport:
+      case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.S3Import:
         return resourceObj.mapping;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
       default:

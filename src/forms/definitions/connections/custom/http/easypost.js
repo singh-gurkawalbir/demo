@@ -16,6 +16,7 @@ export default {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
       inputType: 'password',
+      defaultValue: '',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

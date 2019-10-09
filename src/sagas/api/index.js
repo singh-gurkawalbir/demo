@@ -36,10 +36,13 @@ export function normalizeUrlAndOptions(path, opts) {
     url = path;
     options = opts;
   } else {
-    // all regular api requests go in here
-    if (path.includes('/netSuiteWS')) {
+    if (
+      path.includes('/netSuiteWS') ||
+      /^\/connections.*distributed$/.test(path)
+    ) {
       url = path;
     } else {
+      // all regular api requests go in here
       url = `/api${path}`;
     }
 

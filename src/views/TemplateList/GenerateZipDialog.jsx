@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GenerateZip(props) {
+export default function GenerateZipModal(props) {
   const { onClose, invalid = 'invalid' } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -60,6 +60,7 @@ export default function GenerateZip(props) {
       <IconButton
         aria-label="Close"
         onClick={onClose}
+        data-test="closeGenerateZipDialog"
         className={classes.closeButton}>
         <CloseIcon />
       </IconButton>
@@ -87,6 +88,7 @@ export default function GenerateZip(props) {
           </Select>
           <br />
           <Button
+            data-test="generateTemplateZip"
             variant="contained"
             color="primary"
             type="submit"

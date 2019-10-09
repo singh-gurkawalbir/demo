@@ -4,10 +4,8 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import SignIn from '../../views/SignIn';
 import IntegrationSettings from '../../views/IntegrationSettings';
-import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
-import IntegrationAppSettings from '../../views/IntegrationApps/Settings';
-import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
-import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
+import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
+import MarketplaceRouter from '../../views/MarketPlace/Router';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -28,13 +26,10 @@ const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
 const FlowBuilder = loadable(() =>
-  import(/* webpackChunkName: 'FlowBuider' */ '../../views/FlowBuilder')
+  import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder')
 );
 const ResourceList = loadable(() =>
   import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
-);
-const Marketplace = loadable(() =>
-  import(/* webpackChunkName: 'Marketplace' */ '../../views/MarketPlace')
 );
 const TemplateList = loadable(() =>
   import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList')
@@ -47,15 +42,18 @@ const IntegrationDashboard = loadable(() =>
     /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
   )
 );
-const ConnectorTemplateList = loadable(() =>
-  import(
-    /* webpackChunkName: 'ConnectorTemplateList' */ '../../components/MarketplaceList/ConnectorTemplateList'
-  )
-);
 const AccessTokenList = loadable(() =>
   import(
     /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
   )
+);
+const ConnectorInstallBase = loadable(() =>
+  import(
+    /* webpackChunkName: 'InstallBase' */ '../../views/Connector/InstallBase'
+  )
+);
+const ConnectorLicenses = loadable(() =>
+  import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
 
 @hot(module)
@@ -77,40 +75,26 @@ export default class AppRouting extends Component {
           component={IntegrationSettings}
         />
         <Route
-          path="/pg/marketplace/:application"
-          component={ConnectorTemplateList}
+          path="/pg/connectors/:connectorId/licenses"
+          component={ConnectorLicenses}
         />
         <Route
-          path="/pg/connectors/:integrationId/setup"
-          component={IntegrationAppInstallation}
+          path="/pg/connectors/:connectorId/installBase"
+          component={ConnectorInstallBase}
         />
-        <Route
-          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-          path="/pg/connectors/:integrationId/settings"
-          component={IntegrationAppSettings}
-        />
-        <Route
-          // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-          path="/pg/connectors/:integrationId/install/addNewStore"
-          component={IntegrationAppAddNewStore}
-        />
-        <Route
-          path={[
-            // TODO: should we change "connectors" to integrationapps? If we do, need to change all email templates which include "connectors"
-            '/pg/connectors/:integrationId/uninstall/:storeId',
-            '/pg/connectors/:integrationId/uninstall',
-          ]}
-          component={IntegrationAppUninstallation}
-        />
+        <Route path="/pg/connectors" component={IntegrationAppsRouter} />
+        <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/signin" component={SignIn} />
-        <Route path="/pg/flowBuilder/:flowId" component={FlowBuilder} />
+        <Route
+          path={['/pg/flowBuilder/:flowId', '/pg/flowBuilder']}
+          component={FlowBuilder}
+        />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
         <Route path="/pg/myAccount" component={MyAccount} />
-        <Route path="/pg/marketplace" component={Marketplace} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />
         <Route path="/pg/:resourceType" component={ResourceList} />

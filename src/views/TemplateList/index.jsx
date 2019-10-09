@@ -12,7 +12,8 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
-import GenerateZip from './GenerateZip';
+import GenerateZipDialog from './GenerateZipDialog';
+import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -42,17 +43,22 @@ export default function TemplateList(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       {showGenerateZipDialog && (
-        <GenerateZip onClose={() => setShowGenerateZipDialog(false)} />
+        <GenerateZipDialog
+          data-test="closeGenerateTemplateZipDialog"
+          onClose={() => setShowGenerateZipDialog(false)}
+        />
       )}
-      <CeligoPageBar title="Templates">
+      <CeligoPageBar title="Templates" infoText={infoText.templates}>
         <div className={classes.actions}>
           <IconTextButton
+            data-test="generateTemplateZip"
             onClick={() => setShowGenerateZipDialog(true)}
             variant="text">
             Generate Template Zip
           </IconTextButton>
           <KeywordSearch filterKey="templates" defaultFilter={defaultFilter} />
           <IconTextButton
+            data-test="addNewTemplate"
             component={Link}
             to={`${location.pathname}/add/templates/new-${shortid.generate()}`}
             variant="text"

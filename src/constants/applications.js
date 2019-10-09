@@ -27,13 +27,6 @@ const connectors = [
   },
   { id: 'ftp', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
   {
-    id: 'webhook',
-    name: 'Webhook',
-    type: 'webhook',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
-  {
     id: 'wrapper',
     name: 'Wrapper',
     type: 'wrapper',
@@ -91,6 +84,7 @@ const connectors = [
     name: 'ActiveCampaign',
     type: 'http',
     assistant: 'activecampaign',
+    webhook: true,
   },
   { id: 'acton', name: 'Act-On', type: 'http', assistant: 'acton' },
   { id: 'acumatica', name: 'Acumatica', type: 'http', assistant: 'acumatica' },
@@ -105,7 +99,7 @@ const connectors = [
   { id: 'asana', name: 'Asana', type: 'http', assistant: 'asana' },
   { id: 'atera', name: 'Atera', type: 'http', assistant: 'atera' },
   {
-    id: 'authorize',
+    id: 'authorize.net',
     name: 'Authorize.Net',
     type: 'http',
     assistant: 'authorize.net',
@@ -127,7 +121,7 @@ const connectors = [
     assistant: 'bigcommerce',
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
-  { id: 'box', name: 'Box', type: 'http', assistant: 'box' },
+  { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'Bronto', type: 'http', assistant: 'bronto' },
   {
@@ -184,7 +178,13 @@ const connectors = [
   //   assistant: 'doubleclick',
   // },
   { id: 'drift', name: 'Drift', type: 'http', assistant: 'drift' },
-  { id: 'dropbox', name: 'Dropbox', type: 'http', assistant: 'dropbox' },
+  {
+    id: 'dropbox',
+    name: 'Dropbox',
+    type: 'http',
+    assistant: 'dropbox',
+    webhook: true,
+  },
   {
     id: 'dunandbradstreet',
     name: 'Dun & Bradstreet',
@@ -232,7 +232,13 @@ const connectors = [
     assistant: 'freshbooks',
   },
   { id: 'freshdesk', name: 'Freshdesk', type: 'http', assistant: 'freshdesk' },
-  { id: 'github', name: 'GitHub', type: 'http', assistant: 'github' },
+  {
+    id: 'github',
+    name: 'GitHub',
+    type: 'http',
+    assistant: 'github',
+    webhook: true,
+  },
   // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
   // { id: 'google', name: 'Google', type: 'http', assistant: 'google' },
   {
@@ -281,7 +287,13 @@ const connectors = [
   // { id: 'gusto', name: 'gusto', type: 'http', assistant: 'gusto' },
   { id: 'harvest', name: 'Harvest', type: 'http', assistant: 'harvest' },
   // { id: 'hoovers', name: 'hoovers', type: 'http', assistant: 'hoovers' },
-  { id: 'hubspot', name: 'HubSpot', type: 'http', assistant: 'hubspot' },
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    type: 'http',
+    assistant: 'hubspot',
+    webhook: true,
+  },
   { id: 'insightly', name: 'Insightly', type: 'http', assistant: 'insightly' },
   {
     id: 'integratorio',
@@ -289,9 +301,15 @@ const connectors = [
     type: 'http',
     assistant: 'integratorio',
   },
-  { id: 'intercom', name: 'Intercom', type: 'http', assistant: 'intercom' },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    type: 'http',
+    assistant: 'intercom',
+    webhook: true,
+  },
   { id: 'jet', name: 'Jet', type: 'http', assistant: 'jet' },
-  { id: 'jira', name: 'Jira', type: 'http', assistant: 'jira' },
+  { id: 'jira', name: 'Jira', type: 'http', assistant: 'jira', webhook: true },
   { id: 'jobvite', name: 'Jobvite', type: 'http', assistant: 'jobvite' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'http', assistant: 'klaviyo' },
   {
@@ -308,7 +326,13 @@ const connectors = [
     assistant: 'liquidplanner',
   },
   { id: 'magento', name: 'Magento', type: 'http', assistant: 'magento' },
-  { id: 'mailchimp', name: 'Mailchimp', type: 'http', assistant: 'mailchimp' },
+  {
+    id: 'mailchimp',
+    name: 'Mailchimp',
+    type: 'http',
+    assistant: 'mailchimp',
+    webhook: true,
+  },
   { id: 'mailgun', name: 'Mailgun', type: 'http', assistant: 'mailgun' },
   { id: 'marketo', name: 'Marketo', type: 'http', assistant: 'marketo' },
   // {
@@ -324,7 +348,7 @@ const connectors = [
     assistant: 'merchantesolutions',
   },
   {
-    id: 'MessageMedia',
+    id: 'messagemedia',
     name: 'MessageMedia',
     type: 'http',
     assistant: 'messagemedia',
@@ -409,7 +433,13 @@ const connectors = [
   { id: 'other', name: 'Other', type: 'http', assistant: 'other' },
   { id: 'outreach', name: 'Outreach', type: 'http', assistant: 'outreach' },
   { id: 'pacejet', name: 'Pacejet', type: 'http', assistant: 'pacejet' },
-  { id: 'parseur', name: 'Parseur', type: 'http', assistant: 'parseur' },
+  {
+    id: 'parseur',
+    name: 'Parseur',
+    type: 'http',
+    assistant: 'parseur',
+    webhook: true,
+  },
   { id: 'paychex', name: 'Paychex', type: 'http', assistant: 'paychex' },
   { id: 'paycor', name: 'Paycor', type: 'http', assistant: 'paycor' },
   // { id: 'paylocity', name: 'paylocity',
@@ -422,7 +452,13 @@ const connectors = [
     type: 'http',
     assistant: 'pitneybowes',
   },
-  { id: 'postmark', name: 'Postmark', type: 'http', assistant: 'postmark' },
+  {
+    id: 'postmark',
+    name: 'Postmark',
+    type: 'http',
+    assistant: 'postmark',
+    webhook: true,
+  },
   { id: 'powerbi', name: 'Power BI', type: 'http', assistant: 'powerbi' },
   {
     id: 'practicepanther',
@@ -447,7 +483,13 @@ const connectors = [
     assistant: 'ramplogistics',
   },
   { id: 'recharge', name: 'ReCharge', type: 'http', assistant: 'recharge' },
-  { id: 'recurly', name: 'Recurly', type: 'http', assistant: 'recurly' },
+  {
+    id: 'recurly',
+    name: 'Recurly',
+    type: 'http',
+    assistant: 'recurly',
+    webhook: true,
+  },
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'RetailOps', type: 'http', assistant: 'retailops' },
   { id: 'returnly', name: 'Returnly', type: 'http', assistant: 'returnly' },
@@ -458,7 +500,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment' },
+  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment', webhook: true },
   {
     id: 'servicenow',
     name: 'Service Now',
@@ -479,12 +521,30 @@ const connectors = [
     type: 'http',
     assistant: 'shipstation',
   },
-  { id: 'shipwire', name: 'Shipwire', type: 'http', assistant: 'shipwire' },
-  { id: 'shopify', name: 'Shopify', type: 'http', assistant: 'shopify' },
+  {
+    id: 'shipwire',
+    name: 'Shipwire',
+    type: 'http',
+    assistant: 'shipwire',
+    webhook: true,
+  },
+  {
+    id: 'shopify',
+    name: 'Shopify',
+    type: 'http',
+    assistant: 'shopify',
+    webhook: true,
+  },
   // { id: 'signnow', name: 'SignNow', type: 'http', assistant: 'signnow' },
   { id: 'skubana', name: 'Skubana', type: 'http', assistant: 'skubana' },
   { id: 'skuvault', name: 'Skuvault', type: 'http', assistant: 'skuvault' },
-  { id: 'slack', name: 'Slack', type: 'http', assistant: 'slack' },
+  {
+    id: 'slack',
+    name: 'Slack',
+    type: 'http',
+    assistant: 'slack',
+    webhook: true,
+  },
   {
     id: 'smartsheet',
     name: 'Smartsheet',
@@ -518,20 +578,33 @@ const connectors = [
     assistant: 'steelbrick',
   },
   { id: 'strata', name: 'Strata', type: 'http', assistant: 'strata' },
-  { id: 'stripe', name: 'Stripe', type: 'http', assistant: 'stripe' },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    type: 'http',
+    assistant: 'stripe',
+    webhook: true,
+  },
   { id: 'sugarcrm', name: 'SugarCRM', type: 'http', assistant: 'sugarcrm' },
   // {
   // id: 'surveymonkey',
   // name: 'SurveyMonkey',
   // type: 'http',
   // assistant: 'surveymonkey',
+  // webhook: true,
   // },
   { id: 'svb', name: 'Svb', type: 'http', assistant: 'svb' },
   { id: 'tableau', name: 'Tableau', type: 'http', assistant: 'tableau' },
   { id: 'taxjar', name: 'TaxJar', type: 'http', assistant: 'taxjar' },
   { id: 'tesco', name: 'Tesco', type: 'http', assistant: 'tesco' },
   { id: 'tophatter', name: 'Tophatter', type: 'http', assistant: 'tophatter' },
-  { id: 'travis', name: 'Travis', type: 'http', assistant: 'travis' },
+  {
+    id: 'travis',
+    name: 'Travis',
+    type: 'http',
+    assistant: 'travis',
+    webhook: true,
+  },
   { id: 'trinet', name: 'Trinet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
   { id: 'twilio', name: 'Twilio', type: 'http', assistant: 'twilio' },
@@ -561,6 +634,20 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'http', assistant: 'zuora' },
 ];
 
+/* MISSING WEBHOOK PROVIDERS
+  'travis-org',
+  'helpscout', 
+  'errorception',
+  'aha', 
+  'pagerduty', 
+  'surveymonkey', 
+  'mailparser-io', 
+  'integrator-extension', 
+*/
+
+export const getApplicationConnectors = () => connectors.filter(c => !c.group);
+export const getWebhookConnectors = () => connectors.filter(c => c.webhook);
+
 export const groupApplications = () => [
   {
     label: 'Databases',
@@ -572,7 +659,7 @@ export const groupApplications = () => [
   },
   {
     label: 'Connectors',
-    connectors: connectors.filter(c => !c.group),
+    connectors: getApplicationConnectors(),
   },
 ];
 
@@ -581,8 +668,5 @@ export const getApp = (type, assistant) => {
 
   return connectors.find(c => c.id === id) || {};
 };
-
-export const getApplicationConnectors = () =>
-  connectors.filter(conn => !!conn.assistant);
 
 export default connectors;

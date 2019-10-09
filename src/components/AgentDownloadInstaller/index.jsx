@@ -38,7 +38,7 @@ export default function AgentDownloadInstaller({ agentId }) {
           Mac OS (BETA)
         </MenuItem>
       </Menu>
-      <Button onClick={handleMenuClick}>
+      <Button data-test="downloadAgentInstaller" onClick={handleMenuClick}>
         Download <ArrowDownIcon />
       </Button>
     </Fragment>

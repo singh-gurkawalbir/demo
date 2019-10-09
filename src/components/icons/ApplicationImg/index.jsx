@@ -24,6 +24,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('salesforce')) return 'salesforce';
 
+  if (type.toLowerCase().includes('webhook')) return 'webhook';
+
   return type;
 };
 
@@ -32,11 +34,11 @@ function ApplicationImg(props) {
   let path;
 
   if (assistant) {
-    path = `${process.env.CDN_BASE_URI}marketplace/${size}/${assistant}.png`;
+    path = `${process.env.CDN_BASE_URI}images/marketplace/${size}/${assistant}.png`;
   } else {
     path = `${
       process.env.CDN_BASE_URI
-    }flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+    }images/flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
   }
 
   return <img className={classes[size]} alt={assistant} src={path} />;

@@ -6,6 +6,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-start',
     flexDirection: 'column',
+    position: 'absolute',
+    bottom: '22px',
+    left: '22px',
+    right: '22px',
   },
 }));
 

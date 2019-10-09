@@ -8,7 +8,7 @@ export default {
   component: function Clone({ resourceType }) {
     return (
       <Link to={getRoutePath(`/${resourceType}/clone`)}>
-        <IconButton size="small">
+        <IconButton data-test="cloneResource" size="small">
           <Icon />
         </IconButton>
       </Link>

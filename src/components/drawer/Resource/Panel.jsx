@@ -37,13 +37,53 @@ export default function Panel(props) {
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const classes = useStyles(props);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
-  const getEditUrl = id => {
+  // if this form is for a page processor, we don't know if
+  // the new resource is an export or import. We determine this by
+  // peeking into the patch set from the first step in PP/PG creation.
+  // The patch set should have a value for /adaptorType which
+  // contains [*Import|*Export].
+  const stagedProcessor = useSelector(state =>
+    selectors.stagedResource(state, id)
+  );
+  const resourceLabel =
+    resourceType === 'pageProcessor'
+      ? 'Page Processor'
+      : MODEL_PLURAL_TO_LABEL[resourceType];
+
+  function lookupProcessorResourceType() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      // TODO: we need a better pattern for logging warnings. We need a common util method
+      // which logs these warning only if the build is dev... if build is prod, these
+      // console.warn/logs should not even be bundled by webpack...
+      // eslint-disable-next-line
+      return console.warn(
+        'No patch-set available to determine new Page Processor resourceType.'
+      );
+    }
+
+    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+    const adaptorType = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/adaptorType'
+    );
+
+    // console.log(`adaptorType-${id}`, adaptorType);
+
+    if (!adaptorType || !adaptorType.value) {
+      // eslint-disable-next-line
+        console.warn(
+        'No replace operation against /adaptorType found in the patch-set.'
+      );
+    }
+
+    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+  }
+
+  function getEditUrl(id) {
     // console.log(location);
     const segments = location.pathname.split('/');
     const { length } = segments;
@@ -51,10 +91,14 @@ export default function Panel(props) {
     segments[length - 1] = id;
     segments[length - 3] = 'edit';
 
+    if (resourceType === 'pageProcessor') {
+      segments[length - 2] = lookupProcessorResourceType();
+    }
+
     const url = segments.join('/');
 
     return url;
-  };
+  }
 
   useEffect(() => {
     // once a new resource (id.startsWith('new-')), has been committed,
@@ -78,9 +122,14 @@ export default function Panel(props) {
   }
 
   const submitButtonLabel =
-    isNew && ['imports', 'exports', 'connections'].includes(resourceType)
+    isNew &&
+    ['imports', 'exports', 'connections', 'pageProcessor'].includes(
+      resourceType
+    )
       ? 'Next'
       : 'Save';
+  const resourceTypeToLoad =
+    resourceType === 'pageProcessor' ? 'exports,imports' : resourceType;
 
   return (
     <Fragment>
@@ -88,7 +137,7 @@ export default function Panel(props) {
         <Typography variant="h5" className={classes.title}>
           {isNew ? `Create` : 'Edit'} {resourceLabel}
         </Typography>
-        <LoadResources required resources={resourceType}>
+        <LoadResources required resources={resourceTypeToLoad}>
           <ResourceForm
             className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}

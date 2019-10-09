@@ -44,6 +44,7 @@ export default function ConnectionModal(props) {
         Setup Connection
         {onClose && (
           <IconButton
+            data-test="closeConnectionSetup"
             onClick={onClose}
             className={classes.iconButton}
             autoFocus>

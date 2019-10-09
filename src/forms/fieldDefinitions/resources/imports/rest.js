@@ -77,7 +77,7 @@ export default {
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
-    valueDelimiter: ',',
+    delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
       {

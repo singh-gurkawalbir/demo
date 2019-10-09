@@ -230,6 +230,7 @@ class Edit extends Component {
               <div>
                 {metaPatches > 0 && (
                   <Button
+                    data-test="undoChanges"
                     size="small"
                     color="secondary"
                     onClick={handleUndoChange}>
@@ -242,12 +243,14 @@ class Edit extends Component {
                   className={classes.editButton}
                 />
                 <Button
+                  data-test="jsonViewOfMetaData"
                   size="small"
                   color="primary"
                   onClick={this.handleToggleEditor}>
                   JSON
                 </Button>
                 <Button
+                  data-test="saveForm"
                   size="small"
                   color="primary"
                   disabled={metaPatches === 0}
@@ -255,6 +258,7 @@ class Edit extends Component {
                   Save form
                 </Button>
                 <Button
+                  data-test="cancelMetaChanges"
                   size="small"
                   color="secondary"
                   disabled={metaPatches === 0}
@@ -273,6 +277,7 @@ class Edit extends Component {
           <Link
             key="conn"
             className={classes.relatedContent}
+            data-test="goToConnection"
             to={getRoutePath(`/connections/edit/${connection._id}`)}>
             <Button size="small" color="primary">
               Connected to {connection.name || connection._id}

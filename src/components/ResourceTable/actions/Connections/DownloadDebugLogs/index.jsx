@@ -22,7 +22,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={onDownloadDebugLogClick}>
+      <IconButton
+        data-test="downloadDebugLog"
+        size="small"
+        onClick={onDownloadDebugLogClick}>
         <Icon />
       </IconButton>
     );

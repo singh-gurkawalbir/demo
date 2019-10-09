@@ -206,6 +206,7 @@ class AuditLogTable extends Component {
                             colSpan="2"
                             className={classes.textAlignCenter}>
                             <Button
+                              data-test="auditLogChanges"
                               onClick={() => {
                                 this.setState({
                                   showDiffDialog: true,

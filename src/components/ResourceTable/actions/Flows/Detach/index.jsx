@@ -46,7 +46,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleDetachFlow}>
+      <IconButton
+        data-test="detachFlow"
+        size="small"
+        onClick={handleDetachFlow}>
         <Icon />
       </IconButton>
     );

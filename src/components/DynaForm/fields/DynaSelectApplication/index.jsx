@@ -1,13 +1,12 @@
-import React, { Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select, { components } from 'react-select';
-import { groupApplications } from '../../../../constants/applications';
+import applications, {
+  groupApplications,
+} from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
-import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 
 const groupedApps = groupApplications();
 const useStyles = makeStyles(theme => ({
@@ -45,12 +44,10 @@ export default function SelectApplication(props) {
     value = '',
     placeholder,
     onFieldChange,
-    resourceContext,
   } = props;
   // Custom styles for Select Control
   const classes = useStyles();
   const theme = useTheme();
-  const dispatch = useDispatch();
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -154,16 +151,14 @@ export default function SelectApplication(props) {
     const { type, icon } = props.data;
 
     return (
-      <Fragment>
-        <div className={classes.optionRoot}>
-          <components.Option {...props}>
-            <span className={classes.optionImg}>
-              <ApplicationImg type={type} assistant={icon} />
-            </span>
-            <span className={classes.optionLabel}>{props.label}</span>
-          </components.Option>
-        </div>
-      </Fragment>
+      <div data-test={props.label} className={classes.optionRoot}>
+        <components.Option {...props}>
+          <span className={classes.optionImg}>
+            <ApplicationImg type={type} assistant={icon} />
+          </span>
+          <span className={classes.optionLabel}>{props.label}</span>
+        </components.Option>
+      </div>
     );
   };
 
@@ -182,27 +177,28 @@ export default function SelectApplication(props) {
   };
 
   const handleChange = e => {
-    const patchSet = [{ op: 'replace', path: name, value: e.value }];
-
     onFieldChange && onFieldChange(id, e.value);
-    dispatch(
-      actions.resource.patchStaged(
-        resourceContext.resourceId,
-        patchSet,
-        SCOPES.VALUE
-      )
-    );
   };
 
+  const defaultValue = value
+    ? {
+        value,
+        label: applications.find(a => a.id === value).name,
+      }
+    : '';
+
   return (
-    <FormControl key={id} disabled={disabled} className={classes.formControl}>
+    <FormControl
+      data-test={id}
+      key={id}
+      disabled={disabled}
+      className={classes.formControl}>
       <Select
-        data-test={id}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option }}
-        defaultValue={value}
+        defaultValue={defaultValue}
         options={options}
         onChange={handleChange}
         styles={customStyles}

@@ -7,6 +7,8 @@ import {
   getPatchPathForCustomForms,
   getFieldById,
   getFieldByName,
+  getFieldByIdFromLayout,
+  isExpansionPanelErrored,
 } from './utils';
 import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
 
@@ -363,7 +365,7 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('search field by id through the layout ', () => {
+  describe('search field by id through the fieldMap ', () => {
     test('should correctly search for a field in the metadata', () => {
       const testMeta = {
         fieldMap: {
@@ -389,7 +391,7 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('search field by name through the fieldMap ', () => {
+  describe('getFieldByIdFromLayout search field by name through the fieldMap ', () => {
     test('should correctly search for a field in the fieldMap', () => {
       const testMeta = {
         fieldMap: {
@@ -415,6 +417,439 @@ describe('Form Utils', () => {
         name: '/exportData',
         visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
       });
+    });
+  });
+  describe('search for by id through the layout and check its corresponding fieldMap value', () => {
+    test('should find a field successfully when there is a field in layout and defined in the fieldMap as well ', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+          exportData: {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              fields: ['file.decompressFiles', 'someField'],
+              containers: [
+                {
+                  fields: ['custom.Field', 'exportData'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const foundValue = getFieldByIdFromLayout(
+        metadata.layout,
+        metadata.fieldMap,
+        'exportData'
+      );
+
+      expect(foundValue).toEqual({
+        defaultValue: '',
+        fieldId: 'exportData',
+        helpKey: 'someResourceType.exportData',
+        id: 'exportData',
+        name: '/exportData',
+        resourceId: undefined,
+        resourceType: 'someResourceType',
+      });
+    });
+    test('should not find a field when there is a field in layout and not defined in the fieldMap ', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              fields: ['file.decompressFiles', 'someField'],
+              containers: [
+                {
+                  fields: ['custom.Field', 'exportData'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const foundValue = getFieldByIdFromLayout(
+        metadata.layout,
+        metadata.fieldMap,
+        'exportData'
+      );
+
+      expect(foundValue).toEqual(null);
+    });
+
+    test('should not find a field when the field does not exist in the fields and the fieldMap ', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              fields: ['file.decompressFiles', 'someField'],
+              containers: [
+                {
+                  fields: ['custom.Field'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const foundValue = getFieldByIdFromLayout(
+        metadata.layout,
+        metadata.fieldMap,
+        'exportData'
+      );
+
+      expect(foundValue).toEqual(null);
+    });
+  });
+
+  describe('isExpansionPanelErrored should determine whether the expansion panel should open', () => {
+    test('should error specific expansion pannel only when those field states and unfullfilled', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+          exportData: {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Some heading 1',
+              fields: ['file.decompressFiles', 'someField'],
+            },
+            {
+              label: 'Some heading 2',
+              fields: ['custom.Field', 'exportData'],
+            },
+          ],
+        },
+      };
+      const fieldStates = [
+        { id: 'file.decompressFiles', isValid: true },
+        { id: 'someField', isValid: true },
+        { id: 'custom.Field', isValid: true },
+        { id: 'exportData', isValid: false },
+      ];
+      const { layout, fieldMap } = metadata;
+
+      expect(
+        isExpansionPanelErrored(
+          { layout: layout.containers[0], fieldMap },
+          fieldStates
+        )
+      ).toEqual(false);
+
+      expect(
+        isExpansionPanelErrored(
+          { layout: metadata.layout.containers[1], fieldMap },
+          fieldStates
+        )
+      ).toEqual(true);
+    });
+
+    test('should error specific expansion pannel only when those field states and unfullfilled', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+          exportData: {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Some heading 1',
+              fields: ['file.decompressFiles', 'someField'],
+            },
+            {
+              label: 'Some heading 2',
+              fields: ['custom.Field'],
+              containers: [
+                {
+                  label: 'Some heading 3',
+                  fields: ['exportData'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const fieldStates = [
+        { id: 'file.decompressFiles', isValid: true },
+        { id: 'someField', isValid: true },
+        { id: 'custom.Field', isValid: true },
+        { id: 'exportData', isValid: false },
+      ];
+      const { layout, fieldMap } = metadata;
+
+      expect(
+        isExpansionPanelErrored(
+          { layout: layout.containers[0], fieldMap },
+          fieldStates
+        )
+      ).toEqual(false);
+
+      expect(
+        isExpansionPanelErrored(
+          { layout: metadata.layout.containers[1], fieldMap },
+          fieldStates
+        )
+      ).toEqual(true);
+
+      expect(
+        isExpansionPanelErrored(
+          { layout: metadata.layout.containers[1].containers[0], fieldMap },
+          fieldStates
+        )
+      ).toEqual(true);
     });
   });
 });
