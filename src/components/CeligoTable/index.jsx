@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
     },
     '&:hover > td:last-child > div': {
       display: 'flex',
+      justifyContent: 'center',
     },
     '&:hover > td:last-child > svg': {
       display: 'none',
