@@ -65,13 +65,13 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     float: 'right',
-    marginTop: '20px',
+    marginTop: '10px',
   },
   storeContainer: {
     display: 'flex',
-    background: '#F8FAFF',
-    borderBottom: '1px solid #D6E4ED',
-    borderTop: 'solid 1px #fff',
+    background: theme.palette.background.default,
+    borderBottom: `solid 1px ${theme.palette.primary.main}`,
+    borderTop: `solid 1px ${theme.palette.background.paper}`,
   },
   addStore: {
     float: 'right',
