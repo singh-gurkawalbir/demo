@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   storeContainer: {
     display: 'flex',
     background: theme.palette.background.default,
-    borderBottom: `solid 1px ${theme.palette.primary.main}`,
+    borderBottom: `solid 1px ${theme.palette.background.paper}`,
     borderTop: `solid 1px ${theme.palette.background.paper}`,
   },
   addStore: {
@@ -211,6 +211,7 @@ export default function IntegrationAppSettings(props) {
             </Grid>
           </div>
         )}
+        <Divider />
         <div className={classes.root}>
           <div className={classes.flex}>
             <Drawer
