@@ -303,7 +303,7 @@ export default function IntegrationAppSettings(props) {
                     <NavLink
                       activeClassName={classes.activeLink}
                       className={classes.link}
-                      to="uninstall">
+                      to={`/pg/connectors/${integrationId}/settings/uninstall`}>
                       Uninstall
                     </NavLink>
                   )}
@@ -320,6 +320,26 @@ export default function IntegrationAppSettings(props) {
                 component={Connections}
               />
               <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/uninstall`
+                )}
+                render={props => (
+                  <Uninstall
+                    {...props}
+                    storeId={currentStore}
+                    integrationId={integrationId}
+                  />
+                )}
+              />
+              <Route
+                path={`/pg/connectors/${integrationId}/settings/users`}
+                component={Users}
+              />
+              <Route
+                path={`/pg/connectors/${integrationId}/settings/audit`}
+                component={AuditLog}
+              />
+              <Route
                 path={
                   supportsMultiStore
                     ? getRoutePath(
@@ -330,18 +350,6 @@ export default function IntegrationAppSettings(props) {
                       )
                 }
                 component={Flows}
-              />
-              <Route path={`${props.match.url}/users`} component={Users} />
-              <Route path={`${props.match.url}/audit`} component={AuditLog} />
-              <Route
-                path={`${props.match.url}/uninstall`}
-                render={props => (
-                  <Uninstall
-                    {...props}
-                    storeId={currentStore}
-                    integrationId={integrationId}
-                  />
-                )}
               />
             </Switch>
           </div>
