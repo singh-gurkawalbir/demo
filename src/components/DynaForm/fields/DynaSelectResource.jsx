@@ -149,7 +149,7 @@ function DynaSelectResource(props) {
       {allowEdit && (
         <IconButton
           disabled={!value}
-          data-test="addNewResource"
+          data-test="editNewResource"
           className={classes.iconButton}
           component={Link}
           to={`${location.pathname}/edit/${resourceType}/${value}`}
