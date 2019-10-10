@@ -20,6 +20,7 @@ import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
+import SwitchOnOff from '../../components/SwitchToggle';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -134,6 +135,7 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
+    alignItems: 'center',
   },
   canvasContainer: {
     // border: 'solid 1px black',
@@ -152,7 +154,8 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
-    // border: 'solid 1px lightgrey',
+    borderTop: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
   },
   generatorContainer: {
     display: 'flex',
@@ -323,6 +326,7 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
+          <SwitchOnOff on />
           <IconButton onClick={() => handleDrawerOpen('run')}>
             <RunIcon />
           </IconButton>

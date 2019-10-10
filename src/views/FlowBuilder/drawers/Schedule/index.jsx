@@ -1,9 +1,17 @@
+// import { makeStyles } from '@material-ui/core/styles';
 import RightDrawer from '../RightDrawer';
+import TitleBar from '../TitleBar';
 
-export default function ScheduleDrawer({ flowId, ...props }) {
+// const useStyles = makeStyles(() => ({}));
+
+export default function ScheduleDrawer({ flowId, history, ...props }) {
+  const handleSubmit = () => history.goBack();
+  // const classes = useStyles();
+
   return (
     <RightDrawer {...props} path="schedule">
-      This is the new SCHEDULE drawer for flow: {flowId}
+      <TitleBar history={history} title="Schedule" onSubmit={handleSubmit} />
+      For flow: {flowId}
     </RightDrawer>
   );
 }
