@@ -12,10 +12,14 @@ import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './BottomDrawer';
+import RunDrawer from './drawers/Run';
+import ScheduleDrawer from './drawers/Schedule';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
+import RunIcon from '../../components/icons/RunIcon';
+import CalendarIcon from '../../components/icons/CalendarIcon';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -302,18 +306,30 @@ function FlowBuilder(props) {
     pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
+  function handleDrawerOpen(path) {
+    pushOrReplaceHistory(`${match.url}/${path}`);
+  }
+
   // eslint-disable-next-line
   // console.log(flow);
 
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-
+      <RunDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flowId={flowId} />
       <CeligoPageBar
         title={flow.name}
         subtitle={`Last saved: ${flow.lastModified}`}
         infoText={flow.description}>
-        <div className={classes.actions}>Actions!</div>
+        <div className={classes.actions}>
+          <IconButton onClick={() => handleDrawerOpen('run')}>
+            <RunIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDrawerOpen('schedule')}>
+            <CalendarIcon />
+          </IconButton>
+        </div>
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
         <div
