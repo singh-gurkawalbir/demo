@@ -9,21 +9,6 @@
     "type": "git",
     "url": "git://github.com/celigo/integrator-ui.git"
   },
-  "babel": {
-    "plugins": [
-      [
-        "transform-es2015-modules-commonjs",
-        {
-          "useBuiltIns": true
-        }
-      ],
-      "transform-object-rest-spread",
-      "transform-async-to-generator",
-      "babel-plugin-dynamic-import-node"
-    ],
-    "sourceMaps": true,
-    "retainLines": true
-  },
   "scripts": {
     "start": "neutrino start --require dotenv/config --options.config.devtool source-map",
     "build": "neutrino build --require dotenv/config",
