@@ -12,15 +12,20 @@ import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './BottomDrawer';
+import RunDrawer from './drawers/Run';
+import ScheduleDrawer from './drawers/Schedule';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
+import RunIcon from '../../components/icons/RunIcon';
+import CalendarIcon from '../../components/icons/CalendarIcon';
+import SwitchOnOff from '../../components/SwitchToggle';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
   var FlowSchema = new Schema({
-  _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
+ _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
   schedule: {type: String, cLocked: false, template: true, patch: true},
   timezone: {type: String, cLocked: false, template: true, patch: true},
   name: { type: String, template: true, maxSize: 300, patch: true },
@@ -100,8 +105,8 @@ import itemTypes from './itemTypes';
     }],
     template: true
   },
-  _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
-  _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
+  // old schema, not needed. _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
+  // old schema, not needed. _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
   _integrationId: {type: Schema.Types.ObjectId, ref: 'Integration'},
   _connectorId: {type: Schema.Types.ObjectId, ref: 'Connector'},
   disabled: {type: Boolean, patch: true},
@@ -130,6 +135,7 @@ import itemTypes from './itemTypes';
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
+    alignItems: 'center',
   },
   canvasContainer: {
     // border: 'solid 1px black',
@@ -148,7 +154,8 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
-    // border: 'solid 1px lightgrey',
+    borderTop: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
   },
   generatorContainer: {
     display: 'flex',
@@ -213,7 +220,7 @@ function FlowBuilder(props) {
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
 
       if (commit) {
-        dispatch(actions.resource.commitStaged(flowId, 'value'));
+        dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
       }
     },
     [dispatch, flowId]
@@ -302,18 +309,31 @@ function FlowBuilder(props) {
     pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
+  function handleDrawerOpen(path) {
+    pushOrReplaceHistory(`${match.url}/${path}`);
+  }
+
   // eslint-disable-next-line
   // console.log(flow);
 
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-
+      <RunDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flowId={flowId} />
       <CeligoPageBar
         title={flow.name}
         subtitle={`Last saved: ${flow.lastModified}`}
         infoText={flow.description}>
-        <div className={classes.actions}>Actions!</div>
+        <div className={classes.actions}>
+          <SwitchOnOff on />
+          <IconButton onClick={() => handleDrawerOpen('run')}>
+            <RunIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDrawerOpen('schedule')}>
+            <CalendarIcon />
+          </IconButton>
+        </div>
       </CeligoPageBar>
       <LoadResources required resources="flows, imports, exports">
         <div

@@ -28,6 +28,7 @@ export default {
   name: 'inputFilter',
   left: -24,
   top: 28,
+  // position: [left, right, bottom],
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
