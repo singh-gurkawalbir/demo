@@ -92,7 +92,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function IntegrationAppSettings(props) {
-  const { integrationId } = props.match.params;
+  const { integrationId, storeId, section } = props.match.params;
   const classes = useStyles();
   const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
@@ -100,39 +100,48 @@ export default function IntegrationAppSettings(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const supportsMultiStore =
-    integration.settings && integration.settings.supportsMultiStore;
+  const {
+    supportsMultiStore,
+    hasGeneralSettings,
+    storeLabel,
+  } = integration.settings;
   const connectorFlowSections = useSelector(state =>
     selectors.connectorFlowSections(state, integrationId)
   );
   const defaultStoreId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId)
+    selectors.defaultStoreId(state, integrationId, storeId)
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const showAPITokens = permissions.accesstokens.view;
 
   useEffect(() => {
-    if (!integration) {
-      dispatch(actions.resource.request('integrations', integrationId));
-    }
-  });
-  useEffect(() => {
-    if (!redirected) {
+    if (!redirected && section === 'flows') {
       if (supportsMultiStore) {
         props.history.push(
-          `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+          `${`/pg/connectors/${integrationId}/settings/${currentStore}/${connectorFlowSections[0].title.replace(
+            /\s/g,
+            ''
+          )}`}`
         );
       } else {
-        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+        props.history.push(
+          `/pg/connectors/${integrationId}/settings/${connectorFlowSections[0].title.replace(
+            /\s/g,
+            ''
+          )}`
+        );
       }
 
       setRedirected(true);
     }
   }, [
+    connectorFlowSections,
     currentStore,
     integrationId,
     props.history,
+    props.match.url,
     redirected,
+    section,
     supportsMultiStore,
   ]);
 
@@ -150,10 +159,18 @@ export default function IntegrationAppSettings(props) {
 
     if (supportsMultiStore) {
       props.history.push(
-        `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
+        `/pg/connectors/${integrationId}/settings/${currentStore}/${connectorFlowSections[0].title.replace(
+          /\s/g,
+          ''
+        )}`
       );
     } else {
-      props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+      props.history.push(
+        `/pg/connectors/${integrationId}/settings/${connectorFlowSections[0].title.replace(
+          /\s/g,
+          ''
+        )}`
+      );
     }
   };
 
@@ -200,12 +217,12 @@ export default function IntegrationAppSettings(props) {
               </Grid>
               <Grid item xs={10} className={classes.addStore}>
                 <Button
-                  data-test={`Add ${integration.settings.storeLabel}`}
+                  data-test={`Add ${storeLabel}`}
                   variant="contained"
                   color="primary"
                   onClick={handleAddNewStoreClick}
                   className={classes.button}>
-                  Add {integration.settings.storeLabel}
+                  Add {storeLabel}
                 </Button>
               </Grid>
             </Grid>
@@ -221,26 +238,18 @@ export default function IntegrationAppSettings(props) {
                 paper: classes.leftElement,
               }}>
               <List>
+                {hasGeneralSettings && (
+                  <ListItem className={classes.listItem}>
+                    <NavLink
+                      activeClassName={classes.activeLink}
+                      className={classes.link}
+                      to={`/pg/connectors/${integrationId}/settings/general`}>
+                      General
+                    </NavLink>
+                  </ListItem>
+                )}
                 <ListItem className={classes.listItem}>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to={`/pg/connectors/${integrationId}/settings/general`}>
-                    General
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.listItem}>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to={
-                      supportsMultiStore
-                        ? `/pg/connectors/${integrationId}/settings/${currentStore}/flows`
-                        : `/pg/connectors/${integrationId}/settings/flows`
-                    }>
-                    Integration Flows
-                  </NavLink>
-
+                  Integration Flows
                   <ul>
                     {connectorFlowSections &&
                       connectorFlowSections.map(f => (

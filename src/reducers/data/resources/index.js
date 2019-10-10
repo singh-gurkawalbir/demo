@@ -259,6 +259,10 @@ export function integrationAppSettings(state, id) {
   }
 
   return produce(integration, draft => {
+    if (!draft.settings) {
+      draft.settings = {};
+    }
+
     if (draft.settings.general) {
       draft.hasGeneralSettings = true;
     }
@@ -274,10 +278,14 @@ export function integrationAppSettings(state, id) {
   });
 }
 
-export function defaultStoreId(state, id) {
+export function defaultStoreId(state, id, store) {
   const settings = integrationAppSettings(state, id);
 
   if (settings.stores && settings.stores.length) {
+    if (settings.stores.find(s => s.value === store)) {
+      return store;
+    }
+
     return settings.stores[0].value;
   }
 

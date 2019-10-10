@@ -714,8 +714,8 @@ export function getRequiredDataOfConnectorSettings(
   };
 }
 
-export function defaultStoreId(state, id) {
-  return fromData.defaultStoreId(state && state.data, id);
+export function defaultStoreId(state, id, store) {
+  return fromData.defaultStoreId(state && state.data, id, store);
 }
 
 export function integrationInstallSteps(state, integrationId) {
