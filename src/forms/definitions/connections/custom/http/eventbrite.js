@@ -5,7 +5,7 @@ export default {
     '/assistant': 'eventbrite',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '/v2/listings/active',
+    '/http/ping/relativeURI': '/v3/users/me/',
     '/http/ping/method': 'GET',
     '/http/baseURI': 'https://www.eventbriteapi.com',
     '/http/auth/oauth/authURI': 'https://www.eventbrite.com/oauth/authorize',

@@ -7,9 +7,10 @@ export default {
     '/http/mediaType': 'xml',
     '/http/ping/relativeURI': `/GetAllCompanyLists?appKey=${
       formValues['/http/encrypted/appKey']
-    }&xslUri=&securityKey=${
+    }&xslUri=&securityKey=${encodeURIComponent(
       formValues['/http/encrypted/securityKey']
-    }&includeWarehouses=True`,
+    )},
+    &includeWarehouses=True`,
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://upsprodwebservices.upsefulfillment.com/ws.asmx`,
     '/http/encrypted/securityKey': encodeURIComponent(
