@@ -164,12 +164,19 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
 
   drag(ref);
 
-  const generatorActions = pending
-    ? []
-    : [transformationAction, exportHooksAction, exportFilterAction];
+  let generatorActions = [];
 
-  if (blockType === 'export' && !pending) {
-    generatorActions.push(scheduleAction);
+  if (!pending) {
+    if (blockType === 'export' && !pending) {
+      generatorActions = [scheduleAction];
+    }
+
+    generatorActions = [
+      ...generatorActions,
+      transformationAction,
+      exportHooksAction,
+      exportFilterAction,
+    ];
   }
 
   return (
