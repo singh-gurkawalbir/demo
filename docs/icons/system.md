@@ -11,8 +11,10 @@ const ArrowDownIcon = require('../../src/components/icons/ArrowDownIcon').defaul
 const ArrowUpIcon = require('../../src/components/icons/ArrowUpIcon').default;
 const AuditLogIcon = require('../../src/components/icons/AuditLogIcon').default;
 const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
+const CancelIcon = require('../../src/components/icons/CancelIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
+const ConnectorIcon = require('../../src/components/icons/ConnectorIcon').default;
 const CloudTransferIcon = require('../../src/components/icons/CloudTransferIcon').default;
 const CeligoMarkIcon = require('../../src/components/icons/CeligoMarkIcon').default;
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
@@ -28,9 +30,12 @@ const EllipsisHorizontalIcon = require('../../src/components/icons/EllipsisHoriz
 const EllipsisVerticalIcon = require('../../src/components/icons/EllipsisVerticalIcon').default;
 const ExitIcon = require('../../src/components/icons/ExitIcon').default;
 const ExportsIcon = require('../../src/components/icons/ExportsIcon').default;
+const ExpandWindowIcon = require('../../src/components/icons/ExpandWindowIcon').default;
 const FilterIcon = require('../../src/components/icons/FilterIcon').default;
 const FlowBuilderIcon = require('../../src/components/icons/FlowBuilderIcon').default;
 const FlowBuilderAppIcon = require('../../src/components/icons/FlowBuilderAppIcon').default;
+const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIcon').default;
+const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
@@ -51,9 +56,13 @@ const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
+const PublishIcon = require('../../src/components/icons/PublishIcon').default;
+const PublishedIcon = require('../../src/components/icons/PublishedIcon').default;
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
+const PermissionsMonitorIcon = require('../../src/components/icons/PermissionsMonitorIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
+const RegenerateTokenIcon = require('../../src/components/icons/RegenerateTokenIcon').default;
 const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
 const RunIcon = require('../../src/components/icons/RunIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
@@ -67,9 +76,12 @@ const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
 const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon').default;
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
+const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').default;
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
+const UploadIcon = require('../../src/components/icons/UploadIcon').default;
+const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
 const WarningIcon = require('../../src/components/icons/WarningIcon').default;
 
@@ -138,12 +150,20 @@ const icon = {
       <p>Calendar</p>
     </div>
     <div style={wrapper}>
+      <CancelIcon style={icon}/>
+      <p>Cancel</p>
+    </div>
+    <div style={wrapper}>
       <CloseIcon style={icon}/>
       <p>Close</p>
     </div>
     <div style={wrapper}>
       <CopyIcon style={icon} />
       <p>Copy</p>
+    </div>
+    <div style={wrapper}>
+      <ConnectorIcon style={icon} />
+      <p>Connector</p>
     </div>
     <div style={wrapper}>
       <ConnectionsIcon style={icon} />
@@ -156,10 +176,6 @@ const icon = {
     <div style={wrapper}>
       < CloudTransferIcon style={icon} />
       <p> CloudTransfer(FB)</p>
-    </div>
-    <div style={wrapper}>
-      <TransformIcon style={icon} />
-      <p>Transform</p>
     </div>
     <div style={wrapper}>
       <DataLoaderIcon style={icon} />
@@ -205,6 +221,10 @@ const icon = {
       <ExportsIcon style={icon} />
       <p>Exports</p>
     </div>
+    <div style={wrapper}>
+      <ExpandWindowIcon style={icon} />
+      <p>ExpandWindow</p>
+    </div>
      <div style={wrapper}>
       <FilterIcon style={icon} />
       <p>Filter</p>
@@ -216,6 +236,14 @@ const icon = {
     <div style={wrapper}>
       <FlowBuilderAppIcon style={icon} />
       <p>FlowBuilderApp</p>
+    </div>
+    <div style={wrapper}>
+      <FullScreenOpenIcon style={icon} />
+      <p>FullScreenOpen</p>
+    </div>
+    <div style={wrapper}>
+      <FullScreenCloseIcon style={icon} />
+      <p>FullScreenClose</p>
     </div>
      <div style={wrapper}>
       <GettingStartedIcon style={icon} />
@@ -299,8 +327,20 @@ const icon = {
       <p>OutputFilter</p>
     </div>
     <div style={wrapper}>
+      <PublishIcon style={icon} />
+      <p>Publish</p>
+    </div>
+     <div style={wrapper}>
+      <PublishedIcon style={icon} />
+      <p>Published</p>
+    </div>
+    <div style={wrapper}>
       <PermissionsManageIcon style={icon} />
       <p>PermissionsManage</p>
+    </div>
+     <div style={wrapper}>
+      <PermissionsMonitorIcon style={icon} />
+      <p>PermissionsMonitor</p>
     </div>
     <div style={wrapper}>
       <PermissionExplorerIcon style={icon} />
@@ -310,6 +350,11 @@ const icon = {
       <ResourcesIcon style={icon} />
       <p>Resources</p>
     </div>
+    <div style={wrapper}>
+      <RegenerateTokenIcon style={icon} />
+      <p>RegenerateToken</p>
+    </div>
+  
     <div style={wrapper}>
       <RefreshIcon style={icon} />
       <p>Refresh</p>
@@ -360,15 +405,31 @@ const icon = {
     </div>
     <div style={wrapper}>
       <ToolsIcon style={icon} />
-      <p>ToolsIcon</p>
+      <p>Tools</p>
+    </div>
+    <div style={wrapper}>
+      <TokensApiIcon style={icon} />
+      <p>TokensApi</p>
     </div>
     <div style={wrapper}>
       <TransferIcon style={icon} />
       <p>Transfer</p>
     </div>
+     <div style={wrapper}>
+      <TransformIcon style={icon} />
+      <p>Transform</p>
+    </div>
     <div style={wrapper}>
       <TrashIcon style={icon} />
       <p>Trash</p>
+    </div>
+    <div style={wrapper}>
+      <UploadIcon style={icon} />
+      <p>Upload</p>
+    </div>
+    <div style={wrapper}>
+      <UnpublishedIcon style={icon} />
+      <p>Unpublished</p>
     </div>
     <div style={wrapper}>
       <UnlockIcon style={icon} />
