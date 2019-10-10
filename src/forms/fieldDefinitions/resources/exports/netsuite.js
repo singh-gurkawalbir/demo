@@ -72,10 +72,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionContext,
+      'userinterface,webstore' ||
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.sublists),
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -84,6 +86,7 @@ export default {
   'netsuite.distributed.executionType': {
     type: 'multiselect',
     label: 'Execution type',
+    // defaultValue: 'create,edit',
     options: [
       {
         items: [
@@ -104,10 +107,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionType,
+      'create,edit,xedit' ||
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.sublists),
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
