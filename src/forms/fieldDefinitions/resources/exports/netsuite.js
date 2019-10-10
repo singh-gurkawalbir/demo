@@ -175,7 +175,12 @@ export default {
     type: 'checkbox',
     inverse: true,
     label: 'Group rows',
-    defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
+    defaultValue: r => {
+      const skipGrouping =
+        r && r.netsuite && r.netsuite && r.netsuite.skipGrouping;
+
+      return skipGrouping === undefined ? true : skipGrouping;
+    },
   },
 
   'netsuite.netsuiteExportlabel': {

@@ -1898,7 +1898,10 @@ export default {
   'netsuite.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevel,
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.concurrencyLevel
+        ? r.netsuite.concurrencyLevel
+        : 1,
     visibleWhen: [
       {
         field: '_borrowConcurrencyFromConnectionId',

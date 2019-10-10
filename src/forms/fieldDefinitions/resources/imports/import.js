@@ -1,7 +1,10 @@
 export default {
   name: { type: 'text', label: 'Name' },
   description: { type: 'text', label: 'Description' },
-  apiIdentifier: { type: 'text', label: 'Api Identifier' },
+  apiIdentifier: {
+    label: 'Invoke this Export [POST]',
+    type: 'apiidentifier',
+  },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
     type: 'checkbox',
