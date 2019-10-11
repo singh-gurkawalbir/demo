@@ -350,7 +350,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -657,7 +656,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -771,7 +769,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -1309,6 +1306,12 @@ export default {
     type: 'select',
     label: 'MDN Verification Algorithm',
     required: true,
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.mdn &&
+      r.as2.partnerStationInfo.mdn.mdnSigning,
     options: [
       {
         items: [
@@ -1337,6 +1340,12 @@ export default {
   },
   'as2.partnerStationInfo.auth.type': {
     type: 'select',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.type,
     label: 'Authentication Type',
     options: [
       {
@@ -1409,6 +1418,13 @@ export default {
   'as2.partnerStationInfo.auth.token.location': {
     type: 'select',
     label: 'Location',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.location,
     options: [
       {
         items: [
@@ -1439,6 +1455,13 @@ export default {
   'as2.partnerStationInfo.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.scheme,
     options: [
       {
         items: [
@@ -1469,6 +1492,13 @@ export default {
   'as2.partnerStationInfo.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh Method',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshMethod,
     options: [
       {
         items: [
@@ -1519,6 +1549,13 @@ export default {
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.auth &&
+      r.as2.partnerStationInfo.auth.token &&
+      r.as2.partnerStationInfo.auth.token.refreshMediaType,
     options: [
       {
         items: [
@@ -1598,6 +1635,11 @@ export default {
     type: 'select',
     label: 'Encryption Type',
     required: true,
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.encryptionType,
     options: [
       {
         items: [
@@ -1639,6 +1681,11 @@ export default {
     type: 'select',
     label: 'Signing',
     required: true,
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.signing,
     options: [
       {
         items: [
@@ -1653,6 +1700,11 @@ export default {
   'as2.partnerStationInfo.encoding': {
     type: 'select',
     label: 'Encoding',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.encoding,
     options: [
       {
         items: [
@@ -1665,6 +1717,11 @@ export default {
   'as2.partnerStationInfo.signatureEncoding': {
     type: 'select',
     label: 'Signature Encoding',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.signatureEncoding,
     options: [
       {
         items: [
@@ -1678,7 +1735,7 @@ export default {
     type: 'text',
     label: 'As2 user Station Info mdn mdn URL',
   },
-  'as2.userStationInfo.encrypted.userPrivateKey': {
+  'as2.encrypted.userPrivateKey': {
     type: 'editor',
     mode: 'text',
     label: 'X.509 Private Key',
@@ -1687,6 +1744,12 @@ export default {
     type: 'select',
     label: 'MDN Signing',
     required: true,
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.mdn &&
+      r.as2.userStationInfo.mdn.mdnSigning,
     options: [
       {
         items: [
@@ -1701,6 +1764,12 @@ export default {
   'as2.userStationInfo.mdn.mdnEncoding': {
     type: 'select',
     label: 'Incoming Message Encoding',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.mdn &&
+      r.as2.userStationInfo.mdn.mdnEncoding,
     options: [
       {
         items: [
@@ -1714,6 +1783,11 @@ export default {
     type: 'select',
     label: 'Decryption Algorithm',
     required: true,
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.userStationInfo &&
+      r.as2.userStationInfo.encryptionType,
     options: [
       {
         items: [
@@ -1731,6 +1805,8 @@ export default {
     type: 'select',
     label: 'Signature Verification Algorithm',
     required: true,
+    defaultValue: r =>
+      r && r.as2 && r.as2.userStationInfo && r.as2.userStationInfo.signing,
     options: [
       {
         items: [
@@ -1745,6 +1821,11 @@ export default {
   'as2.partnerStationInfo.mdnSigning': {
     type: 'select',
     label: 'Signature Encoding',
+    defaultValue: r =>
+      r &&
+      r.as2 &&
+      r.as2.partnerStationInfo &&
+      r.as2.partnerStationInfo.mdnSigning,
     options: [
       {
         items: [
@@ -1757,6 +1838,8 @@ export default {
   'as2.userStationInfo.encoding': {
     type: 'select',
     label: 'MDN Encoding',
+    defaultValue: r =>
+      r && r.as2 && r.as2.userStationInfo && r.as2.userStationInfo.encoding,
     options: [
       {
         items: [
@@ -1911,7 +1994,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -2066,7 +2148,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -2130,7 +2211,6 @@ export default {
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },

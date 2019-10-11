@@ -10,8 +10,9 @@ export default {
     label: 'Description',
   },
   apiIdentifier: {
-    label: 'Invoke this Export [POST]',
+    label: 'Invoke this Import [POST]',
     type: 'apiidentifier',
+    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
   // #region ftp
   'ftp.importFrom': {
