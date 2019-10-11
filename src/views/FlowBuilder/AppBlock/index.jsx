@@ -82,6 +82,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     height: 'unset',
     marginTop: theme.spacing(1),
+    '& span': {
+      fontSize: '12px',
+    },
   },
 }));
 
