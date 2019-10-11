@@ -18,6 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
 import Flows from './Flows';
 import Users from '../../IntegrationSettings/Users';
+import GeneralSection from './GeneralSection';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
@@ -133,6 +134,7 @@ export default function IntegrationAppSettings(props) {
         );
       }
 
+      setStoreChanged(false);
       setRedirected(true);
     }
   }, [
@@ -140,7 +142,6 @@ export default function IntegrationAppSettings(props) {
     currentStore,
     integrationId,
     props.history,
-    props.match.url,
     redirected,
     section,
     storeChanged,
@@ -310,6 +311,12 @@ export default function IntegrationAppSettings(props) {
           </div>
           <div className={classes.rightElement}>
             <Switch>
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/general`
+                )}
+                component={GeneralSection}
+              />
               <Route
                 path={getRoutePath(
                   `/connectors/:integrationId/settings/connections`

@@ -18,6 +18,7 @@ export default function Flows(props) {
       storeId
     )
   );
+  const hasAdvancedSettings = !!rest.fields || !!rest.sections;
   const translatedMeta = integrationSettingsToDynaFormMetadata(rest);
   const [count, setCount] = useState(0);
 
@@ -35,7 +36,9 @@ export default function Flows(props) {
           actionProps={{ rest }}
         />
       </LoadResources>
-      <DynaFromWithDynamicActions key={count} fieldMeta={translatedMeta} />
+      {hasAdvancedSettings && (
+        <DynaFromWithDynamicActions key={count} fieldMeta={translatedMeta} />
+      )}
     </Fragment>
   );
 }
