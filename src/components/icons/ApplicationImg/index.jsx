@@ -27,6 +27,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('webhook')) return 'webhook';
 
+  if (type.toLowerCase().includes('mongodb')) return 'mongodb';
+
   return type;
 };
 

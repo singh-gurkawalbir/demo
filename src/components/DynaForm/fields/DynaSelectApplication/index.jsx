@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -8,7 +8,6 @@ import applications, {
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 
-const groupedApps = groupApplications();
 const useStyles = makeStyles(theme => ({
   optionRoot: {
     display: 'flex',
@@ -41,11 +40,15 @@ export default function SelectApplication(props) {
     disabled,
     id,
     name,
+    resourceType,
     value = '',
     placeholder,
     onFieldChange,
   } = props;
   // Custom styles for Select Control
+  const groupedApps = useMemo(() => groupApplications(resourceType), [
+    resourceType,
+  ]);
   const classes = useStyles();
   const theme = useTheme();
   const customStyles = {
