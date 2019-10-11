@@ -9,8 +9,7 @@ export default {
       formValues['/http/encrypted/appKey']
     }&xslUri=&securityKey=${encodeURIComponent(
       formValues['/http/encrypted/securityKey']
-    )},
-    &includeWarehouses=True`,
+    )}&includeWarehouses=True`,
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://upsprodwebservices.upsefulfillment.com/ws.asmx`,
     '/http/encrypted/securityKey': encodeURIComponent(

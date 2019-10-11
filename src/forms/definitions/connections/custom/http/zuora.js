@@ -74,9 +74,9 @@ export default {
   layout: {
     fields: [
       'name',
+      'http.sandbox',
       'http.unencrypted.apiAccessKeyId',
       'http.encrypted.apiSecretAccessKey',
-      'http.sandbox',
     ],
     type: 'collapse',
     containers: [
