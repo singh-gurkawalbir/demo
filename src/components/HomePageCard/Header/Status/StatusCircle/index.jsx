@@ -8,6 +8,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
+    marginBottom: '5px',
   },
   large: {
     width: 24,

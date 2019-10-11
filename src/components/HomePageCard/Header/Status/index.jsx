@@ -19,11 +19,6 @@ const useStyles = makeStyles(theme => ({
   label: {
     textTransform: 'initial',
   },
-  icon: {
-    '& svg': {
-      fontSize: 22,
-    },
-  },
 }));
 
 function Status({ children, count, label, className }) {

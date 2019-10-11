@@ -25,6 +25,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this Export [POST]',
     type: 'apiidentifier',
+    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
   configureAsyncHelper: {
     type: 'checkbox',
