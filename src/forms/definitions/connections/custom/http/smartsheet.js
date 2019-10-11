@@ -10,6 +10,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://app.smartsheet.com/b/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.smartsheet.com/2.0/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/ping/relativeURI': '/2.0/users',
+    '/http/ping/method': 'GET',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

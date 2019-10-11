@@ -50,11 +50,9 @@ export default {
           if (baseUri.indexOf('sandbox') === -1) {
             return 'sandbox';
           }
-
-          return 'production';
         }
 
-        return '';
+        return 'production';
       },
     },
     'http.unencrypted.companyId': {
