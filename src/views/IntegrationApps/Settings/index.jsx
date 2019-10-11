@@ -105,17 +105,18 @@ export default function IntegrationAppSettings(props) {
     hasGeneralSettings,
     storeLabel,
   } = integration.settings;
-  const connectorFlowSections = useSelector(state =>
-    selectors.connectorFlowSections(state, integrationId)
-  );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
+  const [storeChanged, setStoreChanged] = useState(false);
+  const connectorFlowSections = useSelector(state =>
+    selectors.connectorFlowSections(state, integrationId, currentStore)
+  );
   const showAPITokens = permissions.accesstokens.view;
 
   useEffect(() => {
-    if (!redirected && section === 'flows') {
+    if ((!redirected && section === 'flows') || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
           `${`/pg/connectors/${integrationId}/settings/${currentStore}/${connectorFlowSections[0].title.replace(
@@ -142,6 +143,7 @@ export default function IntegrationAppSettings(props) {
     props.match.url,
     redirected,
     section,
+    storeChanged,
     supportsMultiStore,
   ]);
 
@@ -156,22 +158,7 @@ export default function IntegrationAppSettings(props) {
 
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
-
-    if (supportsMultiStore) {
-      props.history.push(
-        `/pg/connectors/${integrationId}/settings/${currentStore}/${connectorFlowSections[0].title.replace(
-          /\s/g,
-          ''
-        )}`
-      );
-    } else {
-      props.history.push(
-        `/pg/connectors/${integrationId}/settings/${connectorFlowSections[0].title.replace(
-          /\s/g,
-          ''
-        )}`
-      );
-    }
+    setStoreChanged(true);
   };
 
   const handleAddNewStoreClick = () => {

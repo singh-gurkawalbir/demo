@@ -587,24 +587,44 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
-export function connectorFlowSections(state, id) {
+export function connectorFlowSections(state, id, store) {
   if (!state) return null;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { sections, supportsMultiStore } = integrationResource.settings;
 
-  if (
-    integrationResource &&
-    integrationResource.settings &&
-    integrationResource.settings.supportsMultiStore
-  ) {
-    return (
-      (integrationResource.settings.sections &&
-        integrationResource.settings.sections[0] &&
-        integrationResource.settings.sections[0].sections) ||
-      []
-    );
+  if (supportsMultiStore) {
+    if (Array.isArray(sections) && sections.length) {
+      if (store) {
+        return (sections.find(sec => sec.id === store) || {}).sections || [];
+      }
+
+      return (
+        (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || []
+      );
+    }
   }
 
-  return integrationResource.settings.sections || [];
+  return sections || [];
+}
+
+export function integrationAppGeneralSettings(state, id, store) {
+  if (!state) return null;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { supportsMultiStore, general } = integrationResource.settings;
+
+  if (supportsMultiStore) {
+    if (Array.isArray(general) && general.length) {
+      if (store) {
+        return general.find(sec => sec.id === store) || {};
+      }
+
+      return general.find(sec => !!sec.id);
+    }
+
+    return [];
+  }
+
+  return general || {};
 }
 
 export function getRequiredDataOfConnectorSettings(
@@ -617,7 +637,7 @@ export function getRequiredDataOfConnectorSettings(
   let fields;
   let sections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const supportMultiStore =
+  const supportsMultiStore =
     integrationResource &&
     integrationResource.settings &&
     integrationResource.settings.supportsMultiStore;
@@ -635,7 +655,7 @@ export function getRequiredDataOfConnectorSettings(
     integrationResource.settings.showMatchRuleEngine
   );
 
-  if (supportMultiStore) {
+  if (supportsMultiStore) {
     if (
       integrationResource &&
       integrationResource._connectorId &&

@@ -256,7 +256,7 @@ export function integrationAppSettings(state, id) {
     }
 
     if (draft.settings.general) {
-      draft.hasGeneralSettings = true;
+      draft.settings.hasGeneralSettings = true;
     }
 
     if (draft.settings.supportsMultiStore) {
