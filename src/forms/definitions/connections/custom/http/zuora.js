@@ -21,7 +21,7 @@ export default {
     ],
     '/http/baseURI': `https://api${
       formValues['/http/sandbox'] === 'sandbox' ? 'sandbox-api' : ''
-    }.zuora.com/http/`,
+    }.zuora.com/rest/`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -74,9 +74,9 @@ export default {
   layout: {
     fields: [
       'name',
+      'http.sandbox',
       'http.unencrypted.apiAccessKeyId',
       'http.encrypted.apiSecretAccessKey',
-      'http.sandbox',
     ],
     type: 'collapse',
     containers: [

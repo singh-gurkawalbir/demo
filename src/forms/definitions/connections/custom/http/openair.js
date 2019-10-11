@@ -10,7 +10,6 @@ export default {
         ? 'https://sandbox.openair.com/api.pl'
         : 'https://www.openair.com/api.pl'
     }`,
-    '/http/ping/relativeURI': '/xml/v1/request.api',
     '/http/ping/successPath': '/response/Auth/@status',
     '/http/ping/successValues': ['0'],
     '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
@@ -51,11 +50,9 @@ export default {
           if (baseUri.indexOf('sandbox') === -1) {
             return 'sandbox';
           }
-
-          return 'production';
         }
 
-        return '';
+        return 'production';
       },
     },
     'http.unencrypted.companyId': {
