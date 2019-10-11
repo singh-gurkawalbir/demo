@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+// import GoogleLogo from '../../static/images/googleLogo.svg';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
@@ -70,16 +71,22 @@ const mapDispatchToProps = dispatch => ({
       marginRight: '5px',
     },
   },
-
   link: {
     paddingLeft: '4px',
     color: theme.palette.primary.dark,
   },
-
   forgotPass: {
     color: theme.palette.primary.dark,
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
+  },
+  googleBtn: {
+    borderRadius: '4px',
+    width: '90%',
+    background: `url('../../static/images/googleLogo.svg') 20% center no-repeat`,
+    backgroundSize: theme.spacing(2),
+    height: '48px',
+    fontSize: '16px',
   },
 }))
 class SignIn extends Component {
@@ -169,6 +176,14 @@ class SignIn extends Component {
             <Link href="true" className={classes.forgotPass}>
               Forgot Password?
             </Link>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.googleBtn}>
+              Sign In With Google
+            </Button>
           </div>
         </form>
       </div>
