@@ -350,6 +350,8 @@ export function permissions(
     'templates',
     'transfers',
     'users',
+    'exports',
+    'imports',
   ];
   const permissions = {};
 

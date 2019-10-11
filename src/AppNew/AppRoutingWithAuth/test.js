@@ -182,7 +182,6 @@ describe('AppRoutingWith authentication redirection behavior', () => {
           store,
         })
       );
-
       expect(history.location.pathname).toBe(getRoutePath(someRoute));
       expect(history.location.state).toBe(undefined);
     });
