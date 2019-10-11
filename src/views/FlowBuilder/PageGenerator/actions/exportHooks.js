@@ -23,7 +23,13 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(flowId, resourceId, 'hooks', true)
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          'exports',
+          'hooks',
+          true
+        )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

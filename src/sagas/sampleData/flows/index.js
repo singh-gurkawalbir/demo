@@ -21,7 +21,7 @@ const dependencies = {
 let fetchSampleData;
 
 function getParseStageData(previewData) {
-  const stages = previewData && previewData.stages;
+  const stages = (previewData && previewData.stages) || [];
   const parseStage = stages.find(stage => stage.name === 'parse');
 
   return parseStage && parseStage.data && parseStage.data[0];
@@ -179,12 +179,13 @@ function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
 function* requestProcessorData({
   flowId,
   resourceId,
+  resourceType,
   processor,
   isPageGenerator,
 }) {
   const { merged } = yield select(
     resourceData,
-    'exports',
+    resourceType,
     resourceId,
     SCOPES.VALUE
   );
@@ -200,6 +201,7 @@ function* requestProcessorData({
     yield call(fetchSampleData, {
       flowId,
       resourceId,
+      resourceType,
       stage: processor,
       isPageGenerator,
     });
@@ -213,7 +215,9 @@ function* requestProcessorData({
   }
 
   if (processor === 'transform') {
-    const transform = { ...merged.transform };
+    const transformLookup =
+      resourceType === 'imports' ? 'responseTransform' : 'transform';
+    const transform = { ...merged[transformLookup] };
     const [rule] = transform.rules || [];
 
     processorData = { data: preProcessedData, rule, processor };
@@ -252,7 +256,13 @@ function* requestProcessorData({
  * We have 4 stages for a processor - input , raw, transform, hooks.
  * Selectors should handle - input filter, output filter, input, transform, hooks.
  */
-function* fetchInputData({ flowId, resourceId, stage, isPageGenerator }) {
+function* fetchInputData({
+  flowId,
+  resourceId,
+  resourceType,
+  stage,
+  isPageGenerator,
+}) {
   // Updates preProcessedData for the procesors
   const sampleDataStage = dependencies[stage];
 
@@ -273,6 +283,7 @@ function* fetchInputData({ flowId, resourceId, stage, isPageGenerator }) {
     yield call(requestProcessorData, {
       flowId,
       resourceId,
+      resourceType,
       processor: sampleDataStage === 'hooks' ? 'javascript' : sampleDataStage,
       isPageGenerator,
     });
@@ -298,6 +309,7 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
     actions.flowData.requestProcessor(
       flowId,
       resourceId,
+      resourceType,
       lastStage,
       isPageGenerator
     )

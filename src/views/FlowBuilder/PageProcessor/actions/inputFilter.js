@@ -12,7 +12,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function InputFilterDialog({ flowId, resourceId, open, onClose }) {
+function InputFilterDialog({
+  flowId,
+  resourceId,
+  resourceType,
+  open,
+  onClose,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
@@ -22,7 +28,12 @@ function InputFilterDialog({ flowId, resourceId, open, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(flowId, resourceId, 'inputFilter')
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'inputFilter'
+        )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

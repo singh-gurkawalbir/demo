@@ -660,10 +660,17 @@ const flowData = {
       previewType,
       isPageGenerator,
     }),
-  requestProcessor: (flowId, resourceId, processor, isPageGenerator) =>
+  requestProcessor: (
+    flowId,
+    resourceId,
+    resourceType,
+    processor,
+    isPageGenerator
+  ) =>
     action(actionTypes.FLOW_DATA.REQUEST_PROCESSOR, {
       flowId,
       resourceId,
+      resourceType,
       processor,
       isPageGenerator,
     }),
@@ -681,10 +688,11 @@ const flowData = {
       processedData,
       isPageGenerator,
     }),
-  fetchSampleData: (flowId, resourceId, stage, isPageGenerator) =>
+  fetchSampleData: (flowId, resourceId, resourceType, stage, isPageGenerator) =>
     action(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, {
       flowId,
       resourceId,
+      resourceType,
       stage,
       isPageGenerator,
     }),

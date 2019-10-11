@@ -11,11 +11,14 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'transform')
   );
-  const rules = resource && resource.transform && resource.transform.rules;
+  const transformLookup =
+    resourceType === 'exports' ? 'transform' : 'responseTransform';
+  const rules =
+    resource && resource[transformLookup] && resource[transformLookup].rules;
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
-      const path = '/transform';
+      const path = `/${transformLookup}`;
       const value = {
         rules: [rule],
         version: '1',
@@ -35,15 +38,20 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(flowId, resourceId, 'transform')
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'transform'
+        )
       );
     }
-  }, [dispatch, flowId, resourceId, sampleData]);
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   return (
     <TransformEditorDialog
       title="Transform Mapping"
-      id={resourceId}
+      id={resourceId + flowId}
       data={sampleData}
       rule={rules && rules[0]}
       onClose={handleClose}

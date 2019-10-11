@@ -33,7 +33,13 @@ function TransformationDialog({ flowId, resource, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(flowId, resourceId, 'transform', true)
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          'exports',
+          'transform',
+          true
+        )
       );
     }
   }, [dispatch, flowId, resourceId, sampleData]);

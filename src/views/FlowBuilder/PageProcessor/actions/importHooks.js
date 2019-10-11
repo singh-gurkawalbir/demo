@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HooksDialog({ flowId, resource, open, onClose }) {
+function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -22,7 +22,14 @@ function HooksDialog({ flowId, resource, open, onClose }) {
 
   useEffect(() => {
     if (!sampleData) {
-      dispatch(actions.flowData.fetchSampleData(flowId, resourceId, 'hooks'));
+      dispatch(
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'hooks'
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

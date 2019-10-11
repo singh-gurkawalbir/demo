@@ -12,7 +12,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ResponseMappingDialog({ flowId, resourceId, open, onClose }) {
+function ResponseMappingDialog({
+  flowId,
+  resourceId,
+  resourceType,
+  open,
+  onClose,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
@@ -22,7 +28,12 @@ function ResponseMappingDialog({ flowId, resourceId, open, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(flowId, resourceId, 'outputFilter')
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'outputFilter'
+        )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
