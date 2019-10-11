@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
   },
   actionColHead: {
     // any smaller and table "giggles" when transitioning to/from hover state
-    width: 115,
+    width: 125,
+    textAlign: 'center',
   },
   ellipsisContainer: {
     padding: theme.spacing(2),

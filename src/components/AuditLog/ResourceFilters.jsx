@@ -2,16 +2,57 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
 import { sortBy } from 'lodash';
 import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
 import { OPTION_ALL } from './util';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
+
+const useStyles = makeStyles(theme => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 200,
+    maxWidth: 300,
+  },
+  select: {
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 42,
+    textAlign: 'left',
+    borderRadius: 2,
+    '& > div': {
+      maxWidth: '85%',
+    },
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 0, 0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+      paddingLeft: 0,
+    },
+  },
+}));
 
 export function ResourceTypeFilter(props) {
+  const classes = useStyles();
   const {
-    classes,
     resourceType,
     resourceId,
     filters,
@@ -73,6 +114,8 @@ export function ResourceTypeFilter(props) {
       <Select
         value={filters.resourceType}
         onChange={onChange}
+        className={classes.select}
+        IconComponent={ArrowDownIcon}
         inputProps={{
           name: 'resourceType',
           id: 'resourceType',
@@ -143,6 +186,9 @@ export function ResourceIdFilter(props) {
           name: '_resourceId',
           id: '_resourceId',
         }}
+        variant="filled"
+        className={classes.select}
+        IconComponent={ArrowDownIcon}
         value={filters._resourceId}
         onChange={onChange}>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>

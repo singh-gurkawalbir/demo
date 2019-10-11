@@ -14,6 +14,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ActionMenu from './ActionMenu';
+import EllipsisHorizontalIcon from '../icons/EllipsisHorizontalIcon';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -29,21 +30,23 @@ const useStyles = makeStyles(theme => ({
   },
 
   row: {
+    '& > td:last-child': {
+      minWidth: '125px',
+    },
     '& > td:last-child > div': {
       display: 'none',
     },
     '&:hover > td:last-child > div': {
       display: 'flex',
+      justifyContent: 'center',
     },
-    '&:hover > th:before': {
-      backgroundColor: theme.palette.primary.main,
-    },
-    '&:hover > td:before': {
-      backgroundColor: theme.palette.primary.main,
+    '&:hover > td:last-child > svg': {
+      display: 'none',
     },
   },
   actionCell: {
     padding: `0 !important`,
+    textAlign: 'center',
   },
   actionContainer: {
     position: 'sticky',
@@ -53,7 +56,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0),
   },
   actionColHead: {
-    width: 100,
+    width: 125,
+    textAlign: 'center',
   },
 }));
 
@@ -182,7 +186,9 @@ export default function CeligoTable({
               </TableCell>
             )
           )}
-          {rowActions && <TableCell className={classes.actionColHead} />}
+          {rowActions && (
+            <TableCell className={classes.actionColHead}>Actions</TableCell>
+          )}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -215,6 +221,7 @@ export default function CeligoTable({
             )}
             {rowActions && (
               <TableCell className={classes.actionCell}>
+                <EllipsisHorizontalIcon />
                 <ActionMenu
                   // rowActions may or may not be a fn. Sometimes
                   // the actions are static, other times they are

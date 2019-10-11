@@ -27,8 +27,6 @@ const mapDispatchToProps = dispatch => ({
 @withStyles(theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
   },
   title: {
     marginBottom: theme.spacing(2),

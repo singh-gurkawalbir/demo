@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   closeButton: {
     position: 'absolute',
     right: '10px',
-    top: '10px',
+    top: '2px',
   },
 }));
 
@@ -76,10 +76,8 @@ export default function ConfigureDebugger(props) {
         onClick={onClose}>
         <CloseIcon />
       </IconButton>
-      <DialogTitle>
-        <Typography>{name}</Typography>
-      </DialogTitle>
-      <DialogContent style={{ width: '70vw' }}>
+      <DialogTitle>{name}</DialogTitle>
+      <DialogContent style={{ width: '30vw' }}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Debug Duration:</FormLabel>
@@ -90,14 +88,14 @@ export default function ConfigureDebugger(props) {
               onChange={evt => setDebugValue(evt.target.value)}>
               <FormControlLabel
                 value="0"
-                control={<Radio color="primary" />}
+                control={<Radio color="secondary" />}
                 label="Off"
               />
               {['15', '30', '45', '60'].map(duration => (
                 <FormControlLabel
                   key={duration}
                   value={duration}
-                  control={<Radio color="primary" />}
+                  control={<Radio color="secondary" />}
                   label={`Next ${duration} mins`}
                 />
               ))}
