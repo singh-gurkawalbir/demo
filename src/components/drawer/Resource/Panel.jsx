@@ -1,5 +1,5 @@
-import { Fragment, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
@@ -38,7 +38,6 @@ export default function Panel(props) {
   const isNew = operation === 'add';
   const classes = useStyles(props);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const dispatch = useDispatch();
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
@@ -100,38 +99,23 @@ export default function Panel(props) {
     return url;
   }
 
-  function removeLastCodePannel() {
-    // console.log(location);
-    const segments = location.pathname.split('/');
-    const url = segments.splice(0, segments.length - 3).join('/');
-
-    return url;
-  }
-
-  useEffect(() => {
-    // once a new resource (id.startsWith('new-')), has been committed,
-    // we need to redirect to the resource using the correct id from
-    // the persistence layer...
-    if (newResourceId) {
-      enqueueSnackbar({
-        message: `${resourceLabel} created`,
-        variant: 'success',
-      });
-
-      onClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, newResourceId]);
-
   function handleSubmitComplete() {
     if (isNew) {
       props.history.replace(getEditUrl(id));
-    } else if (location.pathname === getEditUrl(id)) {
-      if (location.pathname.includes('/add')) {
-        return props.history.replace(removeLastCodePannel());
+    } else {
+      if (newResourceId)
+        enqueueSnackbar({
+          message: `${resourceLabel} created`,
+          variant: 'success',
+        });
+      else {
+        enqueueSnackbar({
+          message: `${resourceLabel} edited`,
+          variant: 'info',
+        });
       }
 
-      props.history.replace(`/pg/${resourceType}`);
+      onClose();
     }
   }
 

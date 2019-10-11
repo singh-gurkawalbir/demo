@@ -172,7 +172,7 @@ export default {
         filter.assistant = app.assistant;
       }
 
-      return { filter };
+      return { filter, appType: app.type };
     }
 
     return null;

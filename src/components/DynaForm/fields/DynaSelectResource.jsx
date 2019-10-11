@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -10,6 +10,12 @@ import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../../components/LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
+import actions from '../../../actions';
+import newConnection from '../../../forms/definitions/connections/new';
+import {
+  defaultPatchSetConverter,
+  getMissingPatchSet,
+} from '../../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +51,7 @@ function DynaSelectResource(props) {
     allowNew,
     allowEdit,
     location,
+    options,
   } = props;
   const classes = useStyles();
   const [newResourceId, setNewResourceId] = useState(newId());
@@ -112,9 +119,30 @@ function DynaSelectResource(props) {
     label: conn.name,
     value: conn._id,
   }));
+  const dispatch = useDispatch();
+  const addNewResource = () => {
+    const values = newConnection.preSave({
+      application: options.appType,
+      '/name': `New ${options.appType} resource`,
+    });
+    const patchValues = defaultPatchSetConverter(values);
+    const missingPatches = getMissingPatchSet(
+      patchValues.map(patch => patch.path)
+    );
+
+    dispatch(
+      actions.resource.patchStaged(
+        newResourceId,
+        [...missingPatches, ...patchValues],
+        'value'
+      )
+    );
+    props.history.push(
+      `${location.pathname}/edit/${resourceType}/${newResourceId}`
+    );
+  };
 
   // Disable adding a new resource when the user has selected an existing resource
-
   return (
     <div className={classes.root}>
       <LoadResources required resources={resourceType}>
@@ -136,11 +164,9 @@ function DynaSelectResource(props) {
 
       {allowNew && (
         <IconButton
-          disabled={!!value}
           data-test="addNewResource"
           className={classes.iconButton}
-          component={Link}
-          to={`${location.pathname}/add/${resourceType}/${newResourceId}`}
+          onClick={addNewResource}
           size="small">
           <AddIcon />
         </IconButton>
