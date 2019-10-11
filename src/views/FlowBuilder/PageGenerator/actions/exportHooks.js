@@ -32,8 +32,7 @@ function HooksDialog({ flowId, resource, open, onClose }) {
         )
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, flowId, resourceId, sampleData]);
 
   return (
     <Dialog

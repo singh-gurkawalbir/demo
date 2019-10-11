@@ -36,8 +36,7 @@ function ResponseMappingDialog({
         )
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   return (
     <Dialog
