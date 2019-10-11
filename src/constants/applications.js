@@ -39,6 +39,55 @@ const connectors = [
     type: 'webhook',
     keywords: 'technology,protocol',
     group: 'tech',
+    webhookOnly: true,
+  },
+  {
+    id: 'travis-org',
+    type: 'webhook',
+    name: 'Travis Org',
+    webhookOnly: true,
+  },
+  {
+    id: 'helpscout',
+    type: 'webhook',
+    name: 'Help Scout',
+    webhookOnly: true,
+  },
+  {
+    id: 'errorception',
+    type: 'webhook',
+    name: 'Errorception',
+    webhookOnly: true,
+  },
+  {
+    id: 'aha',
+    type: 'webhook',
+    name: 'Aha!',
+    webhookOnly: true,
+  },
+  {
+    id: 'pagerduty',
+    type: 'webhook',
+    name: 'PagerDuty',
+    webhookOnly: true,
+  },
+  {
+    id: 'surveymonkey',
+    type: 'webhook',
+    name: 'SurveyMonkey',
+    webhookOnly: true,
+  },
+  {
+    id: 'mailparser-io',
+    type: 'webhook',
+    name: 'Mailparser',
+    webhookOnly: true,
+  },
+  {
+    id: 'integrator-extension',
+    type: 'webhook',
+    name: 'integrator.io Extension',
+    webhookOnly: true,
   },
   {
     id: 'as2',
@@ -637,7 +686,7 @@ const connectors = [
 export const groupApplications = resourceType => {
   const filteredConnectors = connectors.filter(connector => {
     if (resourceType && resourceType !== 'exports')
-      return connector.id !== 'webhook';
+      return !connector.webhookOnly;
 
     return true;
   });
@@ -670,6 +719,8 @@ export const groupApplications = resourceType => {
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => c.webhook);
+export const getWebhookOnlyConnectors = () =>
+  connectors.filter(c => c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

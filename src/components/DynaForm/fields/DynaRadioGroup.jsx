@@ -6,6 +6,7 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
+  FormHelperText,
 } from '@material-ui/core';
 import clsx from 'clsx';
 
@@ -34,6 +35,9 @@ export default function DynaRadio(props) {
     // set fullWidth to true for component to occupy fill width
     fullWidth,
     label,
+    description,
+    isValid,
+    errorMessages,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -92,6 +96,12 @@ export default function DynaRadio(props) {
         }}>
         {items}
       </RadioGroup>
+
+      {(description || errorMessages) && (
+        <FormHelperText error={!isValid}>
+          {isValid ? description : errorMessages}
+        </FormHelperText>
+      )}
     </FormControl>
   );
 }

@@ -1,5 +1,6 @@
 import applications, {
   getWebhookConnectors,
+  getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
 
 const appTypeToAdaptorType = {
@@ -71,7 +72,12 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'application', is: getWebhookConnectors() }],
+      visibleWhen: [
+        {
+          field: 'application',
+          is: getWebhookConnectors().map(connector => connector.id),
+        },
+      ],
     },
     connection: {
       id: 'connection',
@@ -83,7 +89,13 @@ export default {
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
-        { field: 'application', isNot: ['', 'webhook'] },
+        {
+          field: 'application',
+          isNot: [
+            '',
+            ...getWebhookOnlyConnectors().map(connector => connector.id),
+          ],
+        },
         { field: 'type', is: ['api'] },
       ],
       allowNew: true,
