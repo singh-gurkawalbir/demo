@@ -316,6 +316,10 @@ function FlowBuilder(props) {
   // eslint-disable-next-line
   // console.log(flow);
 
+  useEffect(() => {
+    dispatch(actions.flowData.init(flow));
+  }, [dispatch, flow]);
+
   return (
     <Fragment>
       <ResourceDrawer {...props} />

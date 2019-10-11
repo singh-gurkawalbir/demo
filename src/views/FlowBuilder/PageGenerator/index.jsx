@@ -208,7 +208,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
             <a.Component
               open={activeAction === a.name}
               flowId={flowId}
-              resourceId={resourceId}
+              resource={resource}
               onClose={() => setActiveAction(null)}
             />
           </Fragment>

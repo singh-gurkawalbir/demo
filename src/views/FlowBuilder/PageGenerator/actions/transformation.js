@@ -1,26 +1,58 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
+import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
+function TransformationDialog({ flowId, resource, onClose }) {
+  const dispatch = useDispatch();
+  const resourceId = resource._id;
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'transform', true)
+  );
+  const rules = resource && resource.transform && resource.transform.rules;
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const { rule } = editorValues;
+      const path = '/transform';
+      const value = {
+        rules: [rule],
+        version: '1',
+      };
+      const patchSet = [{ op: 'replace', path, value }];
 
-function TransformationDialog({ flowId, resourceId, open, onClose }) {
-  const classes = useStyles();
+      // Save the resource
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+    }
+
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(
+        actions.flowData.fetchSampleData(flowId, resourceId, 'transform', true)
+      );
+    }
+  }, [dispatch, flowId, resourceId, sampleData]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Transformation</DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>exportId: {resourceId}</Typography>
-    </Dialog>
+    <TransformEditorDialog
+      title="Transform Mapping"
+      id={resourceId}
+      data={sampleData}
+      rule={rules && rules[0]}
+      onClose={handleClose}
+    />
   );
+}
+
+function Transformation(props) {
+  const { open } = props;
+
+  return <Fragment>{open && <TransformationDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -31,5 +63,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: TransformationDialog,
+  Component: Transformation,
 };

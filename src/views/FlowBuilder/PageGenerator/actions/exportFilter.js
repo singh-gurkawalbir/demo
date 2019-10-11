@@ -8,8 +8,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ExportFilterDialog({ flowId, resourceId, open, onClose }) {
+function ExportFilterDialog({ flowId, resource, open, onClose }) {
   const classes = useStyles();
+  const resourceId = resource._id;
 
   return (
     <Dialog

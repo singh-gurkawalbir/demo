@@ -247,7 +247,8 @@ const PageProcessor = ({
               <a.Component
                 open={activeAction === a.name}
                 flowId={flowId}
-                resourceId={resourceId}
+                resource={resource}
+                resourceType={resourceType}
                 onClose={() => setActiveAction(null)}
               />
             </Fragment>

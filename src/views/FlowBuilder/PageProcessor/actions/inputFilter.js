@@ -1,5 +1,9 @@
 import { Dialog, Typography, DialogTitle } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -10,6 +14,19 @@ const useStyles = makeStyles(theme => ({
 
 function InputFilterDialog({ flowId, resourceId, open, onClose }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'inputFilter')
+  );
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(
+        actions.flowData.fetchSampleData(flowId, resourceId, 'inputFilter')
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Dialog
@@ -19,8 +36,17 @@ function InputFilterDialog({ flowId, resourceId, open, onClose }) {
       <DialogTitle>Input Filter</DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
+      {sampleData && (
+        <Typography> SampleData: {JSON.stringify(sampleData)}</Typography>
+      )}
     </Dialog>
   );
+}
+
+function InputFilter(props) {
+  const { open } = props;
+
+  return <Fragment>{open && <InputFilterDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -32,5 +58,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: InputFilterDialog,
+  Component: InputFilter,
 };

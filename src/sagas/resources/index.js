@@ -84,6 +84,9 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
         });
         updated.assistantMetadata = assistantMetadata;
       }
+
+      // Trigger flow data state update
+      yield put(actions.flowData.updateFlows(id, resourceType));
     }
 
     yield put(actions.resource.received(resourceType, updated));
