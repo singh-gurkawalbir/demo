@@ -242,16 +242,18 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const addIdToFieldsAndRenameNameAttribute = fields =>
+const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) =>
   fields.map(field => {
     // TODO: generate correct name path
-    const { name, options, tooltip } = field;
+    const { name, options, tooltip, type } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
       ...field,
       name: `/${name}`,
+      _integrationId,
       id: name,
+      type: type === 'input' ? 'text' : type,
       helpText: tooltip,
       options: [
         {
@@ -267,12 +269,15 @@ const addIdToFieldsAndRenameNameAttribute = fields =>
     };
   });
 
-export const integrationSettingsToDynaFormMetadata = meta => {
+export const integrationSettingsToDynaFormMetadata = (meta, integrationId) => {
   const finalData = {};
   const { fields, sections } = meta;
 
   if (fields) {
-    const addedFieldIdFields = addIdToFieldsAndRenameNameAttribute(fields);
+    const addedFieldIdFields = addIdToFieldsAndRenameNameAttribute(
+      fields,
+      integrationId
+    );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
       convertFieldsToFieldReferneceObj,
@@ -284,7 +289,7 @@ export const integrationSettingsToDynaFormMetadata = meta => {
 
   if (sections) {
     sections.forEach(section => {
-      addIdToFieldsAndRenameNameAttribute(section.fields).reduce(
+      addIdToFieldsAndRenameNameAttribute(section.fields, integrationId).reduce(
         convertFieldsToFieldReferneceObj,
         finalData.fieldMap
       );
@@ -299,9 +304,10 @@ export const integrationSettingsToDynaFormMetadata = meta => {
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      fields: addIdToFieldsAndRenameNameAttribute(section.fields).map(
-        refGeneration
-      ),
+      fields: addIdToFieldsAndRenameNameAttribute(
+        section.fields,
+        integrationId
+      ).map(refGeneration),
     }));
   }
 

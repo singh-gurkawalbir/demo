@@ -19,7 +19,10 @@ export default function Flows(props) {
     )
   );
   const hasAdvancedSettings = !!rest.fields || !!rest.sections;
-  const translatedMeta = integrationSettingsToDynaFormMetadata(rest);
+  const translatedMeta = integrationSettingsToDynaFormMetadata(
+    rest,
+    integrationId
+  );
   const [count, setCount] = useState(0);
 
   useEffect(() => {

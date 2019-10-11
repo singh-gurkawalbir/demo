@@ -155,7 +155,7 @@ export default function DynaTable(props) {
         modifiedOptions = {
           options: [
             {
-              items: op.options.map(opt => ({
+              items: op.options.filter(Boolean).map(opt => ({
                 label: opt.text || opt.label,
                 value: opt.id || opt.value,
               })),
