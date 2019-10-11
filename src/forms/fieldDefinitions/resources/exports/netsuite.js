@@ -72,11 +72,11 @@ export default {
       },
     ],
     defaultValue: r =>
-      'userinterface,webstore' ||
       (r &&
         r.netsuite &&
         r.netsuite.distributed &&
-        r.netsuite.distributed.sublists),
+        r.netsuite.distributed.executionContext) ||
+      'userinterface,webstore',
     valueDelimiter: ',',
     required: true,
     helpText:
@@ -86,7 +86,6 @@ export default {
   'netsuite.distributed.executionType': {
     type: 'multiselect',
     label: 'Execution type',
-    // defaultValue: 'create,edit',
     options: [
       {
         items: [
@@ -107,11 +106,11 @@ export default {
       },
     ],
     defaultValue: r =>
-      'create,edit,xedit' ||
       (r &&
         r.netsuite &&
         r.netsuite.distributed &&
-        r.netsuite.distributed.sublists),
+        r.netsuite.distributed.executionType) ||
+      'create,edit,xedit',
     valueDelimiter: ',',
     required: true,
     helpText:
