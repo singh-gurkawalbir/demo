@@ -348,7 +348,7 @@ function FlowBuilder(props) {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             <div className={classes.generatorRoot}>
-              <Typography className={classes.sourceTitle} variant="h6">
+              <Typography className={classes.sourceTitle} variant="overline">
                 SOURCE APPLICATIONS
                 <IconButton
                   data-test="addGenerator"
@@ -374,7 +374,9 @@ function FlowBuilder(props) {
               </div>
             </div>
             <div className={classes.processorRoot}>
-              <Typography className={classes.destinationTitle} variant="h6">
+              <Typography
+                className={classes.destinationTitle}
+                variant="overline">
                 DESTINATION &amp; LOOKUP APPLICATIONS
                 <IconButton
                   data-test="addProcessor"

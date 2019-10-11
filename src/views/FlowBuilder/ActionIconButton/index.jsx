@@ -4,7 +4,6 @@ import { IconButton, Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   button: {
-    position: 'absolute',
     transition: theme.transitions.create(['left', 'top'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -13,6 +12,7 @@ const useStyles = makeStyles(theme => ({
   iconButtonRoot: {
     border: '1px solid',
     padding: theme.spacing(0.5),
+    marginRight: theme.spacing(1),
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
     '&:hover': {
@@ -24,8 +24,8 @@ const useStyles = makeStyles(theme => ({
   },
   iconButtonLabel: {
     '& svg': {
-      width: 20,
-      height: 20,
+      width: 26,
+      height: 26,
     },
   },
 }));

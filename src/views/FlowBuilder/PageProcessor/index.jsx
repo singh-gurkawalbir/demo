@@ -9,7 +9,6 @@ import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
 import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
@@ -17,7 +16,6 @@ import importHooksAction from './actions/importHooks';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import proceedOnFailureAction from './actions/proceedOnFailure';
-import ActionIconButton from '../ActionIconButton';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -32,12 +30,8 @@ const useStyles = makeStyles(theme => ({
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 80,
+    marginTop: 150,
     borderBottom: `3px dotted ${theme.palette.divider}`,
-  },
-  isNotOverActions: {
-    top: 68,
-    left: 116,
   },
   pending: {
     minWidth: 50,
@@ -59,8 +53,6 @@ const PageProcessor = ({
   const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [isOver, setIsOver] = useState(false);
-  const [activeAction, setActiveAction] = useState(null);
   const [newProcessorId, setNewProcessorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(
@@ -219,10 +211,6 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
-          onMouseOver={() => setIsOver(true)}
-          onMouseOut={() => setIsOver(false)}
-          onFocus={() => setIsOver(true)}
-          onBlur={() => setIsOver(false)}
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
@@ -231,33 +219,11 @@ const PageProcessor = ({
           assistant={resource.assistant}
           ref={ref}
           opacity={opacity} /* used for drag n drop */
-          blockType={pp.type === 'export' ? 'lookup' : 'import'}>
-          {processorActions.map(a => (
-            <Fragment key={a.name}>
-              <ActionIconButton
-                helpText={a.helpText}
-                className={clsx({
-                  [classes.isNotOverActions]: !isOver,
-                })}
-                style={isOver ? { left: a.left, top: a.top } : undefined}
-                onClick={() => setActiveAction(a.name)}
-                data-test={a.name}>
-                <a.Icon />
-              </ActionIconButton>
-              <a.Component
-                open={activeAction === a.name}
-                flowId={flowId}
-                resourceId={resourceId}
-                onClose={() => setActiveAction(null)}
-              />
-            </Fragment>
-          ))}
-          {!isOver && processorActions.length > 0 && (
-            <ActionIconButton className={classes.isNotOverActions}>
-              <EllipsisIcon />
-            </ActionIconButton>
-          )}
-        </AppBlock>
+          blockType={pp.type === 'export' ? 'lookup' : 'import'}
+          flowId={flowId}
+          resourceId={resourceId}
+          actions={processorActions}
+        />
         {!isLast && (
           /* Right connecting line between Page Processors is not needed
              for the last App (nothing to connect) */
