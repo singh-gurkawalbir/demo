@@ -178,16 +178,18 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     textAlign: 'center',
+    marginBottom: theme.spacing(3),
   },
   destinationTitle: {
     marginLeft: 100,
+    marginBottom: theme.spacing(3),
   },
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(3, 0, 3, 3),
+    padding: theme.spacing(0, 0, 3, 3),
   },
   processorRoot: {
-    padding: theme.spacing(3, 3, 3, 0),
+    padding: theme.spacing(0, 3, 3, 0),
   },
 }));
 
@@ -355,7 +357,10 @@ function FlowBuilder(props) {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             <div className={classes.generatorRoot}>
-              <Typography className={classes.sourceTitle} variant="overline">
+              <Typography
+                component="div"
+                className={classes.sourceTitle}
+                variant="overline">
                 SOURCE APPLICATIONS
                 <IconButton
                   data-test="addGenerator"
@@ -382,6 +387,7 @@ function FlowBuilder(props) {
             </div>
             <div className={classes.processorRoot}>
               <Typography
+                component="div"
                 className={classes.destinationTitle}
                 variant="overline">
                 DESTINATION &amp; LOOKUP APPLICATIONS

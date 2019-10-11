@@ -10,15 +10,13 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   iconButtonRoot: {
-    border: '1px solid',
     padding: theme.spacing(0.5),
     marginRight: theme.spacing(1),
-    borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.common.white,
       '& svg': {
-        color: theme.palette.common.white,
+        color: theme.palette.primary.main,
       },
     },
   },
@@ -28,12 +26,17 @@ const useStyles = makeStyles(theme => ({
       height: 26,
     },
   },
+  contained: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
 
 export default function ActionIconButton({
   helpText,
   className,
   children,
+  variant,
   ...props
 }) {
   const classes = useStyles();
@@ -42,7 +45,7 @@ export default function ActionIconButton({
     <Tooltip title={helpText}>
       <IconButton
         size="small"
-        className={clsx(classes.button, className)}
+        className={clsx(classes.button, className, classes[variant])}
         classes={{
           root: classes.iconButtonRoot,
           label: classes.iconButtonLabel,

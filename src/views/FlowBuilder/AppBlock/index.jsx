@@ -6,6 +6,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
+import StatusCircle from '../../../components/HomePageCard/Header/Status/StatusCircle';
+import Status from '../../../components/HomePageCard/Header/Status/';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -32,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-end',
     justifyContent: 'center',
     display: 'flex',
-    '& > h4': {
+    '& > h5': {
       textAlign: 'center',
     },
   },
@@ -70,6 +72,16 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     top: 0,
     position: 'absolute',
+  },
+  addButton: {
+    padding: theme.spacing(2),
+    marginTop: -theme.spacing(1),
+    marginLeft: -theme.spacing(1),
+  },
+  status: {
+    justifyContent: 'center',
+    height: 'unset',
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -129,7 +141,7 @@ function AppBlock({
   return (
     <div className={classes.innerContainer}>
       <div className={classes.name}>
-        <Typography variant="h4">{name}</Typography>
+        <Typography variant="h5">{name}</Typography>
       </div>
       <div
         onMouseEnter={() => setIsOver(true)}
@@ -173,6 +185,11 @@ function AppBlock({
             {actions.map(a => (
               <Fragment key={a.name}>
                 <ActionIconButton
+                  variant={
+                    a.position !== 'middle' && expanded
+                      ? 'contained'
+                      : undefined
+                  }
                   helpText={a.helpText}
                   className={clsx({
                     [classes.isNotOverActions]: !expanded,
@@ -192,7 +209,7 @@ function AppBlock({
             ))}
             {!expanded && actions.length > 0 && (
               <ActionIconButton
-                // className={classes.isNotOverActions}
+                className={classes.addButton}
                 onClick={handleExpandClick}
                 helpText="Add data processor">
                 <AddIcon />
@@ -200,6 +217,9 @@ function AppBlock({
             )}
           </div>
         </div>
+        <Status className={classes.status} count="5324" label="new errors">
+          <StatusCircle variant="error" size="small" />
+        </Status>
       </div>
     </div>
   );
