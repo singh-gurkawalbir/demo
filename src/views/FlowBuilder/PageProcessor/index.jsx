@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 150,
+    minWidth: 130,
   },
   lineLeft: {
     minWidth: 50,
@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   isNotOverActions: {
     top: 68,
     left: 116,
+  },
+  pending: {
+    minWidth: 50,
   },
 }));
 const PageProcessor = ({
@@ -258,7 +261,13 @@ const PageProcessor = ({
         {!isLast && (
           /* Right connecting line between Page Processors is not needed
              for the last App (nothing to connect) */
-          <div className={clsx(classes.dottedLine, classes.lineRight)} />
+          <div
+            className={clsx({
+              [classes.dottedLine]: !pending,
+              [classes.lineRight]: !pending,
+              [classes.pending]: pending,
+            })}
+          />
         )}
       </div>
     </Fragment>
