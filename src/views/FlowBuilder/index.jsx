@@ -14,11 +14,13 @@ import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './BottomDrawer';
 import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
+import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import SwitchOnOff from '../../components/SwitchToggle';
 
@@ -321,6 +323,8 @@ function FlowBuilder(props) {
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flowId={flowId} />
+      <SettingsDrawer {...props} flowId={flowId} />
+
       <CeligoPageBar
         title={flow.name}
         subtitle={`Last saved: ${flow.lastModified}`}
@@ -332,6 +336,9 @@ function FlowBuilder(props) {
           </IconButton>
           <IconButton onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDrawerOpen('settings')}>
+            <SettingsIcon />
           </IconButton>
         </div>
       </CeligoPageBar>
