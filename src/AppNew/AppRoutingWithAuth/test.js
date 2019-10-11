@@ -41,7 +41,7 @@ function reduxRouterWrappedComponent({
   );
 }
 
-describe.skip('AppRoutingWith authentication redirection behavior', () => {
+describe('AppRoutingWith authentication redirection behavior', () => {
   const initSession = jest.fn();
   const clearAppError = jest.fn();
   // Should i bring a reducer and deduce the states form there

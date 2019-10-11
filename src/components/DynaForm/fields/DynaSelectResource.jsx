@@ -1,60 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import {
-  Select,
-  FormControl,
-  MenuItem,
-  Input,
-  InputLabel,
-  IconButton,
-  FormHelperText,
-} from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
+import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../../components/LoadResources';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import DynaSelect from './DynaSelect';
+import DynaMultiSelect from './DynaMultiSelect';
+import actions from '../../../actions';
+import newConnection from '../../../forms/definitions/connections/new';
+import {
+  defaultPatchSetConverter,
+  getMissingPatchSet,
+} from '../../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
-  },
-  select: {
-    display: 'flex',
-    width: '100%',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    borderRadius: 2,
-    '& > Label': {
-      zIndex: 1,
-
-      '&.MuiInputLabel-shrink': {
-        paddingTop: 10,
-      },
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-      zIndex: 2,
-    },
-    '& svg': {
-      right: 8,
-    },
   },
   iconButton: {
     alignSelf: 'flex-end',
@@ -76,17 +42,16 @@ const newId = () => `new-${shortid.generate()}`;
 
 function DynaSelectResource(props) {
   const {
-    description,
     disabled,
     id,
-    name,
-    value = '',
-    label,
-    placeholder,
     onFieldChange,
+    multiselect = false,
+    value,
     resourceType,
     allowNew,
+    allowEdit,
     location,
+    options,
   } = props;
   const classes = useStyles();
   const [newResourceId, setNewResourceId] = useState(newId());
@@ -144,54 +109,78 @@ function DynaSelectResource(props) {
     });
   };
 
-  let resourceItems = filteredResources().map(conn => {
-    const label = conn.name;
-    const value = conn._id;
-
-    return (
-      <MenuItem key={value} value={value}>
-        {label || value}
-      </MenuItem>
+  // When adding a new resource and subsequently editing it disable selecting a new connection
+  const isAddingANewResource =
+    allowNew &&
+    (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
+      location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
+  const disableSelect = disabled || isAddingANewResource;
+  const resourceItems = filteredResources().map(conn => ({
+    label: conn.name,
+    value: conn._id,
+  }));
+  const dispatch = useDispatch();
+  const addNewResource = () => {
+    const values = newConnection.preSave({
+      application: options.appType,
+      '/name': `New ${options.appType} resource`,
+    });
+    const patchValues = defaultPatchSetConverter(values);
+    const missingPatches = getMissingPatchSet(
+      patchValues.map(patch => patch.path)
     );
-  });
-  const tempPlaceHolder = placeholder || 'Please Select';
-  const defaultItem = (
-    <MenuItem key={tempPlaceHolder} value="">
-      {tempPlaceHolder}
-    </MenuItem>
-  );
 
-  resourceItems = [defaultItem, ...resourceItems];
+    dispatch(
+      actions.resource.patchStaged(
+        newResourceId,
+        [...missingPatches, ...patchValues],
+        'value'
+      )
+    );
+    props.history.push(
+      `${location.pathname}/edit/${resourceType}/${newResourceId}`
+    );
+  };
 
+  // Disable adding a new resource when the user has selected an existing resource
   return (
     <div className={classes.root}>
-      <FormControl key={id} disabled={disabled} className={classes.select}>
-        <InputLabel shrink={!!value} htmlFor={id}>
-          {label}
-        </InputLabel>
-        <LoadResources required resources={resourceType}>
-          <Select
-            data-test={id}
-            value={value}
-            variant="filled"
-            IconComponent={ArrowDownIcon}
-            onChange={evt => {
-              onFieldChange(id, evt.target.value);
-            }}
-            input={<Input name={name} id={id} />}>
-            {resourceItems}
-          </Select>
-        </LoadResources>
-        {description && <FormHelperText>{description}</FormHelperText>}
-      </FormControl>
+      <LoadResources required resources={resourceType}>
+        {multiselect ? (
+          <DynaMultiSelect
+            {...props}
+            disabled={disableSelect}
+            options={[{ items: resourceItems || [] }]}
+          />
+        ) : (
+          <DynaSelect
+            {...props}
+            disabled={disableSelect}
+            removeHelperText={isAddingANewResource}
+            options={[{ items: resourceItems || [] }]}
+          />
+        )}
+      </LoadResources>
+
       {allowNew && (
         <IconButton
           data-test="addNewResource"
           className={classes.iconButton}
-          component={Link}
-          to={`${location.pathname}/add/${resourceType}/${newResourceId}`}
+          onClick={addNewResource}
           size="small">
           <AddIcon />
+        </IconButton>
+      )}
+
+      {allowEdit && (
+        <IconButton
+          disabled={!value}
+          data-test="editNewResource"
+          className={classes.iconButton}
+          component={Link}
+          to={`${location.pathname}/edit/${resourceType}/${value}`}
+          size="small">
+          <EditIcon />
         </IconButton>
       )}
     </div>

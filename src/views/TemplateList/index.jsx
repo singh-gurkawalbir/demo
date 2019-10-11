@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import shortid from 'shortid';
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TemplateList(props) {
   const { location } = props;
-  const defaultFilter = { take: 3 };
+  const defaultFilter = useMemo(() => ({ take: 3 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;

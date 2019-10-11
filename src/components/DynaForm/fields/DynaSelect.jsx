@@ -48,6 +48,7 @@ export default function DynaSelect(props) {
     value,
     isValid,
     errorMessages,
+    removeHelperText = false,
     name,
     options = [],
     defaultValue = '',
@@ -118,7 +119,7 @@ export default function DynaSelect(props) {
           {items}
         </Select>
       </FormControl>
-      {(description || errorMessages) && (
+      {!removeHelperText && (description || errorMessages) && (
         <FormHelperText error={!isValid}>
           {isValid ? description : errorMessages}
         </FormHelperText>

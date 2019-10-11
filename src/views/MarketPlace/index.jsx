@@ -1,10 +1,10 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import MarketplaceList from '../../components/MarketplaceList';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import KeywordSearch from '../../components/KeywordSearch';
 
 export default function Marketplace() {
-  const defaultFilter = { take: 5 };
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
 
   return (
     <Fragment>

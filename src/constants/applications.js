@@ -39,6 +39,55 @@ const connectors = [
     type: 'webhook',
     keywords: 'technology,protocol',
     group: 'tech',
+    webhookOnly: true,
+  },
+  {
+    id: 'travis-org',
+    type: 'webhook',
+    name: 'Travis Org',
+    webhookOnly: true,
+  },
+  {
+    id: 'helpscout',
+    type: 'webhook',
+    name: 'Help Scout',
+    webhookOnly: true,
+  },
+  {
+    id: 'errorception',
+    type: 'webhook',
+    name: 'Errorception',
+    webhookOnly: true,
+  },
+  {
+    id: 'aha',
+    type: 'webhook',
+    name: 'Aha!',
+    webhookOnly: true,
+  },
+  {
+    id: 'pagerduty',
+    type: 'webhook',
+    name: 'PagerDuty',
+    webhookOnly: true,
+  },
+  {
+    id: 'surveymonkey',
+    type: 'webhook',
+    name: 'SurveyMonkey',
+    webhookOnly: true,
+  },
+  {
+    id: 'mailparser-io',
+    type: 'webhook',
+    name: 'Mailparser',
+    webhookOnly: true,
+  },
+  {
+    id: 'integrator-extension',
+    type: 'webhook',
+    name: 'integrator.io Extension',
+    webhookOnly: true,
   },
   {
     id: 'as2',
@@ -634,6 +683,29 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'http', assistant: 'zuora' },
 ];
 
+export const groupApplications = resourceType => {
+  const filteredConnectors = connectors.filter(connector => {
+    if (resourceType && resourceType !== 'exports')
+      return !connector.webhookOnly;
+
+    return true;
+  });
+
+  return [
+    {
+      label: 'Databases',
+      connectors: filteredConnectors.filter(c => c.group === 'db'),
+    },
+    {
+      label: 'Generic tech connectors',
+      connectors: filteredConnectors.filter(c => c.group === 'tech'),
+    },
+    {
+      label: 'Connectors',
+      connectors: filteredConnectors.filter(c => !c.group),
+    },
+  ];
+};
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
   'helpscout', 
@@ -647,21 +719,8 @@ const connectors = [
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => c.webhook);
-
-export const groupApplications = () => [
-  {
-    label: 'Databases',
-    connectors: connectors.filter(c => c.group === 'db'),
-  },
-  {
-    label: 'Generic tech connectors',
-    connectors: connectors.filter(c => c.group === 'tech'),
-  },
-  {
-    label: 'Connectors',
-    connectors: getApplicationConnectors(),
-  },
-];
+export const getWebhookOnlyConnectors = () =>
+  connectors.filter(c => c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

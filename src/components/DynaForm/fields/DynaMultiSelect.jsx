@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { FormHelperText } from '@material-ui/core';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -56,6 +57,9 @@ export default function DynaMultiSelect(props) {
     label,
     onFieldChange,
     valueDelimiter,
+    description,
+    errorMessages,
+    isValid,
   } = props;
   const classes = useStyles();
   const items = options.reduce(
@@ -102,26 +106,34 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.root}>
-      <InputLabel htmlFor={id}>{label}</InputLabel>
-      <Select
-        multiple
-        data-test={id}
-        value={processedValue}
-        IconComponent={ArrowDownIcon}
-        onChange={evt => {
-          onFieldChange(id, evt.target.value);
-        }}
-        input={<Input name={name} id={id} />}
-        renderValue={selected => (
-          <div className={classes.chips}>
-            {selected &&
-              typeof selected.map === 'function' &&
-              selected.map(createChip)}
-          </div>
-        )}>
-        {items}
-      </Select>
-    </FormControl>
+    <div>
+      <FormControl key={id} disabled={disabled} className={classes.root}>
+        <InputLabel htmlFor={id}>{label}</InputLabel>
+        <Select
+          multiple
+          data-test={id}
+          value={processedValue}
+          IconComponent={ArrowDownIcon}
+          onChange={evt => {
+            onFieldChange(id, evt.target.value);
+          }}
+          input={<Input name={name} id={id} />}
+          renderValue={selected => (
+            <div className={classes.chips}>
+              {selected &&
+                typeof selected.map === 'function' &&
+                selected.map(createChip)}
+            </div>
+          )}>
+          {items}
+        </Select>
+      </FormControl>
+
+      {(description || errorMessages) && (
+        <FormHelperText error={!isValid}>
+          {isValid ? description : errorMessages}
+        </FormHelperText>
+      )}
+    </div>
   );
 }
