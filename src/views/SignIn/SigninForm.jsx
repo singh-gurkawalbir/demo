@@ -2,11 +2,11 @@ import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Typography, Button, Link } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
+import ErrorIcon from '../../components/icons/ErrorIcon';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
@@ -24,8 +24,10 @@ const mapDispatchToProps = dispatch => ({
     margin: theme.spacing(1),
   },
   submit: {
-    marginLeft: 'auto',
-    marginRight: ' auto',
+    width: '90%',
+    borderRadius: '4px',
+    height: '48px',
+    fontSize: theme.spacing(2),
   },
   editableFields: {
     textAlign: 'center',
@@ -44,6 +46,7 @@ const mapDispatchToProps = dispatch => ({
     border: '1px solid',
     background: theme.palette.background.paper,
     borderColor: theme.palette.secondary.lightest,
+    marginBottom: '0px',
 
     // '& div > input:disabled': {
     //   background: theme.palette.background.paper2,
@@ -52,6 +55,31 @@ const mapDispatchToProps = dispatch => ({
       color: theme.palette.secondary.light,
       zIndex: 2,
     },
+  },
+  alertMsg: {
+    marginBottom: theme.spacing(1),
+    fontSize: '12px',
+    textAlign: 'left',
+    marginLeft: '20px',
+    width: '90%',
+    display: 'flex',
+    alignItems: 'center',
+    '& > svg': {
+      fill: theme.palette.error.main,
+      fontSize: theme.spacing(2),
+      marginRight: '5px',
+    },
+  },
+
+  link: {
+    paddingLeft: '4px',
+    color: theme.palette.primary.dark,
+  },
+
+  forgotPass: {
+    color: theme.palette.primary.dark,
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
 }))
 class SignIn extends Component {
@@ -118,12 +146,13 @@ class SignIn extends Component {
             variant="filled"
             className={classes.textField}
           />
-
           {error && (
             <div>
-              <br />
-              <Typography color="error" variant="h5" className={classes.margin}>
-                Authentication Failure!
+              <Typography
+                color="error"
+                variant="h5"
+                className={classes.alertMsg}>
+                <ErrorIcon /> Oops! Something went wrong. Try again.
               </Typography>
             </div>
           )}
@@ -134,8 +163,13 @@ class SignIn extends Component {
             type="submit"
             className={classes.submit}
             value="Submit">
-            Submit
+            Sign In
           </Button>
+          <div className={classes.forgotPass}>
+            <Link href="true" className={classes.forgotPass}>
+              Forgot Password?
+            </Link>
+          </div>
         </form>
       </div>
     );

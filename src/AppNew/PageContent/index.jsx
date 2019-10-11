@@ -16,7 +16,6 @@ export default function PageContent() {
 
   return (
     <main className={classes.content}>
-      <div className={classes.toolbar} />
       <AppRouting />
     </main>
   );
