@@ -2,7 +2,7 @@ export default {
   name: { type: 'text', label: 'Name' },
   description: { type: 'text', label: 'Description' },
   apiIdentifier: {
-    label: 'Invoke this Export [POST]',
+    label: 'Invoke this Import [POST]',
     type: 'apiidentifier',
   },
   sampleData: { type: 'text', label: 'Sample Data' },
