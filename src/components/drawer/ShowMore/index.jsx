@@ -15,7 +15,9 @@ const useStyles = makeStyles(theme => ({
     bottom: 0,
     left: theme.spacing(7),
     textAlign: 'center',
-    background: 'none',
+    backgroundColor: 'white',
+    borderTop: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     zIndex: theme.zIndex.appBar,
     transition: theme.transitions.create(['left'], {
       easing: theme.transitions.easing.sharp,
