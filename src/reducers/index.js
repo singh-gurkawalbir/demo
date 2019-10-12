@@ -467,6 +467,15 @@ export function resourceList(state, options) {
   return fromData.resourceList(state && state.data, options);
 }
 
+export function resources(state, resourceType, resourceIds) {
+  return (
+    resourceIds &&
+    resourceIds.map(rId =>
+      fromData.resource(state && state.data, resourceType, rId)
+    )
+  );
+}
+
 export function resourceListWithPermissions(state, options) {
   const resourceList = fromData.resourceList(state && state.data, options);
   // eslint-disable-next-line no-use-before-define
