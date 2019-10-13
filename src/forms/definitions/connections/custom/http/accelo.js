@@ -8,6 +8,8 @@ export default {
     '/http/baseURI': `https://${
       formValues['/http/acceloSubdomain']
     }.api.accelo.com`,
+    '/http/ping/relativeURI': '/api/v0/companies',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI': `https://${
       formValues['/http/acceloSubdomain']
     }.api.accelo.com/oauth2/v0/authorize`,

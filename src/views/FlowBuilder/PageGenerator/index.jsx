@@ -1,4 +1,4 @@
-import { useRef, Fragment, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
@@ -6,7 +6,6 @@ import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
-import EllipsisIcon from '../../../components/icons/EllipsisHorizontalIcon';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -16,13 +15,12 @@ import exportHooksAction from './actions/exportHooks';
 import transformationAction from './actions/transformation';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
-import ActionIconButton from '../ActionIconButton';
 
 /* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
    We the block consts across several components and thus is a maintenance issue to 
    manage as we enhance the FB layout. */
-const blockHeight = 120;
-const lineHeightOffset = 64;
+const blockHeight = 170;
+const lineHeightOffset = 63;
 const lineWidth = 130;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
@@ -33,19 +31,15 @@ const useStyles = makeStyles(theme => ({
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
     width: lineWidth,
-    marginTop: -theme.spacing(3) - 1,
+    marginTop: 67,
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    marginTop: -208,
+    marginTop: -161,
     height: blockHeight + lineHeightOffset,
     borderRight: `3px dotted ${theme.palette.divider}`,
-  },
-  isNotOverActions: {
-    top: 68,
-    left: 116,
   },
 }));
 const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
@@ -54,8 +48,6 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const resourceType = pg._connectionId ? 'connections' : 'exports';
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [isOver, setIsOver] = useState(false);
-  const [activeAction, setActiveAction] = useState(null);
   const [newGeneratorId, setNewGeneratorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     !resourceId ? {} : selectors.resourceData(state, resourceType, resourceId)
@@ -182,43 +174,17 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   return (
     <div className={classes.pgContainer}>
       <AppBlock
-        onMouseOver={() => setIsOver(true)}
-        onMouseOut={() => setIsOver(false)}
-        onFocus={() => setIsOver(true)}
-        onBlur={() => setIsOver(false)}
         name={blockName}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}
         ref={ref} /* ref is for drag and drop binding */
         blockType={blockType}
-        opacity={opacity}>
-        {generatorActions.map(a => (
-          <Fragment key={a.name}>
-            <ActionIconButton
-              helpText={a.helpText}
-              className={clsx({
-                [classes.isNotOverActions]: !isOver,
-              })}
-              style={isOver ? { left: a.left, top: a.top } : undefined}
-              onClick={() => setActiveAction(a.name)}
-              data-test={a.name}>
-              <a.Icon />
-            </ActionIconButton>
-            <a.Component
-              open={activeAction === a.name}
-              flowId={flowId}
-              resourceId={resourceId}
-              onClose={() => setActiveAction(null)}
-            />
-          </Fragment>
-        ))}
-        {!isOver && generatorActions.length > 0 && (
-          <ActionIconButton className={classes.isNotOverActions}>
-            <EllipsisIcon />
-          </ActionIconButton>
-        )}
-      </AppBlock>
+        opacity={opacity}
+        actions={generatorActions}
+        flowId={flowId}
+        resourceId={resourceId}
+      />
       <div
         /* -- connecting line */
         className={clsx({

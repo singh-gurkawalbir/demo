@@ -1,4 +1,5 @@
 import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 
 const styles = theme => ({
   small: {
@@ -26,11 +27,13 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('webhook')) return 'webhook';
 
+  if (type.toLowerCase().includes('mongodb')) return 'mongodb';
+
   return type;
 };
 
 function ApplicationImg(props) {
-  const { size = 'small', assistant, type, classes } = props;
+  const { size = 'small', assistant, type, classes, className } = props;
   let path;
 
   if (assistant) {
@@ -41,7 +44,13 @@ function ApplicationImg(props) {
     }images/flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
   }
 
-  return <img className={classes[size]} alt={assistant} src={path} />;
+  return (
+    <img
+      className={clsx(classes[size], className)}
+      alt={assistant}
+      src={path}
+    />
+  );
 }
 
 export default withStyles(styles)(ApplicationImg);

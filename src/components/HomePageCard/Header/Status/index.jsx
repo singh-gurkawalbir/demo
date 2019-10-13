@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
@@ -19,19 +19,13 @@ const useStyles = makeStyles(theme => ({
   label: {
     textTransform: 'initial',
   },
-  icon: {
-    '& svg': {
-      fontSize: 22,
-    },
-  },
 }));
 
-function Status(props) {
+function Status({ children, count, label, className }) {
   const classes = useStyles();
-  const { children, count, label } = props;
 
   return (
-    <div className={classNames(classes.root)}>
+    <div className={clsx(classes.root, className)}>
       <Button
         data-test="headerStatus"
         variant="text"

@@ -72,10 +72,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionContext,
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.executionContext) ||
+      'userinterface,webstore',
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -104,10 +106,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionType,
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.executionType) ||
+      'create,edit,xedit',
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -175,7 +179,12 @@ export default {
     type: 'checkbox',
     inverse: true,
     label: 'Group rows',
-    defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
+    defaultValue: r => {
+      const skipGrouping =
+        r && r.netsuite && r.netsuite && r.netsuite.skipGrouping;
+
+      return skipGrouping === undefined ? true : skipGrouping;
+    },
   },
 
   'netsuite.netsuiteExportlabel': {

@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
-    minWidth: 318,
+    // minWidth: 318,
     minHeight: 318,
     maxWidth: 319,
     boxSizing: 'border-box',
@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
       transform: `translateY(-5px)`,
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
       borderColor: theme.palette.primary.light,
-    },
-    [theme.breakpoints.down('xs')]: {
-      maxWidth: '100%',
     },
     [theme.breakpoints.between('sm', 'md')]: {
       minWidth: '100%',

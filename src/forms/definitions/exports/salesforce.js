@@ -35,6 +35,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {
@@ -49,7 +50,9 @@ export default {
       visibleWhen: [{ field: 'salesforce.executionType', is: ['scheduled'] }],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      label: 'Date Field',
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',
@@ -58,7 +61,9 @@ export default {
       ],
     },
     'delta.lagOffset': {
-      fieldId: 'delta.lagOffset',
+      id: 'delta.lagOffset',
+      label: 'Offset',
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',
@@ -67,7 +72,9 @@ export default {
       ],
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      label: 'Boolean Field',
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',

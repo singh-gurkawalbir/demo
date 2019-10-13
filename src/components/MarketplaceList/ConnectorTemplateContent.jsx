@@ -14,22 +14,22 @@ const useStyles = makeStyles(theme => ({
   },
   cardHeader: {
     marginBottom: theme.spacing(2),
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2, 1, 1, 1),
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    padding: '12px',
     background: props =>
       props.type === 'connector'
         ? theme.palette.primary.dark
         : theme.palette.secondary.light,
-    height: '50px',
   },
   user: {
-    display: 'inline',
-    float: 'right',
     color: theme.palette.background.paper,
+    textAlign: 'right',
+    wordBreak: 'break-word',
   },
   title: {
     color: theme.palette.background.paper,
+    maxWidth: '50%',
   },
   content: {
     padding: theme.spacing(0, 2),

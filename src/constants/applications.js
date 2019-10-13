@@ -39,6 +39,55 @@ const connectors = [
     type: 'webhook',
     keywords: 'technology,protocol',
     group: 'tech',
+    webhookOnly: true,
+  },
+  {
+    id: 'travis-org',
+    type: 'webhook',
+    name: 'Travis Org',
+    webhookOnly: true,
+  },
+  {
+    id: 'helpscout',
+    type: 'webhook',
+    name: 'Help Scout',
+    webhookOnly: true,
+  },
+  {
+    id: 'errorception',
+    type: 'webhook',
+    name: 'Errorception',
+    webhookOnly: true,
+  },
+  {
+    id: 'aha',
+    type: 'webhook',
+    name: 'Aha!',
+    webhookOnly: true,
+  },
+  {
+    id: 'pagerduty',
+    type: 'webhook',
+    name: 'PagerDuty',
+    webhookOnly: true,
+  },
+  {
+    id: 'surveymonkey',
+    type: 'webhook',
+    name: 'SurveyMonkey',
+    webhookOnly: true,
+  },
+  {
+    id: 'mailparser-io',
+    type: 'webhook',
+    name: 'Mailparser',
+    webhookOnly: true,
+  },
+  {
+    id: 'integrator-extension',
+    type: 'webhook',
+    name: 'integrator.io Extension',
+    webhookOnly: true,
   },
   {
     id: 'as2',
@@ -301,13 +350,13 @@ const connectors = [
     type: 'http',
     assistant: 'integratorio',
   },
-  {
-    id: 'intercom',
-    name: 'Intercom',
-    type: 'http',
-    assistant: 'intercom',
-    webhook: true,
-  },
+  // {
+  //  id: 'intercom',
+  //  name: 'Intercom',
+  // type: 'http',
+  //  assistant: 'intercom',
+  //  webhook: true,
+  // },
   { id: 'jet', name: 'Jet', type: 'http', assistant: 'jet' },
   { id: 'jira', name: 'Jira', type: 'http', assistant: 'jira', webhook: true },
   { id: 'jobvite', name: 'Jobvite', type: 'http', assistant: 'jobvite' },
@@ -622,7 +671,7 @@ const connectors = [
   { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
   // { id: 'xcart', name: 'X-Cart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
-  { id: 'yammer', name: 'Yammer', type: 'http', assistant: 'yammer' },
+  // { id: 'yammer', name: 'Yammer', type: 'http', assistant: 'yammer' },
   { id: 'zendesk', name: 'Zendesk', type: 'http', assistant: 'zendesk' },
   { id: 'zimbra', name: 'Zimbra', type: 'http', assistant: 'zimbra' },
   { id: 'zoho', name: 'Zoho', type: 'http', assistant: 'zoho' },
@@ -634,6 +683,29 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'http', assistant: 'zuora' },
 ];
 
+export const groupApplications = resourceType => {
+  const filteredConnectors = connectors.filter(connector => {
+    if (resourceType && resourceType !== 'exports')
+      return !connector.webhookOnly;
+
+    return true;
+  });
+
+  return [
+    {
+      label: 'Databases',
+      connectors: filteredConnectors.filter(c => c.group === 'db'),
+    },
+    {
+      label: 'Generic tech connectors',
+      connectors: filteredConnectors.filter(c => c.group === 'tech'),
+    },
+    {
+      label: 'Connectors',
+      connectors: filteredConnectors.filter(c => !c.group),
+    },
+  ];
+};
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
   'helpscout', 
@@ -647,21 +719,8 @@ const connectors = [
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => c.webhook);
-
-export const groupApplications = () => [
-  {
-    label: 'Databases',
-    connectors: connectors.filter(c => c.group === 'db'),
-  },
-  {
-    label: 'Generic tech connectors',
-    connectors: connectors.filter(c => c.group === 'tech'),
-  },
-  {
-    label: 'Connectors',
-    connectors: getApplicationConnectors(),
-  },
-];
+export const getWebhookOnlyConnectors = () =>
+  connectors.filter(c => c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

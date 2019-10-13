@@ -6,6 +6,14 @@ export default {
       delete newValues['/ftp/entryParser'];
     }
 
+    if (newValues['/as2/partnerStationInfo/auth/type'] === 'basic') {
+      newValues['/as2/partnerStationInfo/auth/token'] = undefined;
+    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
+      newValues['/as2/partnerStationInfo/auth/basic'] = undefined;
+    } else {
+      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
+    }
+
     return newValues;
   },
   fieldMap: {
@@ -25,8 +33,8 @@ export default {
     'as2.unencrypted.userPublicKey': {
       fieldId: 'as2.unencrypted.userPublicKey',
     },
-    'as2.userStationInfo.encrypted.userPrivateKey': {
-      fieldId: 'as2.userStationInfo.encrypted.userPrivateKey',
+    'as2.encrypted.userPrivateKey': {
+      fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
       fieldId: 'as2.userStationInfo.ipAddresses',
@@ -156,7 +164,7 @@ export default {
           'as2.userStationInfo.encryptionType',
           'as2.userStationInfo.signing',
           'as2.unencrypted.userPublicKey',
-          'as2.userStationInfo.encrypted.userPrivateKey',
+          'as2.encrypted.userPrivateKey',
           'as2.userStationInfo.ipAddresses',
         ],
       },

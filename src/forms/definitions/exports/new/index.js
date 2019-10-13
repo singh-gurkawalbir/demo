@@ -1,5 +1,6 @@
 import applications, {
   getWebhookConnectors,
+  getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
 
 const appTypeToAdaptorType = {
@@ -71,7 +72,12 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'application', is: getWebhookConnectors() }],
+      visibleWhen: [
+        {
+          field: 'application',
+          is: getWebhookConnectors().map(connector => connector.id),
+        },
+      ],
     },
     connection: {
       id: 'connection',
@@ -79,14 +85,21 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: r => r && r._connectionId,
+      defaultValue: r => (r && r._connectionId) || '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
-        { field: 'application', isNot: ['', 'webhook'] },
+        {
+          field: 'application',
+          isNot: [
+            '',
+            ...getWebhookOnlyConnectors().map(connector => connector.id),
+          ],
+        },
         { field: 'type', is: ['api'] },
       ],
       allowNew: true,
+      allowEdit: true,
     },
     name: {
       id: 'name',
@@ -171,7 +184,7 @@ export default {
         filter.assistant = app.assistant;
       }
 
-      return { filter };
+      return { filter, appType: app.type };
     }
 
     return null;
