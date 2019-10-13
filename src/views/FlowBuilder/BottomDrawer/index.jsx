@@ -128,7 +128,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
         <ConnectionPanel flow={flow} />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <RunDashboardPanel />
+        <RunDashboardPanel flow={flow} />
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
         <AuditPanel flow={flow} />
