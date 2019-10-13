@@ -444,12 +444,7 @@ function FlowBuilder(props) {
           {/* CANVAS END */}
         </div>
       </LoadResources>
-      <BottomDrawer
-        pageGenerators={pageGenerators}
-        pageProcessors={pageProcessors}
-        size={size}
-        setSize={setSize}
-      />
+      <BottomDrawer flow={flow} size={size} setSize={setSize} />
     </Fragment>
   );
 }

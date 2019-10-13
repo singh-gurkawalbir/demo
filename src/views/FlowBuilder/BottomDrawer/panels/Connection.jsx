@@ -1,4 +1,3 @@
-// import { Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import LoadResources from '../../../../components/LoadResources';
@@ -12,7 +11,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionPanel({ pageGenerators, pageProcessors }) {
+export default function ConnectionPanel({ flow }) {
+  const { pageProcessors = [], pageGenerators = [] } = flow;
   const classes = useStyles();
   const connectionIds = [];
 
@@ -32,7 +32,6 @@ export default function ConnectionPanel({ pageGenerators, pageProcessors }) {
 
   return (
     <div className={classes.root}>
-      {/* <Typography variant="h3">Connection panel coming soon!</Typography> */}
       <LoadResources required resources="connections">
         <CeligoTable
           data={connections}
