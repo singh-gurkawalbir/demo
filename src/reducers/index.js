@@ -627,6 +627,27 @@ export function integrationAppGeneralSettings(state, id, store) {
   return general || {};
 }
 
+export function getGeneralSettingsForIntegrationApp(state, id, storeId) {
+  if (!state) return null;
+  let fields;
+  let subSections;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { supportsMultiStore, general } = integrationResource.settings;
+
+  if (supportsMultiStore) {
+    const storeSection = general.find(s => s.id === storeId) || {};
+
+    ({ fields, sections: subSections } = storeSection);
+  } else {
+    ({ fields, sections: subSections } = general);
+  }
+
+  return {
+    fields,
+    sections: subSections,
+  };
+}
+
 export function getRequiredDataOfConnectorSettings(
   state,
   id,
@@ -635,33 +656,21 @@ export function getRequiredDataOfConnectorSettings(
 ) {
   if (!state) return null;
   let fields;
-  let sections;
+  let subSections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const supportsMultiStore =
-    integrationResource &&
-    integrationResource.settings &&
-    integrationResource.settings.supportsMultiStore;
+  const {
+    supportsMultiStore,
+    showFlowSettings,
+    showMatchRuleEngine,
+    sections,
+  } = integrationResource.settings;
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
   let soreIdIndex = 0;
-  const showFlowSettings = !!(
-    integrationResource &&
-    integrationResource.settings &&
-    integrationResource.settings.showFlowSettings
-  );
-  const showMatchRuleEngine = !!(
-    integrationResource &&
-    integrationResource.settings &&
-    integrationResource.settings.showMatchRuleEngine
-  );
 
   if (supportsMultiStore) {
-    if (
-      integrationResource &&
-      integrationResource._connectorId &&
-      integrationResource.settings.sections
-    ) {
-      integrationResource.settings.sections.forEach((f, index) => {
+    if (sections) {
+      sections.forEach((f, index) => {
         if (f.id === storeId) {
           soreIdIndex = index;
         }
@@ -669,35 +678,28 @@ export function getRequiredDataOfConnectorSettings(
     }
 
     if (
-      integrationResource &&
       integrationResource._connectorId &&
-      integrationResource.settings.sections[soreIdIndex] &&
-      integrationResource.settings.sections[soreIdIndex].sections
+      sections[soreIdIndex] &&
+      sections[soreIdIndex].sections
     ) {
-      integrationResource.settings.sections[soreIdIndex].sections.forEach(
-        (f, index) => {
-          if (
-            f.title.replace(/ /g, '') === section ||
-            (index === 0 && section === 'flows')
-          ) {
-            requiredFlows = f.flows;
-            ({ fields, sections } = f);
-          }
+      sections[soreIdIndex].sections.forEach((f, index) => {
+        if (
+          f.title.replace(/ /g, '') === section ||
+          (index === 0 && section === 'flows')
+        ) {
+          requiredFlows = f.flows;
+          ({ fields, sections: subSections } = f);
         }
-      );
+      });
     }
-  } else if (
-    integrationResource &&
-    integrationResource.settings &&
-    integrationResource.settings.sections
-  ) {
-    integrationResource.settings.sections.forEach((f, index) => {
+  } else if (sections) {
+    sections.forEach((f, index) => {
       if (
         f.title.replace(/ /g, '') === section ||
         (index === 0 && section === 'flows')
       ) {
         requiredFlows = f.flows;
-        ({ fields, sections } = f);
+        ({ fields, sections: subSections } = f);
       }
     });
   }
@@ -727,7 +729,7 @@ export function getRequiredDataOfConnectorSettings(
   return {
     flows,
     fields,
-    sections,
+    sections: subSections,
     hasNSInternalIdLookup,
     showFlowSettings,
     showMatchRuleEngine,
