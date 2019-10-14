@@ -9,6 +9,7 @@ import stacks from './stacks';
 import templates from './templates';
 import pageProcessor from './pageProcessor';
 import accesstokens from './accesstokens';
+import connectorLicenses from './connectorLicenses';
 
 export default {
   default: defaultMeta,
@@ -22,4 +23,5 @@ export default {
   stacks,
   pageProcessor,
   accesstokens,
+  connectorLicenses,
 };

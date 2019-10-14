@@ -75,7 +75,7 @@ export default class AppRouting extends Component {
           component={IntegrationSettings}
         />
         <Route
-          path="/pg/connectors/:connectorId/licenses"
+          path="/pg/connectors/:connectorId/connectorLicenses"
           component={ConnectorLicenses}
         />
         <Route

@@ -136,6 +136,7 @@ const getResourceFormAssets = ({
     case 'agents':
     case 'scripts':
     case 'accesstokens':
+    case 'connectorLicenses':
       meta = formMeta[resourceType];
       ({ fieldMap, preSave, init, layout } = meta);
       break;

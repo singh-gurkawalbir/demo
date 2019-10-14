@@ -13,9 +13,13 @@ export const getResourceLink = (resourceType, resource) => (
   <Fragment>
     <Link
       to={getRoutePath(
-        `/${resourceType}/edit/${resourceType}/${resource._id}`
+        resourceType === 'connectorLicenses'
+          ? `/connectors/${resource._connectorId}/connectorLicenses/edit/connectorLicenses/${resource._id}`
+          : `/${resourceType}/edit/${resourceType}/${resource._id}`
       )}>
-      {resource.name || resource._id}
+      {resourceType === 'connectorLicenses'
+        ? resource.user && resource.user.email
+        : resource.name || resource._id}
     </Link>
     <Typography>{resource.shared ? 'Shared' : ''}</Typography>
   </Fragment>
