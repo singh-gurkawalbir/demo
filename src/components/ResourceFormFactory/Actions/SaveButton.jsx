@@ -15,10 +15,29 @@ const SaveButton = props => {
     resourceType,
     resourceId,
     classes,
+    match,
   } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = values => {
-    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
+    let type = resourceType;
+
+    if (resourceType === 'connectorLicenses') {
+      // construct url for licenses
+      const connectorUrlStr = '/connectors/';
+      const startIndex =
+        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+
+      if (startIndex !== -1) {
+        const connectorId = match.url.substring(
+          startIndex,
+          match.url.indexOf('/', startIndex)
+        );
+
+        type = `connectors/${connectorId}/licenses`;
+      }
+    }
+
+    dispatch(actions.resourceForm.submit(type, resourceId, values));
   };
 
   return (

@@ -1110,7 +1110,13 @@ export function resourceStatus(
 
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
-  const master = resource(state, resourceType, id);
+  let type = resourceType;
+
+  if (resourceType.indexOf('/licenses') >= 0) {
+    type = 'connectorLicenses';
+  }
+
+  const master = resource(state, type, id);
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
     id,
