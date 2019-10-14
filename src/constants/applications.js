@@ -718,7 +718,8 @@ export const groupApplications = resourceType => {
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () => connectors.filter(c => c.webhook);
+export const getWebhookConnectors = () =>
+  connectors.filter(c => c.webhook || c.webhookOnly);
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => c.webhookOnly);
 
