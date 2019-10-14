@@ -101,11 +101,8 @@ export default function IntegrationAppSettings(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const {
-    supportsMultiStore,
-    hasGeneralSettings,
-    storeLabel,
-  } = integration.settings;
+  const { supportsMultiStore, hasGeneralSettings, storeLabel } =
+    integration.settings || {};
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );

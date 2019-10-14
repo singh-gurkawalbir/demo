@@ -131,6 +131,16 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
+export const getFieldConfig = (field = {}) => {
+  const newField = { ...field };
+
+  if (!newField.type || newField.type === 'input') {
+    newField.type = 'text';
+  }
+
+  return newField;
+};
+
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {
@@ -245,15 +255,14 @@ const refGeneration = field => {
 const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) =>
   fields.map(field => {
     // TODO: generate correct name path
-    const { name, options, tooltip, type } = field;
+    const { name, options, tooltip } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
-      ...field,
+      ...getFieldConfig(field),
       name: `/${name}`,
       _integrationId,
       id: name,
-      type: type === 'input' ? 'text' : type,
       helpText: tooltip,
       options: [
         {
@@ -269,7 +278,11 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) =>
     };
   });
 
-export const integrationSettingsToDynaFormMetadata = (meta, integrationId) => {
+export const integrationSettingsToDynaFormMetadata = (
+  meta,
+  integrationId,
+  isGeneral
+) => {
   const finalData = {};
   const { fields, sections } = meta;
 
@@ -289,10 +302,10 @@ export const integrationSettingsToDynaFormMetadata = (meta, integrationId) => {
 
   if (sections) {
     sections.forEach(section => {
-      addIdToFieldsAndRenameNameAttribute(section.fields, integrationId).reduce(
-        convertFieldsToFieldReferneceObj,
-        finalData.fieldMap
-      );
+      finalData.fieldMap = addIdToFieldsAndRenameNameAttribute(
+        section.fields,
+        integrationId
+      ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
     // check for title
@@ -300,7 +313,7 @@ export const integrationSettingsToDynaFormMetadata = (meta, integrationId) => {
       finalData.layout = {};
     }
 
-    finalData.type = 'tab';
+    finalData.layout.type = 'tab';
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
@@ -312,10 +325,13 @@ export const integrationSettingsToDynaFormMetadata = (meta, integrationId) => {
   }
 
   // Wrap everything in a adavancedSettings container
-  finalData.layout = {
-    type: 'collapse',
-    containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
-  };
+  if (!isGeneral) {
+    finalData.layout = {
+      type: 'collapse',
+      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+    };
+  }
+
   finalData.actions = [{ id: 'save' }];
 
   return finalData;

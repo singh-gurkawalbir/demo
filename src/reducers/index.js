@@ -606,7 +606,7 @@ export function integrationAppSettings(state, id, storeId) {
 export function connectorFlowSections(state, id, store) {
   if (!state) return null;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { sections, supportsMultiStore } = integrationResource.settings;
+  const { sections, supportsMultiStore } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
     if (Array.isArray(sections) && sections.length) {
@@ -626,7 +626,7 @@ export function connectorFlowSections(state, id, store) {
 export function integrationAppGeneralSettings(state, id, store) {
   if (!state) return null;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, general } = integrationResource.settings;
+  const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
     if (Array.isArray(general) && general.length) {
@@ -648,7 +648,7 @@ export function getGeneralSettingsForIntegrationApp(state, id, storeId) {
   let fields;
   let subSections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, general } = integrationResource.settings;
+  const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
     const storeSection = general.find(s => s.id === storeId) || {};
@@ -679,7 +679,7 @@ export function getRequiredDataOfConnectorSettings(
     showFlowSettings,
     showMatchRuleEngine,
     sections,
-  } = integrationResource.settings;
+  } = integrationResource.settings || {};
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
   let soreIdIndex = 0;

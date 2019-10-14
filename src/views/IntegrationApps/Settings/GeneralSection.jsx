@@ -1,5 +1,3 @@
-import { Typography } from '@material-ui/core';
-import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import { ActionsFactory as DynaFromWithDynamicActions } from '../../../components/ResourceFormFactory';
@@ -13,18 +11,9 @@ export default function GeneralSection(props) {
   );
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     rest,
-    integrationId
+    integrationId,
+    true
   );
-  const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    setCount(count => count + 1);
-  }, []);
-
-  return (
-    <Fragment>
-      <Typography>General Section Renders here</Typography>;
-      <DynaFromWithDynamicActions key={count} fieldMeta={translatedMeta} />
-    </Fragment>
-  );
+  return <DynaFromWithDynamicActions fieldMeta={translatedMeta} />;
 }
