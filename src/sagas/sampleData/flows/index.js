@@ -137,20 +137,31 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     'exports',
     _pageGeneratorId
   );
+  let body = { ...resource };
 
-  if (resource.type === 'delta') {
-    resource.postData = {
+  if (body.type === 'delta') {
+    body.postData = {
       lastExportDateTime: moment()
         .add(-1, 'y')
         .toISOString(),
     };
   }
 
-  delete resource.sampleData;
+  if (body.rawData) {
+    body = {
+      ...body,
+      verbose: true,
+      runOfflineOptions: {
+        runOffline: true,
+        runOfflineSource: 'db',
+      },
+    };
+  }
+
   const path = `/exports/preview`;
   const previewData = yield call(apiCallWithRetry, {
     path,
-    opts: { method: 'POST', body: resource },
+    opts: { method: 'POST', body },
     message: `Fetching Exports Preview`,
   });
   const parseData = getParseStageData(previewData);
