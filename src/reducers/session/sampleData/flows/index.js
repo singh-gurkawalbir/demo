@@ -35,12 +35,12 @@ function reset(flow, index, isPageGenerator) {
 }
 
 function compare(currentList, updatedList) {
-  const changedIndex = currentList.findIndex((item, index) => {
-    const updatedItem = updatedList[index];
+  const changedIndex = updatedList.findIndex((item, index) => {
+    const currentItem = currentList[index];
 
     return (
       (item._exportId || item._importId) !==
-      (updatedItem._exportId || updatedItem._importId)
+      (currentItem._exportId || currentItem._importId)
     );
   });
 
@@ -181,23 +181,24 @@ export default function(state = {}, action) {
         } = updatedFlow;
         // get first change in sequece of pgs
         const updatedPgIndex = compare(pageGenerators, updatedPageGenerators);
-
-        // reset all pg data stages starting from index
-        if (updatedPgIndex > -1) {
-          reset(currentFlow, updatedPgIndex, true);
-        }
-
         // get first change in sequece of pgs
         const updatedPpIndex = compare(pageProcessors, updatedPageProcessors);
-
-        // reset all pp data stages starting from index
-        if (updatedPpIndex > -1) {
-          reset(currentFlow, updatedPgIndex);
-        }
 
         // update sequence
         currentFlow.pageGenerators = updatedPageGenerators;
         currentFlow.pageProcessors = updatedPageProcessors;
+
+        // reset all pg data stages starting from index
+        if (updatedPgIndex > -1) {
+          reset(currentFlow, updatedPgIndex, true);
+          break;
+        }
+
+        // reset all pp data stages starting from index
+        if (updatedPpIndex > -1) {
+          reset(currentFlow, updatedPpIndex);
+        }
+
         break;
       }
 
