@@ -1,4 +1,5 @@
 import jsonPatch from 'fast-json-patch';
+import { get } from 'lodash';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
@@ -183,27 +184,44 @@ export const getMissingPatchSet = (paths, resource) => {
 
 export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   if (!patchSet) return patchSet;
-  const sanitizedSet = patchSet.reduce((s, patch) => {
-    if (patch.op === 'replace') {
-      const field = getFieldByName({ name: patch.path, fieldMeta });
+  const sanitizedSet = patchSet.reduce(
+    (s, patch) => {
+      const { removePatches, valuePatches } = s;
 
-      if (!field || field.defaultValue !== patch.value) {
-        s.push(patch);
+      if (patch.op === 'replace') {
+        const field = getFieldByName({ name: patch.path, fieldMeta });
+
+        // default values of all fields are '' so when undefined value is being sent we
+        if (patch.value === undefined) {
+          const modifiedPath = patch.path
+            .substring(1, patch.path.length)
+            .replace(/\//g, '.');
+
+          get(resource, modifiedPath);
+
+          // consider it as a remove patch
+          if (get(resource, modifiedPath))
+            removePatches.push({ path: patch.path, op: 'remove' });
+        } else if (!field || field.defaultValue !== patch.value) {
+          valuePatches.push(patch);
+        }
       }
-    }
 
-    return s;
-  }, []);
+      return s;
+    },
+    { removePatches: [], valuePatches: [] }
+  );
+  const { removePatches, valuePatches } = sanitizedSet;
 
-  if (sanitizedSet.length === 0 || !resource) {
-    return sanitizedSet;
+  if ((removePatches === 0 && valuePatches === 0) || !resource) {
+    return [...removePatches, ...valuePatches];
   }
 
   const missingPatchSet = getMissingPatchSet(
-    sanitizedSet.map(p => p.path),
+    valuePatches.map(p => p.path),
     resource
   );
-  const newSet = [...missingPatchSet, ...sanitizedSet];
+  const newSet = [...removePatches, ...missingPatchSet, ...valuePatches];
   const error = jsonPatch.validate(newSet, resource);
 
   if (error) {
