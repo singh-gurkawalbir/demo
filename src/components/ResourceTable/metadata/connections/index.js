@@ -12,13 +12,16 @@ import {
   getConnectorName,
 } from '../../../CeligoTable/util';
 import Deregister from '../../actions/Connections/Deregister';
-import { showDownloadLogs } from './util';
+import { showDownloadLogs, isConnectionEditable } from './util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('connections', r),
+      value: (r, actionProps) =>
+        isConnectionEditable(r, actionProps.integrationId)
+          ? getResourceLink('connections', r)
+          : r.name,
       orderBy: 'name',
     },
     { heading: 'Status', value: r => onlineStatus(r) },
@@ -50,20 +53,26 @@ export default {
     },
   ],
   rowActions: (r, actionProps) => {
-    let actionsToReturn = [ConfigureDebugger, AuditLogs, References];
+    let actionsToReturn = [];
 
-    if (showDownloadLogs(r)) {
-      actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
-    }
+    if (isConnectionEditable(r, actionProps.integrationId)) {
+      actionsToReturn = [ConfigureDebugger, AuditLogs, References];
 
-    if (r.type === 'netsuite' || r.type === 'salesforce') {
-      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
-    }
+      if (showDownloadLogs(r)) {
+        actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
+      }
 
-    if (actionProps.integrationId) {
-      actionsToReturn = [Deregister, ...actionsToReturn];
+      if (r.type === 'netsuite' || r.type === 'salesforce') {
+        actionsToReturn = [RefreshMetadata, ...actionsToReturn];
+      }
+
+      if (actionProps.integrationId) {
+        actionsToReturn = [Deregister, ...actionsToReturn];
+      } else {
+        actionsToReturn = [...actionsToReturn, Delete];
+      }
     } else {
-      actionsToReturn = [...actionsToReturn, Delete];
+      actionsToReturn = [DownloadDebugLogs, AuditLogs];
     }
 
     return actionsToReturn;

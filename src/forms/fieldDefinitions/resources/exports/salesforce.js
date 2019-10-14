@@ -83,9 +83,7 @@ export default {
   },
   'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    delimiter: ',',
     label: 'Related Lists',
     multiline: true,
     visibleWhen: [

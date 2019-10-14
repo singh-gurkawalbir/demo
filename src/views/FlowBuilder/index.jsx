@@ -14,11 +14,13 @@ import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './BottomDrawer';
 import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
 import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
+import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import SwitchOnOff from '../../components/SwitchToggle';
 
@@ -176,16 +178,18 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     textAlign: 'center',
+    marginBottom: theme.spacing(3),
   },
   destinationTitle: {
     marginLeft: 100,
+    marginBottom: theme.spacing(3),
   },
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(3, 0, 3, 3),
+    padding: theme.spacing(0, 0, 3, 3),
   },
   processorRoot: {
-    padding: theme.spacing(3, 3, 3, 0),
+    padding: theme.spacing(0, 3, 3, 0),
   },
 }));
 
@@ -325,6 +329,8 @@ function FlowBuilder(props) {
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flowId={flowId} />
+      <SettingsDrawer {...props} flowId={flowId} />
+
       <CeligoPageBar
         title={flow.name}
         subtitle={`Last saved: ${flow.lastModified}`}
@@ -336,6 +342,9 @@ function FlowBuilder(props) {
           </IconButton>
           <IconButton onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDrawerOpen('settings')}>
+            <SettingsIcon />
           </IconButton>
         </div>
       </CeligoPageBar>
@@ -352,7 +361,10 @@ function FlowBuilder(props) {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             <div className={classes.generatorRoot}>
-              <Typography className={classes.sourceTitle} variant="h6">
+              <Typography
+                component="div"
+                className={classes.sourceTitle}
+                variant="overline">
                 SOURCE APPLICATIONS
                 <IconButton
                   data-test="addGenerator"
@@ -378,7 +390,10 @@ function FlowBuilder(props) {
               </div>
             </div>
             <div className={classes.processorRoot}>
-              <Typography className={classes.destinationTitle} variant="h6">
+              <Typography
+                component="div"
+                className={classes.destinationTitle}
+                variant="overline">
                 DESTINATION &amp; LOOKUP APPLICATIONS
                 <IconButton
                   data-test="addProcessor"

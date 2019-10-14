@@ -62,9 +62,7 @@ function InputFilter(props) {
 export default {
   // used to create data-test attribute and component key. Should be unique across FB actions.
   name: 'inputFilter',
-  left: -24,
-  top: 28,
-  // position: [left, right, bottom],
+  position: 'left',
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',

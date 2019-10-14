@@ -7,13 +7,12 @@ import ShowContentIcon from '../icons/ShowContentIcon';
 import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
+import AccessToken from '../AccessToken';
 
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-  },
-  token: {
-    fontFamily: 'Courier',
+    alignItems: 'center',
   },
 });
 
@@ -42,8 +41,8 @@ export default function AgentToken({ agentId }) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="caption" className={classes.token}>
-        {accessToken || '********************************'}
+      <Typography variant="caption">
+        {accessToken || <AccessToken count="24" />}
       </Typography>
       {accessToken && (
         <IconButton

@@ -16,7 +16,13 @@ export default function PageContent() {
 
   return (
     <main className={classes.content}>
-      <div className={classes.toolbar} />
+      <div
+        className={
+          // This empty div is used to push the scrollable
+          // page content below the app/page bars.
+          classes.toolbar
+        }
+      />
       <AppRouting />
     </main>
   );

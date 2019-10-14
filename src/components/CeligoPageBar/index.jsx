@@ -2,7 +2,6 @@ import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
@@ -10,6 +9,7 @@ import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
+import InfoIcon from '../icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {

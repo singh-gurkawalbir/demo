@@ -14,6 +14,35 @@ const useStyles = makeStyles(theme => ({
   inlineElements: {
     display: 'inline',
   },
+  root: {
+    display: 'flex !important',
+    flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 50,
+    justifyContent: 'flex-end',
+    borderRadius: 2,
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+    },
+  },
   selectElement: {
     width: '80%',
   },
@@ -136,7 +165,7 @@ function RefreshGenericResource(props) {
               onFieldChange(id, evt.target.value);
             }}
             input={<Input name={name} id={id} />}
-            className={classes.selectElement}
+            className={classes.root}
             renderValue={selected => (
               <div className={classes.chips}>
                 {selected &&

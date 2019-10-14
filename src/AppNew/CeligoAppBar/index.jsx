@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   unauthenticatedAppBar: {
+    // TODO Surya please remove the appbar for !authenticated
+    display: 'none',
     background: theme.palette.background.paper2,
     height: 36,
   },

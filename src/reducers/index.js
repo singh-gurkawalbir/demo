@@ -1,3 +1,4 @@
+import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
@@ -487,6 +488,21 @@ export function resource(state, resourceType, id) {
 
 export function resourceList(state, options) {
   return fromData.resourceList(state && state.data, options);
+}
+
+export function resourceListWithPermissions(state, options) {
+  const resourceList = fromData.resourceList(state && state.data, options);
+  // eslint-disable-next-line no-use-before-define
+  const permissions = userPermissions(state);
+
+  resourceList.resources = resourceList.resources.map(r => {
+    // eslint-disable-next-line no-param-reassign
+    r.permissions = deepClone(permissions);
+
+    return r;
+  });
+
+  return resourceList;
 }
 
 export function matchingConnectionList(state, connection = {}) {
