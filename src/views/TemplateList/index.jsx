@@ -15,6 +15,8 @@ import AddIcon from '../../components/icons/AddIcon';
 import GenerateZipDialog from './GenerateZipDialog';
 import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -32,7 +34,7 @@ export default function TemplateList(props) {
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceList(state, {
+    selectors.resourceListWithPermissions(state, {
       type: 'templates',
       ...filter,
     })
@@ -41,47 +43,57 @@ export default function TemplateList(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
-      {showGenerateZipDialog && (
-        <GenerateZipDialog
-          data-test="closeGenerateTemplateZipDialog"
-          onClose={() => setShowGenerateZipDialog(false)}
-        />
-      )}
-      <CeligoPageBar title="Templates" infoText={infoText.templates}>
-        <div className={classes.actions}>
-          <IconTextButton
-            data-test="generateTemplateZip"
-            onClick={() => setShowGenerateZipDialog(true)}
-            variant="text">
-            Generate Template Zip
-          </IconTextButton>
-          <KeywordSearch filterKey="templates" defaultFilter={defaultFilter} />
-          <IconTextButton
-            data-test="addNewTemplate"
-            component={Link}
-            to={`${location.pathname}/add/templates/new-${shortid.generate()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> New Template
-          </IconTextButton>
-        </div>
-      </CeligoPageBar>
-      <div className={classes.resultContainer}>
-        <LoadResources required resources={['templates', 'integrations']}>
-          <CeligoTable
-            data={list.resources}
-            filterKey="templates"
-            {...metadata}
-            actionProps={{ resourceType: 'templates' }}
+      <CheckPermissions
+        permission={
+          PERMISSIONS && PERMISSIONS.templates && PERMISSIONS.templates.view
+        }>
+        <ResourceDrawer {...props} />
+        {showGenerateZipDialog && (
+          <GenerateZipDialog
+            data-test="closeGenerateTemplateZipDialog"
+            onClose={() => setShowGenerateZipDialog(false)}
           />
-        </LoadResources>
-      </div>
-      <ShowMoreDrawer
-        filterKey="templates"
-        count={list.count}
-        maxCount={list.filtered}
-      />
+        )}
+        <CeligoPageBar title="Templates" infoText={infoText.templates}>
+          <div className={classes.actions}>
+            <IconTextButton
+              data-test="generateTemplateZip"
+              onClick={() => setShowGenerateZipDialog(true)}
+              variant="text">
+              Generate Template Zip
+            </IconTextButton>
+            <KeywordSearch
+              filterKey="templates"
+              defaultFilter={defaultFilter}
+            />
+            <IconTextButton
+              data-test="addNewTemplate"
+              component={Link}
+              to={`${
+                location.pathname
+              }/add/templates/new-${shortid.generate()}`}
+              variant="text"
+              color="primary">
+              <AddIcon /> New Template
+            </IconTextButton>
+          </div>
+        </CeligoPageBar>
+        <div className={classes.resultContainer}>
+          <LoadResources required resources={['templates', 'integrations']}>
+            <CeligoTable
+              data={list.resources}
+              filterKey="templates"
+              {...metadata}
+              actionProps={{ resourceType: 'templates' }}
+            />
+          </LoadResources>
+        </div>
+        <ShowMoreDrawer
+          filterKey="templates"
+          count={list.count}
+          maxCount={list.filtered}
+        />
+      </CheckPermissions>
     </Fragment>
   );
 }

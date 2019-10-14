@@ -13,6 +13,7 @@ import {
 import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
 import * as selectors from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const {
@@ -38,9 +39,41 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
   formControl: {
     margin: theme.spacing(1),
     minWidth: 200,
+    maxWidth: 300,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
+  },
+  select: {
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 42,
+    textAlign: 'left',
+    borderRadius: 2,
+    '& > div': {
+      maxWidth: '85%',
+    },
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 0, 0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+      paddingLeft: 0,
+    },
   },
 }))
 class Filters extends Component {
@@ -112,6 +145,8 @@ class Filters extends Component {
             name: '_resourceId',
             id: '_resourceId',
           }}
+          className={classes.select}
+          IconComponent={ArrowDownIcon}
           value={filters._resourceId}
           onChange={this.handleChange}>
           <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -167,6 +202,8 @@ class Filters extends Component {
               name: 'byUser',
               id: 'byUser',
             }}
+            className={classes.select}
+            IconComponent={ArrowDownIcon}
             onChange={this.handleChange}
             value={byUser}>
             <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -186,6 +223,8 @@ class Filters extends Component {
               name: 'source',
               id: 'source',
             }}
+            className={classes.select}
+            IconComponent={ArrowDownIcon}
             onChange={this.handleChange}
             value={source}>
             {[

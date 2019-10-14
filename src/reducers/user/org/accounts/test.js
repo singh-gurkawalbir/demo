@@ -585,6 +585,8 @@ describe('account (ashares) reducers', () => {
             delete: true,
           },
           agents: { view: true, create: true, edit: true, delete: true },
+          exports: { view: true, create: true, edit: true, delete: true },
+          imports: { view: true, create: true, edit: true, delete: true },
 
           connections: { view: true, create: true, edit: true, delete: true },
           connectors: {},
@@ -694,6 +696,8 @@ describe('account (ashares) reducers', () => {
           agents: { view: true, create: true, edit: true, delete: true },
 
           connections: { view: true, create: true, edit: true, delete: true },
+          exports: { view: true, create: true, edit: true, delete: true },
+          imports: { view: true, create: true, edit: true, delete: true },
           connectors: {},
           integrations: {
             create: true,
@@ -768,6 +772,8 @@ describe('account (ashares) reducers', () => {
 
           connections: {},
           connectors: {},
+          exports: {},
+          imports: {},
           integrations: {
             none: {
               accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
@@ -822,6 +828,8 @@ describe('account (ashares) reducers', () => {
 
           connections: {},
           connectors: {},
+          exports: {},
+          imports: {},
           integrations: {
             manageIntegration: {
               accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,

@@ -39,7 +39,7 @@ const theme = {
     keys: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
     values: {
       xs: 0,
-      sm: 600,
+      sm: 640,
       md: 960,
       lg: 1280,
       xl: 1700,
@@ -270,19 +270,6 @@ const theme = {
         '&:hover': {
           '&:hover': {
             background: colors.celigoNeutral2,
-            '& td:first-child': {
-              '&:before': {
-                background: colors.celigoAccent2,
-              },
-            },
-            '&:before': {
-              background: colors.celigoAccent2,
-            },
-          },
-          '& > td:first-child': {
-            '&:before': {
-              backgroundColor: colors.celigoAccent2,
-            },
           },
         },
       },
@@ -295,7 +282,8 @@ const theme = {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[15, 40, 15, 16]],
+        padding: [[11, 16]],
+        borderBottomColor: colors.celigoNeutral3,
       },
       head: {
         fontFamily: 'Roboto500',
@@ -305,17 +293,6 @@ const theme = {
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        '&:first-child': {
-          '&:before': {
-            content: '""',
-            width: '6px',
-            height: '100%',
-            position: 'absolute',
-            background: 'transparent',
-            left: '0px',
-            top: '0px',
-          },
-        },
       },
     },
     MuiSelect: {
@@ -420,6 +397,16 @@ const theme = {
     MuiSvgIcon: {
       root: {
         color: colors.celigoNeutral6,
+      },
+    },
+    MuiDialogTitle: {
+      root: {
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
+      },
+    },
+    MuiDialogContent: {
+      root: {
+        background: colors.celigoNeutral1,
       },
     },
   },

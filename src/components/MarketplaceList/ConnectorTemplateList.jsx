@@ -21,20 +21,28 @@ import ArrowRightIcon from '../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(318px, 1fr));`,
-    gridRowGap: theme.spacing(3),
-    gridColumnGap: theme.spacing(2),
-    padding: theme.spacing(3),
+    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridGap: theme.spacing(2),
+    '& > div': {
+      maxWidth: '100%',
+      minWidth: '100%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+    },
+    [theme.breakpoints.up('xs')]: {
+      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+    },
   },
   card: {
     height: '318px',
-    width: '318px',
-    borderRadius: 0,
     border: '1px solid',
     position: 'relative',
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
+    borderRadius: '4px',
   },
   description: {
     width: '200px',

@@ -49,6 +49,7 @@ module.exports.sections = [
           'src/components/Spinner/index.jsx',
           'src/components/TextToggle/index.jsx',
           'src/components/SwitchToggle/index.jsx',
+          'src/components/AccessToken/index.jsx',
         ],
       },
     ],

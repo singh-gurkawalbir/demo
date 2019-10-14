@@ -11,8 +11,8 @@ export default {
   },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
-    type: 'text',
-    disabled: true,
+    type: 'apiidentifier',
+    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
   // #region ftp
   'ftp.importFrom': {
