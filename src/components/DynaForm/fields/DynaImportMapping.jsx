@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import ImportMapping from '../../../components/AFE/ImportMapping';
+import MappingUtil from '../../../utils/mapping';
 
 /*
 lookups and lookupId is passed in options
@@ -14,7 +15,7 @@ export default function DynaImportMapping(props) {
     options,
     label,
     value,
-    resourceId,
+    connectionId,
   } = props;
   const { lookupId, lookups, isStandaloneMapping } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
@@ -23,23 +24,34 @@ export default function DynaImportMapping(props) {
      extrct fields to be extracted later when flow builder is ready
      The best way to fetch extract and generate field is to be figured out later
      */
-  const generateFields = ['myName', 'myId'];
-  const extractFields = ['name', 'id'];
+  const generateFields = MappingUtil.getSampleGenerateFields();
+  const extractFields = [];
   const toggleModalVisibility = () => {
     setModalVisibility(!isModalVisible);
   };
 
-  const handleClose = (shouldCommit, mappings, lookups) => {
-    if (shouldCommit) {
-      onFieldChange(id, { fields: mappings });
-
-      if (lookups) {
-        onFieldChange(lookupId, lookups);
-      }
-    }
-
+  const handleClose = () => {
     toggleModalVisibility();
   };
+
+  const handleSave = (mappings, lookups) => {
+    onFieldChange(id, mappings);
+
+    if (lookups) {
+      onFieldChange(lookupId, lookups);
+    }
+
+    handleClose();
+  };
+
+  let mappings = {};
+
+  if (isModalVisible) {
+    mappings = MappingUtil.getMappingsForApp({
+      mappings: value === '' ? {} : value,
+      appType: application,
+    });
+  }
 
   return (
     <Fragment>
@@ -47,14 +59,16 @@ export default function DynaImportMapping(props) {
         <ImportMapping
           title="Define Import Mapping"
           id={id}
+          // recordType={recordType}
+          connectionId={connectionId}
           application={application}
           lookups={lookups}
           isStandaloneMapping={isStandaloneMapping}
-          resourceId={resourceId}
-          mappings={value}
+          mappings={mappings}
           generateFields={generateFields || []}
           extractFields={extractFields || []}
-          onClose={handleClose}
+          onCancel={handleClose}
+          onSave={handleSave}
         />
       )}
       <Button
