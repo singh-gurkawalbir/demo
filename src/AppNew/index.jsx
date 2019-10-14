@@ -16,6 +16,7 @@ import AppErroredModal from '../App/AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
+import Signin from '../views/SignIn';
 
 // any css returned by this makeStyles function can not use the theme
 // we can only use the theme in components that are children of
@@ -32,13 +33,20 @@ console.log('*** THEME ***', theme);
 
 // const oldTheme = themeProviderOld('light');
 // console.log('old theme', oldTheme);
-const NonSigninComponents = props => (
+const NonSigninHeaderComponents = props => (
   <Fragment>
     <CeligoAppBar {...props} />
     <AppErroredModal {...props} />
     <AuthDialog {...props} />
     <CeligoDrawer {...props} />
   </Fragment>
+);
+
+export const PageContentComponents = props => (
+  <Switch>
+    <Route path="/pg/signin" component={Signin} {...props} />
+    <Route path="/pg*" component={PageContent} {...props} />
+  </Switch>
 );
 
 export default function AppNew() {
@@ -58,12 +66,14 @@ export default function AppNew() {
         <BrowserRouter>
           <div className={classes.root}>
             {isAllLoadingCommsAboveThreshold && <NetworkSnackbar />}
+            {/* Headers */}
             <Switch>
-              <Route path="/pg/signin" component={CeligoAppBar} />
-              <Route path="/pg*" component={NonSigninComponents} />
+              <Route path="/pg/signin" component={null} />
+              <Route path="/pg*" component={NonSigninHeaderComponents} />
             </Switch>
+            {/* page content */}
             <WithAuth>
-              <PageContent />
+              <PageContentComponents />
             </WithAuth>
           </div>
         </BrowserRouter>
