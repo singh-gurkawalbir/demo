@@ -12,15 +12,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function InputFilterDialog({
-  flowId,
-  resourceId,
-  resourceType,
-  open,
-  onClose,
-}) {
+function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'inputFilter')
   );

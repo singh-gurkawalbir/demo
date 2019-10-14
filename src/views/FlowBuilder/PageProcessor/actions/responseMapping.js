@@ -14,13 +14,14 @@ const useStyles = makeStyles(theme => ({
 
 function ResponseMappingDialog({
   flowId,
-  resourceId,
+  resource,
   resourceType,
   open,
   onClose,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'outputFilter')
   );

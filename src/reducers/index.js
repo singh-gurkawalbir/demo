@@ -226,6 +226,10 @@ export function getFlowReferencesForResource(state, resourceId) {
   );
 }
 
+export function getFlowDataState(state, flowId) {
+  return fromSession.getFlowDataState(state && state.session, flowId);
+}
+
 export function avatarUrl(state) {
   return fromUser.avatarUrl(state.user);
 }

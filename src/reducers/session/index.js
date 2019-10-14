@@ -212,6 +212,10 @@ export function getFlowReferencesForResource(state, resourceId) {
   );
 }
 
+export function getFlowDataState(state, flowId) {
+  return fromFlowData.getFlowDataState(state && state.flowData, flowId);
+}
+
 export function apiAccessToken(state, resourceId) {
   return fromApiAccessTokens.apiAccessToken(
     state && state.apiAccessTokens,

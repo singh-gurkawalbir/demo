@@ -12,11 +12,11 @@ import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
 
 const dependencies = {
-  inputFilter: 'input',
-  outputFilter: 'input',
+  inputFilter: 'flowInput',
+  outputFilter: 'flowInput',
   transform: 'raw',
   hooks: 'transform',
-  importMapping: 'input',
+  importMapping: 'flowInput',
 };
 let fetchSampleData;
 
@@ -89,7 +89,7 @@ function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
     eliminateDataProcessors: true,
   });
 
-  if (previewType === 'input') {
+  if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
     flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
       if (pageProcessor._exportId === _pageProcessorId) {
@@ -116,7 +116,7 @@ function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
     });
 
     yield put(
-      actions.flowData.receivedPreview(
+      actions.flowData.receivedPreviewData(
         flowId,
         _pageProcessorId,
         previewData,
@@ -145,7 +145,7 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   const parseData = getParseStageData(previewData);
 
   yield put(
-    actions.flowData.receivedPreview(
+    actions.flowData.receivedPreviewData(
       flowId,
       _pageGeneratorId,
       parseData,
@@ -163,7 +163,7 @@ function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
     const { processor } = processorData;
 
     yield put(
-      actions.flowData.receivedProcessor(
+      actions.flowData.receivedProcessorData(
         flowId,
         resourceId,
         processor,
@@ -266,7 +266,7 @@ function* fetchInputData({
   // Updates preProcessedData for the procesors
   const sampleDataStage = dependencies[stage];
 
-  if (['input', 'raw'].includes(sampleDataStage)) {
+  if (['flowInput', 'raw'].includes(sampleDataStage)) {
     if (isPageGenerator) {
       yield call(fetchPageGeneratorPreview, {
         flowId,
@@ -306,7 +306,7 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
   }
 
   yield put(
-    actions.flowData.requestProcessor(
+    actions.flowData.requestProcessorData(
       flowId,
       resourceId,
       resourceType,
@@ -316,7 +316,7 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
   );
 }
 
-function* updateFlowsData({ resourceId, resourceType }) {
+function* updateFlowsDataForResource({ resourceId, resourceType }) {
   // get flow ids using this resourceId
   const flowRefs = yield select(getFlowReferencesForResource, resourceId);
   // make a preview call for hooks so that the entire state of that processor updates if present
@@ -335,9 +335,27 @@ function* updateFlowsData({ resourceId, resourceType }) {
   }
 }
 
+function* updateFlowData({ flowId }) {
+  const { merged: updatedFlow } = yield select(
+    resourceData,
+    'flows',
+    flowId,
+    SCOPES.VALUE
+  );
+
+  yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
+}
+
 export default [
-  takeEvery(actionTypes.FLOW_DATA.REQUEST_PREVIEW, fetchPageProcessorPreview),
-  takeEvery(actionTypes.FLOW_DATA.REQUEST_PROCESSOR, requestProcessorData),
+  takeEvery(
+    actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA,
+    fetchPageProcessorPreview
+  ),
+  takeEvery(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, requestProcessorData),
   takeEvery(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, fetchSampleData),
-  takeEvery(actionTypes.FLOW_DATA.UPDATE_FLOWS, updateFlowsData),
+  takeEvery(
+    actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE,
+    updateFlowsDataForResource
+  ),
+  takeEvery(actionTypes.FLOW_DATA.UPDATE_FLOW, updateFlowData),
 ];

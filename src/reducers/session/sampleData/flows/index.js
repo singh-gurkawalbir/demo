@@ -1,10 +1,10 @@
 import produce from 'immer';
-import _ from 'lodash';
+import { keys } from 'lodash';
 import actionTypes from '../../../../actions/types';
 
 const dependencies = {
-  inputFilter: 'input',
-  outputFilter: 'input',
+  inputFilter: 'flowInput',
+  outputFilter: 'flowInput',
   transform: 'raw',
   hooks: 'transform',
 };
@@ -12,7 +12,7 @@ const dependencies = {
 function reset(flow, index, isPageGenerator) {
   if (isPageGenerator) {
     const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);
-    const pgIds = _.keys(flow.pageGeneratorsMap);
+    const pgIds = keys(flow.pageGeneratorsMap);
 
     pgIds.forEach(pgId => {
       // eslint-disable-next-line no-param-reassign
@@ -25,7 +25,7 @@ function reset(flow, index, isPageGenerator) {
     const ppsToReset = flow.pageProcessors
       .slice(index)
       .map(pp => pp._exportId || pp._importId);
-    const ppIds = _.keys(flow.pageProcessorsMap);
+    const ppIds = keys(flow.pageProcessorsMap);
 
     ppIds.forEach(ppId => {
       // eslint-disable-next-line no-param-reassign
@@ -34,12 +34,26 @@ function reset(flow, index, isPageGenerator) {
   }
 }
 
+function compare(currentList, updatedList) {
+  const changedIndex = currentList.findIndex((item, index) => {
+    const updatedItem = updatedList[index];
+
+    return (
+      (item._exportId || item._importId) !==
+      (updatedItem._exportId || updatedItem._importId)
+    );
+  });
+
+  return changedIndex;
+}
+
 export default function(state = {}, action) {
   const {
     type,
     flowId,
     resourceId,
     flow = {},
+    updatedFlow = {},
     previewData,
     previewType,
     processor,
@@ -61,7 +75,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.REQUEST_PREVIEW: {
+      case actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA: {
         if (!resourceId) return;
         const resourceMap =
           draft[flowId][
@@ -80,7 +94,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RECEIVED_PREVIEW: {
+      case actionTypes.FLOW_DATA.RECEIVED_PREVIEW_DATA: {
         if (!resourceId) return;
         const resourceMap =
           draft[flowId][
@@ -100,7 +114,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.REQUEST_PROCESSOR: {
+      case actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA: {
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -116,7 +130,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RECEIVED_PROCESSOR: {
+      case actionTypes.FLOW_DATA.RECEIVED_PROCESSOR_DATA: {
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -158,6 +172,35 @@ export default function(state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE: {
+        const currentFlow = draft[flowId];
+        const { pageGenerators, pageProcessors } = currentFlow;
+        const {
+          pageGenerators: updatedPageGenerators,
+          pageProcessors: updatedPageProcessors,
+        } = updatedFlow;
+        // get first change in sequece of pgs
+        const updatedPgIndex = compare(pageGenerators, updatedPageGenerators);
+
+        // reset all pg data stages starting from index
+        if (updatedPgIndex > -1) {
+          reset(currentFlow, updatedPgIndex, true);
+        }
+
+        // get first change in sequece of pgs
+        const updatedPpIndex = compare(pageProcessors, updatedPageProcessors);
+
+        // reset all pp data stages starting from index
+        if (updatedPpIndex > -1) {
+          reset(currentFlow, updatedPgIndex);
+        }
+
+        // update sequence
+        currentFlow.pageGenerators = updatedPageGenerators;
+        currentFlow.pageProcessors = updatedPageProcessors;
+        break;
+      }
+
       default:
     }
   });
@@ -188,7 +231,7 @@ export function getSampleData(
 
 export function getFlowReferencesForResource(state, resourceId) {
   // resourceId may be export or an import
-  const existingFlows = _.keys(state);
+  const existingFlows = keys(state);
   const dependentFlows = existingFlows.filter(flowId => {
     const { pageGenerators = [], pageProcessors = [] } = state[flowId];
 
@@ -204,7 +247,5 @@ export function getFlowReferencesForResource(state, resourceId) {
 }
 
 export function getFlowDataState(state, flowId) {
-  if (!state || !flowId) return {};
-
-  return state[flowId];
+  return state && flowId && state[flowId];
 }
