@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq } from 'lodash';
+import { uniq, some, map } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -575,6 +575,19 @@ export function integrationConnectionList(state, integrationId) {
   return connList;
 }
 
+export function integrationAppConnectionList(state, integrationId, store) {
+  const integrationConnections = fromData.resourceList(state.data, {
+    type: 'flows',
+    filter: { _integrationId: integrationId },
+  });
+
+  integrationConnections.ressources = integrationConnections.resources.filter(
+    c => c.id === store
+  );
+
+  return integrationConnections;
+}
+
 export function resourceReferences(state) {
   return fromSession.resourceReferences(state && state.session);
 }
@@ -623,27 +636,7 @@ export function connectorFlowSections(state, id, store) {
   return sections || [];
 }
 
-export function integrationAppGeneralSettings(state, id, store) {
-  if (!state) return null;
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, general } = integrationResource.settings || {};
-
-  if (supportsMultiStore) {
-    if (Array.isArray(general) && general.length) {
-      if (store) {
-        return general.find(sec => sec.id === store) || {};
-      }
-
-      return general.find(sec => !!sec.id);
-    }
-
-    return [];
-  }
-
-  return general || {};
-}
-
-export function getGeneralSettingsForIntegrationApp(state, id, storeId) {
+export function integrationAppGeneralSettings(state, id, storeId) {
   if (!state) return null;
   let fields;
   let subSections;
@@ -651,7 +644,7 @@ export function getGeneralSettingsForIntegrationApp(state, id, storeId) {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    const storeSection = general.find(s => s.id === storeId) || {};
+    const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
   } else {
@@ -664,12 +657,7 @@ export function getGeneralSettingsForIntegrationApp(state, id, storeId) {
   };
 }
 
-export function getRequiredDataOfConnectorSettings(
-  state,
-  id,
-  section,
-  storeId
-) {
+export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return null;
   let fields;
   let subSections;
@@ -682,65 +670,43 @@ export function getRequiredDataOfConnectorSettings(
   } = integrationResource.settings || {};
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
-  let soreIdIndex = 0;
 
   if (supportsMultiStore) {
-    if (sections) {
-      sections.forEach((f, index) => {
-        if (f.id === storeId) {
-          soreIdIndex = index;
-        }
-      });
-    }
+    const store = (sections || []).find(s => s.id === storeId) || {};
+    const sectionStore =
+      (store.sections || []).find(
+        sec => sec.title.replace(/\s/g, '') === section
+      ) || {};
 
-    if (
-      integrationResource._connectorId &&
-      sections[soreIdIndex] &&
-      sections[soreIdIndex].sections
-    ) {
-      sections[soreIdIndex].sections.forEach((f, index) => {
-        if (
-          f.title.replace(/ /g, '') === section ||
-          (index === 0 && section === 'flows')
-        ) {
-          requiredFlows = f.flows;
-          ({ fields, sections: subSections } = f);
-        }
-      });
-    }
+    requiredFlows = map(sectionStore.flows, '_id');
+    hasNSInternalIdLookup = some(
+      sectionStore.flows,
+      f => f.showNSInternalIdLookup
+    );
+    ({ fields, sections: subSections } = sectionStore);
   } else if (sections) {
-    sections.forEach((f, index) => {
-      if (
-        f.title.replace(/ /g, '') === section ||
-        (index === 0 && section === 'flows')
-      ) {
-        requiredFlows = f.flows;
-        ({ fields, sections: subSections } = f);
-      }
-    });
+    const selectedSection =
+      (sections || []).find(sec => sec.title.replace(/\s/g, '') === section) ||
+      {};
+
+    requiredFlows = map(selectedSection.flows, '_id');
+    hasNSInternalIdLookup = some(
+      selectedSection.flows,
+      f => f.showNSInternalIdLookup
+    );
+    ({ fields, sections: subSections } = selectedSection);
   }
 
   const preferences = userPreferences(state);
   let flows = resourceList(state, {
     type: 'flows',
     sandbox: preferences.environment === 'sandbox',
+    filter: {
+      _integrationId: id,
+    },
   }).resources;
-  const flowArray = [];
 
-  requiredFlows.forEach(f => {
-    if (f.showNSInternalIdLookup) {
-      hasNSInternalIdLookup = true;
-    }
-
-    flowArray.push(f._id);
-  });
-  flows =
-    flows &&
-    flows.filter(
-      f =>
-        flowArray.indexOf(f._id) > -1 &&
-        !!f.sandbox === (preferences.environment === 'sandbox')
-    );
+  flows = flows.filter(f => requiredFlows.includes(f._id));
 
   return {
     flows,

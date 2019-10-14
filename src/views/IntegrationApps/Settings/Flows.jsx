@@ -11,12 +11,7 @@ export default function Flows(props) {
   const { match } = props;
   const { integrationId, section, storeId } = match.params;
   const { flows, ...rest } = useSelector(state =>
-    selectors.getRequiredDataOfConnectorSettings(
-      state,
-      integrationId,
-      section,
-      storeId
-    )
+    selectors.integrationAppFlowSettings(state, integrationId, section, storeId)
   );
   const hasAdvancedSettings = !!rest.fields || !!rest.sections;
   const translatedMeta = integrationSettingsToDynaFormMetadata(

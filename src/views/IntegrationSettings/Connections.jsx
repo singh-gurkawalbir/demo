@@ -15,13 +15,21 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Connections(props) {
-  const { match } = props;
+  const { match, store } = props;
   const { integrationId } = match.params;
   const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
-  const list = useSelector(state =>
-    selectors.integrationConnectionList(state, integrationId)
-  );
+  const list = useSelector(state => {
+    if (store) {
+      return selectors.integrationAppConnectionList(
+        state,
+        integrationId,
+        store
+      );
+    }
+
+    return selectors.integrationConnectionList(state, integrationId);
+  });
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );

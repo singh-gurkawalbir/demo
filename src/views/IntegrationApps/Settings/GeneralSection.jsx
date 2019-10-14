@@ -7,7 +7,7 @@ export default function GeneralSection(props) {
   const { match } = props;
   const { integrationId, storeId } = match.params;
   const { flows, ...rest } = useSelector(state =>
-    selectors.getGeneralSettingsForIntegrationApp(state, integrationId, storeId)
+    selectors.integrationAppGeneralSettings(state, integrationId, storeId)
   );
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     rest,
