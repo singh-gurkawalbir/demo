@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { put, select, call, takeEvery } from 'redux-saga/effects';
 import {
   resourceData,
@@ -59,7 +60,9 @@ function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
         if (resourceType === 'exports' && resource.type === 'delta') {
           resourceMap[resourceId].options.postData = {
             // @TODO: Raghu add valid dateTime
-            lastExportDateTime: new Date().toISOString(),
+            lastExportDateTime: moment()
+              .add(-1, 'y')
+              .toISOString(),
           };
         }
 
@@ -134,6 +137,14 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     'exports',
     _pageGeneratorId
   );
+
+  if (resource.type === 'delta') {
+    resource.postData = {
+      lastExportDateTime: moment()
+        .add(-1, 'y')
+        .toISOString(),
+    };
+  }
 
   delete resource.sampleData;
   const path = `/exports/preview`;
