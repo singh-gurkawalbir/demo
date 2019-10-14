@@ -16,9 +16,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RightDrawer({ match, history, children }) {
+export function RightDrawer({ open, match, history, children }) {
   const classes = useStyles();
-  const open = !!match;
   const handleClose = () => {
     history.goBack();
   };
@@ -27,8 +26,7 @@ function RightDrawer({ match, history, children }) {
     <Drawer
       variant="persistent"
       anchor="right"
-      elevation={3}
-      open={open}
+      open={open || !!match}
       classes={{
         paper: classes.drawerPaper,
       }}

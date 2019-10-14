@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import { FormHelperText, FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import applications, {
   groupApplications,
@@ -40,6 +39,7 @@ export default function SelectApplication(props) {
     disabled,
     id,
     name,
+    label,
     resourceType,
     value = '',
     placeholder,
@@ -196,6 +196,8 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
+      <InputLabel htmlFor={id}>{label}</InputLabel>
+
       <Select
         name={name}
         placeholder={placeholder}

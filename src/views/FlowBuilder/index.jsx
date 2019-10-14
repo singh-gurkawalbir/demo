@@ -11,7 +11,8 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
-import BottomDrawer from './BottomDrawer';
+import BottomDrawer from './drawers/BottomDrawer';
+import WizardDrawer from './drawers/Wizard';
 import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
@@ -326,20 +327,30 @@ function FlowBuilder(props) {
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flowId={flowId} />
       <SettingsDrawer {...props} flowId={flowId} />
+      <WizardDrawer {...props} flowId={flowId} />
 
       <CeligoPageBar
-        title={flow.name}
-        subtitle={`Last saved: ${flow.lastModified}`}
+        title={flowId ? flow.name : 'New flow'}
+        subtitle={`Last saved: ${flowId ? flow.lastModified : 'Never'}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff on />
-          <IconButton onClick={() => handleDrawerOpen('run')}>
+          <SwitchOnOff
+            disabled={!flowId}
+            on={!!flowId && flow.disabled === 'false'}
+          />
+          <IconButton
+            disabled={!flowId}
+            onClick={() => handleDrawerOpen('run')}>
             <RunIcon />
           </IconButton>
-          <IconButton onClick={() => handleDrawerOpen('schedule')}>
+          <IconButton
+            disabled={!flowId}
+            onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
-          <IconButton onClick={() => handleDrawerOpen('settings')}>
+          <IconButton
+            disabled={!flowId}
+            onClick={() => handleDrawerOpen('settings')}>
             <SettingsIcon />
           </IconButton>
         </div>

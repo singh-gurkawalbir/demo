@@ -41,7 +41,7 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'radiogroup',
+      type: 'select',
       label: 'What would you like to do?',
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
@@ -61,12 +61,12 @@ export default {
       name: 'isNew',
       type: 'radiogroup',
       showOptionsHorizontally: true,
-      label: 'Build new or use existing?',
+      // label: 'Build new or use existing?',
       defaultValue: 'true',
       options: [
         {
           items: [
-            { label: 'Build new', value: 'true' },
+            { label: 'Create new', value: 'true' },
             {
               label: 'Choose existing',
               value: 'false',
