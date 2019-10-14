@@ -8,7 +8,11 @@ export default {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
     }
 
-    return newValues;
+    return {
+      ...newValues,
+      '/netsuite/requestLevelCredentials': true,
+      '/netsuite/wsdlVersion': 'next',
+    };
   },
   optionsHandler(fieldId, fields) {
     const { value: env } =
