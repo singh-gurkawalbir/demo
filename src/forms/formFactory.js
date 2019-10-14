@@ -104,6 +104,33 @@ const getResourceFormAssets = ({
       break;
 
     case 'imports':
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        if (isNew) {
+          meta = meta.new;
+        }
+        // get edit form meta branch
+        else if (type === 'netsuite') {
+          meta = meta.netsuiteDistributed;
+        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+          meta = meta.rdbms;
+        } else if (resource && resource.assistant) {
+          meta = meta.custom.http.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
+        } else {
+          meta = meta[type];
+        }
+
+        if (meta) {
+          ({ fieldMap, layout, init, preSave, actions } = meta);
+        }
+      }
+
+      break;
     case 'exports':
       meta = formMeta[resourceType];
 
@@ -112,7 +139,7 @@ const getResourceFormAssets = ({
           meta = meta.new;
         }
         // get edit form meta branch
-        else if (type === 'netsuite' && resourceType === 'exports') {
+        else if (type === 'netsuite') {
           meta = meta.netsuite[resource.netsuite.type];
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
