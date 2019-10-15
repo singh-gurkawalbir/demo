@@ -1,4 +1,4 @@
-import { useEffect, Fragment } from 'react';
+import { useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -11,7 +11,10 @@ function TransformationDialog({ flowId, resource, onClose }) {
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'transform', true)
   );
-  const rules = resource && resource.transform && resource.transform.rules;
+  const rules = useMemo(
+    () => resource && resource.transform && resource.transform.rules,
+    [resource]
+  );
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
