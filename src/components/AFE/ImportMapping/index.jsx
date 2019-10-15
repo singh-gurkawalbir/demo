@@ -9,6 +9,7 @@ import {
   DialogTitle,
   Grid,
   DialogActions,
+  Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
@@ -309,7 +310,9 @@ export default function ImportMapping(props) {
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
       {children}
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
           <Grid container className={classes.root}>

@@ -5,6 +5,7 @@ import {
   DialogTitle,
   makeStyles,
   IconButton,
+  Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import Close from '../icons/CloseIcon';
@@ -104,7 +105,9 @@ export default function FlowSchedule(props) {
         onClick={onClose}>
         <Close />
       </IconButton>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <DynaForm
           fieldMeta={getMetadata({

@@ -26,8 +26,8 @@ const mapDispatchToProps = dispatch => ({
   },
   submit: {
     width: '90%',
-    borderRadius: '4px',
-    height: '48px',
+    borderRadius: 4,
+    height: 48,
     fontSize: theme.spacing(2),
   },
   editableFields: {
@@ -47,7 +47,7 @@ const mapDispatchToProps = dispatch => ({
     border: '1px solid',
     background: theme.palette.background.paper,
     borderColor: theme.palette.secondary.lightest,
-    marginBottom: '0px',
+    marginBottom: 0,
 
     // '& div > input:disabled': {
     //   background: theme.palette.background.paper2,
@@ -59,20 +59,20 @@ const mapDispatchToProps = dispatch => ({
   },
   alertMsg: {
     marginBottom: theme.spacing(1),
-    fontSize: '12px',
+    fontSize: 12,
     textAlign: 'left',
-    marginLeft: '20px',
+    marginLeft: 20,
     width: '90%',
     display: 'flex',
     alignItems: 'center',
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
-      marginRight: '5px',
+      marginRight: 5,
     },
   },
   link: {
-    paddingLeft: '4px',
+    paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
   forgotPass: {
@@ -81,12 +81,12 @@ const mapDispatchToProps = dispatch => ({
     marginTop: theme.spacing(2),
   },
   googleBtn: {
-    borderRadius: '4px',
+    borderRadius: 4,
     width: '90%',
     background: `url('../../static/images/googleLogo.svg') 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
-    height: '48px',
-    fontSize: '16px',
+    height: 48,
+    fontSize: 16,
   },
 }))
 class SignIn extends Component {

@@ -5,6 +5,7 @@ import {
   DialogTitle,
   Button,
   makeStyles,
+  Typography,
 } from '@material-ui/core';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
@@ -57,7 +58,9 @@ export default function ImportMappingSettings(props) {
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <DynaForm
           fieldMeta={fieldMeta}

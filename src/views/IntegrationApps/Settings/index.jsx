@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
     minHeight: 500,
-    zIndex: 1,
+    zIndex: 0,
   },
   rightElement: {
     flex: 4,
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     float: 'right',
-    marginTop: '20px',
+    marginTop: 20,
   },
   storeContainer: {
     display: 'flex',

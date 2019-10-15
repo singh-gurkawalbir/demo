@@ -34,7 +34,7 @@ const getColumns = result => {
 
 const useStyles = makeStyles(theme => ({
   container: {
-    padding: '10px',
+    padding: 10,
     backgroundColor: theme.palette.background.default,
     height: '100%',
   },
@@ -99,7 +99,8 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           control={
             <Checkbox
-              // color="primary"
+              // Why it is commented ?
+              color="primary"
               checked={hasHeaderRow}
               onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
             />
@@ -109,7 +110,7 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           control={
             <Checkbox
-              // color="primary"
+              color="primary"
               checked={trimSpaces}
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />

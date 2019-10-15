@@ -16,7 +16,9 @@ function TransformationDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Transformation</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Transformation</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>exportId: {resourceId}</Typography>
     </Dialog>

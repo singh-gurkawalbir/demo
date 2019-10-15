@@ -4,6 +4,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Typography } from '@material-ui/core';
 
 const withStyles = makeStyles(() => ({
   contentContainer: {
@@ -27,14 +28,20 @@ export default function FormDialog(props) {
 
   return (
     <Dialog open onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
 
       <DialogContent>
         <div className={classes.contentContainer}>{children}</div>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} variant="contained" size="small">
+        <Button
+          onClick={onClose}
+          variant="contained"
+          color="secondary"
+          size="small">
           {cancelLabel}
         </Button>
         <Button
@@ -42,7 +49,7 @@ export default function FormDialog(props) {
           disabled={!isValid}
           variant="contained"
           size="small"
-          color="secondary">
+          color="primary">
           {submitLabel}
         </Button>
       </DialogActions>

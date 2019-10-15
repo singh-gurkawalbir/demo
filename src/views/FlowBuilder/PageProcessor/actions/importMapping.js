@@ -16,7 +16,9 @@ function ImportMappingDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Import Mapping</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Import Mapping</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>

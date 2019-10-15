@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-    marginBottom: '29px',
+    marginBottom: 29,
   },
   innerContent: {
     width: '80vw',
   },
-  stepTable: { position: 'relative', marginTop: '-20px' },
+  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },

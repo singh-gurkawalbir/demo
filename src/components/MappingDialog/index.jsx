@@ -43,8 +43,8 @@ export default function MappingDialog({ onClose, resource }) {
         onClick={onClose}>
         <CloseIcon />
       </IconButton>
-      <DialogTitle className={classes.title}>
-        <Typography>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography variant="h6">
           Please select which mapping you would like to edit.
         </Typography>
       </DialogTitle>

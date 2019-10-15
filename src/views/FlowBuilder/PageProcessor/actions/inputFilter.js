@@ -16,7 +16,9 @@ function InputFilterDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Input Filter</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Input Filter</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>

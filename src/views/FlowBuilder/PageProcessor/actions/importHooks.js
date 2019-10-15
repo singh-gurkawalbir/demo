@@ -16,7 +16,9 @@ function HooksDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Hooks</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Hooks</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>

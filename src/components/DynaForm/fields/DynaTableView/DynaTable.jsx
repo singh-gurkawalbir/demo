@@ -4,10 +4,10 @@ import produce from 'immer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 
 const useStyles = makeStyles(theme => ({

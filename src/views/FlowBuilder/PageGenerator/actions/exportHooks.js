@@ -16,7 +16,9 @@ function HooksDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Export Hooks</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Export Hooks</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>exportId: {resourceId}</Typography>
     </Dialog>

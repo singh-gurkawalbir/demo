@@ -7,7 +7,7 @@ import ShowContentIcon from '../icons/ShowContentIcon';
 import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import AccessToken from '../AccessToken';
+import AccessToken from '../MaskToken';
 
 const useStyles = makeStyles({
   root: {

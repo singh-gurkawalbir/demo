@@ -16,7 +16,9 @@ function ResponseMappingDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Response Mapping</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Response Mapping</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>

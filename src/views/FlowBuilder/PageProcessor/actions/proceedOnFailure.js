@@ -16,7 +16,9 @@ function ProceedOnFailureDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Proceed on Failure</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Proceed on Failure</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
     </Dialog>

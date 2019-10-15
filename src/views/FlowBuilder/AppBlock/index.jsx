@@ -6,8 +6,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-import StatusCircle from '../../../components/HomePageCard/Header/Status/StatusCircle';
-import Status from '../../../components/HomePageCard/Header/Status/';
+import StatusCircle from '../../../components/StatusCircle';
+import Status from '../../../components/Status/';
 
 const blockHeight = 170;
 const blockWidth = 275;

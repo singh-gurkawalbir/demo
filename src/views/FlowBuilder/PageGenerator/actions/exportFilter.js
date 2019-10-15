@@ -16,7 +16,9 @@ function ExportFilterDialog({ flowId, resourceId, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Export Filter</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Export Filter</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>exportId: {resourceId}</Typography>
     </Dialog>
