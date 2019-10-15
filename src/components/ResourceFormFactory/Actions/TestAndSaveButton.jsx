@@ -26,6 +26,7 @@ const ConfirmDialog = props => {
     formValues,
     handleCloseAndClearForm,
     handleSubmit,
+    handleSaveCompleted,
     commErrorMessage,
   } = props;
 
@@ -37,6 +38,7 @@ const ConfirmDialog = props => {
         {
           label: 'No',
           onClick: () => {
+            handleSaveCompleted();
             handleCloseAndClearForm();
           },
         },
@@ -54,16 +56,19 @@ const ConfirmDialog = props => {
 
 function reducer(state, action) {
   const { type, erroredMessage, formValues } = action;
+  const { savingForm } = state;
 
   switch (type) {
     case 'setFormValues':
-      return { ...state, formValues };
+      return { ...state, savingForm: true, formValues };
     case 'testInitiated':
       return { ...state, testInitiated: true };
     case 'clearFormData':
-      return {};
+      return { savingForm };
     case 'testErrored':
       return { ...state, erroredMessage };
+    case 'saveCompleted':
+      return {};
     default:
       throw new Error();
   }
@@ -88,7 +93,7 @@ const TestAndSaveButton = props => {
   );
   const pingLoading = testConnectionCommState.commState === COMM_STATES.LOADING;
   const { commState, message } = testConnectionCommState;
-  const { formValues, testInitiated, erroredMessage } = formState;
+  const { formValues, testInitiated, erroredMessage, savingForm } = formState;
 
   useEffect(() => {
     if (commState === COMM_STATES.LOADING && formValues) {
@@ -118,6 +123,14 @@ const TestAndSaveButton = props => {
     message,
     handleSubmitForm,
   ]);
+  const resourceFormState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+
+  useEffect(() => {
+    if (resourceFormState.submitComplete)
+      dispatchLocalAction({ type: 'saveCompleted' });
+  }, [resourceFormState.submitComplete]);
 
   return (
     <Fragment>
@@ -128,14 +141,18 @@ const TestAndSaveButton = props => {
           handleCloseAndClearForm={() =>
             dispatchLocalAction({ type: 'clearFormData' })
           }
+          handleSaveCompleted={() =>
+            dispatchLocalAction({ type: 'saveCompleted' })
+          }
           handleSubmit={handleSubmitForm}
         />
       )}
       {/* Test button which hides the test button and shows the ping snackbar */}
       <TestButton {...props} isTestOnly={false} />
+      {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}
       <DynaAction
         {...props}
-        disabled={disabled || pingLoading || !!formValues}
+        disabled={disabled || pingLoading || savingForm}
         onClick={values => {
           clearComms();
           handleTestConnection(values);
