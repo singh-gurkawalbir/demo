@@ -16,14 +16,12 @@ export default function DynaImportMapping(props) {
     label,
     value,
     connectionId,
+    // TODO: recordType support in import definition
+    recordType,
   } = props;
   const { lookupId, lookups, isStandaloneMapping } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
-  /*
-     Using dummy data for functionality demonstration. generate fields and
-     extrct fields to be extracted later when flow builder is ready
-     The best way to fetch extract and generate field is to be figured out later
-     */
+  // TODO: Change to real data
   const generateFields = MappingUtil.getSampleGenerateFields();
   const extractFields = [];
   const toggleModalVisibility = () => {
@@ -59,7 +57,7 @@ export default function DynaImportMapping(props) {
         <ImportMapping
           title="Define Import Mapping"
           id={id}
-          // recordType={recordType}
+          recordType={recordType}
           connectionId={connectionId}
           application={application}
           lookups={lookups}

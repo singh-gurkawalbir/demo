@@ -14,7 +14,7 @@ export default function MappingSettingsField(props) {
     lookup,
     application,
     updateLookup,
-    // recordType
+    recordType,
     value,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
@@ -43,7 +43,7 @@ export default function MappingSettingsField(props) {
           lookup={lookup}
           value={value}
           onClose={handleClose}
-          // recordType={recordType}
+          recordType={recordType}
           extractFields={extractFields}
           generateFields={generateFields}
         />

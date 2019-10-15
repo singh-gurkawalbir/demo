@@ -133,7 +133,7 @@ export default function ImportMapping(props) {
     generateFields = [],
     extractFields = [],
     onCancel,
-    // recordType,
+    recordType,
     onSave,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
@@ -361,10 +361,8 @@ export default function ImportMapping(props) {
                         id={mapping.index}
                         onSave={handleSettingsClose}
                         value={mapping}
-                        // recordType={recordType}
-                        // TODO (Aditya): remove hard coded value
-                        // generate={mapping.generate}
-                        // selectField="category"
+                        recordType={recordType}
+                        generate={mapping.generate}
                         application={application}
                         connectionId={connectionId}
                         updateLookup={updateLookupHandler}

@@ -20,12 +20,12 @@ export default function StandaloneImportMapping(props) {
   const { id, resourceId, onClose, connectionId } = props;
   const dispatch = useDispatch();
   /*
-     Using dummy data for functionality demonstration. generate fields and	     Using dummy data for functionality demonstration. generate fields and
-     extrct fields to be extracted later when flow builder is ready	     extrct fields to be extracted later when flow builder is ready
-     The best way to fetch extract and generate field is to be figured out later	     replace getSampleGenerateFields by fetching sample data
-     */
+     Using dummy data for functionality demonstration. generate fields and
+     extrct fields to be extracted later when flow builder is ready
+     replace getSampleGenerateFields by fetching sample data
+  */
   const generateFields = MappingUtil.getSampleGenerateFields();
-  const extractFields = ['name', 'id'];
+  const extractFields = [];
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
