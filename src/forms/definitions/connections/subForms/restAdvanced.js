@@ -1,11 +1,16 @@
 export default {
   fieldMap: {
+    'rest.disableStrictSSL': { fieldId: 'rest.disableStrictSSL' },
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'rest.concurrencyLevel': { fieldId: 'rest.concurrencyLevel' },
   },
   layout: {
-    fields: ['_borrowConcurrencyFromConnectionId', 'rest.concurrencyLevel'],
+    fields: [
+      'rest.disableStrictSSL',
+      '_borrowConcurrencyFromConnectionId',
+      'rest.concurrencyLevel',
+    ],
   },
 };
