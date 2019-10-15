@@ -235,6 +235,125 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   return newSet;
 };
 
+const convertFieldsToFieldReferneceObj = (acc, curr) => {
+  if (!curr.fieldId && !curr.id && !curr.formId) {
+    throw new Error('No fieldId , id or formId', curr);
+  }
+
+  if (acc && curr.fieldId) acc[curr.fieldId] = curr;
+  else if (acc && curr.id) acc[curr.id] = curr;
+  else if (acc && curr.formId) acc[curr.formId] = curr;
+  // else throw new Error('could not find any of the props');
+
+  // !curr.formId
+  return acc;
+};
+
+const refGeneration = field => {
+  const { fieldId, id, formId } = field;
+
+  if (fieldId) return fieldId;
+  else if (id) return id;
+  else if (formId) return formId;
+  throw new Error('cant generate reference');
+};
+
+const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
+  const getFieldConfig = (field = {}) => {
+    const newField = { ...field };
+
+    if (!newField.type || newField.type === 'input') {
+      newField.type = 'text';
+    }
+
+    return newField;
+  };
+
+  return fields.map(field => {
+    // TODO: generate correct name path
+    const { name, options, tooltip } = field;
+    // name is the unique identifier....verify with Ashok
+
+    return {
+      ...getFieldConfig(field),
+      name: `/${name}`,
+      _integrationId,
+      id: name,
+      helpText: tooltip,
+      options: [
+        {
+          items:
+            (options &&
+              options.map(option => ({
+                label: option && option[1],
+                value: option && option[0],
+              }))) ||
+            [],
+        },
+      ],
+    };
+  });
+};
+
+export const integrationSettingsToDynaFormMetadata = (
+  meta,
+  integrationId,
+  isGeneral
+) => {
+  const finalData = {};
+  const { fields, sections } = meta;
+
+  if (fields) {
+    const addedFieldIdFields = addIdToFieldsAndRenameNameAttribute(
+      fields,
+      integrationId
+    );
+
+    finalData.fieldMap = addedFieldIdFields.reduce(
+      convertFieldsToFieldReferneceObj,
+      {}
+    );
+    finalData.layout = {};
+    finalData.layout.fields = addedFieldIdFields.map(refGeneration);
+  }
+
+  if (sections) {
+    sections.forEach(section => {
+      finalData.fieldMap = addIdToFieldsAndRenameNameAttribute(
+        section.fields,
+        integrationId
+      ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
+    });
+
+    // check for title
+    if (!finalData.layout) {
+      finalData.layout = {};
+    }
+
+    finalData.layout.type = 'tab';
+    finalData.layout.containers = sections.map(section => ({
+      collapsed: section.collapsed || true,
+      label: section.title,
+      fields: addIdToFieldsAndRenameNameAttribute(
+        section.fields,
+        integrationId
+      ).map(refGeneration),
+    }));
+  }
+
+  // Wrap everything in a adavancedSettings container
+  if (!isGeneral) {
+    finalData.layout = {
+      type: 'collapse',
+      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+    };
+  }
+
+  finalData.actions = [{ id: 'save' }];
+
+  return finalData;
+};
+
 export default {
   getFieldById,
   defaultPatchSetConverter,
