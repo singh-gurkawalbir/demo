@@ -197,8 +197,6 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
             .substring(1, patch.path.length)
             .replace(/\//g, '.');
 
-          get(resource, modifiedPath);
-
           // consider it as a remove patch
           if (get(resource, modifiedPath))
             removePatches.push({ path: patch.path, op: 'remove' });
