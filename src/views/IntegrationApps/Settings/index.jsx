@@ -134,15 +134,10 @@ export default function IntegrationAppSettings(props) {
     if ((!redirected && section === 'flows') || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
-          `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].title.replace(
-            /\s/g,
-            ''
-          )}`}`
+          `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`
         );
       } else {
-        props.history.push(
-          `${urlPrefix}/${connectorFlowSections[0].title.replace(/\s/g, '')}`
-        );
+        props.history.push(`${urlPrefix}/${connectorFlowSections[0].titleId}`);
       }
 
       setStoreChanged(false);
@@ -248,19 +243,16 @@ export default function IntegrationAppSettings(props) {
                   <ul>
                     {connectorFlowSections &&
                       connectorFlowSections.map(f => (
-                        <ListItem key={`${f.title.replace(/ /g, '')}`}>
+                        <ListItem key={`${f.titleId}`}>
                           <NavLink
                             activeClassName={classes.subSection}
                             className={classes.link}
                             to={
                               supportsMultiStore
-                                ? `${urlPrefix}/${currentStore}/${f.title.replace(
-                                    / /g,
-                                    ''
-                                  )}`
-                                : `${urlPrefix}/${f.title.replace(/ /g, '')}`
+                                ? `${urlPrefix}/${currentStore}/${f.titleId}`
+                                : `${urlPrefix}/${f.titleId}`
                             }>
-                            {f.title.replace(/ /g, '')}
+                            {f.title}
                           </NavLink>
                         </ListItem>
                       ))}

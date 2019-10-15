@@ -618,22 +618,29 @@ export function integrationAppSettings(state, id, storeId) {
 
 export function connectorFlowSections(state, id, store) {
   if (!state) return null;
+  let flowSections = [];
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { sections, supportsMultiStore } = integrationResource.settings || {};
+  const { sections = [], supportsMultiStore } =
+    integrationResource.settings || {};
 
   if (supportsMultiStore) {
     if (Array.isArray(sections) && sections.length) {
       if (store) {
-        return (sections.find(sec => sec.id === store) || {}).sections || [];
+        flowSections =
+          (sections.find(sec => sec.id === store) || {}).sections || [];
+      } else {
+        flowSections =
+          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
       }
-
-      return (
-        (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || []
-      );
     }
+  } else {
+    flowSections = sections;
   }
 
-  return sections || [];
+  return flowSections.map(sec => ({
+    ...sec,
+    titleId: sec.title.replace(/\s/g, ''),
+  }));
 }
 
 export function integrationAppGeneralSettings(state, id, storeId) {
