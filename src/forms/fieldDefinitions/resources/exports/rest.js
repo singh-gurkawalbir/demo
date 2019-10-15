@@ -49,8 +49,6 @@ export default {
   'rest.pagingMethod': {
     type: 'select',
     label: 'Paging Method',
-    defaultValue: r =>
-      r && r.rest && r.rest.pagingMethod ? r.rest.pagingMethod : '',
     options: [
       {
         items: [

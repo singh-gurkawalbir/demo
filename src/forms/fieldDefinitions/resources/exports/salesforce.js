@@ -32,8 +32,6 @@ export default {
     mode: 'sql',
     label: 'SOQL Query',
     omitWhenHidden: true,
-    defaultValue: r =>
-      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query,
     visibleWhen: [
       {
         field: 'salesforce.executionType',
