@@ -128,6 +128,7 @@ export default {
         generate => generate.id === mappingTmp.generate
       );
 
+      // TODO (Aditya): Check for below object type comparison
       if (
         fieldMetadata &&
         fieldMetadata.type === 'multiselect' &&
