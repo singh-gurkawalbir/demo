@@ -8,7 +8,7 @@ import MappingDialog from '../../../components/MappingDialog/Mapping';
 import Description from './Actions/Description';
 
 export default {
-  columns: (resource, actionProps) => {
+  columns: (sectionContext, actionProps) => {
     const { hasNSInternalIdLookup, showFlowSettings, showMatchRuleEngine } =
       actionProps && actionProps.rest;
     const columnData = [];

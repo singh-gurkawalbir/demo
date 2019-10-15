@@ -488,7 +488,7 @@ export function matchingConnectionList(state, connection = {}) {
     type: 'connections',
     filter: {
       $where() {
-        if (this.sandbox !== (preferences.environment === 'sandbox')) {
+        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
           return false;
         }
 

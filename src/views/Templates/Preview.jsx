@@ -59,8 +59,6 @@ export default function TemplatePreview(props) {
   const components = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
-  const { name, description, user } = template;
-  const { name: username, company } = user;
   const columns = [
     {
       heading: 'Name',
@@ -72,11 +70,23 @@ export default function TemplatePreview(props) {
   ];
 
   useEffect(() => {
+    if (!template) {
+      dispatch(actions.marketplace.requestTemplates());
+    }
+  }, [dispatch, template]);
+  useEffect(() => {
     if (!components || (isEmpty(components) && !requested)) {
       dispatch(actions.template.requestPreview(templateId));
       setRequested(true);
     }
   }, [components, dispatch, requested, templateId]);
+
+  if (!template) {
+    return null;
+  }
+
+  const { name, description, user } = template;
+  const { name: username, company } = user || {};
   const { objects = [] } = components;
   const installTemplate = () => {
     const { installSteps, connectionMap } =
