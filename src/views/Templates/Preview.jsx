@@ -82,7 +82,7 @@ export default function TemplatePreview(props) {
   }, [components, dispatch, requested, templateId]);
 
   if (!template) {
-    return null;
+    return <Typography>Loading Template...</Typography>;
   }
 
   const { name, description, user } = template;
