@@ -80,6 +80,9 @@ export default function DynaHook(props) {
   const { resources: allScripts } = useSelector(state =>
     selectors.resourceList(state, { type: 'scripts' })
   );
+  const { resources: allStacks } = useSelector(state =>
+    selectors.resourceList(state, { type: 'stacks' })
+  );
   const {
     id,
     disabled,
@@ -90,6 +93,8 @@ export default function DynaHook(props) {
     required,
     value,
     label,
+    hookType,
+    preHookData = {},
   } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -115,7 +120,7 @@ export default function DynaHook(props) {
         <JavaScriptEditorDialog
           title="Script Editor"
           id={id}
-          data="{}"
+          data={JSON.stringify(preHookData)}
           scriptId={value._scriptId}
           entryFunction={value.function}
           onClose={handleClose}
@@ -140,27 +145,48 @@ export default function DynaHook(props) {
             variant="filled"
             onChange={handleFieldChange('function')}
           />
-          <FormControl className={classes.select}>
-            <InputLabel htmlFor="scriptId">Script</InputLabel>
-            <Select
-              id="scriptId"
-              margin="dense"
-              variant="filled"
-              value={value._scriptId}
-              onChange={handleFieldChange('_scriptId')}>
-              {allScripts.map(s => (
-                <MenuItem key={s._id} value={s._id}>
-                  {s.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <IconButton
-            onClick={handleEditorClick}
-            className={classes.editorButton}
-            data-test={id}>
-            <EditIcon />
-          </IconButton>
+          {hookType === 'stack' && (
+            <FormControl className={classes.select}>
+              <InputLabel htmlFor="stackId">Stack</InputLabel>
+              <Select
+                id="stackId"
+                margin="dense"
+                variant="filled"
+                value={value._stackId}
+                onChange={handleFieldChange('_stackId')}>
+                {allStacks.map(s => (
+                  <MenuItem key={s._id} value={s._id}>
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {hookType === 'script' && (
+            <FormControl className={classes.select}>
+              <InputLabel htmlFor="scriptId">Script</InputLabel>
+              <Select
+                id="scriptId"
+                margin="dense"
+                variant="filled"
+                value={value._scriptId}
+                onChange={handleFieldChange('_scriptId')}>
+                {allScripts.map(s => (
+                  <MenuItem key={s._id} value={s._id}>
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {hookType === 'script' && value._scriptId && (
+            <IconButton
+              onClick={handleEditorClick}
+              className={classes.editorButton}
+              data-test={id}>
+              <EditIcon />
+            </IconButton>
+          )}
         </div>
       </div>
     </Fragment>
