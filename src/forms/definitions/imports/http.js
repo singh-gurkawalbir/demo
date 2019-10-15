@@ -95,7 +95,10 @@ export default {
     },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
-    uploadFile: { fieldId: 'uploadFile' },
+    uploadFile: {
+      fieldId: 'uploadFile',
+      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+    },
     'file.csv.columnDelimiter': {
       fieldId: 'file.csv.columnDelimiter',
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
@@ -105,7 +108,6 @@ export default {
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
     'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
-    dataMappings: { formId: 'dataMappings' },
     'http.body': { fieldId: 'http.body' },
     'file.csv.rowDelimiter': {
       fieldId: 'file.csv.rowDelimiter',
@@ -163,7 +165,6 @@ export default {
       'file.csv.columnDelimiter',
       'file.csv.includeHeader',
       'file.csv.customHeaderRows',
-      'dataMappings',
       'http.body',
     ],
     type: 'collapse',
