@@ -19,80 +19,56 @@ export default {
       },
     ],
   },
-  ediFactFormat: {
-    type: 'select',
-    label: 'EDIFACT Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'AMAZON VC INVOIC', value: 'amazonvcinvoice' },
-          { label: 'AMAZON VC ORDERS', value: 'amazonvcorders' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['delimited/edifact'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'file.type',
-        is: ['delimited/edifact'],
-      },
-    ],
-  },
-  ediFormat: {
-    type: 'select',
-    label: 'Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'AgoNow Inbound 810', value: 'agonow810' },
-          { label: 'AgoNow Inbound 855', value: 'agonow855' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['fixed'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'file.type',
-        is: ['fixed'],
-      },
-    ],
-  },
-  ediX12Format: {
-    type: 'select',
+  'edix12.format': {
+    type: 'filedefinitionselect',
     label: 'EDI X12 Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'Generic 180', value: 'generic180' },
-          { label: 'Generic 850', value: 'generic850' },
-        ],
-      },
-    ],
+    format: 'edi',
+    required: r => !r,
     visibleWhen: [
       {
         field: 'file.type',
         is: ['filedefinition'],
       },
     ],
-    requiredWhen: [
+  },
+  'fixed.format': {
+    type: 'filedefinitionselect',
+    label: 'Format',
+    format: 'fixed',
+    required: r => !r,
+    visibleWhen: [
       {
         field: 'file.type',
-        is: ['filedefinition'],
+        is: ['fixed'],
       },
     ],
+  },
+  'edifact.format': {
+    type: 'filedefinitionselect',
+    label: 'EDIFACT Format',
+    format: 'ediFact',
+    required: r => !r,
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['delimited/edifact'],
+      },
+    ],
+  },
+  'file.filedefinition.rules': {
+    type: 'filedefinitioneditor',
+    label: 'File Definition Rules ',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+    ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
   uploadFile: {
     type: 'uploadfile',
@@ -204,6 +180,14 @@ export default {
         is: ['csv', 'json', 'xlsx', 'xml'],
       },
     ],
+  },
+  'file.fileDefinition.resourcePath': {
+    type: 'text',
+    label: 'Resource Path',
+  },
+  'file.fileDefinition._fileDefinitionId': {
+    type: 'text',
+    label: 'File file Definition _file Definition Id',
   },
   'file.csv.rowDelimiter': {
     type: 'select',

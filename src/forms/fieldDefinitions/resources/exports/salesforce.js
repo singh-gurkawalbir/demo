@@ -3,7 +3,6 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
-    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     omitWhenHidden: true,
     visibleWhen: [
       {
