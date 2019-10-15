@@ -4,8 +4,20 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshGenericResource from './RefreshGenericResource';
 
+/**
+ *
+ * Setting options.disableOptionsLoad= true, will restrict fetch of resources
+ */
 export default function DynaSelectOptionsGenerator(props) {
-  const { connectionId, resourceType, mode, options = {}, filterKey } = props;
+  const {
+    connectionId,
+    resourceType,
+    mode,
+    options = {},
+    filterKey,
+    recordType,
+    selectField,
+  } = props;
   const dispatch = useDispatch();
   const { status, data, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources(
@@ -13,7 +25,9 @@ export default function DynaSelectOptionsGenerator(props) {
       connectionId,
       mode,
       options.resourceToFetch || resourceType,
-      filterKey
+      filterKey,
+      recordType,
+      selectField
     )
   );
   const handleFetchResource = useCallback(() => {
@@ -26,24 +40,43 @@ export default function DynaSelectOptionsGenerator(props) {
           metadataType: resource,
           mode,
           filterKey,
+          recordType,
+          selectField,
         })
       );
     }
-  }, [connectionId, data, dispatch, filterKey, mode, options, resourceType]);
+  }, [
+    connectionId,
+    data,
+    dispatch,
+    filterKey,
+    mode,
+    options.resourceToFetch,
+    recordType,
+    resourceType,
+    selectField,
+  ]);
   const handleRefreshResource = () => {
     const resource = options.resourceToFetch || resourceType;
 
     if (resource) {
       dispatch(
-        actions.metadata.refresh(connectionId, resource, mode, filterKey)
+        actions.metadata.refresh(
+          connectionId,
+          resource,
+          mode,
+          filterKey,
+          recordType,
+          selectField
+        )
       );
     }
   };
 
   return (
     <RefreshGenericResource
-      resourceToFetch={props.options.resourceToFetch}
-      resetValue={props.options.resetValue}
+      resourceToFetch={options.resourceToFetch || resourceType}
+      resetValue={options.resetValue}
       handleFetchResource={handleFetchResource}
       handleRefreshResource={handleRefreshResource}
       fieldStatus={status}
