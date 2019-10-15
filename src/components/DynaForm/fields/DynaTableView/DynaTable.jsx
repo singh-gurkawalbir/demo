@@ -155,6 +155,7 @@ export default function DynaTable(props) {
         modifiedOptions = {
           options: [
             {
+              // Filter out non-truthy values from options. IA sends [null] as initial options for select and multisselect fields
               items: op.options.filter(Boolean).map(opt => ({
                 label: opt.text || opt.label,
                 value: opt.id || opt.value,

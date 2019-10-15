@@ -131,16 +131,6 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
-export const getFieldConfig = (field = {}) => {
-  const newField = { ...field };
-
-  if (!newField.type || newField.type === 'input') {
-    newField.type = 'text';
-  }
-
-  return newField;
-};
-
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {
@@ -252,8 +242,18 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) =>
-  fields.map(field => {
+const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
+  const getFieldConfig = (field = {}) => {
+    const newField = { ...field };
+
+    if (!newField.type || newField.type === 'input') {
+      newField.type = 'text';
+    }
+
+    return newField;
+  };
+
+  return fields.map(field => {
     // TODO: generate correct name path
     const { name, options, tooltip } = field;
     // name is the unique identifier....verify with Ashok
@@ -277,6 +277,7 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) =>
       ],
     };
   });
+};
 
 export const integrationSettingsToDynaFormMetadata = (
   meta,
