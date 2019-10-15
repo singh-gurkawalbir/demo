@@ -4,6 +4,7 @@ import CeligoLogo from '../../components/CeligoLogo';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    flexGrow: 1,
     display: 'grid',
     gridTemplateColumns: '40% 60%',
     height: '100vh',

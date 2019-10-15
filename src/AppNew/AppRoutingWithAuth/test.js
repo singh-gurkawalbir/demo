@@ -11,7 +11,7 @@ import { AppRoutingWithAuth } from './index';
 import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../themeProvider';
-import AppRouting from '../AppRouting';
+import { PageContentComponents as AppRouting } from '../';
 
 // fireEvent
 // Ok, so here's what your tests might look like
