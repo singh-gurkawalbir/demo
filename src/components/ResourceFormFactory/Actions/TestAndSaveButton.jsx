@@ -71,7 +71,7 @@ function reducer(state, action) {
 
 const TestAndSaveButton = props => {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
-  const { classes, resourceType, resourceId, label } = props;
+  const { classes, resourceType, resourceId, label, disabled } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = useCallback(
     values =>
@@ -135,7 +135,7 @@ const TestAndSaveButton = props => {
       <TestButton {...props} isTestOnly={false} />
       <DynaAction
         {...props}
-        disableButton={pingLoading}
+        disabled={disabled || pingLoading || !!formValues}
         onClick={values => {
           clearComms();
           handleTestConnection(values);
