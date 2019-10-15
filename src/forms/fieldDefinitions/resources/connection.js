@@ -23,28 +23,6 @@ export default {
     type: 'selectscopes',
     label: 'Configure Scopes',
   },
-  type: {
-    type: 'select',
-    label: 'Type',
-    options: [
-      {
-        items: [
-          { label: 'NetSuite', value: 'netsuite' },
-          { label: 'Salesforce', value: 'salesforce' },
-          { label: 'FTP', value: 'ftp' },
-          { label: 'S3', value: 's3' },
-          { label: 'REST', value: 'rest' },
-          { label: 'Wrapper', value: 'wrapper' },
-          { label: 'HTTP', value: 'http' },
-          { label: 'PostgreSQL', value: 'postgresql' },
-          { label: 'MongoDB', value: 'mongodb' },
-          { label: 'MySQL', value: 'mysql' },
-          { label: 'Microsoft SQL', value: 'mssql' },
-          { label: 'AS2', value: 'as2' },
-        ],
-      },
-    ],
-  },
   name: {
     type: 'text',
     label: 'Name',
@@ -451,6 +429,7 @@ export default {
   'rest.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable Strict SSL',
+    defaultValue: r => r && r.rest && r.rest.disableStrictSSL,
   },
   'rest.authType': {
     type: 'select',
@@ -774,6 +753,7 @@ export default {
   'http.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable Strict SSL',
+    defaultValue: r => r && r.http && r.http.disableStrictSSL,
   },
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
@@ -1204,7 +1184,7 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use Passive Mode',
-    defaultValue: true,
+    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
     type: 'select',
@@ -1230,20 +1210,25 @@ export default {
   },
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
+    defaultValue: r => r && r.ftp && r.ftp.userDirectoryIsRoot,
     label: 'User Directory Is Root',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
+    defaultValue: r => r && r.ftp && r.ftp.useImplicitFtps,
     label: 'Use Implicit FTPS',
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
+    defaultValue: r => r && r.ftp && r.ftp.requireSocketReUse,
     label: 'Require Socket Reuse',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.usePgp': {
     type: 'checkbox',
+    defaultValue: r =>
+      r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey),
     label: 'Use PGP Encryption',
   },
   'ftp.pgpEncryptKey': {
