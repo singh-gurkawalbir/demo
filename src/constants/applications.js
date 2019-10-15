@@ -674,7 +674,7 @@ const connectors = [
   // { id: 'yammer', name: 'Yammer', type: 'http', assistant: 'yammer' },
   { id: 'zendesk', name: 'Zendesk', type: 'http', assistant: 'zendesk' },
   { id: 'zimbra', name: 'Zimbra', type: 'http', assistant: 'zimbra' },
-  { id: 'zoho', name: 'Zoho', type: 'http', assistant: 'zoho' },
+  // { id: 'zoho', name: 'Zoho', type: 'http', assistant: 'zoho' },
   { id: 'zohobooks', name: 'Zoho Books', type: 'http', assistant: 'zohobooks' },
   { id: 'zohocrm', name: 'Zoho CRM', type: 'http', assistant: 'zohocrm' },
   { id: 'zohodesk', name: 'Zoho Desk', type: 'http', assistant: 'zohodesk' },
