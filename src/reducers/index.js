@@ -544,6 +544,8 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
+// #begin integrationApps Region
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
@@ -576,32 +578,62 @@ export function integrationConnectionList(state, integrationId) {
 }
 
 export function integrationAppConnectionList(state, integrationId, store) {
+  if (!state) return [];
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, sections } = integrationResource.settings || {};
   const integrationConnections = fromData.resourceList(state.data, {
-    type: 'flows',
+    type: 'connections',
     filter: { _integrationId: integrationId },
   });
 
-  integrationConnections.ressources = integrationConnections.resources.filter(
-    c => c.id === store
+  if (!supportsMultiStore || !store) {
+    return integrationConnections;
+  }
+
+  const flows = [];
+  const connections = [];
+  const selectedStore = (sections || []).find(s => s.id === store) || {};
+
+  (selectedStore.sections || []).forEach(sec => {
+    flows.push(...map(sec.flows, '_id'));
+  });
+  flows.forEach(f => {
+    let exp;
+    let imp;
+    const flow = resource(state, 'flows', f) || {};
+
+    if (flow._exportId) {
+      exp = resource(state, 'exports', flow._exportId) || {};
+      connections.push(exp._connectionId);
+    }
+
+    if (flow._importId) {
+      imp = resource(state, 'imports', flow._importId) || {};
+      connections.push(imp._connectionId);
+    }
+
+    (flow.pageGenerators || []).forEach(pg => {
+      exp = resource(state, 'exports', pg._exportId) || {};
+      connections.push(exp._connectionId);
+    });
+    (flow.pageProcessors || []).forEach(pp => {
+      imp =
+        resource(
+          state,
+          pp.type === 'import' ? 'imports' : 'exports',
+          pp.type === 'import' ? pp._importId : pp._exportId
+        ) || {};
+      connections.push(imp._connectionId);
+    });
+  });
+  integrationConnections.resources = integrationConnections.resources.filter(
+    c => connections.includes(c._id)
   );
 
   return integrationConnections;
-}
-
-export function resourceReferences(state) {
-  return fromSession.resourceReferences(state && state.session);
-}
-
-export function resourceDetailsMap(state) {
-  return fromData.resourceDetailsMap(state.data);
-}
-
-export function processors(state) {
-  return fromData.processors(state.data);
-}
-
-export function isAgentOnline(state, agentId) {
-  return fromData.isAgentOnline(state.data, agentId);
 }
 
 export function integrationAppSettings(state, id, storeId) {
@@ -785,6 +817,24 @@ export function addNewStoreSteps(state, integrationId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+// #end integrationApps Region
+
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state && state.session);
+}
+
+export function resourceDetailsMap(state) {
+  return fromData.resourceDetailsMap(state.data);
+}
+
+export function processors(state) {
+  return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion
