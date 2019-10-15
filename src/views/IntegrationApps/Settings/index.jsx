@@ -92,11 +92,28 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function LHSItem(props) {
+  const classes = useStyles();
+  const { to, label } = props;
+
+  return (
+    <ListItem className={classes.listItem}>
+      <NavLink
+        activeClassName={classes.activeLink}
+        className={classes.link}
+        to={to}>
+        {label}
+      </NavLink>
+    </ListItem>
+  );
+}
+
 export default function IntegrationAppSettings(props) {
   const { integrationId, storeId, section } = props.match.params;
   const classes = useStyles();
   const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
+  const urlPrefix = getRoutePath(`connectors/${integrationId}/settings`);
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
@@ -117,17 +134,14 @@ export default function IntegrationAppSettings(props) {
     if ((!redirected && section === 'flows') || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
-          `${`/pg/connectors/${integrationId}/settings/${currentStore}/${connectorFlowSections[0].title.replace(
+          `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].title.replace(
             /\s/g,
             ''
           )}`}`
         );
       } else {
         props.history.push(
-          `/pg/connectors/${integrationId}/settings/${connectorFlowSections[0].title.replace(
-            /\s/g,
-            ''
-          )}`
+          `${urlPrefix}/${connectorFlowSections[0].title.replace(/\s/g, '')}`
         );
       }
 
@@ -143,6 +157,7 @@ export default function IntegrationAppSettings(props) {
     section,
     storeChanged,
     supportsMultiStore,
+    urlPrefix,
   ]);
 
   useEffect(() => {
@@ -160,7 +175,9 @@ export default function IntegrationAppSettings(props) {
   };
 
   const handleAddNewStoreClick = () => {
-    props.history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
+    props.history.push(
+      getRoutePath(`connectors/${integrationId}/install/addNewStore`)
+    );
   };
 
   const handleTagChangeHandler = tag => {
@@ -224,14 +241,7 @@ export default function IntegrationAppSettings(props) {
               }}>
               <List>
                 {hasGeneralSettings && (
-                  <ListItem className={classes.listItem}>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to={`/pg/connectors/${integrationId}/settings/general`}>
-                      General
-                    </NavLink>
-                  </ListItem>
+                  <LHSItem to={`${urlPrefix}/general`} label="General" />
                 )}
                 <ListItem className={classes.listItem}>
                   Integration Flows
@@ -244,14 +254,11 @@ export default function IntegrationAppSettings(props) {
                             className={classes.link}
                             to={
                               supportsMultiStore
-                                ? `/pg/connectors/${integrationId}/settings/${currentStore}/${f.title.replace(
+                                ? `${urlPrefix}/${currentStore}/${f.title.replace(
                                     / /g,
                                     ''
                                   )}`
-                                : `/pg/connectors/${integrationId}/settings/${f.title.replace(
-                                    / /g,
-                                    ''
-                                  )}`
+                                : `${urlPrefix}/${f.title.replace(/ /g, '')}`
                             }>
                             {f.title.replace(/ /g, '')}
                           </NavLink>
@@ -260,49 +267,12 @@ export default function IntegrationAppSettings(props) {
                   </ul>
                 </ListItem>
                 {showAPITokens && (
-                  <ListItem className={classes.listItem}>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to={`/pg/connectors/${integrationId}/settings/tokens`}>
-                      API Tokens
-                    </NavLink>
-                  </ListItem>
+                  <LHSItem to={`${urlPrefix}/tokens`} label="API Tokens" />
                 )}
-                <ListItem className={classes.listItem}>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to={`/pg/connectors/${integrationId}/settings/connections`}>
-                    Connections
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.listItem}>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to={`/pg/connectors/${integrationId}/settings/users`}>
-                    Users
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.listItem}>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to={`/pg/connectors/${integrationId}/settings/audit`}>
-                    Audit Log
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.listItem}>
-                  {integration._connectorId && (
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to={`/pg/connectors/${integrationId}/settings/uninstall`}>
-                      Uninstall
-                    </NavLink>
-                  )}
-                </ListItem>
+                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
+                <LHSItem to={`${urlPrefix}/users`} label="Users" />
+                <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
+                <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
             </Drawer>
           </div>
@@ -333,11 +303,11 @@ export default function IntegrationAppSettings(props) {
                 )}
               />
               <Route
-                path={`/pg/connectors/${integrationId}/settings/users`}
+                path={getRoutePath(`connectors/:integrationId/settings/users`)}
                 component={Users}
               />
               <Route
-                path={`/pg/connectors/${integrationId}/settings/audit`}
+                path={getRoutePath('connectors/:integrationId/settings/audit')}
                 component={AuditLog}
               />
               <Route
