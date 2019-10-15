@@ -16,7 +16,8 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
   const rules = useMemo(
     () =>
       resource && resource[transformLookup] && resource[transformLookup].rules,
-    [resource, transformLookup]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
