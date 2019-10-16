@@ -271,11 +271,12 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
 
   return fields.map(field => {
     // TODO: generate correct name path
-    const { name, options, tooltip } = field;
+    const { name, options, default: defaultValue, tooltip } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
       ...getFieldConfig(field),
+      defaultValue,
       name: `/${name}`,
       _integrationId,
       id: name,
@@ -349,7 +350,7 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'save' }];
+  finalData.actions = [{ id: 'saveintegrationsettings' }];
 
   return finalData;
 };

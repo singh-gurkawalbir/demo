@@ -9,6 +9,7 @@ import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
+import { defaultPatchSetConverter } from '../../forms/utils';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -122,6 +123,28 @@ export function* downloadFile({ resourceType, id }) {
   } catch (e) {
     return true;
   }
+}
+
+export function* updateIntegrationSettings({ storeId, integrationId, values }) {
+  const path = `/integrations/${integrationId}/settings/persistSettings`;
+  let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
+    .newDocument;
+
+  if (storeId) {
+    payload = { [storeId]: payload };
+  }
+
+  payload = {
+    pending: payload,
+  };
+  yield call(apiCallWithRetry, {
+    path,
+    opts: {
+      method: 'put',
+      body: payload,
+    },
+    message: 'Saving integration settings',
+  });
 }
 
 export function* patchResource({ resourceType, id, patchSet, options = {} }) {
@@ -280,6 +303,10 @@ export function* requestDeregister({ connectionId, integrationId }) {
 
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE,
+    updateIntegrationSettings
+  ),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
