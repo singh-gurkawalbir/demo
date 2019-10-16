@@ -222,6 +222,7 @@ const PageProcessor = ({
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}
           resource={resource}
+          resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}
         />
