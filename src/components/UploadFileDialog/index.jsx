@@ -7,6 +7,7 @@ import {
   Button,
   DialogTitle,
   Divider,
+  Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
@@ -43,15 +44,20 @@ export default function UploadFileDialog(props) {
 
   return (
     <Dialog open onClose={onClose} aria-labelledby="upload-file-dialog">
-      <IconButton
-        aria-label="Close"
-        onClick={onClose}
-        data-test="showUploadFileDialogModal"
-        className={classes.closeButton}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle id="upload-file-dialog" className={classes.title}>
-        Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+      <DialogTitle
+        id="upload-file-dialog"
+        className={classes.title}
+        disableTypography>
+        <Typography variant="h6">
+          Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+        </Typography>
+        <IconButton
+          aria-label="Close"
+          onClick={onClose}
+          data-test="showUploadFileDialogModal"
+          className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <Divider variant="middle" />
       <DialogContent>

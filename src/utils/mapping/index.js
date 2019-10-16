@@ -78,7 +78,6 @@ export default {
     switch (application) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return '/netsuite_da/mapping';
-      default:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
@@ -90,6 +89,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
+      default:
     }
   },
   getGenerateLabelForMapping: application => {

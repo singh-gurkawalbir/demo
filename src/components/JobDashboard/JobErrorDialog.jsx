@@ -113,8 +113,8 @@ function JobErrorDialog({
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle className={classes.title}>
-        <Typography>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography variant="h6">
           {`${integrationName} > ${flowJob && flowJob.name}`}
         </Typography>
         <IconButton

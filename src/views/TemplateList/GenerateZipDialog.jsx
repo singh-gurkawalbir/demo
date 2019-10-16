@@ -10,17 +10,14 @@ import {
   Button,
   DialogTitle,
   Divider,
+  Typography,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import CloseIcon from '../../components/icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -57,15 +54,15 @@ export default function GenerateZipModal(props) {
 
   return (
     <Dialog open onClose={onClose} aria-labelledby="generate-template-zip">
-      <IconButton
-        aria-label="Close"
-        onClick={onClose}
-        data-test="closeGenerateZipDialog"
-        className={classes.closeButton}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle id="generate-template-zip" className={classes.title}>
-        Generate Template Zip
+      <DialogTitle id="generate-template-zip" disableTypography>
+        <Typography variant="h6">Generate Template Zip</Typography>
+        <IconButton
+          aria-label="Close"
+          onClick={onClose}
+          data-test="closeGenerateZipDialog"
+          className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <Divider variant="middle" />
       <DialogContent>

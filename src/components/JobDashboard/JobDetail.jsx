@@ -165,6 +165,7 @@ function JobDetail({
           <Checkbox
             disabled={!(job.retriable || job.numError)}
             checked={isSelected}
+            color="primary"
             onChange={event => handleSelectChange(event)}
           />
         </TableCell>

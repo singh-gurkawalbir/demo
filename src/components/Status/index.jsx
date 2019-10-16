@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import ArrowRightIcon from '../../../icons/ArrowRightIcon';
+import ArrowRightIcon from '../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,15 +13,12 @@ const useStyles = makeStyles(theme => ({
     padding: '0px',
     color: theme.palette.text.primary,
   },
-  counts: {
-    marginRight: 5,
-  },
   label: {
     textTransform: 'initial',
   },
 }));
 
-function Status({ children, count, label, className }) {
+function Status({ children, label, className }) {
   const classes = useStyles();
 
   return (
@@ -31,14 +28,6 @@ function Status({ children, count, label, className }) {
         variant="text"
         className={classes.wrapper}>
         {children}
-        {count && (
-          <Typography
-            variant="body2"
-            component="span"
-            className={classes.counts}>
-            {count}
-          </Typography>
-        )}
         <Typography variant="body2" component="span" className={classes.label}>
           {label}
         </Typography>
