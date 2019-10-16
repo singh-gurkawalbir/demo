@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
     margin: theme.spacing(1),
-    padding: theme.spacing(0, 1, 0, 2),
+    padding: theme.spacing(0, 0.5, 0, 2),
   },
   logoContainer: {
     display: 'flex',
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AppPill({ appId }) {
+export default function AppPill({ appId, onRemove }) {
   const classes = useStyles();
   const app = applications.find(a => a.id === appId);
 
@@ -44,7 +44,7 @@ export default function AppPill({ appId }) {
           assistant={app.icon || app.assistant}
         />
       </div>
-      <IconButton size="small">
+      <IconButton onClick={onRemove} size="small">
         <CloseIcon />
       </IconButton>
     </div>

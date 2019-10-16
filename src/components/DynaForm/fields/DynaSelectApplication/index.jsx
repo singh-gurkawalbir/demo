@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
   selectedContainer: {
     display: 'flex',
     flexWrap: 'wrap',
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -189,15 +190,6 @@ export default function SelectApplication({
     return true;
   };
 
-  const handleChange = e => {
-    if (onFieldChange) {
-      const newValue = isMulti ? [...value, e.value] : e.value;
-
-      console.log('newValue', newValue);
-      onFieldChange(id, newValue);
-    }
-  };
-
   const defaultValue =
     !value || isMulti
       ? ''
@@ -205,6 +197,22 @@ export default function SelectApplication({
           value,
           label: applications.find(a => a.id === value).name,
         };
+
+  function handleChange(e) {
+    if (onFieldChange) {
+      const newValue = isMulti ? [...value, e.value] : e.value;
+
+      // console.log('newValue', newValue);
+      onFieldChange(id, newValue);
+    }
+  }
+
+  function handleRemove(index) {
+    const newApps = [...value];
+
+    newApps.splice(index, 1);
+    onFieldChange(id, newApps);
+  }
 
   return (
     <FormControl
@@ -217,6 +225,7 @@ export default function SelectApplication({
       </InputLabel>
       <Select
         name={name}
+        value={isMulti ? '' : undefined}
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option }}
@@ -230,8 +239,16 @@ export default function SelectApplication({
 
       {isMulti && value.length > 0 && (
         <div className={classes.selectedContainer}>
-          {value.map(appId => (
-            <AppPill key={appId} appId={appId} />
+          {value.map((appId, i) => (
+            <AppPill
+              // i think we are ok to add index when a user selects multiple
+              // same applications. Even if a user deletes a matching app, the
+              // keys would still work out. Not sure how else to assign keys here.
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${appId}-${i}`}
+              appId={appId}
+              onRemove={() => handleRemove(i)}
+            />
           ))}
         </div>
       )}

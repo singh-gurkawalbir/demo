@@ -217,6 +217,9 @@ function FlowBuilder(props) {
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
+  const flowData = useSelector(state =>
+    selectors.getFlowDataState(state, flowId)
+  );
   // #endregion
   const patchFlow = useCallback(
     (path, value, commit = false) => {
@@ -299,6 +302,10 @@ function FlowBuilder(props) {
   }, [createdProcessorId, patchFlow]);
   // #endregion
 
+  useEffect(() => {
+    if (flowId && !flowData) dispatch(actions.flowData.init(flow));
+  }, [dispatch, flow, flowData, flowId]);
+
   const pushOrReplaceHistory = to => {
     if (match.isExact) {
       history.push(to);
@@ -321,13 +328,6 @@ function FlowBuilder(props) {
 
   // eslint-disable-next-line
   // console.log(flow);
-  const flowData = useSelector(state =>
-    selectors.getFlowDataState(state, flowId)
-  );
-
-  useEffect(() => {
-    if (!flowData) dispatch(actions.flowData.init(flow));
-  }, [dispatch, flow, flowData]);
 
   return (
     <Fragment>
