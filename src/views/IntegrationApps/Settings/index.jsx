@@ -274,7 +274,9 @@ export default function IntegrationAppSettings(props) {
                 path={getRoutePath(
                   `/connectors/:integrationId/settings/general`
                 )}
-                component={GeneralSection}
+                render={props => (
+                  <GeneralSection {...props} storeId={currentStore} />
+                )}
               />
               <Route
                 path={getRoutePath(
