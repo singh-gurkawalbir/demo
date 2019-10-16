@@ -305,7 +305,7 @@ export default function ImportMapping(props) {
           <CloseIcon />
         </IconButton>
       )}
-      <DialogTitle>
+      <DialogTitle disableTypography>
         <Typography variant="h6">{title}</Typography>
       </DialogTitle>
       <DialogContent className={classes.modalContent}>
