@@ -223,6 +223,7 @@ function FlowBuilder(props) {
       const patchSet = [{ op: 'replace', path, value }];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
 
       if (commit) {
         dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
@@ -320,6 +321,13 @@ function FlowBuilder(props) {
 
   // eslint-disable-next-line
   // console.log(flow);
+  const flowData = useSelector(state =>
+    selectors.getFlowDataState(state, flowId)
+  );
+
+  useEffect(() => {
+    if (!flowData) dispatch(actions.flowData.init(flow));
+  }, [dispatch, flow, flowData]);
 
   return (
     <Fragment>

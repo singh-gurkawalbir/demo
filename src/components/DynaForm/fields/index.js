@@ -60,6 +60,7 @@ export default {
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
+  staticMapWidget: DynaStaticMap,
   csvparse: DynaCsvParse,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,

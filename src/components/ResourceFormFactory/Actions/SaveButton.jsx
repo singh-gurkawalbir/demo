@@ -1,7 +1,9 @@
 import { withStyles } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
+import * as selectors from '../../../reducers';
 
 const styles = theme => ({
   actionButton: {
@@ -15,18 +17,29 @@ const SaveButton = props => {
     resourceType,
     resourceId,
     classes,
+    disabled = false,
   } = props;
   const dispatch = useDispatch();
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+  const [disableSave, setDisableSave] = useState(false);
   const handleSubmitForm = values => {
     dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
+    setDisableSave(true);
   };
+
+  useEffect(() => {
+    if (formState.submitComplete) setDisableSave(false);
+  }, [formState.submitComplete]);
 
   return (
     <DynaAction
       {...props}
       className={classes.actionButton}
+      disabled={disabled || disableSave}
       onClick={handleSubmitForm}>
-      {submitButtonLabel}
+      {disableSave ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
 };

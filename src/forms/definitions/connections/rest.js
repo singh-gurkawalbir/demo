@@ -2,6 +2,8 @@ export default {
   preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
+    delete newValues['/mode'];
+
     if (!newValues['/rest/pingSuccessPath']) {
       newValues['/rest/pingSuccessValues'] = undefined;
     }
@@ -65,7 +67,6 @@ export default {
       type: 'radiogroup',
       label: 'Mode',
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [

@@ -99,7 +99,8 @@ function AppBlock({
   actions,
   opacity = 1,
   flowId,
-  resourceId,
+  resourceType,
+  resource,
   ...rest
 }) {
   const classes = useStyles();
@@ -205,7 +206,8 @@ function AppBlock({
                 <a.Component
                   open={activeAction === a.name}
                   flowId={flowId}
-                  resourceId={resourceId}
+                  resource={resource}
+                  resourceType={resourceType}
                   onClose={() => setActiveAction(null)}
                 />
               </Fragment>

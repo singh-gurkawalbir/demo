@@ -7,6 +7,8 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': 'ticket_fields.json',
     '/http/ping/method': 'GET',
+    '/http/ping/failPath': 'require_login',
+    '/http/ping/failValues': [true],
     '/http/baseURI': `https://${
       formValues['/http/freshdeskSubdomain']
     }.freshdesk.com/`,

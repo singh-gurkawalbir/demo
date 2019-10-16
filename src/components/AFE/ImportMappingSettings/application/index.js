@@ -52,7 +52,16 @@ const getFormattedLookup = (lookup, formVal) => {
 
 export default {
   getMetaData: options => {
-    const { application, value, lookup = {}, extractFields } = options;
+    const {
+      application,
+      value,
+      lookup = {},
+      extractFields,
+      connectionId,
+      recordType,
+      generate,
+      generateFields,
+    } = options;
     let fieldMeta = {};
 
     switch (application) {
@@ -68,6 +77,10 @@ export default {
           value,
           lookup,
           extractFields,
+          connectionId,
+          recordType,
+          generate,
+          generateFields,
         });
         break;
       case adaptorTypeMap.AS2Import:
@@ -113,18 +126,25 @@ export default {
     }
 
     if (formVal.fieldMappingType === 'hardCoded') {
-      // in case of hardcoded value, we dont save extract property
-      switch (formVal.hardcodedAction) {
-        case 'useEmptyString':
-          settings.hardCodedValue = '';
-          break;
-        case 'useNull':
-          settings.hardCodedValue = null;
-          break;
-        case 'default':
-          settings.hardCodedValue = formVal.hardcodedDefault;
-          break;
-        default:
+      if (formVal.hardcodedAction) {
+        switch (formVal.hardcodedAction) {
+          case 'useEmptyString':
+            settings.hardCodedValue = '';
+            break;
+          case 'useNull':
+            settings.hardCodedValue = null;
+            break;
+          case 'default':
+            settings.hardCodedValue = formVal.hardcodedDefault;
+            break;
+          default:
+        }
+      } else if (formVal.hardcodedSelect) {
+        settings.hardCodedValue = Array.isArray(formVal.hardcodedSelect)
+          ? formVal.hardcodedSelect.join(',')
+          : formVal.hardcodedSelect;
+      } else if (formVal.hardcodedCheckbox) {
+        settings.hardCodedValue = formVal.hardcodedCheckbox;
       }
     } else if (
       formVal.fieldMappingType === 'standard' ||
