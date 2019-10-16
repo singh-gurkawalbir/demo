@@ -21,9 +21,6 @@ const useStyles = makeStyles({
   child: {
     flexBasis: '100%',
     paddingRight: 10,
-    '&:last-child': {
-      // paddingRight: 0,
-    },
   },
 });
 const getCorrespondingFieldMap = (fields, fieldMap) =>

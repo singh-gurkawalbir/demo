@@ -155,7 +155,10 @@ export default function CeligoTable({
               />
             </TableCell>
           )}
-          {columns.map(col =>
+          {(typeof columns === 'function'
+            ? columns('', actionProps)
+            : columns
+          ).map(col =>
             col.orderBy ? (
               <TableCell
                 style={col.width ? { width: col.width } : undefined}
@@ -206,7 +209,10 @@ export default function CeligoTable({
                 )}
               </TableCell>
             )}
-            {columns.map((col, index) =>
+            {(typeof columns === 'function'
+              ? columns(r, actionProps)
+              : columns
+            ).map((col, index) =>
               index === 0 ? (
                 <TableCell
                   component="th"

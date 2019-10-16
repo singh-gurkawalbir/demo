@@ -11,6 +11,7 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
@@ -30,6 +31,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  flowData,
   integrationApps,
   templates,
   oAuthAuthorize,
@@ -185,6 +187,33 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
     resourceId,
     stage
   );
+}
+
+export function getSampleData(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  isPageGenerator
+) {
+  return fromFlowData.getSampleData(
+    state && state.flowData,
+    flowId,
+    resourceId,
+    stage,
+    isPageGenerator
+  );
+}
+
+export function getFlowReferencesForResource(state, resourceId) {
+  return fromFlowData.getFlowReferencesForResource(
+    state && state.flowData,
+    resourceId
+  );
+}
+
+export function getFlowDataState(state, flowId) {
+  return fromFlowData.getFlowDataState(state && state.flowData, flowId);
 }
 
 export function apiAccessToken(state, resourceId) {

@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
-    top: theme.spacing(1),
+    top: 2,
   },
 }));
 
@@ -115,7 +115,9 @@ export default function FlowSchedule(props) {
             integration,
             preferences,
           })}>
-          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+          <DynaSubmit onClick={handleSubmit} color="primary">
+            Save
+          </DynaSubmit>
         </DynaForm>
       </DialogContent>
     </Dialog>

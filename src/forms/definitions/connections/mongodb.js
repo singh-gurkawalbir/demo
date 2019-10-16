@@ -1,4 +1,11 @@
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    delete newValues['/mode'];
+
+    return formValues;
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     mode: {
@@ -6,7 +13,6 @@ export default {
       type: 'radiogroup',
       label: 'Mode',
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [

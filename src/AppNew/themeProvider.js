@@ -414,6 +414,12 @@ const theme = {
         padding: '0px 12px',
       },
     },
+    MuiChip: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral8,
+      },
+    },
   },
 };
 

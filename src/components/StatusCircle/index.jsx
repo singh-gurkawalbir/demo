@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
   small: {
     width: 12,
     height: 12,
-    marginBottom: '0px',
   },
   success: {
     backgroundColor: theme.palette.success.main,

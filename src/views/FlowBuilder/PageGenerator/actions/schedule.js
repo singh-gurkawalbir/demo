@@ -8,8 +8,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ScheduleDialog({ flowId, resourceId, open, onClose }) {
+function ScheduleDialog({ flowId, resource, open, onClose }) {
   const classes = useStyles();
+  const resourceId = resource._id;
 
   return (
     <Dialog

@@ -1,27 +1,14 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Fragment } from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
+import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
-
-function ImportMappingDialog({ flowId, resourceId, open, onClose }) {
-  const classes = useStyles();
-
+function ImportMappingDialog({ resourceId, open, onClose }) {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Import Mapping</Typography>
-      </DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>resourceId: {resourceId}</Typography>
-    </Dialog>
+    <Fragment>
+      {open && (
+        <StandaloneImportMapping resourceId={resourceId} onClose={onClose} />
+      )}
+    </Fragment>
   );
 }
 

@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
-// import GoogleLogo from '../../static/images/googleLogo.svg';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
@@ -29,6 +28,7 @@ const mapDispatchToProps = dispatch => ({
     borderRadius: 4,
     height: 48,
     fontSize: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   editableFields: {
     textAlign: 'center',
@@ -87,6 +87,24 @@ const mapDispatchToProps = dispatch => ({
     backgroundSize: theme.spacing(2),
     height: 48,
     fontSize: 16,
+    backgroundColor: theme.palette.background.paper,
+  },
+  or: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    '&:before': {
+      content: '""',
+      width: '30%',
+      borderTop: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+    },
+    '&:after': {
+      content: '""',
+      width: '30%',
+      borderTop: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+    },
   },
 }))
 class SignIn extends Component {
@@ -170,19 +188,20 @@ class SignIn extends Component {
             type="submit"
             className={classes.submit}
             value="Submit">
-            Sign In
+            Sign in
           </Button>
           <div className={classes.forgotPass}>
-            <Link href="true" className={classes.forgotPass}>
-              Forgot Password?
+            <Link href="true" className={classes.forgotPass} variant="body2">
+              Forgot password?
             </Link>
           </div>
           <div>
+            <div className={classes.or}>or</div>
             <Button
               variant="contained"
               color="secondary"
               className={classes.googleBtn}>
-              Sign In With Google
+              Sign in with Google
             </Button>
           </div>
         </form>

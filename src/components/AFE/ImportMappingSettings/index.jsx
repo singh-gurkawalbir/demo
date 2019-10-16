@@ -21,11 +21,14 @@ export default function ImportMappingSettings(props) {
   const {
     title,
     value,
+    connectionId,
     onClose,
     extractFields,
+    generateFields,
     lookup,
     updateLookup,
     application,
+    recordType,
   } = props;
   const { generate, extract } = value;
   const classes = useStyles();
@@ -34,6 +37,10 @@ export default function ImportMappingSettings(props) {
     value,
     lookup,
     extractFields,
+    connectionId,
+    recordType,
+    generate,
+    generateFields,
   });
   const handleSubmit = formVal => {
     const mappingObj = ApplicationMappingSettings.getFormattedValue(

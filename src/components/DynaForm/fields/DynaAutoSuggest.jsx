@@ -18,15 +18,24 @@ export default function DynaAutoSuggest(props) {
     placeholder,
     onFieldChange,
     onBlur,
+    labelName,
+    valueName,
     options = [],
   } = props;
-  const suggestions = options.map(option => ({ label: option, value: option }));
-  const [inputValue, setInputValue] = useState(value || '');
+  const suggestions = options.map(option => ({
+    label: option[labelName],
+    value: option[valueName],
+  }));
+  const [inputState, setInputState] = useState({
+    inputValue: value || '',
+    isFocus: false,
+  });
+  const { inputValue, isFocus } = inputState;
   const classes = useStyles();
   const handleChange = newObj => {
     const newVal = newObj.value;
 
-    setInputValue(newVal);
+    setInputState({ ...inputState, inputValue: newVal });
 
     if (onFieldChange) onFieldChange(id, newVal);
 
@@ -35,19 +44,27 @@ export default function DynaAutoSuggest(props) {
 
   const handleBlur = () => {
     if (onBlur) onBlur(id, inputValue);
+    setInputState({ ...inputState, isFocus: false });
   };
 
   const handleInputChange = newVal => {
-    setInputValue(newVal);
+    setInputState({ isFocus: true, inputValue: newVal });
 
     if (onFieldChange) onFieldChange(id, newVal);
   };
 
+  const selectedValue =
+    !isFocus && suggestions.find(o => o.value === inputValue);
+  const inputVal =
+    (!isFocus && selectedValue && selectedValue.label) || inputValue;
+
   return (
     <FormControl disabled={disabled} className={classes.root}>
       <Select
+        key={id}
         data-test={id}
-        inputValue={inputValue}
+        inputValue={inputVal}
+        value={selectedValue}
         noOptionsMessage={() => null}
         placeholder={placeholder || ''}
         onInputChange={handleInputChange}
