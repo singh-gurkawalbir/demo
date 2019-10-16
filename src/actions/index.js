@@ -640,7 +640,7 @@ const sampleData = {
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
-    action(actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA, {
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
       resourceId,
       previewType,
@@ -653,7 +653,7 @@ const flowData = {
     previewType,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.RECEIVED_PREVIEW_DATA, {
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,
       resourceId,
       previewData,
@@ -667,7 +667,7 @@ const flowData = {
     processor,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, {
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
@@ -681,7 +681,7 @@ const flowData = {
     processedData,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.RECEIVED_PROCESSOR_DATA, {
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
       flowId,
       resourceId,
       processor,
@@ -689,7 +689,7 @@ const flowData = {
       isPageGenerator,
     }),
   fetchSampleData: (flowId, resourceId, resourceType, stage, isPageGenerator) =>
-    action(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, {
+    action(actionTypes.FLOW_DATA.SAMPLE_DATA_FETCH, {
       flowId,
       resourceId,
       resourceType,
@@ -699,13 +699,13 @@ const flowData = {
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
   resetFlowSequence: (flowId, updatedFlow) =>
-    action(actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE, { flowId, updatedFlow }),
+    action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType) =>
-    action(actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE, {
+    action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
     }),
-  updateFlow: flowId => action(actionTypes.FLOW_DATA.UPDATE_FLOW, { flowId }),
+  updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
 };
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),

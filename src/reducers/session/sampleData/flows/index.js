@@ -75,7 +75,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA: {
+      case actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST: {
         if (!resourceId) return;
         const resourceMap =
           draft[flowId][
@@ -94,7 +94,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RECEIVED_PREVIEW_DATA: {
+      case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!resourceId) return;
         const resourceMap =
           draft[flowId][
@@ -114,7 +114,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA: {
+      case actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST: {
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -130,7 +130,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RECEIVED_PROCESSOR_DATA: {
+      case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -172,7 +172,7 @@ export default function(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE: {
+      case actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET: {
         const currentFlow = draft[flowId];
         const { pageGenerators, pageProcessors } = currentFlow;
         const {

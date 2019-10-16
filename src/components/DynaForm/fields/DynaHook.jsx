@@ -120,7 +120,7 @@ export default function DynaHook(props) {
         <JavaScriptEditorDialog
           title="Script Editor"
           id={id}
-          data={JSON.stringify(preHookData)}
+          data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
           entryFunction={value.function}
           onClose={handleClose}

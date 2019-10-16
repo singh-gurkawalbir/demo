@@ -370,14 +370,14 @@ function* updateFlowData({ flowId }) {
 
 export default [
   takeEvery(
-    actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA,
+    actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
     fetchPageProcessorPreview
   ),
-  takeEvery(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, requestProcessorData),
-  takeEvery(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, fetchSampleData),
+  takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
+  takeEvery(actionTypes.FLOW_DATA.SAMPLE_DATA_FETCH, fetchSampleData),
   takeEvery(
-    actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE,
+    actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource
   ),
-  takeEvery(actionTypes.FLOW_DATA.UPDATE_FLOW, updateFlowData),
+  takeEvery(actionTypes.FLOW_DATA.FLOW_UPDATE, updateFlowData),
 ];
