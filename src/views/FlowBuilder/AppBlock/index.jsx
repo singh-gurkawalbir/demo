@@ -110,7 +110,7 @@ function AppBlock({
 
   useEffect(() => {
     if (expanded && !isOver) {
-      const timer = setTimeout(setExpanded, 2000);
+      const timer = setTimeout(setExpanded, 500);
 
       return () => clearTimeout(timer);
     }
