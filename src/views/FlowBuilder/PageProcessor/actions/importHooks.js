@@ -17,6 +17,7 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
+  const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
   const preHookData = useSelector(state => {
     const sampleData = selectors.getSampleData(
       state,
@@ -64,6 +65,7 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
           onCancel={onClose}
           preHookData={preHookData}
           preHookDataStatus={preHookDataStatus}
+          defaultValue={defaultValue}
         />
       </DialogContent>
     </Dialog>

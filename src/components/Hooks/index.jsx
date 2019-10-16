@@ -6,7 +6,13 @@ import LoadResources from '../../components/LoadResources';
 import Spinner from '../Spinner';
 
 export default function Hooks(props) {
-  const { onSave, onCancel, preHookData, preHookDataStatus } = props;
+  const {
+    onSave,
+    onCancel,
+    preHookData,
+    preHookDataStatus,
+    defaultValue = {},
+  } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
 
   // Shows loading icon till it gets sample data
@@ -14,6 +20,8 @@ export default function Hooks(props) {
     return <Spinner />;
   }
 
+  const defaultHookType =
+    defaultValue && defaultValue._stackId ? 'stack' : 'script';
   const fieldMeta = {
     fieldMap: {
       hookType: {
@@ -21,7 +29,7 @@ export default function Hooks(props) {
         name: 'hookType',
         type: 'radiogroup',
         label: 'Hook Type',
-        defaultValue: 'script',
+        defaultValue: defaultHookType,
         showOptionsHorizontally: true,
         fullWidth: true,
         options: [
@@ -39,16 +47,16 @@ export default function Hooks(props) {
         type: 'hook',
         hookType: 'script',
         preHookData,
+        defaultValue: defaultHookType === 'script' ? defaultValue : {},
         visibleWhen: [{ field: 'hookType', is: ['script'] }],
-        refreshOptionsOnChangesTo: ['hookType'],
       },
       stack: {
         id: 'stack',
         name: 'stack',
         type: 'hook',
         hookType: 'stack',
+        defaultValue: defaultHookType === 'stack' ? defaultValue : {},
         visibleWhen: [{ field: 'hookType', is: ['stack'] }],
-        refreshOptionsOnChangesTo: ['hookType'],
       },
     },
     layout: {
@@ -66,7 +74,10 @@ export default function Hooks(props) {
       selectedHook._stackId = values.stack && values.stack._stackId;
     }
 
-    if (selectedHook.function && selectedHook._scriptId) {
+    if (
+      selectedHook.function &&
+      (selectedHook._scriptId || selectedHook._stackId)
+    ) {
       onSave(selectedHook);
     } else {
       enquesnackbar({
@@ -79,7 +90,7 @@ export default function Hooks(props) {
   return (
     <LoadResources resources="scripts, stacks">
       <div>
-        <DynaForm key="hooks" fieldMeta={fieldMeta}>
+        <DynaForm fieldMeta={fieldMeta}>
           <Button data-test="cancelLookupForm" onClick={onCancel}>
             Cancel
           </Button>

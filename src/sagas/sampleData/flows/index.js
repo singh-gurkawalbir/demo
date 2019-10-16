@@ -64,10 +64,6 @@ function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
               .toISOString(),
           };
         }
-
-        if (resource && resource.sampleData) {
-          resourceMap[resourceId].options.uiData = resource.sampleData;
-        }
       }
     }
   }
