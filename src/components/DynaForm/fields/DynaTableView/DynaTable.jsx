@@ -212,7 +212,11 @@ export default function DynaTable(props) {
     const { id, onFieldChange } = props;
 
     dispatchLocalAction({ type: 'remove', index, setChangeIdentifier });
-    onFieldChange(id, preSubmit(state));
+    const stateCopy = [...state];
+
+    stateCopy.splice(index, 1);
+
+    onFieldChange(id, preSubmit(stateCopy));
   }
 
   const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
