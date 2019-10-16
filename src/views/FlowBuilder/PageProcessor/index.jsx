@@ -13,8 +13,12 @@ import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
 import importHooksAction from './actions/importHooks';
+import lookupHooksAction from './actions/lookupHooks';
+import outputFilterAction from './actions/outputFilter';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
+import resultsMapping from './actions/resultsMapping';
+import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 
 const useStyles = makeStyles(theme => ({
@@ -189,18 +193,30 @@ const PageProcessor = ({
 
   drag(drop(ref));
 
-  const processorActions = pending
-    ? []
-    : [
+  const processorActions = [];
+
+  if (!pending) {
+    if (pp.type === 'export') {
+      processorActions.push(
+        inputFilterAction,
+        outputFilterAction,
+        transformationAction,
+        lookupHooksAction,
+        resultsMapping
+      );
+    } else {
+      processorActions.push(
         inputFilterAction,
         importMappingAction,
+        responseTransformationAction,
         importHooksAction,
-        transformationAction,
-      ];
+        responseMapping
+      );
+    }
 
-  if (!isLast && !pending) {
-    processorActions.push(responseMapping);
-    processorActions.push(proceedOnFailureAction);
+    if (!isLast) {
+      processorActions.push(proceedOnFailureAction);
+    }
   }
 
   return (
