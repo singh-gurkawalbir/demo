@@ -9,9 +9,20 @@ import Hooks from '../../../../components/Hooks';
 function HooksDialog({ flowId, resource, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'hooks', true)
-  );
+  const preHookData = useSelector(state => {
+    const sampleData = selectors.getSampleData(
+      state,
+      flowId,
+      resourceId,
+      'hooks',
+      true
+    );
+
+    if (sampleData) {
+      // @TODO Raghu Finalize on the structure
+      return { errors: [], data: [sampleData] };
+    }
+  });
   const onSave = selectedHook => {
     const hooks = { preSavePage: selectedHook };
     const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
@@ -22,7 +33,7 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   };
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!preHookData) {
       dispatch(
         actions.flowData.fetchSampleData(
           flowId,
@@ -33,13 +44,13 @@ function HooksDialog({ flowId, resource, open, onClose }) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, sampleData]);
+  }, [dispatch, flowId, resourceId, preHookData]);
 
   return (
     <Dialog open={open}>
       <DialogTitle>Hooks</DialogTitle>
       <DialogContent>
-        <Hooks onSave={onSave} onCancel={onClose} preHookData={sampleData} />
+        <Hooks onSave={onSave} onCancel={onClose} preHookData={preHookData} />
       </DialogContent>
     </Dialog>
   );

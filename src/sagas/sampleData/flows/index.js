@@ -315,7 +315,7 @@ function* fetchInputData({
 fetchSampleData = fetchInputData;
 
 export function* refreshResourceData({ flowId, resourceId, resourceType }) {
-  const lastStage = 'hooks';
+  const lastStage = 'transform';
   let isPageGenerator = false;
 
   if (resourceType !== 'imports') {

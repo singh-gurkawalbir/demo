@@ -91,7 +91,7 @@ export default function DynaHook(props) {
     onFieldChange,
     placeholder,
     required,
-    value,
+    value = {},
     label,
     hookType,
     preHookData = {},

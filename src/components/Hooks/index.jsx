@@ -1,11 +1,13 @@
 import { Button } from '@material-ui/core';
 import { useState, useEffect } from 'react';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../components/LoadResources';
 
 export default function Hooks(props) {
   const { onSave, onCancel, preHookData } = props;
+  const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = {
     fieldMap: {
       hookType: {
@@ -31,7 +33,6 @@ export default function Hooks(props) {
         type: 'hook',
         hookType: 'script',
         preHookData,
-        defaultValue: {},
         visibleWhen: [{ field: 'hookType', is: ['script'] }],
         refreshOptionsOnChangesTo: ['hookType'],
       },
@@ -40,7 +41,6 @@ export default function Hooks(props) {
         name: 'stack',
         type: 'hook',
         hookType: 'stack',
-        defaultValue: {},
         visibleWhen: [{ field: 'hookType', is: ['stack'] }],
         refreshOptionsOnChangesTo: ['hookType'],
       },
@@ -60,16 +60,23 @@ export default function Hooks(props) {
       selectedHook._stackId = values.stack && values.stack._stackId;
     }
 
-    onSave(selectedHook);
+    if (selectedHook.function && selectedHook._scriptId) {
+      onSave(selectedHook);
+    } else {
+      enquesnackbar({
+        message: 'Please fill the mandatory fields',
+        variant: 'error',
+      });
+    }
   };
 
   const [keyToRemount, setKeyToRemount] = useState(0);
 
   useEffect(() => {
-    if (preHookData) {
-      setKeyToRemount(setKeyToRemount => setKeyToRemount + 1);
+    if (preHookData && !keyToRemount) {
+      setKeyToRemount(1);
     }
-  }, [preHookData]);
+  }, [keyToRemount, preHookData]);
 
   return (
     <LoadResources resources="scripts, stacks">
