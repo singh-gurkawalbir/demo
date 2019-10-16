@@ -2,11 +2,11 @@ import { Fragment } from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
 import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
 
-function ImportMappingDialog({ resourceId, open, onClose }) {
+function ImportMappingDialog({ resource, open, onClose }) {
   return (
     <Fragment>
       {open && (
-        <StandaloneImportMapping resourceId={resourceId} onClose={onClose} />
+        <StandaloneImportMapping resourceId={resource._id} onClose={onClose} />
       )}
     </Fragment>
   );
