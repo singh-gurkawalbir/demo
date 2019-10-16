@@ -59,7 +59,6 @@ function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
 
         if (resourceType === 'exports' && resource.type === 'delta') {
           resourceMap[resourceId].options.postData = {
-            // @TODO: Raghu add valid dateTime
             lastExportDateTime: moment()
               .add(-1, 'y')
               .toISOString(),

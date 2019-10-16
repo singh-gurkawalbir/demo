@@ -1,4 +1,5 @@
 import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -6,8 +7,15 @@ import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    padding: theme.spacing(3),
+  },
+}));
+
 function HooksDialog({ flowId, resource, open, onClose }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const resourceId = resource._id;
   const preHookData = useSelector(state => {
     const sampleData = selectors.getSampleData(
@@ -23,6 +31,9 @@ function HooksDialog({ flowId, resource, open, onClose }) {
       return { errors: [], data: [sampleData] };
     }
   });
+  const preHookDataStatus = useSelector(state =>
+    selectors.getSampleDataStatus(state, flowId, resourceId, 'hooks', true)
+  );
   const onSave = selectedHook => {
     const hooks = { preSavePage: selectedHook };
     const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
@@ -47,10 +58,15 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   }, [dispatch, flowId, resourceId, preHookData]);
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} PaperProps={{ className: classes.paper }}>
       <DialogTitle>Hooks</DialogTitle>
       <DialogContent>
-        <Hooks onSave={onSave} onCancel={onClose} preHookData={preHookData} />
+        <Hooks
+          onSave={onSave}
+          onCancel={onClose}
+          preHookData={preHookData}
+          preHookDataStatus={preHookDataStatus}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -1,13 +1,19 @@
 import { Button } from '@material-ui/core';
-import { useState, useEffect } from 'react';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../components/LoadResources';
+import Spinner from '../Spinner';
 
 export default function Hooks(props) {
-  const { onSave, onCancel, preHookData } = props;
+  const { onSave, onCancel, preHookData, preHookDataStatus } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
+
+  // Shows loading icon till it gets sample data
+  if (!preHookDataStatus || preHookDataStatus === 'requested') {
+    return <Spinner />;
+  }
+
   const fieldMeta = {
     fieldMap: {
       hookType: {
@@ -70,18 +76,10 @@ export default function Hooks(props) {
     }
   };
 
-  const [keyToRemount, setKeyToRemount] = useState(0);
-
-  useEffect(() => {
-    if (preHookData && !keyToRemount) {
-      setKeyToRemount(1);
-    }
-  }, [keyToRemount, preHookData]);
-
   return (
     <LoadResources resources="scripts, stacks">
       <div>
-        <DynaForm key={keyToRemount} fieldMeta={fieldMeta}>
+        <DynaForm key="hooks" fieldMeta={fieldMeta}>
           <Button data-test="cancelLookupForm" onClick={onCancel}>
             Cancel
           </Button>

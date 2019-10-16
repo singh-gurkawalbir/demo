@@ -230,6 +230,29 @@ export function getSampleData(
   );
 }
 
+export function getSampleDataStatus(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  isPageGenerator
+) {
+  // returns input data for that stage to populate
+  const flow = state[flowId];
+
+  if (!flow || !dependencies[stage]) return;
+  const resourceMap = isPageGenerator
+    ? flow.pageGeneratorsMap
+    : flow.pageProcessorsMap;
+
+  return (
+    resourceMap &&
+    resourceMap[resourceId] &&
+    resourceMap[resourceId][dependencies[stage]] &&
+    resourceMap[resourceId][dependencies[stage]].status
+  );
+}
+
 export function getFlowReferencesForResource(state, resourceId) {
   // resourceId may be export or an import
   const existingFlows = keys(state);

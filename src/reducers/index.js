@@ -219,6 +219,22 @@ export function getSampleData(
   );
 }
 
+export function getSampleDataStatus(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  isPageGenerator
+) {
+  return fromSession.getSampleDataStatus(
+    state && state.session,
+    flowId,
+    resourceId,
+    stage,
+    isPageGenerator
+  );
+}
+
 export function getFlowReferencesForResource(state, resourceId) {
   return fromSession.getFlowReferencesForResource(
     state && state.session,

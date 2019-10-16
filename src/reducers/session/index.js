@@ -205,6 +205,22 @@ export function getSampleData(
   );
 }
 
+export function getSampleDataStatus(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  isPageGenerator
+) {
+  return fromFlowData.getSampleDataStatus(
+    state && state.flowData,
+    flowId,
+    resourceId,
+    stage,
+    isPageGenerator
+  );
+}
+
 export function getFlowReferencesForResource(state, resourceId) {
   return fromFlowData.getFlowReferencesForResource(
     state && state.flowData,
