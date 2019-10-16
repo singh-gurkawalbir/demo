@@ -190,6 +190,7 @@ function Filters({
             // indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={hideEmpty}
             onChange={handleChange}
+            color="primary"
           />
         </FormControl>
       </form>

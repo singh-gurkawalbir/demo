@@ -13,14 +13,14 @@ const useStyles = makeStyles(theme => ({
     background: `right / contain no-repeat url("../../static/images/gridDots.svg"), ${theme.palette.primary.main} `,
   },
   logo: {
-    width: '150px',
+    width: 150,
     marginBottom: theme.spacing(10),
     '& > svg': {
       fill: theme.palette.primary.dark,
     },
   },
   link: {
-    paddingLeft: '4px',
+    paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
   signinWrapper: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '380px',
+    width: 380,
     marginTop: '23%',
   },
   title: {

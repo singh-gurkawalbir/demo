@@ -17,7 +17,9 @@ function ScheduleDialog({ flowId, resource, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Export Schedule</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Export Schedule</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>exportId: {resourceId}</Typography>
     </Dialog>

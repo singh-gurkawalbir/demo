@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
     minHeight: 500,
-    zIndex: 1,
+    zIndex: 0,
   },
   rightElement: {
     flex: 4,
@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     float: 'right',
-    marginTop: '10px',
+    marginTop: 10,
   },
   storeContainer: {
     display: 'flex',
@@ -274,7 +274,9 @@ export default function IntegrationAppSettings(props) {
                 path={getRoutePath(
                   `/connectors/:integrationId/settings/general`
                 )}
-                component={GeneralSection}
+                render={props => (
+                  <GeneralSection {...props} storeId={currentStore} />
+                )}
               />
               <Route
                 path={getRoutePath(

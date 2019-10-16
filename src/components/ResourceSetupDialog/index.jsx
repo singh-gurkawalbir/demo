@@ -4,6 +4,7 @@ import {
   makeStyles,
   DialogContent,
   DialogTitle,
+  Typography,
 } from '@material-ui/core';
 import ResourceForm from '../../components/ResourceFormFactory';
 import LoadResources from '../LoadResources';
@@ -33,8 +34,10 @@ export default function ResourceModal(props) {
   return (
     <LoadResources required resources="connections">
       <Dialog open maxWidth={false}>
-        <DialogTitle>
-          Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}
+        <DialogTitle disableTypography>
+          <Typography variant="h6">
+            Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}
+          </Typography>
           {onClose && (
             <IconButton
               onClick={onClose}

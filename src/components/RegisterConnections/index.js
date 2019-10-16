@@ -58,8 +58,8 @@ export default function RegisterConnections({ onClose, integrationId }) {
         onClick={onClose}>
         <CloseIcon />
       </IconButton>
-      <DialogTitle className={classes.title}>
-        <Typography>Register Connections</Typography>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography variant="h6">Register Connections</Typography>
       </DialogTitle>
       <DialogContent>
         <LoadResources required resources="connections">
@@ -72,7 +72,11 @@ export default function RegisterConnections({ onClose, integrationId }) {
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button data-test="registerConnections" onClick={handleRegisterClick}>
+        <Button
+          data-test="registerConnections"
+          onClick={handleRegisterClick}
+          variant="contained"
+          color="primary">
           Register
         </Button>
       </DialogActions>
