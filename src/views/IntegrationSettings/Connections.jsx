@@ -15,16 +15,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Connections(props) {
-  const { match, store } = props;
+  const { match, storeId } = props;
   const { integrationId } = match.params;
   const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
   const list = useSelector(state => {
-    if (store) {
+    if (storeId) {
       return selectors.integrationAppConnectionList(
         state,
         integrationId,
-        store
+        storeId
       );
     }
 

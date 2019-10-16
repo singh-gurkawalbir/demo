@@ -283,7 +283,7 @@ export default function IntegrationAppSettings(props) {
                   `/connectors/:integrationId/settings/connections`
                 )}
                 render={props => (
-                  <Connections {...props} store={currentStore} />
+                  <Connections {...props} storeId={currentStore} />
                 )}
               />
               <Route
