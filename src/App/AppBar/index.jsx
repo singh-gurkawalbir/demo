@@ -53,7 +53,7 @@ const mapStateToProps = state => ({
     color: theme.appBar.contrast,
     paddingRight: theme.spacing(3),
     letterSpacing: '1.3px',
-    fontSize: '13px',
+    fontSize: 13,
     fontWeight: 500,
     textDecoration: 'none',
     textTransform: 'uppercase',

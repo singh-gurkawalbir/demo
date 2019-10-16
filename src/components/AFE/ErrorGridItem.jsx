@@ -7,8 +7,8 @@ const useStyles = makeStyles(theme => ({
   gridItem: {
     border: `solid 1px rgb(0,0,0,0.3)`,
     overflow: 'hidden',
-    minWidth: '150px',
-    minHeight: '100px',
+    minWidth: 150,
+    minHeight: 100,
     gridArea: 'error',
     marginBottom: theme.spacing(2),
   },
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'stretch',
   },
   title: { flex: '0 0 auto' },
-  panel: { flex: '1 1 100px', minHeight: '50px' },
+  panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
 export default function ErrorGridItem(props) {

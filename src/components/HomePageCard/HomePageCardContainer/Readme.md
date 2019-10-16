@@ -2,9 +2,7 @@
 const Grid = require('@material-ui/core/Grid').default;
 const Typography = require('@material-ui/core/Typography').default;
 const Header = require('../Header').default;
-const StatusCircle = require('../Header/Status/StatusCircle').default;
 const HeaderAction = require('../Header/HeaderAction').default;
-const Status = require('../Header/Status').default;
 const Content = require('../Content').default;
 const CardTitle = require('../Content/CardTitle').default;
 const ApplicationImages = require('../Content/ApplicationImages').default;
@@ -19,6 +17,8 @@ const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').defau
 const TrialExpireNotification = require('../TrialExpireNotification').default;
 const ArrowPopper = require('../../Arrowpopper').default;
 const TooltipContent = require('../../TooltipContent').default;
+const Status = require('../../Status').default;
+const StatusCircle = require('../../StatusCircle').default;
 
 
 const handleOver = (event, placement) => setState({ 
@@ -32,9 +32,9 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="Success">
-          <StatusCircle variant="success" />
-        </Status>
+      <Status label=" 5234 Errors">
+        <StatusCircle variant="error" size="small"></StatusCircle>
+      </Status>
         <HeaderAction variants={options} />
       </Header>
       <Content>
@@ -67,9 +67,9 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="Errors" count="445">
-          <StatusCircle variant="error" />
-        </Status>
+       <Status label="success">
+        <StatusCircle variant="success"></StatusCircle>
+      </Status>
         <HeaderAction variants={options} />
       </Header>
         <Content>
@@ -96,9 +96,9 @@ const handleOut = () => setState({ anchorEl: null });
   <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
     <HomePageCardContainer>
       <Header>
-        <Status label="Continue setup">
-          <StatusCircle variant="warning" />
-        </Status>
+      <Status label="continue setup">
+        <StatusCircle variant="warning"></StatusCircle>
+      </Status>
         <HeaderAction variants={options} />
       </Header>
         <Content>

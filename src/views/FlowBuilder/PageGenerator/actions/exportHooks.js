@@ -1,4 +1,9 @@
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Typography,
+} from '@material-ui/core';
 import { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -37,7 +42,9 @@ function HooksDialog({ flowId, resource, open, onClose }) {
 
   return (
     <Dialog open={open}>
-      <DialogTitle>Hooks</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h6">Hooks</Typography>
+      </DialogTitle>
       <DialogContent>
         <Hooks onSave={onSave} onCancel={onClose} preHookData={sampleData} />
       </DialogContent>

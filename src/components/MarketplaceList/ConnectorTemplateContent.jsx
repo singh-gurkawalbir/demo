@@ -25,11 +25,17 @@ const useStyles = makeStyles(theme => ({
   user: {
     color: theme.palette.background.paper,
     textAlign: 'right',
-    wordBreak: 'break-word',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: '88%',
+    textOverflow: 'ellipsis',
   },
   title: {
     color: theme.palette.background.paper,
-    maxWidth: '50%',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: '88%',
+    textOverflow: 'ellipsis',
   },
   content: {
     padding: theme.spacing(0, 2),
@@ -43,8 +49,14 @@ export default function ConnectorTemplateContent(props) {
   return (
     <Fragment>
       <div className={classes.cardHeader}>
-        <Typography className={classes.title}>{title}</Typography>
-        <Typography className={classes.user}>
+        <Typography className={classes.title} title={title}>
+          {title}
+        </Typography>
+        <Typography
+          className={classes.user}
+          title={
+            resource.user.company || resource.user.name || resource.user.email
+          }>
           {resource.user &&
             (resource.user.company ||
               resource.user.name ||

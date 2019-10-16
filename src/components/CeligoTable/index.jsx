@@ -151,6 +151,7 @@ export default function CeligoTable({
               <Checkbox
                 onChange={event => handleSelectAllChange(event)}
                 checked={isAllSelected}
+                color="primary"
               />
             </TableCell>
           )}
@@ -203,6 +204,7 @@ export default function CeligoTable({
                   <Checkbox
                     onChange={event => handleSelectChange(event, r._id)}
                     checked={!!selectedResources[r._id]}
+                    color="primary"
                   />
                 )}
               </TableCell>
