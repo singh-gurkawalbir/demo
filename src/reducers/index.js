@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq } from 'lodash';
+import { uniq, some, map } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -201,6 +201,33 @@ export function processorRequestOptions(state, id) {
   if (!state) return {};
 
   return fromSession.processorRequestOptions(state.session, id);
+}
+
+export function getSampleData(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  isPageGenerator
+) {
+  return fromSession.getSampleData(
+    state && state.session,
+    flowId,
+    resourceId,
+    stage,
+    isPageGenerator
+  );
+}
+
+export function getFlowReferencesForResource(state, resourceId) {
+  return fromSession.getFlowReferencesForResource(
+    state && state.session,
+    resourceId
+  );
+}
+
+export function getFlowDataState(state, flowId) {
+  return fromSession.getFlowDataState(state && state.session, flowId);
 }
 
 export function avatarUrl(state) {
@@ -486,32 +513,41 @@ export function matchingConnectionList(state, connection = {}) {
   const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
-    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      $where() {
+        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
+          return false;
+        }
+
+        if (connection.assistant) {
+          return this.assistant === connection.assistant && !this._connectorId;
+        }
+
+        if (['netsuite'].indexOf(connection.type) > -1) {
+          return (
+            this.type === 'netsuite' &&
+            !this._connectorId &&
+            (this.netsuite.account && this.netsuite.environment)
+          );
+        }
+
+        return this.type === connection.type && !this._connectorId;
+      },
+    },
   });
 
-  return resources.filter(c => {
-    if (connection.assistant) {
-      return c.assistant === connection.assistant && !c._connectorId;
-    }
-
-    if (['netsuite'].indexOf(connection.type) > -1) {
-      return (
-        c.type === 'netsuite' &&
-        !c._connectorId &&
-        (c.netsuite.account && c.netsuite.environment)
-      );
-    }
-
-    return c.type === connection.type && !c._connectorId;
-  });
+  return resources;
 }
 
 export function matchingStackList(state) {
   const { resources = [] } = resourceList(state, {
     type: 'stacks',
+    filter: {
+      _connectorId: { $exists: false },
+    },
   });
 
-  return resources.filter(r => !r._connectorId);
+  return resources;
 }
 
 export function filteredResourceList(state, resource, resourceType) {
@@ -535,11 +571,18 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
+// #begin integrationApps Region
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
 
-  if (integrationId && integrationId !== 'none' && integration) {
+  if (
+    integrationId &&
+    integrationId !== 'none' &&
+    integration &&
+    !integration._connectorId
+  ) {
     const registeredConnections =
       integration && integration._registeredConnectionIds;
 
@@ -551,25 +594,73 @@ export function integrationConnectionList(state, integrationId) {
           conn => registeredConnections.indexOf(conn._id) >= 0
         );
     }
+  } else if (integration && integration._connectorId) {
+    connList.resources =
+      connList &&
+      connList.resources &&
+      connList.resources.filter(conn => conn._integrationId === integrationId);
   }
 
   return connList;
 }
 
-export function resourceReferences(state) {
-  return fromSession.resourceReferences(state && state.session);
-}
+export function integrationAppConnectionList(state, integrationId, store) {
+  if (!state) return [];
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, sections } = integrationResource.settings || {};
+  const integrationConnections = fromData.resourceList(state.data, {
+    type: 'connections',
+    filter: { _integrationId: integrationId },
+  });
 
-export function resourceDetailsMap(state) {
-  return fromData.resourceDetailsMap(state.data);
-}
+  if (!supportsMultiStore || !store) {
+    return integrationConnections;
+  }
 
-export function processors(state) {
-  return fromData.processors(state.data);
-}
+  const flows = [];
+  const connections = [];
+  const selectedStore = (sections || []).find(s => s.id === store) || {};
 
-export function isAgentOnline(state, agentId) {
-  return fromData.isAgentOnline(state.data, agentId);
+  (selectedStore.sections || []).forEach(sec => {
+    flows.push(...map(sec.flows, '_id'));
+  });
+  flows.forEach(f => {
+    let exp;
+    let imp;
+    const flow = resource(state, 'flows', f) || {};
+
+    if (flow._exportId) {
+      exp = resource(state, 'exports', flow._exportId) || {};
+      connections.push(exp._connectionId);
+    }
+
+    if (flow._importId) {
+      imp = resource(state, 'imports', flow._importId) || {};
+      connections.push(imp._connectionId);
+    }
+
+    (flow.pageGenerators || []).forEach(pg => {
+      exp = resource(state, 'exports', pg._exportId) || {};
+      connections.push(exp._connectionId);
+    });
+    (flow.pageProcessors || []).forEach(pp => {
+      imp =
+        resource(
+          state,
+          pp.type === 'import' ? 'imports' : 'exports',
+          pp.type === 'import' ? pp._importId : pp._exportId
+        ) || {};
+      connections.push(imp._connectionId);
+    });
+  });
+  integrationConnections.resources = integrationConnections.resources.filter(
+    c => connections.includes(c._id)
+  );
+
+  return integrationConnections;
 }
 
 export function integrationAppSettings(state, id, storeId) {
@@ -584,8 +675,117 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
-export function defaultStoreId(state, id) {
-  return fromData.defaultStoreId(state && state.data, id);
+export function connectorFlowSections(state, id, store) {
+  if (!state) return null;
+  let flowSections = [];
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { sections = [], supportsMultiStore } =
+    integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    if (Array.isArray(sections) && sections.length) {
+      if (store) {
+        flowSections =
+          (sections.find(sec => sec.id === store) || {}).sections || [];
+      } else {
+        flowSections =
+          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+      }
+    }
+  } else {
+    flowSections = sections;
+  }
+
+  return flowSections.map(sec => ({
+    ...sec,
+    titleId: sec.title.replace(/\s/g, ''),
+  }));
+}
+
+export function integrationAppGeneralSettings(state, id, storeId) {
+  if (!state) return null;
+  let fields;
+  let subSections;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { supportsMultiStore, general } = integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    const storeSection = (general || []).find(s => s.id === storeId) || {};
+
+    ({ fields, sections: subSections } = storeSection);
+  } else {
+    ({ fields, sections: subSections } = general);
+  }
+
+  return {
+    fields,
+    sections: subSections,
+  };
+}
+
+export function integrationAppFlowSettings(state, id, section, storeId) {
+  if (!state) return null;
+  let fields;
+  let subSections;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const {
+    supportsMultiStore,
+    showFlowSettings,
+    showMatchRuleEngine,
+    sections,
+  } = integrationResource.settings || {};
+  let requiredFlows = [];
+  let hasNSInternalIdLookup = false;
+
+  if (supportsMultiStore) {
+    const store = (sections || []).find(s => s.id === storeId) || {};
+    const sectionStore =
+      (store.sections || []).find(
+        sec => sec.title.replace(/\s/g, '') === section
+      ) || {};
+
+    requiredFlows = map(sectionStore.flows, '_id');
+    hasNSInternalIdLookup = some(
+      sectionStore.flows,
+      f => f.showNSInternalIdLookup
+    );
+    ({ fields, sections: subSections } = sectionStore);
+  } else if (sections) {
+    const selectedSection =
+      (sections || []).find(sec => sec.title.replace(/\s/g, '') === section) ||
+      {};
+
+    requiredFlows = map(selectedSection.flows, '_id');
+    hasNSInternalIdLookup = some(
+      selectedSection.flows,
+      f => f.showNSInternalIdLookup
+    );
+    ({ fields, sections: subSections } = selectedSection);
+  }
+
+  const preferences = userPreferences(state);
+  let flows = resourceList(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      _integrationId: id,
+    },
+  }).resources;
+
+  flows = flows.filter(f => requiredFlows.includes(f._id));
+
+  return {
+    flows,
+    fields,
+    sections: subSections,
+    hasNSInternalIdLookup,
+    showFlowSettings,
+    showMatchRuleEngine,
+  };
+}
+
+export function defaultStoreId(state, id, store) {
+  return fromData.defaultStoreId(state && state.data, id, store);
 }
 
 export function integrationInstallSteps(state, integrationId) {
@@ -644,6 +844,24 @@ export function addNewStoreSteps(state, integrationId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+// #end integrationApps Region
+
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state && state.session);
+}
+
+export function resourceDetailsMap(state) {
+  return fromData.resourceDetailsMap(state.data);
+}
+
+export function processors(state) {
+  return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion

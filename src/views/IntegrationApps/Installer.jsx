@@ -27,13 +27,14 @@ const useStyles = makeStyles(theme => ({
     padding: '10px 25px',
   },
   formHead: {
-    borderBottom: 'solid 1px #e5e5e5',
-    marginBottom: '29px',
+    borderBottom: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    marginBottom: 29,
   },
   innerContent: {
     width: '80vw',
   },
-  stepTable: { position: 'relative', marginTop: '-20px' },
+  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },

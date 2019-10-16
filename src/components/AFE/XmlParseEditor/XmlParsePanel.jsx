@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'pre-line',
   },
   container: {
-    padding: '10px',
+    padding: 10,
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflow: 'auto',
@@ -73,7 +73,10 @@ export default function XmlParsePanel(props) {
             <FormControlLabel
               key={label}
               control={
-                <Radio checked={label === 'Advanced' ? advanced : !advanced} />
+                <Radio
+                  color="primary"
+                  checked={label === 'Advanced' ? advanced : !advanced}
+                />
               }
               label={label}
             />
@@ -92,6 +95,7 @@ export default function XmlParsePanel(props) {
                 <Checkbox
                   checked={trimSpaces}
                   onChange={() => patchEditor('trimSpaces', !trimSpaces)}
+                  color="primary"
                 />
               }
               label="Trim Spaces"
@@ -101,6 +105,7 @@ export default function XmlParsePanel(props) {
               control={
                 <Checkbox
                   checked={stripNewLineChars}
+                  color="primary"
                   onChange={() =>
                     patchEditor('stripNewLineChars', !stripNewLineChars)
                   }

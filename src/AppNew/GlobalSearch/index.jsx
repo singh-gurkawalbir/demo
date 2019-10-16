@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     '&.Mui-focused': {
       border: '1px solid',
       borderColor: fade(theme.palette.common.black, 0.15),
-      borderRadius: '20px',
+      borderRadius: 20,
       backgroundColor: theme.palette.common.white,
       zIndex: '-1',
     },
@@ -79,11 +79,11 @@ const useStyles = makeStyles(theme => ({
     },
     '&:before': {
       content: '""',
-      width: '6px',
+      width: 6,
       height: '100%',
       position: 'absolute',
-      left: '0px',
-      top: '0px',
+      left: 0,
+      top: 0,
       backgroundColor: 'transparent',
     },
     '&:hover': {

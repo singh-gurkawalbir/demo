@@ -39,8 +39,10 @@ export default function JobRetriesDialog({
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle className={classes.title}>
-        <Typography>{`${integrationName} > ${job && job.name}`}</Typography>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography variant="h6">
+          {`${integrationName} > ${job && job.name}`}
+        </Typography>
         <Typography>
           Success: {job.numSuccess} Ignore: {job.numIgnore} Error:{' '}
           {job.numError}

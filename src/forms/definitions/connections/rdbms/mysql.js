@@ -1,9 +1,16 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'rdbms',
-    '/rdbms/type': 'mysql',
-  }),
+  preSave: formValues => {
+    const newValues = {
+      ...formValues,
+      '/type': 'rdbms',
+      '/rdbms/type': 'mysql',
+    };
+
+    delete newValues['/mode'];
+
+    return newValues;
+  },
+
   fieldMap: {
     name: { fieldId: 'name' },
     // type: {
@@ -25,7 +32,6 @@ export default {
       type: 'radiogroup',
       label: 'Mode',
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [
