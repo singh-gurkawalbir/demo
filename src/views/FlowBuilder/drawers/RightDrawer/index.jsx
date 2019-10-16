@@ -6,13 +6,14 @@ import Drawer from '@material-ui/core/Drawer';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
+    // minWidth: 400,
+    width: 475,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     // boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
     padding: theme.spacing(3),
     // backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
-    minWidth: 400,
   },
 }));
 

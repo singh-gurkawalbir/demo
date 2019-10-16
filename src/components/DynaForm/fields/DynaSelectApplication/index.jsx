@@ -6,6 +6,7 @@ import applications, {
   groupApplications,
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
+import AppPill from './AppPill';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -31,20 +32,29 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: '10px',
     height: '100%',
   },
+  inputLabel: {
+    transform: 'unset',
+    position: 'static',
+    marginBottom: theme.spacing(1),
+  },
+  selectedContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
 }));
 
-export default function SelectApplication(props) {
-  const {
-    description,
-    disabled,
-    id,
-    name,
-    label,
-    resourceType,
-    value = '',
-    placeholder,
-    onFieldChange,
-  } = props;
+export default function SelectApplication({
+  description,
+  disabled,
+  id,
+  isMulti,
+  name,
+  label,
+  resourceType,
+  value = isMulti ? [] : '',
+  placeholder,
+  onFieldChange,
+}) {
   // Custom styles for Select Control
   const groupedApps = useMemo(() => groupApplications(resourceType), [
     resourceType,
@@ -180,15 +190,21 @@ export default function SelectApplication(props) {
   };
 
   const handleChange = e => {
-    onFieldChange && onFieldChange(id, e.value);
+    if (onFieldChange) {
+      const newValue = isMulti ? [...value, e.value] : e.value;
+
+      console.log('newValue', newValue);
+      onFieldChange(id, newValue);
+    }
   };
 
-  const defaultValue = value
-    ? {
-        value,
-        label: applications.find(a => a.id === value).name,
-      }
-    : '';
+  const defaultValue =
+    !value || isMulti
+      ? ''
+      : {
+          value,
+          label: applications.find(a => a.id === value).name,
+        };
 
   return (
     <FormControl
@@ -196,8 +212,9 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
-      <InputLabel htmlFor={id}>{label}</InputLabel>
-
+      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+        {label}
+      </InputLabel>
       <Select
         name={name}
         placeholder={placeholder}
@@ -210,6 +227,14 @@ export default function SelectApplication(props) {
         filterOption={filterOptions}
       />
       {description && <FormHelperText>{description}</FormHelperText>}
+
+      {isMulti && value.length > 0 && (
+        <div className={classes.selectedContainer}>
+          {value.map(appId => (
+            <AppPill key={appId} appId={appId} />
+          ))}
+        </div>
+      )}
     </FormControl>
   );
 }

@@ -14,10 +14,22 @@ export default function WizardDrawer({ flowId, match, history, ...props }) {
   const optionsHandler = undefined;
   const fieldMeta = {
     fieldMap: {
-      application: {
-        id: 'application',
-        name: 'application',
-        label: 'Select source Application(s)',
+      sourceApps: {
+        id: 'sourceApps',
+        name: 'sourceApps',
+        label: 'Choose one or more source applications',
+        isMulti: true,
+        type: 'selectapplication',
+        placeholder: 'search...',
+        defaultValue: '',
+        required: true,
+        // visibleWhen: [visibleWhenIsNew],
+      },
+      destinationApps: {
+        id: 'destinationApps',
+        name: 'destinationApps',
+        label: 'Choose one or more destination applications',
+        isMulti: true,
         type: 'selectapplication',
         placeholder: 'search...',
         defaultValue: '',
@@ -26,7 +38,7 @@ export default function WizardDrawer({ flowId, match, history, ...props }) {
       },
     },
     layout: {
-      fields: ['application'],
+      fields: ['sourceApps', 'destinationApps'],
     },
   };
 
