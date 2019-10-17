@@ -2,8 +2,6 @@ export default {
   's3.region': {
     type: 'select',
     label: 'Region',
-
-    defaultValue: r => r && r.s3 && r.s3.region,
     required: true,
     options: [
       {
