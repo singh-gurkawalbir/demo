@@ -1,28 +1,29 @@
 when we use StatusTag component we have to use the hook useTheme to give our brand colors as a prop.
 ```js
 const Grid = require('@material-ui/core/Grid').default;
+const Typography = require('@material-ui/core/Typography').default;
 
 <Grid container  justify="flex-start" spacing={3} >
   <Grid item>
-    <StatusTag variant="Success" backgroundcolor="#4CBB02"></StatusTag>
+    <StatusTag>Default</StatusTag>
+  </Grid>  <Grid item>
+    <StatusTag variant="success">Success!</StatusTag>
   </Grid>
    <Grid item>
-    <StatusTag variant="Error" backgroundcolor="#FF3C3C"></StatusTag>
+    <StatusTag variant="error">ERROR</StatusTag>
   </Grid>
   <Grid item>
-    <StatusTag variant="warning" backgroundcolor="#FFB30C"></StatusTag>
+    <StatusTag variant="warn">Waring :P</StatusTag>
   </Grid>
   <Grid item>
-    <StatusTag variant="info" backgroundcolor="#00A1E1"></StatusTag>
+    <StatusTag variant="info">Info</StatusTag>
   </Grid>
   <Grid item>
-    <StatusTag variant="Realtime" backgroundcolor="#95ABBC"></StatusTag>
-  </Grid>
-  <Grid item>
-    <StatusTag variant="Notistack Success bg" backgroundcolor="#43a047"></StatusTag>
-  </Grid>
-  <Grid item>
-    <StatusTag variant="Custom Info bg" backgroundcolor="#0188be"></StatusTag>
+    <StatusTag variant="realtime">
+      <Typography variant="h3">
+        realtime variant using H3 as child.
+      </ Typography>
+    </StatusTag>
   </Grid>
 </Grid>
 
