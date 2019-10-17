@@ -225,7 +225,6 @@ export default function SelectApplication({
       </InputLabel>
       <Select
         name={name}
-        value={isMulti ? '' : undefined}
         placeholder={placeholder}
         closeMenuOnSelect
         components={{ Option }}

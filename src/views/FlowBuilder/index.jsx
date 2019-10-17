@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import shortid from 'shortid';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, Button, IconButton } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -25,6 +25,7 @@ import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import SwitchOnOff from '../../components/SwitchToggle';
+import EditableText from './EditableText';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -214,8 +215,11 @@ function FlowBuilder(props) {
   const [newProcessorId, setNewProcessorId] = useState(getNewId());
   //
   // #region Selectors
+  const newFlowId = useSelector(state =>
+    selectors.createdResourceId(state, flowId)
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const { merged: flow = {}, patch } = useSelector(state =>
+  const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
@@ -230,24 +234,18 @@ function FlowBuilder(props) {
   );
   // #endregion
   const patchFlow = useCallback(
-    (path, value, commit = false) => {
+    (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.flowData.updateFlow(flowId));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
 
-      if (commit) {
-        dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      if (!isNewFlow) {
+        dispatch(actions.flowData.updateFlow(flowId));
       }
     },
-    [dispatch, flowId]
+    [dispatch, flowId, isNewFlow]
   );
-  const undoFlowPatch = useCallback(() => {
-    dispatch(actions.resource.undoStaged(flowId, 'value'));
-  }, [dispatch, flowId]);
-  const commitFlowPatch = useCallback(() => {
-    dispatch(actions.resource.commitStaged(flowId, 'value'));
-  }, [dispatch, flowId]);
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
@@ -311,8 +309,8 @@ function FlowBuilder(props) {
   // #endregion
 
   useEffect(() => {
-    if (flowId && !flowData) dispatch(actions.flowData.init(flow));
-  }, [dispatch, flow, flowData, flowId]);
+    if (!isNewFlow && !flowData) dispatch(actions.flowData.init(flow));
+  }, [dispatch, flow, flowData, isNewFlow]);
 
   const pushOrReplaceHistory = to => {
     if (match.isExact) {
@@ -334,17 +332,43 @@ function FlowBuilder(props) {
     pushOrReplaceHistory(`${match.url}/${path}`);
   }
 
-  // This prt of the code initialized a new flow (patch, no commit)
-  // and redirects (replaces) the url to reflect the new temp id.
-  if (flowId === 'new') {
+  function handleTitleChange(title) {
+    // console.log(title);
+    patchFlow('/name', title);
+  }
+
+  // #region New Flow Creation logic
+  const rewriteUrl = id => {
     const parts = match.url.split('/');
+
+    parts[parts.length - 1] = id;
+
+    return parts.join('/');
+  };
+
+  // This block initializes a new flow (patch, no commit)
+  // and replaces the url to reflect the new temp id.
+  if (flowId === 'new') {
     const newId = getNewId();
+    const newUrl = rewriteUrl(newId);
+    const patchSet = [
+      { op: 'add', path: '/name', value: 'New flow' },
 
-    parts[parts.length - 1] = newId;
-    const newUrl = parts.join('/');
-    const patchSet = [{ op: 'add', path: '/name', value: 'New flow' }];
+      // TODO: The message below gets hidden from the end-user.
+      // we need to trace the sagas and figure out how to present this
+      // and other errors like this, to the user. Is this because
+      // the status code is 403 possibly? Should we treat all 400s as
+      // informational and proxy them through to the user as notifications?
+      // {"errors":[{"code":"subscription_required","message":"Enabling this flow requires a product subscription, or that you register for a free trial.  Please navigate to My Account -> Subscription to start a new trial, extend an existing trial, or to request a product subscription."}]}
+      { op: 'add', path: '/disabled', value: true },
 
-    if (integrationId !== 'null') {
+      // not sure we even need to init these arrays...
+      // leave in for now to prevent downstream undefined reference errors.
+      { op: 'add', path: '/pageGenerators', value: [] },
+      { op: 'add', path: '/pageProcessors', value: [] },
+    ];
+
+    if (integrationId && integrationId !== 'none') {
       patchSet.push({
         op: 'add',
         path: '/_integrationId',
@@ -357,6 +381,16 @@ function FlowBuilder(props) {
 
     return null;
   }
+
+  // Replaces the url once the virtual flow resource is
+  // persisted and we have the final flow id.
+  if (newFlowId) {
+    history.replace(rewriteUrl(newFlowId));
+
+    return null;
+  }
+  // #endregion
+
   // eslint-disable-next-line
   // console.log(flow);
 
@@ -369,7 +403,9 @@ function FlowBuilder(props) {
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
-        title={flow.name}
+        title={
+          <EditableText onChange={handleTitleChange}>{flow.name}</EditableText>
+        }
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
@@ -483,24 +519,6 @@ function FlowBuilder(props) {
                   ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                   : 64 + theme.spacing(3),
               }}>
-              {patch && patch.length > 0 && (
-                <Fragment>
-                  <Button
-                    data-test="commitFlowPatches"
-                    variant="outlined"
-                    color="primary"
-                    onClick={commitFlowPatch}>
-                    Commit
-                  </Button>
-                  &nbsp;
-                  <Button
-                    data-test="undoFlowPatches"
-                    variant="outlined"
-                    onClick={undoFlowPatch}>
-                    Undo {patch.length} change(s)
-                  </Button>
-                </Fragment>
-              )}
               <TrashCan onDrop={handleDelete} />
             </div>
           )}
