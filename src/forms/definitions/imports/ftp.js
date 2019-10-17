@@ -6,7 +6,7 @@ export default {
       fieldMeta.fieldMap['file.filedefinition.rules'];
 
     if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Export creation mode, delete generic visibleWhenAll rules
+      // In Import creation mode, delete generic visibleWhenAll rules
       // Add custom visible when rules
       delete fileDefinitionRulesField.visibleWhenAll;
       fileDefinitionRulesField.visibleWhen = [

@@ -29,16 +29,10 @@ export default {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
     },
-    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
-    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
   },
   layout: {
-    fields: [
-      'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.includeHeader',
-      'file.xlsx.includeHeader',
-    ],
+    fields: ['uploadFile', 'file.csv', 'file.xlsx.includeHeader'],
   },
 };

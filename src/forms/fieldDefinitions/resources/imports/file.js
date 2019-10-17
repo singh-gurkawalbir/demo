@@ -84,31 +84,9 @@ export default {
       },
     ],
   },
-  'file.csv.columnDelimiter': {
-    type: 'select',
-    label: 'Column Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'Comma', value: ',' },
-          { label: 'Pipe', value: '|' },
-          { label: 'Semicolon', value: ';' },
-          { label: 'Space', value: ' ' },
-          { label: 'Tab', value: '\t' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-      { field: 'file.output', is: ['records'] },
-    ],
-  },
-  'file.csv.includeHeader': {
-    type: 'checkbox',
-    label: 'Include Header',
+  'file.csv': {
+    type: 'csvparse',
+    label: 'Configure CSV parse options',
     visibleWhen: [
       {
         field: 'file.type',
@@ -123,16 +101,6 @@ export default {
       {
         field: 'file.type',
         is: ['xlsx'],
-      },
-    ],
-  },
-  'file.csv.customHeaderRows': {
-    type: 'textarea',
-    label: 'Custom Header Rows',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
       },
     ],
   },
