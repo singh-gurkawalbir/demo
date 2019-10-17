@@ -52,6 +52,9 @@ const theme = {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto500',
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
       },
       contained: {
         borderRadius: '17px',
@@ -397,6 +400,9 @@ const theme = {
     MuiIconButton: {
       root: {
         color: colors.celigoNeutral6,
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
       },
     },
     MuiDialogTitle: {
@@ -428,12 +434,14 @@ export default () => {
 
   muiTheme.palette.success = muiTheme.palette.augmentColor({
     main: colors.celigoSuccess,
+    contrastText: colors.celigoWhite,
   });
   muiTheme.palette.warning = muiTheme.palette.augmentColor({
     main: colors.celigoWarning,
   });
   muiTheme.palette.info = muiTheme.palette.augmentColor({
     main: colors.celigoAccent2,
+    contrastText: colors.celigoWhite,
   });
 
   return muiTheme;
