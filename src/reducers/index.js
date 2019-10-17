@@ -28,6 +28,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import commKeyGen from '../utils/commKeyGenerator';
+import { getAllFlows } from './data/Flows';
 
 const combinedReducers = combineReducers({
   app,
@@ -764,13 +765,13 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
 
   const preferences = userPreferences(state);
-  let flows = resourceList(state, {
+  let flows = getAllFlows(state, {
     type: 'flows',
     sandbox: preferences.environment === 'sandbox',
     filter: {
       _integrationId: id,
     },
-  }).resources;
+  });
 
   flows = flows.filter(f => requiredFlows.includes(f._id));
 
