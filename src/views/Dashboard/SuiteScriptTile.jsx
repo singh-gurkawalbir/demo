@@ -1,99 +1,123 @@
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import { withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import { Link } from 'react-router-dom';
-import Chip from '@material-ui/core/Chip';
-import TileAction from './TileAction';
+import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
+import Header from '../../components/HomePageCard/Header';
+import Status from '../../components/HomePageCard/Header/Status';
+import StatusCircle from '../../components/HomePageCard/Header/Status/StatusCircle';
+import Content from '../../components/HomePageCard/Content';
+import ApplicationImg from '../../components/icons/ApplicationImg';
+import AddIcon from '../../components/icons/AddIcon';
+import ApplicationImages from '../../components/HomePageCard/Content/ApplicationImages';
+import CardTitle from '../../components/HomePageCard/Content/CardTitle';
+import Footer from '../../components/HomePageCard/Footer';
+import FooterActions from '../../components/HomePageCard/Footer/FooterActions';
+import Info from '../../components/HomePageCard/Footer/Info';
+import Tag from '../../components/HomePageCard/Footer/Tag';
+import Manage from '../../components/HomePageCard/Footer/Manage';
+import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
+import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
+import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
-import { INTEGRATION_ACCESS_LEVELS } from '../../utils/constants';
 
-const styles = theme => ({
-  card: {
-    cursor: 'move',
-  },
-  connectorOwner: {
-    marginLeft: 'auto',
-  },
-  navLink: {
-    color: theme.palette.primary.color,
-    paddingRight: theme.spacing(3),
-    letterSpacing: '1.3px',
-    fontSize: '13px',
-    fontWeight: 500,
-    textDecoration: 'none',
-    textTransform: 'uppercase',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
-  tag: {
-    marginLeft: 'auto',
-    maxWidth: '50%',
-  },
-});
-
-function SuiteScriptTile({ classes, tile }) {
+function SuiteScriptTile({ tile, history }) {
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
+  const status = tileStatus(tile);
 
-  function handleLinkClick(event) {
-    event.preventDefault();
-    const { href } = event.target;
+  function handleClick() {
+    if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/setup`
+        )
+      );
+    } else if (tile.status === TILE_STATUS.UNINSTALL) {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/uninstall`
+        )
+      );
+    } else if (tile._connectorId) {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/settings`
+        )
+      );
+    } else {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`
+        )
+      );
+    }
+  }
 
-    window.open(href.replace('/pg/', '/'), 'AmpersandApp');
+  function handleStatusClick(event) {
+    event.stopPropagation();
+
+    if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
+      // TODO - open connection edit
+    } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/setup`
+        )
+      );
+    } else {
+      history.push(
+        getRoutePath(
+          `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/dashboard`
+        )
+      );
+    }
   }
 
   return (
-    <Card className={classes.card}>
-      <CardActions>
-        <TileAction size="small" color="primary" tile={tile} />
-      </CardActions>
-      <CardContent>
-        <Typography variant="h5" component="h2">
-          {tile.name}
-        </Typography>
-      </CardContent>
-      <Divider component="br" />
-      <CardActions>
-        {tile.status === 'IS_PENDING_SETUP' && (
-          <Typography>Click to continue setup.</Typography>
-        )}
-        {tile.status !== 'IS_PENDING_SETUP' && accessLevel && (
-          <Link
-            className={classes.navLink}
-            onClick={handleLinkClick}
-            to={getRoutePath(
-              `/suitescript/connections/${tile._ioConnectionId}/${
-                tile._connectorId ? 'connectors' : 'integrations'
-              }/${tile._integrationId}/settings`
-            )}>
-            {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR
-              ? 'Monitor'
-              : 'Manage'}
-          </Link>
-        )}
-        <Chip
-          label={`NS Account #${tile.tag}`}
-          color="secondary"
-          className={classes.tag}
+    <HomePageCardContainer onClick={handleClick}>
+      <Header>
+        <Status label={status.label} onClick={handleStatusClick}>
+          <StatusCircle variant={status.variant} />
+        </Status>
+      </Header>
+      <Content>
+        <CardTitle>
+          <Typography variant="h3">{tile.name}</Typography>
+        </CardTitle>
+        {tile.connector &&
+          tile.connector.applications &&
+          tile.connector.applications.length > 1 && (
+            <ApplicationImages>
+              <ApplicationImg type={tile.connector.applications[0]} />
+              <span>
+                <AddIcon />
+              </span>
+              <ApplicationImg type={tile.connector.applications[1]} />
+            </ApplicationImages>
+          )}
+      </Content>
+      <Footer>
+        <FooterActions>
+          {accessLevel && (
+            <Manage>
+              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
+                <PermissionsMonitorIcon />
+              ) : (
+                <PermissionsManageIcon />
+              )}
+            </Manage>
+          )}
+          {tile.tag && <Tag variant={`NS Account #${tile.tag}`} />}
+        </FooterActions>
+        <Info
+          variant={tile._connectorId ? 'Integration app' : 'Legacy'}
+          label={tile.connector && tile.connector.owner}
         />
-      </CardActions>
-      <Divider />
-      <CardActions>
-        <Typography>
-          {tile._connectorId ? 'SmartConnector' : 'Legacy'}
-        </Typography>
-        <Typography className={classes.connectorOwner}>
-          {tile.connector && tile.connector.owner}
-        </Typography>
-      </CardActions>
-    </Card>
+      </Footer>
+    </HomePageCardContainer>
   );
 }
 
-export default withStyles(styles)(SuiteScriptTile);
+export default withRouter(SuiteScriptTile);

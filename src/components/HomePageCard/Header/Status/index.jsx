@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Status({ children, count, label, className }) {
+function Status({ children, count, label, className, onClick }) {
   const classes = useStyles();
 
   return (
@@ -29,7 +29,8 @@ function Status({ children, count, label, className }) {
       <Button
         data-test="headerStatus"
         variant="text"
-        className={classes.wrapper}>
+        className={classes.wrapper}
+        onClick={onClick}>
         {children}
         {count && (
           <Typography
