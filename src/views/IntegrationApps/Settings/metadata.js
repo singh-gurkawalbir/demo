@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
 import ViewAuditLog from '../../../components/ResourceTable/actions/AuditLogs';
 import FieldMappings from '../../../components/ResourceTable/actions/Flows/FieldMappings';
 import Schedule from '../../../components/ResourceTable/actions/Flows/Schedule';
@@ -7,7 +6,6 @@ import Run from '../../../components/ResourceTable/actions/Flows/Run';
 import OnOff from '../../../components/ResourceTable/actions/Flows/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
 import Description from './Actions/Description';
-// import { getAllFlows } from '../../../reducers/data/Flows';
 
 export default {
   columns: (sectionContext, actionProps) => {
