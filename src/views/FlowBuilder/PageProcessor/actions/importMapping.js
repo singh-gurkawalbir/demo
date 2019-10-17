@@ -3,10 +3,17 @@ import Icon from '../../../../components/icons/MapDataIcon';
 import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
 
 function ImportMappingDialog({ resource, open, onClose }) {
+  const resourceId = resource._id;
+  const connectionId = resource._connectionId;
+
   return (
     <Fragment>
       {open && (
-        <StandaloneImportMapping resourceId={resource._id} onClose={onClose} />
+        <StandaloneImportMapping
+          resourceId={resourceId}
+          connectionId={connectionId}
+          onClose={onClose}
+        />
       )}
     </Fragment>
   );
