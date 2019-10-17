@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../icons/CloseIcon';
+import RefreshIcon from '../../../../icons/RefreshIcon';
 import actions from '../../../../../actions';
 
 export default {
@@ -60,7 +60,7 @@ export default {
         data-test="refreshConnectionMetadata"
         size="small"
         onClick={handleClick}>
-        <Icon />
+        <RefreshIcon />
       </IconButton>
     );
   },

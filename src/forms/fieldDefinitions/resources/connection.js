@@ -23,28 +23,6 @@ export default {
     type: 'selectscopes',
     label: 'Configure Scopes',
   },
-  type: {
-    type: 'select',
-    label: 'Type',
-    options: [
-      {
-        items: [
-          { label: 'NetSuite', value: 'netsuite' },
-          { label: 'Salesforce', value: 'salesforce' },
-          { label: 'Ftp', value: 'ftp' },
-          { label: 'S3', value: 's3' },
-          { label: 'Rest', value: 'rest' },
-          { label: 'Wrapper', value: 'wrapper' },
-          { label: 'Http', value: 'http' },
-          { label: 'PostgreSQL', value: 'postgresql' },
-          { label: 'Mongodb', value: 'mongodb' },
-          { label: 'MySQL', value: 'mysql' },
-          { label: 'Microsoft SQL', value: 'mssql' },
-          { label: 'As2', value: 'as2' },
-        ],
-      },
-    ],
-  },
   name: {
     type: 'text',
     label: 'Name',
@@ -323,6 +301,7 @@ export default {
     label: 'SQL Server Version',
     required: true,
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
+    defaultValue: r => r && r.rdbms && r.rdbms.version,
     options: [
       {
         items: [
@@ -393,13 +372,14 @@ export default {
     options: [
       {
         items: [
-          { label: 'Json', value: 'json' },
-          { label: 'Urlencoded', value: 'urlencoded' },
-          { label: 'Xml', value: 'xml' },
-          { label: 'Csv', value: 'csv' },
+          { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'CSV', value: 'csv' },
         ],
       },
     ],
+    defaultValue: r =>
+      r && r.rest && r.rest.mediaType ? r.rest.mediaType : 'json',
   },
   'rest.baseURI': {
     type: 'text',
@@ -416,6 +396,7 @@ export default {
   'rest.tokenLocation': {
     type: 'select',
     label: 'Location',
+    defaultValue: r => r && r.rest && r.rest.tokenLocation,
     options: [
       {
         items: [
@@ -447,11 +428,13 @@ export default {
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Rest disable Strict SSL',
+    label: 'Disable Strict SSL',
+    defaultValue: r => r && r.rest && r.rest.disableStrictSSL,
   },
   'rest.authType': {
     type: 'select',
     label: 'Authentication Type',
+    defaultValue: r => r && r.rest && r.rest.authType,
     options: [
       {
         items: [
@@ -469,7 +452,8 @@ export default {
   },
   'rest.authHeader': {
     type: 'text',
-    label: 'Rest auth Header',
+    label: 'Header Name',
+    defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
   },
   'rest.retryHeader': {
     type: 'text',
@@ -478,6 +462,8 @@ export default {
   'rest.authScheme': {
     type: 'select',
     label: 'Scheme',
+    defaultValue: r =>
+      r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
     options: [
       {
         items: [
@@ -515,6 +501,8 @@ export default {
   'rest.cookieAuth.method': {
     type: 'select',
     label: 'Cookie Method',
+    defaultValue: r =>
+      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.method,
     options: [
       {
         items: [
@@ -580,6 +568,7 @@ export default {
   'rest.refreshTokenMethod': {
     type: 'select',
     label: 'Refresh Token Method',
+    defaultValue: r => r && r.rest && r.rest.refreshTokenMethod,
     options: [
       {
         items: [
@@ -605,6 +594,7 @@ export default {
   'rest.refreshTokenMediaType': {
     type: 'select',
     label: 'Refresh Token Media Type',
+    defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
         items: [
@@ -651,7 +641,7 @@ export default {
   },
   'rest.concurrencyLevel': {
     type: 'select',
-    label: 'Rest concurrency Level',
+    label: 'Concurrency Level',
     defaultValue: r => r && r.rest && r.rest.concurrencyLevel,
     options: [
       {
@@ -713,6 +703,7 @@ export default {
     type: 'select',
     label: 'Authentication Type',
     required: true,
+    defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
     options: [
       {
         items: [
@@ -727,6 +718,7 @@ export default {
     type: 'select',
     label: 'Media Type',
     required: true,
+    defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
     options: [
       {
         items: [
@@ -761,6 +753,7 @@ export default {
   'http.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable Strict SSL',
+    defaultValue: r => r && r.http && r.http.disableStrictSSL,
   },
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
@@ -811,11 +804,11 @@ export default {
   'http.ping.relativeURI': {
     type: 'text',
     label: 'Ping Relative URI',
-    required: true,
   },
   'http.ping.method': {
     type: 'select',
     label: 'Ping Method',
+    defaultValue: r => r && r.http && r.http.ping && r.http.ping.method,
     options: [
       {
         items: [
@@ -953,6 +946,12 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.location,
     options: [
       {
         items: [
@@ -966,11 +965,24 @@ export default {
   'http.auth.token.headerName': {
     type: 'text',
     label: 'Header Name',
-    defaultValue: 'Authorization',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.token &&
+        r.http.auth.token.headerName) ||
+      'Authorization',
   },
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.token &&
+        r.http.auth.token.scheme) ||
+      'Bearer',
     options: [
       {
         items: [
@@ -989,6 +1001,12 @@ export default {
   'http.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh Method',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMethod,
     options: [
       {
         items: [
@@ -1015,6 +1033,12 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMediaType,
     options: [
       {
         items: [
@@ -1116,6 +1140,7 @@ export default {
   'ftp.type': {
     type: 'radiogroup',
     label: 'Protocol',
+    defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
     options: [
       {
         items: [
@@ -1146,7 +1171,7 @@ export default {
   },
   'ftp.port': {
     type: 'ftpport',
-    label: 'Ftp port',
+    label: 'Port',
     validWhen: {
       fallsWithinNumericalRange: {
         min: 0,
@@ -1159,11 +1184,12 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use Passive Mode',
-    defaultValue: true,
+    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
     type: 'select',
     label: 'Entry Parser',
+    defaultValue: r => r && r.ftp && r.ftp.entryParser,
     options: [
       {
         items: [
@@ -1184,20 +1210,25 @@ export default {
   },
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
-    label: 'User Directory is Root',
+    defaultValue: r => r && r.ftp && r.ftp.userDirectoryIsRoot,
+    label: 'User Directory Is Root',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
-    label: 'Ftp use Implicit Ftps',
+    defaultValue: r => r && r.ftp && r.ftp.useImplicitFtps,
+    label: 'Use Implicit FTPS',
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
-    label: 'Ftp require Socket Re Use',
+    defaultValue: r => r && r.ftp && r.ftp.requireSocketReUse,
+    label: 'Require Socket Reuse',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.usePgp': {
     type: 'checkbox',
+    defaultValue: r =>
+      r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey),
     label: 'Use PGP Encryption',
   },
   'ftp.pgpEncryptKey': {
@@ -1209,6 +1240,7 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP Encryption Algorithm',
+    defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
     options: [
@@ -1223,7 +1255,6 @@ export default {
         ],
       },
     ],
-    defaultValue: 'CAST5',
   },
   'ftp.pgpDecryptKey': {
     type: 'text',
@@ -1241,11 +1272,11 @@ export default {
   // #region s3
   's3.accessKeyId': {
     type: 'text',
-    label: 'S3 access Key Id',
+    label: 'Access Key Id',
   },
   's3.secretAccessKey': {
     type: 'text',
-    label: 'S3 secret Access Key',
+    label: 'Secret Access Key',
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1253,7 +1284,7 @@ export default {
   },
   's3.pingBucket': {
     type: 'text',
-    label: 'S3 ping Bucket',
+    label: 'Ping Bucket',
   },
   // #endregion s3
   // #region as2
@@ -2077,6 +2108,7 @@ export default {
     type: 'select',
     label: 'Account Type',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.sandbox,
     options: [
       {
         items: [
@@ -2094,6 +2126,7 @@ export default {
     type: 'select',
     label: 'Oauth2 Flow Type',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.oauth2FlowType,
     options: [
       {
         items: [
@@ -2139,7 +2172,8 @@ export default {
   'salesforce.concurrencyLevel': {
     type: 'select',
     label: 'Concurrency Level',
-    defaultValue: r => r && r.salesforce && r.salesforce.concurrencyLevel,
+    defaultValue: r =>
+      (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2250,7 +2284,7 @@ export default {
         is: [''],
       },
     ],
-    defaultValue: r => r && r.wrapper && r.wrapper.concurrencyLevel,
+    defaultValue: r => (r && r.wrapper && r.wrapper.concurrencyLevel) || 1,
   },
   // #endregion wrapper
   // #region mongodb

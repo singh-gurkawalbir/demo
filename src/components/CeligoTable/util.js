@@ -2,9 +2,7 @@ import { Fragment } from 'react';
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-// TODO: @Azhar, this status circle seems to be used more than just in
-// the homepage card. Can you move it under /components, pls?
-import StatusCircle from '../HomePageCard/Header/Status/StatusCircle';
+import StatusCircle from '../StatusCircle';
 import getRoutePath from '../../utils/routePaths';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';

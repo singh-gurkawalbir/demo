@@ -16,7 +16,6 @@ export default {
     // excludeFilter: r => ({ _
     //
   },
-
   'ftp.directoryPath': {
     type: 'text',
     label: 'Directory Path',

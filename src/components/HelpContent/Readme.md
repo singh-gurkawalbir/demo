@@ -1,7 +1,6 @@
 ```js
 const Grid = require('@material-ui/core/Grid').default;
 const Typography = require('@material-ui/core/Typography').default;
-const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 <Grid container justify="flex-start" spacing={2}>
   <Grid item>
     <HelpContent title="Small content">

@@ -1,7 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEqual } from 'lodash';
 import { Link } from 'react-router-dom';
@@ -17,6 +16,7 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import getRoutePath from '../../utils/routePaths';
+import RefreshIcon from '../icons/RefreshIcon';
 
 export default function JobDashboard({
   integrationId,

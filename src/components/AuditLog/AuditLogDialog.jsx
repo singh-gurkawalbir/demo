@@ -3,15 +3,15 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/core';
+import { withStyles, Typography } from '@material-ui/core';
+import CloseIcon from '../icons/CloseIcon';
 import AuditLog from './index';
 
 @withStyles(theme => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
-    top: '1px',
+    top: 1,
   },
   dialogContent: {
     overflowX: 'auto',
@@ -29,8 +29,8 @@ export default class AuditLogDialog extends Component {
 
     return (
       <Dialog open maxWidth="lg">
-        <DialogTitle>
-          {title}
+        <DialogTitle disableTypography>
+          <Typography variant="h6">{title}</Typography>
           {onClose ? (
             <IconButton
               data-test="closeAuditDialog"

@@ -52,6 +52,7 @@ export default function ChildJobDetail({
       <TableCell />
       <TableCell padding="checkbox">
         <Checkbox
+          color="primary"
           disabled={!isSelectable}
           checked={isSelectable && isSelected}
           onChange={event => handleSelectChange(event)}

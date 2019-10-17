@@ -1,26 +1,61 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Typography,
+} from '@material-ui/core';
+import { useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/HookIcon';
+import actions from '../../../../actions';
+import Hooks from '../../../../components/Hooks';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
+function HooksDialog({ flowId, resource, open, onClose }) {
+  const dispatch = useDispatch();
+  const resourceId = resource._id;
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'hooks', true)
+  );
+  const onSave = selectedHook => {
+    const hooks = { preSavePage: selectedHook };
+    const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
 
-function HooksDialog({ flowId, resourceId, open, onClose }) {
-  const classes = useStyles();
+    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(
+        actions.flowData.fetchSampleData(
+          flowId,
+          resourceId,
+          'exports',
+          'hooks',
+          true
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, sampleData]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Export Hooks</DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>exportId: {resourceId}</Typography>
+    <Dialog open={open}>
+      <DialogTitle>
+        <Typography variant="h6">Hooks</Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Hooks onSave={onSave} onCancel={onClose} preHookData={sampleData} />
+      </DialogContent>
     </Dialog>
   );
+}
+
+function ExportHooks(props) {
+  const { open } = props;
+
+  return <Fragment>{open && <HooksDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -30,5 +65,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: HooksDialog,
+  Component: ExportHooks,
 };

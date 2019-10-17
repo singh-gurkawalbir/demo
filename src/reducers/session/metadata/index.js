@@ -30,7 +30,9 @@ function generateNetsuiteOptions(
   metadataType,
   mode,
   filterKey,
-  isFieldMetadata = false
+  isFieldMetadata = false,
+  recordType,
+  selectField
 ) {
   let options = null;
 
@@ -110,6 +112,10 @@ function generateNetsuiteOptions(
             item.id.indexOf('.') === -1
         )
         .map(item => ({ label: item.name, value: item.id }));
+    } else if (recordType && selectField) {
+      options = data.map(item => ({ label: item.name, value: item.id }));
+    } else if (filterKey === 'searchColumns') {
+      options = data.map(item => ({ label: item.name, value: item.id }));
     }
   }
 
@@ -234,7 +240,9 @@ export default (
         metadataType,
         mode,
         filterKey,
-        !!(selectField && recordType)
+        !!(selectField && recordType),
+        recordType,
+        selectField
       );
 
       if (recordType && selectField) {

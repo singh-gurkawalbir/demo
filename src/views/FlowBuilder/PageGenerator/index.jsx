@@ -183,7 +183,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
         opacity={opacity}
         actions={generatorActions}
         flowId={flowId}
-        resourceId={resourceId}
+        resource={resource}
       />
       <div
         /* -- connecting line */

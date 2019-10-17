@@ -10,7 +10,7 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-    defaultValue: r => (r && r.http && r.http.successMediaType) || '',
+    defaultValue: r => (r && r.http && r.http.successMediaType) || 'json',
     options: [
       {
         items: [
@@ -24,6 +24,7 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error Media Type',
+    defaultValue: r => (r && r.http && r.http.errorMediaType) || 'json',
     options: [
       {
         items: [

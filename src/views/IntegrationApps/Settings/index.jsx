@@ -16,16 +16,19 @@ import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
-import Flows from '../../IntegrationSettings/Flows';
+import Flows from './Flows';
 import Users from '../../IntegrationSettings/Users';
+import GeneralSection from './GeneralSection';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,
-    // color: theme.palette.action.active,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   appFrame: {
     padding: theme.spacing(1),
@@ -44,14 +47,18 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
     minHeight: 500,
-    zIndex: 1,
+    zIndex: 0,
   },
   rightElement: {
     flex: 4,
     textAlign: 'center',
     padding: theme.spacing(1),
   },
+
   activeLink: {
+    fontWeight: 'bold',
+  },
+  subSection: {
     fontWeight: 'bold',
   },
   flex: {
@@ -59,13 +66,13 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     float: 'right',
-    marginTop: '20px',
+    marginTop: 10,
   },
   storeContainer: {
     display: 'flex',
-    background: '#F8FAFF',
-    borderBottom: '1px solid #D6E4ED',
-    borderTop: 'solid 1px #fff',
+    background: theme.palette.background.default,
+    borderBottom: `solid 1px ${theme.palette.background.paper}`,
+    borderTop: `solid 1px ${theme.palette.background.paper}`,
   },
   addStore: {
     float: 'right',
@@ -76,27 +83,77 @@ const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
   },
+  listItem: {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    '& > ul': {
+      padding: 0,
+    },
+  },
 }));
 
-export default function IntegrationAppSettings(props) {
-  const { integrationId } = props.match.params;
+function LHSItem(props) {
   const classes = useStyles();
+  const { to, label } = props;
+
+  return (
+    <ListItem className={classes.listItem}>
+      <NavLink
+        activeClassName={classes.activeLink}
+        className={classes.link}
+        to={to}>
+        {label}
+      </NavLink>
+    </ListItem>
+  );
+}
+
+export default function IntegrationAppSettings(props) {
+  const { integrationId, storeId, section } = props.match.params;
+  const classes = useStyles();
+  const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
+  const urlPrefix = getRoutePath(`connectors/${integrationId}/settings`);
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
+  const { supportsMultiStore, hasGeneralSettings, storeLabel } =
+    integration.settings || {};
   const defaultStoreId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId)
+    selectors.defaultStoreId(state, integrationId, storeId)
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
+  const [storeChanged, setStoreChanged] = useState(false);
+  const connectorFlowSections = useSelector(state =>
+    selectors.connectorFlowSections(state, integrationId, currentStore)
+  );
   const showAPITokens = permissions.accesstokens.view;
 
   useEffect(() => {
-    if (!integration) {
-      dispatch(actions.resource.request('integrations', integrationId));
+    if ((!redirected && section === 'flows') || storeChanged) {
+      if (supportsMultiStore) {
+        props.history.push(
+          `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`
+        );
+      } else {
+        props.history.push(`${urlPrefix}/${connectorFlowSections[0].titleId}`);
+      }
+
+      setStoreChanged(false);
+      setRedirected(true);
     }
-  });
+  }, [
+    connectorFlowSections,
+    currentStore,
+    integrationId,
+    props.history,
+    redirected,
+    section,
+    storeChanged,
+    supportsMultiStore,
+    urlPrefix,
+  ]);
 
   useEffect(() => {
     if (
@@ -107,13 +164,15 @@ export default function IntegrationAppSettings(props) {
       setCurrentStore(defaultStoreId);
   }, [currentStore, defaultStoreId, integration.stores]);
 
-  const isMultiStore = !!(integration.settings || {}).supportsMutliStore;
   const handleStoreChange = (id, value) => {
     setCurrentStore(value);
+    setStoreChanged(true);
   };
 
   const handleAddNewStoreClick = () => {
-    props.history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
+    props.history.push(
+      getRoutePath(`connectors/${integrationId}/install/addNewStore`)
+    );
   };
 
   const handleTagChangeHandler = tag => {
@@ -127,7 +186,9 @@ export default function IntegrationAppSettings(props) {
   };
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources
+      required
+      resources="integrations, exports, imports, flows, connections">
       <div className={classes.appFrame}>
         <div className={classes.about}>
           <Typography variant="h5">{integration.name}</Typography>
@@ -139,7 +200,7 @@ export default function IntegrationAppSettings(props) {
           />
         </div>
         <Divider />
-        {isMultiStore && (
+        {supportsMultiStore && (
           <div className={classes.storeContainer}>
             <Grid container>
               <Grid item xs={2} className={classes.storeSelect}>
@@ -153,17 +214,18 @@ export default function IntegrationAppSettings(props) {
               </Grid>
               <Grid item xs={10} className={classes.addStore}>
                 <Button
-                  data-test={`Add ${integration.settings.storeLabel}`}
+                  data-test={`Add ${storeLabel}`}
                   variant="contained"
                   color="primary"
                   onClick={handleAddNewStoreClick}
                   className={classes.button}>
-                  Add {integration.settings.storeLabel}
+                  Add {storeLabel}
                 </Button>
               </Grid>
             </Grid>
           </div>
         )}
+        <Divider />
         <div className={classes.root}>
           <div className={classes.flex}>
             <Drawer
@@ -173,80 +235,61 @@ export default function IntegrationAppSettings(props) {
                 paper: classes.leftElement,
               }}>
               <List>
-                <ListItem>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to="general">
-                    General
-                  </NavLink>
-                </ListItem>
-                <ListItem>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to="flows">
-                    Integration Flows
-                  </NavLink>
+                {hasGeneralSettings && (
+                  <LHSItem to={`${urlPrefix}/general`} label="General" />
+                )}
+                <ListItem className={classes.listItem}>
+                  Integration Flows
+                  <ul>
+                    {connectorFlowSections &&
+                      connectorFlowSections.map(f => (
+                        <ListItem key={`${f.titleId}`}>
+                          <NavLink
+                            activeClassName={classes.subSection}
+                            className={classes.link}
+                            to={
+                              supportsMultiStore
+                                ? `${urlPrefix}/${currentStore}/${f.titleId}`
+                                : `${urlPrefix}/${f.titleId}`
+                            }>
+                            {f.title}
+                          </NavLink>
+                        </ListItem>
+                      ))}
+                  </ul>
                 </ListItem>
                 {showAPITokens && (
-                  <ListItem>
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="tokens">
-                      API Tokens
-                    </NavLink>
-                  </ListItem>
+                  <LHSItem to={`${urlPrefix}/tokens`} label="API Tokens" />
                 )}
-                <ListItem>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to="connections">
-                    Connections
-                  </NavLink>
-                </ListItem>
-                <ListItem>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to="users">
-                    Users
-                  </NavLink>
-                </ListItem>
-                <ListItem>
-                  <NavLink
-                    activeClassName={classes.activeLink}
-                    className={classes.link}
-                    to="audit">
-                    Audit Log
-                  </NavLink>
-                </ListItem>
-                <ListItem>
-                  {integration._connectorId && (
-                    <NavLink
-                      activeClassName={classes.activeLink}
-                      className={classes.link}
-                      to="uninstall">
-                      Uninstall
-                    </NavLink>
-                  )}
-                </ListItem>
+                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
+                <LHSItem to={`${urlPrefix}/users`} label="Users" />
+                <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
+                <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
             </Drawer>
           </div>
           <div className={classes.rightElement}>
             <Switch>
-              <Route path={`${props.match.url}/flows`} component={Flows} />
               <Route
-                path={`${props.match.url}/connections`}
-                component={Connections}
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/general`
+                )}
+                render={props => (
+                  <GeneralSection {...props} storeId={currentStore} />
+                )}
               />
-              <Route path={`${props.match.url}/users`} component={Users} />
-              <Route path={`${props.match.url}/audit`} component={AuditLog} />
               <Route
-                path={`${props.match.url}/uninstall`}
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/connections`
+                )}
+                render={props => (
+                  <Connections {...props} storeId={currentStore} />
+                )}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/uninstall`
+                )}
                 render={props => (
                   <Uninstall
                     {...props}
@@ -254,6 +297,26 @@ export default function IntegrationAppSettings(props) {
                     integrationId={integrationId}
                   />
                 )}
+              />
+              <Route
+                path={getRoutePath(`connectors/:integrationId/settings/users`)}
+                component={Users}
+              />
+              <Route
+                path={getRoutePath('connectors/:integrationId/settings/audit')}
+                component={AuditLog}
+              />
+              <Route
+                path={
+                  supportsMultiStore
+                    ? getRoutePath(
+                        `/connectors/:integrationId/settings/:storeId/:section`
+                      )
+                    : getRoutePath(
+                        `/connectors/:integrationId/settings/:section`
+                      )
+                }
+                component={Flows}
               />
             </Switch>
           </div>
