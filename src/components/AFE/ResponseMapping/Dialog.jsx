@@ -276,7 +276,6 @@ export default function ResponseMappingDialog(props) {
           variant="contained"
           size="small"
           color="secondary">
-          {' '}
           Save
         </Button>
         <Button
