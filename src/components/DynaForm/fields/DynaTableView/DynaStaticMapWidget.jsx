@@ -4,7 +4,7 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
-export default function DynaStaticMap(props) {
+export default function DynaStaticMapWidget(props) {
   const {
     id,
     _integrationId,
@@ -16,7 +16,7 @@ export default function DynaStaticMap(props) {
     supportsExtractsRefresh,
     supportsGeneratesRefresh,
   } = props;
-  const computedValue = Object.keys(map).map(key => ({
+  const computedValue = Object.keys(map || {}).map(key => ({
     extracts: key,
     generates: map[key],
   }));

@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
     borderRadius: '50%',
     display: 'inline-block',
-    marginBottom: '5px',
+    marginRight: '5px',
   },
   large: {
     width: 24,
@@ -17,11 +17,6 @@ const useStyles = makeStyles(theme => ({
   small: {
     width: 12,
     height: 12,
-    // TODO: Azhar, possibly there is a better way? I added bottom margin
-    // to align the small dot better. it was not visually centered with the
-    // text and right arrow... If the solution below is good, erase this
-    // comment.
-    marginBottom: 3, // used to properly center small dot with text.
   },
   success: {
     backgroundColor: theme.palette.success.main,
@@ -49,6 +44,7 @@ function StatusCircle({ variant, size = 'large' }) {
 
 StatusCircle.propTypes = {
   variant: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
+  size: PropTypes.oneOf(['small', 'large']),
 };
 
 export default StatusCircle;

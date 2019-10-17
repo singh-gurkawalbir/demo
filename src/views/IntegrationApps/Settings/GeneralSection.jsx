@@ -4,8 +4,8 @@ import { ActionsFactory as DynaFromWithDynamicActions } from '../../../component
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
 
 export default function GeneralSection(props) {
-  const { match } = props;
-  const { integrationId, storeId } = match.params;
+  const { match, storeId } = props;
+  const { integrationId } = match.params;
   const { flows, ...rest } = useSelector(state =>
     selectors.integrationAppGeneralSettings(state, integrationId, storeId)
   );

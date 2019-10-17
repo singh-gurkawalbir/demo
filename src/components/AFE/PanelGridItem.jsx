@@ -5,8 +5,8 @@ const useStyles = makeStyles(() => ({
   gridItem: {
     border: `solid 1px rgb(0,0,0,0.3)`,
     overflow: 'hidden',
-    minWidth: '150px',
-    minHeight: '70px',
+    minWidth: 150,
+    minHeight: 70,
   },
   flexContainer: {
     display: 'flex',
@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
     alignItems: 'stretch',
   },
   title: { flex: '0 0 auto' },
-  panel: { flex: '1 1 100px', minHeight: '50px' },
+  panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
 export default function PanelGridItem(props) {
