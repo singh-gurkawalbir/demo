@@ -394,7 +394,7 @@ const theme = {
         },
       },
     },
-    MuiSvgIcon: {
+    MuiIconButton: {
       root: {
         color: colors.celigoNeutral6,
       },
@@ -407,6 +407,17 @@ const theme = {
     MuiDialogContent: {
       root: {
         background: colors.celigoNeutral1,
+      },
+    },
+    MuiExpansionPanelSummary: {
+      root: {
+        padding: '0px 12px',
+      },
+    },
+    MuiChip: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral8,
       },
     },
   },

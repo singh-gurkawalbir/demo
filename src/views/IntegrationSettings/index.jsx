@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
     minHeight: 500,
+    zIndex: 0,
   },
   rightElement: {
     flex: 4,

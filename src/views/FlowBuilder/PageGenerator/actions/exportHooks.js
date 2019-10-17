@@ -1,5 +1,9 @@
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Typography,
+} from '@material-ui/core';
 import { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -7,15 +11,8 @@ import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
-
 function HooksDialog({ flowId, resource, open, onClose }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const resourceId = resource._id;
   const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
   const preHookData = useSelector(state => {
@@ -59,8 +56,10 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   }, [dispatch, flowId, resourceId, preHookData]);
 
   return (
-    <Dialog open={open} PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Hooks</DialogTitle>
+    <Dialog open={open}>
+      <DialogTitle>
+        <Typography variant="h6">Hooks</Typography>
+      </DialogTitle>
       <DialogContent>
         <Hooks
           onSave={onSave}

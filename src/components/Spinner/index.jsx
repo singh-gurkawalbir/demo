@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
+import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
@@ -24,5 +25,10 @@ function Spinner(props) {
     progress
   );
 }
+
+Spinner.propTypes = {
+  size: PropTypes.number,
+  thickness: PropTypes.number,
+};
 
 export default Spinner;

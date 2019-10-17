@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Divider, List, Collapse, ButtonBase } from '@material-ui/core';
+import { List, Collapse, ButtonBase } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -103,15 +103,15 @@ const useStyles = makeStyles(theme => ({
     },
     '&:before': {
       content: '""',
-      width: '6px',
+      width: 6,
       height: '100%',
       position: 'absolute',
       background: 'transparent',
-      left: '0px',
+      left: 0,
     },
   },
   itemIconRoot: {
-    minWidth: '45px',
+    minWidth: 45,
   },
   menuList: {
     overflowY: 'auto',
@@ -143,7 +143,7 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
     '& svg': {
       position: 'relative',
-      top: '-12px',
+      top: -12,
     },
   },
 }));
@@ -258,7 +258,6 @@ export default function CeligoDrawer() {
           </List>
         </div>
         <div>
-          <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton
               data-test="celigoDrawerToggle"

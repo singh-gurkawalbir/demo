@@ -22,8 +22,8 @@ const mapStateToProps = state => ({
     },
   },
   wafflePopper: {
-    width: '300px',
-    maxHeight: '450px',
+    width: 300,
+    maxHeight: 450,
     padding: theme.spacing(1, 2),
     display: 'flex',
     flexWrap: 'wrap',
