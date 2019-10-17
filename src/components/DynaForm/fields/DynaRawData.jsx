@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import { FormContext } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
@@ -7,6 +6,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { isNewId } from '../../../utils/resource';
+import RefreshIcon from '../../icons/RefreshIcon';
 
 function DynaRawData(props) {
   const {

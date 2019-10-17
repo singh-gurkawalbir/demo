@@ -8,6 +8,7 @@ const useStyles = makeStyles(theme => ({
     position: 'sticky',
     display: 'flex',
     overflow: 'hidden',
+    zIndex: 1,
   },
   action: {
     padding: theme.spacing(0, 0),

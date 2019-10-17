@@ -100,8 +100,10 @@ class UserDialog extends Component {
         />
 
         <Dialog open maxWidth={false}>
-          <DialogTitle>
-            {id ? 'Change User Permissions' : 'Invite User'}
+          <DialogTitle disableTypography>
+            <Typography variant="h6">
+              {id ? 'Change User Permissions' : 'Invite User'}
+            </Typography>
           </DialogTitle>
           <DialogContent style={{ width: '30vw' }}>
             <Typography>{errorMessage}</Typography>
