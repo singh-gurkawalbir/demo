@@ -335,7 +335,6 @@ export default {
     type: 'refreshableselect',
     mode: 'suitescript',
     filterKey: 'dateField',
-    defaultValue: r => r && r.delta && r.delta.dateField,
     required: true,
     placeholder: 'Please select a date field',
     connectionId: r => r && r._connectionId,
@@ -351,7 +350,6 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    defaultValue: r => r && r.delta && r.delta.lagOffset,
   },
   'delta.endDateField': {
     type: 'text',
@@ -363,7 +361,6 @@ export default {
     label: 'Boolean Field',
     type: 'refreshableselect',
     placeholder: 'Please select a Boolean field',
-    defaultValue: r => r && r.once && r.once.booleanField,
     mode: 'suitescript',
     filterKey: 'booleanField',
     required: true,
