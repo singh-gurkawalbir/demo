@@ -2,7 +2,6 @@ export default {
   'webhook.provider': {
     type: 'select',
     label: 'Provider',
-    defaultValue: r => r && r.webhook && r.webhook.provider,
     required: true,
     options: [
       {
@@ -77,9 +76,7 @@ export default {
   'webhook.verify': {
     type: 'select',
     label: 'Verification Type',
-    defaultValue: r => r && r.webhook && r.webhook.verify,
     required: true,
-
     options: [
       {
         items: [
@@ -100,7 +97,6 @@ export default {
   'webhook.algorithm': {
     type: 'select',
     label: 'Algorithm',
-    defaultValue: r => r && r.webhook && r.webhook.algorithm,
     options: [
       {
         items: [
@@ -120,7 +116,6 @@ export default {
     type: 'select',
     label: 'Header (Containing HMAC)',
     required: true,
-    defaultValue: r => r && r.webhook && r.webhook.header,
     options: [
       {
         items: [
@@ -140,7 +135,6 @@ export default {
     type: 'select',
     label: 'Encoding',
     required: true,
-    defaultValue: r => r && r.webhook && r.webhook.encoding,
     options: [
       {
         items: [
