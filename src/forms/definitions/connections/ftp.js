@@ -43,9 +43,9 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    'ftp.hostURI': { fieldId: 'ftp.hostURI', required: true },
-    'ftp.type': { fieldId: 'ftp.type', required: true },
-    'ftp.username': { fieldId: 'ftp.username', required: true },
+    'ftp.hostURI': { fieldId: 'ftp.hostURI' },
+    'ftp.type': { fieldId: 'ftp.type' },
+    'ftp.username': { fieldId: 'ftp.username' },
     'ftp.password': { fieldId: 'ftp.password' },
     'ftp.authKey': {
       fieldId: 'ftp.authKey',
