@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import clsx from 'clsx';
-import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
 import TextToggle from '../../components/TextToggle';
@@ -90,74 +89,64 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoAppBar(props) {
+export default function CeligoAppBar() {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const authenticated = useSelector(state => selectors.isAuthenticated(state));
-  const { location } = props;
 
   return (
     <SlideOnScroll threshold={500}>
       <ElevateOnScroll threshold={250}>
-        {!authenticated ? (
-          <AppBar className={classes.unauthenticatedAppBar}>
-            {location && location.pathname === '/pg/signin' && (
-              <span className={classNames(classes.celigoLogo)} />
-            )}
-          </AppBar>
-        ) : (
-          <AppBar
-            color="inherit"
-            position="fixed"
-            className={clsx(classes.appBar, {
-              [classes.appBarShift]: drawerOpened,
-            })}>
-            <Toolbar className="topBar" variant="dense">
-              <Breadcrumbs
-                maxItems={3}
-                separator={<ArrowRightIcon fontSize="small" />}
-                aria-label="breadcrumb"
-                className={classes.breadCrumb}>
-                <Link color="inherit" href="/pg">
-                  Home
-                </Link>
-                <Link color="inherit" href="/pg">
-                  Profile
-                </Link>
-                <Link color="inherit" href="/pg">
-                  Subscription
-                </Link>
-                <Typography variant="body2" className={classes.addons}>
-                  Add-ons
-                </Typography>
-              </Breadcrumbs>
-              <ul className={classes.topBarActions}>
-                <li>
-                  <GlobalSearch />
-                </li>
-                <li>
-                  <TextToggle
-                    defaultValue={1}
-                    exclusive
-                    options={[
-                      { value: 1, label: 'Production' },
-                      { value: 2, label: 'Sandbox' },
-                    ]}
-                  />
-                </li>
-                <li>
-                  <Notifications />
-                </li>
-                <li>
-                  <LicenseAction />
-                </li>
-                <li>
-                  <ProfileMenuButton />
-                </li>
-              </ul>
-            </Toolbar>
-          </AppBar>
-        )}
+        <AppBar
+          color="inherit"
+          position="fixed"
+          className={clsx(classes.appBar, {
+            [classes.appBarShift]: drawerOpened,
+          })}>
+          <Toolbar className="topBar" variant="dense">
+            <Breadcrumbs
+              maxItems={3}
+              separator={<ArrowRightIcon fontSize="small" />}
+              aria-label="breadcrumb"
+              className={classes.breadCrumb}>
+              <Link color="inherit" href="/pg">
+                Home
+              </Link>
+              <Link color="inherit" href="/pg">
+                Profile
+              </Link>
+              <Link color="inherit" href="/pg">
+                Subscription
+              </Link>
+              <Typography variant="body2" className={classes.addons}>
+                Add-ons
+              </Typography>
+            </Breadcrumbs>
+            <ul className={classes.topBarActions}>
+              <li>
+                <GlobalSearch />
+              </li>
+              <li>
+                <TextToggle
+                  defaultValue={1}
+                  exclusive
+                  options={[
+                    { value: 1, label: 'Production' },
+                    { value: 2, label: 'Sandbox' },
+                  ]}
+                />
+              </li>
+              <li>
+                <Notifications />
+              </li>
+              <li>
+                <LicenseAction />
+              </li>
+              <li>
+                <ProfileMenuButton />
+              </li>
+            </ul>
+          </Toolbar>
+        </AppBar>
       </ElevateOnScroll>
     </SlideOnScroll>
   );

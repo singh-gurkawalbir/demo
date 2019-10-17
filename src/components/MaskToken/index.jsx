@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
-// import Typography from '@material-ui/core/Typography';
-// import { Button } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -18,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AccessToken({ count }) {
+function MaskToken({ count }) {
   const len = parseInt(count, 0);
   const classes = useStyles();
   const items = [];
@@ -34,4 +33,8 @@ function AccessToken({ count }) {
   return <div className={classes.wrapper}>{listItems}</div>;
 }
 
-export default AccessToken;
+MaskToken.propTypes = {
+  count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
+export default MaskToken;

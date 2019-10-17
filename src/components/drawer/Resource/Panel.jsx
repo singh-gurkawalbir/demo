@@ -108,12 +108,6 @@ export default function Panel(props) {
           message: `${resourceLabel} created`,
           variant: 'success',
         });
-      else {
-        enqueueSnackbar({
-          message: `${resourceLabel} edited`,
-          variant: 'info',
-        });
-      }
 
       onClose();
     }

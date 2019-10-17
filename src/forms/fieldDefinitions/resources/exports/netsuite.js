@@ -186,7 +186,6 @@ export default {
       return skipGrouping === undefined ? true : skipGrouping;
     },
   },
-
   'netsuite.netsuiteExportlabel': {
     label: 'What would you like to export from NetSuite?',
     type: 'labeltitle',

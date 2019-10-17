@@ -637,6 +637,76 @@ const sampleData = {
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
 };
+const flowData = {
+  init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
+    action(actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA, {
+      flowId,
+      resourceId,
+      previewType,
+      isPageGenerator,
+    }),
+  receivedPreviewData: (
+    flowId,
+    resourceId,
+    previewData,
+    previewType,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_PREVIEW_DATA, {
+      flowId,
+      resourceId,
+      previewData,
+      previewType,
+      isPageGenerator,
+    }),
+  requestProcessorData: (
+    flowId,
+    resourceId,
+    resourceType,
+    processor,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, {
+      flowId,
+      resourceId,
+      resourceType,
+      processor,
+      isPageGenerator,
+    }),
+  receivedProcessorData: (
+    flowId,
+    resourceId,
+    processor,
+    processedData,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_PROCESSOR_DATA, {
+      flowId,
+      resourceId,
+      processor,
+      processedData,
+      isPageGenerator,
+    }),
+  fetchSampleData: (flowId, resourceId, resourceType, stage, isPageGenerator) =>
+    action(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isPageGenerator,
+    }),
+  reset: (flowId, resourceId) =>
+    action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
+  resetFlowSequence: (flowId, updatedFlow) =>
+    action(actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE, { flowId, updatedFlow }),
+  updateFlowsForResource: (resourceId, resourceType) =>
+    action(actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE, {
+      resourceId,
+      resourceType,
+    }),
+  updateFlow: flowId => action(actionTypes.FLOW_DATA.UPDATE_FLOW, { flowId }),
+};
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
@@ -857,6 +927,7 @@ export default {
   assistantMetadata,
   stack,
   sampleData,
+  flowData,
   connection,
   marketplace,
   recycleBin,

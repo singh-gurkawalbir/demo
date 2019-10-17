@@ -2,7 +2,46 @@ import MappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields } = options;
+    const {
+      value,
+      lookup = {},
+      extractFields,
+      connectionId,
+      recordType,
+      generate,
+      generateFields,
+    } = options;
+    const fieldId =
+      generate && generate.indexOf('[*].') !== -1
+        ? generate.split('[*].')[1]
+        : generate;
+    const fieldMetadata = generateFields.find(gen => gen.id === generate);
+    let generateFieldType;
+
+    if (
+      fieldMetadata &&
+      fieldMetadata.id === 'item[*].item.internalid' &&
+      fieldMetadata.type === 'select'
+    ) {
+      fieldMetadata.type = 'integer';
+      generateFieldType = 'integer';
+    }
+
+    if (
+      fieldMetadata &&
+      (fieldMetadata.type === 'select' ||
+        fieldMetadata.type === 'multiselect') &&
+      !generateFieldType
+    ) {
+      generateFieldType = fieldMetadata.type;
+    } else if (
+      fieldMetadata &&
+      (fieldMetadata.type === 'checkbox' || fieldMetadata.type === 'radio') &&
+      !generateFieldType
+    ) {
+      generateFieldType = 'checkbox';
+    }
+
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -82,16 +121,50 @@ export default {
             },
           ],
         },
+        'lookup.recordType': {
+          id: 'lookup.recordType',
+          name: 'recordType',
+          mode: 'suitescript',
+          defaultValue: '',
+          type: 'refreshableselect',
+          resourceType: 'recordTypes',
+          label: 'Search Record Type',
+          connectionId,
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+        },
+        'lookup.resultField': {
+          id: 'lookup.resultField',
+          name: 'resultField',
+          type: 'refreshableselect',
+          label: 'Value Field',
+          mode: 'suitescript',
+          defaultValue: '',
+          filterKey: 'searchColumns',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+        },
         'lookup.mapList': {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
+          connectionId: fieldId.indexOf('.internalid') && connectionId,
+          selectField: fieldId
+            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
+            : undefined,
           label: '',
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (HTTP)',
           map: lookup.map,
+          recordType,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -102,6 +175,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -109,6 +183,7 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
+          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -211,6 +286,45 @@ export default {
           ],
           defaultValue: lookup.default,
         },
+        hardcodedSelect: {
+          id: 'hardcodedSelect',
+          name: 'hardcodedSelect',
+          type: 'refreshableselect',
+          label: 'Value',
+          mode: 'suitescript',
+          multiselect: generateFieldType === 'multiselect',
+          // filterKey: 'searchColumns',
+          defaultValue:
+            generateFieldType === 'multiselect' && value.hardCodedValue
+              ? value.hardCodedValue.split(',')
+              : value.hardCodedValue,
+          recordType,
+          resourceType: 'recordTypes',
+          selectField: fieldId
+            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
+            : undefined,
+          connectionId,
+          // refreshOptionsOnChangesTo: ['lookup.recordType'],
+          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
+        },
+        hardcodedCheckbox: {
+          id: 'hardcodedCheckbox',
+          name: 'hardcodedCheckbox',
+          type: 'radiogroup',
+          label: 'Value',
+          defaultValue: value.hardCodedValue,
+          showOptionsHorizontally: true,
+          fullWidth: true,
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
+          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
+        },
       },
       layout: {
         fields: [
@@ -220,6 +334,8 @@ export default {
           'useAsAnInitializeValue',
           'fieldMappingType',
           'lookup.mode',
+          'lookup.recordType',
+          'lookup.resultField',
           'lookup.mapList',
           'functions',
           'extract',
@@ -228,6 +344,8 @@ export default {
           'lookupAction',
           'hardcodedDefault',
           'lookupDefault',
+          'hardcodedSelect',
+          'hardcodedCheckbox',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -246,12 +364,17 @@ export default {
           if (functionsField.value) expressionValue += functionsField.value;
 
           return expressionValue;
+        } else if (fieldId === 'lookup.recordType') {
+          return {
+            resourceToFetch: 'recordTypes',
+          };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'
           );
 
           return {
+            disableOptionsLoad: !(recordTypeField && recordTypeField.value),
             resourceToFetch:
               recordTypeField &&
               recordTypeField.value &&
@@ -263,6 +386,43 @@ export default {
         return null;
       },
     };
+    let { fields } = fieldMeta.layout;
+
+    if (
+      recordType &&
+      fieldId.indexOf('.internalid') !== -1 &&
+      (generateFieldType === 'select' || generateFieldType === 'multiselect')
+    ) {
+      delete fieldMeta.fieldMap.hardcodedAction;
+      delete fieldMeta.fieldMap.hardcodedDefault;
+      delete fieldMeta.fieldMap.hardcodedCheckbox;
+
+      fields = fields.filter(
+        el =>
+          el !== 'hardcodedAction' &&
+          el !== 'hardcodedDefault' &&
+          el !== 'hardcodedCheckbox'
+      );
+    } else if (generateFieldType === 'checkbox') {
+      delete fieldMeta.fieldMap.hardcodedAction;
+      delete fieldMeta.fieldMap.hardcodedDefault;
+      delete fieldMeta.fieldMap.hardcodedSelect;
+
+      fields = fields.filter(
+        el =>
+          el !== 'hardcodedAction' &&
+          el !== 'hardcodedDefault' &&
+          el !== 'hardcodedSelect'
+      );
+    } else {
+      delete fieldMeta.fieldMap.hardcodedSelect;
+      delete fieldMeta.fieldMap.hardcodedCheckbox;
+      fields = fields.filter(
+        el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
+      );
+    }
+
+    fieldMeta.layout.fields = fields;
 
     return fieldMeta;
   },

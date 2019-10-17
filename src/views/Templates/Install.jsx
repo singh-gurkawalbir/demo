@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-    marginBottom: '29px',
+    marginBottom: 29,
   },
   innerContent: {
     width: '80vw',
   },
-  stepTable: { position: 'relative', marginTop: '-20px' },
+  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },
@@ -114,8 +114,9 @@ export default function ConnectorInstallation(props) {
     return <Typography>Invalid Template</Typography>;
   }
 
-  const handleStepClick = step => {
+  const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type } = step;
+    let bundleURL = installURL;
 
     // handle connection step click
     if (type === INSTALL_STEP_TYPES.CONNECTION) {
@@ -145,7 +146,16 @@ export default function ConnectorInstallation(props) {
             templateId
           )
         );
-        openExternalUrl({ url: installURL });
+
+        if (
+          conn &&
+          conn.type === 'netsuite' &&
+          ((conn.netsuite || {}).dataCenterURLs || {}).systemDomain
+        ) {
+          bundleURL = conn.netsuite.dataCenterURLs.systemDomain + bundleURL;
+        }
+
+        openExternalUrl({ url: bundleURL });
       } else {
         if (step.verifying) {
           return false;
