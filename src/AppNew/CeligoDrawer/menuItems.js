@@ -29,7 +29,11 @@ export default function menuItems(userProfile, userPermissions) {
       label: 'Tools',
       Icon: ToolsIcon,
       children: [
-        { label: 'Flow builder', path: '/flowBuilder', Icon: FlowBuilderIcon },
+        {
+          label: 'Flow builder',
+          path: '/integrations/none/flowBuilder/new',
+          Icon: FlowBuilderIcon,
+        },
         { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
       ],

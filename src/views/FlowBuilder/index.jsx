@@ -204,7 +204,7 @@ const useStyles = makeStyles(theme => ({
 function FlowBuilder(props) {
   const newId = () => `new-${shortid.generate()}`;
   const { match, history } = props;
-  const { flowId } = match.params;
+  const { flowId /* , integrationId */ } = match.params;
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -333,6 +333,14 @@ function FlowBuilder(props) {
     pushOrReplaceHistory(`${match.url}/${path}`);
   }
 
+  if (flowId === 'new') {
+    const parts = match.url.split('/');
+
+    parts[parts.length - 1] = newId();
+    const newUrl = parts.join('/');
+
+    history.replace(newUrl);
+  }
   // eslint-disable-next-line
   // console.log(flow);
 

@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   appLogoContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
-    width: 101,
+    // width: 101,
     height: 49,
   },
   appLogo: {
