@@ -15,26 +15,54 @@ export default function ConnectionPanel({ flow }) {
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const classes = useStyles();
   const connectionIds = [];
+  const exportIds = [];
+  const importIds = [];
 
   pageGenerators.forEach(pg => {
+    exportIds.push(pg._exportId);
+
     if (pg._connectionId) {
       connectionIds.push(pg._connectionId);
     }
   });
   pageProcessors.forEach(pp => {
+    if (pp.type === 'import') {
+      importIds.push(pp._importId);
+    } else {
+      exportIds.push(pp._exportId);
+    }
+
     if (pp._connectionId) {
       connectionIds.push(pp._connectionId);
     }
   });
-  const connections = useSelector(state =>
-    selectors.resources(state, 'connections', connectionIds)
+  const exportList = useSelector(state =>
+    selectors.resources(state, 'exports', exportIds)
+  );
+  const importList = useSelector(state =>
+    selectors.resources(state, 'imports', importIds)
+  );
+
+  exportList.forEach(e => {
+    if (e._connectionId) {
+      connectionIds.push(e._connectionId);
+    }
+  });
+  importList.forEach(i => {
+    if (i._connectionId) {
+      connectionIds.push(i._connectionId);
+    }
+  });
+  const uniqueConnectionIds = [...new Set(connectionIds)];
+  const connectionList = useSelector(state =>
+    selectors.resources(state, 'connections', uniqueConnectionIds)
   );
 
   return (
     <div className={classes.root}>
       <LoadResources required resources="connections">
         <CeligoTable
-          data={connections}
+          data={connectionList}
           filterKey="connections"
           {...metadata}
           actionProps={{ resourceType: 'connections' }}

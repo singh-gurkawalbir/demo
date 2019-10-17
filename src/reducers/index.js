@@ -497,8 +497,8 @@ export function resourceList(state, options) {
 export function resources(state, resourceType, resourceIds) {
   return (
     resourceIds &&
-    resourceIds.map(rId =>
-      fromData.resource(state && state.data, resourceType, rId)
+    resourceIds.map(
+      rId => fromData.resource(state && state.data, resourceType, rId) || {}
     )
   );
 }
