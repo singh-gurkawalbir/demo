@@ -202,15 +202,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const newId = () => `new-${shortid.generate()}`;
+  const getNewId = () => `new-${shortid.generate()}`;
   const { match, history } = props;
-  const { flowId /* , integrationId */ } = match.params;
+  const { flowId, integrationId } = match.params;
+  const isNewFlow = !flowId || flowId.startsWith('new');
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
   const [size, setSize] = useState(0);
-  const [newGeneratorId, setNewGeneratorId] = useState(newId());
-  const [newProcessorId, setNewProcessorId] = useState(newId());
+  const [newGeneratorId, setNewGeneratorId] = useState(getNewId());
+  const [newProcessorId, setNewProcessorId] = useState(getNewId());
   //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -285,7 +286,7 @@ function FlowBuilder(props) {
         { _exportId: createdGeneratorId },
       ]);
       // in case someone clicks + again to add another resource...
-      setNewGeneratorId(newId());
+      setNewGeneratorId(getNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,7 +303,7 @@ function FlowBuilder(props) {
         { type: 'import', _importId: createdProcessorId },
       ]);
 
-      setNewProcessorId(newId());
+      setNewProcessorId(getNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -333,13 +334,28 @@ function FlowBuilder(props) {
     pushOrReplaceHistory(`${match.url}/${path}`);
   }
 
+  // This prt of the code initialized a new flow (patch, no commit)
+  // and redirects (replaces) the url to reflect the new temp id.
   if (flowId === 'new') {
     const parts = match.url.split('/');
+    const newId = getNewId();
 
-    parts[parts.length - 1] = newId();
+    parts[parts.length - 1] = newId;
     const newUrl = parts.join('/');
+    const patchSet = [{ op: 'add', path: '/name', value: 'New flow' }];
 
+    if (integrationId !== 'null') {
+      patchSet.push({
+        op: 'add',
+        path: '/_integrationId',
+        value: integrationId,
+      });
+    }
+
+    dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     history.replace(newUrl);
+
+    return null;
   }
   // eslint-disable-next-line
   // console.log(flow);
@@ -353,26 +369,26 @@ function FlowBuilder(props) {
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
-        title={flowId ? flow.name : 'New flow'}
-        subtitle={`Last saved: ${flowId ? flow.lastModified : 'Never'}`}
+        title={flow.name}
+        subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
           <SwitchOnOff
-            disabled={!flowId}
-            on={!!flowId && flow.disabled === 'false'}
+            disabled={isNewFlow}
+            on={!isNewFlow && flow.disabled === 'false'}
           />
           <IconButton
-            disabled={!flowId}
+            disabled={isNewFlow}
             onClick={() => handleDrawerOpen('run')}>
             <RunIcon />
           </IconButton>
           <IconButton
-            disabled={!flowId}
+            disabled={isNewFlow}
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
           <IconButton
-            disabled={!flowId}
+            disabled={isNewFlow}
             onClick={() => handleDrawerOpen('settings')}>
             <SettingsIcon />
           </IconButton>
