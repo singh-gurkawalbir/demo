@@ -449,7 +449,7 @@ function FlowBuilder(props) {
                     onMove={handleMove}
                   />
                 ))}
-                {!pageGenerators.length && (
+                {!pageProcessors.length && (
                   <AppBlock
                     className={classes.newPP}
                     onBlockClick={handleAddProcessor}
