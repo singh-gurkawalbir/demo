@@ -558,13 +558,22 @@ export function filteredResourceList(state, resource, resourceType) {
 
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
-
-  return fromData.marketplaceConnectors(
+  const connectors = fromData.marketplaceConnectors(
     state && state.data,
     application,
     sandbox,
     licenses
   );
+
+  return connectors.map(c => {
+    const installedIntegrationApps = resourceList(state, {
+      type: 'integrations',
+      sandbox,
+      filter: { _connectorId: c._id },
+    });
+
+    return { ...c, installed: !!installedIntegrationApps.resources.length };
+  });
 }
 
 export function marketplaceTemplates(state, application) {
