@@ -1140,6 +1140,7 @@ export default {
   'ftp.type': {
     type: 'radiogroup',
     label: 'Protocol',
+    required: true,
     defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
     options: [
       {
@@ -1154,10 +1155,12 @@ export default {
   'ftp.username': {
     type: 'text',
     label: 'Username',
+    required: true,
   },
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    required: true,
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1292,18 +1295,6 @@ export default {
     type: 'text',
     label: 'AS2 Identifier',
     required: true,
-  },
-  configureTokenRefresh: {
-    label: 'Configure Token Refresh',
-    type: 'checkbox',
-    defaultValue: r =>
-      !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,
-    visibleWhen: [
-      {
-        field: 'as2.partnerStationInfo.auth.type',
-        is: ['token'],
-      },
-    ],
   },
   'as2.partnerId': {
     type: 'text',
