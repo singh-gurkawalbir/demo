@@ -27,7 +27,7 @@ function OutputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
           flowId,
           resourceId,
           resourceType,
-          'inputFilter'
+          'outputFilter'
         )
       );
     }
