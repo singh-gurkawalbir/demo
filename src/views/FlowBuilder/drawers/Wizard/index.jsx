@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import {
+  Stepper,
+  Step,
+  StepLabel,
+  Typography,
+  Button,
+} from '@material-ui/core';
 import { RightDrawer } from '../RightDrawer';
-import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import CloseIcon from '../../../../components/icons/CloseIcon';
+import ChooseAppsPanel from './ChooseAppsPanel';
 
 const useStyles = makeStyles(theme => ({
   titleContainer: {
@@ -19,55 +24,86 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function WizardDrawer({ flowId, match, history, ...props }) {
-  const handleSubmit = formValues => console.log(formValues);
   const classes = useStyles();
+  const [activeStep, setActiveStep] = useState(-1);
+  const [sourceApps, setSourceApps] = useState([]);
+  const [destinationApps, setDestinationApps] = useState([]);
   const open = !flowId;
-  const fieldMeta = {
-    fieldMap: {
-      sourceApps: {
-        id: 'sourceApps',
-        name: 'sourceApps',
-        label: 'Choose one or more source apps',
-        isMulti: true,
-        type: 'selectapplication',
-        placeholder: 'search...',
-        defaultValue: '',
-        required: true,
-      },
-      destinationApps: {
-        id: 'destinationApps',
-        name: 'destinationApps',
-        label: 'Choose one or more destination apps',
-        isMulti: true,
-        type: 'selectapplication',
-        placeholder: 'search...',
-        defaultValue: '',
-        required: true,
-      },
-    },
-    layout: {
-      fields: ['sourceApps', 'destinationApps'],
-    },
-  };
+
+  function handleSubmit(formValues) {
+    setSourceApps(formValues.sourceApps);
+    setDestinationApps(formValues.destinationApps);
+    setActiveStep(0);
+    // console.log(formValues);
+  }
+
+  function getSteps() {
+    return ['Connect sources', 'Connect destinations'];
+  }
+
+  function getStepContent(stepIndex) {
+    switch (stepIndex) {
+      case 0:
+        return 'Connect sources content.';
+      case 1:
+        return 'Connect destinations content.';
+      default:
+        return 'Unknown stepIndex content.';
+    }
+  }
+
+  const steps = getSteps();
 
   return (
     <RightDrawer {...props} open={open}>
-      <div className={classes.titleContainer}>
-        <Typography variant="h5" className={classes.title}>
-          Choose apps for your flow
-        </Typography>
-        <IconButton
-          size="small"
-          data-test="cancelFbWizard"
-          onClick={() => history.goBack()}>
-          <CloseIcon />
-        </IconButton>
-      </div>
-      <DynaForm className={classes.formRoot} fieldMeta={fieldMeta}>
-        <DynaSubmit data-test="submitFbWizard" onClick={handleSubmit}>
-          Set up your connections
-        </DynaSubmit>
-      </DynaForm>
+      {activeStep === -1 && (
+        <ChooseAppsPanel
+          sourceApps={sourceApps}
+          destinationApps={destinationApps}
+          history={history}
+          onSubmit={handleSubmit}
+        />
+      )}
+      {activeStep >= 0 && (
+        <div>
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            orientation="vertical">
+            {steps.map(label => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <div>
+            {activeStep === steps.length ? (
+              <div>
+                <Typography className={classes.instructions}>
+                  All steps completed
+                </Typography>
+                <Button onClick={() => setActiveStep(-1)}>Reset</Button>
+              </div>
+            ) : (
+              <div>
+                <Typography className={classes.instructions}>
+                  {getStepContent(activeStep)}
+                </Typography>
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={() => setActiveStep(activeStep - 1)}>
+                    Back
+                  </Button>
+                  <Button onClick={() => setActiveStep(activeStep + 1)}>
+                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </RightDrawer>
   );
 }

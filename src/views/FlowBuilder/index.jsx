@@ -12,13 +12,14 @@ import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './drawers/BottomDrawer';
-import WizardDrawer from './drawers/Wizard';
+// import WizardDrawer from './drawers/Wizard';
 import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import TrashCan from './TrashCan';
+import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
@@ -192,6 +193,12 @@ const useStyles = makeStyles(theme => ({
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
   },
+  newPP: {
+    marginLeft: 100,
+  },
+  newPG: {
+    marginRight: 50,
+  },
 }));
 
 function FlowBuilder(props) {
@@ -335,7 +342,7 @@ function FlowBuilder(props) {
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flowId={flowId} />
       <SettingsDrawer {...props} flowId={flowId} />
-      <WizardDrawer {...props} flowId={flowId} />
+      {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
         title={flowId ? flow.name : 'New flow'}
@@ -402,6 +409,13 @@ function FlowBuilder(props) {
                     isLast={pageProcessors.length === i + 1}
                   />
                 ))}
+                {!pageGenerators.length && (
+                  <AppBlock
+                    className={classes.newPG}
+                    onBlockClick={handleAddGenerator}
+                    blockType="newPG"
+                  />
+                )}
               </div>
             </div>
             <div className={classes.processorRoot}>
@@ -427,6 +441,13 @@ function FlowBuilder(props) {
                     onMove={handleMove}
                   />
                 ))}
+                {!pageGenerators.length && (
+                  <AppBlock
+                    className={classes.newPP}
+                    onBlockClick={handleAddProcessor}
+                    blockType="newPP"
+                  />
+                )}
               </div>
             </div>
           </div>
