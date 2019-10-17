@@ -1,5 +1,6 @@
 import { useReducer, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import {
   Button,
@@ -13,7 +14,11 @@ import {
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 import CloseIcon from '../../icons/CloseIcon';
+import mappingUtil from '../../../utils/mapping';
+import * as resourceUtil from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -81,22 +86,37 @@ export const reducer = (state, action) => {
 };
 
 export default function ResponseMappingDialog(props) {
-  const {
-    // extractsList,
-    resource,
-    value,
-    // resourceIndex,
-    // flowId,
-    // resourceType
-
-    onClose,
-  } = props;
+  const { resource, resourceIndex, flowId, resourceType, onClose } = props;
+  const { merged: flow = {} } = useSelector(state =>
+    selectors.resourceData(state, 'flows', flowId)
+  );
+  const pageProcessorsObject =
+    flow && flow.pageProcessors && flow.pageProcessors[resourceIndex];
+  const resourceSubType = resourceUtil.getResourceSubTypeFromAdaptorType(
+    resource.adaptorType
+  );
+  const application = resourceSubType.type;
   const keyName = 'extract';
   const valueName = 'generate';
   const classes = useStyles();
-  const extractsList =
+  const dispatch = useDispatch();
+  let extractsList =
     resource && resource.responseTransform && resource.responseTransform.rules;
-  const [state, dispatchLocalAction] = useReducer(reducer, value || []);
+
+  if (!extractsList) {
+    extractsList = mappingUtil.getResponseMappingDefaultExtracts(resourceType);
+  }
+
+  const responseMappings =
+    pageProcessorsObject && pageProcessorsObject.responseMapping;
+  const formattedResponseMapping = mappingUtil.getMappingsForApp({
+    mappings: responseMappings,
+    appType: application,
+  });
+  const [state, dispatchLocalAction] = useReducer(
+    reducer,
+    formattedResponseMapping || []
+  );
   const mappingsTmp = deepClone(state);
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const handleFieldUpdate = (row, event, field) => {
@@ -128,12 +148,41 @@ export default function ResponseMappingDialog(props) {
   mappingsTmp.push({});
   const tableData = (mappingsTmp || []).map((r, n) => ({ ...r, index: n }));
   const handleSubmit = closeModal => {
-    // path = `/pageProcessorts/${index}/responseMapping`;
-    // const patchSet = [{ op: 'replace', path, value }];
+    let mappings = state.map(({ index, ...others }) => others);
 
-    // dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    // dispatch(actions.flowData.updateFlow(flowId));
-    // dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+    mappings = mappingUtil.generateMappingsForApp({
+      mappings,
+      generateList: [],
+      appType: application,
+    });
+    const patchSet = [];
+    let path;
+
+    if (
+      pageProcessorsObject &&
+      pageProcessorsObject[resourceIndex] &&
+      pageProcessorsObject[resourceIndex].responseMapping
+    ) {
+      const obj = {};
+
+      obj.responseMapping = {};
+      obj.type = resourceType === 'imports' ? 'import' : 'export';
+      obj[resourceType === 'imports' ? '_importId' : '_exportId'] =
+        resource._id;
+
+      path = `/pageProcessors/${resourceIndex}`;
+      patchSet.push({
+        op: 'add',
+        path,
+        value: obj,
+      });
+    }
+
+    path = `/pageProcessors/${resourceIndex}/responseMapping`;
+    patchSet.push({ op: 'replace', path, value: mappings });
+    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+    dispatch(actions.flowData.updateFlow(flowId));
+    dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
 
     if (closeModal) {
       onClose();
@@ -159,7 +208,8 @@ export default function ResponseMappingDialog(props) {
               <Grid container>
                 <Grid key="heading_extract" item xs>
                   <span className={classes.alignLeft}>
-                    Import Response Field
+                    {resourceType === 'imports' ? 'Import' : 'Lookup'} Response
+                    Field
                   </span>
                 </Grid>
                 <Grid key="heading_generate" item xs>
@@ -201,9 +251,9 @@ export default function ResponseMappingDialog(props) {
                         }}
                       />
                     </Grid>
-                    <Grid item key="edit_button">
+                    <Grid item key="delete_button">
                       <IconButton
-                        data-test="editMapping"
+                        data-test="deleteMapping"
                         aria-label="delete"
                         onClick={() => {
                           handleDelete(r.index);
