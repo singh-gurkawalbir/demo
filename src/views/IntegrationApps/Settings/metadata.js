@@ -5,12 +5,17 @@ import Schedule from '../../../components/ResourceTable/actions/Flows/Schedule';
 import Run from '../../../components/ResourceTable/actions/Flows/Run';
 import OnOff from '../../../components/ResourceTable/actions/Flows/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
+import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
 
 export default {
   columns: (sectionContext, actionProps) => {
-    const { hasNSInternalIdLookup, showFlowSettings, showMatchRuleEngine } =
-      actionProps && actionProps.rest;
+    const {
+      hasNSInternalIdLookup,
+      showFlowSettings,
+      hasDescription,
+      showMatchRuleEngine,
+    } = actionProps && actionProps.rest;
     const columnData = [];
 
     columnData.push({
@@ -20,12 +25,15 @@ export default {
       },
       orderBy: 'name',
     });
-    columnData.push({
-      heading: 'Description',
-      value: function ScheduleAction(r) {
-        return <Description.component resource={r} />;
-      },
-    });
+
+    if (hasDescription) {
+      columnData.push({
+        heading: 'Description',
+        value: function ScheduleAction(r) {
+          return <Description.component resource={r} />;
+        },
+      });
+    }
 
     if (hasNSInternalIdLookup) {
       columnData.push({
@@ -40,7 +48,7 @@ export default {
       columnData.push({
         heading: 'Settings',
         value: function ScheduleAction(r) {
-          return <Schedule.component resource={r} />;
+          return <FlowSettings.component resource={r} />;
         },
       });
     }

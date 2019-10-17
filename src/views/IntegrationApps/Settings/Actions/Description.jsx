@@ -1,6 +1,6 @@
 import { IconButton } from '@material-ui/core';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
-import InfoIcon from '../../../../../components/icons/InfoIcon';
+import { confirmDialog } from '../../../../components/ConfirmDialog';
+import InfoIcon from '../../../../components/icons/InfoIcon';
 
 export default {
   label: 'Description',
