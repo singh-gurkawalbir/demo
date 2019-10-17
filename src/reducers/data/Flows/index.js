@@ -16,6 +16,30 @@ export function isRealtimeFlow(state, flow) {
   );
 }
 
+export function hasBatchExport(state, flow) {
+  let toReturn = false;
+
+  if (flow._exportId) {
+    return !flow.isRealtime;
+  }
+
+  if (flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportId = pg._exportId;
+      const exp = resource(state, 'exports', exportId);
+      const isRealtime =
+        (exp &&
+          ((exp.type && ['distributed', 'webhook'].indexOf(exp.type) > -1) ||
+            exp.adaptorType === 'AS2Export')) ||
+        false;
+
+      toReturn = toReturn || !isRealtime;
+    });
+  }
+
+  return toReturn;
+}
+
 export function isSimpleImportFlow(state, flow) {
   const _exportId =
     flow.pageGenerators && flow.pageGenerators.length
@@ -24,6 +48,31 @@ export function isSimpleImportFlow(state, flow) {
   const exp = resource(state, 'exports', _exportId);
 
   return exp && exp.type === 'simple';
+}
+
+export function isRunnable(state, flow) {
+  let toReturn = true;
+
+  if (flow.isOrchestratedFlow) {
+    toReturn =
+      toReturn &&
+      !!(flow.pageGenerators && flow.pageGenerators.length) &&
+      !!(flow.pageProcessors && flow.pageProcessors.length);
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      toReturn = toReturn && !!pg._exportId;
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      toReturn = toReturn && (!!pp._exportId || !!pp._importId);
+    });
+  }
+
+  return toReturn && !flow.disabled && hasBatchExport(state, flow);
 }
 
 export function getAllFlows(state, options) {
@@ -36,6 +85,10 @@ export function getAllFlows(state, options) {
 
     if (isSimpleImportFlow(state, f)) {
       flows[i].isSimpleImport = true;
+    }
+
+    if (isRunnable(state, f)) {
+      flows[i].isRunnable = true;
     }
   });
 

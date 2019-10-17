@@ -12,7 +12,11 @@ export default {
     };
 
     return (
-      <IconButton data-test="runFlow" size="small" onClick={handleRunFlowClick}>
+      <IconButton
+        disabled={!resource.isRunnable}
+        data-test="runFlow"
+        size="small"
+        onClick={handleRunFlowClick}>
         <RunIcon />
       </IconButton>
     );
