@@ -3,12 +3,6 @@ export default {
   'netsuite.distributed.recordType': {
     label: 'Record type',
     mode: 'suitescript',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.distributed &&
-        r.netsuite.distributed.recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -19,12 +13,6 @@ export default {
   'netsuite.restlet.recordType': {
     label: 'Record type',
     mode: 'suitescript',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.restlet &&
-        r.netsuite.restlet.recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -34,13 +22,6 @@ export default {
   'netsuite.webservices.recordType': {
     label: 'Record type',
     mode: 'webservices',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.searches &&
-        r.netsuite.searches[0] &&
-        r.netsuite.searches[0].recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -124,19 +105,12 @@ export default {
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
-    defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.sublists,
     connectionId: r => r && r._connectionId,
   },
   // search id
   'netsuite.restlet.searchId': {
     type: 'nssavedsearch',
     mode: 'suitescript',
-    defaultValue: r =>
-      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
     resourceType: 'savedSearches',
     required: true,
     connectionId: r => r && r._connectionId,

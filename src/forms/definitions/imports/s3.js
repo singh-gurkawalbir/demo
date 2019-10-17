@@ -1,6 +1,32 @@
 import { adaptorTypeMap } from '../../../utils/resource';
 
 export default {
+  init: fieldMeta => {
+    const fileDefinitionRulesField =
+      fieldMeta.fieldMap['file.filedefinition.rules'];
+
+    if (!fileDefinitionRulesField.userDefinitionId) {
+      // In Import creation mode, delete generic visibleWhenAll rules
+      // Add custom visible when rules
+      delete fileDefinitionRulesField.visibleWhenAll;
+      fileDefinitionRulesField.visibleWhen = [
+        {
+          field: 'edix12.format',
+          isNot: [''],
+        },
+        {
+          field: 'fixed.format',
+          isNot: [''],
+        },
+        {
+          field: 'edifact.format',
+          isNot: [''],
+        },
+      ];
+    }
+
+    return fieldMeta;
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
       const lookupField = fields.find(
@@ -13,6 +39,32 @@ export default {
           lookups: lookupField && lookupField.value,
         };
       }
+    }
+
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fieldId === 'uploadFile') {
+      return fileType.value;
+    }
+
+    if (fieldId === 'file.filedefinition.rules') {
+      let definitionFieldId;
+
+      // Fetch format specific Field Definition field to fetch id
+      if (fileType.value === 'filedefinition')
+        definitionFieldId = 'edix12.format';
+      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
+      else definitionFieldId = 'edifact.format';
+      const definition = fields.find(field => field.id === definitionFieldId);
+      const resourcePath = fields.find(
+        field => field.id === 'file.fileDefinition.resourcePath'
+      );
+
+      return {
+        format: definition && definition.format,
+        definitionId: definition && definition.value,
+        resourcePath: resourcePath && resourcePath.value,
+      };
     }
 
     return null;
