@@ -1134,6 +1134,7 @@ export default {
   'ftp.hostURI': {
     type: 'text',
     label: 'Host',
+    required: true,
     description:
       'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
   },
