@@ -9,7 +9,9 @@ function TransformationDialog({ flowId, resource, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'transform', true)
+    selectors.getSampleData(state, flowId, resourceId, 'transform', {
+      isPageGenerator: true,
+    })
   );
   const rules = useMemo(
     () => resource && resource.transform && resource.transform.rules,

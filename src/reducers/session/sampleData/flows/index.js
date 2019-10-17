@@ -1,51 +1,7 @@
 import produce from 'immer';
 import { keys } from 'lodash';
 import actionTypes from '../../../../actions/types';
-
-const dependencies = {
-  inputFilter: 'flowInput',
-  outputFilter: 'flowInput',
-  transform: 'raw',
-  hooks: 'transform',
-};
-
-function reset(flow, index, isPageGenerator) {
-  if (isPageGenerator) {
-    const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);
-    const pgIds = keys(flow.pageGeneratorsMap);
-
-    pgIds.forEach(pgId => {
-      // eslint-disable-next-line no-param-reassign
-      if (pgsToReset.includes(pgId)) flow.pageGeneratorsMap[pgId] = {};
-    });
-
-    // eslint-disable-next-line no-param-reassign
-    flow.pageProcessorsMap = {};
-  } else {
-    const ppsToReset = flow.pageProcessors
-      .slice(index)
-      .map(pp => pp._exportId || pp._importId);
-    const ppIds = keys(flow.pageProcessorsMap);
-
-    ppIds.forEach(ppId => {
-      // eslint-disable-next-line no-param-reassign
-      if (ppsToReset.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
-    });
-  }
-}
-
-function compare(currentList, updatedList) {
-  const changedIndex = updatedList.findIndex((item, index) => {
-    const currentItem = currentList[index];
-
-    return (
-      (item._exportId || item._importId) !==
-      (currentItem._exportId || currentItem._importId)
-    );
-  });
-
-  return changedIndex;
-}
+import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
 
 export default function(state = {}, action) {
   const {
@@ -155,6 +111,7 @@ export default function(state = {}, action) {
           pg => pg._exportId === resourceId
         );
 
+        // given a resourceId -- resets itself and  all linked pps or pgs after that
         if (pageGeneratorIndexToReset > -1) {
           reset(flow, pageGeneratorIndexToReset, true);
           break;
@@ -168,7 +125,6 @@ export default function(state = {}, action) {
           reset(flow, pageProcessorIndexToReset);
         }
 
-        // given a resourceId -- resets itself and  all linked pps or pgs after that
         break;
       }
 
@@ -212,12 +168,14 @@ export function getSampleData(
   flowId,
   resourceId,
   stage,
-  isPageGenerator
+  { isPageGenerator, isImport }
 ) {
   // returns input data for that stage to populate
   const flow = state[flowId];
+  const resourceType = isImport ? 'imports' : 'exports';
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-  if (!flow || !dependencies[stage]) return;
+  if (!flow || !sampleDataStage) return;
   const resourceMap = isPageGenerator
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
@@ -225,8 +183,8 @@ export function getSampleData(
   return (
     resourceMap &&
     resourceMap[resourceId] &&
-    resourceMap[resourceId][dependencies[stage]] &&
-    resourceMap[resourceId][dependencies[stage]].data
+    resourceMap[resourceId][sampleDataStage] &&
+    resourceMap[resourceId][sampleDataStage].data
   );
 }
 
@@ -235,12 +193,14 @@ export function getSampleDataStatus(
   flowId,
   resourceId,
   stage,
-  isPageGenerator
+  { isPageGenerator, isImport }
 ) {
   // returns input data for that stage to populate
   const flow = state[flowId];
+  const resourceType = isImport ? 'imports' : 'exports';
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-  if (!flow || !dependencies[stage]) return;
+  if (!flow || !sampleDataStage) return;
   const resourceMap = isPageGenerator
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
@@ -248,8 +208,8 @@ export function getSampleDataStatus(
   return (
     resourceMap &&
     resourceMap[resourceId] &&
-    resourceMap[resourceId][dependencies[stage]] &&
-    resourceMap[resourceId][dependencies[stage]].status
+    resourceMap[resourceId][sampleDataStage] &&
+    resourceMap[resourceId][sampleDataStage].status
   );
 }
 
@@ -270,6 +230,16 @@ export function getFlowReferencesForResource(state, resourceId) {
   return dependentFlows;
 }
 
-export function getFlowDataState(state, flowId) {
-  return state && flowId && state[flowId];
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  if (!state || !flowId) return;
+  const flow = state[flowId];
+
+  // Returns flow state
+  if (!resourceId) return flow;
+  // Returns PP/PG's state
+  const resourceMap = isPageGenerator
+    ? flow.pageGeneratorsMap
+    : flow.pageProcessorsMap;
+
+  return resourceMap[resourceId];
 }

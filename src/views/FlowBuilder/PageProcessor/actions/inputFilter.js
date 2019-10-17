@@ -17,7 +17,9 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'inputFilter')
+    selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
+      isImport: resourceType === 'imports',
+    })
   );
 
   useEffect(() => {

@@ -203,19 +203,13 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
-export function getSampleData(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  isPageGenerator
-) {
+export function getSampleData(state, flowId, resourceId, stage, options = {}) {
   return fromSession.getSampleData(
     state && state.session,
     flowId,
     resourceId,
     stage,
-    isPageGenerator
+    options
   );
 }
 
@@ -224,14 +218,14 @@ export function getSampleDataStatus(
   flowId,
   resourceId,
   stage,
-  isPageGenerator
+  options = {}
 ) {
   return fromSession.getSampleDataStatus(
     state && state.session,
     flowId,
     resourceId,
     stage,
-    isPageGenerator
+    options
   );
 }
 
@@ -242,8 +236,13 @@ export function getFlowReferencesForResource(state, resourceId) {
   );
 }
 
-export function getFlowDataState(state, flowId) {
-  return fromSession.getFlowDataState(state && state.session, flowId);
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  return fromSession.getFlowDataState(
+    state && state.session,
+    flowId,
+    resourceId,
+    isPageGenerator
+  );
 }
 
 export function avatarUrl(state) {

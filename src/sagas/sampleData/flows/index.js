@@ -4,6 +4,7 @@ import {
   resourceData,
   getSampleData,
   getFlowReferencesForResource,
+  getFlowDataState,
 } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -11,14 +12,8 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
+import { getSampleDataStage } from '../../../utils/flowData';
 
-const dependencies = {
-  inputFilter: 'flowInput',
-  outputFilter: 'flowInput',
-  transform: 'raw',
-  hooks: 'transform',
-  importMapping: 'flowInput',
-};
 let fetchSampleData;
 
 function getParseStageData(previewData) {
@@ -269,10 +264,53 @@ function* requestProcessorData({
   }
 }
 
-/*
- * We have 4 stages for a processor - input , raw, transform, hooks.
- * Selectors should handle - input filter, output filter, input, transform, hooks.
- */
+function* fetchSampleResponseData({ flowId, resourceId, stage }) {
+  const resourceDataState = yield select(getFlowDataState, flowId, resourceId);
+  let responseTransformData = resourceDataState[stage];
+
+  if (!responseTransformData) {
+    const resource = yield select(
+      resourceData,
+      'imports',
+      resourceId,
+      SCOPES.VALUE
+    );
+
+    responseTransformData = resource.responseTransform;
+  }
+
+  yield put(
+    actions.flowData.receivedPreviewData(
+      flowId,
+      resourceId,
+      responseTransformData,
+      stage
+    )
+  );
+}
+
+function* fetchSampleDataForImports({ flowId, resourceId, sampleDataStage }) {
+  switch (sampleDataStage) {
+    case 'raw':
+      yield call(fetchPageProcessorPreview, {
+        flowId,
+        _pageProcessorId: resourceId,
+        previewType: sampleDataStage,
+      });
+      break;
+    case 'responseTransform': {
+      yield call(fetchSampleResponseData, {
+        flowId,
+        resourceId,
+        sampleDataStage: 'stage',
+      });
+      break;
+    }
+
+    default:
+  }
+}
+
 function* fetchInputData({
   flowId,
   resourceId,
@@ -281,7 +319,17 @@ function* fetchInputData({
   isPageGenerator,
 }) {
   // Updates preProcessedData for the procesors
-  const sampleDataStage = dependencies[stage];
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
+
+  if (resourceType === 'imports') {
+    yield call(fetchSampleDataForImports, {
+      flowId,
+      resourceId,
+      sampleDataStage,
+    });
+
+    return;
+  }
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
     if (isPageGenerator) {

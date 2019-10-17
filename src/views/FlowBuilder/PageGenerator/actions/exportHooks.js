@@ -21,7 +21,7 @@ function HooksDialog({ flowId, resource, open, onClose }) {
       flowId,
       resourceId,
       'hooks',
-      true
+      { isPageGenerator: true }
     );
 
     if (sampleData) {
@@ -30,7 +30,9 @@ function HooksDialog({ flowId, resource, open, onClose }) {
     }
   });
   const preHookDataStatus = useSelector(state =>
-    selectors.getSampleDataStatus(state, flowId, resourceId, 'hooks', true)
+    selectors.getSampleDataStatus(state, flowId, resourceId, 'hooks', {
+      isPageGenerator: true,
+    })
   );
   const onSave = selectedHook => {
     const hooks = { preSavePage: selectedHook };
