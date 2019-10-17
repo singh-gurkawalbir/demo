@@ -13,7 +13,10 @@ export default function RunDashboardPanel({ flow }) {
   return (
     <div className={classes.root}>
       {flow._integrationId && (
-        <JobDashboard integrationId={flow._integrationId} />
+        <JobDashboard
+          integrationId={flow._integrationId || 'none'}
+          flowId={flow._id}
+        />
       )}
     </div>
   );
