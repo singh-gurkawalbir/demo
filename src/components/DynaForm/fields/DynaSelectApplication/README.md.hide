@@ -1,3 +1,4 @@
+This file is hidden because the new <AppPill> component is causing the styleguide to fail.
 ```js
 <div>
   <SelectApplication id="application" name="application" placeholder="Select Application" />

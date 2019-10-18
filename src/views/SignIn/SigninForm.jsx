@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
-// import GoogleLogo from '../../static/images/googleLogo.svg';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
@@ -26,9 +25,10 @@ const mapDispatchToProps = dispatch => ({
   },
   submit: {
     width: '90%',
-    borderRadius: '4px',
-    height: '48px',
+    borderRadius: 4,
+    height: 48,
     fontSize: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   editableFields: {
     textAlign: 'center',
@@ -36,6 +36,9 @@ const mapDispatchToProps = dispatch => ({
     margin: [[-8, -24]],
     background: theme.palette.background.paper2,
     padding: [[8, 24]],
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+    },
   },
   relatedContent: {
     textDecoration: 'none',
@@ -47,7 +50,7 @@ const mapDispatchToProps = dispatch => ({
     border: '1px solid',
     background: theme.palette.background.paper,
     borderColor: theme.palette.secondary.lightest,
-    marginBottom: '0px',
+    marginBottom: 0,
 
     // '& div > input:disabled': {
     //   background: theme.palette.background.paper2,
@@ -59,20 +62,20 @@ const mapDispatchToProps = dispatch => ({
   },
   alertMsg: {
     marginBottom: theme.spacing(1),
-    fontSize: '12px',
+    fontSize: 12,
     textAlign: 'left',
-    marginLeft: '20px',
+    marginLeft: 20,
     width: '90%',
     display: 'flex',
     alignItems: 'center',
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
-      marginRight: '5px',
+      marginRight: 5,
     },
   },
   link: {
-    paddingLeft: '4px',
+    paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
   forgotPass: {
@@ -81,12 +84,33 @@ const mapDispatchToProps = dispatch => ({
     marginTop: theme.spacing(2),
   },
   googleBtn: {
-    borderRadius: '4px',
+    borderRadius: 4,
     width: '90%',
     background: `url('../../static/images/googleLogo.svg') 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
-    height: '48px',
-    fontSize: '16px',
+    height: 48,
+    fontSize: 16,
+    backgroundColor: theme.palette.background.paper,
+  },
+  or: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
+    margin: '0 auto',
+    marginBottom: theme.spacing(2),
+    '&:before': {
+      content: '""',
+      width: '40%',
+      borderTop: '2px solid',
+      borderColor: theme.palette.secondary.lightest,
+    },
+    '&:after': {
+      content: '""',
+      width: '40%',
+      borderTop: '2px solid',
+      borderColor: theme.palette.secondary.lightest,
+    },
   },
 }))
 class SignIn extends Component {
@@ -170,19 +194,22 @@ class SignIn extends Component {
             type="submit"
             className={classes.submit}
             value="Submit">
-            Sign In
+            Sign in
           </Button>
           <div className={classes.forgotPass}>
-            <Link href="true" className={classes.forgotPass}>
-              Forgot Password?
+            <Link href="true" className={classes.forgotPass} variant="body2">
+              Forgot password?
             </Link>
           </div>
           <div>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
             <Button
               variant="contained"
               color="secondary"
               className={classes.googleBtn}>
-              Sign In With Google
+              Sign in with Google
             </Button>
           </div>
         </form>

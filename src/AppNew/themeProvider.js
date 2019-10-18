@@ -52,6 +52,9 @@ const theme = {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto500',
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
       },
       contained: {
         borderRadius: '17px',
@@ -394,9 +397,12 @@ const theme = {
         },
       },
     },
-    MuiSvgIcon: {
+    MuiIconButton: {
       root: {
         color: colors.celigoNeutral6,
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
       },
     },
     MuiDialogTitle: {
@@ -409,6 +415,17 @@ const theme = {
         background: colors.celigoNeutral1,
       },
     },
+    MuiExpansionPanelSummary: {
+      root: {
+        padding: '0px 12px',
+      },
+    },
+    MuiChip: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral8,
+      },
+    },
   },
 };
 
@@ -417,12 +434,14 @@ export default () => {
 
   muiTheme.palette.success = muiTheme.palette.augmentColor({
     main: colors.celigoSuccess,
+    contrastText: colors.celigoWhite,
   });
   muiTheme.palette.warning = muiTheme.palette.augmentColor({
     main: colors.celigoWarning,
   });
   muiTheme.palette.info = muiTheme.palette.augmentColor({
     main: colors.celigoAccent2,
+    contrastText: colors.celigoWhite,
   });
 
   return muiTheme;

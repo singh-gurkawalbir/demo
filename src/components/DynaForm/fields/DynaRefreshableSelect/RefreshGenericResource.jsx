@@ -4,11 +4,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   inlineElements: {
@@ -55,10 +55,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property is part of props being send from Form factory
+ * setting disableOptionsLoad = false will restrict fetch of resources
+ */
 function RefreshGenericResource(props) {
   const {
     description,
     disabled,
+    disableOptionsLoad,
     id,
     name,
     value,
@@ -78,7 +84,10 @@ function RefreshGenericResource(props) {
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
   const isLoading =
-    !fieldStatus || fieldStatus === 'requested' || fieldStatus === 'refreshed';
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
@@ -103,10 +112,10 @@ function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldData) {
+    if (!fieldData && !disableOptionsLoad) {
       handleFetchResource();
     }
-  }, [fieldData, handleFetchResource]);
+  }, [disableOptionsLoad, fieldData, handleFetchResource]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -115,9 +124,9 @@ function RefreshGenericResource(props) {
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
 
-  if (!fieldData) return <Spinner />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
-  let optionMenuItems = fieldData.map(options => {
+  let optionMenuItems = (fieldData || []).map(options => {
     const { label, value } = options;
 
     return (

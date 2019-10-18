@@ -151,10 +151,14 @@ export default function CeligoTable({
               <Checkbox
                 onChange={event => handleSelectAllChange(event)}
                 checked={isAllSelected}
+                color="primary"
               />
             </TableCell>
           )}
-          {columns.map(col =>
+          {(typeof columns === 'function'
+            ? columns('', actionProps)
+            : columns
+          ).map(col =>
             col.orderBy ? (
               <TableCell
                 style={col.width ? { width: col.width } : undefined}
@@ -200,11 +204,15 @@ export default function CeligoTable({
                   <Checkbox
                     onChange={event => handleSelectChange(event, r._id)}
                     checked={!!selectedResources[r._id]}
+                    color="primary"
                   />
                 )}
               </TableCell>
             )}
-            {columns.map((col, index) =>
+            {(typeof columns === 'function'
+              ? columns(r, actionProps)
+              : columns
+            ).map((col, index) =>
               index === 0 ? (
                 <TableCell
                   component="th"

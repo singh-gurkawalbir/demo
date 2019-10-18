@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
+    '& > div:first-child': {
+      width: '100%',
+    },
   },
   iconButton: {
     alignSelf: 'flex-end',

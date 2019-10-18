@@ -78,11 +78,11 @@ export default function reducer(state = {}, action) {
             }
 
             if (verifyBundleStep) {
-              (bundleStep = draft[templateId].installSteps || []).find(
+              bundleStep = (draft[templateId].installSteps || []).find(
                 s => s.application === verifyBundleStep
               );
 
-              if (bundleStep && bundleStep.options) {
+              if (bundleStep) {
                 bundleStep.options._connectionId = newConnectionId;
               }
             }

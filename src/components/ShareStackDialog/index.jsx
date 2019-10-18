@@ -5,17 +5,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ShareStackUserTable from './ShareStackUserTable';
 import actions from '../../actions';
+import CloseIcon from '../icons/CloseIcon';
 
 const styles = theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
   submit: {
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(4),
@@ -57,15 +53,15 @@ function StackShareDialog(props) {
 
   return (
     <Dialog open maxWidth={false}>
-      <IconButton
-        data-test="closeStackShareDialog"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle className={classes.title}>
-        <Typography>{title}</Typography>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+        <IconButton
+          data-test="closeStackShareDialog"
+          aria-label="Close"
+          className={classes.closeButton}
+          onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent style={{ width }}>
         <form onSubmit={handleOnInviteClick} className={classes.form}>
@@ -76,6 +72,7 @@ function StackShareDialog(props) {
             type="email"
             className={classes.textField}
             margin="normal"
+            variant="filled"
           />
           <Button
             data-test="inviteUserAccessToStack"

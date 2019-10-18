@@ -49,10 +49,12 @@ function ResourceReferences(props) {
       {resourceReferences &&
         (resourceReferences.length !== 0 ? (
           <Fragment>
-            <DialogTitle id="resource-references">
-              {title
-                ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[type]} as`
-                : `${MODEL_PLURAL_TO_LABEL[type]} References:`}
+            <DialogTitle id="resource-references" disableTypography>
+              <Typography variant="h6">
+                {title
+                  ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[type]} as`
+                  : `${MODEL_PLURAL_TO_LABEL[type]} References:`}
+              </Typography>
             </DialogTitle>
             <Typography className={classes.message}>
               {title &&

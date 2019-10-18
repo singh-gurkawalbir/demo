@@ -301,7 +301,6 @@ export default {
     label: 'SQL Server Version',
     required: true,
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
-    defaultValue: r => r && r.rdbms && r.rdbms.version,
     options: [
       {
         items: [
@@ -325,7 +324,6 @@ export default {
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.rdbms && r.rdbms.concurrencyLevel,
     options: [
       {
         items: [
@@ -396,7 +394,6 @@ export default {
   'rest.tokenLocation': {
     type: 'select',
     label: 'Location',
-    defaultValue: r => r && r.rest && r.rest.tokenLocation,
     options: [
       {
         items: [
@@ -429,12 +426,10 @@ export default {
   'rest.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable Strict SSL',
-    defaultValue: r => r && r.rest && r.rest.disableStrictSSL,
   },
   'rest.authType': {
     type: 'select',
     label: 'Authentication Type',
-    defaultValue: r => r && r.rest && r.rest.authType,
     options: [
       {
         items: [
@@ -501,8 +496,6 @@ export default {
   'rest.cookieAuth.method': {
     type: 'select',
     label: 'Cookie Method',
-    defaultValue: r =>
-      r && r.rest && r.rest.cookieAuth && r.rest.cookieAuth.method,
     options: [
       {
         items: [
@@ -568,7 +561,6 @@ export default {
   'rest.refreshTokenMethod': {
     type: 'select',
     label: 'Refresh Token Method',
-    defaultValue: r => r && r.rest && r.rest.refreshTokenMethod,
     options: [
       {
         items: [
@@ -642,7 +634,6 @@ export default {
   'rest.concurrencyLevel': {
     type: 'select',
     label: 'Concurrency Level',
-    defaultValue: r => r && r.rest && r.rest.concurrencyLevel,
     options: [
       {
         items: [
@@ -703,7 +694,6 @@ export default {
     type: 'select',
     label: 'Authentication Type',
     required: true,
-    defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
     options: [
       {
         items: [
@@ -753,12 +743,10 @@ export default {
   'http.disableStrictSSL': {
     type: 'checkbox',
     label: 'Disable Strict SSL',
-    defaultValue: r => r && r.http && r.http.disableStrictSSL,
   },
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.http && r.http.concurrencyLevel,
     options: [
       {
         items: [
@@ -808,7 +796,6 @@ export default {
   'http.ping.method': {
     type: 'select',
     label: 'Ping Method',
-    defaultValue: r => r && r.http && r.http.ping && r.http.ping.method,
     options: [
       {
         items: [
@@ -1193,7 +1180,6 @@ export default {
   'ftp.entryParser': {
     type: 'select',
     label: 'Entry Parser',
-    defaultValue: r => r && r.ftp && r.ftp.entryParser,
     options: [
       {
         items: [
@@ -1214,17 +1200,14 @@ export default {
   },
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
-    defaultValue: r => r && r.ftp && r.ftp.userDirectoryIsRoot,
     label: 'User Directory Is Root',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
-    defaultValue: r => r && r.ftp && r.ftp.useImplicitFtps,
     label: 'Use Implicit FTPS',
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
-    defaultValue: r => r && r.ftp && r.ftp.requireSocketReUse,
     label: 'Require Socket Reuse',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1329,12 +1312,6 @@ export default {
     type: 'select',
     label: 'MDN Verification Algorithm',
     required: true,
-    defaultValue: r =>
-      r &&
-      r.as2 &&
-      r.as2.partnerStationInfo &&
-      r.as2.partnerStationInfo.mdn &&
-      r.as2.partnerStationInfo.mdn.mdnSigning,
     options: [
       {
         items: [
@@ -1467,7 +1444,14 @@ export default {
   'as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
     label: 'Header Name',
-    defaultValue: 'Authorization',
+    defaultValue: r =>
+      (r &&
+        r.as2 &&
+        r.as2.partnerStationInfo &&
+        r.as2.partnerStationInfo.auth &&
+        r.as2.partnerStationInfo.auth.token &&
+        r.as2.partnerStationInfo.auth.token.headerName) ||
+      'Authorization',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.token.location',
@@ -1887,7 +1871,6 @@ export default {
   'netsuite.authType': {
     type: 'select',
     label: 'Authentication Type',
-    defaultValue: r => r && r.netsuite && r.netsuite.authType,
     options: [
       {
         items: [
@@ -2100,7 +2083,6 @@ export default {
     type: 'select',
     label: 'Account Type',
     required: true,
-    defaultValue: r => r && r.salesforce && r.salesforce.sandbox,
     options: [
       {
         items: [
@@ -2118,7 +2100,6 @@ export default {
     type: 'select',
     label: 'Oauth2 Flow Type',
     required: true,
-    defaultValue: r => r && r.salesforce && r.salesforce.oauth2FlowType,
     options: [
       {
         items: [

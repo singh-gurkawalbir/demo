@@ -8,15 +8,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ExportFilterDialog({ flowId, resourceId, open, onClose }) {
+function ExportFilterDialog({ flowId, resource, open, onClose }) {
   const classes = useStyles();
+  const resourceId = resource._id;
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Export Filter</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Export Filter</Typography>
+      </DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>exportId: {resourceId}</Typography>
     </Dialog>

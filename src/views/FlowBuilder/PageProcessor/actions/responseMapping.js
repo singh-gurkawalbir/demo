@@ -1,26 +1,11 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Fragment } from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
+import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
+function ResponseMapping(props) {
+  const { open } = props;
 
-function ResponseMappingDialog({ flowId, resourceId, open, onClose }) {
-  const classes = useStyles();
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Response Mapping</DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>resourceId: {resourceId}</Typography>
-    </Dialog>
-  );
+  return <Fragment>{open && <ResponseMappingDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -30,5 +15,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: ResponseMappingDialog,
+  Component: ResponseMapping,
 };

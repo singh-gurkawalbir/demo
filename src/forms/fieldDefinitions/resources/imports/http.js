@@ -73,6 +73,7 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
+    defaultValue: [],
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
   },

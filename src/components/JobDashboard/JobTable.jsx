@@ -125,6 +125,7 @@ function JobTable({
                 disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}
                 onChange={handleSelectAllChange}
+                color="primary"
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>

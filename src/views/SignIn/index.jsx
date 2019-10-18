@@ -4,22 +4,29 @@ import CeligoLogo from '../../components/CeligoLogo';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    flexGrow: 1,
     display: 'grid',
     gridTemplateColumns: '40% 60%',
     height: '100vh',
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '100%',
+    },
   },
   gridImgWrapper: {
     background: `right / contain no-repeat url("../../static/images/gridDots.svg"), ${theme.palette.primary.main} `,
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   logo: {
-    width: '150px',
+    width: 150,
     marginBottom: theme.spacing(10),
     '& > svg': {
       fill: theme.palette.primary.dark,
     },
   },
   link: {
-    paddingLeft: '4px',
+    paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
   signinWrapper: {
@@ -27,19 +34,28 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    paddingBottom: theme.spacing(2),
   },
   signinWrapperContent: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '380px',
+    width: 380,
     marginTop: '23%',
+    // [theme.breakpoints.down('xs')]: {
+    //   width: '100%',
+    // },
   },
   title: {
     marginBottom: theme.spacing(3),
   },
   subTitle: {
     marginBottom: theme.spacing(1),
+  },
+  signInForm: {
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: '100%',
+    },
   },
 }));
 
@@ -62,7 +78,11 @@ export default function Signin(props) {
               Sign up
             </Link>
           </Typography>
-          <SigninForm {...props} dialogOpen={false} />
+          <SigninForm
+            {...props}
+            dialogOpen={false}
+            className={classes.signInForm}
+          />
         </div>
       </div>
       <div className={classes.gridImgWrapper} />

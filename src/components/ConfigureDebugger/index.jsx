@@ -27,8 +27,11 @@ const useStyles = makeStyles(theme => ({
   },
   closeButton: {
     position: 'absolute',
-    right: '10px',
-    top: '2px',
+    right: theme.spacing(1),
+    top: 2,
+  },
+  content: {
+    width: '30vw',
   },
 }));
 
@@ -69,15 +72,17 @@ export default function ConfigureDebugger(props) {
 
   return (
     <Dialog open maxWidth={false}>
-      <IconButton
-        aria-label="Close"
-        data-test="closeConfigureDebugger"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle>{name}</DialogTitle>
-      <DialogContent style={{ width: '30vw' }}>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{name}</Typography>
+        <IconButton
+          aria-label="Close"
+          data-test="closeConfigureDebugger"
+          className={classes.closeButton}
+          onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent className={classes.content}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Debug Duration:</FormLabel>
@@ -88,14 +93,14 @@ export default function ConfigureDebugger(props) {
               onChange={evt => setDebugValue(evt.target.value)}>
               <FormControlLabel
                 value="0"
-                control={<Radio color="secondary" />}
+                control={<Radio color="primary" />}
                 label="Off"
               />
               {['15', '30', '45', '60'].map(duration => (
                 <FormControlLabel
                   key={duration}
                   value={duration}
-                  control={<Radio color="secondary" />}
+                  control={<Radio color="primary" />}
                   label={`Next ${duration} mins`}
                 />
               ))}

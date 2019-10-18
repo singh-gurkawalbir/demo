@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import SignIn from '../../views/SignIn';
 import IntegrationSettings from '../../views/IntegrationSettings';
 import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
@@ -75,6 +74,10 @@ export default class AppRouting extends Component {
           component={IntegrationSettings}
         />
         <Route
+          path={['/pg/integrations/:integrationId/flowBuilder/:flowId']}
+          component={FlowBuilder}
+        />
+        <Route
           path="/pg/connectors/:connectorId/licenses"
           component={ConnectorLicenses}
         />
@@ -86,11 +89,6 @@ export default class AppRouting extends Component {
         <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
-        <Route path="/pg/signin" component={SignIn} />
-        <Route
-          path={['/pg/flowBuilder/:flowId', '/pg/flowBuilder']}
-          component={FlowBuilder}
-        />
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />

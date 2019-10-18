@@ -1,8 +1,8 @@
 export default {
   celigoWhite: '#FFFFFF',
-  celigoError: '#c23934',
+  celigoError: '#FF3C3C',
   celigoSuccess: '#4CBB02',
-  celigoWarning: '#FFA10C',
+  celigoWarning: '#FFB30C',
   celigoAccent1: '#0E7DC1',
   celigoAccent2: '#00A1E1',
   celigoAccent3: '#37B5ED',
