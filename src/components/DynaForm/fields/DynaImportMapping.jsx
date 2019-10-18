@@ -20,7 +20,13 @@ export default function DynaImportMapping(props) {
     // TODO: recordType support in import definition
     // recordType
   } = props;
-  const { lookupId, lookups, isStandaloneMapping } = options;
+  const {
+    lookupId,
+    lookups,
+    isStandaloneMapping,
+    sObjectType,
+    recordType,
+  } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
   // TODO: Change to real data
   const generateFields = [];
@@ -32,15 +38,16 @@ export default function DynaImportMapping(props) {
   const opts = {};
 
   if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    opts.api = '';
+    // opts.api = '';
     opts.connectionId = connectionId;
-    opts.sObjectType = 'account'; // options.sObjectType;
+    // TODO: Hardcoding it. Change it to sObjectType
+    opts.sObjectType = sObjectType;
+    // 'account'
   } else if (
     application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
   ) {
     opts.connectionId = connectionId;
-    opts.recordType = options.recordType;
-    // generateFields = MappingUtil.getSampleGenerateFields();
+    opts.recordType = recordType;
   }
 
   const handleClose = () => {
