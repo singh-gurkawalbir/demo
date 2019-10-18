@@ -16,7 +16,14 @@ export default {
     columnData.push({
       heading: 'Flow Name',
       value: function FlowBuilderLink(r) {
-        return <Link to={`/pg/flowBuilder/${r._id}`}>{r.name || r._id}</Link>;
+        return (
+          <Link
+            to={`/pg/integrations/${r._integrationId || 'none'}/flowBuilder/${
+              r._id
+            }`}>
+            {r.name || r._id}
+          </Link>
+        );
       },
       orderBy: 'name',
     });

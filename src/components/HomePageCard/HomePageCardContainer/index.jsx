@@ -6,9 +6,8 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
-    // minWidth: 318,
     minHeight: 318,
-    maxWidth: 319,
+    width: '100%',
     boxSizing: 'border-box',
     border: '1px solid',
     cursor: 'pointer',
@@ -39,7 +38,10 @@ function HomePageCardContainer(props) {
   const { children } = props;
 
   return (
-    <Paper className={classNames(classes.wrapper)} elevation={0}>
+    <Paper
+      className={classNames(classes.wrapper)}
+      elevation={0}
+      onClick={props.onClick}>
       <div>{children}</div>
     </Paper>
   );
