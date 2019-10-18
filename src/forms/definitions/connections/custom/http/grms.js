@@ -56,6 +56,7 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
+      required: true,
       helpText: 'The Access Token of your GRMS account',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

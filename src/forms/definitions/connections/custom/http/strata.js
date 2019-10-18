@@ -79,6 +79,7 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
       label: 'Generate Token',
+      required: true,
       defaultValue: '',
       helpText: 'The Access Token of your Strata account',
     },
