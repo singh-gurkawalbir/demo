@@ -30,6 +30,7 @@ export default {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
+      delete newValues['/_connectionId'];
     } else {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 

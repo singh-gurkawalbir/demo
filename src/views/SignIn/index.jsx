@@ -8,9 +8,15 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '40% 60%',
     height: '100vh',
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '100%',
+    },
   },
   gridImgWrapper: {
     background: `right / contain no-repeat url("../../static/images/gridDots.svg"), ${theme.palette.primary.main} `,
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   logo: {
     width: 150,
@@ -28,6 +34,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    paddingBottom: theme.spacing(2),
   },
   signinWrapperContent: {
     display: 'flex',
@@ -35,12 +42,20 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: 380,
     marginTop: '23%',
+    // [theme.breakpoints.down('xs')]: {
+    //   width: '100%',
+    // },
   },
   title: {
     marginBottom: theme.spacing(3),
   },
   subTitle: {
     marginBottom: theme.spacing(1),
+  },
+  signInForm: {
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: '100%',
+    },
   },
 }));
 
@@ -63,7 +78,11 @@ export default function Signin(props) {
               Sign up
             </Link>
           </Typography>
-          <SigninForm {...props} dialogOpen={false} />
+          <SigninForm
+            {...props}
+            dialogOpen={false}
+            className={classes.signInForm}
+          />
         </div>
       </div>
       <div className={classes.gridImgWrapper} />
