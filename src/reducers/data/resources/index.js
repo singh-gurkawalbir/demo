@@ -11,8 +11,14 @@ const resourceTypesToIgnore = [
   'audit',
 ];
 
-function replaceOrInsertResource(state, type, resource) {
+function replaceOrInsertResource(state, resourceType, resource) {
   // handle case of no collection
+  let type = resourceType;
+
+  if (type.indexOf('/licenses') >= 0) {
+    type = 'connectorLicenses';
+  }
+
   if (!state[type]) {
     return { ...state, [type]: [resource] };
   }
