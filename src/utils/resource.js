@@ -124,6 +124,13 @@ export function getResourceSubType(resource) {
   };
 }
 
+export function getResourceSubTypeFromAdaptorType(adaptorType) {
+  return {
+    type: adaptorTypeMap[adaptorType],
+    resourceType: inferResourceType(adaptorType),
+  };
+}
+
 // fn to consolidate this simple expression in case we ever
 // change how we identify new resources..
 export const isNewId = id => id && id.startsWith('new');

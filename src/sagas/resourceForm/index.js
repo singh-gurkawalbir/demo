@@ -162,6 +162,7 @@ export function* createFormValuesPatchSet({
 
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
+    fieldMeta: formState.fieldMeta,
     resource,
   });
 
