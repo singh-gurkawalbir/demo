@@ -1,31 +1,36 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
-import sortTiles from './util';
+import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ResourceDrawer from '../../components/drawer/Resource';
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    padding: 12,
+const useStyles = makeStyles(theme => ({
+  container: {
+    margin: theme.spacing(2),
+    display: 'grid',
+    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridGap: theme.spacing(2),
+    '& > div': {
+      maxWidth: '100%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+    },
+    [theme.breakpoints.up('xs')]: {
+      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+    },
   },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-});
+}));
 
 function Dashboard(props) {
-  const { classes } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const ssLinkedConnections = useSelector(state =>
@@ -75,31 +80,22 @@ function Dashboard(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-
       <CeligoPageBar title="My integrations" />
       <LoadResources required resources="published,integrations,connections">
-        <div className={classes.root}>
-          <Grid container spacing={3}>
-            {sortedTiles.map(t => (
-              <Grid
-                key={t._ioConnectionId ? t._id : t._integrationId}
-                item
-                lg={3}
-                md={4}
-                sm={6}
-                xs={12}>
-                {t._ioConnectionId ? (
-                  <SuiteScriptTile tile={t} />
-                ) : (
-                  <Tile tile={t} />
-                )}
-              </Grid>
-            ))}
-          </Grid>
+        <div className={classes.container}>
+          {sortedTiles.map(t => (
+            <div key={t._ioConnectionId ? t._id : t._integrationId}>
+              {t._ioConnectionId ? (
+                <SuiteScriptTile tile={t} />
+              ) : (
+                <Tile tile={t} />
+              )}
+            </div>
+          ))}
         </div>
       </LoadResources>
     </Fragment>
   );
 }
 
-export default withStyles(styles)(Dashboard);
+export default Dashboard;

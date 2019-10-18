@@ -4,7 +4,6 @@ export default {
   uploadFile: {
     type: 'uploadfile',
     label: 'Sample File (that would be exported)',
-    resourceType: 'connections',
     mode: r => r && r.file && r.file.type,
     // filter: r => ({ type: r.type }),
     // excludeFilter: r => ({ _
@@ -67,76 +66,135 @@ export default {
     type: 'checkbox',
     label: 'File purge Internal Backup',
   },
+  'file.json.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['json'],
+      },
+    ],
+  },
+  'file.xml.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xml'],
+      },
+    ],
+  },
+  'file.fileDefinition.resourcePath': {
+    label: 'Resource Path',
+    type: 'text',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+    ],
+  },
+  'edix12.format': {
+    type: 'filedefinitionselect',
+    label: 'EDI X12 Format',
+    format: 'edi',
+    required: r => !r,
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['filedefinition'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+  },
+  'fixed.format': {
+    type: 'filedefinitionselect',
+    label: 'Format',
+    format: 'fixed',
+    required: r => !r,
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['fixed'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+  },
+  'edifact.format': {
+    type: 'filedefinitionselect',
+    label: 'EDIFACT Format',
+    format: 'ediFact',
+    required: r => !r,
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['delimited/edifact'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+  },
+  'file.filedefinition.rules': {
+    type: 'filedefinitioneditor',
+    label: 'File Definition Rules ',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+    refreshOptionsOnChangesTo: [
+      'edix12.format',
+      'fixed.format',
+      'edifact.format',
+      'file.fileDefinition.resourcePath',
+    ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
+  },
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    sampleData: r => r.sampleData,
-  },
-  'file.csv.columnDelimiter': {
-    type: 'select',
-    label: 'File csv column Delimiter',
-    options: [
+    visibleWhen: [
       {
-        items: [
-          { label: 'Comma', value: ',' },
-          { label: 'Pipe', value: '|' },
-          { label: 'Semicolumn', value: ';' },
-          { label: 'Space', value: ' ' },
-          { label: 'Tab', value: '\t' },
-        ],
+        field: 'file.type',
+        is: ['csv'],
       },
     ],
-  },
-  'file.csv.rowDelimiter': {
-    type: 'text',
-    label: 'File csv row Delimiter',
-  },
-  'file.csv.keyColumns': {
-    type: 'text',
-    label: 'File csv key Columns',
-  },
-  'file.csv.hasHeaderRow': {
-    type: 'checkbox',
-    label: 'File csv has Header Row',
-  },
-  'file.csv.trimSpaces': {
-    type: 'checkbox',
-    label: 'File csv trim Spaces',
-  },
-  'file.csv.rowsToSkip': {
-    type: 'text',
-    label: 'File csv rows To Skip',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  'file.json.resourcePath': {
-    type: 'text',
-    label: 'Resource Path',
   },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File Has Header',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xlsx'],
+      },
+    ],
+  },
+  'file.xlsx.rowsPerRecord': {
+    type: 'checkbox',
+    label: 'Multiple Rows Per Record',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xlsx'],
+      },
+    ],
   },
   'file.xlsx.keyColumns': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
     label: 'Key Columns',
-  },
-  'file.xml.resourcePath': {
-    type: 'text',
-    label: 'Resource Path',
-  },
-  'file.fileDefinition.resourcePath': {
-    type: 'text',
-    label: 'Resource Path',
-  },
-  'file.fileDefinition._fileDefinitionId': {
-    type: 'text',
-    label: 'File file Definition _file Definition Id',
+    visibleWhen: [
+      {
+        field: 'file.xlsx.rowsPerRecord',
+        is: [true],
+      },
+    ],
   },
 };
