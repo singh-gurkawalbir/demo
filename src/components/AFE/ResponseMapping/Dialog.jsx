@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     height: '100%',
-    maxHeight: '28px',
+    maxHeight: '28',
   },
   root: {
     flexGrow: 1,
@@ -73,7 +73,7 @@ export const reducer = (state, action) => {
 
           draft[index] = objCopy;
         } else {
-          draft.push(Object.assign({}, lastRowData, { [field]: value }));
+          draft.push(...lastRowData, { [field]: value });
         }
 
         setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
