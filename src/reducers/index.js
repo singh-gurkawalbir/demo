@@ -1517,6 +1517,8 @@ export function commMetadataPathGen(
 
       if (selectField && recordType) {
         commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
+      } else if (recordType) {
+        commMetadataPath += `/${recordType}`;
       }
     }
   } else if (applicationType === 'salesforce') {
@@ -1917,4 +1919,29 @@ export function getAllPageProcessorImports(state, pageProcessors) {
     imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
 
   return ppImports;
+}
+
+export function getImportSampleData(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { assistant, adaptorType, sampleData } = resource;
+
+  if (sampleData) return sampleData;
+  else if (assistant) {
+    // get assistants sample data
+  } else if (adaptorType === 'NetSuiteDistributedImport') {
+    // eslint-disable-next-line camelcase
+    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { data: sampleData } = metadataOptionsAndResources(
+      state,
+      connectionId,
+      'suitescript',
+      'recordTypes',
+      `record-${netsuite_da.recordType}`,
+      netsuite_da.recordType
+    );
+
+    return sampleData;
+  } else if (adaptorType === 'SalesforceImport') {
+    // similar logic as netsuite
+  }
 }

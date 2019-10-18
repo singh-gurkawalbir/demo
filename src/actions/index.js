@@ -637,6 +637,10 @@ const sampleData = {
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
 };
+const importSampleData = {
+  fetch: resourceId =>
+    action(actionTypes.IMPORT_SAMPLEDATA.FETCH, { resourceId }),
+};
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
@@ -927,6 +931,7 @@ export default {
   assistantMetadata,
   stack,
   sampleData,
+  importSampleData,
   flowData,
   connection,
   marketplace,
